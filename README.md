@@ -48,7 +48,7 @@ This operating system is much **leaner** than any other RTOSes, especilly when c
     }
 ```
 ### Send from one thread to another
-![Delay](https://raw.githubusercontent.com/EDI-Systems/M5P1_MuProkaron/master/Documents/Demo/Send.gif)
+![Send](https://raw.githubusercontent.com/EDI-Systems/M5P1_MuProkaron/master/Documents/Demo/Send.gif)
 ```C
     void Func_1(void* Param)
     {
@@ -81,6 +81,34 @@ This operating system is much **leaner** than any other RTOSes, especilly when c
 ```
 
 ### Counting semaphores
+![Semaphore](https://raw.githubusercontent.com/EDI-Systems/M5P1_MuProkaron/master/Documents/Demo/Semaphore.gif)
+```C
+    void Func_1(void* Param)
+    {
+        while(1)
+        {
+            RMP_Thd_Delay(30000);
+            RMP_Sem_Post(&Sem_1, 1);
+        };
+    }
+
+    void Func_2(void* Param)
+    {
+        ptr_t Data;
+        while(1)
+        {
+            RMP_Sem_Pend(&Sem_1, RMP_MAX_SLICES);
+            RMP_PRINTK_S("Semaphore successfully acquired!\r\n\r\n");
+        };
+    }
+
+    void RMP_Init_Hook(void)
+    {
+        RMP_Sem_Crt(&Sem_1,0);
+        RMP_Thd_Crt(&Thd_1, Func_1, &Stack_1[238], (void*)0x12345678, 1, 5);
+        RMP_Thd_Crt(&Thd_2, Func_2, &Stack_2[238], (void*)0x87654321, 1, 5);
+    }
+```
 
 ### Typical performance figures
 |Machine   |Toolchain     |Flash|SRAM|Yield|Mailbox|Semaphore|Mailbox/Int|Semaphore/Int|

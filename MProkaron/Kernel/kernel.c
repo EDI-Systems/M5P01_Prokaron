@@ -1244,9 +1244,10 @@ ret_t RMP_Sem_Pend(struct RMP_Sem* Semaphore, ptr_t Slices)
             return RMP_ERR_OPER;
         }
 
-        /* We must be running */
+        /* We must be running - place into waitlist now */
         _RMP_Clr_Rdy(RMP_Cur_Thd);
-
+        RMP_List_Ins(&(RMP_Cur_Thd->Run_Head),Semaphore->Wait_List.Prev,&(Semaphore->Wait_List));
+        
         if(Slices<RMP_MAX_SLICES)
         {
             _RMP_Dly_Ins(RMP_Cur_Thd, Slices);
@@ -1345,7 +1346,7 @@ ret_t RMP_Sem_Post(struct RMP_Sem* Semaphore, ptr_t Number)
     
     Semaphore->Cur_Num+=Number;
     /* Is there any thread waiting on it? If there are, clean them up*/
-    while((&(Semaphore->Wait_List)!=Semaphore->Wait_List.Next)||(Semaphore->Cur_Num==0))
+    while((&(Semaphore->Wait_List)!=Semaphore->Wait_List.Next)&&(Semaphore->Cur_Num!=0))
     {
         Thread=(struct RMP_Thd*)(Semaphore->Wait_List.Next);
         RMP_List_Del(Thread->Run_Head.Prev,Thread->Run_Head.Next);

@@ -2,12 +2,10 @@
 
 void Func_1(void* Param)
 {
-    ptr_t Time=0;
     while(1)
     {
         RMP_Thd_Delay(30000);
-        RMP_Thd_Snd(&Thd_2, Time, RMP_MAX_SLICES);
-        Time++;
+        RMP_Sem_Post(&Sem_1, 1);
     };
 }
 
@@ -16,15 +14,15 @@ void Func_2(void* Param)
     ptr_t Data;
     while(1)
     {
-        RMP_Thd_Rcv(&Data, RMP_MAX_SLICES);
-        RMP_PRINTK_S("Received ");
-        RMP_PRINTK_I(Data);
-        RMP_PRINTK_S("\r\n\r\n");
+        RMP_Sem_Pend(&Sem_1, RMP_MAX_SLICES);
+        RMP_PRINTK_S("Semaphore successfully acquired!\r\n\r\n");
     };
 }
 
 void RMP_Init_Hook(void)
 {
+    /* Counting semaphore */
+    RMP_Sem_Crt(&Sem_1,0);
     /* Start threads */
     RMP_Thd_Crt(&Thd_1, Func_1, &Stack_1[238], (void*)0x12345678, 1, 5);
     RMP_Thd_Crt(&Thd_2, Func_2, &Stack_2[238], (void*)0x87654321, 1, 5);
