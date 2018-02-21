@@ -28,7 +28,9 @@ This operating system is much **leaner** than any other RTOSes, especilly when c
 ```
 
 ### Delaying a thread
+<center>
 ![Delay](https://raw.githubusercontent.com/EDI-Systems/M5P1_MuProkaron/master/Documents/Demo/Delay.gif)
+</center>
 ```C
     void Func_1(void* Param)
     {
@@ -48,7 +50,9 @@ This operating system is much **leaner** than any other RTOSes, especilly when c
     }
 ```
 ### Send from one thread to another
+<center>
 ![Delay](https://raw.githubusercontent.com/EDI-Systems/M5P1_MuProkaron/master/Documents/Demo/Send.gif)
+</center>
 ```C
     void Func_1(void* Param)
     {
@@ -83,6 +87,7 @@ This operating system is much **leaner** than any other RTOSes, especilly when c
 ### Counting semaphores
 
 ### Typical performance figures
+<center>
 |Machine   |Flash|SRAM|Yield|Mailbox|Semaphore|Mailbox/I|Semaphore/I|
 |----------|-----|----|-----|-------|---------|---------|-----------|
 |Cortex-M0 | TBT |TBT | TBT |       |         |         |           |
@@ -91,7 +96,7 @@ This operating system is much **leaner** than any other RTOSes, especilly when c
 |Cortex-M4 | TBT |TBT | TBT |       |         |         |           |
 |Cortex-M7 | TBT |TBT | TBT |       |         |         |           |
 |MSP430    | TBT |TBT | TBT |       |         |         |           |
-
+</center>
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
