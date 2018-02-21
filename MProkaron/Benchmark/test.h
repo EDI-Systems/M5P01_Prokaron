@@ -43,15 +43,15 @@
 //    0                                                                          /* const struct RVM_Image* const * const Next_Image; */
 //};
 
-ptr_t Stack_1[256];
-struct RMP_Thd Thd_1={0};
+//ptr_t Stack_1[256];
+//struct RMP_Thd Thd_1={0};
 
-ptr_t Stack_2[256];
-struct RMP_Thd Thd_2={0};
+//ptr_t Stack_2[256];
+//struct RMP_Thd Thd_2={0};
 
-struct RMP_Sem Sem_1={0};
+//struct RMP_Sem Sem_1={0};
 
-ptr_t Time;
+//ptr_t Time;
 
 
 

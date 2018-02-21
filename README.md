@@ -113,12 +113,12 @@ This operating system is much **leaner** than any other RTOSes, especilly when c
 ### Typical performance figures
 |Machine   |Toolchain     |Flash|SRAM|Yield|Mailbox|Semaphore|Mailbox/Int|Semaphore/Int|
 |:--------:|:------------:|:---:|:--:|:---:|:-----:|:-------:|:---------:|:-----------:|
-|Cortex-M0 |Keil uVision 5|TBT  |TBT |TBT  |       |         |           |             |
-|Cortex-M0+|Keil uVision 5|TBT  |TBT |TBT  |       |         |           |             |
-|Cortex-M3 |Keil uVision 5|TBT  |TBT |TBT  |       |         |           |             |
-|Cortex-M4 |Keil uVision 5|TBT  |TBT |TBT  |       |         |           |             |
-|Cortex-M7 |Keil uVision 5|TBT  |TBT |TBT  |       |         |           |             |
-|MSP430    |TI CCS6       |TBT  |TBT |TBT  |       |         |           |             |
+|Cortex-M0 |Keil uVision 5|TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
+|Cortex-M0+|Keil uVision 5|TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
+|Cortex-M3 |Keil uVision 5|TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
+|Cortex-M4 |Keil uVision 5|TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
+|Cortex-M7 |Keil uVision 5|6.66 |1.65|TBT  |TBT    |TBT      |TBT        |TBT          |
+|MSP430    |TI CCS6       |TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
 
 **Flash and SRAM consumption is calculated in kB, while the other figures are calculated in CPU clock cycles.**  
 Yield: The time to yield between different threads.  
