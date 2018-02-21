@@ -104,7 +104,8 @@ while(0)
 #define RMP_CMX_PUTCHAR(CHAR) \
 do \
 { \
-    ITM_SendChar((s8)(CHAR)); \
+    USART1->TDR=CHAR; \
+    while((USART1->ISR&0x40)==0); \
 } \
 while(0)
 /* End Defines ***************************************************************/
