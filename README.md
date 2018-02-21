@@ -1,8 +1,19 @@
-# RTOS-Mutate-Prokaron (M5P1 R4T1)
+# MuProkaron
 
 **RMP** is a small real-time operating system which focuses on formal reliability and simplicity. It achieves reliability by deployment of formal techniques(not completed yet). All the basic functionalities that are necessary for RTOSes are povided, but nothing more. This guarantees that the system is the minimum possible kernel and is also suitable to be used as a guest operating system when hosted on virtual machine monitors.
 This operating system is much **leaner** than any other RTOSes, especilly when compared to _FreeRTOS_ or _RT-Thread_, and understanding it should be simple enough.
-**_The formal proof is not completed yet, and the system is in pre-beta quality._**
+
+## Demo
+### Basic thread operations
+
+### Delaying a thread and flip a LED
+
+### Send from one thread to another
+
+### Counting semaphores
+
+### Key performance figures
+
 
 ## Getting Started
 
@@ -40,3 +51,5 @@ Please read [CONTRIBUTING.md] for details on our code of conduct, and the proces
 
 This project is licensed under the GPLv3 License - see the [LICENSE.md](LICENSE.md) file for details. However, commercial licenses are also available.
 
+## EDI Project Information
+Mutate - Protero - Prokaron (M5P1 R4T1)
