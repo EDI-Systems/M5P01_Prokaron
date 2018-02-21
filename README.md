@@ -82,8 +82,15 @@ This operating system is much **leaner** than any other RTOSes, especilly when c
 
 ### Counting semaphores
 
-### Key performance figures
-
+### Typical performance figures
+|Machine   |Flash|SRAM|Yield|Mailbox|Semaphore|Mailbox/I|Semaphore/I|
+|----------|-----|----|-----|-------|---------|---------|-----------|
+|Cortex-M0 | TBT |TBT | TBT |       |         |         |           |
+|Cortex-M0+| TBT |TBT | TBT |       |         |         |           |
+|Cortex-M3 | TBT |TBT | TBT |       |         |         |           |
+|Cortex-M4 | TBT |TBT | TBT |       |         |         |           |
+|Cortex-M7 | TBT |TBT | TBT |       |         |         |           |
+|MSP430    | TBT |TBT | TBT |       |         |         |           |
 
 ## Getting Started
 
