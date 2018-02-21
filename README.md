@@ -41,13 +41,14 @@ This operating system is much **leaner** than any other RTOSes, especilly when c
             RMP_PRINTK_S("Delayed 30000 cycles\r\n\r\n");
         };
     }
+
     void RMP_Init_Hook(void)
     {
         RMP_Thd_Crt(&Thd_1, Func_1, &Stack_1[238], (void*)0x12345678, 1, 5);
     }
 ```
 ### Send from one thread to another
-
+![Delay](https://raw.githubusercontent.com/EDI-Systems/M5P1_MuProkaron/master/Documents/Demo/Send.gif)
 ```C
     void Func_1(void* Param)
     {
