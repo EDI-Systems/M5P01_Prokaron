@@ -91,6 +91,12 @@ This operating system is much **leaner** than any other RTOSes, especilly when c
 |Cortex-M4 |Keil uVision 5|TBT  |TBT |TBT  |       |         |           |             |
 |Cortex-M7 |Keil uVision 5|TBT  |TBT |TBT  |       |         |           |             |
 |MSP430    |TI CCS6       |TBT  |TBT |TBT  |       |         |           |             |
+**Flash and SRAM consumption is calculated in kB, while the other figures are calculated in CPU clock cycles.**
+Yield: The time to yield between different threads.
+Mailbox: The mailbox communication time between two threads.
+Semaphore: The semaphore communication time between two threads.
+Mailbox/Int: The time to send to a mailbox from interrupt.
+Semaphore/Int: The time to post to a semaphore from interrupt.
 
 ## Getting Started
 
