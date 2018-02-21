@@ -27,7 +27,7 @@ RMP_Thd_Crt(&Thd_1           /* Thread control block */,
     RMP_Thd_Resume(&Thd_1     /* Thread control block */);
 ```
 
-### Delaying a thread and flip a LED
+### Delaying a thread
 
 ### Send from one thread to another
 
