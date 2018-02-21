@@ -28,7 +28,7 @@ RMP_Thd_Crt(&Thd_1           /* Thread control block */,
 ```
 
 ### Delaying a thread
-
+![Delay](https://raw.githubusercontent.com/EDI-Systems/M5P1_MuProkaron/master/Documents/Demo/Delay.gif)
 ### Send from one thread to another
 
 ### Counting semaphores
