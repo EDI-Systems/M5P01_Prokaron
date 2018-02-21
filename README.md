@@ -5,6 +5,7 @@ This operating system is much **leaner** than any other RTOSes, especilly when c
 
 ## Quick Demo
 ### Basic thread operations
+![Basic](http://github.com/EDI-Systems/M5P1_MuProkaron/blob/master/Documents/Demo/Thread_Operations.png)
 
 ### Delaying a thread and flip a LED
 
