@@ -3,9 +3,6 @@
 void Func_1(void* Param)
 {
     ptr_t Time=0;
-    RMP_PRINTK_S("Parameter passed is ");
-    RMP_PRINTK_U((ptr_t)Param);
-    RMP_PRINTK_S("\r\n");
     while(1)
     {
         RMP_Thd_Delay(30000);
@@ -17,14 +14,12 @@ void Func_1(void* Param)
 void Func_2(void* Param)
 {
     ptr_t Data;
-    
     while(1)
     {
-//        RMP_Thd_Rcv(&Data, RMP_MAX_SLICES);
-//        
-//        RMP_PRINTK_S("Received ");
-//        RMP_PRINTK_I(Data);
-//        RMP_PRINTK_S("\n");
+        RMP_Thd_Rcv(&Data, RMP_MAX_SLICES);
+        RMP_PRINTK_S("Received ");
+        RMP_PRINTK_I(Data);
+        RMP_PRINTK_S("\r\n\r\n");
     };
 }
 
