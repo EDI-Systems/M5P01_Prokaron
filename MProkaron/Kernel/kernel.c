@@ -609,10 +609,10 @@ ret_t RMP_Thd_Crt(struct RMP_Thd* Thread, void* Entry, void* Stack, void* Arg, p
     Thread->Prio=Prio;
     Thread->Slices=Slices;
     Thread->Slices_Left=Slices;
-    Thread->Stack=Stack;
+    Thread->Stack=(ptr_t)Stack;
     
     /* Initialize its stack and sending list */
-    _RMP_Stack_Init(Entry, Stack, Arg);
+    _RMP_Stack_Init((ptr_t)Entry, (ptr_t)Stack, (ptr_t)Arg);
     RMP_List_Crt(&(Thread->Snd_List));
     
     /* Notify the scheduler that we have created something new, also check locks */
