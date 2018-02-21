@@ -5,7 +5,7 @@ This operating system is much **leaner** than any other RTOSes, especilly when c
 
 ## Quick Demo
 ### Basic thread operations
-![Basic](http://lmsotfy.com/so.png)
+![Basic](https://imgur.com/a/HfeMF)
 
 ### Delaying a thread and flip a LED
 
