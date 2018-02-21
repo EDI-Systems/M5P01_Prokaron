@@ -2,16 +2,15 @@
 
 void Func_1(void* Param)
 {
+    ptr_t Time=0;
     RMP_PRINTK_S("Parameter passed is ");
     RMP_PRINTK_U((ptr_t)Param);
     RMP_PRINTK_S("\r\n");
     while(1)
     {
         RMP_Thd_Delay(30000);
-        RMP_PRINTK_S("Delayed 30000 cycles\r\n\r\n");
-        
-//        RMP_Thd_Snd(&Thd_2, Time, RMP_MAX_SLICES);
-//        Time++;
+        RMP_Thd_Snd(&Thd_2, Time, RMP_MAX_SLICES);
+        Time++;
     };
 }
 
