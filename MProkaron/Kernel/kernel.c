@@ -577,15 +577,15 @@ Description : Create a real-time thread.
 Input       : struct RMP_Thd* Thread - The thread structure provided. The user 
                                        should make this allocation according to
                                        his or her needs.
-              ptr_t Entry - The entry of the thread.
-              ptr_t Stack - The stack of this thread.
-              ptr_t Arg - The argument to pass to the thread.
+              void* Entry - The entry of the thread.
+              void* Stack - The stack of this thread.
+              void* Arg - The argument to pass to the thread.
               ptr_t Prio - The priority of the thread.
               ptr_t Slices - The number of timeslices to assign to the thread.
 Output      : None.
 Return      : ret_t - If successful, 0. on error, return an error code.
 ******************************************************************************/
-ret_t RMP_Thd_Crt(struct RMP_Thd* Thread, ptr_t Entry, ptr_t Stack, ptr_t Arg, ptr_t Prio, ptr_t Slices)
+ret_t RMP_Thd_Crt(struct RMP_Thd* Thread, void* Entry, void* Stack, void* Arg, ptr_t Prio, ptr_t Slices)
 {
     /* Check if the priority and timeslice range is correct */
     if(Prio>=RMP_MAX_PREEMPT_PRIO)

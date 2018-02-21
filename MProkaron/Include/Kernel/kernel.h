@@ -261,7 +261,7 @@ __EXTERN__ void RMP_List_Ins(volatile struct RMP_List* New,
 /* System interfaces */
 __EXTERN__ void RMP_Yield(void);
 __EXTERN__ ret_t RMP_Thd_Crt(struct RMP_Thd* Thread, 
-                             ptr_t Entry, ptr_t Stack, ptr_t Arg, 
+                             void* Entry, void* Stack, void* Arg, 
                              ptr_t Prio, ptr_t Slices);
 __EXTERN__ ret_t RMP_Thd_Del(struct RMP_Thd* Thread);
 __EXTERN__ ret_t RMP_Thd_Set(struct RMP_Thd* Thread, ptr_t Prio, ptr_t Slices);
