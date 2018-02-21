@@ -5,9 +5,8 @@ This operating system is much **leaner** than any other RTOSes, especilly when c
 
 ## Quick Demo
 ### Basic thread operations
-####/* Create a thread */
+**Create a thread**
 ```
-
 RMP_Thd_Crt(&Thd_1           /* Thread control block */, 
             Func_1           /* Thread entry */,
             &Stack_1[238]    /* Stack address */,
@@ -15,7 +14,7 @@ RMP_Thd_Crt(&Thd_1           /* Thread control block */,
             1                 /* Priority */, 
             5                 /* Timeslices */);
 ```
-####/* Delete a thread */
+**Delete a thread**
 ```
 RMP_Thd_Crt(&Thd_1           /* Thread control block */, 
             Func_1           /* Thread entry */,
