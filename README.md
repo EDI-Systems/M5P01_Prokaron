@@ -83,14 +83,14 @@ This operating system is much **leaner** than any other RTOSes, especilly when c
 ### Counting semaphores
 
 ### Typical performance figures
-|Machine   |Flash|SRAM|Yield|Mailbox|Semaphore|Mailbox/Intvect|Semaphore/Intvect|
-|:--------:|:---:|:--:|:---:|:-----:|:-------:|:-------------:|:---------------:|
-|Cortex-M0 |TBT  |TBT |TBT  |       |         |               |                 |
-|Cortex-M0+|TBT  |TBT |TBT  |       |         |               |                 |
-|Cortex-M3 |TBT  |TBT |TBT  |       |         |               |                 |
-|Cortex-M4 |TBT  |TBT |TBT  |       |         |               |                 |
-|Cortex-M7 |TBT  |TBT |TBT  |       |         |               |                 |
-|MSP430    |TBT  |TBT |TBT  |       |         |               |                 |
+|Machine   |Toolchain     |Flash|SRAM|Yield|Mailbox|Semaphore|Mailbox/Int|Semaphore/Int|
+|:--------:|:------------:|:---:|:--:|:---:|:-----:|:-------:|:---------:|:-----------:|
+|Cortex-M0 |Keil uVision 5|TBT  |TBT |TBT  |       |         |           |             |
+|Cortex-M0+|Keil uVision 5|TBT  |TBT |TBT  |       |         |           |             |
+|Cortex-M3 |Keil uVision 5|TBT  |TBT |TBT  |       |         |           |             |
+|Cortex-M4 |Keil uVision 5|TBT  |TBT |TBT  |       |         |           |             |
+|Cortex-M7 |Keil uVision 5|TBT  |TBT |TBT  |       |         |           |             |
+|MSP430    |TI CCS6       |TBT  |TBT |TBT  |       |         |           |             |
 
 ## Getting Started
 
