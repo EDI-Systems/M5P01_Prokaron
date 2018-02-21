@@ -39,6 +39,7 @@ When deploying this into a production system, it is recommended that you read th
 ## Built With
 
 - Keil uVision 5 (armcc)
+- Code composer studio
 - gcc/clang-llvm
 
 Other toolchains are not recommended nor supported at this point, though it might be possible to support them later on.
