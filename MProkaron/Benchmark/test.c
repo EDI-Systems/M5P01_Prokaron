@@ -33,9 +33,10 @@ void RMP_Init_Hook(void)
     RMP_Thd_Crt(&Thd_2, Func_2, &Stack_2[238], (void*)0x87654321, 1, 5);
     
     /* Delete threads */
-    
+    RMP_Thd_Del(&Thd_1);
     
     /* Suspend threads */
+    RMP_Thd_Suspend(&Thd_1);
     
     /* Resume threads */
     
