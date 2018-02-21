@@ -6,7 +6,7 @@ This operating system is much **leaner** than any other RTOSes, especilly when c
 ## Quick Demo
 ### Basic thread operations
 **Create a thread**
-```
+```C
 RMP_Thd_Crt(&Thd_1           /* Thread control block */, 
             Func_1           /* Thread entry */,
             &Stack_1[238]    /* Stack address */,
@@ -15,20 +15,37 @@ RMP_Thd_Crt(&Thd_1           /* Thread control block */,
             5                 /* Timeslices */);
 ```
 **Delete a thread**
-```
+```C
     RMP_Thd_Del(&Thd_1        /* Thread control block */);
 ```
 **Suspend a thread**
-```
+```C
     RMP_Thd_Suspend(&Thd_1    /* Thread control block */);
 ```
 **Resume a thread**
-```
+```C
     RMP_Thd_Resume(&Thd_1     /* Thread control block */);
 ```
 
 ### Delaying a thread
 ![Delay](https://raw.githubusercontent.com/EDI-Systems/M5P1_MuProkaron/master/Documents/Demo/Delay.gif)
+```C
+void Func_1(void* Param)
+{
+    RMP_PRINTK_S("Parameter passed is ");
+    RMP_PRINTK_U((ptr_t)Param);
+    RMP_PRINTK_S("\r\n");
+    while(1)
+    {
+        RMP_Thd_Delay(30000);
+        RMP_PRINTK_S("Delayed 30000 cycles\r\n\r\n");
+    };
+}
+void RMP_Init_Hook(void)
+{
+    RMP_Thd_Crt(&Thd_1, Func_1, &Stack_1[238], (void*)0x12345678, 1, 5);
+}
+```
 ### Send from one thread to another
 
 ### Counting semaphores
