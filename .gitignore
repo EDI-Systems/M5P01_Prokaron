@@ -52,7 +52,7 @@ Mkfile.old
 dkms.conf
 
 # Unneeded history and documents
-Documents/**
+Documents/*
 !Documents/M5P1_轻量级实时操作系统使用说明书.pdf
 !Documents/Demo/
 
