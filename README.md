@@ -16,12 +16,15 @@ RMP_Thd_Crt(&Thd_1           /* Thread control block */,
 ```
 **Delete a thread**
 ```
-RMP_Thd_Crt(&Thd_1           /* Thread control block */, 
-            Func_1           /* Thread entry */,
-            &Stack_1[238]    /* Stack address */,
-            (void*)0x12345678 /* Parameter */,
-            1                 /* Priority */, 
-            5                 /* Timeslices */);
+    RMP_Thd_Del(&Thd_1        /* Thread control block */);
+```
+**Suspend a thread**
+```
+    RMP_Thd_Suspend(&Thd_1    /* Thread control block */);
+```
+**Resume a thread**
+```
+    RMP_Thd_Resume(&Thd_1     /* Thread control block */);
 ```
 
 ### Delaying a thread and flip a LED
