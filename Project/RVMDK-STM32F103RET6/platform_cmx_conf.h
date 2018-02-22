@@ -1,13 +1,13 @@
 /******************************************************************************
-Filename   : test.h
+Filename   : platform_cmx_conf.h
 Author     : pry
 Date       : 24/06/2017
 Licence    : LGPL v3+; see COPYING for details.
-Description: The configuration file for testing program.
+Description: The configuration file for Cortex-M HAL.
 ******************************************************************************/
 
 /* Config Includes ***********************************************************/
-#include "Platform/test_STM32F767IG.h"
+#include "Platform/CortexM/Chips/STM32F103RE/platform_STM32F103RE.h"
 /* End Config Includes *******************************************************/
 
 /* End Of File ***************************************************************/

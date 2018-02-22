@@ -1,15 +1,15 @@
 /******************************************************************************
-Filename   : platform_STM32F405RG.h
+Filename   : platform_STM32F103RE.h
 Author     : pry
 Date       : 24/06/2017
 Licence    : LGPL v3+; see COPYING for details.
-Description: The configuration file for STM32F405RG.
+Description: The configuration file for STM32F103RE.
 ******************************************************************************/
 
 /* Defines *******************************************************************/
 /* The HAL library */
-#include "stm32f4xx.h"
-#include "core_cm4.h"
+#include "stm32f10x_conf.h"
+#include "core_cm3.h"
 /* The maximum number of preemption priority levels in the system.
  * This parameter must be divisible by the word length - 32 is usually sufficient */
 #define RMP_MAX_PREEMPT_PRIO         32
@@ -25,26 +25,23 @@ Description: The configuration file for STM32F405RG.
 /* What is the NVIC priority grouping? */
 #define RMP_CMX_NVIC_GROUPING        RMP_CMX_NVIC_GROUPING_P2S6
 /* What is the Systick value? */
-#define RMP_CMX_SYSTICK_VAL          16800
+#define RMP_CMX_SYSTICK_VAL          7200
 
 /* Other low-level initialization stuff - clock and serial
- * STM32F405 APB1<42MHz, APB2<84MHz */
+ * STM32F10x APB1<36MHz, APB2<72MHz */
 #define RMP_CMX_LOW_LEVEL_INIT() \
 do \
 { \
     USART_InitTypeDef USART1_Init; \
-    GPIO_InitTypeDef GPIOB_Init; \
+    GPIO_InitTypeDef GPIOA_Init; \
     RMP_Clear(&USART1_Init, sizeof(USART_InitTypeDef)); \
-    RMP_Clear(&GPIOB_Init, sizeof(GPIO_InitTypeDef)); \
+    RMP_Clear(&GPIOA_Init, sizeof(GPIO_InitTypeDef)); \
     \
-    GPIOB_Init.GPIO_Mode=GPIO_Mode_AF; \
-    GPIOB_Init.GPIO_Pin=GPIO_Pin_6; \
-    GPIOB_Init.GPIO_Speed=GPIO_Speed_50MHz; \
-	GPIOB_Init.GPIO_OType=GPIO_OType_PP; \
-	GPIOB_Init.GPIO_PuPd=GPIO_PuPd_UP; \
-    RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB, ENABLE); \
-    GPIO_Init(GPIOB, &GPIOB_Init); \
-	GPIO_PinAFConfig(GPIOB, GPIO_PinSource6, GPIO_AF_USART1); \
+    GPIOA_Init.GPIO_Mode=GPIO_Mode_AF_PP; \
+    GPIOA_Init.GPIO_Pin=GPIO_Pin_9; \
+    GPIOA_Init.GPIO_Speed=GPIO_Speed_50MHz; \
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE); \
+    GPIO_Init(GPIOA, &GPIOA_Init); \
     \
     USART1_Init.USART_BaudRate=115200; \
     USART1_Init.USART_WordLength=USART_WordLength_8b; \
