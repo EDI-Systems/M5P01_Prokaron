@@ -28,7 +28,10 @@ Description: The configuration file for STM32F767IG.
 /* What is the Systick value? */
 #define RMP_CMX_SYSTICK_VAL          21600
 
-/* Other low-level initialization stuff - clock and serial */
+/* Other low-level initialization stuff - clock and serial
+ * STM32F7xx APB1<45MHz, APB2<90MHz. When running at 216MHz,
+ * actually we are overdriving the bus a little, which might
+ * be fine. */
 #define RMP_CMX_LOW_LEVEL_INIT() \
 do \
 { \
@@ -63,7 +66,7 @@ do \
     RCC_ClkInitStructure.ClockType=(RCC_CLOCKTYPE_SYSCLK|RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2); \
     RCC_ClkInitStructure.SYSCLKSource=RCC_SYSCLKSOURCE_PLLCLK; \
     RCC_ClkInitStructure.AHBCLKDivider=RCC_SYSCLK_DIV1; \
-    RCC_ClkInitStructure.APB1CLKDivider=RCC_HCLK_DIV2; \
+    RCC_ClkInitStructure.APB1CLKDivider=RCC_HCLK_DIV4; \
     RCC_ClkInitStructure.APB2CLKDivider=RCC_HCLK_DIV2; \
     /* Flash latency = 7us, 8 CPU cycles */ \
     RMP_ASSERT(HAL_RCC_ClockConfig(&RCC_ClkInitStructure,FLASH_LATENCY_7)==HAL_OK); \

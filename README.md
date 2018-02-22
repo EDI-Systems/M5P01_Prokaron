@@ -117,9 +117,9 @@ This operating system is much **leaner** than any other RTOSes, especilly when c
 |MSP430       |GCC           |TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
 |Cortex-M0    |Keil uVision 5|TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
 |Cortex-M0+   |Keil uVision 5|TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
-|Cortex-M3    |Keil uVision 5|TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
+|Cortex-M3    |Keil uVision 5|2.60 |1.65|246  |456    |422      |443        |409          |
 |Cortex-M3    |GCC           |TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
-|Cortex-M4    |Keil uVision 5|TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
+|Cortex-M4    |Keil uVision 5|2.70 |1.66|184  |339    |325      |374        |361          |
 |Cortex-M4    |GCC           |TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
 |Cortex-M7    |Keil uVision 5|6.66 |1.65|170  |256    |230      |274        |268          |
 |Cortex-M7    |GCC           |TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
