@@ -110,7 +110,7 @@ This operating system is much **leaner** than any other RTOSes, especilly when c
     }
 ```
 
-### Typical performance figures
+### Typical performance figures for all supported architectures
 |Machine      |Toolchain     |Flash|SRAM|Yield|Mailbox|Semaphore|Mailbox/Int|Semaphore/Int|
 |:-----------:|:------------:|:---:|:--:|:---:|:-----:|:-------:|:---------:|:-----------:|
 |MSP430       |TI CCS6       |TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
@@ -123,6 +123,10 @@ This operating system is much **leaner** than any other RTOSes, especilly when c
 |Cortex-M4    |GCC           |TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
 |Cortex-M7    |Keil uVision 5|6.66 |1.65|170  |256    |230      |274        |268          |
 |Cortex-M7    |GCC           |TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
+|Cortex-R4    |Keil uVision 5|TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
+|Cortex-R4    |GCC           |TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
+|Cortex-R5    |Keil uVision 5|TBT  |1.65|170  |256    |230      |274        |268          |
+|Cortex-R5    |GCC           |TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
 |MIPS M14k    |MPLAB X       |TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
 |MIPS M14k    |GCC           |TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
 
@@ -139,8 +143,8 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-You need **_Cortex-M or MIPS or PowerPC or MSP430_** microcontroller development kits to run the tests. Do not use QEMU simulators because they do not behave correctly in many scenarios.
-Other platform supports should be simple to implement, however they are not scheduled yet.
+You need **_Cortex-M or Cortex-R or MIPS or MSP430_** microcontroller development kits to run the tests. Do not use QEMU simulators because they do not behave correctly in many scenarios.  
+Other platform supports should be simple to implement, however they are not scheduled yet. For Cortex-A and other CPUs with a memory management unit ([MMU](https://en.wikipedia.org/wiki/Memory_management_unit)), go [M7M1_MuEukaron](https://github.com/EDI-Systems/M7M1_MuEukaron) Real-Time Multi-Core Microkernel instead; M7M1 supports some Cortex-Ms and Cortex-Rs as well.
 
 ### Compilation
 
