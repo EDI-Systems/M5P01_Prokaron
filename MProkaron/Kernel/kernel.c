@@ -718,7 +718,9 @@ ret_t RMP_Thd_Del(struct RMP_Thd* Thread)
 /* End Function:RMP_Thd_Del **************************************************/
 
 /* Begin Function:RMP_Thd_Set *************************************************
-Description : Change the priority or timeslice of a real-time thread.
+Description : Change the priority or timeslice of a real-time thread. If one of
+              the changes is not desired, just leave it to RMP_MAX_PREEMPT_PRIO
+              or RMP_MAX_SLICES.
 Input       : struct RMP_Thd* Thread - The thread structure of the thread.
               ptr_t Prio - The priority of the thread.
               ptr_t Slices - The new timeslice value for this thread.
@@ -728,10 +730,7 @@ Return      : ret_t - If successful, 0; else error code.
 ret_t RMP_Thd_Set(struct RMP_Thd* Thread, ptr_t Prio, ptr_t Slices)
 {
     /* Check if the priority and timeslice range is correct */
-    if(Prio>=RMP_MAX_PREEMPT_PRIO)
-        return RMP_ERR_PRIO;
-
-    if((Slices==0)||(Slices>=RMP_MAX_SLICES))
+    if(Slices==0)
         return RMP_ERR_SLICE;
     
     /* Check if this thread structure could possibly be in use */
@@ -750,18 +749,26 @@ ret_t RMP_Thd_Set(struct RMP_Thd* Thread, ptr_t Prio, ptr_t Slices)
     if(RMP_THD_STATE(Thread->State)==RMP_THD_RUNNING)
     {
         /* See if we are gonna change one of it or both */
-        if(Thread->Prio!=Prio)
+        if(Prio<RMP_MAX_PREEMPT_PRIO)
         {
-            _RMP_Clr_Rdy(Thread);
-            Thread->Prio=Prio;
-            _RMP_Set_Rdy(Thread);
+            if(Thread->Prio!=Prio)
+            {
+                _RMP_Clr_Rdy(Thread);
+                Thread->Prio=Prio;
+                _RMP_Set_Rdy(Thread);
+            }
         }
-        Thread->Slices=Slices;
+        
+        if(Slices<RMP_MAX_SLICES)
+            Thread->Slices=Slices;
     }
     else
     {
-        Thread->Prio=Prio;
-        Thread->Slices=Slices;
+        if(Prio<RMP_MAX_PREEMPT_PRIO)
+            Thread->Prio=Prio;
+        
+        if(Slices<RMP_MAX_SLICES)
+            Thread->Slices=Slices;
     }
     
     RMP_Unlock_Sched();
@@ -798,7 +805,7 @@ ret_t RMP_Thd_Suspend(struct RMP_Thd* Thread)
     }
     /* Mark this as suspended */
     Thread->State|=RMP_THD_SUSPENDED;
-    /* Only when it is running do we change its priority */
+    /* Only when it is running do we clear this */
     if(RMP_THD_STATE(Thread->State)==RMP_THD_RUNNING)
         _RMP_Clr_Rdy(Thread);
     
@@ -970,7 +977,11 @@ ret_t RMP_Thd_Snd_ISR(struct RMP_Thd* Thread, ptr_t Data)
 
             /* Is it suspended? If yes, we can't directly send it running */
             if((Thread->State&RMP_THD_SUSPENDED)==0)
+            {
                 _RMP_Set_Rdy(Thread);
+                if(Thread->Prio>RMP_Cur_Thd->Prio)
+                    _RMP_Yield();
+            }
         }
         
         /* Set the mailbox */
@@ -1022,6 +1033,8 @@ ret_t RMP_Thd_Rcv(ptr_t* Data, ptr_t Slices)
             /* Is it suspended? If yes, we can't directly send it running */
             if((Sender->State&RMP_THD_SUSPENDED)==0)
                 _RMP_Set_Rdy(Sender);
+            
+            RMP_Unlock_Sched();
         }
         /* No sender waiting on us, we need to block */
         else
@@ -1395,7 +1408,7 @@ ret_t RMP_Sem_Post_ISR(struct RMP_Sem* Semaphore, ptr_t Number)
     
     Semaphore->Cur_Num+=Number;
     /* Is there any thread waiting on it? If there are, clean them up*/
-    while((&(Semaphore->Wait_List)!=Semaphore->Wait_List.Next)||(Semaphore->Cur_Num==0))
+    while((&(Semaphore->Wait_List)!=Semaphore->Wait_List.Next)&&(Semaphore->Cur_Num!=0))
     {
         Thread=(struct RMP_Thd*)(Semaphore->Wait_List.Next);
         RMP_List_Del(Thread->Run_Head.Prev,Thread->Run_Head.Next);
@@ -1406,14 +1419,16 @@ ret_t RMP_Sem_Post_ISR(struct RMP_Sem* Semaphore, ptr_t Number)
 
         /* Only when when this thread is not suspended do we change it back */
         if((Thread->State&RMP_THD_SUSPENDED)==0)
+        {
             _RMP_Set_Rdy(Thread);
+            if(Thread->Prio>RMP_Cur_Thd->Prio)
+                _RMP_Yield();
+        }
 
         /* Finally, return success */
         Thread->Retval=0;
         Semaphore->Cur_Num--;
     }
-    
-    RMP_Unlock_Sched();
 
     return 0;
 }
@@ -1488,10 +1503,14 @@ Return      : int - This function never returns.
 ******************************************************************************/
 void RMP_Init(void)
 {
+    RMP_Lock_Sched();
+    
     /* Platform will use this hook to do something */
     _RMP_Plat_Hook();
     /* Start the second thread here */
     RMP_Init_Hook();
+    
+    RMP_Unlock_Sched();
     
     while(1)
     {
