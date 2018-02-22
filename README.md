@@ -125,7 +125,7 @@ This operating system is much **leaner** than any other RTOSes, especilly when c
 |Cortex-M7    |GCC           |TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
 |Cortex-R4    |Keil uVision 5|TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
 |Cortex-R4    |GCC           |TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
-|Cortex-R5    |Keil uVision 5|TBT  |1.65|170  |256    |230      |274        |268          |
+|Cortex-R5    |Keil uVision 5|TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
 |Cortex-R5    |GCC           |TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
 |MIPS M14k    |MPLAB X       |TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
 |MIPS M14k    |GCC           |TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
@@ -143,12 +143,12 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-You need **_Cortex-M or Cortex-R or MIPS or MSP430_** microcontroller development kits to run the tests. Do not use QEMU simulators because they do not behave correctly in many scenarios.  
-Other platform supports should be simple to implement, however they are not scheduled yet. For Cortex-A and other CPUs with a memory management unit ([MMU](https://en.wikipedia.org/wiki/Memory_management_unit)), go [M7M1_MuEukaron](https://github.com/EDI-Systems/M7M1_MuEukaron) Real-Time Multi-Core Microkernel instead; M7M1 supports some Cortex-Ms and Cortex-Rs as well.
+You need **_Cortex-M or Cortex-R or MIPS or MSP430_** microcontroller development kits to run the tests. This RTOS focuses on value-line MCUs and do not concentrate on high-end MCUs or MPUs. Do not use QEMU simulator to test the projects because they do not behave correctly in many scenarios.  
+Other platform supports should be simple to implement, however they are not scheduled yet. For Cortex-A and other CPUs with a memory management unit ([MMU](https://en.wikipedia.org/wiki/Memory_management_unit)), go [M7M1_MuEukaron](https://github.com/EDI-Systems/M7M1_MuEukaron) _Real-Time Multi-Core Microkernel_ instead; M7M1 supports some Cortex-Ms and Cortex-Rs as well.
 
 ### Compilation
 
-The **Keil uVision** or **GNU Makefile** projects for various microcontrollers are available in the **_Project_** folder. Refer to the readme files in each folder for specific instructions about how to run them. However, keep in mind that some examples may need vendor-specific libraries such as the STM HAL.
+The **Keil uVision** or **GNU Makefile** projects for various microcontrollers are available in the **_Project_** folder. Refer to the readme files in each folder for specific instructions about how to run them. However, keep in mind that some examples may need vendor-specific libraries such as the STM HAL. Some additional drivers may be required too.
 
 ## Running the tests
 
