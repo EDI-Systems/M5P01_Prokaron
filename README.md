@@ -121,16 +121,10 @@ This operating system is much **leaner** than any other RTOSes, especilly when c
 |Cortex-M3    |GCC           |TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
 |Cortex-M4    |Keil uVision 5|TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
 |Cortex-M4    |GCC           |TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
-|Cortex-M4-RVM|Keil uVision 5|TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
-|Cortex-M4-RVM|GCC           |TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
 |Cortex-M7    |Keil uVision 5|6.66 |1.65|170  |256    |230      |274        |268          |
 |Cortex-M7    |GCC           |TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
-|Cortex-M7-RVM|Keil uVision 5|6.66 |1.65|170  |256    |230      |274        |268          |
-|Cortex-M7-RVM|GCC           |TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
 |MIPS M14k    |MPLAB X       |TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
 |MIPS M14k    |GCC           |TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
-|MIPS M14k-RVM|MPLAB X       |TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
-|MIPS M14k-RVM|GCC           |TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
 
 **Flash and SRAM consumption is calculated in kB, while the other figures are calculated in CPU clock cycles.**  
 Yield: The time to yield between different threads.  
