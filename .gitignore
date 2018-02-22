@@ -59,4 +59,7 @@ Documents/*
 # Keil specific
 Project/**/Debug/**
 *.tmp
+*.uvgui*
+*.uvopt*
+*.dep
 *.TMP
