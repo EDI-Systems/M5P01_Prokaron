@@ -117,7 +117,7 @@ This operating system is much **leaner** than any other RTOSes, especilly when c
 |Cortex-M0+|Keil uVision 5|TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
 |Cortex-M3 |Keil uVision 5|TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
 |Cortex-M4 |Keil uVision 5|TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
-|Cortex-M7 |Keil uVision 5|6.66 |1.65|TBT  |TBT    |TBT      |TBT        |TBT          |
+|Cortex-M7 |Keil uVision 5|6.66 |1.65|170  |256    |230      |274        |268          |
 |MSP430    |TI CCS6       |TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
 
 **Flash and SRAM consumption is calculated in kB, while the other figures are calculated in CPU clock cycles.**  
