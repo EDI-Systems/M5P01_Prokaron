@@ -1,4 +1,4 @@
-The MIT License
+The modified MIT License
 
 Copyright (c) Evo-Devo Instrum.
 
