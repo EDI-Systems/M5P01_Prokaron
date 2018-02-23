@@ -20,8 +20,7 @@ The following is a set of guidelines for contributing to RMP and its packages, w
 
 [Styleguides](#styleguides)
   * [Git Commit Messages](#git-commit-messages)
-  * [C Styleguide](#javascript-styleguide)
-  * [C comment Styleguide](#coffeescript-styleguide)
+  * [C Styleguide](#c-programming-styleguide)
   * [Documentation Styleguide](#documentation-styleguide)
 
 [Additional Notes](#additional-notes)
@@ -97,41 +96,31 @@ Enhancement suggestions are tracked as [GitHub issues](https://guides.github.com
 * Fill in [the required template](PULL_REQUEST_TEMPLATE.md)
 * Do not include issue numbers in the PR title
 * Include screenshots and animated GIFs in your pull request whenever possible.
-* Follow the [JavaScript](#javascript-styleguide) and [CoffeeScript](#coffeescript-styleguide) styleguides.
-* Include thoughtfully-worded, well-structured [Jasmine](https://jasmine.github.io/) specs in the `./spec` folder. Run them using `atom --test spec`. See the [Specs Styleguide](#specs-styleguide) below.
+* Follow the [C](#c-programming-styleguide) styleguides.
 * Document new code based on the [Documentation Styleguide](#documentation-styleguide)
-* End all files with a newline
+* End all files with a newline (otherwise you get tons of warnings on some toolchains)!
 * Avoid platform-dependent code, unless you are working on new processor support.
-* Place requires in the following order:
-    * Built in Node Modules (such as `path`)
-    * Built in Atom and Electron Modules (such as `atom`, `remote`)
-    * Local Modules (using relative paths)
-* Place class properties in the following order:
-    * Class methods and properties (methods starting with a `@` in CoffeeScript or `static` in JavaScript)
-    * Instance methods and properties
 
 ## Styleguides
 
 ### Git Commit Messages
 
 * Use the present tense ("Add feature" not "Added feature")
-* Use the imperative mood ("Move cursor to..." not "Moves cursor to...")
-* Limit the first line to 72 characters or less
+* Limit the first line to 80 characters or less
 * Reference issues and pull requests liberally after the first line
-* When only changing documentation, include `[ci skip]` in the commit title
 * Consider starting the commit message with an applicable emoji:
     * :art: `:art:` when improving the format/structure of the code
     * :racehorse: `:racehorse:` when improving performance
     * :non-potable_water: `:non-potable_water:` when plugging memory leaks
     * :memo: `:memo:` when writing docs
-    * :penguin: `:penguin:` when fixing something on Linux
-    * :apple: `:apple:` when fixing something on macOS
-    * :checkered_flag: `:checkered_flag:` when fixing something on Windows
+    * :penguin: `:penguin:` when fixing something on Linux or GNU toolchain
+    * :apple: `:apple:` when fixing something on macOS or Clang/LLVM toolchain
+    * :checkered_flag: `:checkered_flag:` when fixing something on Windows or manufacturer official toolchain
     * :bug: `:bug:` when fixing a bug
     * :fire: `:fire:` when removing code or files
     * :green_heart: `:green_heart:` when fixing the CI build
     * :white_check_mark: `:white_check_mark:` when adding tests
-    * :lock: `:lock:` when dealing with security
+    * :lock: `:lock:` when dealing with reliability or formal proof
     * :arrow_up: `:arrow_up:` when upgrading dependencies
     * :arrow_down: `:arrow_down:` when downgrading dependencies
     * :shirt: `:shirt:` when removing linter warnings
@@ -139,14 +128,16 @@ Enhancement suggestions are tracked as [GitHub issues](https://guides.github.com
 ### C programming Styleguide
 
 * DO NOT place spaces around the binary operators, especially "=" and "==". Leave them as they are.
-    * `a=b ->` instead of `a = b`
+    * `a=b` instead of `a = b`
 * Feel free to use spaces after commas. If no space is used, it is also fine.
-* Always use parentheses in bool expressions.
-* Add headers and enders fo functions, files and code blocks. Refer to the code itself for more info.
+    * both `foo(a, b, c) and `foo(a,b,c)` is okay.
+* Always use (sometimes even excessive) parentheses in bool expressions.
+    * `a==b||c==d` instead of `(a==b)||(c==d)`.
+* Add headers and enders fo functions, files and code blocks. Refer to the snippets shown below.
 * Naming convention must adhere to the current convention.
 * For other info, please relate to the source code itself.
 
-A example snipped C header file:
+A example C header file:
 ```C
     /******************************************************************************
     Filename    : <Filename>.h
@@ -248,7 +239,7 @@ A example snipped C header file:
     /* Copyright (C) Evo-Devo Instrum. All rights reserved ***********************/
 ```
 
-An example snipped C source file:
+An example C source file:
 ```C
     /******************************************************************************
     Filename    : <Filename>.c
