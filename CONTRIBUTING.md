@@ -138,54 +138,164 @@ Enhancement suggestions are tracked as [GitHub issues](https://guides.github.com
 
 ### C programming Styleguide
 
-All JavaScript must adhere to [JavaScript Standard Style](https://standardjs.com/).
+* DO NOT place spaces around the binary operators, especially "=" and "==". Leave them as they are.
+    * `a=b ->` instead of `a = b`
+* Feel free to use spaces after commas. If no space is used, it is also fine.
+* Always use parentheses in bool expressions.
+* Add headers and enders fo functions, files and code blocks. Refer to the code itself for more info.
+* Naming convention must adhere to the current convention.
+* For other info, please relate to the source code itself.
 
-* Prefer the object spread operator (`{...anotherObj}`) to `Object.assign()`
-* Inline `export`s with expressions whenever possible
-  ```js
-  // Use this:
-  export default class ClassName {
+A example snipped C header file:
+```C
+    /******************************************************************************
+    Filename    : <Filename>.h
+    Author      : <Name>
+    Date        : <DD/MM/YYYY>
+    Licence     : LGPL v3+; see COPYING for details.
+    Description : <File description>
+    ******************************************************************************/
 
-  }
+    /* Defines *******************************************************************/
+    #ifdef __HDR_DEFS__
+    #ifndef __<FILENAME>_H_DEFS__
+    #define __<FILENAME>_H_DEFS__
+    /*****************************************************************************/
+    <Place your defines here>
+    /*****************************************************************************/
+    /* __<FILENAME>_H_DEFS__ */
+    #endif
+    /* __HDR_DEFS__ */
+    #endif
+    /* End Defines ***************************************************************/
 
-  // Instead of:
-  class ClassName {
+    /* Structs *******************************************************************/
+    #ifdef __HDR_STRUCTS__
+    #ifndef __<FILENAME>_H_STRUCTS__
+    #define __<FILENAME>_H_STRUCTS__
 
-  }
-  export default ClassName
-  ```
+    /* Use defines in these headers */
+    #define __HDR_DEFS__
+    <Place external define import headers here>
+    #undef __HDR_DEFS__
 
-### C comment Styleguide
+    /* We used structs in these headers */
+    <Place external struct import headers here>
+    /*****************************************************************************/
+    <Place struct definitions here>
+    /*****************************************************************************/
+    /* __<FILENAME>_H_STRUCTS__ */
+    #endif
+    /* __HDR_STRUCTS__ */
+    #endif
+    /* End Structs ***************************************************************/
 
-* Set parameter defaults without spaces around the equal sign
-    * `clear = (count=1) ->` instead of `clear = (count = 1) ->`
-* Use spaces around operators
-    * `count + 1` instead of `count+1`
-* Use spaces after commas (unless separated by newlines)
-* Use parentheses if it improves code clarity.
-* Prefer alphabetic keywords to symbolic keywords:
-    * `a is b` instead of `a == b`
-* Avoid spaces inside the curly-braces of hash literals:
-    * `{a: 1, b: 2}` instead of `{ a: 1, b: 2 }`
-* Include a single line of whitespace between methods.
-* Capitalize initialisms and acronyms in names, except for the first word, which
-  should be lower-case:
-  * `getURI` instead of `getUri`
-  * `uriToOpen` instead of `URIToOpen`
-* Use `slice()` to copy an array
-* Add an explicit `return` when your function ends with a `for`/`while` loop and
-  you don't want it to return a collected array.
-* Use `this` instead of a standalone `@`
-  * `return this` instead of `return @`
+    /* Private Global Variables **************************************************/
+    #if(!(defined __HDR_DEFS__||defined __HDR_STRUCTS__))
+    #ifndef __<FILENAME>_MEMBERS__
+    #define __<FILENAME>_MEMBERS__
+
+    /* In this way we can use the data structures and definitions in the headers */
+    #define __HDR_DEFS__
+    <Place external define import headers here>
+    #undef __HDR_DEFS__
+
+    #define __HDR_STRUCTS__
+    <Place external struct import headers here>
+    #undef __HDR_STRUCTS__
+
+    /* If the header is not used in the public mode */
+    #ifndef __HDR_PUBLIC_MEMBERS__
+    /*****************************************************************************/
+    <Place private global variables here>
+    /*****************************************************************************/
+    /* End Private Global Variables **********************************************/
+
+    /* Private C Function Prototypes *********************************************/ 
+    /*****************************************************************************/
+    <Place private C function prototypes here>
+    /*****************************************************************************/
+    #define __EXTERN__
+    /* End Private C Function Prototypes *****************************************/
+
+    /* Public Global Variables ***************************************************/
+    /* __HDR_PUBLIC_MEMBERS__ */
+    #else
+    #define __EXTERN__ EXTERN 
+    /* __HDR_PUBLIC_MEMBERS__ */
+    #endif
+
+    /*****************************************************************************/
+    <Place public global variables here>
+    /*****************************************************************************/
+
+    /* End Public Global Variables ***********************************************/
+
+    /* Public C Function Prototypes **********************************************/
+    /*****************************************************************************/
+    <Place public C function prototypes here>
+    /*****************************************************************************/
+    /* Undefine "__EXTERN__" to avoid redefinition */
+    #undef __EXTERN__
+    /* __<FILENAME>_MEMBERS__ */
+    #endif
+    /* !(defined __HDR_DEFS__||defined __HDR_STRUCTS__) */
+    #endif
+    /* End Public C Function Prototypes ******************************************/
+
+    /* End Of File ***************************************************************/
+
+    /* Copyright (C) Evo-Devo Instrum. All rights reserved ***********************/
+```
+
+An example snipped C source file:
+```C
+    /******************************************************************************
+    Filename    : <Filename>.c
+    Author      : <Name>
+    Date        : <DD/MM/YYYY>
+    Licence     : LGPL v3+; see COPYING for details.
+    Description : <File description>
+    ******************************************************************************/
+
+    /* Includes ******************************************************************/
+    #define __HDR_DEFS__
+    <Place the headers you wish to import defines here>
+    #undef __HDR_DEFS__
+
+    #define __HDR_STRUCTS__
+    <Place the headers you wish to import structs here>
+    #undef __HDR_STRUCTS__
+
+    /* Private include */
+    <Place the private headers here>
+
+    #define __HDR_PUBLIC_MEMBERS__
+    <Place the headers you wish to import globals here>
+    #undef __HDR_PUBLIC_MEMBERS__
+    /* End Includes **************************************************************/
+
+    /* Begin Function:<Name> ******************************************************
+    Description : <Description of the function>.
+    Input       : <Type> <Argument> - <Explanation>.
+    Output      : <Type> <Argument> - <Explanation>.
+    Return      : <Type> - <Explanation>.
+    ******************************************************************************/
+    <Type> <Name>(<Parameter-list>)
+    {
+        <Function body>
+    }
+    /* End Function:<Name> *******************************************************/
+
+    /* End Of File ***************************************************************/
+
+    /* Copyright (C) Evo-Devo Instrum. All rights reserved ***********************/
+```
 
 ### Documentation Styleguide
 
-* Use [AtomDoc](https://github.com/atom/atomdoc).
-* Use [Markdown](https://daringfireball.net/projects/markdown).
-* Reference methods and classes in markdown with the custom `{}` notation:
-    * Reference classes with `{ClassName}`
-    * Reference instance methods with `{ClassName::methodName}`
-    * Reference class methods with `{ClassName.methodName}`
+* All functions and file must embedded documentations and they must follow the changes of code.
+* When you changed code significantly, especially their APIs, file an issue to alert possible manual changes.
 
 ## Attribution
 
