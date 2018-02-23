@@ -1,7 +1,7 @@
 ### Title of the pull request
 
-* Filling out the template is required. Any pull request that does not include enough information to be reviewed in a timely manner may be closed at the maintainers' discretion.
-* All new code requires tests to ensure against regressions
+* Filling out the template is required.
+* All new code requires tests to ensure against regressions.
 
 ### Description of the Change
 
@@ -45,7 +45,7 @@ Describe the actions you performed (e.g., buttons you clicked, text you typed, c
 
 <!-- Enter any applicable Issues here -->
 
-### Makes sure all the boxes below are checked
+### Extra Requirements
 
 - [ ] Coding style is coherent with current code
 - [ ] All redundant code is removed, or properly commented for future use in a well manner
