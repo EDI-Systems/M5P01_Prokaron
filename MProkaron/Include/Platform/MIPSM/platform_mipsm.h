@@ -170,6 +170,7 @@ EXTERN void RMP_Enable_Int(void);
 EXTERN ptr_t RMP_MSB_Get(ptr_t Val);
 EXTERN void _RMP_Start(ptr_t Entry, ptr_t Stack);
 EXTERN void _RMP_Yield(void);
+EXTERN void _RMP_Set_Timer(ptr_t Ticks);
 
 /* Initialization */
 __EXTERN__ void _RMP_Stack_Init(ptr_t Entry, ptr_t Stack, ptr_t Arg);
