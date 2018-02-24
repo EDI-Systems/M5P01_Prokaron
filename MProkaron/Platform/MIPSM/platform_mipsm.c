@@ -68,13 +68,22 @@ void _RMP_Low_Level_Init(void)
 {
     RMP_MIPSM_LOW_LEVEL_INIT();
     
-    /* Enable all fault handlers */
+    /* Core Timer Interrupt _CORE_TIMER_VECTOR 0 OFF000<17:1> IFS0<0> IEC0<0> IPC0<4:2> IPC0<1:0> No
+     * Core Software Interrupt 0 _CORE_SOFTWARE_0_VECTOR 1 OFF001<17:1> IFS0<1> IEC0<1> IPC0<12:10> IPC0<9:8> No */
+    /* Clear the software interrupt flags */
+	IFS0CLR=_IFS0_CTIF_MASK|_IFS0_CS0IF_MASK;
     
-    /* Set the priority of timer, svc and faults to the lowest */
+	/* Set both interrupt priority - priority 1, subpriority 3, lowest allowed */
+	IPC0CLR=_IPC0_CTIP_MASK|_IPC0_CTIS_MASK|
+            _IPC0_CS0IP_MASK|_IPC0_CS0IS_MASK;
+	IPC0SET=(1<<_IPC0_CTIP_POSITION)|(0<<_IPC0_CTIS_POSITION)|
+            (1<<_IPC0_CS0IP_POSITION)|(0<<_IPC0_CS0IS_POSITION);
+
+	IEC0CLR=_IEC0_CTIE_POSITION|_IEC0_CS0IE_MASK;
+	IEC0SET=(1<<_IEC0_CTIE_POSITION)|(1<<_IEC0_CS0IE_POSITION);
     
-    /* Configure systick */
-    
-    RMP_Disable_Int();
+    /* Set the timer timeout value */
+    _RMP_Set_Timer(RMP_MIPSM_TICK_VAL/2);
 }
 /* End Function:_RMP_Low_Level_Init ******************************************/
 

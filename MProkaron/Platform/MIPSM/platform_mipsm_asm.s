@@ -49,8 +49,6 @@ R31    $ra        return address (used by function call)
 ******************************************************************************/
     
 /* Begin Header **************************************************************/
-                .set mips32r2
-                .set nomips16
                 .text
                 .align 4
 /* End Header ****************************************************************/
@@ -69,7 +67,9 @@ R31    $ra        return address (used by function call)
                 /* The system pending service routine */
                 .global          PendSV_Handler 
                 /* The systick timer routine */
-                .global          SysTick_Handler                               
+                .global          SysTick_Handler
+                /* Set timer overflow value */
+                .global          _RMP_Set_Timer
 /* End Exports ***************************************************************/
 
 /* Begin Imports *************************************************************/
@@ -87,9 +87,11 @@ R31    $ra        return address (used by function call)
 /* End Imports ***************************************************************/
 
 /* Begin Macros **************************************************************/
-                .equ             CP0_EPC,$14
-                .equ             CP0_CAUSE,$13
+                .equ             CP0_COUNT,$9
+                .equ             CP0_COMPARE,$11
                 .equ             CP0_STATUS,$12
+                .equ             CP0_CAUSE,$13
+                .equ             CP0_EPC,$14
                 .equ             CTX_SIZE,140
                 /* Context saving */
 .macro	SAVE_CONTEXT
@@ -147,11 +149,13 @@ R31    $ra        return address (used by function call)
                 sw               $1,0($sp)
                 /* Save extra registers */
                 jal              RMP_Save_Ctx
+                nop
 .endm
                 /* Context restoring */
 .macro	LOAD_CONTEXT
                 /* Restore extra registers */
                 jal              RMP_Load_Ctx
+                nop
                 /* Restore everything else */
                 lw               $1,0($sp)
                 lw               $2,4($sp)
@@ -203,6 +207,7 @@ R31    $ra        return address (used by function call)
                 /* Make room for the context */
                 addiu            $sp,$sp,CTX_SIZE
                 eret
+                nop
 .endm
 /* End Macros ****************************************************************/
 
@@ -212,14 +217,17 @@ Input          : None.
 Output         : None.    
 Register Usage : None.                                  
 ******************************************************************************/
-                .set noreorder
-                .set noat
-                .ent RMP_Disable_Int
+               	.set             nomips16
+                .set             nomicromips
+                .set             noreorder
+                .set             noat
+                .ent             RMP_Disable_Int
 RMP_Disable_Int:
                 /* Disable all interrupts */
                 di
-                jr              $ra
-                .end RMP_Disable_Int
+                jr               $ra
+                nop
+                .end             RMP_Disable_Int
 /* End Function:RMP_Disable_Int **********************************************/
 
 /* Begin Function:RMP_Enable_Int **********************************************
@@ -228,15 +236,38 @@ Input          : None.
 Output         : None.    
 Register Usage : None.                                  
 ******************************************************************************/
-                .set noreorder
-                .set noat
-                .ent RMP_Enable_Int
+               	.set             nomips16
+                .set             nomicromips
+                .set             noreorder
+                .set             noat
+                .ent             RMP_Enable_Int
 RMP_Enable_Int:
                 /* Enable all interrupts */
                 ei
-                jr              $ra
-                .end RMP_Enable_Int
+                jr               $ra
+                nop
+                .end             RMP_Enable_Int
 /* End Function:RMP_Enable_Int ***********************************************/
+
+/* Begin Function:_RMP_Set_Timer **********************************************
+Description    : The function for setting the timer.
+Input          : $a0 - Timer overflow value.
+Output         : None.    
+Register Usage : None.                                  
+******************************************************************************/
+               	.set             nomips16
+                .set             nomicromips
+                .set             noreorder
+                .set             noat
+                .ent             _RMP_Set_Timer
+_RMP_Set_Timer:
+                mtc0             $a0,CP0_COMPARE
+                li               $a0,0
+                mtc0             $a0,CP0_COUNT
+                jr               $ra
+                nop
+                .end             _RMP_Set_Timer
+/* End Function:_RMP_Set_Timer ***********************************************/
 
 /* Begin Function:RMP_MSB_Get *************************************************
 Description    : Get the MSB of the word.
@@ -245,15 +276,18 @@ Output         : None.
 Return         : ptr_t - The MSB position.   
 Register Usage : None. 
 ******************************************************************************/
-                .set noreorder
-                .set noat
-                .ent RMP_MSB_Get
+               	.set             nomips16
+                .set             nomicromips
+                .set             noreorder
+                .set             noat
+                .ent             RMP_MSB_Get
 RMP_MSB_Get:
-                clz      $a0,$a0
-                li       $v0,31
-                sub      $v0,$a0
-                jr       $ra
-                .end RMP_MSB_Get
+                clz              $a0,$a0
+                li               $v0,31
+                sub              $v0,$a0
+                jr               $ra
+                nop
+                .end             RMP_MSB_Get
 /* End Function:RMP_MSB_Get **************************************************/
 
 /* Begin Function:_RMP_Yield **************************************************
@@ -261,17 +295,20 @@ Description : Trigger a yield to another thread.
 Input       : None.
 Output      : None.                                      
 ******************************************************************************/
-                .set noreorder
-                .set noat
-                .ent _RMP_Yield
+               	.set             nomips16
+                .set             nomicromips
+                .set             noreorder
+                .set             noat
+                .ent             _RMP_Yield
 _RMP_Yield:
                 /* Get the cause for this */
-                mfc0       $t0,$13
-                or         $t0,1
+                mfc0             $t0,$13
+                or               $t0,1
                 /* Now write back to trigger the software interrupt */
-                mtc0       $t0,$13
-                jr         $ra
-                .end _RMP_Yield                                           
+                mtc0             $t0,$13
+                jr               $ra
+                nop
+                .end             _RMP_Yield                                           
 /* End Function:_RMP_Yield ***************************************************/
 
 ;/* Begin Function:_RMP_Start *************************************************
@@ -280,47 +317,57 @@ _RMP_Yield:
                R1 - The stack to use.
 ;Output      : None.                                      
 ;*****************************************************************************/
-                .set noreorder
-                .set noat
-                .ent _RMP_Start
+               	.set             nomips16
+                .set             nomicromips
+                .set             noreorder
+                .set             noat
+                .ent             _RMP_Start
 _RMP_Start:
-                sub       $sp,$a1,128                  /* Set the SP */
-                jal       $a0                          /* Branch to target */
-__Loop:         j         __Loop                       /* Dead loop to capture faults */
-                .end _RMP_Start
-;/* End Function:_RMP_Start **************************************************/
+                sub              $sp,$a1,128                  /* Set the SP */
+                jal              $a0                          /* Branch to target */
+                nop
+__Loop:         j                __Loop                       /* Dead loop to capture faults */
+                nop
+                .end             _RMP_Start
+/* End Function:_RMP_Start ***************************************************/
 
-;/* Begin Function:PendSV_Handler *********************************************
-;Description : The PendSV interrupt routine. In fact, it will call a C function
-;              directly. The reason why the interrupt routine must be an assembly
-;              function is that the compiler may deal with the stack in a different 
-;              way when different optimization level is chosen. An assembly function
-;              can make way around this problem.
-;              However, if your compiler support inline assembly functions, this
-;              can also be written in C.
-;Input       : None.
-;Output      : None.                                      
-;*****************************************************************************/
-                .set noreorder
-                .set noat
-                .ent PendSV_Handler
+/* Begin Function:PendSV_Handler **********************************************
+Description : The PendSV interrupt routine. In fact, it will call a C function
+              directly. The reason why the interrupt routine must be an assembly
+              function is that the compiler may deal with the stack in a different 
+              way when different optimization level is chosen. An assembly function
+              can make way around this problem.
+              However, if your compiler support inline assembly functions, this
+              can also be written in C.
+Input       : None.
+Output      : None.                                      
+******************************************************************************/
+               	.set             nomips16
+                .set             nomicromips
+                .set             noreorder
+                .set             noat
+                .equ             __vector_dispatch_1,PendSV_Handler
+                .global          __vector_dispatch_1
+                .section         .vector_1,code
+                .ent             PendSV_Handler
 PendSV_Handler:
                 SAVE_CONTEXT
                 
                 /* Save the SP to control block */
-                lui       $a0, %hi(RMP_Cur_SP)
-                ori       $a0, $a0, %lo(RMP_Cur_SP)
-                sw        $sp,($a0)
+                lui              $a0, %hi(RMP_Cur_SP)
+                ori              $a0, $a0, %lo(RMP_Cur_SP)
+                sw               $sp,($a0)
                 /* Get the highest priority ready task */
-                jal       _RMP_Get_High_Rdy
+                jal              _RMP_Get_High_Rdy
+                nop
                 /* Load the SP from control block */
-                lui       $a0, %hi(RMP_Cur_SP)
-                ori       $a0, $a0, %lo(RMP_Cur_SP)
-                lw        $sp,($a0)
+                lui              $a0, %hi(RMP_Cur_SP)
+                ori              $a0, $a0, %lo(RMP_Cur_SP)
+                lw               $sp,($a0)
                 
                 LOAD_CONTEXT
-                .end PendSV_Handler
-;/* End Function:PendSV_Handler **********************************************/
+                .end             PendSV_Handler
+/* End Function:PendSV_Handler ***********************************************/
 
 /* Begin Function:SysTick_Handler *********************************************
 Description : The SysTick interrupt routine. In fact, it will call a C function
@@ -333,15 +380,21 @@ Description : The SysTick interrupt routine. In fact, it will call a C function
 Input       : None.
 Output      : None.                                      
 ******************************************************************************/
-                .set noreorder
-                .set noat
-                .ent SysTick_Handler
+               	.set             nomips16
+                .set             nomicromips
+                .set             noreorder
+                .set             noat
+                .equ             __vector_dispatch_0,SysTick_Handler
+                .global          __vector_dispatch_0
+                .section         .vector_0,code,keep
+                .ent             SysTick_Handler
 SysTick_Handler:
                 /* Note the system that we have entered an interrupt. We are not using tickless */
                 SAVE_CONTEXT
                 
-                li        $a0,1
-                jal       _RMP_Tick_Handler
+                li               $a0,1
+                jal              _RMP_Tick_Handler
+                nop
                 
                 LOAD_CONTEXT
                 .end SysTick_Handler
