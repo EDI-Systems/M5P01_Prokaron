@@ -1,13 +1,13 @@
 /******************************************************************************
-Filename   : test.h
+Filename   : platform_mipsm_conf.h
 Author     : pry
 Date       : 24/06/2017
 Licence    : LGPL v3+; see COPYING for details.
-Description: The configuration file for testing program.
+Description: The configuration file for MIPS M-class.
 ******************************************************************************/
 
 /* Config Includes ***********************************************************/
-#include "Platform/test_PIC32MZ2048EFM100.h"
+#include "Platform/MIPSM/Chips/PIC32MZ2048EFM100/platform_PIC32MZ2048EFM100.h"
 /* End Config Includes *******************************************************/
 
 /* End Of File ***************************************************************/
