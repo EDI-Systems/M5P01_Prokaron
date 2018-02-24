@@ -125,7 +125,7 @@ _RMP_Yield
 ;*****************************************************************************/
 _RMP_Start
                 ;Should never reach here
-                SUB       R1,#16                       ; This is how we push our registers so move forward
+                SUB       R1,#64                       ; This is how we push our registers so move forward
                 MSR       PSP,R1                       ; Set the stack pointer
                 MOV       R4,#0x02                     ; Previleged thread mode
                 MSR       CONTROL,R4

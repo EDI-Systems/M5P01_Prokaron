@@ -65,7 +65,7 @@ void Test_Sem_1(void)
     }
 }
 
-void Func_1(void* Param)
+void Func_1(void)
 {
     Test_Yield_1();
     /* Change priority of thread 2 */
@@ -144,7 +144,7 @@ void Test_Sem_ISR(void)
     };
 }
 
-void Func_2(void* Param)
+void Func_2(void)
 {
     /* Yield tests */
     Total=0;
@@ -237,6 +237,10 @@ void RMP_Init_Hook(void)
 #ifndef MINIMAL_SIZE
     /* Init the timer */
     Timer_Init();
+    /* Clean up the structures */
+    RMP_Clear(&Thd_1,sizeof(struct RMP_Thd));
+    RMP_Clear(&Thd_2,sizeof(struct RMP_Thd));
+    RMP_Clear(&Sem_1,sizeof(struct RMP_Sem));
     /* Create counting semaphore */
     RMP_Sem_Crt(&Sem_1,0);
     /* Start threads */

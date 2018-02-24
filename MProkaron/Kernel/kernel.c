@@ -1020,10 +1020,9 @@ ret_t RMP_Thd_Rcv(ptr_t* Data, ptr_t Slices)
         if(&(RMP_Cur_Thd->Snd_List)!=RMP_Cur_Thd->Snd_List.Next)
         {
             /* Read the data */
-            Sender=(struct RMP_Thd*)(Sender->Snd_List.Next);
-            *Data=Sender->Data;
-            
+            Sender=(struct RMP_Thd*)(RMP_Cur_Thd->Snd_List.Next);
             RMP_List_Del(Sender->Run_Head.Prev,Sender->Run_Head.Next);
+            *Data=Sender->Data;
             /* Now we unblock it - what state is it in? */
             if((RMP_THD_STATE(Sender->State)==RMP_THD_SNDDLY))
                 RMP_List_Del(Sender->Dly_Head.Prev,Sender->Dly_Head.Next);
@@ -1488,6 +1487,7 @@ Return      : None.
 #if(RMP_USE_HOOKS==RMP_FALSE)
 void RMP_Tick_Hook(ptr_t Ticks)
 {
+    Ticks=Ticks;
     return;
 }
 #endif
@@ -1528,7 +1528,7 @@ Return      : int - This function never returns.
 ******************************************************************************/
 int main(void)
 {
-    cnt_t Count;
+    ptr_t Count;
     /* Initialize the kernel data structures first */
     _RMP_Low_Level_Init();
     
