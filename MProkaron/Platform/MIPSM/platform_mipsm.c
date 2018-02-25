@@ -26,26 +26,30 @@ Description : The platform specific file for MIPS M-class.
 #undef __HDR_PUBLIC_MEMBERS__
 /* End Includes **************************************************************/
 
-/* Begin Function:_RMP_Stack_Init *********************************************
-Description : Initiate the process stack when trying to start a process. Never
-              call this function in user application.
-Input       : ptr_t Entry - The entry of the thread.
-              ptr_t Stack - The stack address of the thread.
-              ptr_t Arg - The argument to pass to the thread.
+/* Begin Function:_RMP_Clear_Soft_Flag ****************************************
+Description : Clear the software interrupt flag in the interrupt controller.
+Input       : None.
 Output      : None.
 Return      : None.
-
 ******************************************************************************/
 void _RMP_Clear_Soft_Flag(void)
 {
-	IFS0CLR=_IFS0_CS0IF_MASK;
+    RMP_MIPSM_CLEAR_SOFT_FLAG();
 }
+/* End Function:_RMP_Clear_Soft_Flag *****************************************/
 
+/* Begin Function:_RMP_Clear_Timer_Flag ***************************************
+Description : Clear the timer interrupt flag in the interrupt controller.
+Input       : None.
+Output      : None.
+Return      : None.
+******************************************************************************/
 void _RMP_Clear_Timer_Flag(void)
 {
     _RMP_Set_Timer(RMP_MIPSM_TICK_VAL/2);
-	IFS0CLR=_IFS0_CTIF_MASK;
+    RMP_MIPSM_CLEAR_TIMER_FLAG();
 }
+/* End Function:_RMP_Clear_Timer_Flag ****************************************/
 
 /* Begin Function:_RMP_Stack_Init *********************************************
 Description : Initiate the process stack when trying to start a process. Never
