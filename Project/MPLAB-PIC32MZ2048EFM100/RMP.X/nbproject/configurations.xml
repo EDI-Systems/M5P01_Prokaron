@@ -14,6 +14,7 @@
                    projectFiles="true">
       <logicalFolder name="f4" displayName="Benchmark" projectFiles="true">
         <itemPath>../../../MProkaron/Benchmark/test.c</itemPath>
+        <itemPath>../../../MProkaron/Benchmark/Platform/test_PIC32MZ2048EFM100_extra.s</itemPath>
       </logicalFolder>
       <logicalFolder name="f3" displayName="Lib" projectFiles="true">
       </logicalFolder>

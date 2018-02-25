@@ -57,17 +57,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=../../../MProkaron/Benchmark/test.c ../../../MProkaron/Kernel/kernel.c ../../../MProkaron/Platform/MIPSM/platform_mipsm.c ../../../MProkaron/Platform/MIPSM/platform_mipsm_asm.s
+SOURCEFILES_QUOTED_IF_SPACED=../../../MProkaron/Benchmark/test.c ../../../MProkaron/Kernel/kernel.c ../../../MProkaron/Platform/MIPSM/platform_mipsm.c ../../../MProkaron/Platform/MIPSM/platform_mipsm_asm.s ../../../MProkaron/Benchmark/Platform/test_PIC32MZ2048EFM100_extra.s
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/_ext/1372619718/test.o ${OBJECTDIR}/_ext/878830112/kernel.o ${OBJECTDIR}/_ext/312523307/platform_mipsm.o ${OBJECTDIR}/_ext/312523307/platform_mipsm_asm.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/_ext/1372619718/test.o.d ${OBJECTDIR}/_ext/878830112/kernel.o.d ${OBJECTDIR}/_ext/312523307/platform_mipsm.o.d ${OBJECTDIR}/_ext/312523307/platform_mipsm_asm.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/_ext/1372619718/test.o ${OBJECTDIR}/_ext/878830112/kernel.o ${OBJECTDIR}/_ext/312523307/platform_mipsm.o ${OBJECTDIR}/_ext/312523307/platform_mipsm_asm.o ${OBJECTDIR}/_ext/1850200776/test_PIC32MZ2048EFM100_extra.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/_ext/1372619718/test.o.d ${OBJECTDIR}/_ext/878830112/kernel.o.d ${OBJECTDIR}/_ext/312523307/platform_mipsm.o.d ${OBJECTDIR}/_ext/312523307/platform_mipsm_asm.o.d ${OBJECTDIR}/_ext/1850200776/test_PIC32MZ2048EFM100_extra.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/_ext/1372619718/test.o ${OBJECTDIR}/_ext/878830112/kernel.o ${OBJECTDIR}/_ext/312523307/platform_mipsm.o ${OBJECTDIR}/_ext/312523307/platform_mipsm_asm.o
+OBJECTFILES=${OBJECTDIR}/_ext/1372619718/test.o ${OBJECTDIR}/_ext/878830112/kernel.o ${OBJECTDIR}/_ext/312523307/platform_mipsm.o ${OBJECTDIR}/_ext/312523307/platform_mipsm_asm.o ${OBJECTDIR}/_ext/1850200776/test_PIC32MZ2048EFM100_extra.o
 
 # Source Files
-SOURCEFILES=../../../MProkaron/Benchmark/test.c ../../../MProkaron/Kernel/kernel.c ../../../MProkaron/Platform/MIPSM/platform_mipsm.c ../../../MProkaron/Platform/MIPSM/platform_mipsm_asm.s
+SOURCEFILES=../../../MProkaron/Benchmark/test.c ../../../MProkaron/Kernel/kernel.c ../../../MProkaron/Platform/MIPSM/platform_mipsm.c ../../../MProkaron/Platform/MIPSM/platform_mipsm_asm.s ../../../MProkaron/Benchmark/Platform/test_PIC32MZ2048EFM100_extra.s
 
 
 CFLAGS=
@@ -111,11 +111,19 @@ ${OBJECTDIR}/_ext/312523307/platform_mipsm_asm.o: ../../../MProkaron/Platform/MI
 	@${MKDIR} "${OBJECTDIR}/_ext/312523307" 
 	@${RM} ${OBJECTDIR}/_ext/312523307/platform_mipsm_asm.o 
 	@${FIXDEPS} "${OBJECTDIR}/_ext/312523307/platform_mipsm_asm.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC} $(MP_EXTRA_AS_PRE)  -D__DEBUG  -DPKOBSKDEPlatformTool=1 -c -mprocessor=$(MP_PROCESSOR_OPTION)  -o ${OBJECTDIR}/_ext/312523307/platform_mipsm_asm.o ../../../MProkaron/Platform/MIPSM/platform_mipsm_asm.s  -Wa,--defsym=__MPLAB_BUILD=1$(MP_EXTRA_AS_POST),--defsym=__ICD2RAM=1,--defsym=__MPLAB_DEBUG=1,--defsym=__DEBUG=1,--defsym=PKOBSKDEPlatformTool=1,--gdwarf-2,-MD="${OBJECTDIR}/_ext/312523307/platform_mipsm_asm.o.d" -I../../../Source/portable/MPLAB/PIC32MZ -I../
+${OBJECTDIR}/_ext/1850200776/test_PIC32MZ2048EFM100_extra.o: ../../../MProkaron/Benchmark/Platform/test_PIC32MZ2048EFM100_extra.s  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}/_ext/1850200776" 
+	@${RM} ${OBJECTDIR}/_ext/1850200776/test_PIC32MZ2048EFM100_extra.o 
+	@${FIXDEPS} "${OBJECTDIR}/_ext/1850200776/test_PIC32MZ2048EFM100_extra.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC} $(MP_EXTRA_AS_PRE)  -D__DEBUG  -DPKOBSKDEPlatformTool=1 -c -mprocessor=$(MP_PROCESSOR_OPTION)  -o ${OBJECTDIR}/_ext/1850200776/test_PIC32MZ2048EFM100_extra.o ../../../MProkaron/Benchmark/Platform/test_PIC32MZ2048EFM100_extra.s  -Wa,--defsym=__MPLAB_BUILD=1$(MP_EXTRA_AS_POST),--defsym=__ICD2RAM=1,--defsym=__MPLAB_DEBUG=1,--defsym=__DEBUG=1,--defsym=PKOBSKDEPlatformTool=1,--gdwarf-2,-MD="${OBJECTDIR}/_ext/1850200776/test_PIC32MZ2048EFM100_extra.o.d" -I../../../Source/portable/MPLAB/PIC32MZ -I../
 else
 ${OBJECTDIR}/_ext/312523307/platform_mipsm_asm.o: ../../../MProkaron/Platform/MIPSM/platform_mipsm_asm.s  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}/_ext/312523307" 
 	@${RM} ${OBJECTDIR}/_ext/312523307/platform_mipsm_asm.o 
 	@${FIXDEPS} "${OBJECTDIR}/_ext/312523307/platform_mipsm_asm.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC} $(MP_EXTRA_AS_PRE)  -c -mprocessor=$(MP_PROCESSOR_OPTION)  -o ${OBJECTDIR}/_ext/312523307/platform_mipsm_asm.o ../../../MProkaron/Platform/MIPSM/platform_mipsm_asm.s  -Wa,--defsym=__MPLAB_BUILD=1$(MP_EXTRA_AS_POST),--gdwarf-2,-MD="${OBJECTDIR}/_ext/312523307/platform_mipsm_asm.o.d" -I../../../Source/portable/MPLAB/PIC32MZ -I../
+${OBJECTDIR}/_ext/1850200776/test_PIC32MZ2048EFM100_extra.o: ../../../MProkaron/Benchmark/Platform/test_PIC32MZ2048EFM100_extra.s  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}/_ext/1850200776" 
+	@${RM} ${OBJECTDIR}/_ext/1850200776/test_PIC32MZ2048EFM100_extra.o 
+	@${FIXDEPS} "${OBJECTDIR}/_ext/1850200776/test_PIC32MZ2048EFM100_extra.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC} $(MP_EXTRA_AS_PRE)  -c -mprocessor=$(MP_PROCESSOR_OPTION)  -o ${OBJECTDIR}/_ext/1850200776/test_PIC32MZ2048EFM100_extra.o ../../../MProkaron/Benchmark/Platform/test_PIC32MZ2048EFM100_extra.s  -Wa,--defsym=__MPLAB_BUILD=1$(MP_EXTRA_AS_POST),--gdwarf-2,-MD="${OBJECTDIR}/_ext/1850200776/test_PIC32MZ2048EFM100_extra.o.d" -I../../../Source/portable/MPLAB/PIC32MZ -I../
 endif
 
 # ------------------------------------------------------------------------------------

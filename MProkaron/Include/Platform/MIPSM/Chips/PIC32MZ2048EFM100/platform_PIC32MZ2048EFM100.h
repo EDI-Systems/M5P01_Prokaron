@@ -7,8 +7,9 @@ Description: The configuration file for PIC32MZ2048EFM100.
 ******************************************************************************/
 
 /* Defines *******************************************************************/
-/* The MPLAB library */
+/* The MPLAB libraries */
 #include <xc.h>
+#include <sys/attribs.h>
 /* The maximum number of preemption priority levels in the system.
  * This parameter must be divisible by the word length - 32 is usually sufficient */
 #define RMP_MAX_PREEMPT_PRIO         32
@@ -59,6 +60,9 @@ do \
 	IEC0SET=(1<<_IEC0_CTIE_POSITION)|(1<<_IEC0_CS0IE_POSITION); \
 } \
 while(0)
+
+#define RMP_MIPSM_CLEAR_SOFT_FLAG()    do{IFS0CLR=_IFS0_CS0IF_MASK;}while(0)
+#define RMP_MIPSM_CLEAR_TIMER_FLAG()   do{IFS0CLR=_IFS0_CTIF_MASK;}while(0)
 
 /* This is for debugging output */
 #define RMP_MIPSM_PUTCHAR(CHAR) \

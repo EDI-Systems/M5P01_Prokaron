@@ -111,12 +111,25 @@ Return      : None.
 ******************************************************************************/
 void Int_Init(void)
 {
-    /* Initialize timer 2 to run at the same speed as the CPU */
-
-	/* Clear interrupt pending bit, because we used EGR to update the registers */
+    /* Initialize timer 2 to run at 1/5 speed of the CPU */
+    T2CON=0;
+    TMR2=0;
+    PR2=20000;
+    /* Lowest interrupt level */
+    IPC2SET=(1<<_IPC2_T2IP_POSITION)|(0<<_IPC2_T2IS_POSITION);
+    IFS0CLR=_IFS0_T2IF_MASK;
+    IEC0SET=(1<<_IEC0_T2IE_POSITION);
+    /* Start the timer */
+    T2CONSET=(1<<15);
 }
 
-/* The interrupt handler */
+/* The interrupt handler with shadow register sets */
+void Tim2_Interrupt(void)
+{
+    Int_Handler();
+    /* Clear flags */
+    IFS0CLR=_IFS0_T2IF_MASK;
+}
 /* End Function:Int_Init *****************************************************/
 
 /* Begin Function:Int_Disable *************************************************
@@ -128,7 +141,8 @@ Return      : None.
 ******************************************************************************/
 void Int_Disable(void)
 {
-    /* Disable timer 4 interrupt */
+    /* Disable timer 2 interrupt */
+    IEC0CLR=_IEC0_T2IE_MASK;
 }
 #endif
 /* End Function:Int_Disable **************************************************/
