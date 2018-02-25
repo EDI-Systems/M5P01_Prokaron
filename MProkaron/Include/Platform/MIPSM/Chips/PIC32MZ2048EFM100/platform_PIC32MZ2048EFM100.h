@@ -58,6 +58,14 @@ do \
             (1<<_IPC0_CS0IP_POSITION)|(0<<_IPC0_CS0IS_POSITION); \
 	IEC0CLR=_IEC0_CTIE_POSITION|_IEC0_CS0IE_MASK; \
 	IEC0SET=(1<<_IEC0_CTIE_POSITION)|(1<<_IEC0_CS0IE_POSITION); \
+    /* Initialize UART1 */ \
+    U1MODE=0; \
+    U1STAbits.UTXEN=1; \
+    U1MODEbits.BRGH=1; \
+    U1BRG=86; /* Refer to datasheet for calculation */ \
+    /* RPD15 used as TX port */ \
+    RPD15Rbits.RPD15R=1; \
+    U1MODESET=(1<<15); \
 } \
 while(0)
 
@@ -68,6 +76,8 @@ while(0)
 #define RMP_MIPSM_PUTCHAR(CHAR) \
 do \
 { \
+    while(U1STAbits.UTXBF!=0); \
+    U1TXREG=(CHAR); \
 } \
 while(0)
 /* End Defines ***************************************************************/
