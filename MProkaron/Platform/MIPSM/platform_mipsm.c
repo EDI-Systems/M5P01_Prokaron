@@ -34,27 +34,80 @@ Input       : ptr_t Entry - The entry of the thread.
               ptr_t Arg - The argument to pass to the thread.
 Output      : None.
 Return      : None.
-Other       : When the system stack safe redundancy is set to zero, the stack 
-              looks like this when we try to step into the next process by 
-              context switch:
-              HIGH-->  XPSR PC LR(1) R12 R3-R0 LR R11-R4 -->LOW 
-              We need to set the stack correctly pretending that we are 
-              returning from an systick timer interrupt. Thus, we set the XPSR
-              to avoid INVSTATE; set PC to the pseudo-process entrance; set LR
-              (1) to 0 because the process does not return to anything; set the 
-              R12,R3-R0 to 0; set R11-R4 to 0.
+
+******************************************************************************/
+void _RMP_Clear_Soft_Flag(void)
+{
+	IFS0CLR=_IFS0_CS0IF_MASK;
+}
+
+void _RMP_Clear_Timer_Flag(void)
+{
+    _RMP_Set_Timer(RMP_MIPSM_TICK_VAL/2);
+	IFS0CLR=_IFS0_CTIF_MASK;
+}
+
+/* Begin Function:_RMP_Stack_Init *********************************************
+Description : Initiate the process stack when trying to start a process. Never
+              call this function in user application.
+Input       : ptr_t Entry - The entry of the thread.
+              ptr_t Stack - The stack address of the thread.
+              ptr_t Arg - The argument to pass to the thread.
+Output      : None.
+Return      : None.
 ******************************************************************************/
 void _RMP_Stack_Init(ptr_t Entry, ptr_t Stack, ptr_t Arg)
 {
-    /* The "9" here is because we also pushed other registers to PSP */
-    /* This is the LR value indicating that we never used the FPU */
-    ((ptr_t*)Stack)[0+8]=0xFFFFFFFD;    
-    /* CM3:Pass the parameter */                            
-    ((ptr_t*)Stack)[0+9]=Arg;       
-    /* CM3:for xPSR. fill the T bit,or an INVSTATE will happen */
-    ((ptr_t*)Stack)[6+9]=Entry;
-    /* CM3:Set the process entrance */                            
-    ((ptr_t*)Stack)[7+9]=0x01000200;      
+    ptr_t* Stack_Ptr;
+    
+    Stack_Ptr=(ptr_t*)Stack;
+    /* General purpose registers */
+#if(RMP_MIPSM_INIT_EXTRA==RMP_TRUE)
+    Stack_Ptr[0]=0x01010101;                                    /* R1 */
+    Stack_Ptr[1]=0x02020202;                                    /* R2 */
+    Stack_Ptr[2]=0x03030303;                                    /* R3 */
+#endif
+    Stack_Ptr[3]=Arg;                                           /* R4 */
+#if(RMP_MIPSM_INIT_EXTRA==RMP_TRUE)
+    Stack_Ptr[4]=0x05050505;                                    /* R5 */
+    Stack_Ptr[5]=0x06060606;                                    /* R6 */
+    Stack_Ptr[6]=0x07070707;                                    /* R7 */
+    Stack_Ptr[7]=0x08080808;                                    /* R8 */
+    Stack_Ptr[8]=0x09090909;                                    /* R9 */
+    Stack_Ptr[9]=0x10101010;                                    /* R10 */
+    Stack_Ptr[10]=0x11111111;                                   /* R11 */
+    Stack_Ptr[11]=0x12121212;                                   /* R12 */
+    Stack_Ptr[12]=0x13131313;                                   /* R13 */
+    Stack_Ptr[13]=0x14141414;                                   /* R14 */
+    Stack_Ptr[14]=0x15151515;                                   /* R15 */
+    Stack_Ptr[15]=0x16161616;                                   /* R16 */
+    Stack_Ptr[16]=0x17171717;                                   /* R17 */
+    Stack_Ptr[17]=0x18181818;                                   /* R18 */
+    Stack_Ptr[18]=0x19191919;                                   /* R19 */
+    Stack_Ptr[19]=0x24242424;                                   /* R24 */
+    Stack_Ptr[20]=0x25252525;                                   /* R25 */
+    Stack_Ptr[21]=0x30303030;                                   /* R30 */
+    Stack_Ptr[22]=0x31313131;                                   /* R31 */
+    /* Kernel registers */
+    Stack_Ptr[23]=0x26262626;                                   /* R26 */
+    Stack_Ptr[24]=0x27272727;                                   /* R27 */
+#endif
+    Stack_Ptr[25]=RMP_GP_Val;                                   /* R28 */
+#if(RMP_MIPSM_INIT_EXTRA==RMP_TRUE)
+    /* Multiply/divide */
+    Stack_Ptr[26]=0x15151515;                                    /* LO */
+    Stack_Ptr[27]=0x51515151;                                    /* HI */
+#endif
+    /* Status registers */
+    Stack_Ptr[28]=RMP_MIPSM_STATUS_IE|RMP_MIPSM_STATUS_EXL;     /* CP0_STATUS */
+    Stack_Ptr[29]=Entry;                                        /* CP0_EPC */
+#if(RMP_MIPSM_INIT_EXTRA==RMP_TRUE)
+    /* Some general-purpose scratch regs */
+    Stack_Ptr[30]=0x20202020;                                   /* R20 */
+    Stack_Ptr[31]=0x21212121;                                   /* R21 */
+    Stack_Ptr[32]=0x22222222;                                   /* R22 */
+    Stack_Ptr[33]=0x23232323;                                   /* R23 */
+#endif
 }
 /* End Function:_RMP_Stack_Init **********************************************/
 
@@ -68,19 +121,8 @@ void _RMP_Low_Level_Init(void)
 {
     RMP_MIPSM_LOW_LEVEL_INIT();
     
-    /* Core Timer Interrupt _CORE_TIMER_VECTOR 0 OFF000<17:1> IFS0<0> IEC0<0> IPC0<4:2> IPC0<1:0> No
-     * Core Software Interrupt 0 _CORE_SOFTWARE_0_VECTOR 1 OFF001<17:1> IFS0<1> IEC0<1> IPC0<12:10> IPC0<9:8> No */
-    /* Clear the software interrupt flags */
-	IFS0CLR=_IFS0_CTIF_MASK|_IFS0_CS0IF_MASK;
-    
-	/* Set both interrupt priority - priority 1, subpriority 3, lowest allowed */
-	IPC0CLR=_IPC0_CTIP_MASK|_IPC0_CTIS_MASK|
-            _IPC0_CS0IP_MASK|_IPC0_CS0IS_MASK;
-	IPC0SET=(1<<_IPC0_CTIP_POSITION)|(0<<_IPC0_CTIS_POSITION)|
-            (1<<_IPC0_CS0IP_POSITION)|(0<<_IPC0_CS0IS_POSITION);
-
-	IEC0CLR=_IEC0_CTIE_POSITION|_IEC0_CS0IE_MASK;
-	IEC0SET=(1<<_IEC0_CTIE_POSITION)|(1<<_IEC0_CS0IE_POSITION);
+    RMP_Disable_Int();
+    RMP_Int_Nest=0;
     
     /* Set the timer timeout value */
     _RMP_Set_Timer(RMP_MIPSM_TICK_VAL/2);

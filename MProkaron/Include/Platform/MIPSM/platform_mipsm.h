@@ -87,14 +87,31 @@ typedef s32 ret_t;
 /* The maximum length of char printing - no need to change this in most cases */
 #define RMP_KERNEL_DEBUG_MAX_STR 255
 /* The offset of the stack when initializing */
-#define RMP_INIT_STACK           RMP_INIT_STACK_TAIL(17)
+#define RMP_INIT_STACK           RMP_INIT_STACK_TAIL(64)
 
 /* The CPU and application specific macros are here */
 #include "platform_mipsm_conf.h"
 /* End System macros *********************************************************/
 
 /* MIPS-M class specific macros **********************************************/
+/* Bits within the CP0 STATUS register */
+#define RMP_MIPSM_STATUS_IE         (1<<0)        /* Enable interrupts */
+#define RMP_MIPSM_STATUS_EXL        (1<<1)        /* Exception level */
+#define RMP_MIPSM_STATUS_MX         (1<<24)       /* Allow DSP instructions */
+#define RMP_MIPSM_STATUS_CU1        (0x20000000)  /* Enable CP1 for parts with hardware */
+#define RMP_MIPSM_STATUS_FR         (0x04000000)  /* Enable 64 bit floating point registers */
 
+/* Bits within the CP0 CAUSE register */
+#define RMP_MIPSM_CAUSE_CORESW0     (0x00000100)  /*  */
+#define RMP_MIPSM_CAUSE_CORESW1     (0x00000200)  /*  */
+
+/* The EXL bit is set to ensure interrupts do not occur while the context of
+the first task is being restored. */
+#if ( __mips_hard_float == 1 )
+    #define portINITIAL_SR			( portIE_BIT | portEXL_BIT | portMX_BIT | portFR_BIT | portCU1_BIT )
+#else
+    #define portINITIAL_SR			( portIE_BIT | portEXL_BIT | portMX_BIT )
+#endif
 /*****************************************************************************/
 /* __PLATFORM_MIPSM_H_DEFS__ */
 #endif
@@ -156,6 +173,10 @@ typedef s32 ret_t;
 #endif
 
 /*****************************************************************************/
+__EXTERN__ ptr_t RMP_GP_Val;
+__EXTERN__ ptr_t RMP_SP_Val;
+__EXTERN__ ptr_t RMP_Old_SP_Val;
+__EXTERN__ ptr_t RMP_Int_Nest;
 
 /*****************************************************************************/
 
@@ -177,6 +198,10 @@ __EXTERN__ void _RMP_Stack_Init(ptr_t Entry, ptr_t Stack, ptr_t Arg);
 __EXTERN__ void _RMP_Low_Level_Init(void);
 __EXTERN__ void RMP_Putchar(char Char);
 __EXTERN__ void _RMP_Plat_Hook(void);
+
+/* Platform-dependent hooks */
+__EXTERN__ void _RMP_Clear_Soft_Flag(void);
+__EXTERN__ void _RMP_Clear_Timer_Flag(void);
 /*****************************************************************************/
 /* Undefine "__EXTERN__" to avoid redefinition */
 #undef __EXTERN__

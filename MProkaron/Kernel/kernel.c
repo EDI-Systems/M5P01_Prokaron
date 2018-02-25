@@ -1554,6 +1554,7 @@ int main(void)
     RMP_Clear(&RMP_Init_Thd,sizeof(struct RMP_Thd));
     RMP_Init_Thd.Prio=0;
     RMP_Init_Thd.Slices=RMP_MAX_SLICES-1;
+    RMP_Init_Thd.Slices_Left=10;
     RMP_Init_Thd.State=RMP_THD_RUNNING;
     RMP_Init_Thd.Stack=RMP_INIT_STACK;
     

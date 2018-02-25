@@ -12,11 +12,11 @@ Description : The testbench for PIC32MZ2048EFM100.
 
 /* Defines *******************************************************************/
 /* How to read counter */
-#define COUNTER_READ()   0
+#define COUNTER_READ()    (TMR1*5)
 /* Are we doing minimal measurements? */
 /* #define MINIMAL_SIZE */
-/* The PIC32 timers are all 32 bits, so */
-typedef ptr_t tim_t;
+/* The PIC32 timers are all 16 bits, so */
+typedef u16 tim_t;
 
 /* The pragmas for PIC32 fuse */
 /*** DEVCFG0 ***/
@@ -77,9 +77,9 @@ typedef ptr_t tim_t;
 /* Globals *******************************************************************/
 #ifndef MINIMAL_SIZE
 void Int_Handler(void);
-ptr_t Stack_1[256];
+ptr_t Stack_1[512];
 struct RMP_Thd Thd_1;
-ptr_t Stack_2[256];
+ptr_t Stack_2[512];
 struct RMP_Thd Thd_2;
 struct RMP_Sem Sem_1;
 /* End Globals ***************************************************************/
@@ -93,7 +93,12 @@ Return      : None.
 ******************************************************************************/
 void Timer_Init(void)
 {
-    /* Initialize timer 2 to run at the same speed as the CPU */
+    /* Initialize timer 1 to run at the same speed as the CPU */
+    T1CON=0;
+    TMR1=0;
+    PR1=0xFFFF;
+    /* Start the timer */
+    T1CONSET=(1<<15);
 }
 /* End Function:Timer_Init ***************************************************/
 
