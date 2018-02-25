@@ -130,8 +130,7 @@ This software is **triple-licensed**: it is either **[LGPL v3](LICENSE.md)** or 
 |Cortex-R4    |GCC           |TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
 |Cortex-R5    |Keil uVision 5|TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
 |Cortex-R5    |GCC           |TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
-|MIPS M14k    |MPLAB X       |TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
-|MIPS M14k    |GCC           |TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
+|MIPS M14k    |XC32-GCC      |11.3 |2.46|248  |332    |312      |398        |388          |
 
 **Flash and SRAM consumption is calculated in kB, while the other figures are calculated in CPU clock cycles.**  
 Yield: The time to yield between different threads.  
