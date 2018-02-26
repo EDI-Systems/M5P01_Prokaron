@@ -1,29 +1,73 @@
 /******************************************************************************
-Filename    : platform_cmx.c
+Filename    : platform_msp430.c
 Author      : pry
-Date        : 04/02/2018
+Date        : 25/02/2018
 Licence     : LGPL v3+; see COPYING for details.
-Description : The platform specific file for Cortex-M.
+Description : The platform specific file for MSP430.
 ******************************************************************************/
 
 /* Includes ******************************************************************/
 #define __HDR_DEFS__
-#include "Platform/CortexM/platform_cmx.h"
+#include "Platform/MSP430/platform_msp430.h"
 #include "Kernel/kernel.h"
 #undef __HDR_DEFS__
 
 #define __HDR_STRUCTS__
-#include "Platform/CortexM/platform_cmx.h"
+#include "Platform/MSP430/platform_msp430.h"
 #include "Kernel/kernel.h"
 #undef __HDR_STRUCTS__
 
 /* Private include */
-#include "Platform/CortexM/platform_cmx.h"
+#include "Platform/MSP430/platform_msp430.h"
 
 #define __HDR_PUBLIC_MEMBERS__
 #include "Kernel/kernel.h"
 #undef __HDR_PUBLIC_MEMBERS__
 /* End Includes **************************************************************/
+
+/* Begin Function:RMP_MSB_Get *************************************************
+Description : Get the MSB of the word.
+Input       : ptr_t Val - The value.
+Output      : None.
+Return      : ptr_t - The MSB position.
+******************************************************************************/
+/* 2*i and 2*i+1 will correspond to the same slot in this table */
+const u8 RMP_MSB_Tbl[128]=
+{
+    /* 0-1 */
+    0x00,
+    /* 2-3 */
+    0x01,
+    /* 4-7 */
+    0x02,0x02,
+    /* 8-15 */
+    0x03,0x03,0x03,0x03,
+    /* 16-31 */
+    0x04,0x04,0x04,0x04,0x04,0x04,0x04,0x04,
+    /* 32-63 */
+    0x05,0x05,0x05,0x05,0x05,0x05,0x05,0x05,0x05,0x05,0x05,0x05,0x05,0x05,0x05,0x05,
+    /* 64-127 */
+    0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,
+    0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,
+    /* 128-255 */
+    0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,
+    0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,
+    0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,
+    0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07
+};
+
+ptr_t RMP_MSB_Get(ptr_t Val)
+{
+    /* Something at high bits */
+    if((Val&0xFF00)!=0)
+        return RMP_MSB_Tbl[Val>>9]+16;
+    /* Something at low bits */
+    else if((Val&0xFF)!=0)
+        return RMP_MSB_Tbl[Val>>1];
+    /* Nothing anywhere */
+    return 0xFFFF;
+}
+/* End Function:RMP_MSB_Get **************************************************/
 
 /* Begin Function:_RMP_Stack_Init *********************************************
 Description : Initiate the process stack when trying to start a process. Never
@@ -33,27 +77,10 @@ Input       : ptr_t Entry - The entry of the thread.
               ptr_t Arg - The argument to pass to the thread.
 Output      : None.
 Return      : None.
-Other       : When the system stack safe redundancy is set to zero, the stack 
-              looks like this when we try to step into the next process by 
-              context switch:
-              HIGH-->  XPSR PC LR(1) R12 R3-R0 LR R11-R4 -->LOW 
-              We need to set the stack correctly pretending that we are 
-              returning from an systick timer interrupt. Thus, we set the XPSR
-              to avoid INVSTATE; set PC to the pseudo-process entrance; set LR
-              (1) to 0 because the process does not return to anything; set the 
-              R12,R3-R0 to 0; set R11-R4 to 0.
 ******************************************************************************/
 void _RMP_Stack_Init(ptr_t Entry, ptr_t Stack, ptr_t Arg)
 {
-    /* The "9" here is because we also pushed other registers to PSP */
-    /* This is the LR value indicating that we never used the FPU */
-    ((ptr_t*)Stack)[0+8]=0xFFFFFFFD;    
-    /* CM3:Pass the parameter */                            
-    ((ptr_t*)Stack)[0+9]=Arg;       
-    /* CM3:for xPSR. fill the T bit,or an INVSTATE will happen */
-    ((ptr_t*)Stack)[6+9]=Entry;
-    /* CM3:Set the process entrance */                            
-    ((ptr_t*)Stack)[7+9]=0x01000200;      
+
 }
 /* End Function:_RMP_Stack_Init **********************************************/
 
@@ -65,22 +92,20 @@ Return      : None.
 ******************************************************************************/
 void _RMP_Low_Level_Init(void)
 {
-    RMP_CMX_LOW_LEVEL_INIT();
+    RMP_MSP430_LOW_LEVEL_INIT();
     
     /* Enable all fault handlers */
-    SCB->SHCSR|=RMP_CMX_SHCSR_USGFAULTENA|RMP_CMX_SHCSR_BUSFAULTENA|RMP_CMX_SHCSR_MEMFAULTENA;
     
     /* Set the priority of timer, svc and faults to the lowest */
-    NVIC_SetPriorityGrouping(RMP_CMX_NVIC_GROUPING);
-    NVIC_SetPriority(SVCall_IRQn, 0xFF);
-    NVIC_SetPriority(PendSV_IRQn, 0xFF);
-    NVIC_SetPriority(SysTick_IRQn, 0xFF);
-    NVIC_SetPriority(BusFault_IRQn, 0xFF);
-    NVIC_SetPriority(UsageFault_IRQn, 0xFF);
-    NVIC_SetPriority(DebugMonitor_IRQn, 0xFF);
-    
+    TA0CCTL0 = CCIE;                             // CCR0 interrupt enabled
+    TA0CTL = TASSEL_2 + MC_1 + ID_3;             // SMCLK/8, upmode
+    TA0CCR0 =  1000;                                 // 1250 Hz
+    TA0CCTL1 = CCIE;                             // CCR1 interrupt enabled
+
+    /* Manully pend the interrupt - test successful! */
+    TA0CCTL1|=CCIFG_1;
+
     /* Configure systick */
-    SysTick_Config(RMP_CMX_SYSTICK_VAL);
     
     RMP_Disable_Int();
 }
@@ -106,7 +131,7 @@ Return      : None.
 ******************************************************************************/
 void RMP_Putchar(char Char)
 {
-    RMP_CMX_PUTCHAR(Char);
+    RMP_MSP430_PUTCHAR(Char);
 }
 /* End Function:RMP_Putchar **************************************************/
 
