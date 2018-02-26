@@ -28,7 +28,9 @@ Description : The platform specific file for Cortex-M.
 /* Begin Function:_RMP_Stack_Init *********************************************
 Description : Initiate the process stack when trying to start a process. Never
               call this function in user application.
-Input       : pid_t PID - The PID of the process.
+Input       : ptr_t Entry - The entry of the thread.
+              ptr_t Stack - The stack address of the thread.
+              ptr_t Arg - The argument to pass to the thread.
 Output      : None.
 Return      : None.
 Other       : When the system stack safe redundancy is set to zero, the stack 
