@@ -6,6 +6,8 @@ This operating system is much **leaner** than any other RTOSes, especilly when c
 Read **[Contributing](CONTRIBUTING.md)** and **[Code of Conduct](CODE_OF_CONDUCT.md)** if you want to contribute, and **[Pull Request Template](PULL_REQUEST_TEMPLATE.md)** when you make pull requests.
 This software is **triple-licensed**: it is either **[LGPL v3](LICENSE.md)** or **[modified MIT license](MODMIT.md)**. **Commercial** licenses are also available upon request.
 
+For vendor-supplied packages and hardware abstraction libraries, please refer to the [libraries](https://github.com/EDI-Systems/M0P0_Libraries) repo to download and use them properly.
+
 ## Quick Demo
 ### Basic thread operations
 **Create a thread**
