@@ -1,8 +1,8 @@
 ;/*****************************************************************************
-;Filename    : platform_msp430_asm.s
+;Filename    : platform_msp430x_asm.s
 ;Author      : pry
 ;Date        : 25/02/2018
-;Description : The assembly part of the RMP RTOS. This is for MSP430.
+;Description : The assembly part of the RMP RTOS. This is for MSP430X.
 ;              This port does not support interrupt preemption, as it makes no 
 ;              sense on MSP430(X) because MSP430(X) interrupt priority is fixed.
 ;*****************************************************************************/
@@ -16,7 +16,7 @@
 ;Note that MSP430X's register PC,SP,R4-R15 are all 20 bits,while MSP430 is 16 bits.
 ;Some variants also have the low energy vector math accelerator.
 ;*****************************************************************************/
-
+            
 ;/* Begin Header *************************************************************/
                 .text
                 .align          2
@@ -56,10 +56,10 @@
 ; Push everything to stack
 SAVE_CONTEXT 	.macro
                 push            SR
-                pushm           #12,R15
+                pushm.a         #12,R15
 	            .endm
 LOAD_CONTEXT .macro
-                popm            #12,R15
+                popm.a          #12,R15
 	            pop             SR
 	            nop
 	            reti
@@ -79,7 +79,7 @@ RMP_Disable_Int:.asmfunc
                 nop
                 dint
                 nop
-                ret
+                reta
                 .endasmfunc
 ;/* End Function:RMP_Disable_Int *********************************************/
 
@@ -96,24 +96,28 @@ RMP_Enable_Int:.asmfunc
                 nop
                 eint
                 nop
-                ret
+                reta
                 .endasmfunc               
 ;/* End Function:RMP_Enable_Int **********************************************/
 
 ;/* Begin Function:_RMP_Start *************************************************
 ;Description : Jump to the user function and will never return from it.
 ;              Note that all thread function entries should locate at <64kB.
-;Input       : R12 - PC.
-;              R13 - SP.
+;Input       : R13:R12 - PC.
+;              R14 - SP.
 ;Output      : None.                                      
 ;*****************************************************************************/
                 .text
                 .align          2
 _RMP_Start:     .asmfunc
-                mov             R13,SP
-                mov             R12,PC
+                ;Place the entry into the same word
+                push            R13
+                push            R12
+                popa            R13
+                mova            R14,SP
+                mova            R13,PC
                 ; Dummy return
-                ret
+                reta
                 .endasmfunc       
 ;/* End Function:_RMP_Start **************************************************/
 
@@ -135,22 +139,22 @@ PendSV_Handler: .asmfunc
                 SAVE_CONTEXT
                 
                 ;Clear the interrupt flag
-                call            #_RMP_Clear_Soft_Flag
+                calla           #_RMP_Clear_Soft_Flag
                 
                 ;Save extra context
-                call            #RMP_Save_Ctx
+                calla           #RMP_Save_Ctx
                 
                 ;Save The SP to control block.
-                mov             SP,&RMP_Cur_SP
+                mova            SP,&RMP_Cur_SP
                 
                 ;Get the highest ready task.
-                call            #_RMP_Get_High_Rdy
+                calla           #_RMP_Get_High_Rdy
                 
                 ;Load the SP.
-                mov             &RMP_Cur_SP,SP
+                mova            &RMP_Cur_SP,SP
                 
                 ;Load extra context
-                call            #RMP_Load_Ctx
+                calla           #RMP_Load_Ctx
 
                 LOAD_CONTEXT
                 .endasmfunc       
@@ -174,11 +178,11 @@ SysTick_Handler:.asmfunc
                 SAVE_CONTEXT
                 
                 ;Clear the interrupt flag
-                call            #_RMP_Clear_Timer_Flag
+                calla           #_RMP_Clear_Timer_Flag
                 
                 ;Note the system that we have entered an interrupt. We are not using tickless.
-                mov             #0x01,R12
-                call            #_RMP_Tick_Handler
+                mova            #0x01,R12
+                calla           #_RMP_Tick_Handler
 
                 LOAD_CONTEXT
                 .endasmfunc

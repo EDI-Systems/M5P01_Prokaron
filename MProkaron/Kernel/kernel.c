@@ -261,8 +261,6 @@ Return      : None.
 ******************************************************************************/
 void RMP_Lock_Sched(void)
 {
-    /* Disable first before registering it. If an switch occurs between 
-     * registering and disabling, then register-and-disable will cause fault. */
     RMP_Sched_Locked=1;
     RMP_Sched_Lock_Cnt++;
 }
@@ -290,8 +288,11 @@ void RMP_Unlock_Sched(void)
             _RMP_Yield();
         }
     }
-    else if(RMP_Sched_Lock_Cnt!=0)
+    else if(RMP_Sched_Lock_Cnt>1)
         RMP_Sched_Lock_Cnt--;
+    /* Trying to unlock a scheduler that is not locked */
+    else
+        while(1);
 }
 /* End Function:RMP_Unlock_Sched *********************************************/
 
@@ -1057,7 +1058,9 @@ ret_t RMP_Thd_Rcv(ptr_t* Data, ptr_t Slices)
                 RMP_THD_STATE_SET(RMP_Cur_Thd->State,RMP_THD_RCVBLK);
             
             RMP_Unlock_Sched();
-            
+            /* Dummy read - to separate the lock & unlock. If the compiler optimizes these two
+             * functions(inline them) on some architectures sometimes we never block. */
+            *Data=RMP_Cur_Thd->Mailbox;
             /* We've been unblocked. There must be something in our mbox, or we should have failed */
             RMP_Lock_Sched();
             *Data=RMP_Cur_Thd->Mailbox;
@@ -1553,7 +1556,7 @@ int main(void)
     /* Now boot into the first thread */
     RMP_Clear(&RMP_Init_Thd,sizeof(struct RMP_Thd));
     RMP_Init_Thd.Prio=0;
-    RMP_Init_Thd.Slices=RMP_MAX_SLICES-1;
+    RMP_Init_Thd.Slices=10;
     RMP_Init_Thd.Slices_Left=10;
     RMP_Init_Thd.State=RMP_THD_RUNNING;
     RMP_Init_Thd.Stack=RMP_INIT_STACK;
