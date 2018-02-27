@@ -116,7 +116,7 @@ This software is **triple-licensed**: it is either **[LGPL v3](LICENSE.md)** or 
 ### Typical performance figures for all supported architectures
 |Machine      |Toolchain     |Flash|SRAM|Yield|Mailbox|Semaphore|Mailbox/Int|Semaphore/Int|
 |:-----------:|:------------:|:---:|:--:|:---:|:-----:|:-------:|:---------:|:-----------:|
-|MSP430       |TI CCS6       |TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
+|MSP430       |TI CCS6       |TBT  |TBT |1199 |2444   |2281     |2378       |2245         |
 |MSP430       |GCC           |TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
 |Cortex-M0    |Keil uVision 5|TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
 |Cortex-M0+   |Keil uVision 5|TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |

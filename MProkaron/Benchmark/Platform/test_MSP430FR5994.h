@@ -11,8 +11,9 @@ Description : The testbench for MSP430FR5994.
 /* End Includes **************************************************************/
 
 /* Defines *******************************************************************/
+/* This test is really slow. It takes 1-2 minutes(typ.1 min 30 sec) to run through @ 16MHz */
 /* How to read counter */
-#define COUNTER_READ()   0 //((TIM2->CNT)<<1)
+#define COUNTER_READ()    (TA1R)
 /* Are we doing minimal measurements? */
 /* #define MINIMAL_SIZE */
 /* The MSP430 timers are all 16 bits, so */
@@ -23,12 +24,11 @@ typedef u16 tim_t;
 #ifndef MINIMAL_SIZE
 void Int_Handler(void);
 ptr_t Stack_1[128];
-struct RMP_Thd Thd_1={0};
+volatile struct RMP_Thd Thd_1={0};
 ptr_t Stack_2[128];
-struct RMP_Thd Thd_2={0};
-struct RMP_Sem Sem_1={0};
-//TIM_HandleTypeDef TIM2_Handle={0};
-//TIM_HandleTypeDef TIM4_Handle={0};
+volatile struct RMP_Thd Thd_2={0};
+volatile struct RMP_Sem Sem_1={0};
+struct Timer_A_initUpModeParam TIM1_Handle={0};
 /* End Globals ***************************************************************/
 
 /* Begin Function:Timer_Init **************************************************
@@ -40,8 +40,15 @@ Return      : None.
 ******************************************************************************/
 void Timer_Init(void)
 {
-    /* Initialize timer 2 to run at the same speed as the CPU */
-
+    /* Initialize timer 1 to run at 1/16 speed of the CPU */
+    TIM1_Handle.clockSource=TIMER_A_CLOCKSOURCE_SMCLK;
+    TIM1_Handle.clockSourceDivider=TIMER_A_CLOCKSOURCE_DIVIDER_1;
+    TIM1_Handle.timerPeriod=0xFFFF;
+    TIM1_Handle.timerInterruptEnable_TAIE=TIMER_A_TAIE_INTERRUPT_DISABLE;
+    TIM1_Handle.captureCompareInterruptEnable_CCR0_CCIE=TIMER_A_CCIE_CCR0_INTERRUPT_DISABLE;
+    TIM1_Handle.timerClear=TIMER_A_SKIP_CLEAR;
+    TIM1_Handle.startTimer=1;
+    Timer_A_initUpMode(TA1_BASE,&TIM1_Handle);
 }
 /* End Function:Timer_Init ***************************************************/
 
@@ -54,14 +61,16 @@ Return      : None.
 ******************************************************************************/
 void Int_Init(void)
 {
-    /* Initialize timer 2 to run at the same speed as the CPU */
-
+    /* Make sure that we also generate interrupts from the same timer */
+    TA1CCTL0|=CCIE;
 }
 
 
 /* The interrupt handler */
-void TIM4_IRQHandler(void)
+#pragma vector=TIMER1_A0_VECTOR
+__interrupt void TIM1_IRQHandler(void)
 {
+    TA1CCTL0&=~CCIFG;
     Int_Handler();
 }
 /* End Function:Int_Init *****************************************************/
@@ -75,8 +84,8 @@ Return      : None.
 ******************************************************************************/
 void Int_Disable(void)
 {
-    /* Disable timer 4 interrupt */
-
+    /* Disable timer 1 interrupt */
+    TA1CCTL0&=~CCIE;
 }
 #endif
 /* End Function:Int_Disable **************************************************/

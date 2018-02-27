@@ -69,6 +69,44 @@ ptr_t RMP_MSB_Get(ptr_t Val)
 }
 /* End Function:RMP_MSB_Get **************************************************/
 
+/* Begin Function:_RMP_Clear_Soft_Flag ****************************************
+Description : Clear the software interrupt flag in the interrupt controller.
+Input       : None.
+Output      : None.
+Return      : None.
+******************************************************************************/
+void _RMP_Clear_Soft_Flag(void)
+{
+    RMP_MSP430_CLEAR_SOFT_FLAG();
+}
+/* End Function:_RMP_Clear_Soft_Flag *****************************************/
+
+/* Begin Function:_RMP_Clear_Timer_Flag ***************************************
+Description : Clear the timer interrupt flag in the interrupt controller.
+Input       : None.
+Output      : None.
+Return      : None.
+******************************************************************************/
+void _RMP_Clear_Timer_Flag(void)
+{
+    RMP_MSP430_CLEAR_TIMER_FLAG();
+}
+/* End Function:_RMP_Clear_Timer_Flag ****************************************/
+
+/* Begin Function:_RMP_Yield **************************************************
+Description : Trigger a yield to another thread. This will always trigger the
+              timer 0 compare vector on MSP430.
+Input       : None.
+Output      : None.
+Return      : None.
+******************************************************************************/
+void _RMP_Yield(void)
+{
+    /* Manully pend the interrupt */
+    RMP_MSP430_PEND_SOFT_FLAG();
+}
+/* End Function:_RMP_Yield ***************************************************/
+
 /* Begin Function:_RMP_Stack_Init *********************************************
 Description : Initiate the process stack when trying to start a process. Never
               call this function in user application.
@@ -80,7 +118,35 @@ Return      : None.
 ******************************************************************************/
 void _RMP_Stack_Init(ptr_t Entry, ptr_t Stack, ptr_t Arg)
 {
+    ptr_t* Stack_Ptr=(ptr_t*)Stack;
 
+    /* General purpose registers */
+#if(RMP_MSP430_INIT_EXTRA==RMP_TRUE)
+    Stack_Ptr[0]=0x0404;                                    /* R4 */
+    Stack_Ptr[1]=0x0505;                                    /* R5 */
+    Stack_Ptr[2]=0x0606;                                    /* R6 */
+    Stack_Ptr[3]=0x0707;                                    /* R7 */
+    Stack_Ptr[4]=0x0808;                                    /* R8 */
+    Stack_Ptr[5]=0x0909;                                    /* R9 */
+    Stack_Ptr[6]=0x1010;                                    /* R10 */
+    Stack_Ptr[7]=0x1111;                                    /* R11 */
+#endif
+    Stack_Ptr[8]=Arg;                                       /* R12 */
+#if(RMP_MSP430_INIT_EXTRA==RMP_TRUE)
+    Stack_Ptr[9]=0x1313;                                    /* R13 */
+    Stack_Ptr[10]=0x1414;                                   /* R14 */
+    Stack_Ptr[11]=0x1515;                                   /* R15 */
+#endif
+
+#if(RMP_MSP430_X==RMP_TRUE)
+    ((u16*)Stack_Ptr)[24]=0;
+    ((u16*)Stack_Ptr)[25]=((Entry>>4)&0xF000)|RMP_MSP430_SR_GIE;
+    ((u16*)Stack_Ptr)[26]=Entry&0xFFFF;
+    //RMP_MSP430X_PCSR(Entry,RMP_MSP430_SR_GIE);/* Status & PC */
+#else
+    Stack_Ptr[12]=RMP_MSP430_SR_GIE;                        /* Status */
+    Stack_Ptr[13]=Entry;                                    /* PC */
+#endif
 }
 /* End Function:_RMP_Stack_Init **********************************************/
 
@@ -93,20 +159,7 @@ Return      : None.
 void _RMP_Low_Level_Init(void)
 {
     RMP_MSP430_LOW_LEVEL_INIT();
-    
-    /* Enable all fault handlers */
-    
-    /* Set the priority of timer, svc and faults to the lowest */
-    TA0CCTL0 = CCIE;                             // CCR0 interrupt enabled
-    TA0CTL = TASSEL_2 + MC_1 + ID_3;             // SMCLK/8, upmode
-    TA0CCR0 =  1000;                                 // 1250 Hz
-    TA0CCTL1 = CCIE;                             // CCR1 interrupt enabled
 
-    /* Manully pend the interrupt - test successful! */
-    TA0CCTL1|=CCIFG_1;
-
-    /* Configure systick */
-    
     RMP_Disable_Int();
 }
 /* End Function:_RMP_Low_Level_Init ******************************************/

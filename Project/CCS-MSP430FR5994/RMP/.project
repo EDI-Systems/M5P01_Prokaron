@@ -36,6 +36,11 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>Lib</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>Platform</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -51,6 +56,26 @@
 			<locationURI>PARENT-3-PROJECT_LOC/MProkaron/Kernel/kernel.c</locationURI>
 		</link>
 		<link>
+			<name>Lib/cs.c</name>
+			<type>1</type>
+			<locationURI>PARENT-4-PROJECT_LOC/M0P0_Library/MSP430FR5xx_6xx/cs.c</locationURI>
+		</link>
+		<link>
+			<name>Lib/eusci_a_uart.c</name>
+			<type>1</type>
+			<locationURI>PARENT-4-PROJECT_LOC/M0P0_Library/MSP430FR5xx_6xx/eusci_a_uart.c</locationURI>
+		</link>
+		<link>
+			<name>Lib/gpio.c</name>
+			<type>1</type>
+			<locationURI>PARENT-4-PROJECT_LOC/M0P0_Library/MSP430FR5xx_6xx/gpio.c</locationURI>
+		</link>
+		<link>
+			<name>Lib/timer_a.c</name>
+			<type>1</type>
+			<locationURI>PARENT-4-PROJECT_LOC/M0P0_Library/MSP430FR5xx_6xx/timer_a.c</locationURI>
+		</link>
+		<link>
 			<name>Platform/platform_msp430.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/MProkaron/Platform/MSP430/platform_msp430.c</locationURI>
@@ -59,6 +84,11 @@
 			<name>Platform/platform_msp430_asm.s</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/MProkaron/Platform/MSP430/platform_msp430_asm.s</locationURI>
+		</link>
+		<link>
+			<name>Platform/platform_msp430x_asm.s</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/MProkaron/Platform/MSP430/platform_msp430x_asm.s</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>

@@ -83,14 +83,20 @@ typedef s16 ret_t;
 /* The maximum length of char printing - no need to change this in most cases */
 #define RMP_KERNEL_DEBUG_MAX_STR 128
 /* The offset of the stack when initializing */
-#define RMP_INIT_STACK           RMP_INIT_STACK_TAIL(17)
+#define RMP_INIT_STACK           RMP_INIT_STACK_TAIL(12)
 
 /* The CPU and application specific macros are here */
 #include "platform_msp430_conf.h"
 /* End System macros *********************************************************/
 
 /* MSP430 specific macros ****************************************************/
+#define RMP_MSP430_SR_SCG1      (1<<7)
+#define RMP_MSP430_SR_SCG0      (1<<6)
+#define RMP_MSP430_SR_OSCOFF    (1<<5)
+#define RMP_MSP430_SR_CPUOFF    (1<<4)
+#define RMP_MSP430_SR_GIE       (1<<3)
 
+#define RMP_MSP430X_PCSR(PC,SR) (((PC)<<16)|(((PC)>>4)&0xF000)|(SR))
 /*****************************************************************************/
 /* __PLATFORM_MSP430_H_DEFS__ */
 #endif
@@ -165,13 +171,17 @@ EXTERN void RMP_Enable_Int(void);
 
 __EXTERN__ ptr_t RMP_MSB_Get(ptr_t Val);
 EXTERN void _RMP_Start(ptr_t Entry, ptr_t Stack);
-EXTERN void _RMP_Yield(void);
+__EXTERN__ void _RMP_Yield(void);
 
 /* Initialization */
 __EXTERN__ void _RMP_Stack_Init(ptr_t Entry, ptr_t Stack, ptr_t Arg);
 __EXTERN__ void _RMP_Low_Level_Init(void);
 __EXTERN__ void RMP_Putchar(char Char);
 __EXTERN__ void _RMP_Plat_Hook(void);
+
+/* Platform-dependent hooks */
+__EXTERN__ void _RMP_Clear_Soft_Flag(void);
+__EXTERN__ void _RMP_Clear_Timer_Flag(void);
 /*****************************************************************************/
 /* Undefine "__EXTERN__" to avoid redefinition */
 #undef __EXTERN__

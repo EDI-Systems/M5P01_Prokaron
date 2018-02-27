@@ -14,10 +14,10 @@ Description : The performance testbench for RMP. Do not modify this file; what
 
 /* Globals *******************************************************************/
 #ifndef MINIMAL_SIZE
-tim_t Start=0;
-tim_t End=0;
-ptr_t Total=0;
-ptr_t Temp=0;
+volatile tim_t Start=0;
+volatile tim_t End=0;
+volatile ptr_t Total=0;
+volatile ptr_t Temp=0;
 /* Test results also written here */
 volatile ptr_t Yield_Time=0;
 volatile ptr_t Mailbox_Time=0;
@@ -45,7 +45,7 @@ void Test_Yield_1(void)
 
 void Test_Mail_1(void)
 {
-    cnt_t Count;
+    static cnt_t Count;
     for(Count=0;Count<10000;Count++)
     {
         /* Read counter here */
@@ -211,14 +211,24 @@ void Int_Handler(void)
         Count++;
         Start=COUNTER_READ();
         if(RMP_Thd_Snd_ISR(&Thd_2, 1)<0)
+        {
+            RMP_PRINTK_S("ISR Mailbox send failure: ");
+            RMP_PRINTK_I(Count);
+            RMP_PRINTK_S(" sends.\r\n");
             while(1);
+        }
     }
     else if(Count<20000)
     {
         Count++;
         Start=COUNTER_READ();
         if(RMP_Sem_Post_ISR(&Sem_1, 1)<0)
+        {
+            RMP_PRINTK_S("ISR semaphore post failure: ");
+            RMP_PRINTK_I(Count);
+            RMP_PRINTK_S(" posts.\r\n");
             while(1);
+        }
     }
     else
         Int_Disable();

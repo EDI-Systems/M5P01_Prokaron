@@ -63,3 +63,9 @@ Project/**/Debug/**
 *.uvopt*
 *.dep
 *.TMP
+
+# CCS specific
+Project/**/.jxbrowser-data/**
+Project/**/.metadata/**
+Project/**/.tempFiles/**
+Project/**/.jxbrowser-data/**
