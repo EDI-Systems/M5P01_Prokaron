@@ -7,7 +7,7 @@ Description: The configuration file for Cortex-M HAL.
 ******************************************************************************/
 
 /* Config Includes ***********************************************************/
-#include "Platform/CortexM/Chips/STM32F405RG/platform_STM32F405RG.h"
+#include "Platform/CortexM/Chips/STM32L053C8/platform_STM32L053C8.h"
 /* End Config Includes *******************************************************/
 
 /* End Of File ***************************************************************/

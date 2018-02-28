@@ -2,7 +2,7 @@
 ;Filename    : platform_cmx_asm.s
 ;Author      : pry
 ;Date        : 10/04/2012
-;Description : The assembly part of the RMP RTOS.
+;Description : The assembly part of the RMP RTOS. This is for Cortex-M3/4/7.
 ;*****************************************************************************/
 
 ;/* The ARM Cortex-M Structure ************************************************
@@ -16,7 +16,7 @@
 ;EPSR                         Execute Program Status Register.
 ;The above 3 registers are saved into the stack in combination(xPSR).
 ;
-;The ARM Cortex-M4 also include a single-accuracy FPU.
+;The ARM Cortex-M4/7 also include a single-accuracy FPU.
 ;*****************************************************************************/
             
 ;/* Begin Header *************************************************************/
@@ -91,10 +91,10 @@ RMP_Enable_Int
 ;Register Usage : None. 
 ;*****************************************************************************/
 RMP_MSB_Get
-                CLZ      R1,R0
-                MOV      R0,#31
-                SUB      R0,R1
-                BX       LR
+                CLZ             R1,R0
+                MOVS            R0,#31
+                SUBS            R0,R1
+                BX              LR
 ;/* End Function:RMP_MSB_Get *************************************************/
 
 ;/* Begin Function:_RMP_Yield *************************************************
@@ -103,19 +103,17 @@ RMP_MSB_Get
 ;Output      : None.                                      
 ;*****************************************************************************/
 _RMP_Yield
-                PUSH       {R0-R1}
+                PUSH            {R0-R1}
                 
-                
-                LDR        R0,=0xE000ED04              ;The NVIC_INT_CTRL register
-                      
-                LDR        R1,=0x10000000              ;Trigger the PendSV          
-                STR        R1,[R0]
+                LDR             R0,=0xE000ED04         ;The NVIC_INT_CTRL register
+                LDR             R1,=0x10000000         ;Trigger the PendSV          
+                STR             R1,[R0]
 
                 DSB                                    ;Data and instruction barrier
                 ISB
                 
-                POP        {R0-R1}                
-                BX         LR                                                   
+                POP             {R0-R1}                
+                BX              LR                                                   
 ;/* End Function:_RMP_Yield **************************************************/
 
 ;/* Begin Function:_RMP_Start *************************************************
@@ -125,16 +123,16 @@ _RMP_Yield
 ;*****************************************************************************/
 _RMP_Start
                 ;Should never reach here
-                SUB       R1,#64                       ; This is how we push our registers so move forward
-                MSR       PSP,R1                       ; Set the stack pointer
-                MOV       R4,#0x02                     ; Previleged thread mode
-                MSR       CONTROL,R4
+                SUBS            R1,#64                 ;This is how we push our registers so move forward
+                MSR             PSP,R1                 ;Set the stack pointer
+                MOVS            R4,#0x02               ;Previleged thread mode
+                MSR             CONTROL,R4
                 
                 DSB                                    ;Data and instruction barrier
                 ISB
                 
-                BLX       R0                           ; Branch to our target
-                B         .                            ; Capture faults      
+                BLX             R0                     ;Branch to our target
+                B               .                      ;Capture faults      
 ;/* End Function:_RMP_Start **************************************************/
 
 ;/* Begin Function:PendSV_Handler *********************************************
@@ -149,32 +147,25 @@ _RMP_Start
 ;Output      : None.                                      
 ;*****************************************************************************/
 PendSV_Handler
-                ;Spill all the registers onto the user stack
-                MRS       R0,PSP
+                MRS       R0,PSP                     ;Spill all the registers onto the user stack
                 STMDB     R0!,{R4-R11,LR}
                 
-                ;Save extra context
-                BL        RMP_Save_Ctx
+                BL        RMP_Save_Ctx               ;Save extra context
                 
-                ;Save The SP to control block.
-                LDR       R1,=RMP_Cur_SP
+                LDR       R1,=RMP_Cur_SP             ;Save The SP to control block.
                 STR       R0,[R1]
                 
-                ;Get the highest ready task.
-                BL        _RMP_Get_High_Rdy
+                BL        _RMP_Get_High_Rdy          ;Get the highest ready task.
                 
-                ;Load the SP.
-                LDR       R1,=RMP_Cur_SP
+                LDR       R1,=RMP_Cur_SP             ;Load the SP.
                 LDR       R0,[R1]
                 
-                ;Load extra context
-                BL        RMP_Load_Ctx
+                BL        RMP_Load_Ctx               ;Load extra context
 
                 LDMIA     R0!,{R4-R11,LR}
                 MSR       PSP,R0
                 
-                ;Here the LR will indicate whether we are using FPU.     
-                BX        LR
+                BX        LR                         ;The LR will indicate whether we are using FPU.     
 ;/* End Function:PendSV_Handler **********************************************/
 
 ;/* Begin Function:SysTick_Handler ********************************************
@@ -190,8 +181,8 @@ PendSV_Handler
 ;*****************************************************************************/
 SysTick_Handler
                 PUSH      {LR}
-                ;Note the system that we have entered an interrupt. We are not using tickless.
-                MOV       R0,#0x01
+                
+                MOVS      R0,#0x01                     ;We are not using tickless.
                 BL        _RMP_Tick_Handler
                 
                 POP       {PC}
@@ -201,4 +192,4 @@ SysTick_Handler
                 END
 ;/* End Of File **************************************************************/
 
-;/* Copyright (C) 2011-2013 Evo-Devo Instrum. All rights reserved ************/
+;/* Copyright (C) Evo-Devo Instrum. All rights reserved **********************/

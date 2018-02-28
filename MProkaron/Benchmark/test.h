@@ -7,7 +7,7 @@ Description: The configuration file for testing program.
 ******************************************************************************/
 
 /* Config Includes ***********************************************************/
-#include "Platform/test_MSP430FR5994.h"
+#include "Platform/test_STM32L053C8.h"
 /* End Config Includes *******************************************************/
 
 /* End Of File ***************************************************************/

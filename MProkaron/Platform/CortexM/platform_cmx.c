@@ -64,23 +64,8 @@ Output      : None.
 Return      : None.
 ******************************************************************************/
 void _RMP_Low_Level_Init(void)
-{
+{   
     RMP_CMX_LOW_LEVEL_INIT();
-    
-    /* Enable all fault handlers */
-    SCB->SHCSR|=RMP_CMX_SHCSR_USGFAULTENA|RMP_CMX_SHCSR_BUSFAULTENA|RMP_CMX_SHCSR_MEMFAULTENA;
-    
-    /* Set the priority of timer, svc and faults to the lowest */
-    NVIC_SetPriorityGrouping(RMP_CMX_NVIC_GROUPING);
-    NVIC_SetPriority(SVCall_IRQn, 0xFF);
-    NVIC_SetPriority(PendSV_IRQn, 0xFF);
-    NVIC_SetPriority(SysTick_IRQn, 0xFF);
-    NVIC_SetPriority(BusFault_IRQn, 0xFF);
-    NVIC_SetPriority(UsageFault_IRQn, 0xFF);
-    NVIC_SetPriority(DebugMonitor_IRQn, 0xFF);
-    
-    /* Configure systick */
-    SysTick_Config(RMP_CMX_SYSTICK_VAL);
     
     RMP_Disable_Int();
 }

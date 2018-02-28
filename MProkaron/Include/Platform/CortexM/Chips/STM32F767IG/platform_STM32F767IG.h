@@ -96,6 +96,17 @@ do \
 	UART1_Handle.Init.HwFlowCtl=UART_HWCONTROL_NONE; \
 	UART1_Handle.Init.Mode=UART_MODE_TX; \
 	HAL_UART_Init(&UART1_Handle); \
+    /* Enable all fault handlers */ \
+    SCB->SHCSR|=RMP_CMX_SHCSR_USGFAULTENA|RMP_CMX_SHCSR_BUSFAULTENA|RMP_CMX_SHCSR_MEMFAULTENA; \
+     \
+    /* Set the priority of timer, svc and faults to the lowest */ \
+    NVIC_SetPriorityGrouping(RMP_CMX_NVIC_GROUPING); \
+    NVIC_SetPriority(SVCall_IRQn, 0xFF); \
+    NVIC_SetPriority(PendSV_IRQn, 0xFF); \
+    NVIC_SetPriority(SysTick_IRQn, 0xFF); \
+    NVIC_SetPriority(BusFault_IRQn, 0xFF); \
+    NVIC_SetPriority(UsageFault_IRQn, 0xFF); \
+    NVIC_SetPriority(DebugMonitor_IRQn, 0xFF); \
 } \
 while(0)
     
