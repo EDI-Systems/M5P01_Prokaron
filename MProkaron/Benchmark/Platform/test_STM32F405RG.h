@@ -11,11 +11,14 @@ Description : The testbench for STM32F405RG.
 /* End Includes **************************************************************/
 
 /* Defines *******************************************************************/
+/* Where are the initial stacks */
+#define THD1_STACK        (&Stack_1[230])
+#define THD2_STACK        (&Stack_2[230])
 /* How to read counter */
-#define COUNTER_READ()   ((TIM2->CNT)<<1)
+#define COUNTER_READ()    ((TIM2->CNT)<<1)
 /* Are we doing minimal measurements? */
 /* #define MINIMAL_SIZE */
-/* The STM32F1 timers are all 16 bits, so */
+/* The STM32F4 timers are all 16 bits, so */
 typedef u16 tim_t;
 /* End Defines ***************************************************************/
 
@@ -40,7 +43,7 @@ Return      : None.
 ******************************************************************************/
 void Timer_Init(void)
 {
-    /* Initialize timer 2 to run at the same speed as the CPU */
+    /* TIM2 clock = 1/2 CPU clock */
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
     TIM_DeInit(TIM2);
     TIM2_Handle.TIM_Period=(ptr_t)(-1); 
@@ -62,7 +65,7 @@ Return      : None.
 ******************************************************************************/
 void Int_Init(void)
 {
-    /* Initialize timer 4 to run at the same speed as the CPU to generate interrupts. Downcounter. */
+    /* TIM4 clock = 1/2 CPU clock */
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4, ENABLE);
     TIM_DeInit(TIM4);
     TIM4_Handle.TIM_Period=16800; 

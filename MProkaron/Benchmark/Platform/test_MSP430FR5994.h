@@ -11,6 +11,9 @@ Description : The testbench for MSP430FR5994.
 /* End Includes **************************************************************/
 
 /* Defines *******************************************************************/
+/* Where are the initial stacks */
+#define THD1_STACK        (&Stack_1[100])
+#define THD2_STACK        (&Stack_2[100])
 /* This test is really slow. It takes 1-2 minutes(typ.1 min 30 sec) to run through @ 16MHz */
 /* How to read counter */
 #define COUNTER_READ()    (TA1R)
@@ -40,7 +43,7 @@ Return      : None.
 ******************************************************************************/
 void Timer_Init(void)
 {
-    /* Initialize timer 1 to run at 1/16 speed of the CPU */
+    /* TIM1 clock = CPU clock */
     TIM1_Handle.clockSource=TIMER_A_CLOCKSOURCE_SMCLK;
     TIM1_Handle.clockSourceDivider=TIMER_A_CLOCKSOURCE_DIVIDER_1;
     TIM1_Handle.timerPeriod=0xFFFF;
