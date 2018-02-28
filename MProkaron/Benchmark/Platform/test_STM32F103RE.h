@@ -11,8 +11,11 @@ Description : The testbench for STM32F103RE.
 /* End Includes **************************************************************/
 
 /* Defines *******************************************************************/
+/* Where are the initial stacks */
+#define THD1_STACK        (&Stack_1[230])
+#define THD2_STACK        (&Stack_2[230])
 /* How to read counter */
-#define COUNTER_READ()   (TIM2->CNT)
+#define COUNTER_READ()    (TIM2->CNT)
 /* Are we doing minimal measurements? */
 /* #define MINIMAL_SIZE */
 /* The STM32F1 timers are all 16 bits, so */
@@ -40,7 +43,7 @@ Return      : None.
 ******************************************************************************/
 void Timer_Init(void)
 {
-    /* Initialize timer 2 to run at the same speed as the CPU */
+    /* TIM2 clock = CPU clock */
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
     TIM_DeInit(TIM2);
     TIM2_Handle.TIM_Period=65535; 
@@ -62,8 +65,8 @@ Return      : None.
 ******************************************************************************/
 void Int_Init(void)
 {
-    /* Initialize timer 4 to run at the same speed as the CPU to generate interrupts. Downcounter. */
-    RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4 , ENABLE);
+    /* TIM4 clock = CPU clock */
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4, ENABLE);
     TIM_DeInit(TIM4);
     TIM4_Handle.TIM_Period=7200; 
     TIM4_Handle.TIM_Prescaler=0;
@@ -78,6 +81,7 @@ void Int_Init(void)
     NVIC_SetPriority(TIM4_IRQn, 0xFF);
     NVIC_EnableIRQ(TIM4_IRQn);
 }
+
 /* The interrupt handler */
 void TIM4_IRQHandler(void)
 {

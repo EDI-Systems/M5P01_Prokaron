@@ -29,7 +29,7 @@ Description: The configuration file for STM32L053C8.
 #define RMP_CMX_SYSTICK_VAL          3600
 
 /* Other low-level initialization stuff - clock and serial
- * STM32L0xx APB1 , APB2 */
+ * STM32L0xx APB1<32MHz, APB2<32MHz */
 #define RMP_CMX_LOW_LEVEL_INIT() \
 do \
 { \

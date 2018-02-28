@@ -17,7 +17,7 @@ Description : The testbench for STM32L053C8.
 /* How to read counter */
 #define COUNTER_READ()    (TIM2->CNT)
 /* Are we doing minimal measurements? */
-#define MINIMAL_SIZE
+/* #define MINIMAL_SIZE */
 /* The STM32L0 timers are all 16 bits, so */
 typedef u16 tim_t;
 /* End Defines ***************************************************************/

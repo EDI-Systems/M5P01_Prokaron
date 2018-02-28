@@ -11,8 +11,11 @@ Description : The testbench for PIC32MZ2048EFM100.
 /* End Includes **************************************************************/
 
 /* Defines *******************************************************************/
+/* Where are the initial stacks */
+#define THD1_STACK          (&Stack_1[400])
+#define THD2_STACK          (&Stack_2[400])
 /* How to read counter */
-#define COUNTER_READ()    (TMR1*5)
+#define COUNTER_READ()      (TMR1*5)
 /* Are we doing minimal measurements? */
 /* #define MINIMAL_SIZE */
 /* The PIC32 timers are all 16 bits, so */
@@ -93,7 +96,7 @@ Return      : None.
 ******************************************************************************/
 void Timer_Init(void)
 {
-    /* Initialize timer 1 to run at the same speed as the CPU */
+    /* TIM1 clock = 1/5 CPU clock */
     T1CON=0;
     TMR1=0;
     PR1=0xFFFF;
@@ -111,7 +114,7 @@ Return      : None.
 ******************************************************************************/
 void Int_Init(void)
 {
-    /* Initialize timer 2 to run at 1/5 speed of the CPU */
+    /* TIM2 clock = 1/5 CPU clock */
     T2CON=0;
     TMR2=0;
     PR2=20000;

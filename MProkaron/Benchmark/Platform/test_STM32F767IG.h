@@ -11,8 +11,11 @@ Description : The testbench for STM32F767IG.
 /* End Includes **************************************************************/
 
 /* Defines *******************************************************************/
+/* Where are the initial stacks */
+#define THD1_STACK        (&Stack_1[230])
+#define THD2_STACK        (&Stack_2[230])
 /* How to read counter */
-#define COUNTER_READ()   ((TIM2->CNT)<<1)
+#define COUNTER_READ()    ((TIM2->CNT)<<1)
 /* Are we doing minimal measurements? */
 /* #define MINIMAL_SIZE */
 /* The STM32F7 timers are all 32 bits, so */
@@ -40,7 +43,7 @@ Return      : None.
 ******************************************************************************/
 void Timer_Init(void)
 {
-    /* Initialize timer 2 to run at the same speed as the CPU */
+    /* TIM2 clock = 1/2 CPU clock */
     TIM2_Handle.Instance=TIM2;
     TIM2_Handle.Init.Prescaler=0;
     TIM2_Handle.Init.CounterMode=TIM_COUNTERMODE_UP;
@@ -61,7 +64,7 @@ Return      : None.
 ******************************************************************************/
 void Int_Init(void)
 {
-    /* Initialize timer 2 to run at the same speed as the CPU */
+    /* TIM4 clock = 1/2 CPU clock */
     TIM4_Handle.Instance=TIM4;
     TIM4_Handle.Init.Prescaler=0;
     TIM4_Handle.Init.CounterMode=TIM_COUNTERMODE_DOWN;

@@ -186,7 +186,6 @@ SysTick_Handler
                 BL        _RMP_Tick_Handler
                 
                 POP       {PC}
-                NOP
 ;/* End Function:SysTick_Handler *********************************************/
 
                 END
