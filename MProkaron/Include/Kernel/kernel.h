@@ -186,31 +186,31 @@ struct RMP_Sem
 #ifndef __HDR_PUBLIC_MEMBERS__
 /*****************************************************************************/
 /* The scheduler bitmap */
-static ptr_t RMP_Bitmap[RMP_BITMAP_SIZE];
-static struct RMP_List RMP_Run[RMP_MAX_PREEMPT_PRIO];
-static struct RMP_List RMP_Delay;
+static volatile ptr_t RMP_Bitmap[RMP_BITMAP_SIZE];
+static volatile struct RMP_List RMP_Run[RMP_MAX_PREEMPT_PRIO];
+static volatile struct RMP_List RMP_Delay;
 
 /* The timestamp value */
-static ptr_t RMP_Tick;
+static volatile ptr_t RMP_Tick;
 /* Scheduler lock */
-static ptr_t RMP_Sched_Lock_Cnt;
-static ptr_t RMP_Sched_Locked;
+static volatile ptr_t RMP_Sched_Lock_Cnt;
+static volatile ptr_t RMP_Sched_Locked;
 /* Scheduler pending */
-static ptr_t RMP_Sched_Pend;
+static volatile ptr_t RMP_Sched_Pend;
 /* Timer events pending */
-static ptr_t RMP_Timer_Pend;
+static volatile ptr_t RMP_Timer_Pend;
 
 /* Init thread */
-static ptr_t RMP_Init_Stack[RMP_INIT_STACK_SIZE>>(RMP_WORD_ORDER-3)];
-static struct RMP_Thd RMP_Init_Thd;
+static volatile ptr_t RMP_Init_Stack[RMP_INIT_STACK_SIZE>>(RMP_WORD_ORDER-3)];
+static volatile struct RMP_Thd RMP_Init_Thd;
 /*****************************************************************************/
 /* End Private Global Variables **********************************************/
 
 /* Private C Function Prototypes *********************************************/ 
 /*****************************************************************************/
-static void _RMP_Set_Rdy(struct RMP_Thd* Thread);
-static void _RMP_Clr_Rdy(struct RMP_Thd* Thread);
-static void _RMP_Dly_Ins(struct RMP_Thd* Thread, ptr_t Slices);
+static void _RMP_Set_Rdy(volatile struct RMP_Thd* Thread);
+static void _RMP_Clr_Rdy(volatile struct RMP_Thd* Thread);
+static void _RMP_Dly_Ins(volatile struct RMP_Thd* Thread, ptr_t Slices);
 static void _RMP_Timer_Proc(void);
 /*****************************************************************************/
 #define __EXTERN__
@@ -224,9 +224,9 @@ static void _RMP_Timer_Proc(void);
 #endif
 
 /*****************************************************************************/
-/* The current thread */
-__EXTERN__ struct RMP_Thd* RMP_Cur_Thd;
-__EXTERN__ ptr_t RMP_Cur_SP;
+/* The current thread - the pointer itself is volatile but not its contents */
+__EXTERN__ struct RMP_Thd* volatile RMP_Cur_Thd;
+__EXTERN__ volatile ptr_t RMP_Cur_SP;
 /*****************************************************************************/
 
 /* End Public Global Variables ***********************************************/
@@ -238,7 +238,7 @@ EXTERN void RMP_Init(void);
 __EXTERN__ void _RMP_Get_High_Rdy(void);
 __EXTERN__ void _RMP_Tick_Handler(ptr_t Ticks);
 __EXTERN__ ptr_t _RMP_Get_Near_Ticks(void);
-__EXTERN__ void RMP_Clear(void* Addr, ptr_t Size);
+__EXTERN__ void RMP_Clear(volatile void* Addr, ptr_t Size);
 
 /* Scheduler locking & unlocking */
 __EXTERN__ void RMP_Lock_Sched(void);
@@ -258,27 +258,27 @@ __EXTERN__ void RMP_List_Ins(volatile struct RMP_List* New,
 
 /* System interfaces */
 __EXTERN__ void RMP_Yield(void);
-__EXTERN__ ret_t RMP_Thd_Crt(struct RMP_Thd* Thread, 
+__EXTERN__ ret_t RMP_Thd_Crt(volatile struct RMP_Thd* Thread, 
                              void* Entry, void* Stack, void* Arg, 
                              ptr_t Prio, ptr_t Slices);
-__EXTERN__ ret_t RMP_Thd_Del(struct RMP_Thd* Thread);
-__EXTERN__ ret_t RMP_Thd_Set(struct RMP_Thd* Thread, ptr_t Prio, ptr_t Slices);
-__EXTERN__ ret_t RMP_Thd_Suspend(struct RMP_Thd* Thread);
-__EXTERN__ ret_t RMP_Thd_Resume(struct RMP_Thd* Thread);
+__EXTERN__ ret_t RMP_Thd_Del(volatile struct RMP_Thd* Thread);
+__EXTERN__ ret_t RMP_Thd_Set(volatile struct RMP_Thd* Thread, ptr_t Prio, ptr_t Slices);
+__EXTERN__ ret_t RMP_Thd_Suspend(volatile struct RMP_Thd* Thread);
+__EXTERN__ ret_t RMP_Thd_Resume(volatile struct RMP_Thd* Thread);
 
 __EXTERN__ ret_t RMP_Thd_Delay(ptr_t Slices);
-__EXTERN__ ret_t RMP_Thd_Cancel(struct RMP_Thd* Thread);
+__EXTERN__ ret_t RMP_Thd_Cancel(volatile struct RMP_Thd* Thread);
 
-__EXTERN__ ret_t RMP_Thd_Snd(struct RMP_Thd* Thread, ptr_t Data, ptr_t Slices);
-__EXTERN__ ret_t RMP_Thd_Snd_ISR(struct RMP_Thd* Thread, ptr_t Data);
+__EXTERN__ ret_t RMP_Thd_Snd(volatile struct RMP_Thd* Thread, ptr_t Data, ptr_t Slices);
+__EXTERN__ ret_t RMP_Thd_Snd_ISR(volatile struct RMP_Thd* Thread, ptr_t Data);
 __EXTERN__ ret_t RMP_Thd_Rcv(ptr_t* Data, ptr_t Slices);
 
-__EXTERN__ ret_t RMP_Sem_Crt(struct RMP_Sem* Semaphore, ptr_t Number);
-__EXTERN__ ret_t RMP_Sem_Del(struct RMP_Sem* Semaphore);
-__EXTERN__ ret_t RMP_Sem_Pend(struct RMP_Sem* Semaphore, ptr_t Slices);
-__EXTERN__ ret_t RMP_Sem_Abort(struct RMP_Thd* Thread);
-__EXTERN__ ret_t RMP_Sem_Post(struct RMP_Sem* Semaphore, ptr_t Number);
-__EXTERN__ ret_t RMP_Sem_Post_ISR(struct RMP_Sem* Semaphore, ptr_t Number);
+__EXTERN__ ret_t RMP_Sem_Crt(volatile struct RMP_Sem* Semaphore, ptr_t Number);
+__EXTERN__ ret_t RMP_Sem_Del(volatile struct RMP_Sem* Semaphore);
+__EXTERN__ ret_t RMP_Sem_Pend(volatile struct RMP_Sem* Semaphore, ptr_t Slices);
+__EXTERN__ ret_t RMP_Sem_Abort(volatile struct RMP_Thd* Thread);
+__EXTERN__ ret_t RMP_Sem_Post(volatile struct RMP_Sem* Semaphore, ptr_t Number);
+__EXTERN__ ret_t RMP_Sem_Post_ISR(volatile struct RMP_Sem* Semaphore, ptr_t Number);
 
 /* Hook functions */
 #if(RMP_USE_HOOKS==RMP_TRUE)

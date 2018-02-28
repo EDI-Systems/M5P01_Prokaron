@@ -26,10 +26,7 @@ typedef u16 tim_t;
 #ifndef MINIMAL_SIZE
 void Int_Handler(void);
 ptr_t Stack_1[256];
-struct RMP_Thd Thd_1={0};
 ptr_t Stack_2[256];
-struct RMP_Thd Thd_2={0};
-struct RMP_Sem Sem_1={0};
 TIM_TimeBaseInitTypeDef TIM2_Handle={0};   
 TIM_TimeBaseInitTypeDef TIM4_Handle={0};
 /* End Globals ***************************************************************/

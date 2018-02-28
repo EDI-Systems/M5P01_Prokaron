@@ -12,8 +12,8 @@ Description : The testbench for PIC32MZ2048EFM100.
 
 /* Defines *******************************************************************/
 /* Where are the initial stacks */
-#define THD1_STACK          (&Stack_1[400])
-#define THD2_STACK          (&Stack_2[400])
+#define THD1_STACK          (&Stack_1[300])
+#define THD2_STACK          (&Stack_2[300])
 /* How to read counter */
 #define COUNTER_READ()      (TMR1*5)
 /* Are we doing minimal measurements? */
@@ -81,10 +81,7 @@ typedef u16 tim_t;
 #ifndef MINIMAL_SIZE
 void Int_Handler(void);
 ptr_t Stack_1[512];
-struct RMP_Thd Thd_1;
 ptr_t Stack_2[512];
-struct RMP_Thd Thd_2;
-struct RMP_Sem Sem_1;
 /* End Globals ***************************************************************/
 
 /* Begin Function:Timer_Init **************************************************

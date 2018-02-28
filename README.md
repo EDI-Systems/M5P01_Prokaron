@@ -118,10 +118,10 @@ For vendor-supplied packages and hardware abstraction libraries, please refer to
 ### Typical performance figures for all supported architectures
 |Machine      |Toolchain     |Flash|SRAM|Yield|Mailbox|Semaphore|Mailbox/Int|Semaphore/Int|
 |:-----------:|:------------:|:---:|:--:|:---:|:-----:|:-------:|:---------:|:-----------:|
-|MSP430       |TI CCS6       |TBT  |TBT |1199 |2444   |2281     |2378       |2245         |
+|MSP430       |TI CCS6       |2.90 |0.64|1254 |2386   |2281     |2378       |2245         |
 |MSP430       |GCC           |TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
-|Cortex-M0    |Keil uVision 5|4.94 |1.65|374  |663    |616      |659        |617          |  **
-|Cortex-M0+   |Keil uVision 5|6.25 |1.65|334  |607    |544      |588        |552          |  **
+|Cortex-M0    |Keil uVision 5|4.94 |1.65|374  |663    |616      |659        |617          |
+|Cortex-M0+   |Keil uVision 5|6.25 |1.65|334  |607    |544      |588        |552          |
 |Cortex-M3    |Keil uVision 5|2.60 |1.65|246  |456    |422      |443        |409          |
 |Cortex-M3    |GCC           |TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
 |Cortex-M4    |Keil uVision 5|2.70 |1.66|184  |339    |325      |374        |361          |
@@ -132,9 +132,10 @@ For vendor-supplied packages and hardware abstraction libraries, please refer to
 |Cortex-R4    |GCC           |TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
 |Cortex-R5    |Keil uVision 5|TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
 |Cortex-R5    |GCC           |TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
-|MIPS M14k    |XC32-GCC      |11.3 |2.46|248  |332    |312      |398        |388          |
+|MIPS M14k    |XC32-GCC      |17.2 |2.46|264  |358    |340      |421        |415          |
 
-**Flash and SRAM consumption is calculated in kB, while the other figures are calculated in CPU clock cycles.**  
+**Flash and SRAM consumption is calculated in kB, while the other figures are calculated in CPU clock cycles.** 
+All compiler options are the highest optimization (usually -O3) and optimized for time. 
 Yield: The time to yield between different threads.  
 Mailbox: The mailbox communication time between two threads.  
 Semaphore: The semaphore communication time between two threads.  
