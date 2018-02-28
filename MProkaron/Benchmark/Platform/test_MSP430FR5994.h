@@ -27,10 +27,7 @@ typedef u16 tim_t;
 #ifndef MINIMAL_SIZE
 void Int_Handler(void);
 ptr_t Stack_1[128];
-volatile struct RMP_Thd Thd_1={0};
 ptr_t Stack_2[128];
-volatile struct RMP_Thd Thd_2={0};
-volatile struct RMP_Sem Sem_1={0};
 struct Timer_A_initUpModeParam TIM1_Handle={0};
 /* End Globals ***************************************************************/
 

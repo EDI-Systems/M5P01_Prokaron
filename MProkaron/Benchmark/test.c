@@ -24,6 +24,10 @@ volatile ptr_t Mailbox_Time=0;
 volatile ptr_t Semaphore_Time=0;
 volatile ptr_t Mailbox_ISR_Time=0;
 volatile ptr_t Semaphore_ISR_Time=0;
+/* Kernel objects */
+volatile struct RMP_Thd Thd_1;
+volatile struct RMP_Thd Thd_2;
+volatile struct RMP_Sem Sem_1;
 /* End Globals ***************************************************************/
 
 /* Begin Function:Func_1 ******************************************************
