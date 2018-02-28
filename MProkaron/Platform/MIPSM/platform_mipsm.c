@@ -5,6 +5,11 @@ Date        : 04/02/2018
 Licence     : LGPL v3+; see COPYING for details.
 Description : The platform specific file for MIPS M-class. 
               Currently M4k and M14kF is supported.
+              Beware that sometimes GCC-based compilers will use the LWX 
+              instruction, which belongs to the DSP ASE expansion. We do not
+              enable DSP ASE by default however, so passing no ASE flags to the
+              compiler is necessary.
+              Add -mno-dsp and -mno-dspr2
 ******************************************************************************/
 
 /* Includes ******************************************************************/

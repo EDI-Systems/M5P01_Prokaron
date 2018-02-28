@@ -30,12 +30,12 @@ Description : The RMP RTOS single-file kernel.
 
 /* Begin Function:RMP_Clear ***************************************************
 Description : Memset a memory area to zero.
-Input       : void* Addr - The address to clear.
+Input       : volatile void* Addr - The address to clear.
               ptr_t Size - The size to clear.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void RMP_Clear(void* Addr, ptr_t Size)
+void RMP_Clear(volatile void* Addr, ptr_t Size)
 {
     ptr_t* Word_Inc;
     u8* Byte_Inc;
@@ -507,11 +507,11 @@ ptr_t _RMP_Get_Near_Ticks(void)
 Description : Set the thread as ready to schedule. That means, put the thread into
               the runqueue. When this is called, please make sure that the scheduler
               is locked.
-Input       : struct RMP_Thd* Thread - The thread to put into the runqueue.
+Input       : volatile struct RMP_Thd* Thread - The thread to put into the runqueue.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void _RMP_Set_Rdy(struct RMP_Thd* Thread)
+void _RMP_Set_Rdy(volatile struct RMP_Thd* Thread)
 {
     /* Insert this into the corresponding runqueue */
     RMP_List_Ins(&(Thread->Run_Head),RMP_Run[Thread->Prio].Prev,&(RMP_Run[Thread->Prio]));
@@ -527,11 +527,11 @@ void _RMP_Set_Rdy(struct RMP_Thd* Thread)
 /* Begin Function:_RMP_Clr_Rdy ************************************************
 Description : Clear the thread from the runqueue. When this is called, please 
               make sure that the scheduler is locked.
-Input       : struct RMP_Thd* Thread - The thread to clear from the runqueue.
+Input       : volatile struct RMP_Thd* Thread - The thread to clear from the runqueue.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void _RMP_Clr_Rdy(struct RMP_Thd* Thread)
+void _RMP_Clr_Rdy(volatile struct RMP_Thd* Thread)
 {
     /* See if it is the last thread on the priority level */
     if(Thread->Run_Head.Prev==Thread->Run_Head.Next)
@@ -549,12 +549,12 @@ void _RMP_Clr_Rdy(struct RMP_Thd* Thread)
 /* Begin Function:_RMP_Dly_Ins ************************************************
 Description : Insert the thread into the delay queue, given some timeslices into the
               future. The thread must not be in the run queue any more.
-Input       : struct RMP_Thd* Thread - The thread to put into the delay queue.
+Input       : volatile struct RMP_Thd* Thread - The thread to put into the delay queue.
               ptr_t - The timeslices to delay.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void _RMP_Dly_Ins(struct RMP_Thd* Thread, ptr_t Slices)
+void _RMP_Dly_Ins(volatile struct RMP_Thd* Thread, ptr_t Slices)
 {
     struct RMP_List* Trav_Ptr;
     struct RMP_Thd* Trav_Thd;
@@ -575,9 +575,9 @@ void _RMP_Dly_Ins(struct RMP_Thd* Thread, ptr_t Slices)
 
 /* Begin Function:RMP_Thd_Crt *************************************************
 Description : Create a real-time thread.
-Input       : struct RMP_Thd* Thread - The thread structure provided. The user 
-                                       should make this allocation according to
-                                       his or her needs.
+Input       : volatile struct RMP_Thd* Thread - The thread structure provided. The user 
+                                                should make this allocation according to
+                                                his or her needs.
               void* Entry - The entry of the thread.
               void* Stack - The stack of this thread.
               void* Arg - The argument to pass to the thread.
@@ -586,7 +586,7 @@ Input       : struct RMP_Thd* Thread - The thread structure provided. The user
 Output      : None.
 Return      : ret_t - If successful, 0. on error, return an error code.
 ******************************************************************************/
-ret_t RMP_Thd_Crt(struct RMP_Thd* Thread, void* Entry, void* Stack, void* Arg, ptr_t Prio, ptr_t Slices)
+ret_t RMP_Thd_Crt(volatile struct RMP_Thd* Thread, void* Entry, void* Stack, void* Arg, ptr_t Prio, ptr_t Slices)
 {
     /* Check if the priority and timeslice range is correct */
     if(Prio>=RMP_MAX_PREEMPT_PRIO)
@@ -628,11 +628,11 @@ ret_t RMP_Thd_Crt(struct RMP_Thd* Thread, void* Entry, void* Stack, void* Arg, p
 
 /* Begin Function:RMP_Thd_Del *************************************************
 Description : Delete a real-time thread.
-Input       : struct RMP_Thd* Thread - The thread structure of the thread.
+Input       : volatile struct RMP_Thd* Thread - The thread structure of the thread.
 Output      : None.
 Return      : ret_t - If successful, 0; or an error code.
 ******************************************************************************/
-ret_t RMP_Thd_Del(struct RMP_Thd* Thread)
+ret_t RMP_Thd_Del(volatile struct RMP_Thd* Thread)
 {
     struct RMP_Thd* Release;
     ptr_t Self_Del;
@@ -722,13 +722,13 @@ ret_t RMP_Thd_Del(struct RMP_Thd* Thread)
 Description : Change the priority or timeslice of a real-time thread. If one of
               the changes is not desired, just leave it to RMP_MAX_PREEMPT_PRIO
               or RMP_MAX_SLICES.
-Input       : struct RMP_Thd* Thread - The thread structure of the thread.
+Input       : volatile struct RMP_Thd* Thread - The thread structure of the thread.
               ptr_t Prio - The priority of the thread.
               ptr_t Slices - The new timeslice value for this thread.
 Output      : None.
 Return      : ret_t - If successful, 0; else error code.
 ******************************************************************************/
-ret_t RMP_Thd_Set(struct RMP_Thd* Thread, ptr_t Prio, ptr_t Slices)
+ret_t RMP_Thd_Set(volatile struct RMP_Thd* Thread, ptr_t Prio, ptr_t Slices)
 {
     /* Check if the priority and timeslice range is correct */
     if(Slices==0)
@@ -780,11 +780,11 @@ ret_t RMP_Thd_Set(struct RMP_Thd* Thread, ptr_t Prio, ptr_t Slices)
 
 /* Begin Function:RMP_Thd_Suspend *********************************************
 Description : Suspend the execution of a real-time thread.
-Input       : struct RMP_Thd* Thread - The thread structure of the thread.
+Input       : volatile struct RMP_Thd* Thread - The thread structure of the thread.
 Output      : None.
 Return      : ret_t - If successful, 0; else error code.
 ******************************************************************************/
-ret_t RMP_Thd_Suspend(struct RMP_Thd* Thread)
+ret_t RMP_Thd_Suspend(volatile struct RMP_Thd* Thread)
 {
     /* Check if this thread structure could possibly be in use */
     if(Thread==0)
@@ -818,11 +818,11 @@ ret_t RMP_Thd_Suspend(struct RMP_Thd* Thread)
 
 /* Begin Function:RMP_Thd_Resume **********************************************
 Description : Resume the execution of a real-time thread.
-Input       : struct RMP_Thd* Thread - The thread structure of the thread.
+Input       : volatile struct RMP_Thd* Thread - The thread structure of the thread.
 Output      : None.
 Return      : ret_t - If successful, 0; else error code.
 ******************************************************************************/
-ret_t RMP_Thd_Resume(struct RMP_Thd* Thread)
+ret_t RMP_Thd_Resume(volatile struct RMP_Thd* Thread)
 {
     ret_t Retval;
     
@@ -859,13 +859,13 @@ ret_t RMP_Thd_Resume(struct RMP_Thd* Thread)
 /* Begin Function:RMP_Thd_Snd *************************************************
 Description : Send to a real-time thread's mailbox. If the mailbox is full, then
               this operation can potentially block.
-Input       : struct RMP_Thd* Thread - The thread structure of the thread to send to.
+Input       : volatile struct RMP_Thd* Thread - The thread structure of the thread to send to.
               ptr_t Data - The data to send to that thread.
               ptr_t Slices - The timeslice to wait, if the mailbox is already full.
 Output      : None.
 Return      : ret_t - If successful,0; or an error code.
 ******************************************************************************/
-ret_t RMP_Thd_Snd(struct RMP_Thd* Thread, ptr_t Data, ptr_t Slices)
+ret_t RMP_Thd_Snd(volatile struct RMP_Thd* Thread, ptr_t Data, ptr_t Slices)
 {
     /* Check if this thread structure could possibly be in use */
     if(Thread==0)
@@ -944,12 +944,12 @@ ret_t RMP_Thd_Snd(struct RMP_Thd* Thread, ptr_t Data, ptr_t Slices)
 Description : Send to a real-time thread's mailbox. If the mailbox is full, then
               this operation will just fail. This function can only be called from
               an ISR whose priority is below or equal to the context switch handler's.
-Input       : struct RMP_Thd* Thread - The thread structure of the thread to send to.
+Input       : volatile struct RMP_Thd* Thread - The thread structure of the thread to send to.
               ptr_t Data - The data to send to that thread.
 Output      : None.
 Return      : ret_t - If successful,0; or an error code.
 ******************************************************************************/
-ret_t RMP_Thd_Snd_ISR(struct RMP_Thd* Thread, ptr_t Data)
+ret_t RMP_Thd_Snd_ISR(volatile struct RMP_Thd* Thread, ptr_t Data)
 {
     /* Check if this thread structure could possibly be in use */
     if(Thread==0)
@@ -1102,11 +1102,11 @@ ret_t RMP_Thd_Delay(ptr_t Slices)
 
 /* Begin Function:RMP_Thd_Cancel **********************************************
 Description : Cancel the real-time thread from a previous delay.
-Input       : struct RMP_Thd* Thread - The thread structure of the thread.
+Input       : volatile struct RMP_Thd* Thread - The thread structure of the thread.
 Output      : None.
 Return      : ret_t - If successful, 0; else error code.
 ******************************************************************************/
-ret_t RMP_Thd_Cancel(struct RMP_Thd* Thread)
+ret_t RMP_Thd_Cancel(volatile struct RMP_Thd* Thread)
 {
     /* Check if this thread structure could possibly be in use */
     if(Thread==0)
@@ -1139,12 +1139,12 @@ ret_t RMP_Thd_Cancel(struct RMP_Thd* Thread)
 
 /* Begin Function:RMP_Sem_Crt *************************************************
 Description : Create a semaphore in the system.
-Input       : struct RMP_Sem* Semaphore - The pointer to the semaphore structure.
+Input       : volatile struct RMP_Sem* Semaphore - The pointer to the semaphore structure.
               ptr_t Number - The initial number of this semaphore.
 Output      : None.
 Return      : ret_t - If successful, 0; or an error code.
 ******************************************************************************/
-ret_t RMP_Sem_Crt(struct RMP_Sem* Semaphore, ptr_t Number)
+ret_t RMP_Sem_Crt(volatile struct RMP_Sem* Semaphore, ptr_t Number)
 {
     /* Check if this semaphore structure could possibly be in use */
     if(Semaphore==0)
@@ -1178,11 +1178,11 @@ ret_t RMP_Sem_Crt(struct RMP_Sem* Semaphore, ptr_t Number)
 
 /* Begin Function:RMP_Sem_Del *************************************************
 Description : Delete a semaphore in the system.
-Input       : struct RMP_Sem* Semaphore - The pointer to the semaphore structure.
+Input       : volatile struct RMP_Sem* Semaphore - The pointer to the semaphore structure.
 Output      : None.
 Return      : ret_t - If successful, 0; else error code.
 ******************************************************************************/
-ret_t RMP_Sem_Del(struct RMP_Sem* Semaphore)
+ret_t RMP_Sem_Del(volatile struct RMP_Sem* Semaphore)
 {
     struct RMP_Thd* Thread;
     
@@ -1224,12 +1224,12 @@ ret_t RMP_Sem_Del(struct RMP_Sem* Semaphore)
 
 /* Begin Function:RMP_Sem_Pend ************************************************
 Description : Pend on the semaphore, trying to get one.
-Input       : struct RMP_Sem* Semaphore - The pointer to the semaphore structure.
+Input       : volatile struct RMP_Sem* Semaphore - The pointer to the semaphore structure.
               ptr_t Slices - The number of slices to wait.
 Output      : None.
 Return      : ret_t - If successful, the current semaphore number; else error code.
 ******************************************************************************/
-ret_t RMP_Sem_Pend(struct RMP_Sem* Semaphore, ptr_t Slices)
+ret_t RMP_Sem_Pend(volatile struct RMP_Sem* Semaphore, ptr_t Slices)
 {
     /* Check if this semaphore structure could possibly be in use */
     if(Semaphore==0)
@@ -1282,11 +1282,11 @@ ret_t RMP_Sem_Pend(struct RMP_Sem* Semaphore, ptr_t Slices)
 
 /* Begin Function:RMP_Sem_Abort ***********************************************
 Description : Abort the waiting of one thread on a semaphore.
-Input       : struct RMP_Thd* Thread - The thread structure of the thread.
+Input       : volatile struct RMP_Thd* Thread - The thread structure of the thread.
 Output      : None.
 Return      : ret_t - If successful, 0; else error code.
 ******************************************************************************/
-ret_t RMP_Sem_Abort(struct RMP_Thd* Thread)
+ret_t RMP_Sem_Abort(volatile struct RMP_Thd* Thread)
 {
     /* Check if this thread structure could possibly be in use */
     if(Thread==0)
@@ -1331,12 +1331,12 @@ ret_t RMP_Sem_Abort(struct RMP_Thd* Thread)
 Description : Post a number of semaphores to the list. This function can only be
               called from an ISR whose priority is below or equal to the context
               switch handler's.
-Input       : struct RMP_Sem* Semaphore - The pointer to the semaphore structure.
+Input       : volatile struct RMP_Sem* Semaphore - The pointer to the semaphore structure.
               ptr_t Number - The number to post.
 Output      : None.
 Return      : ret_t - If successful, 0; else error code.
 ******************************************************************************/
-ret_t RMP_Sem_Post(struct RMP_Sem* Semaphore, ptr_t Number)
+ret_t RMP_Sem_Post(volatile struct RMP_Sem* Semaphore, ptr_t Number)
 {
     struct RMP_Thd* Thread;
     
@@ -1386,12 +1386,12 @@ ret_t RMP_Sem_Post(struct RMP_Sem* Semaphore, ptr_t Number)
 
 /* Begin Function:RMP_Sem_Post_ISR ********************************************
 Description : Post a number of semaphores to the list.
-Input       : struct RMP_Sem* Semaphore - The pointer to the semaphore structure.
+Input       : volatile struct RMP_Sem* Semaphore - The pointer to the semaphore structure.
               ptr_t Number - The number to post.
 Output      : None.
 Return      : ret_t - If successful, 0; else error code.
 ******************************************************************************/
-ret_t RMP_Sem_Post_ISR(struct RMP_Sem* Semaphore, ptr_t Number)
+ret_t RMP_Sem_Post_ISR(volatile struct RMP_Sem* Semaphore, ptr_t Number)
 {
     struct RMP_Thd* Thread;
     /* Check if this semaphore structure could possibly be in use */
@@ -1570,7 +1570,7 @@ int main(void)
     RMP_Bitmap[0]|=1;
     
     /* Set current thread and stack */
-    RMP_Cur_Thd=&RMP_Init_Thd;
+    RMP_Cur_Thd=(struct RMP_Thd*)(&RMP_Init_Thd);
     RMP_Cur_SP=RMP_Init_Thd.Stack;
     
     /* Now jump to the user function and will never return. Initialization of stack is not needed */

@@ -173,10 +173,10 @@ the first task is being restored. */
 #endif
 
 /*****************************************************************************/
-__EXTERN__ ptr_t RMP_GP_Val;
-__EXTERN__ ptr_t RMP_SP_Val;
-__EXTERN__ ptr_t RMP_Old_SP_Val;
-__EXTERN__ ptr_t RMP_Int_Nest;
+__EXTERN__ volatile ptr_t RMP_GP_Val;
+__EXTERN__ volatile ptr_t RMP_SP_Val;
+__EXTERN__ volatile ptr_t RMP_Old_SP_Val;
+__EXTERN__ volatile ptr_t RMP_Int_Nest;
 
 /*****************************************************************************/
 
