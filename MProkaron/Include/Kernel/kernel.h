@@ -186,23 +186,23 @@ struct RMP_Sem
 #ifndef __HDR_PUBLIC_MEMBERS__
 /*****************************************************************************/
 /* The scheduler bitmap */
-static volatile ptr_t RMP_Bitmap[RMP_BITMAP_SIZE];
-static volatile struct RMP_List RMP_Run[RMP_MAX_PREEMPT_PRIO];
-static volatile struct RMP_List RMP_Delay;
+static ptr_t RMP_Bitmap[RMP_BITMAP_SIZE];
+static struct RMP_List RMP_Run[RMP_MAX_PREEMPT_PRIO];
+static struct RMP_List RMP_Delay;
 
 /* The timestamp value */
-static volatile ptr_t RMP_Tick;
+static ptr_t RMP_Tick;
 /* Scheduler lock */
-static volatile ptr_t RMP_Sched_Lock_Cnt;
-static volatile ptr_t RMP_Sched_Locked;
+static ptr_t RMP_Sched_Lock_Cnt;
+static ptr_t RMP_Sched_Locked;
 /* Scheduler pending */
-static volatile ptr_t RMP_Sched_Pend;
+static ptr_t RMP_Sched_Pend;
 /* Timer events pending */
-static volatile ptr_t RMP_Timer_Pend;
+static ptr_t RMP_Timer_Pend;
 
 /* Init thread */
-static volatile ptr_t RMP_Init_Stack[RMP_INIT_STACK_SIZE>>(RMP_WORD_ORDER-3)];
-static volatile struct RMP_Thd RMP_Init_Thd;
+static ptr_t RMP_Init_Stack[RMP_INIT_STACK_SIZE>>(RMP_WORD_ORDER-3)];
+static struct RMP_Thd RMP_Init_Thd;
 /*****************************************************************************/
 /* End Private Global Variables **********************************************/
 
@@ -225,8 +225,8 @@ static void _RMP_Timer_Proc(void);
 
 /*****************************************************************************/
 /* The current thread */
-__EXTERN__ volatile  struct RMP_Thd* RMP_Cur_Thd;
-__EXTERN__ volatile ptr_t RMP_Cur_SP;
+__EXTERN__ struct RMP_Thd* RMP_Cur_Thd;
+__EXTERN__ ptr_t RMP_Cur_SP;
 /*****************************************************************************/
 
 /* End Public Global Variables ***********************************************/

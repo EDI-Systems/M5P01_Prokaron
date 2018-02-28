@@ -237,7 +237,7 @@ void Int_Handler(void)
 /* End Function:Int_Handler **************************************************/
 
 /* Begin Function:RMP_Init ****************************************************
-Description : The init thread ook functions.
+Description : The init thread hook functions.
 Input       : None.
 Output      : None.
 Return      : None.
@@ -254,8 +254,8 @@ void RMP_Init_Hook(void)
     /* Create counting semaphore */
     RMP_Sem_Crt(&Sem_1,0);
     /* Start threads */
-    RMP_Thd_Crt(&Thd_1, Func_1, &Stack_1[100], (void*)0x1234, 1, 5);
-    RMP_Thd_Crt(&Thd_2, Func_2, &Stack_2[100], (void*)0x4321, 1, 5);
+    RMP_Thd_Crt(&Thd_1, Func_1, THD1_STACK, (void*)0x1234, 1, 5);
+    RMP_Thd_Crt(&Thd_2, Func_2, THD2_STACK, (void*)0x4321, 1, 5);
 #endif
 }
 
