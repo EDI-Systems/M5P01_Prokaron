@@ -120,8 +120,8 @@ For vendor-supplied packages and hardware abstraction libraries, please refer to
 |:-----------:|:------------:|:---:|:--:|:---:|:-----:|:-------:|:---------:|:-----------:|
 |MSP430       |TI CCS6       |TBT  |TBT |1199 |2444   |2281     |2378       |2245         |
 |MSP430       |GCC           |TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
-|Cortex-M0    |Keil uVision 5|TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
-|Cortex-M0+   |Keil uVision 5|6.25 |1.65|334  |607    |544      |588        |552          |
+|Cortex-M0    |Keil uVision 5|4.94 |1.65|374  |663    |616      |659        |617          |  **
+|Cortex-M0+   |Keil uVision 5|6.25 |1.65|334  |607    |544      |588        |552          |  **
 |Cortex-M3    |Keil uVision 5|2.60 |1.65|246  |456    |422      |443        |409          |
 |Cortex-M3    |GCC           |TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
 |Cortex-M4    |Keil uVision 5|2.70 |1.66|184  |339    |325      |374        |361          |
