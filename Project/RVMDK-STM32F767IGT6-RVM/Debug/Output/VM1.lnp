@@ -1,0 +1,9 @@
+--cpu Cortex-M7.fp.dp
+".\debug\output\kernel.o"
+".\debug\output\platform_cmx_rvm.o"
+".\debug\output\platform_cmx_rvm_asm.o"
+".\debug\output\test.o"
+--library_type=microlib --strict --scatter ".\Debug\Output\VM1.sct"
+--summary_stderr --info summarysizes --map --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list ".\Debug\Listings\VM1.map" -o .\Debug\Output\VM1.axf

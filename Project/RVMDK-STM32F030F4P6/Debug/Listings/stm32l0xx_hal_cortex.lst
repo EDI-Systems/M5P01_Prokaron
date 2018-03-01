@@ -1,0 +1,98 @@
+L 1 "..\..\..\M0P0_Library\STM32Cube_FW_L0_V1.10.0\Drivers\STM32L0xx_HAL_Driver\Src\stm32l0xx_hal_cortex.c"
+N/**
+N  ******************************************************************************
+N  * @file    stm32l0xx_hal_cortex.c
+N  * @author  MCD Application Team
+N  * @brief   CORTEX HAL module driver.
+N  *          This file provides firmware functions to manage the following 
+N  *          functionalities of the CORTEX:
+N  *           + Initialization and de-initialization functions
+N  *           + Peripheral Control functions 
+N  *
+N  @verbatim  
+N  ==============================================================================
+N                        ##### How to use this driver #####
+N  ==============================================================================
+N
+N    [..]  
+N    *** How to configure Interrupts using CORTEX HAL driver ***
+N    ===========================================================
+N    [..]     
+N    This section provide functions allowing to configure the NVIC interrupts (IRQ).
+N    The Cortex-M0+ exceptions are managed by CMSIS functions.
+N      (#) Enable and Configure the priority of the selected IRQ Channels. 
+N             The priority can be 0..3. 
+N
+N        -@- Lower priority values gives higher priority.
+N        -@- Priority Order:
+N            (#@) Lowest priority.
+N            (#@) Lowest hardware priority (IRQn position).  
+N    
+N     (#)  Configure the priority of the selected IRQ Channels using HAL_NVIC_SetPriority() 
+N
+N     (#)  Enable the selected IRQ Channels using HAL_NVIC_EnableIRQ() 
+N      
+N    [..]  
+N    *** How to configure Systick using CORTEX HAL driver ***
+N    ========================================================
+N    [..]
+N    Setup SysTick Timer for time base 
+N           
+N   (+) The HAL_SYSTICK_Config()function calls the SysTick_Config() function which
+N       is a CMSIS function that:
+N        (++) Configures the SysTick Reload register with value passed as function parameter.
+N        (++) Configures the SysTick IRQ priority to the lowest value (0x03).
+N        (++) Resets the SysTick Counter register.
+N        (++) Configures the SysTick Counter clock source to be Core Clock Source (HCLK).
+N        (++) Enables the SysTick Interrupt.
+N        (++) Starts the SysTick Counter.
+N	
+N   (+) You can change the SysTick Clock source to be HCLK_Div8 by calling the function
+N       HAL_SYSTICK_CLKSourceConfig(SYSTICK_CLKSOURCE_HCLK_DIV8) just after the
+N       HAL_SYSTICK_Config() function call. The HAL_SYSTICK_CLKSourceConfig() function is defined
+N       inside the stm32l0xx_hal_cortex.c file.
+N
+N   (+) You can change the SysTick IRQ priority by calling the
+N       HAL_NVIC_SetPriority(SysTick_IRQn,...) function just after the HAL_SYSTICK_Config() function 
+N       call. The HAL_NVIC_SetPriority() call the NVIC_SetPriority() function which is a CMSIS function.
+N
+N   (+) To adjust the SysTick time base, use the following formula:
+N                            
+N       Reload Value = SysTick Counter Clock (Hz) x  Desired Time base (s)
+N       (++) Reload Value is the parameter to be passed for HAL_SYSTICK_Config() function
+N       (++) Reload Value should not exceed 0xFFFFFF
+N   
+N  @endverbatim
+N  ******************************************************************************
+N  * @attention
+N  *
+N  * <h2><center>&copy; COPYRIGHT(c) 2016 STMicroelectronics</center></h2>
+N  *
+N  * Redistribution and use in source and binary forms, with or without modification,
+N  * are permitted provided that the following conditions are met:
+N  *   1. Redistributions of source code must retain the above copyright notice,
+N  *      this list of conditions and the following disclaimer.
+N  *   2. Redistributions in binary form must reproduce the above copyright notice,
+N  *      this list of conditions and the following disclaimer in the documentation
+N  *      and/or other materials provided with the distribution.
+N  *   3. Neither the name of STMicroelectronics nor the names of its contributors
+N  *      may be used to endorse or promote products derived from this software
+N  *      without specific prior written permission.
+N  *
+N  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+N  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+N  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+N  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+N  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+N  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+N  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+N  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+N  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+N  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+N  *
+N  ******************************************************************************  
+N  */
+N
+N/* Includes ------------------------------------------------------------------*/
+C "..\..\..\M0P0_Library\STM32Cube_FW_L0_V1.10.0\Drivers\STM32L0xx_HAL_Driver\Src\stm32l0xx_hal_cortex.c" 96 27 cannot open source input file "stm32l0xx_hal.h": No such file or directory
+N#include "stm32l0xx_hal.h"

@@ -1,0 +1,90 @@
+L 1 "..\..\..\M0P0_Library\STM32Cube_FW_L0_V1.10.0\Drivers\STM32L0xx_HAL_Driver\Src\stm32l0xx_hal_dma.c"
+N/**
+N  ******************************************************************************
+N  * @file    stm32l0xx_hal_dma.c
+N  * @author  MCD Application Team
+N  * @brief   DMA HAL module driver.
+N  *    
+N  *         This file provides firmware functions to manage the following 
+N  *         functionalities of the Direct Memory Access (DMA) peripheral:
+N  *           + Initialization/de-initialization functions
+N  *           + I/O operation functions
+N  *           + Peripheral State functions
+N  *  
+N  *           
+N  @verbatim     
+N  ==============================================================================      
+N                        ##### How to use this driver #####
+N  ============================================================================== 
+N  [..]
+N   (#) Enable and configure the peripheral to be connected to the DMA Channel
+N       (except for internal SRAM / FLASH memories: no initialization is 
+N       necessary). 
+N          
+N   (#) For a given Channel, program the required configuration through the following parameters:   
+N       Channel request, Transfer Direction, Source and Destination data formats, 
+N       Circular, Normal or peripheral flow control mode, Channel Priority level, 
+N       Source and Destination Increment mode using HAL_DMA_Init() function.
+N   
+N     *** Polling mode IO operation ***
+N     =================================   
+N    [..] 
+N          (+) Use HAL_DMA_Start() to start DMA transfer after the configuration of Source 
+N              address and destination address and the Length of data to be transferred
+N          (+) Use HAL_DMA_PollForTransfer() to poll for the end of current transfer, in this  
+N              case a fixed Timeout can be configured by User depending from his application.
+N               
+N     *** Interrupt mode IO operation ***    
+N     =================================== 
+N    [..]     
+N          (+) Configure the DMA interrupt priority using HAL_NVIC_SetPriority()
+N          (+) Enable the DMA IRQ handler using HAL_NVIC_EnableIRQ() 
+N          (+) Use HAL_DMA_Start_IT() to start DMA transfer after the configuration of  
+N              Source address and destination address and the Length of data to be transferred. In this 
+N              case the DMA interrupt is configured 
+N          (+) Use HAL_DMA_IRQHandler() called under DMA_IRQHandler() Interrupt subroutine
+N          (+) At the end of data transfer HAL_DMA_IRQHandler() function is executed and user can 
+N              add his own function by customization of function pointer XferCpltCallback and 
+N              XferErrorCallback (i.e a member of DMA handle structure). 
+N                
+N   (#) Use HAL_DMA_GetState() function to return the DMA state and HAL_DMA_GetError() in case of error 
+N       detection.
+N         
+N   (#) Use HAL_DMA_Abort() function to abort the current transfer              
+N                   
+N   -@-   In Memory-to-Memory transfer mode, Circular mode is not allowed.          
+N  
+N  @endverbatim
+N  ******************************************************************************
+N  * @attention
+N  *
+N  * <h2><center>&copy; COPYRIGHT(c) 2016 STMicroelectronics</center></h2>
+N  *
+N  * Redistribution and use in source and binary forms, with or without modification,
+N  * are permitted provided that the following conditions are met:
+N  *   1. Redistributions of source code must retain the above copyright notice,
+N  *      this list of conditions and the following disclaimer.
+N  *   2. Redistributions in binary form must reproduce the above copyright notice,
+N  *      this list of conditions and the following disclaimer in the documentation
+N  *      and/or other materials provided with the distribution.
+N  *   3. Neither the name of STMicroelectronics nor the names of its contributors
+N  *      may be used to endorse or promote products derived from this software
+N  *      without specific prior written permission.
+N  *
+N  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+N  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+N  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+N  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+N  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+N  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+N  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+N  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+N  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+N  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+N  *
+N  ******************************************************************************
+N  */ 
+N
+N/* Includes ------------------------------------------------------------------*/
+C "..\..\..\M0P0_Library\STM32Cube_FW_L0_V1.10.0\Drivers\STM32L0xx_HAL_Driver\Src\stm32l0xx_hal_dma.c" 88 27 cannot open source input file "stm32l0xx_hal.h": No such file or directory
+N#include "stm32l0xx_hal.h"
