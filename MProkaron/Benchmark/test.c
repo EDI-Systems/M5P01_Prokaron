@@ -176,7 +176,7 @@ void Func_2(void)
     Semaphore_Time=Total/10000;
     RMP_PRINTK_I(Semaphore_Time);
     RMP_PRINTK_S(" cycles.\r\n");
-    
+
     /* Mailbox from interrupt tests */
     Total=0;
     Int_Init();
@@ -263,6 +263,7 @@ void RMP_Init_Hook(void)
 #endif
 }
 
+volatile unsigned int count;
 void RMP_Init_Idle(void)
 {
     return;

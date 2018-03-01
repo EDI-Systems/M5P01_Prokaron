@@ -11,6 +11,9 @@ This software is **triple-licensed**: it is either **[LGPL v3](LICENSE.md)** or 
 For vendor-supplied packages and hardware abstraction libraries, please refer to the **[M0P0_Library](https://github.com/EDI-Systems/M0P0_Library)** repo to download and use them properly.
 
 ## Quick Demo
+### Linux minimal runnable binary
+Download the precompiled 32-bit linux binary **[here](Project/ECLIPSE-GCC-LINUX/RMP/Debug/RMP)** and watch benchmark results!
+
 ### Basic thread operations
 **Create a thread**
 ```C
@@ -135,6 +138,7 @@ For vendor-supplied packages and hardware abstraction libraries, please refer to
 |Cortex-R5    |Keil uVision 5|TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
 |Cortex-R5    |GCC           |TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
 |MIPS M14k    |XC32-GCC      |17.2 |2.46|264  |358    |340      |421        |415          |
+|X86-LINUX    |GCC           |N/A  |N/A |33000|35000  |33000    |35000      |33000        |
 
 **Flash and SRAM consumption is calculated in kB, while the other figures are calculated in CPU clock cycles.** 
 All compiler options are the highest optimization (usually -O3) and optimized for time. 
@@ -151,11 +155,12 @@ These instructions will get you a copy of the project up and running on your loc
 ### Prerequisites
 
 You need **_Cortex-M or Cortex-R or MIPS or MSP430_** microcontroller development kits to run the tests. This RTOS focuses on value-line MCUs and do not concentrate on high-end MCUs or MPUs. Do not use QEMU simulator to test the projects because they do not behave correctly in many scenarios.  
+If you don't have a development board, a **_x86-based Linux port_** of RMP is also available. However, running RMP on top of linux uses the [ptrace](https://en.wikipedia.org/wiki/Ptrace) system call and [signal](https://en.wikipedia.org/wiki/Signal_(IPC)) system, thus it is not particularly fast. Just run the example and observe benchmark output.
 Other platform supports should be simple to implement, however they are not scheduled yet. For Cortex-A and other CPUs with a memory management unit ([MMU](https://en.wikipedia.org/wiki/Memory_management_unit)), go [M7M1_MuEukaron](https://github.com/EDI-Systems/M7M1_MuEukaron) _Real-Time Multi-Core Microkernel_ instead; M7M1 supports some Cortex-Ms and Cortex-Rs as well.
 
 ### Compilation
 
-The **Vendor Toolchain** or **GNU Makefile** projects for various microcontrollers are available in the **_Project_** folder. Refer to the readme files in each folder for specific instructions about how to run them. However, keep in mind that some examples may need vendor-specific libraries such as the STM HAL. Some additional drivers may be required too.
+The **Vendor Toolchain** or **Eclipse** projects for various microcontrollers are available in the **_Project_** folder. Refer to the readme files in each folder for specific instructions about how to run them. However, keep in mind that some examples may need vendor-specific libraries such as the STMicroelectronics HAL. Some additional drivers may be required too. These can be found in **[M0P0_Library](https://github.com/EDI-Systems/M0P0_Library)** repo.
 
 ## Running the tests
 
