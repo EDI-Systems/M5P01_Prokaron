@@ -10,7 +10,6 @@ before_script:
   - "sudo apt-get -qq install gcc-multilib libc6:i386 libgcc1:i386 gcc-4.6-base:i386 libstdc++5:i386 libstdc++6:i386 libsdl-dev || true"
   - sudo mkdir -p /media/pry/Code/Code_Library/MCU/Mutatus/
   - sudo ln -s . /media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron
-  - ls /media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/
-  - ls
 script:
-  - ls
+  - ls /media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/
+  - cd Project/ECLIPSE-GCC-LINUX/RMP/Debug/Kernel && make all
