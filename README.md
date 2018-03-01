@@ -142,13 +142,23 @@ Download the precompiled 32-bit linux binary **[here](Project/ECLIPSE-GCC-LINUX/
 |MIPS M14k    |XC32-GCC      |17.2 |2.46|264  |358    |340      |421        |415          |
 |X86-LINUX    |GCC           |N/A  |N/A |33000|35000  |33000    |35000      |33000        |
 
-**Flash and SRAM consumption is calculated in kB, while the other figures are calculated in CPU clock cycles.** 
+**Flash and SRAM consumption is calculated in kB, while the other figures are calculated in CPU clock cycles.**
+
+- MSP430 is evaluated with MSP430FR5994.
+- Cortex-M0 is evaluated with STM32F030F4P6.
+- Cortex-M0+ is evaluated with STM32L053C8T6.
+- Cortex-M3 is evaluated with STM32F103RET6.
+- Cortex-M4 is evaluated with STM32F405RGT6.
+- Cortex-M7 is evaluated with STM32F767IGT6.
+- MIPS M14k is evaluated with PIC32MZ2048EFM100.
+- X86 Linux is evaluated with Ubuntu 16.04 on i7-4820k @ 3.7GHz.
+
 All compiler options are the highest optimization (usually -O3) and optimized for time. 
-Yield: The time to yield between different threads.  
-Mailbox: The mailbox communication time between two threads.  
-Semaphore: The semaphore communication time between two threads.  
-Mailbox/Int: The time to send to a mailbox from interrupt.  
-Semaphore/Int: The time to post to a semaphore from interrupt.  
+- Yield: The time to yield between different threads.  
+- Mailbox: The mailbox communication time between two threads.  
+- Semaphore: The semaphore communication time between two threads.  
+- Mailbox/Int: The time to send to a mailbox from interrupt.  
+- Semaphore/Int: The time to post to a semaphore from interrupt.  
 
 ## Getting Started
 
