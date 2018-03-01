@@ -7,7 +7,7 @@ Description : The platform specific types for RMP.
 ******************************************************************************/
 
 /* Platform Includes *********************************************************/
-#include "Platform/CortexM/platform_cmx.h"
+#include "Platform/X86_LINUX/platform_x86_linux.h"
 /* End Platform Includes *****************************************************/
 
 /* End Of File ***************************************************************/
