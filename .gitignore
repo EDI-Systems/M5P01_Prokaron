@@ -57,8 +57,8 @@ Documents/*
 !Documents/Demo/
 
 # Keil specific
-Project/**/Debug/Listings/*
-Project/**/Debug/Output/*
+Project/**/Debug/Listings/
+Project/**/Debug/Output/
 *.tmp
 *.uvgui*
 *.uvopt*
