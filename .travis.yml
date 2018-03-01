@@ -12,4 +12,5 @@ before_script:
   - sudo ln -s $(pwd) /media/pry/Code/Code_Library/MCU/Mutatus
 script:
   - sudo ls /media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/
-  - sudo cd /media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/Project/ECLIPSE-GCC-LINUX/RMP/Debug && sudo make all
+  - cd /media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/Project/ECLIPSE-GCC-LINUX/RMP/Debug
+    sudo make all
