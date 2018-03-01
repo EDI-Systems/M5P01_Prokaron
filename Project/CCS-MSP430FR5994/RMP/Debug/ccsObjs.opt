@@ -1,1 +1,0 @@
-"./Benchmark/test.obj" "./Kernel/kernel.obj" "./Lib/cs.obj" "./Lib/eusci_a_uart.obj" "./Lib/gpio.obj" "./Lib/timer_a.obj" "./Platform/platform_msp430.obj" "./Platform/platform_msp430x_asm.obj" "../lnk_msp430fr5994.cmd" -llibmpu_init.a -llibmath.a -llibc.a 
