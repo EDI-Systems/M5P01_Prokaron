@@ -12,7 +12,7 @@ For vendor-supplied packages and hardware abstraction libraries, please refer to
 
 ## Quick Demo
 ### Linux minimal runnable binary
-Download the precompiled 32-bit linux binary **[here](Project/ECLIPSE-GCC-LINUX/RMP/RMP)** and watch benchmark results!
+Download the precompiled 32-bit linux binary **[here](Project/ECLIPSE-GCC-LINUX/RMP/Debug/RMP)** and watch benchmark results!
 
 ### Basic thread operations
 **Create a thread**
