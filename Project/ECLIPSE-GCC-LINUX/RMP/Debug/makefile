@@ -39,7 +39,6 @@ RMP: $(OBJS) $(USER_OBJS)
 	gcc -static -m32 -o "RMP" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
-	$(MAKE) --no-print-directory post-build
 
 # Other Targets
 clean:
@@ -50,10 +49,6 @@ pre-build:
 	-../copy.sh
 	-@echo ' '
 
-post-build:
-	-../extract.sh
-	-@echo ' '
-
-.PHONY: all clean dependents main-build pre-build post-build
+.PHONY: all clean dependents main-build pre-build
 
 -include ../makefile.targets
