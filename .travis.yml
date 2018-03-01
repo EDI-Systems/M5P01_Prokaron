@@ -1,0 +1,13 @@
+# Travis-ci automatic testing framework for X86-Linux port
+language: c
+
+notifications:
+  email: false
+
+before_script:
+  # Our example is under x86-32 thus 32-bit binaries are used
+  - sudo apt-get update
+  - "sudo apt-get -qq install gcc-multilib libc6:i386 libgcc1:i386 gcc-4.6-base:i386 libstdc++5:i386 libstdc++6:i386 libsdl-dev || true"
+  - ls
+script:
+  - ls
