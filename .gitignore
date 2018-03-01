@@ -58,7 +58,7 @@ Documents/*
 
 # Keil specific
 Project/**/Debug/**
-#git add -f Project/ECLIPSE-GCC-LINUX/RMP/Debug/
+!Project/ECLIPSE-GCC-LINUX/RMP/Debug/
 *.tmp
 *.uvgui*
 *.uvopt*
