@@ -60,7 +60,7 @@ ptr_t RMP_MSB_Get(ptr_t Val)
 {
     /* Something at high bits */
     if((Val&0xFF00)!=0)
-        return RMP_MSB_Tbl[Val>>9]+16;
+        return RMP_MSB_Tbl[Val>>9]+8;
     /* Something at low bits */
     else if((Val&0xFF)!=0)
         return RMP_MSB_Tbl[Val>>1];
