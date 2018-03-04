@@ -4,27 +4,26 @@
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/1684/badge)](https://bestpractices.coreinfrastructure.org/projects/1684) 
 [![Join the chat at https://gitter.im/M5P1_MuProkaron/Lobby](https://badges.gitter.im/M5P1_MuProkaron/Lobby.svg)](https://gitter.im/M5P1_MuProkaron/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-**RMP** is a small real-time operating system which focuses on formal reliability and simplicity. It achieves reliability by deployment of formal techniques(not completed yet). All the basic functionalities that are necessary for RTOSes are povided, but nothing more. This guarantees that the system is the minimum possible kernel and is also suitable to be used as a guest operating system when hosted on virtual machine monitors.
-This operating system is much **leaner** than any other RTOSes, especilly when compared to _FreeRTOS_ or _RT-Thread_, and understanding it should be simple enough.
+**RMP** 是一个专注于形式化验证和简易可用的小型实时系统。它通过采取形式化方法来确保系统的可靠性（当前验证工作还未完成）。所有的实时操作系统必备的功能它都具备，但是并不在此基础上提供更多可选组件以确保内核的精炼性。这样，得到的内核就是一个最小化的内核，可以很方便地对它进行形式化验证。同时，它还可以作为客户操作系统运行在虚拟机监视器上。本系统比以_FreeRTOS_和_RT-Thread_为代表的全功能系统相比要**小**得多，而且理解起来应该也相对容易得多。
 
-Read **[Contributing](CONTRIBUTING.md)** and **[Code of Conduct](CODE_OF_CONDUCT.md)** if you want to contribute, and **[Pull Request Template](PULL_REQUEST_TEMPLATE.md)** when you make pull requests.
-This software is **triple-licensed**: it is either **[LGPL v3](LICENSE.md)** or **[modified MIT license](MODMIT.md)**. **Commercial** licenses are also available upon request.
+如果想要参与开发，请阅读**[参与](CONTRIBUTING.md)**和**[规范](CODE_OF_CONDUCT.md)**两个指导文档。如果要提交拉取请求，请使用**[拉取请求模板](PULL_REQUEST_TEMPLATE.md)**。
+本软件采用**三种不同的授权**：你可以选择**[LGPL v3](LICENSE.md)**，也可以使用**[经修改的MIT协议](MODMIT.md)**。 如果有特殊需求，**商业**授权许可也是可以的。
 
-For vendor-supplied packages and hardware abstraction libraries, please refer to the **[M0P0_Library](https://github.com/EDI-Systems/M0P0_Library)** repo to download and use them properly.
+对于那些由微控制器厂商提供的硬件抽象层软件包，请到**[M0P0_Library](https://github.com/EDI-Systems/M0P0_Library)**软件仓库自行下载。
 
-## Quick Demo
-### Linux minimal runnable binary
-Download the precompiled 32-bit linux binary **[here](Project/ECLIPSE-GCC-LINUX/RMP/Debug/RMP)** and watch benchmark results!
+## 快速演示
+### 可在Linux上直接运行的Demo
+从**[这里](Project/ECLIPSE-GCC-LINUX/RMP/Debug/RMP)**下载预编译的x86-32位Linux系统上可运行的二进制，观察性能测试的运行结果！
 
-### Basic thread operations
-**Create a thread**
+### 基础线程操作
+**创建一个线程**
 ```C
-    RMP_Thd_Crt(&Thd_1            /* Thread control block */, 
-                Func_1            /* Thread entry */,
-                &Stack_1[238]     /* Stack address */,
-                (void*)0x12345678 /* Parameter */,
-                1                 /* Priority */, 
-                5                 /* Timeslices */);
+    RMP_Thd_Crt(&Thd_1            /* 线程控制块 */, 
+                Func_1            /* 线程入口 */,
+                &Stack_1[238]     /* 线程栈地址 */,
+                (void*)0x12345678 /* 参数 */,
+                1                 /* 优先级 */, 
+                5                 /* 时间片 */);
 ```
 **Delete a thread**
 ```C
