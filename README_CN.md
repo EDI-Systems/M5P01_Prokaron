@@ -143,19 +143,19 @@
 
 **Flash和SRAM消耗以kB计，其他数据以CPU指令周期计。这里列出的所有值都是典型（有意义的系统配置）值而非绝对意义上的最小值，因为纯技术层面的最小配置在实际工程中很少是真正有用的。**
 
-- MSP430平台使用MSP430FR5994进行评估.
-- Cortex-M0平台使用STM32F030F4P6进行评估.
-- Cortex-M0+平台使用STM32L053C8T6进行评估.
-- Cortex-M3平台使用STM32F103RET6进行评估.
-- Cortex-M4平台使用STM32F405RGT6进行评估.
-- Cortex-M7平台使用STM32F767IGT6进行评估.
-- MIPS M14k平台使用PIC32MZ2048EFM100进行评估.
-- X86 Linux平台使用Ubuntu 16.04和i7-4820k @ 3.7GHz进行评估.
+- MSP430平台使用MSP430FR5994进行评估。
+- Cortex-M0平台使用STM32F030F4P6进行评估。
+- Cortex-M0+平台使用STM32L053C8T6进行评估。
+- Cortex-M3平台使用STM32F103RET6进行评估。
+- Cortex-M4平台使用STM32F405RGT6进行评估。
+- Cortex-M7平台使用STM32F767IGT6进行评估。
+- MIPS M14k平台使用PIC32MZ2048EFM100进行评估。
+- X86 Linux平台使用Ubuntu 16.04和i7-4820k @ 3.7GHz进行评估。
 
-所有的编译器优化选项都被设为最高（通常是-O3），而且时间优化选项也被打开. 
+所有的编译器优化选项都被设为最高（通常是-O3），而且时间优化选项也被打开。 
 - Yield：两线程间进行切换所用的时间。  
 - Mailbox：两线程间使用邮箱进行发送-接收操作的耗时。  
-- Semaphore：两线程间使用计数信号量进行发布-获取操作的耗时.  
+- Semaphore：两线程间使用计数信号量进行发布-获取操作的耗时。  
 - Mailbox/Int：从中断发送到某线程邮箱的耗时。 
 - Semaphore/Int：从中断发布信号量的耗时。  
 
@@ -179,7 +179,7 @@
 
 ## 生产部署
 
-When deploying this into a production system, it is recommended that you read the manual in the **_Documents_** folder carefully to configure all macros correctly.
+当部署本系统到生产环境时，请仔细阅读本系统自带的手册，以确保各项配置正确。本系统的手册可以在**_Documents_**文件夹下找到。
 
 ## 支持的工具链
 
