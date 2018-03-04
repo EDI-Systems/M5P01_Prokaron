@@ -152,50 +152,47 @@
 - MIPS M14k平台使用PIC32MZ2048EFM100进行评估.
 - X86 Linux平台使用Ubuntu 16.04和i7-4820k @ 3.7GHz进行评估.
 
-All compiler options are the highest optimization (usually -O3) and optimized for time. 
-- Yield: The time to yield between different threads.  
-- Mailbox: The mailbox communication time between two threads.  
-- Semaphore: The semaphore communication time between two threads.  
-- Mailbox/Int: The time to send to a mailbox from interrupt.  
-- Semaphore/Int: The time to post to a semaphore from interrupt.  
+所有的编译器优化选项都被设为最高（通常是-O3），而且时间优化选项也被打开. 
+- Yield：两线程间进行切换所用的时间。  
+- Mailbox：两线程间使用邮箱进行发送-接收操作的耗时。  
+- Semaphore：两线程间使用计数信号量进行发布-获取操作的耗时.  
+- Mailbox/Int：从中断发送到某线程邮箱的耗时。 
+- Semaphore/Int：从中断发布信号量的耗时。  
 
-## Getting Started
+## 新手上路
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+下面的说明会帮助你在本地快速建立一个可用来评估测试本系统的工程。请参看系统的中文文档以获取更多信息。
 
-### Prerequisites
+### 准备工作
 
-You need **_Cortex-M or Cortex-R or MIPS or MSP430_** microcontroller development kits to run the tests. This RTOS focuses on value-line MCUs and do not concentrate on high-end MCUs or MPUs. Do not use QEMU simulator to test the projects because they do not behave correctly in many scenarios.  
-If you don't have a development board, a **_x86-based Linux port_** of RMP is also available. However, running RMP on top of linux uses the [ptrace](https://en.wikipedia.org/wiki/Ptrace) system call and [signal](https://en.wikipedia.org/wiki/Signal_(IPC)) system, thus it is not particularly fast. Just run the example and observe benchmark output.
-Other platform supports should be simple to implement, however they are not scheduled yet. For Cortex-A and other CPUs with a memory management unit ([MMU](https://en.wikipedia.org/wiki/Memory_management_unit)), go [M7M1_MuEukaron](https://github.com/EDI-Systems/M7M1_MuEukaron) _Real-Time Multi-Core Microkernel_ instead; M7M1 supports some Cortex-Ms and Cortex-Rs as well.
+要运行测试，你需要一块基于**_Cortex-M或Cortex-R或MIPS或MSP430_**的开发板。本RTOS主要面向资源受限的MCU，不提供对高端MCU和，MPU和CPU的特别支持。不要使用QEMU模拟器来测试本系统，因为QEMU有很多不完善之处，与真正的硬件行为并不一致。
+如果你没有开发板，那么RMP也有一个**_基于x86处理器的Linux移植_**。然而，该移植使用了[ptrace](https://en.wikipedia.org/wiki/Ptrace)系统调用和[信号](https://en.wikipedia.org/wiki/Signal_(IPC))系统，因此并不很快，这一点可以从性能测试的数据看出。
+对于其他平台的支持应该是容易实现的，但是当前并没有支持计划。对于那些Cortex-A和具备内存管理单元（[MMU](https://en.wikipedia.org/wiki/Memory_management_unit)）的其他处理器，可以使用[M7M1_MuEukaron](https://github.com/EDI-Systems/M7M1_MuEukaron) _实时多核心微内核_；M7M1也支持一部分的Cortex-M和全部的Cortex-R。
 
-### Compilation
+### 编译指南
 
-The **Vendor Toolchain** or **Eclipse** projects for various microcontrollers are available in the **_Project_** folder. Refer to the readme files in each folder for specific instructions about how to run them. However, keep in mind that some examples may need vendor-specific libraries such as the STMicroelectronics HAL. Some additional drivers may be required too. These can be found in **[M0P0_Library](https://github.com/EDI-Systems/M0P0_Library)** repo.
+在**_Project_**文件夹下能够找到多种微控制器的移植好的**厂商集成开发环境**或**Eclipse**的工程样板。参看各个工程文件夹下的自述文件以获取更多关于如何编译和运行该工程的信息。某些工程需要额外的厂商硬件抽象层库的支持，它们可以在**[M0P0_Library](https://github.com/EDI-Systems/M0P0_Library)**软件仓库被找到。
 
-## Running the tests
+## 运行测试
 
-To run the sample programs, simply download them into the development board and start step-by-step debugging. Some examples will use one or two LEDs to indicate the system status. In that case, it is necessary to fill the LED blinking wrapper functions.
+要运行测试，只要将测试下载到对应的开发板并开始单步调试即可。某些例子会采用两个LED来指示系统当前的状态，此时要填充LED的点亮和熄灭函数来运行该示例。
 
-## Deployment
+## 生产部署
 
 When deploying this into a production system, it is recommended that you read the manual in the **_Documents_** folder carefully to configure all macros correctly.
 
-## Built With
+## 支持的工具链
 
 - Keil uVision 5 (armcc)
 - Code composer studio
+- MPLAB X XC32
 - gcc/clang-llvm
 
-Other toolchains are not recommended nor supported at this point, though it might be possible to support them later on.
+其他的工具链现在不推荐或者当前不受支持，虽然要增加新的支持应该也很简单。
 
-## Contributing
+## 参与项目
 
-Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
+请阅读[CONTRIBUTING.md](CONTRIBUTING.md)文档来获得关于行为规范和提交代码的相关信息。
 
-## License
-
-This project is licensed under the GPLv3 License - see the [LICENSE.md](LICENSE.md) file for details. However, commercial licenses are also available.
-
-## EDI Project Information
-Mutate - Protero - Prokaron (M5P1 R4T1)
+## EDI 工程信息
+演进 - 远古 - 原核 (M5P1 R4T1)
