@@ -165,13 +165,13 @@
 
 ### 准备工作
 
-要运行测试，你需要一块基于**_Cortex-M或Cortex-R或MIPS或MSP430_**的开发板。本RTOS主要面向资源受限的MCU，不提供对高端MCU和，MPU和CPU的特别支持。不要使用QEMU模拟器来测试本系统，因为QEMU有很多不完善之处，与真正的硬件行为并不一致。
-如果你没有开发板，那么RMP也有一个**_基于x86处理器的Linux移植_**。然而，该移植使用了[ptrace](https://en.wikipedia.org/wiki/Ptrace)系统调用和[信号](https://en.wikipedia.org/wiki/Signal_(IPC))系统，因此并不很快，这一点可以从性能测试的数据看出。
+要运行测试，你需要一块基于 **_Cortex-M或Cortex-R或MIPS或MSP430_** 的开发板。本RTOS主要面向资源受限的MCU，不提供对高端MCU和，MPU和CPU的特别支持。不要使用QEMU模拟器来测试本系统，因为QEMU有很多不完善之处，与真正的硬件行为并不一致。
+如果你没有开发板，那么RMP也有一个 **_基于x86处理器的Linux移植_** 。然而，该移植使用了[ptrace](https://en.wikipedia.org/wiki/Ptrace)系统调用和[信号](https://en.wikipedia.org/wiki/Signal_(IPC))系统，因此并不很快，这一点可以从性能测试的数据看出。
 对于其他平台的支持应该是容易实现的，但是当前并没有支持计划。对于那些Cortex-A和具备内存管理单元（[MMU](https://en.wikipedia.org/wiki/Memory_management_unit)）的其他处理器，可以使用[M7M1_MuEukaron](https://github.com/EDI-Systems/M7M1_MuEukaron) _实时多核心微内核_；M7M1也支持一部分的Cortex-M和全部的Cortex-R。
 
 ### 编译指南
 
-在**_Project_**文件夹下能够找到多种微控制器的移植好的**厂商集成开发环境**或**Eclipse**的工程样板。参看各个工程文件夹下的自述文件以获取更多关于如何编译和运行该工程的信息。某些工程需要额外的厂商硬件抽象层库的支持，它们可以在**[M0P0_Library](https://github.com/EDI-Systems/M0P0_Library)**软件仓库被找到。
+在 **_Project_** 文件夹下能够找到多种微控制器的移植好的 **厂商集成开发环境** 或 **Eclipse** 的工程样板。参看各个工程文件夹下的自述文件以获取更多关于如何编译和运行该工程的信息。某些工程需要额外的厂商硬件抽象层库的支持，它们可以在 **[M0P0_Library](https://github.com/EDI-Systems/M0P0_Library)** 软件仓库被找到。
 
 ## 运行测试
 
@@ -179,7 +179,7 @@
 
 ## 生产部署
 
-当部署本系统到生产环境时，请仔细阅读本系统自带的手册，以确保各项配置正确。本系统的手册可以在**_Documents_**文件夹下找到。
+当部署本系统到生产环境时，请仔细阅读本系统自带的手册，以确保各项配置正确。本系统的手册可以在 **_Documents_** 文件夹下找到。
 
 ## 支持的工具链
 
