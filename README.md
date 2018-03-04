@@ -186,6 +186,7 @@ When deploying this into a production system, it is recommended that you read th
 
 - Keil uVision 5 (armcc)
 - Code composer studio
+- MPLAB X XC32
 - gcc/clang-llvm
 
 Other toolchains are not recommended nor supported at this point, though it might be possible to support them later on.
@@ -193,10 +194,6 @@ Other toolchains are not recommended nor supported at this point, though it migh
 ## Contributing
 
 Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
-
-## License
-
-This project is licensed under the GPLv3 License - see the [LICENSE.md](LICENSE.md) file for details. However, commercial licenses are also available.
 
 ## EDI Project Information
 Mutate - Protero - Prokaron (M5P1 R4T1)
