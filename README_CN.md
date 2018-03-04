@@ -25,15 +25,15 @@
                 1                 /* 优先级 */, 
                 5                 /* 时间片 */);
 ```
-**Delete a thread**
+**删除一个线程**
 ```C
     RMP_Thd_Del(&Thd_1            /* 线程控制块 */);
 ```
-**Suspend a thread**
+**悬起一个线程**
 ```C
     RMP_Thd_Suspend(&Thd_1        /* 线程控制块 */);
 ```
-**Resume a thread**
+**解除线程悬起**
 ```C
     RMP_Thd_Resume(&Thd_1         /* 线程控制块 */);
 ```
@@ -141,16 +141,16 @@
 |MIPS M14k    |XC32-GCC      |17.2 |2.46|264  |358    |340      |421        |415          |
 |X86-LINUX    |GCC           |N/A  |N/A |33000|35000  |33000    |35000      |33000        |
 
-**Flash and SRAM consumption is calculated in kB, while the other figures are calculated in CPU clock cycles. All values listed here are typical (useful system) values, not minimum values, because minimum values on system size seldom make any real sense.**
+**Flash和SRAM消耗以kB计，其他数据以CPU指令周期计。这里列出的所有值都是典型（有意义的系统配置）值而非绝对意义上的最小值，因为纯技术层面的最小配置在实际工程中很少是真正有用的。**
 
-- MSP430 is evaluated with MSP430FR5994.
-- Cortex-M0 is evaluated with STM32F030F4P6.
-- Cortex-M0+ is evaluated with STM32L053C8T6.
-- Cortex-M3 is evaluated with STM32F103RET6.
-- Cortex-M4 is evaluated with STM32F405RGT6.
-- Cortex-M7 is evaluated with STM32F767IGT6.
-- MIPS M14k is evaluated with PIC32MZ2048EFM100.
-- X86 Linux is evaluated with Ubuntu 16.04 on i7-4820k @ 3.7GHz.
+- MSP430平台使用MSP430FR5994进行评估.
+- Cortex-M0平台使用STM32F030F4P6进行评估.
+- Cortex-M0+平台使用STM32L053C8T6进行评估.
+- Cortex-M3平台使用STM32F103RET6进行评估.
+- Cortex-M4平台使用STM32F405RGT6进行评估.
+- Cortex-M7平台使用STM32F767IGT6进行评估.
+- MIPS M14k平台使用PIC32MZ2048EFM100进行评估.
+- X86 Linux平台使用Ubuntu 16.04和i7-4820k @ 3.7GHz进行评估.
 
 All compiler options are the highest optimization (usually -O3) and optimized for time. 
 - Yield: The time to yield between different threads.  
