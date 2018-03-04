@@ -27,18 +27,18 @@
 ```
 **Delete a thread**
 ```C
-    RMP_Thd_Del(&Thd_1            /* Thread control block */);
+    RMP_Thd_Del(&Thd_1            /* 线程控制块 */);
 ```
 **Suspend a thread**
 ```C
-    RMP_Thd_Suspend(&Thd_1        /* Thread control block */);
+    RMP_Thd_Suspend(&Thd_1        /* 线程控制块 */);
 ```
 **Resume a thread**
 ```C
-    RMP_Thd_Resume(&Thd_1         /* Thread control block */);
+    RMP_Thd_Resume(&Thd_1         /* 线程控制块 */);
 ```
 
-### Delaying a thread
+### 线程延时
 ![Delay](https://raw.githubusercontent.com/EDI-Systems/M5P1_MuProkaron/master/Documents/Demo/Delay.gif)
 ```C
     void Func_1(void* Param)
@@ -58,7 +58,7 @@
         RMP_Thd_Crt(&Thd_1, Func_1, &Stack_1[238], (void*)0x12345678, 1, 5);
     }
 ```
-### Send from one thread to another
+### 从一个线程向另一个线程的邮箱发送
 ![Send](https://raw.githubusercontent.com/EDI-Systems/M5P1_MuProkaron/master/Documents/Demo/Send.gif)
 ```C
     void Func_1(void* Param)
@@ -91,7 +91,7 @@
     }
 ```
 
-### Counting semaphores
+### 计数信号量
 ![Semaphore](https://raw.githubusercontent.com/EDI-Systems/M5P1_MuProkaron/master/Documents/Demo/Semaphore.gif)
 ```C
     void Func_1(void* Param)
@@ -121,7 +121,7 @@
     }
 ```
 
-### Typical performance figures for all supported architectures
+### 所有被支持架构上的典型性能数据
 |Machine      |Toolchain     |Flash|SRAM|Yield|Mailbox|Semaphore|Mailbox/Int|Semaphore/Int|
 |:-----------:|:------------:|:---:|:--:|:---:|:-----:|:-------:|:---------:|:-----------:|
 |MSP430       |TI CCS6       |2.90 |0.64|1254 |2386   |2281     |2378       |2245         |
