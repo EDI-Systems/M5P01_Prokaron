@@ -22,6 +22,9 @@ Description: The configuration file for MSP43FR5994.
 #define RMP_USE_HOOKS                RMP_FALSE
 /* The stzck size of the init thread */
 #define RMP_INIT_STACK_SIZE          128
+/* The mask/unmask interrupt operations */
+#define RMP_MASK_INT()               RMP_Disable_Int()
+#define RMP_UNMASK_INT()             RMP_Enable_Int()
 
 /* We are using MSP430X or not */
 #define RMP_MSP430_X                 RMP_TRUE

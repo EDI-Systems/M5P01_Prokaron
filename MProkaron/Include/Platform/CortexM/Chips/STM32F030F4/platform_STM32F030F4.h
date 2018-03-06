@@ -22,6 +22,9 @@ Description: The configuration file for STM32F030F4.
 #define RMP_USE_HOOKS                RMP_FALSE
 /* The stzck size of the init thread */
 #define RMP_INIT_STACK_SIZE          256
+/* The mask/unmask interrupt operations */
+#define RMP_MASK_INT()               RMP_Disable_Int()
+#define RMP_UNMASK_INT()             RMP_Enable_Int()
 
 /* What is the NVIC priority grouping? */
 #define RMP_CMX_NVIC_GROUPING        RMP_CMX_NVIC_GROUPING_P2S6

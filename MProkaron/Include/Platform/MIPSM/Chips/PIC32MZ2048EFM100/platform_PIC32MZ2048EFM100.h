@@ -21,6 +21,9 @@ Description: The configuration file for PIC32MZ2048EFM100.
 #define RMP_USE_HOOKS                RMP_FALSE
 /* The stack size of the init thread */
 #define RMP_INIT_STACK_SIZE          2048
+/* The mask/unmask interrupt operations */
+#define RMP_MASK_INT()               RMP_Disable_Int()
+#define RMP_UNMASK_INT()             RMP_Enable_Int()
 
 /* What is the tick timer value? */
 #define RMP_MIPSM_TICK_VAL           20000
