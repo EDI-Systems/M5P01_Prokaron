@@ -30,7 +30,9 @@
                 ;Disable all interrupts
                 EXPORT          RMP_Disable_Int      
                 ;Enable all interrupts            
-                EXPORT          RMP_Enable_Int   
+                EXPORT          RMP_Enable_Int
+                ;Mask/unmask interrupt dummy
+                EXPORT          RMP_Mask_Int
                 ;Get the MSB                              
                 EXPORT          RMP_MSB_Get
                 ;Start the first thread
@@ -80,6 +82,16 @@ RMP_Enable_Int
                 CPSIE           I                                                          
                 BX              LR
 ;/* End Function:RMP_Enable_Int **********************************************/
+
+;/* Begin Function:RMP_Mask_Int ***********************************************
+;Description    : Cortex-M0 does not allow masking and this is provided as dummy.
+;Input          : R0 - The new basepri to set.
+;Output         : None.    
+;Register Usage : None.                                  
+;*****************************************************************************/
+RMP_Mask_Int                                                   
+                BX              LR
+;/* End Function:RMP_Mask_Int ************************************************/
 
 ;/* Begin Function:RMP_MSB_Get ************************************************
 ;Description    : Get the MSB of the word.

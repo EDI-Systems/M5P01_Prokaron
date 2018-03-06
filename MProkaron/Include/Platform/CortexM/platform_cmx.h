@@ -278,6 +278,7 @@ typedef s32 ret_t;
 /* Interrupts */
 EXTERN void RMP_Disable_Int(void);
 EXTERN void RMP_Enable_Int(void);
+EXTERN void RMP_Mask_Int(ptr_t Level);
 
 EXTERN ptr_t RMP_MSB_Get(ptr_t Val);
 EXTERN void _RMP_Start(ptr_t Entry, ptr_t Stack);
