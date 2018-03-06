@@ -261,6 +261,7 @@ Return      : None.
 ******************************************************************************/
 void RMP_Lock_Sched(void)
 {
+    RMP_MASK_INT();
     RMP_Sched_Locked=1;
     RMP_Sched_Lock_Cnt++;
 }
@@ -287,6 +288,7 @@ void RMP_Unlock_Sched(void)
             RMP_Sched_Pend=0;
             _RMP_Yield();
         }
+        RMP_UNMASK_INT();
     }
     else if(RMP_Sched_Lock_Cnt>1)
         RMP_Sched_Lock_Cnt--;
