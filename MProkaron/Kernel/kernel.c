@@ -1701,7 +1701,7 @@ ret_t RMP_Mem_Init(volatile void* Pool, ptr_t Size)
     volatile struct RMP_Mem_Head* Mem_Head;
     
     /* See if the memory pool is large enough to enable dynamic allocation - at least 4096 words */
-    if(Size<(4096*sizeof(ptr_t)))
+    if((Pool==0)||(Size<(4096*sizeof(ptr_t)))||((Size>>27)>0))
         return RMP_ERR_MEM;
     
     /* See if the address and size is word-aligned */
