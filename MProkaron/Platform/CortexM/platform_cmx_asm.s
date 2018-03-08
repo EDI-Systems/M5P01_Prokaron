@@ -81,7 +81,7 @@ RMP_Disable_Int
 ;*****************************************************************************/
 RMP_Enable_Int
                 ;Enable all interrupts.
-                CPSIE           I                                                          
+                CPSIE           I               
                 BX              LR
 ;/* End Function:RMP_Enable_Int **********************************************/
 
@@ -200,6 +200,7 @@ SysTick_Handler
                 BL        _RMP_Tick_Handler
                 
                 POP       {PC}
+                NOP
 ;/* End Function:SysTick_Handler *********************************************/
 
                 END

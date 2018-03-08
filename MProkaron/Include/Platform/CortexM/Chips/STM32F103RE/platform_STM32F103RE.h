@@ -23,7 +23,7 @@ Description: The configuration file for STM32F103RE.
 #define RMP_INIT_STACK_SIZE          256
 /* The mask/unmask interrupt operations - can be adjusted to fit your own levels */
 #define RMP_MASK_INT()               RMP_Mask_Int(0xFF)
-#define RMP_UNMASK_INT()             RMP_Enable_Int(0x00)
+#define RMP_UNMASK_INT()             RMP_Mask_Int(0x00)
 
 /* What is the NVIC priority grouping? */
 #define RMP_CMX_NVIC_GROUPING        RMP_CMX_NVIC_GROUPING_P2S6

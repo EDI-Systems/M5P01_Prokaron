@@ -16,6 +16,8 @@ Description : The testbench for STM32F103RE.
 #define THD2_STACK        (&Stack_2[230])
 /* How to read counter */
 #define COUNTER_READ()    (TIM2->CNT)
+/* Are we testing the memory pool? */
+#define TEST_MEM_POOL     8192
 /* Are we doing minimal measurements? */
 /* #define MINIMAL_SIZE */
 /* The STM32F1 timers are all 16 bits, so */

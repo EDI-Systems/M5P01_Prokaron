@@ -78,8 +78,6 @@ typedef s16 ret_t;
 /* System macros *************************************************************/
 /* Compiler "extern" keyword setting */
 #define EXTERN                   extern
-/* The order of bits in one CPU machine word */
-#define RMP_WORD_ORDER           4
 /* The maximum length of char printing - no need to change this in most cases */
 #define RMP_KERNEL_DEBUG_MAX_STR 128
 /* The offset of the stack when initializing */
@@ -87,6 +85,13 @@ typedef s16 ret_t;
 
 /* The CPU and application specific macros are here */
 #include "platform_msp430_conf.h"
+
+/* The order of bits in one CPU machine word */
+#if(RMP_MSP430_X==RMP_TRUE)
+#define RMP_WORD_ORDER           5
+#else
+#define RMP_WORD_ORDER           4
+#endif
 /* End System macros *********************************************************/
 
 /* MSP430 specific macros ****************************************************/

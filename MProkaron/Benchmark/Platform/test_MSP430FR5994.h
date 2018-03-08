@@ -17,6 +17,9 @@ Description : The testbench for MSP430FR5994.
 /* This test is really slow. It takes 1-2 minutes(typ.1 min 30 sec) to run through @ 16MHz */
 /* How to read counter */
 #define COUNTER_READ()    (TA1R)
+/* Are we testing the memory pool? */
+#define TEST_MEM_POOL     8192
+#pragma PERSISTENT(Pool)
 /* Are we doing minimal measurements? */
 /* #define MINIMAL_SIZE */
 /* The MSP430 timers are all 16 bits, so */

@@ -19,6 +19,9 @@ Description : The header file for the kernel.
 #define RMP_THD_FLAG(X)        ((X)&~0xFF)
 #define RMP_THD_STATE_SET(X,S) ((X)=(RMP_THD_FLAG(X)|(S)))
 
+/* Memory pool position lookup */
+#define RMP_MEM_POS(FLI,SLI)   ((SLI)+((FLI)<<3))
+
 /* This thread is currently unused */
 #define RMP_THD_FREE           (0)
 /* This thread is currently running */
@@ -46,6 +49,10 @@ Description : The header file for the kernel.
 #define RMP_SEM_FREE           (0)
 #define RMP_SEM_USED           (1)
 
+/* States of memory blocks */
+#define RMP_MEM_FREE           (0)
+#define RMP_MEM_USED           (1)
+
 /* Error codes */
 /* This error is thread related */
 #define RMP_ERR_THD            (-1)
@@ -59,6 +66,8 @@ Description : The header file for the kernel.
 #define RMP_ERR_OPER           (-5)
 /* This error is semaphore related */
 #define RMP_ERR_SEM            (-6)
+/* This error is memory related */
+#define RMP_ERR_MEM            (-7)
 
 /* Word sizes settings */
 #define RMP_WORD_SIZE          (((ptr_t)1)<<RMP_WORD_ORDER)
@@ -161,6 +170,38 @@ struct RMP_Sem
     /* The current number of semaphore */
     ptr_t Cur_Num;
 };
+
+
+/* The head struct of a memory block */
+struct RMP_Mem_Head
+{
+    /* This is what is used in TLSF LUT */
+    struct RMP_List Head;
+    /* Is this block used at the moment? */
+    ptr_t State;
+    /* The pointer to the tail */
+    volatile struct RMP_Mem_Tail* Tail;
+};
+
+/* The tail struct of a memory block */
+struct RMP_Mem_Tail
+{
+    /* This is for tailing the memory */
+    volatile struct RMP_Mem_Head* Head;
+};
+
+/* The memory control block structure */
+struct RMP_Mem
+{
+    struct RMP_List Alloc;
+    ptr_t FLI_Num;
+    ptr_t Start;
+    ptr_t Size;
+    /* The bitmap - in no case will the system manage more than 128MB of mmeory */
+    ptr_t Bitmap[5];
+    /* There are at least this number of levels - 16kB thus 8*8 */
+    struct RMP_List Table[8*8];
+};
 /*****************************************************************************/
 /* __KERNEL_H_STRUCTS__ */
 #endif
@@ -212,6 +253,10 @@ static void _RMP_Set_Rdy(volatile struct RMP_Thd* Thread);
 static void _RMP_Clr_Rdy(volatile struct RMP_Thd* Thread);
 static void _RMP_Dly_Ins(volatile struct RMP_Thd* Thread, ptr_t Slices);
 static void _RMP_Timer_Proc(void);
+static void _RMP_Mem_Block(volatile struct RMP_Mem_Head* Addr, ptr_t Size);
+static void _RMP_Mem_Ins(volatile void* Pool, volatile struct RMP_Mem_Head* Mem_Head);
+static void _RMP_Mem_Del(volatile void* Pool, volatile struct RMP_Mem_Head* Mem_Head);
+static ret_t _RMP_Mem_Search(volatile void* Pool, ptr_t Size, cnt_t* FLI_Level, cnt_t* SLI_Level);
 /*****************************************************************************/
 #define __EXTERN__
 /* End Private C Function Prototypes *****************************************/
@@ -239,6 +284,10 @@ __EXTERN__ void _RMP_Get_High_Rdy(void);
 __EXTERN__ void _RMP_Tick_Handler(ptr_t Ticks);
 __EXTERN__ ptr_t _RMP_Get_Near_Ticks(void);
 __EXTERN__ void RMP_Clear(volatile void* Addr, ptr_t Size);
+
+/* Some helpers */
+__EXTERN__ ptr_t RMP_RBIT_Get(ptr_t Val);
+__EXTERN__ ptr_t RMP_LSB_Get(ptr_t Val);
 
 /* Scheduler locking & unlocking */
 __EXTERN__ void RMP_Lock_Sched(void);
@@ -279,6 +328,11 @@ __EXTERN__ ret_t RMP_Sem_Pend(volatile struct RMP_Sem* Semaphore, ptr_t Slices);
 __EXTERN__ ret_t RMP_Sem_Abort(volatile struct RMP_Thd* Thread);
 __EXTERN__ ret_t RMP_Sem_Post(volatile struct RMP_Sem* Semaphore, ptr_t Number);
 __EXTERN__ ret_t RMP_Sem_Post_ISR(volatile struct RMP_Sem* Semaphore, ptr_t Number);
+                             
+/* Memory interfaces */
+__EXTERN__ ret_t RMP_Mem_Init(volatile void* Pool, ptr_t Size);
+__EXTERN__ void* RMP_Malloc(volatile void* Pool, ptr_t Size);
+__EXTERN__ void RMP_Free(volatile void* Pool, void* Mem_Ptr);
 
 /* Hook functions */
 #if(RMP_USE_HOOKS==RMP_TRUE)

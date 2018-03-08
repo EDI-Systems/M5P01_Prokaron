@@ -123,25 +123,37 @@ Click **[HERE](README.md)** for English version.
     }
 ```
 
+### 内存池操作
+```C
+    /* Initialize memory pool */
+    RMP_Mem_Init(Pool, Pool_Size);
+
+    /* Allocate from the pool */
+    Mem=RMP_Malloc(Pool, Alloc_Size);
+
+    /* Free allocated memory */
+    RMP_Free(Pool, Mem);
+```
+
 ### 所有被支持架构上的典型性能数据
-|Machine      |Toolchain     |Flash|SRAM|Yield|Mailbox|Semaphore|Mailbox/Int|Semaphore/Int|
-|:-----------:|:------------:|:---:|:--:|:---:|:-----:|:-------:|:---------:|:-----------:|
-|MSP430       |TI CCS6       |2.90 |0.64|1254 |2386   |2281     |2378       |2245         |
-|MSP430       |GCC           |TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
-|Cortex-M0    |Keil uVision 5|4.94 |1.65|374  |663    |616      |659        |617          |
-|Cortex-M0+   |Keil uVision 5|6.25 |1.65|334  |607    |544      |588        |552          |
-|Cortex-M3    |Keil uVision 5|2.60 |1.65|246  |456    |422      |443        |409          |
-|Cortex-M3    |GCC           |TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
-|Cortex-M4    |Keil uVision 5|2.70 |1.66|184  |339    |325      |374        |361          |
-|Cortex-M4    |GCC           |TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
-|Cortex-M7    |Keil uVision 5|6.66 |1.65|170  |256    |230      |274        |268          |
-|Cortex-M7    |GCC           |TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
-|Cortex-R4    |Keil uVision 5|TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
-|Cortex-R4    |GCC           |TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
-|Cortex-R5    |Keil uVision 5|TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
-|Cortex-R5    |GCC           |TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
-|MIPS M14k    |XC32-GCC      |17.2 |2.46|264  |358    |340      |421        |415          |
-|X86-LINUX    |GCC           |N/A  |N/A |33000|35000  |33000    |35000      |33000        |
+|Machine      |Toolchain     |Flash|SRAM|Yield|Mail |Sem  |Mail/Int|Sem/Int|Mem  |
+|:-----------:|:------------:|:---:|:--:|:---:|:---:|:---:|:------:|:-----:|:---:|
+|MSP430       |TI CCS6       |2.90 |0.64|495  |906  |786  |830     |736    |1575 |
+|MSP430       |GCC           |TBT  |TBT |TBT  |TBT  |TBT  |TBT     |TBT    |     |
+|Cortex-M0    |Keil uVision 5|4.94 |1.65|374  |663  |616  |659     |617    |N/A  |
+|Cortex-M0+   |Keil uVision 5|6.25 |1.65|334  |607  |544  |588     |552    |N/A  |
+|Cortex-M3    |Keil uVision 5|2.60 |1.65|246  |456  |422  |443     |409    |308  |
+|Cortex-M3    |GCC           |TBT  |TBT |TBT  |TBT  |TBT  |TBT     |TBT    |     |
+|Cortex-M4    |Keil uVision 5|2.70 |1.66|184  |339  |325  |374     |361    |244  |
+|Cortex-M4    |GCC           |TBT  |TBT |TBT  |TBT  |TBT  |TBT     |TBT    |     |
+|Cortex-M7    |Keil uVision 5|6.66 |1.65|170  |256  |230  |274     |268    |180  |
+|Cortex-M7    |GCC           |TBT  |TBT |TBT  |TBT  |TBT  |TBT     |TBT    |     |
+|Cortex-R4    |Keil uVision 5|TBT  |TBT |TBT  |TBT  |TBT  |TBT     |TBT    |     |
+|Cortex-R4    |GCC           |TBT  |TBT |TBT  |TBT  |TBT  |TBT     |TBT    |     |
+|Cortex-R5    |Keil uVision 5|TBT  |TBT |TBT  |TBT  |TBT  |TBT     |TBT    |     |
+|Cortex-R5    |GCC           |TBT  |TBT |TBT  |TBT  |TBT  |TBT     |TBT    |     |
+|MIPS M14k    |XC32-GCC      |17.2 |2.46|264  |358  |340  |421     |415    |213  |
+|X86-LINUX    |GCC           |N/A  |N/A |33000|35000|33000|35000   |33000  |136  |
 
 **Flash和SRAM消耗以kB计，其他数据以CPU指令周期计。这里列出的所有值都是典型（有意义的系统配置）值而非绝对意义上的最小值，因为纯技术层面的最小配置在实际工程中很少是真正有用的。**
 
@@ -155,11 +167,12 @@ Click **[HERE](README.md)** for English version.
 - X86 Linux平台使用Ubuntu 16.04和i7-4820k @ 3.7GHz进行评估。
 
 所有的编译器优化选项都被设为最高（通常是-O3），而且时间优化选项也被打开。 
-- Yield：两线程间进行切换所用的时间。  
-- Mailbox：两线程间使用邮箱进行发送-接收操作的耗时。  
-- Semaphore：两线程间使用计数信号量进行发布-获取操作的耗时。  
-- Mailbox/Int：从中断发送到某线程邮箱的耗时。 
-- Semaphore/Int：从中断发布信号量的耗时。  
+- Yield   ：两线程间进行切换所用的时间。  
+- Mail    ：两线程间使用邮箱进行发送-接收操作的耗时。  
+- Sem     ：两线程间使用计数信号量进行发布-获取操作的耗时。  
+- Mail/Int：从中断发送到某线程邮箱的耗时。 
+- Sem/Int ：从中断发布信号量的耗时。 
+- Mem     ：进行一次内存操作（比如分配或释放）的用时。 
 
 ## 新手上路
 
