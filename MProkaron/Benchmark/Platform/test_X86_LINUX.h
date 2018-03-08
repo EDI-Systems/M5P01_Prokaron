@@ -27,10 +27,15 @@ static __inline__ unsigned long long rdtsc(void)
 }
 
 #define COUNTER_READ()    rdtsc()
+/* Are we testing the memory pool? */
+#define TEST_MEM_POOL     8192
 /* Are we doing minimal measurements? */
 /* #define MINIMAL_SIZE */
 /* The POSIX timers are all 64 bits, so */
 typedef unsigned long long tim_t;
+
+/* Interrupt interval in usec */
+#define TEST_INT_INTERVAL 10000
 /* End Defines ***************************************************************/
 
 /* Globals *******************************************************************/
@@ -77,12 +82,12 @@ void Int_Init(void)
 	memset(&Tick, 0, sizeof(Tick));
 	/* First timeout */
 	Tick.it_value.tv_sec=0;
-	Tick.it_value.tv_usec=1000;
+	Tick.it_value.tv_usec=TEST_INT_INTERVAL;
 	/* Interval time to run function */
 	Tick.it_interval.tv_sec=0;
-	Tick.it_interval.tv_usec=1000;
+	Tick.it_interval.tv_usec=TEST_INT_INTERVAL;
 	RMP_ASSERT(setitimer(ITIMER_REAL, &Tick, NULL)>=0);
-    RMP_PRINTK_S("Init done.\r\n");
+    RMP_PRINTK_S("Timer init done - testing interrupts.\r\n");
 }
 
 /* End Function:Int_Init *****************************************************/

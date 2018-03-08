@@ -121,8 +121,8 @@ Enhancement suggestions are tracked as [GitHub issues](https://guides.github.com
     * :green_heart: `:green_heart:` when fixing the CI build
     * :white_check_mark: `:white_check_mark:` when adding tests
     * :lock: `:lock:` when dealing with reliability or formal proof
-    * :arrow_up: `:arrow_up:` when upgrading dependencies
-    * :arrow_down: `:arrow_down:` when downgrading dependencies
+    * :arrow_up: `:arrow_up:` when upgrading dependencies or adding features
+    * :arrow_down: `:arrow_down:` when downgrading dependencies or removing features
     * :shirt: `:shirt:` when removing linter warnings
 
 ### C programming Styleguide

@@ -16,6 +16,8 @@ Description : The testbench for PIC32MZ2048EFM100.
 #define THD2_STACK          (&Stack_2[300])
 /* How to read counter */
 #define COUNTER_READ()      (TMR1*5)
+/* Are we testing the memory pool? */
+#define TEST_MEM_POOL       8192
 /* Are we doing minimal measurements? */
 /* #define MINIMAL_SIZE */
 /* The PIC32 timers are all 16 bits, so */

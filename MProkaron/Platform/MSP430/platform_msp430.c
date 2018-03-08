@@ -58,6 +58,19 @@ const u8 RMP_MSB_Tbl[128]=
 
 ptr_t RMP_MSB_Get(ptr_t Val)
 {
+#if(RMP_MSP430_X==RMP_TRUE)
+    /* Scan one by one */
+    if((Val&0xFF000000UL)!=0)
+        return RMP_MSB_Tbl[Val>>25]+24;
+    else if((Val&0xFF0000UL)!=0)
+        return RMP_MSB_Tbl[Val>>17]+16;
+    else if((Val&0xFF00UL)!=0)
+        return RMP_MSB_Tbl[Val>>9]+8;
+    else if((Val&0xFFUL)!=0)
+        return RMP_MSB_Tbl[Val>>1];
+    /* Nothing anywhere */
+    return 0xFFFFFFFFUL;
+#else
     /* Something at high bits */
     if((Val&0xFF00)!=0)
         return RMP_MSB_Tbl[Val>>9]+8;
@@ -66,6 +79,7 @@ ptr_t RMP_MSB_Get(ptr_t Val)
         return RMP_MSB_Tbl[Val>>1];
     /* Nothing anywhere */
     return 0xFFFF;
+#endif
 }
 /* End Function:RMP_MSB_Get **************************************************/
 
@@ -142,7 +156,6 @@ void _RMP_Stack_Init(ptr_t Entry, ptr_t Stack, ptr_t Arg)
     ((u16*)Stack_Ptr)[24]=0;
     ((u16*)Stack_Ptr)[25]=((Entry>>4)&0xF000)|RMP_MSP430_SR_GIE;
     ((u16*)Stack_Ptr)[26]=Entry&0xFFFF;
-    //RMP_MSP430X_PCSR(Entry,RMP_MSP430_SR_GIE);/* Status & PC */
 #else
     Stack_Ptr[12]=RMP_MSP430_SR_GIE;                        /* Status */
     Stack_Ptr[13]=Entry;                                    /* PC */
