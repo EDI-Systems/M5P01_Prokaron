@@ -140,19 +140,19 @@ Download the precompiled 32-bit linux binary **[here](Project/ECLIPSE-GCC-LINUX/
 |Machine      |Toolchain     |Flash|SRAM|Yield|Mail |Sem  |Mail/Int|Sem/Int|Mem  |
 |:-----------:|:------------:|:---:|:--:|:---:|:---:|:---:|:------:|:-----:|:---:|
 |MSP430       |TI CCS6       |2.90 |0.64|495  |906  |786  |830     |736    |1575 |
-|MSP430       |GCC           |TBT  |TBT |TBT  |TBT  |TBT  |TBT     |TBT    |     |
+|MSP430       |GCC           |     |    |     |     |     |        |       |     |
 |Cortex-M0    |Keil uVision 5|4.94 |1.65|374  |663  |616  |659     |617    |N/A  |
 |Cortex-M0+   |Keil uVision 5|6.25 |1.65|334  |607  |544  |588     |552    |N/A  |
 |Cortex-M3    |Keil uVision 5|2.60 |1.65|246  |456  |422  |443     |409    |308  |
-|Cortex-M3    |GCC           |TBT  |TBT |TBT  |TBT  |TBT  |TBT     |TBT    |     |
+|Cortex-M3    |GCC           |     |    |     |     |     |        |       |     |
 |Cortex-M4    |Keil uVision 5|2.70 |1.66|184  |339  |325  |374     |361    |244  |
-|Cortex-M4    |GCC           |TBT  |TBT |TBT  |TBT  |TBT  |TBT     |TBT    |     |
+|Cortex-M4    |GCC           |     |    |     |     |     |        |       |     |
 |Cortex-M7    |Keil uVision 5|6.66 |1.65|170  |256  |230  |274     |268    |180  |
-|Cortex-M7    |GCC           |TBT  |TBT |TBT  |TBT  |TBT  |TBT     |TBT    |     |
-|Cortex-R4    |Keil uVision 5|TBT  |TBT |TBT  |TBT  |TBT  |TBT     |TBT    |     |
-|Cortex-R4    |GCC           |TBT  |TBT |TBT  |TBT  |TBT  |TBT     |TBT    |     |
-|Cortex-R5    |Keil uVision 5|TBT  |TBT |TBT  |TBT  |TBT  |TBT     |TBT    |     |
-|Cortex-R5    |GCC           |TBT  |TBT |TBT  |TBT  |TBT  |TBT     |TBT    |     |
+|Cortex-M7    |GCC           |     |    |     |     |     |        |       |     |
+|Cortex-R4    |Keil uVision 5|     |    |     |     |     |        |       |     |
+|Cortex-R4    |GCC           |     |    |     |     |     |        |       |     |
+|Cortex-R5    |Keil uVision 5|     |    |     |     |     |        |       |     |
+|Cortex-R5    |GCC           |     |    |     |     |     |        |       |     |
 |MIPS M14k    |XC32-GCC      |17.2 |2.46|264  |358  |340  |421     |415    |213  |
 |X86-LINUX    |GCC           |N/A  |N/A |33000|35000|33000|35000   |33000  |136  |
 
