@@ -66,6 +66,11 @@
 			<locationURI>PARENT-4-PROJECT_LOC/M0P0_Library/MSP430FR5xx_6xx/eusci_a_uart.c</locationURI>
 		</link>
 		<link>
+			<name>Lib/framctl_a.c</name>
+			<type>1</type>
+			<locationURI>PARENT-4-PROJECT_LOC/M0P0_Library/MSP430FR5xx_6xx/framctl_a.c</locationURI>
+		</link>
+		<link>
 			<name>Lib/gpio.c</name>
 			<type>1</type>
 			<locationURI>PARENT-4-PROJECT_LOC/M0P0_Library/MSP430FR5xx_6xx/gpio.c</locationURI>

@@ -124,25 +124,37 @@ Download the precompiled 32-bit linux binary **[here](Project/ECLIPSE-GCC-LINUX/
     }
 ```
 
+### Memory pool operations
+```C
+    /* Initialize memory pool */
+    RMP_Mem_Init(Pool, Pool_Size);
+
+    /* Allocate from the pool */
+    Mem=RMP_Malloc(Pool, Alloc_Size);
+
+    /* Free allocated memory */
+    RMP_Free(Pool, Mem);
+```
+
 ### Typical performance figures for all supported architectures
-|Machine      |Toolchain     |Flash|SRAM|Yield|Mailbox|Semaphore|Mailbox/Int|Semaphore/Int|
-|:-----------:|:------------:|:---:|:--:|:---:|:-----:|:-------:|:---------:|:-----------:|
-|MSP430       |TI CCS6       |2.90 |0.64|1254 |2386   |2281     |2378       |2245         |
-|MSP430       |GCC           |TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
-|Cortex-M0    |Keil uVision 5|4.94 |1.65|374  |663    |616      |659        |617          |
-|Cortex-M0+   |Keil uVision 5|6.25 |1.65|334  |607    |544      |588        |552          |
-|Cortex-M3    |Keil uVision 5|2.60 |1.65|246  |456    |422      |443        |409          |
-|Cortex-M3    |GCC           |TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
-|Cortex-M4    |Keil uVision 5|2.70 |1.66|184  |339    |325      |374        |361          |
-|Cortex-M4    |GCC           |TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
-|Cortex-M7    |Keil uVision 5|6.66 |1.65|170  |256    |230      |274        |268          |
-|Cortex-M7    |GCC           |TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
-|Cortex-R4    |Keil uVision 5|TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
-|Cortex-R4    |GCC           |TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
-|Cortex-R5    |Keil uVision 5|TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
-|Cortex-R5    |GCC           |TBT  |TBT |TBT  |TBT    |TBT      |TBT        |TBT          |
-|MIPS M14k    |XC32-GCC      |17.2 |2.46|264  |358    |340      |421        |415          |
-|X86-LINUX    |GCC           |N/A  |N/A |33000|35000  |33000    |35000      |33000        |
+|Machine      |Toolchain     |Flash|SRAM|Yield|Mail |Sem  |Mail/Int|Sem/Int|Mem  |
+|:-----------:|:------------:|:---:|:--:|:---:|:---:|:---:|:------:|:-----:|:---:|
+|MSP430       |TI CCS6       |2.90 |0.64|495  |906  |786  |830     |736    |1575 |
+|MSP430       |GCC           |TBT  |TBT |TBT  |TBT  |TBT  |TBT     |TBT    |     |
+|Cortex-M0    |Keil uVision 5|4.94 |1.65|374  |663  |616  |659     |617    |N/A  |
+|Cortex-M0+   |Keil uVision 5|6.25 |1.65|334  |607  |544  |588     |552    |N/A  |
+|Cortex-M3    |Keil uVision 5|2.60 |1.65|246  |456  |422  |443     |409    |308  |
+|Cortex-M3    |GCC           |TBT  |TBT |TBT  |TBT  |TBT  |TBT     |TBT    |     |
+|Cortex-M4    |Keil uVision 5|2.70 |1.66|184  |339  |325  |374     |361    |244  |
+|Cortex-M4    |GCC           |TBT  |TBT |TBT  |TBT  |TBT  |TBT     |TBT    |     |
+|Cortex-M7    |Keil uVision 5|6.66 |1.65|170  |256  |230  |274     |268    |180  |
+|Cortex-M7    |GCC           |TBT  |TBT |TBT  |TBT  |TBT  |TBT     |TBT    |     |
+|Cortex-R4    |Keil uVision 5|TBT  |TBT |TBT  |TBT  |TBT  |TBT     |TBT    |     |
+|Cortex-R4    |GCC           |TBT  |TBT |TBT  |TBT  |TBT  |TBT     |TBT    |     |
+|Cortex-R5    |Keil uVision 5|TBT  |TBT |TBT  |TBT  |TBT  |TBT     |TBT    |     |
+|Cortex-R5    |GCC           |TBT  |TBT |TBT  |TBT  |TBT  |TBT     |TBT    |     |
+|MIPS M14k    |XC32-GCC      |17.2 |2.46|264  |358  |340  |421     |415    |213  |
+|X86-LINUX    |GCC           |N/A  |N/A |33000|35000|33000|35000   |33000  |136  |
 
 **Flash and SRAM consumption is calculated in kB, while the other figures are calculated in CPU clock cycles. All values listed here are typical (useful system) values, not minimum values, because minimum values on system size seldom make any real sense.**
 
@@ -156,11 +168,12 @@ Download the precompiled 32-bit linux binary **[here](Project/ECLIPSE-GCC-LINUX/
 - X86 Linux is evaluated with Ubuntu 16.04 on i7-4820k @ 3.7GHz.
 
 All compiler options are the highest optimization (usually -O3) and optimized for time. 
-- Yield: The time to yield between different threads.  
-- Mailbox: The mailbox communication time between two threads.  
-- Semaphore: The semaphore communication time between two threads.  
-- Mailbox/Int: The time to send to a mailbox from interrupt.  
-- Semaphore/Int: The time to post to a semaphore from interrupt.  
+- Yield    : The time to yield between different threads.  
+- Mail     : The mailbox communication time between two threads.  
+- Sem      : The semaphore communication time between two threads.  
+- Mail/Int : The time to send to a mailbox from interrupt.  
+- Sem/Int  : The time to post to a semaphore from interrupt.  
+- Mem      : The time to do an operation on memory, e.g. allocation/free.  
 
 ## Getting Started
 

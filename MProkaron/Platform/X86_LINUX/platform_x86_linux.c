@@ -143,10 +143,24 @@ void _RMP_Start(ptr_t Entry, ptr_t Stack)
 	RMP_ASSERT(signal(SIGALRM, SigAlrm_Handler)>=0);
 	RMP_ASSERT(setitimer(ITIMER_REAL, &Tick, NULL)>=0);
 
+    printf("The test on interrupt response time can take up to 5 minutes. Please wait patiently.\n");
+    printf("The performance number printed is not accurate. If you see 6-figure numbers, run again.\n");
+    printf("Additionally, the interrupt test may fail, because the Linux scheduler is not\n");
+    printf("guaranteed to pick the user thread after the system thread have finished its\n");
+    printf("signal handling. If another signal comes again before the user thread gets a\n");
+    printf("chance to run, then it will fail because the mailbox is not empty yet. Should\n");
+    printf("this happen on your computer(due to performance issues), increase the macro\n");
+    printf("TEST_INT_INTERVAL's (in test_X86_LINUX.h) value. However this macro's value\n");
+    printf("have a linear relationship with interrupt response test runtime, so configure it\n");
+    printf("according to your needs. The default value 10000 corresponds to 200 seconds.\n");
+    printf("This test will continue to run if not killed manually (mimicking the MCUs).\n");
+    printf("Remember to kill it after its completion!\n\n");
+
+
 	RMP_Sys_PID=syscall(SYS_gettid);
 	RMP_User_PID=clone((int (*)(void*))(Entry), (void*)Stack, CLONE_VM|SIGCHLD, 0);
-    printf("Sys PID is %d, User PID is %d\n",RMP_Sys_PID,RMP_User_PID);
-    /* Set up the timer */
+    printf("Sys PID is %d, User PID is %d.\n\n",RMP_Sys_PID,RMP_User_PID);
+
     while(1)
     {
     	/* Wait for the thread to receive the signal */
@@ -159,7 +173,6 @@ void _RMP_Start(ptr_t Entry, ptr_t Stack)
         else if(RMP_PendSV_Flag!=0)
         {
         	RMP_PendSV_Flag=0;
-        	//printf("p");
         	PendSV_Handler();
         }
         /* Must be an external interrupt */
@@ -186,13 +199,6 @@ Input       : None.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void print_regs(struct pt_regs* Regs)
-{
-//	printf("\n\n    EBX        ECX        EDX        ESI        EDI        EBP        EAX        XDS   \n");
-//	printf("0x%8x 0x%8x 0x%8x 0x%8x 0x%8x 0x%8x 0x%8x 0x%8x\n",Regs->ebx,Regs->ecx,Regs->edx,Regs->esi,Regs->edi,Regs->ebp,Regs->eax,Regs->xds);
-//	printf("    XES        XFS        XGS     ORIG_EAX      EIP        XCS       EFLAGS      ESP       XSS\n");
-//	printf("0x%8x 0x%8x 0x%8x 0x%8x 0x%8x 0x%8x 0x%8x 0x%8x 0x%8x 0x%8x\n",Regs->xes,Regs->xfs,Regs->xgs,Regs->orig_eax,Regs->eip,Regs->xcs,Regs->eflags,Regs->esp,Regs->xss);
-}
 void PendSV_Handler(void)
 {
 	ptr_t* SP;

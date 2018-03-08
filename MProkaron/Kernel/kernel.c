@@ -1079,7 +1079,7 @@ ret_t RMP_Thd_Rcv(ptr_t* Data, ptr_t Slices)
 Description : Delay the execution of a real-time thread.
 Input       : ptr_t Slices - The number of timeslices to delay.
 Output      : None.
-Return      : ret_t - If successful, 0; else error code.
+Return      : ret_t - If successful, 0; or an error code.
 ******************************************************************************/
 ret_t RMP_Thd_Delay(ptr_t Slices)
 {
@@ -1106,7 +1106,7 @@ ret_t RMP_Thd_Delay(ptr_t Slices)
 Description : Cancel the real-time thread from a previous delay.
 Input       : volatile struct RMP_Thd* Thread - The thread structure of the thread.
 Output      : None.
-Return      : ret_t - If successful, 0; else error code.
+Return      : ret_t - If successful, 0; or an error code.
 ******************************************************************************/
 ret_t RMP_Thd_Cancel(volatile struct RMP_Thd* Thread)
 {
@@ -1182,7 +1182,7 @@ ret_t RMP_Sem_Crt(volatile struct RMP_Sem* Semaphore, ptr_t Number)
 Description : Delete a semaphore in the system.
 Input       : volatile struct RMP_Sem* Semaphore - The pointer to the semaphore structure.
 Output      : None.
-Return      : ret_t - If successful, 0; else error code.
+Return      : ret_t - If successful, 0; or an error code.
 ******************************************************************************/
 ret_t RMP_Sem_Del(volatile struct RMP_Sem* Semaphore)
 {
@@ -1229,7 +1229,7 @@ Description : Pend on the semaphore, trying to get one.
 Input       : volatile struct RMP_Sem* Semaphore - The pointer to the semaphore structure.
               ptr_t Slices - The number of slices to wait.
 Output      : None.
-Return      : ret_t - If successful, the current semaphore number; else error code.
+Return      : ret_t - If successful, the current semaphore number; or an error code.
 ******************************************************************************/
 ret_t RMP_Sem_Pend(volatile struct RMP_Sem* Semaphore, ptr_t Slices)
 {
@@ -1286,7 +1286,7 @@ ret_t RMP_Sem_Pend(volatile struct RMP_Sem* Semaphore, ptr_t Slices)
 Description : Abort the waiting of one thread on a semaphore.
 Input       : volatile struct RMP_Thd* Thread - The thread structure of the thread.
 Output      : None.
-Return      : ret_t - If successful, 0; else error code.
+Return      : ret_t - If successful, 0; or an error code.
 ******************************************************************************/
 ret_t RMP_Sem_Abort(volatile struct RMP_Thd* Thread)
 {
@@ -1336,7 +1336,7 @@ Description : Post a number of semaphores to the list. This function can only be
 Input       : volatile struct RMP_Sem* Semaphore - The pointer to the semaphore structure.
               ptr_t Number - The number to post.
 Output      : None.
-Return      : ret_t - If successful, 0; else error code.
+Return      : ret_t - If successful, 0; or an error code.
 ******************************************************************************/
 ret_t RMP_Sem_Post(volatile struct RMP_Sem* Semaphore, ptr_t Number)
 {
@@ -1391,7 +1391,7 @@ Description : Post a number of semaphores to the list.
 Input       : volatile struct RMP_Sem* Semaphore - The pointer to the semaphore structure.
               ptr_t Number - The number to post.
 Output      : None.
-Return      : ret_t - If successful, 0; else error code.
+Return      : ret_t - If successful, 0; or an error code.
 ******************************************************************************/
 ret_t RMP_Sem_Post_ISR(volatile struct RMP_Sem* Semaphore, ptr_t Number)
 {
@@ -1581,6 +1581,483 @@ int main(void)
     return 0;
 }
 /* End Function:main *********************************************************/
+
+/* Begin Function:RMP_RBIT_Get ************************************************
+Description : Reverse the bit order in a word.
+Input       : ptr_t Val - The input value.
+Output      : None.
+Return      : ptr_t - The result.
+******************************************************************************/
+static const u8 RMP_RBIT_Table[256]=
+{
+    0x00, 0x80, 0x40, 0xC0, 0x20, 0xA0, 0x60, 0xE0, 0x10, 0x90, 0x50, 0xD0, 0x30, 0xB0, 0x70, 0xF0,
+    0x08, 0x88, 0x48, 0xC8, 0x28, 0xA8, 0x68, 0xE8, 0x18, 0x98, 0x58, 0xD8, 0x38, 0xB8, 0x78, 0xF8,
+    0x04, 0x84, 0x44, 0xC4, 0x24, 0xA4, 0x64, 0xE4, 0x14, 0x94, 0x54, 0xD4, 0x34, 0xB4, 0x74, 0xF4,
+    0x0C, 0x8C, 0x4C, 0xCC, 0x2C, 0xAC, 0x6C, 0xEC, 0x1C, 0x9C, 0x5C, 0xDC, 0x3C, 0xBC, 0x7C, 0xFC,
+    0x02, 0x82, 0x42, 0xC2, 0x22, 0xA2, 0x62, 0xE2, 0x12, 0x92, 0x52, 0xD2, 0x32, 0xB2, 0x72, 0xF2,
+    0x0A, 0x8A, 0x4A, 0xCA, 0x2A, 0xAA, 0x6A, 0xEA, 0x1A, 0x9A, 0x5A, 0xDA, 0x3A, 0xBA, 0x7A, 0xFA,
+    0x06, 0x86, 0x46, 0xC6, 0x26, 0xA6, 0x66, 0xE6, 0x16, 0x96, 0x56, 0xD6, 0x36, 0xB6, 0x76, 0xF6,
+    0x0E, 0x8E, 0x4E, 0xCE, 0x2E, 0xAE, 0x6E, 0xEE, 0x1E, 0x9E, 0x5E, 0xDE, 0x3E, 0xBE, 0x7E, 0xFE,
+    0x01, 0x81, 0x41, 0xC1, 0x21, 0xA1, 0x61, 0xE1, 0x11, 0x91, 0x51, 0xD1, 0x31, 0xB1, 0x71, 0xF1,
+    0x09, 0x89, 0x49, 0xC9, 0x29, 0xA9, 0x69, 0xE9, 0x19, 0x99, 0x59, 0xD9, 0x39, 0xB9, 0x79, 0xF9,
+    0x05, 0x85, 0x45, 0xC5, 0x25, 0xA5, 0x65, 0xE5, 0x15, 0x95, 0x55, 0xD5, 0x35, 0xB5, 0x75, 0xF5,
+    0x0D, 0x8D, 0x4D, 0xCD, 0x2D, 0xAD, 0x6D, 0xED, 0x1D, 0x9D, 0x5D, 0xDD, 0x3D, 0xBD, 0x7D, 0xFD,
+    0x03, 0x83, 0x43, 0xC3, 0x23, 0xA3, 0x63, 0xE3, 0x13, 0x93, 0x53, 0xD3, 0x33, 0xB3, 0x73, 0xF3,
+    0x0B, 0x8B, 0x4B, 0xCB, 0x2B, 0xAB, 0x6B, 0xEB, 0x1B, 0x9B, 0x5B, 0xDB, 0x3B, 0xBB, 0x7B, 0xFB,
+    0x07, 0x87, 0x47, 0xC7, 0x27, 0xA7, 0x67, 0xE7, 0x17, 0x97, 0x57, 0xD7, 0x37, 0xB7, 0x77, 0xF7,
+    0x0F, 0x8F, 0x4F, 0xCF, 0x2F, 0xAF, 0x6F, 0xEF, 0x1F, 0x9F, 0x5F, 0xDF, 0x3F, 0xBF, 0x7F, 0xFF
+};
+
+ptr_t RMP_RBIT_Get(ptr_t Val)
+{
+    ptr_t Ret;
+    u8* To;
+    u8* From;
+    
+    To=(u8*)(&Ret);
+    From=(u8*)(&Val);
+    
+#if(RMP_WORD_ORDER==4)
+    To[0]=RMP_RBIT_Table[From[1]];
+    To[1]=RMP_RBIT_Table[From[0]];
+#elif(RMP_WORD_ORDER==5)
+    To[0]=RMP_RBIT_Table[From[3]];
+    To[1]=RMP_RBIT_Table[From[2]];
+    To[2]=RMP_RBIT_Table[From[1]];
+    To[3]=RMP_RBIT_Table[From[0]];
+#else
+    To[0]=RMP_RBIT_Table[From[7]];
+    To[1]=RMP_RBIT_Table[From[6]];
+    To[2]=RMP_RBIT_Table[From[5]];
+    To[3]=RMP_RBIT_Table[From[4]];
+    To[4]=RMP_RBIT_Table[From[3]];
+    To[5]=RMP_RBIT_Table[From[2]];
+    To[6]=RMP_RBIT_Table[From[1]];
+    To[7]=RMP_RBIT_Table[From[0]];
+#endif
+
+    return Ret;
+}
+/* End Function:RMP_RBIT_Get *************************************************/
+
+/* Begin Function:RMP_LSB_Get *************************************************
+Description : Get the LSB in a word. If the word is all zero, a negative value
+              will be returned.
+Input       : ptr_t Val - The input value.
+Output      : None.
+Return      : ptr_t - The LSB found.
+******************************************************************************/
+ptr_t RMP_LSB_Get(ptr_t Val)
+{
+#if(RMP_WORD_ORDER==4)
+    return 15-RMP_MSB_Get(RMP_RBIT_Get(Val));
+#elif(RMP_WORD_ORDER==5)
+    return 31-RMP_MSB_Get(RMP_RBIT_Get(Val));
+#else
+    return 63-RMP_MSB_Get(RMP_RBIT_Get(Val));
+#endif 
+}
+/* End Function:RMP_LSB_Get **************************************************/
+
+/* Begin Function:RMP_Mem_Init ************************************************
+Description : Initialize a trunk of memory as the memory pool. The TLSF allocator's
+              FLI will be decided upon the memory block size. All memory allocation
+              functions does not lock the scheduler; decide whether you need to lock
+              in your code.
+              The TLSF memory allocator is consisted of FLI, SLI and allocatable
+              memory. The FLI is classified by 2^n, and the SLI segregates the 
+              FLI section by an power of 2, i.e. 8 or 16. Thus, when we need 
+              an memory block, we try to find it in the corresponding FLI, and
+              then the SLI.(This is a two-dimensional matrix.) Then 
+              (1) If the SLI has no allocatable blocks, we will allocate some
+                  from the nearest bigger block.
+              (2) If there is some block from the SLI block, allocate the memory
+                  size and put the residue memory into the corresponding FLI and
+                  SLI area.
+              When freeing memory, the adjacent free memory blocks will automatically
+              merge.
+              In the system, the FLI is variable and the SLI is fixed to 8.
+              The FLI has a miniumum block size of 64 Byte(If the allocated size
+              is always smaller than 64 bits, then there's no need to use DSA.)
+              To make sure that it is like this, we set the smallest allocatable
+              size to 64B. In addition, we set the alignment to 8.
+              [FLI]:
+              .....    6       5      4       3         2        1         0
+                     8K-4K   4K-2K  2K-1K  1K-512B  511-256B  255-128B  127-64B
+              For example, when a memory block is 720 byte, then it should be in
+              FLI=3,SLI=3.
+              When a lower FLI has no blocks for allocation, it will "borrow"
+              a block from the nearest FLI block that is big enough.
+Input       : volatile void* Pool - The start address of the memory pool, word-aligned.
+              ptr_t Size - The size of the memory pool, word-aligned.
+Output      : None.
+Return      : ret_t - If successful, 0; else an error code.
+******************************************************************************/
+ret_t RMP_Mem_Init(volatile void* Pool, ptr_t Size)
+{
+    cnt_t FLI_Cnt;
+    ptr_t Usable_Size;
+    volatile struct RMP_Mem* Mem;
+    volatile struct RMP_Mem_Head* Mem_Head;
+    
+    /* See if the memory pool is large enough to enable dynamic allocation - at least 4096 words */
+    if(Size<(4096*sizeof(ptr_t)))
+        return RMP_ERR_MEM;
+    
+    /* See if the address and size is word-aligned */
+    if((((ptr_t)Pool&(RMP_WORD_MASK>>2))!=0)||((Size&(RMP_WORD_MASK>>2))!=0))
+        return RMP_ERR_MEM;
+        
+    Mem=(volatile struct RMP_Mem*)Pool;
+    Mem->Size=Size;
+    /* Initialize the allocated block list */
+    RMP_List_Crt(&(Mem->Alloc));
+    /* Calculate the FLI value needed for this - we always align to 64 byte */
+    Mem->FLI_Num=RMP_MSB_Get(Size-sizeof(struct RMP_Mem))-6+1;
+    /* Initialize the TLSF allocation table first */
+    for(FLI_Cnt=0;FLI_Cnt<(cnt_t)(Mem->FLI_Num);FLI_Cnt++)
+    {
+        RMP_List_Crt(&(Mem->Table[RMP_MEM_POS(FLI_Cnt,0)]));
+        RMP_List_Crt(&(Mem->Table[RMP_MEM_POS(FLI_Cnt,1)]));
+        RMP_List_Crt(&(Mem->Table[RMP_MEM_POS(FLI_Cnt,2)]));
+        RMP_List_Crt(&(Mem->Table[RMP_MEM_POS(FLI_Cnt,3)]));
+        RMP_List_Crt(&(Mem->Table[RMP_MEM_POS(FLI_Cnt,4)]));
+        RMP_List_Crt(&(Mem->Table[RMP_MEM_POS(FLI_Cnt,5)]));
+        RMP_List_Crt(&(Mem->Table[RMP_MEM_POS(FLI_Cnt,6)]));
+        RMP_List_Crt(&(Mem->Table[RMP_MEM_POS(FLI_Cnt,7)]));
+    }
+    for(FLI_Cnt=0;FLI_Cnt<5;FLI_Cnt++)
+        Mem->Bitmap[FLI_Cnt]=0;
+    
+    /* Get the big memory block's size and position */
+    Usable_Size=sizeof(struct RMP_Mem)+(sizeof(struct RMP_List)<<3)*(Mem->FLI_Num-8);
+    Mem_Head=(struct RMP_Mem_Head*)(((ptr_t)Pool)+Usable_Size);
+    Mem->Start=(ptr_t)Mem_Head;
+    Usable_Size=Size-Usable_Size;
+    
+    /* Initialize the big block */
+    _RMP_Mem_Block(Mem_Head,Usable_Size);
+    
+    /* Insert the memory into the corresponding level */
+    _RMP_Mem_Ins(Pool, Mem_Head);
+    return 0;
+}
+/* End Function:RMP_Mem_Init *************************************************/
+
+/* Begin Function:_RMP_Mem_Block **********************************************
+Description : Make a memory block from the memory trunk. The memory block is always
+              free when created. No parameter check performed here.
+Input       : volatile struct RMP_Mem_Head* Addr - The start address of the
+                                                   memory block, word-aligned.
+              ptr_t Size - The size of the memory block, word-aligned.
+Output      : None.
+Return      : None.
+******************************************************************************/
+void _RMP_Mem_Block(volatile struct RMP_Mem_Head* Addr, ptr_t Size)
+{
+    volatile struct RMP_Mem_Head* Mem_Head;
+    
+    /* Get the big memory block's size and position */
+    Mem_Head=(struct RMP_Mem_Head*)Addr;
+    
+    /* Initialize the big memory block */
+    Mem_Head->State=RMP_MEM_FREE;
+    Mem_Head->Tail=(struct RMP_Mem_Tail*)(((ptr_t)Mem_Head)+Size-sizeof(struct RMP_Mem_Tail));
+    Mem_Head->Tail->Head=Mem_Head;
+}
+/* End Function:_RMP_Mem_Block ***********************************************/
+
+/* Begin Function:_RMP_Mem_Ins ************************************************
+Description : The memory insertion function, to insert a certain memory block
+              into the corresponding FLI and SLI slot.
+Input       : volatile void* Pool - The memory pool.
+              volatile struct RMP_Mem_Head* Mem_Head - The pointer to the memory block.
+Output      : None.
+Return      : None.
+******************************************************************************/
+void _RMP_Mem_Ins(volatile void* Pool, volatile struct RMP_Mem_Head* Mem_Head)
+{
+    cnt_t FLI_Level;
+    cnt_t SLI_Level;
+    ptr_t Level;
+    ptr_t Size;
+    volatile struct RMP_Mem* Mem;
+    volatile struct RMP_List* Slot;
+    
+    /* Get the memory pool and block size */
+    Mem=(volatile struct RMP_Mem*)Pool;
+    Size=(ptr_t)(Mem_Head->Tail)-((ptr_t)Mem_Head)-sizeof(struct RMP_Mem_Head);
+
+    /* Guarantee the Mem_Size is bigger than 64 or a failure will surely occur here */
+    FLI_Level=RMP_MSB_Get(Size)-6;
+    /* Decide the SLI level directly from the FLI level */
+    SLI_Level=(Size>>(FLI_Level+3))&0x07;
+    Level=(FLI_Level<<3)+SLI_Level;
+    /* Get the slot */
+    Slot=&(Mem->Table[RMP_MEM_POS(FLI_Level,SLI_Level)]);
+
+    /* See if there are any blocks in the level, equal means no. So what we inserted is the first block */
+    if(Slot==Slot->Next)
+    {
+        /* Set the corresponding bit in the TLSF bitmap */
+        Mem->Bitmap[Level>>RMP_WORD_ORDER]|=1<<(Level&RMP_WORD_MASK);
+    }
+
+    /* Insert the node now */
+    RMP_List_Ins(&(Mem_Head->Head), Slot, Slot->Next);
+}
+/* End Function:_RMP_Mem_Ins *************************************************/
+
+/* Begin Function:_RMP_Mem_Del ************************************************
+Description : The memory deletion function, to delete a certain memory block
+              from the corresponding FLI and SLI class.
+Input       : volatile void* Pool - The memory pool.
+              volatile struct RMP_Mem_Head* Mem_Head - The pointer to the memory block.
+Output      : None.
+Return      : None.
+******************************************************************************/
+void _RMP_Mem_Del(volatile void* Pool, volatile struct RMP_Mem_Head* Mem_Head)
+{
+    cnt_t FLI_Level;
+    cnt_t SLI_Level;
+    ptr_t Level;
+    ptr_t Size;
+    volatile struct RMP_Mem* Mem;
+    volatile struct RMP_List* Slot;    
+    
+    /* Get the memory pool and block size */
+    Mem=(volatile struct RMP_Mem*)Pool;
+    Size=(ptr_t)(Mem_Head->Tail)-((ptr_t)Mem_Head)-sizeof(struct RMP_Mem_Head);
+    
+    /* Guarantee the Mem_Size is bigger than 64 or a failure will surely occur here */
+    FLI_Level=RMP_MSB_Get(Size)-6;
+    /* Decide the SLI level directly from the FLI level */
+    SLI_Level=(Size>>(FLI_Level+3))&0x07;
+    Level=(FLI_Level<<3)+SLI_Level;
+    /* Get the slot */
+    Slot=&(Mem->Table[RMP_MEM_POS(FLI_Level,SLI_Level)]);
+   
+    RMP_List_Del(Mem_Head->Head.Prev,Mem_Head->Head.Next);
+
+    /* See if there are any blocks in the level, equal means no. So
+     * what we deleted is the last block */
+    if(Slot==Slot->Next)
+    {
+        /* Clear the corresponding bit in the TLSF bitmap */
+        Mem->Bitmap[Level>>RMP_WORD_ORDER]&=~(1<<(Level&RMP_WORD_MASK));
+    }
+}
+/* End Function:_RMP_Mem_Del *************************************************/
+
+/* Begin Function:_RMP_Mem_Search *********************************************
+Description : The TLSF memory searcher.
+Input       : ptr_t Size - The memory size, must be bigger than 64. This must be
+                           guaranteed before calling this function or an error
+                           will unavoidably occur.
+Output      : cnt_t* FLI_Level - The FLI level found.
+              cnt_t* SLI_Level - The SLI level found.
+Return      : ret_t - If successful, 0; else -1 for failure.
+******************************************************************************/
+ret_t _RMP_Mem_Search(volatile void* Pool, ptr_t Size, cnt_t* FLI_Level, cnt_t* SLI_Level)
+{
+    cnt_t FLI_Level_Temp;
+    cnt_t SLI_Level_Temp;
+    cnt_t Level;
+    ptr_t LSB;
+    volatile struct RMP_Mem* Mem;
+
+    /* Make sure that it is bigger than 64. 64=2^6 */
+    FLI_Level_Temp=RMP_MSB_Get(Size)-6;
+    
+    /* Decide the SLI level directly from the FLI level. We plus the number by one here
+     * so that we can avoid the list search. However, when the allocated memory is just
+     * an order of 2, then we do not need to jump to the next level and can fit directly */
+    if(((cnt_t)Size)==((1<<6)<<FLI_Level_Temp))
+        SLI_Level_Temp=(Size>>(FLI_Level_Temp+3))&0x07;
+    else
+    {
+        SLI_Level_Temp=((Size>>(FLI_Level_Temp+3))&0x07)+1;
+        
+        /* If the SLI level is the largest of the SLI level, then jump to the next FLI level */
+        if(SLI_Level_Temp==8)
+        {
+            FLI_Level_Temp+=1;
+            SLI_Level_Temp=0;
+        }
+    }
+    
+    /* Check if the FLI level is over the boundary */
+    Mem=(volatile struct RMP_Mem*)Pool;
+    if((ptr_t)FLI_Level_Temp>=Mem->FLI_Num)
+        return -1;
+    
+    /* Try to find one position on this processor word level */
+    Level=(FLI_Level_Temp<<3)+SLI_Level_Temp;
+    LSB=RMP_LSB_Get(Mem->Bitmap[Level>>RMP_WORD_ORDER]>>(Level&RMP_WORD_MASK));
+    /* If there's at least one block that matches the query, return the level */
+    if(LSB<32)
+    {
+        Level=(Level&(~RMP_WORD_MASK))+LSB+(Level&RMP_WORD_MASK);
+        *FLI_Level=Level>>3;
+        *SLI_Level=Level&0x07;
+        return 0;
+    }
+    /* No one exactly fits */
+    else
+    {
+        /* From the next word, query one by one */
+        for(Level=(Level>>RMP_WORD_ORDER)+1;Level<5;Level++)
+        {
+            /* if the level has blocks of one FLI level */
+            if(Mem->Bitmap[Level]!=0)
+            {
+                /* Find the actual level */ 
+                LSB=RMP_LSB_Get(Mem->Bitmap[Level]);
+                *FLI_Level=((Level<<RMP_WORD_ORDER)+LSB)>>3;
+                *SLI_Level=LSB&0x07;
+                return 0;
+            }
+        }
+    }
+
+    /* Search failed */
+    return -1;
+}
+/* End Function:_RMP_Mem_Search **********************************************/
+
+/* Begin Function:RMP_Malloc **************************************************
+Description : Allocate some memory from a designated memory pool.
+Input       : volatile void* Pool - The pool to allocate from.
+              ptr_t Size - The size of the RAM needed to allocate.
+Output      : None.
+Return      : void* - The pointer to the memory. If no memory available, 0 is returned.
+******************************************************************************/
+void* RMP_Malloc(volatile void* Pool, ptr_t Size)									                   
+{	
+    cnt_t FLI_Level;
+    cnt_t SLI_Level;
+    volatile struct RMP_Mem* Mem;
+    ptr_t Old_Size;
+    volatile struct RMP_Mem_Head* Mem_Head;
+    ptr_t Rounded_Size;
+    volatile struct RMP_Mem_Head* New_Mem;
+    ptr_t New_Size;
+    
+    if(Size==0)
+        return (void*)(0);
+    
+    /* Round up the size:a multiple of 8 and bigger than 64B. In fact, we will add
+     * extra 8 bytes at the end if the size is a multiple of 8 for safety. */
+    Rounded_Size=(((Size-1)>>3)+1)<<3;
+    /* See if it is smaller than the smallest block */
+    Rounded_Size=(Rounded_Size>64)?Rounded_Size:64;
+
+    /* See if such block exists, if not, abort */
+    if(_RMP_Mem_Search(Pool,Rounded_Size,&FLI_Level,&SLI_Level)!=0)
+        return (void*)(0);
+    
+    Mem=(volatile struct RMP_Mem*)Pool;
+    
+    /* There is such block. Get it and delete it from the TLSF list. */
+    Mem_Head=(struct RMP_Mem_Head*)(Mem->Table[RMP_MEM_POS(FLI_Level,SLI_Level)].Next);
+    _RMP_Mem_Del(Pool, Mem_Head);
+
+    /* Allocate and calculate if the space left could be big enough to be a new 
+     * block. If so, we will put the block back into the TLSF table */
+    New_Size=(ptr_t)(Mem_Head->Tail)-((ptr_t)Mem_Head)-sizeof(struct RMP_Mem_Head)-Rounded_Size;
+    if(New_Size>=sizeof(struct RMP_Mem_Head)+64+sizeof(struct RMP_Mem_Tail))
+    {
+        Old_Size=sizeof(struct RMP_Mem_Head)+Rounded_Size+sizeof(struct RMP_Mem_Tail);
+        New_Mem=(volatile struct RMP_Mem_Head*)(((ptr_t)Mem_Head)+Old_Size);
+
+        _RMP_Mem_Block(Mem_Head, Old_Size);
+        _RMP_Mem_Block(New_Mem, New_Size);
+
+        /* Put the extra block back */
+        _RMP_Mem_Ins(Pool, New_Mem);
+    }
+
+    /* Insert the allocated block into the lists */
+    RMP_List_Ins(&(Mem_Head->Head),&(Mem->Alloc),Mem->Alloc.Next);
+    Mem_Head->State=RMP_MEM_USED;
+
+    /* Finally, return the start address */
+    return (void*)(((ptr_t)Mem_Head)+sizeof(struct RMP_Mem_Head));
+}
+/* End Function:RMP_Malloc ***************************************************/
+
+/* Begin Function:RMP_Free ****************************************************
+Description : Free allocated memory, for system use mainly. It will free memory 
+              in the name of a certain process, specified by the PID.
+Input       : volatile void* Pool - The pool to free to.
+              void* Mem_Ptr - The pointer returned by "RMP_Malloc".
+Output      : None.
+Return      : None.
+******************************************************************************/
+void RMP_Free(volatile void* Pool, void* Mem_Ptr)
+{
+    volatile struct RMP_Mem* Mem; 
+    volatile struct RMP_Mem_Head* Mem_Head;
+    volatile struct RMP_Mem_Head* Left_Head;
+    volatile struct RMP_Mem_Head* Right_Head;
+    cnt_t Merge_Left;
+
+    /* See if the address is within the allocatable address range. If not, abort directly. */
+    Mem=(volatile struct RMP_Mem*)Pool;
+    if((((ptr_t)Mem_Ptr)<=((ptr_t)Mem))||(((ptr_t)Mem_Ptr)>=(((ptr_t)Mem)+Mem->Size)))
+        return;
+
+    Mem_Head=(struct RMP_Mem_Head*)(((ptr_t)Mem_Ptr)-sizeof(struct RMP_Mem_Head));
+    /* See if the block can really be freed by this PID. If cannot, return directly */
+    if(Mem_Head->State==RMP_MEM_FREE)
+        return;
+
+    /* Now we are sure that it can be freed. Delete it from the allocated list now */
+    RMP_List_Del(Mem_Head->Head.Prev,Mem_Head->Head.Next);
+    Mem_Head->State=RMP_MEM_FREE;
+    
+    /* Now check if we can merge it with the higher blocks */
+    Right_Head=(struct RMP_Mem_Head*)(((ptr_t)(Mem_Head->Tail))+sizeof(struct RMP_Mem_Tail));
+    if(((ptr_t)Right_Head)!=(((ptr_t)Mem)+Mem->Size))
+    {
+        /* If this one is unoccupied */
+        if((Right_Head->State)==RMP_MEM_FREE)
+        {
+            /* Delete, merge */
+            _RMP_Mem_Del(Pool,Right_Head);
+            _RMP_Mem_Block(Mem_Head,
+                           ((ptr_t)(Right_Head->Tail))+sizeof(struct RMP_Mem_Tail)-(ptr_t)Mem_Head);
+        }
+    }
+
+    /* Now check if we can merge it with the lower blocks */
+    Merge_Left=0;
+    if((ptr_t)Mem_Head!=Mem->Start)
+    {
+        Left_Head=((struct RMP_Mem_Tail*)(((ptr_t)Mem_Head)-sizeof(struct RMP_Mem_Tail)))->Head;
+
+        /* If this one is unoccupied */
+        if(Left_Head->State==RMP_MEM_FREE)
+        {
+            /* Delete, merge */
+            _RMP_Mem_Del(Pool, Left_Head);
+            _RMP_Mem_Block(Left_Head,
+                           (ptr_t)((ptr_t)(Mem_Head->Tail)+sizeof(struct RMP_Mem_Tail)-(ptr_t)Left_Head));
+
+            /* We have completed the merge here and the original block has destroyed.
+             * Thus there's no need to insert it into the list again */
+            Merge_Left=1;
+        }
+    }
+
+    /* If we did not merge it with the left-side blocks, insert the original pointer's block 
+     * into the TLSF table(Merging with the right-side one won't disturb this) */
+    if(Merge_Left==0)
+        _RMP_Mem_Ins(Pool, Mem_Head);
+    else
+        _RMP_Mem_Ins(Pool, Left_Head);
+}
+/* End Function:RMP_Free *****************************************************/
 
 /* End Of File ***************************************************************/
 

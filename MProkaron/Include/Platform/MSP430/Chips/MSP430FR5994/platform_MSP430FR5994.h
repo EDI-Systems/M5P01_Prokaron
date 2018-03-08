@@ -41,6 +41,10 @@ do \
     WDTCTL = WDTPW | WDTHOLD; \
     /* Enable GPIO settings */ \
     PM5CTL0&=~LOCKLPM5; \
+    /* FRAM 1 wait state */ \
+    FRAMCtl_A_configureWaitStateControl(NWAITS_1); \
+    /* Disable write protection since we have a MPU */ \
+    FRAMCtl_A_disableWriteProtection(); \
     /* 32.768kHz input */ \
     GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_PJ, \
                                                GPIO_PIN4+GPIO_PIN5, \
