@@ -30,6 +30,7 @@ Description: The configuration file for TMS570LC4357.
 #define RMP_CRX_LOW_LEVEL_INIT() \
 do \
 { \
+    /* The TI library is in charge of all the initialization of interrupts and clocks */\
 } \
 while(0)
 
