@@ -157,22 +157,17 @@ _RMP_Yield      .asmfunc
 
 ;/* Begin Function:_RMP_Start *************************************************
 ;Description : Jump to the user function and will never return from it.
+;              Because the CCS startup code put us into the system state already,
+;              there's no need to use interrupt return semantics - just branch to it.
 ;Input       : None.
 ;Output      : None.                                      
 ;*****************************************************************************/
 _RMP_Start      .asmfunc
                 ;Should never reach here
                 SUBS            R1,R1,#64              ;This is how we push our registers so move forward
-
-             ;   MSR             PSP,R1                 ;Set the stack pointer
-                MOVS            R4,#0x02               ;Previleged thread mode
-           ;     MSR             CONTROL,R4
-                
-                DSB                                    ;Data and instruction barrier
-                ISB
-                
-                BLX             R0                     ;Branch to our target
-Loop:           B               Loop                      ;Capture faults
+                MOVS            SP,R1                  ;Set the stack pointer
+                BL              R0                     ;Branch to our target
+Loop:           B               Loop                   ;Capture faults
                 .endasmfunc
 ;/* End Function:_RMP_Start **************************************************/
 
