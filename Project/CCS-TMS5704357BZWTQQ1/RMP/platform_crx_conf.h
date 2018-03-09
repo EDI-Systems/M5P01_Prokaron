@@ -1,13 +1,13 @@
 /******************************************************************************
-Filename   : test.h
+Filename   : platform_crx_conf.h
 Author     : pry
 Date       : 24/06/2017
 Licence    : LGPL v3+; see COPYING for details.
-Description: The configuration file for testing program.
+Description: The configuration file for Cortex-R HAL.
 ******************************************************************************/
 
 /* Config Includes ***********************************************************/
-#include "Platform/test_TMS570LC4357.h"
+#include "Platform/CortexR/Chips/TMS570LC4357/platform_TMS570LC4357.h"
 /* End Config Includes *******************************************************/
 
 /* End Of File ***************************************************************/
