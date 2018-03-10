@@ -138,15 +138,24 @@ typedef s32 ret_t;
 #define RMP_CMX_SHCSR_MEMFAULTENA       (1<<16)
 /* MPU definitions */
 #define RMP_CMX_MPU_PRIVDEF             0x00000004
-/* NVIC definitions */
-#define RMP_CMX_NVIC_GROUPING_P7S1      0
-#define RMP_CMX_NVIC_GROUPING_P6S2      1
-#define RMP_CMX_NVIC_GROUPING_P5S3      2
-#define RMP_CMX_NVIC_GROUPING_P4S4      3
-#define RMP_CMX_NVIC_GROUPING_P3S5      4
-#define RMP_CMX_NVIC_GROUPING_P2S6      5
-#define RMP_CMX_NVIC_GROUPING_P1S7      6
-#define RMP_CMX_NVIC_GROUPING_P0S8      7
+
+/* Mode definitions */
+#define RMP_CRX_SYS                     (0x1F)
+#define RMP_CRX_USR                     (0x10)
+#define RMP_CRX_SVC                     (0x13)
+#define RMP_CRX_IRQ                     (0x12)
+#define RMP_CRX_FIQ                     (0x11)
+#define RMP_CRX_ABT                     (0x17)
+#define RMP_CRX_UND                     (0x1B)
+
+/* CPSR bit definitions */
+#define RMP_CRX_CPSR_E                  (1<<9)
+#define RMP_CRX_CPSR_A                  (1<<8)
+#define RMP_CRX_CPSR_I                  (1<<7)
+#define RMP_CRX_CPSR_F                  (1<<6)
+#define RMP_CRX_CPSR_T                  (1<<5)
+#define RMP_CRX_CPSR_M(X)               ((X))
+
 /* Fault definitions */
 /* The NMI is active */
 #define RMP_CMX_ICSR_NMIPENDSET         (((ptr_t)1)<<31)

@@ -12,10 +12,10 @@ Description : The testbench for TMS570LC4357.
 
 /* Defines *******************************************************************/
 /* Where are the initial stacks */
-#define THD1_STACK        (&Stack_1[230])
-#define THD2_STACK        (&Stack_2[230])
+#define THD1_STACK        (&Stack_1[215])
+#define THD2_STACK        (&Stack_2[215])
 /* How to read counter */
-#define COUNTER_READ()    (0)
+#define COUNTER_READ()    ((rtiREG1->CNT[0].FRCx)<<3)
 /* Are we testing the memory pool? */
 #define TEST_MEM_POOL     8192
 /* Are we doing minimal measurements? */
@@ -40,8 +40,8 @@ Return      : None.
 ******************************************************************************/
 void Timer_Init(void)
 {
-    /* TIM2 clock = 1/2 CPU clock */
-
+    /* RTI/FRC0 clock = 1/8 CPU clock, already initialized. Disable compare 1 */
+    rtiREG1->INTFLAG = 2U;
 }
 /* End Function:Timer_Init ***************************************************/
 
@@ -54,12 +54,18 @@ Return      : None.
 ******************************************************************************/
 void Int_Init(void)
 {
-    /* TIM4 clock = 1/2 CPU clock */
-
+    /* RTI/FRC1 clock = 1/8 CPU clock */
+    rtiREG1->INTFLAG = 2U;
+    rtiStopCounter(rtiREG1, rtiCOUNTER_BLOCK1);
+    rtiSetPeriod(rtiREG1, rtiCOMPARE1, 3750);
+    rtiEnableNotification(rtiREG1, rtiNOTIFICATION_COMPARE1);
+    rtiStartCounter(rtiREG1, rtiCOUNTER_BLOCK1);
 }
+volatile int Acc_Count=0;
 /* The interrupt handler */
-void TIM4_IRQHandler(void)
+void rtiInterrupt(void)
 {
+    Acc_Count++;
     Int_Handler();
 }
 /* End Function:Int_Init *****************************************************/
@@ -73,7 +79,9 @@ Return      : None.
 ******************************************************************************/
 void Int_Disable(void)
 {
-    /* Disable timer 4 interrupt */
+    /* Disable channel 1 interrupt */
+    rtiDisableNotification(rtiREG1, rtiNOTIFICATION_COMPARE1);
+    rtiStopCounter(rtiREG1, rtiCOUNTER_BLOCK1);
 }
 #endif
 /* End Function:Int_Disable **************************************************/

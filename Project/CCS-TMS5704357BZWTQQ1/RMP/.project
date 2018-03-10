@@ -56,11 +56,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/MProkaron/Kernel/kernel.c</locationURI>
 		</link>
 		<link>
-			<name>Lib/HL_ajsm.asm</name>
-			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/M0P0_Library/TMS570LC43x/source/HL_ajsm.asm</locationURI>
-		</link>
-		<link>
 			<name>Lib/HL_esm.c</name>
 			<type>1</type>
 			<locationURI>PARENT-4-PROJECT_LOC/M0P0_Library/TMS570LC43x/source/HL_esm.c</locationURI>
@@ -84,6 +79,11 @@
 			<name>Lib/HL_rti.c</name>
 			<type>1</type>
 			<locationURI>PARENT-4-PROJECT_LOC/M0P0_Library/TMS570LC43x/source/HL_rti.c</locationURI>
+		</link>
+		<link>
+			<name>Lib/HL_sci.c</name>
+			<type>1</type>
+			<locationURI>PARENT-4-PROJECT_LOC/M0P0_Library/TMS570LC43x/source/HL_sci.c</locationURI>
 		</link>
 		<link>
 			<name>Lib/HL_sys_core.asm</name>
