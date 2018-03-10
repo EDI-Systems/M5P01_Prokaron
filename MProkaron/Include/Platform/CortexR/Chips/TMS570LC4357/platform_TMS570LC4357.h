@@ -10,6 +10,8 @@ Description: The configuration file for TMS570LC4357.
 /* The HAL library */
 #include "HL_sys_common.h"
 #include "HL_system.h"
+#include "HL_rti.h"
+#include "HL_sci.h"
 
 /* The maximum number of preemption priority levels in the system.
  * This parameter must be divisible by the word length - 32 is usually sufficient */
@@ -21,16 +23,24 @@ Description: The configuration file for TMS570LC4357.
 /* Are we using custom hooks? */
 #define RMP_USE_HOOKS                RMP_FALSE
 /* The stzck size of the init thread */
-#define RMP_INIT_STACK_SIZE          256
+#define RMP_INIT_STACK_SIZE          1024
 /* The mask/unmask interrupt operations */
 #define RMP_MASK_INT()               RMP_Disable_Int()
 #define RMP_UNMASK_INT()             RMP_Enable_Int()
+
+#define RMP_CRX_SYSTICK_VAL          3750
 
 /* Other low-level initialization stuff - clock and serial  */
 #define RMP_CRX_LOW_LEVEL_INIT() \
 do \
 { \
     /* The TI library is in charge of all the initialization of interrupts and clocks */\
+    rtiInit(); \
+    rtiSetPeriod(rtiREG1, rtiCOMPARE0, RMP_CRX_SYSTICK_VAL); \
+    rtiEnableNotification(rtiREG1, rtiNOTIFICATION_COMPARE0); \
+    rtiStartCounter(rtiREG1, rtiCOUNTER_BLOCK0); \
+    /* Enable SCI */ \
+    sciInit(); \
 } \
 while(0)
 
@@ -38,6 +48,7 @@ while(0)
 #define RMP_CRX_PUTCHAR(CHAR) \
 do \
 { \
+    sciSendByte(sciREG1,(CHAR)); \
 } \
 while(0)
 /* End Defines ***************************************************************/

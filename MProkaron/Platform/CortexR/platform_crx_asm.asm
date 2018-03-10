@@ -26,7 +26,7 @@
 ;---------------------------------------------------------------
 ;    CPSR      CPSR      CPSR      CPSR     CPSR      CPSR
 ;              SPSR_F    SPSR_S    SPSR_A   SPSR_I    SPSR_U
-;    10000     10001     10011     10111    10010     11011
+; 11111/10000  10001     10011     10111    10010     11011
 ;---------------------------------------------------------------
 ;R0-R7  : General purpose registers that are accessible
 ;R8-R12 : General purpose regsisters that are not accessible by 16-bit thumb
@@ -57,14 +57,11 @@
                 ;The PendSV trigger
                 .global         _RMP_Yield
                 ;The system pending service routine              
-                .global         _svc                   ;PendSV_Handler
+                .global         ssiInterrupt           ;PendSV_Handler
                 ;The systick timer routine              
-                .global         SysTick_Handler
+                .global         rtiNotification        ;SysTick_Handler
                 ;Other unused error handlers
-                .global        _dabort
-                .global        _prefetch
-                .global        _undef
-                .global        phantomInterrupt
+                .global         phantomInterrupt
 ;/* End Exports **************************************************************/
 
 ;/* Begin Imports ************************************************************/
@@ -145,14 +142,17 @@ RMP_MSB_Get     .asmfunc
 _RMP_Yield      .asmfunc
                 PUSH            {R0-R1}
                 
-                SVC             #0                     ;Trigger the SVC instruction
+                LDR             R0,SSI1_Addr           ;The SSI interrupt register address
+                MOVS            R1,#0x7500             ;The key needed to trigger such interrupt
+                STR             R1,[R0]                ;Trigger the software interrupt
 
                 DSB                                    ;Data and instruction barrier
                 ISB
                 
                 POP             {R0-R1}                
                 BX              LR   
-                .endasmfunc                                                
+                .endasmfunc
+SSI1_Addr       .word           0xFFFFFFB0
 ;/* End Function:_RMP_Yield **************************************************/
 
 ;/* Begin Function:_RMP_Start *************************************************
@@ -166,7 +166,7 @@ _RMP_Start      .asmfunc
                 ;Should never reach here
                 SUBS            R1,R1,#64              ;This is how we push our registers so move forward
                 MOVS            SP,R1                  ;Set the stack pointer
-                BL              R0                     ;Branch to our target
+                BLX             R0                     ;Branch to our target
 Loop:           B               Loop                   ;Capture faults
                 .endasmfunc
 ;/* End Function:_RMP_Start **************************************************/
@@ -182,28 +182,34 @@ Loop:           B               Loop                   ;Capture faults
 ;Input       : None.
 ;Output      : None.                                      
 ;*****************************************************************************/
-_svc
+ssiInterrupt    .asmfunc
+                .endasmfunc
 PendSV_Handler  .asmfunc
-;                MRS            R0,PSP                     ;Spill all the registers onto the user stack
-                STMDB           R0!,{R4-R11,LR}
+                SUBS            LR,LR,#0x04                ;Correct the LR value first - the LR is always a word behind
+                SRSDB           SP!,#0x1F                  ;Save LR at SVC(PC at SYS) and SPSR at SVC(CPSR at SYS)
+                CPS             #0x1F                      ;Switch to SYS mode
+                PUSH	        {R0-R12,LR}                ;Spill all registers to stack
                 
+                LDR             R0,SSIF_Addr               ;Clear the software interrupt flag
+                MOV             R1,#0x0F
+                STR             R1,[R0]
+
                 BL              RMP_Save_Ctx               ;Save extra context
                 
-;                LDR            R1,=RMP_Cur_SP             ;Save The SP to control block.
-                STR             R0,[R1]
+                LDR             R1,RMP_Cur_SP_Addr         ;Save The SP to control block.
+                STR             SP,[R1]
                 
                 BL              _RMP_Get_High_Rdy          ;Get the highest ready task.
                 
- ;               LDR            R1,=RMP_Cur_SP             ;Load the SP.
-                LDR             R0,[R1]
+                LDR             R1,RMP_Cur_SP_Addr         ;Load the SP.
+                LDR             SP,[R1]
                 
                 BL              RMP_Load_Ctx               ;Load extra context
 
-                LDMIA           R0!,{R4-R11,LR}
- ;               MSR            PSP,R0
-                
-                BX              LR                         ;The LR will indicate whether we are using FPU.
-                .endasmfunc   
+                POP             {R0-R12,LR}
+                RFEIA           SP!
+                .endasmfunc
+SSIF_Addr       .word           0xFFFFFFF8
 ;/* End Function:PendSV_Handler **********************************************/
 
 ;/* Begin Function:SysTick_Handler ********************************************
@@ -214,30 +220,26 @@ PendSV_Handler  .asmfunc
 ;              can make way around this problem.
 ;              However, if your compiler support inline assembly functions, this
 ;              can also be written in C.
+;              In the TI library, this was called by a high-level C function, thus the
+;              SRSDB and RFEIA are not needed.
 ;Input       : None.
 ;Output      : None.                                      
 ;*****************************************************************************/
+rtiNotification .asmfunc
+                .endasmfunc
 SysTick_Handler .asmfunc
-                PUSH            {LR}
+                ;SRSDB           SP!,#0x1F                  ;Save LR at SVC(PC at SYS) and SPSR at SVC(CPSR at SYS)
+                PUSH            {R0-R3,LR}
                 
-                MOVS            R0,#0x01                     ;We are not using tickless.
+                MOVS            R0,#0x01                    ;We are not using tickless.
                 BL              _RMP_Tick_Handler
-                
-                POP             {PC}
+
+                POP             {R0-R3,PC}
+                ;RFEIA           SP!
                 .endasmfunc
 ;/* End Function:SysTick_Handler *********************************************/
 
-_dabort         .asmfunc
-                B               _dabort
-                .endasmfunc
-
-_prefetch       .asmfunc
-                B               _prefetch
-                .endasmfunc
-
-_undef          .asmfunc
-                B               _undef
-                .endasmfunc
+RMP_Cur_SP_Addr	.word	        RMP_Cur_SP
 
 phantomInterrupt .asmfunc
                 B               phantomInterrupt

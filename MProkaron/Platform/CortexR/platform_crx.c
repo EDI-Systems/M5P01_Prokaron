@@ -36,7 +36,7 @@ Return      : None.
 Other       : When the system stack safe redundancy is set to zero, the stack 
               looks like this when we try to step into the next process by 
               context switch:
-              HIGH-->  XPSR PC LR(1) R12 R3-R0 LR R11-R4 -->LOW 
+              HIGH-->  CPSR PC LR R12-R0 -->LOW
               We need to set the stack correctly pretending that we are 
               returning from an systick timer interrupt. Thus, we set the XPSR
               to avoid INVSTATE; set PC to the pseudo-process entrance; set LR
@@ -45,15 +45,30 @@ Other       : When the system stack safe redundancy is set to zero, the stack
 ******************************************************************************/
 void _RMP_Stack_Init(ptr_t Entry, ptr_t Stack, ptr_t Arg)
 {
-    /* The "9" here is because we also pushed other registers to PSP */
-    /* This is the LR value indicating that we never used the FPU */
-    ((ptr_t*)Stack)[0+8]=0xFFFFFFFD;    
-    /* CM3:Pass the parameter */                            
-    ((ptr_t*)Stack)[0+9]=Arg;       
-    /* CM3:for xPSR. fill the T bit,or an INVSTATE will happen */
-    ((ptr_t*)Stack)[6+9]=Entry;
-    /* CM3:Set the process entrance */                            
-    ((ptr_t*)Stack)[7+9]=0x01000200;      
+    ptr_t* Stack_Ptr;
+
+    Stack_Ptr=(ptr_t*)Stack;
+    Stack_Ptr[0]=Arg;
+    Stack_Ptr[1]=0x01010101;
+    Stack_Ptr[2]=0x02020202;
+    Stack_Ptr[3]=0x03030303;
+    Stack_Ptr[4]=0x04040404;
+    Stack_Ptr[5]=0x05050505;
+    Stack_Ptr[6]=0x06060606;
+    Stack_Ptr[7]=0x07070707;
+    Stack_Ptr[8]=0x08080808;
+    Stack_Ptr[9]=0x09090909;
+    Stack_Ptr[10]=0x10101010;
+    Stack_Ptr[11]=0x11111111;
+    Stack_Ptr[12]=0x12121212;
+    Stack_Ptr[13]=0x14141414;
+    Stack_Ptr[14]=Entry;
+
+    /* See if the user code is thumb or ARM */
+    if((Entry&0x01)!=0)
+        Stack_Ptr[15]=RMP_CRX_CPSR_E|RMP_CRX_CPSR_A|RMP_CRX_CPSR_F|RMP_CRX_CPSR_T|RMP_CRX_CPSR_M(RMP_CRX_SYS);
+    else
+        Stack_Ptr[15]=RMP_CRX_CPSR_E|RMP_CRX_CPSR_A|RMP_CRX_CPSR_F|RMP_CRX_CPSR_M(RMP_CRX_SYS);
 }
 /* End Function:_RMP_Stack_Init **********************************************/
 
