@@ -181,8 +181,8 @@ Click **[HERE](README.md)** for English version.
 |:-------------:|:------------:|:----------------------------:|
 |PIC24/33/dsPIC |常用16位单片机 |:star::star::star::star::star:|
 |RL78           |常用16位单片机 |:star::star::star:            |
-|TI C2000       |常用DSP架构   |:star:                        |
-|RISC-V         |新兴RISC架构  |:star::star::star:            |
+|TI C2000       |常用DSP架构   |:star::star:                  |
+|RISC-V         |新兴RISC架构  |:star::star::star::star:      |
 |MicroBlaze     |常用软核      |:star:                        |
 |NIOS II        |常用软核      |:star:                        |
 
@@ -190,7 +190,7 @@ Click **[HERE](README.md)** for English version.
 |架构           |原因           |替代方案                                                             |
 |:-------------:|:------------:|:------------------------------------------------------------------:|
 |PIC18          |硬件堆栈       |使用[RMS状态机操作系统](https://github.com/EDI-Systems/M2A1_MuSimpron)|
-|AVR32          |正在消亡       |无                                                                  |
+|AVR32          |正在消亡       |使用大众化的Cortex-M和Cortex-R                                        |
 |ARMv5          |被替代        |使用更新的Cortex-M和Cortex-R                                          |
 |x86-64         |高级系统       |使用[RME微内核操作系统](https://github.com/EDI-Systems/M7M1_MuEukaron)|
 |Cortex-A       |高级系统       |使用[RME微内核操作系统](https://github.com/EDI-Systems/M7M1_MuEukaron)|

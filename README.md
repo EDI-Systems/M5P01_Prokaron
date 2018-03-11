@@ -177,6 +177,30 @@ All compiler options are the highest optimization (usually -O3) and optimized fo
 - Sem/Int  : The time to post to a semaphore from interrupt.  
 - Mem      : The time to do an operation on memory, e.g. allocation/free.  
 
+### Possible New Architecture Supports
+|Architecture   |Reason                 |Priority                      |
+|:-------------:|:---------------------:|:----------------------------:|
+|PIC24/33/dsPIC |Largely used 16-bit MCU|:star::star::star::star::star:|
+|RL78           |Largely used 16-bit MCU|:star::star::star:            |
+|TI C2000       |Largely used DSP       |:star::star:                  |
+|RISC-V         |New RISC architecture  |:star::star::star::star:      |
+|MicroBlaze     |Largely used soft core |:star:                        |
+|NIOS II        |Largely used soft core |:star:                        |
+
+### Architectures NOT Supported
+|Architecture   |Reason                |Workaround                                                                    |
+|:-------------:|:--------------------:|:----------------------------------------------------------------------------:|
+|PIC18          |Hardware stack        |Use[RMS State-machine based OS](https://github.com/EDI-Systems/M2A1_MuSimpron)|
+|AVR32          |In decline            |Use more popular Cortex-M and Cortex-Rs                                       |
+|ARMv5          |New versions available|Use newer Cortex-M and Cortex-Rs                                              |
+|x86-64         |Advanced system       |Use[RME Microkernel-based OS](https://github.com/EDI-Systems/M7M1_MuEukaron)  |
+|Cortex-A       |Advanced system       |Use[RME Microkernel-based OS](https://github.com/EDI-Systems/M7M1_MuEukaron)  |
+|Coldfire       |In decline            |Use more popular Cortex-M and Cortex-Rs                                       |
+|PowerPC        |In decline            |Use more popular Cortex-M and Cortex-Rs                                       |
+|RX100/600/600S |Rarely used           |Use more popular Cortex-M and Cortex-Rs                                       |
+|Tricore        |Rarely used           |Use more popular Cortex-M and Cortex-Rs                                       |
+|MB91460        |Rarely used           |Use more popular Cortex-M and Cortex-Rs                                       |
+
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
