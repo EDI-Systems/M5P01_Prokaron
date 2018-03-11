@@ -163,6 +163,8 @@ Click **[HERE](README.md)** for English version.
 - Cortex-M3平台使用STM32F103RET6进行评估。
 - Cortex-M4平台使用STM32F405RGT6进行评估。
 - Cortex-M7平台使用STM32F767IGT6进行评估。
+- Cortex-R4平台使用TMS570LS0432进行评估。
+- Cortex-R5平台使用TMS570LC4357进行评估。
 - MIPS M14k平台使用PIC32MZ2048EFM100进行评估。
 - X86 Linux平台使用Ubuntu 16.04和i7-4820k @ 3.7GHz进行评估。
 
@@ -174,13 +176,37 @@ Click **[HERE](README.md)** for English version.
 - Sem/Int ：从中断发布信号量的耗时。 
 - Mem     ：进行一次内存操作（比如分配或释放）的用时。 
 
+### 将来可能支持的新架构
+|架构           |原因           |支持优先度                     |
+|:-------------:|:------------:|:----------------------------:|
+|PIC24/33/dsPIC |常用16位单片机 |:star::star::star::star::star:|
+|RL78           |常用16位单片机 |:star::star::star:            |
+|TI C2000       |常用DSP架构   |:star:                        |
+|RISC-V         |新兴RISC架构  |:star::star::star:            |
+|MicroBlaze     |常用软核      |:star:                        |
+|NIOS II        |常用软核      |:star:                        |
+
+### 明确不考虑支持的架构
+|架构           |原因           |替代方案                                                             |
+|:-------------:|:------------:|:------------------------------------------------------------------:|
+|PIC18          |硬件堆栈       |使用[RMS状态机操作系统](https://github.com/EDI-Systems/M2A1_MuSimpron)|
+|AVR32          |正在消亡       |无                                                                  |
+|ARMv5          |被替代        |使用更新的Cortex-M和Cortex-R                                          |
+|x86-64         |高级系统       |使用[RME微内核操作系统](https://github.com/EDI-Systems/M7M1_MuEukaron)|
+|Cortex-A       |高级系统       |使用[RME微内核操作系统](https://github.com/EDI-Systems/M7M1_MuEukaron)|
+|Coldfire       |正在消亡      |使用大众化的Cortex-M和Cortex-R                                        |
+|PowerPC        |正在消亡      |使用大众化的Cortex-M和Cortex-R                                        |
+|RX100/600/600S |小众架构      |使用大众化的Cortex-M和Cortex-R                                        |
+|Tricore        |小众架构      |使用大众化的Cortex-M和Cortex-R                                        |
+|MB91460        |小众架构      |使用大众化的Cortex-M和Cortex-R                                        |
+
 ## 新手上路
 
 下面的说明会帮助你在本地快速建立一个可用来评估测试本系统的工程。请参看系统的中文文档以获取更多信息。
 
 ### 准备工作
 
-要运行测试，你需要一块基于 **_Cortex-M或Cortex-R或MIPS或MSP430_** 的开发板。本RTOS主要面向资源受限的MCU，不提供对高端MCU和，MPU和CPU的特别支持。不要使用QEMU模拟器来测试本系统，因为QEMU有很多不完善之处，与真正的硬件行为并不一致。
+要运行测试，你需要一块基于 **_Cortex-M或Cortex-R或MIPS或MSP430_** 的开发板。本RTOS主要面向资源受限的MCU，不提供对高端MCU，MPU和CPU的特别支持。不要使用QEMU模拟器来测试本系统，因为QEMU有很多不完善之处，与真正的硬件行为并不一致。
 如果你没有开发板，那么RMP也有一个 **_基于x86处理器的Linux移植_** 。然而，该移植使用了[ptrace](https://en.wikipedia.org/wiki/Ptrace)系统调用和[信号](https://en.wikipedia.org/wiki/Signal_(IPC))系统，因此并不很快，这一点可以从性能测试的数据看出。
 对于其他平台的支持应该是容易实现的，但是当前并没有支持计划。对于那些Cortex-A和具备内存管理单元（[MMU](https://en.wikipedia.org/wiki/Memory_management_unit)）的其他处理器，可以使用[M7M1_MuEukaron](https://github.com/EDI-Systems/M7M1_MuEukaron) _实时多核心微内核_；M7M1也支持一部分的Cortex-M和全部的Cortex-R。
 
