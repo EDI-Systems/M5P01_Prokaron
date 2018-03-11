@@ -164,6 +164,8 @@ Download the precompiled 32-bit linux binary **[here](Project/ECLIPSE-GCC-LINUX/
 - Cortex-M3 is evaluated with STM32F103RET6.
 - Cortex-M4 is evaluated with STM32F405RGT6.
 - Cortex-M7 is evaluated with STM32F767IGT6.
+- Cortex-R4 is evaluated with TMS570LS0432.
+- Cortex-R5 is evaluated with TMS570LC4357.
 - MIPS M14k is evaluated with PIC32MZ2048EFM100.
 - X86 Linux is evaluated with Ubuntu 16.04 on i7-4820k @ 3.7GHz.
 
