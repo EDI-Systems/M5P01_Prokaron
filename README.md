@@ -188,18 +188,18 @@ All compiler options are the highest optimization (usually -O3) and optimized fo
 |NIOS II        |Largely used soft core |:star:                        |
 
 ### Architectures NOT Supported
-|Architecture   |Reason                |Workaround                                                                    |
-|:-------------:|:--------------------:|:----------------------------------------------------------------------------:|
-|PIC18          |Hardware stack        |Use[RMS State-machine based OS](https://github.com/EDI-Systems/M2A1_MuSimpron)|
-|AVR32          |In decline            |Use more popular Cortex-M and Cortex-Rs                                       |
-|ARMv5          |New versions available|Use newer Cortex-M and Cortex-Rs                                              |
-|x86-64         |Advanced system       |Use[RME Microkernel-based OS](https://github.com/EDI-Systems/M7M1_MuEukaron)  |
-|Cortex-A       |Advanced system       |Use[RME Microkernel-based OS](https://github.com/EDI-Systems/M7M1_MuEukaron)  |
-|Coldfire       |In decline            |Use more popular Cortex-M and Cortex-Rs                                       |
-|PowerPC        |In decline            |Use more popular Cortex-M and Cortex-Rs                                       |
-|RX100/600/600S |Rarely used           |Use more popular Cortex-M and Cortex-Rs                                       |
-|Tricore        |Rarely used           |Use more popular Cortex-M and Cortex-Rs                                       |
-|MB91460        |Rarely used           |Use more popular Cortex-M and Cortex-Rs                                       |
+|Architecture   |Reason                |Workaround                                                                     |
+|:-------------:|:--------------------:|:-----------------------------------------------------------------------------:|
+|PIC18          |Hardware stack        |Use [RMS State-machine based OS](https://github.com/EDI-Systems/M2A1_MuSimpron)|
+|AVR32          |In decline            |Use more popular Cortex-M and Cortex-Rs                                        |
+|ARMv5          |New versions available|Use newer Cortex-M and Cortex-Rs                                               |
+|x86-64         |Advanced system       |Use [RME Microkernel-based OS](https://github.com/EDI-Systems/M7M1_MuEukaron)  |
+|Cortex-A       |Advanced system       |Use [RME Microkernel-based OS](https://github.com/EDI-Systems/M7M1_MuEukaron)  |
+|Coldfire       |In decline            |Use more popular Cortex-M and Cortex-Rs                                        |
+|PowerPC        |In decline            |Use more popular Cortex-M and Cortex-Rs                                        |
+|RX100/600/600S |Rarely used           |Use more popular Cortex-M and Cortex-Rs                                        |
+|Tricore        |Rarely used           |Use more popular Cortex-M and Cortex-Rs                                        |
+|MB91460        |Rarely used           |Use more popular Cortex-M and Cortex-Rs                                        |
 
 ## Getting Started
 
