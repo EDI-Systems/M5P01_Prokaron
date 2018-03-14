@@ -1,6 +1,5 @@
 #include "lcd.h"
 #include "stdlib.h"
-#include "font.h" 
 #include "ltdc.h" 
 
 SRAM_HandleTypeDef SRAM_Handler;
