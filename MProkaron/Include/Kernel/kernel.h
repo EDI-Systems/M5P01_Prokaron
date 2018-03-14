@@ -387,6 +387,8 @@ EXTERN void RMP_POINT(cnt_t,cnt_t,ptr_t);
 __EXTERN__ void RMP_Line(cnt_t Start_X, cnt_t Start_Y, cnt_t End_X, cnt_t End_Y, ptr_t Color);
 __EXTERN__ void RMP_Dot_Line(cnt_t Start_X, cnt_t Start_Y, cnt_t End_X,cnt_t End_Y, ptr_t Dot, ptr_t Space);
 __EXTERN__ void RMP_Rectangle(cnt_t Coord_X, cnt_t Coord_Y, cnt_t Length, cnt_t Width, ptr_t Border, ptr_t Fill);
+__EXTERN__ void RMP_Round_Rect(cnt_t Coord_X, cnt_t Coord_Y, cnt_t Length, cnt_t Width, 
+                               cnt_t Round, ptr_t Fore, ptr_t Back);
 __EXTERN__ void RMP_Circle(cnt_t Center_X, cnt_t Center_Y, cnt_t Radius, ptr_t Border, ptr_t Fill);
 __EXTERN__ void RMP_Matrix(cnt_t Coord_X, cnt_t Coord_Y, const u8* Matrix,
                            cnt_t Bit_Order, cnt_t Length, cnt_t Width, ptr_t Color);
