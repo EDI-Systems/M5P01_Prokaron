@@ -2059,6 +2059,1042 @@ void RMP_Free(volatile void* Pool, void* Mem_Ptr)
 }
 /* End Function:RMP_Free *****************************************************/
 
+/* Begin Function:RMP_Line ****************************************************
+Description : Draw a line given the start and end coordinates.
+Input       : cnt_t Start_X - The start point X coordinate.
+              cnt_t Start_Y - The start point Y coordinate.
+              cnt_t End_X - The end point X coordinate.
+              cnt_t End_Y - The end point Y coordinate.
+              ptr_t Color - The color of the line.
+Output      : None.
+Return      : None.
+******************************************************************************/
+#ifdef RMP_POINT
+void RMP_Line(cnt_t Start_X, cnt_t Start_Y, cnt_t End_X, cnt_t End_Y, ptr_t Color)
+{
+    cnt_t Trav_X;
+    cnt_t Trav_Y;
+    cnt_t Dir_X;
+    cnt_t Dir_Y;
+    cnt_t Error;
+    cnt_t Cur_X;
+    cnt_t Cur_Y;
+    
+    /* See if this line is horizontal or vertical. If so we speed it up */
+    if(Start_X==End_X)
+    {
+        /* Vertical */
+        if(Start_Y>End_Y)
+        {
+            Dir_Y=End_Y;
+            Trav_Y=Start_Y;
+        }
+        else
+        {
+            Dir_Y=Start_Y;
+            Trav_Y=End_Y;
+        }
+        
+        for(Cur_Y=Dir_Y;Cur_Y<=Trav_Y;Cur_Y++)
+            RMP_POINT(Start_X,Cur_Y,Color);
+        return;
+    }
+    else if(Start_Y==End_Y)
+    {
+        /* Horizontal */
+        if(Start_X>End_X)
+        {
+            Dir_X=End_X;
+            Trav_X=Start_X;
+        }
+        else
+        {
+            Dir_X=Start_X;
+            Trav_X=End_X;
+        }
+        
+        for(Cur_X=Dir_X;Cur_X<=Trav_X;Cur_X++)
+            RMP_POINT(Cur_X,Start_Y,Color);
+        return;
+    }
+
+    Error=0;
+    /* Get their absolute value, and then draw the line */
+    Trav_X=(Start_X>End_X)?(Start_X-End_X):(End_X-Start_X);
+    Trav_Y=(Start_Y>End_Y)?(Start_Y-End_Y):(End_Y-Start_Y);
+
+    /* Decide the increment direction */
+    if(End_X-Start_X>0)
+        Dir_X=1;
+    else
+        Dir_X=-1;
+
+    if(End_Y-Start_Y>0)
+        Dir_Y=1;
+    else
+        Dir_Y=-1;
+
+    if(Trav_X>Trav_Y)
+    {
+        Cur_Y=Start_Y;
+        for(Cur_X=Start_X;Cur_X!=End_X+Dir_X;Cur_X+=Dir_X)
+        {
+            RMP_POINT(Cur_X,Cur_Y,Color);
+            Error+=Trav_Y;
+            if((Error<<1)>=Trav_X)
+            {
+                Cur_Y+=Dir_Y;
+                Error-=Trav_X;
+            }
+        }
+    }
+    else
+    {
+        Cur_X=Start_X;
+        for(Cur_Y=Start_Y;Cur_Y!=End_Y+Dir_Y;Cur_Y+=Dir_Y)
+        {
+            RMP_POINT(Cur_X,Cur_Y,Color);
+            Error+=Trav_X;
+            if((Error<<1)>=Trav_Y)
+            {
+                Cur_X+=Dir_X;
+                Error-=Trav_Y;
+            }
+        }
+    }
+}
+/* End Function:RMP_Line *****************************************************/
+
+/* Begin Function:RMP_Dot_Line ************************************************
+Description : Draw a dotted line given the start and end coordinates.
+Input       : cnt_t Start_X - The start point X coordinate.
+              cnt_t Start_Y - The start point Y coordinate.
+              cnt_t End_X - The end point X coordinate.
+              cnt_t End_Y - The end point Y coordinate.
+              ptr_t Dot - The color of the dotted line.
+              ptr_t Space - The color of the white space. "RMP_TRANS" for nothing.
+Output      : None.
+Return      : None.
+******************************************************************************/
+void RMP_Dot_Line(cnt_t Start_X, cnt_t Start_Y, cnt_t End_X,cnt_t End_Y, ptr_t Dot, ptr_t Space)
+{
+    cnt_t Trav_X;
+    cnt_t Trav_Y;
+    cnt_t Dir_X;
+    cnt_t Dir_Y;
+    cnt_t Error;
+    cnt_t Cur_X;
+    cnt_t Cur_Y;
+
+    Error=0;
+    /* Get their absolute value, and then draw the line */
+    Trav_X=(Start_X>End_X)?(Start_X-End_X):(End_X-Start_X);
+    Trav_Y=(Start_Y>End_Y)?(Start_Y-End_Y):(End_Y-Start_Y);
+
+    /* Decide the increment direction */
+    if(End_X-Start_X>0)
+        Dir_X=1;
+    else
+        Dir_X=-1;
+
+    if(End_Y-Start_Y>0)
+        Dir_Y=1;
+    else
+        Dir_Y=-1;
+
+    if(Trav_X>Trav_Y)
+    {
+        Cur_Y=Start_Y;
+        for(Cur_X=Start_X;Cur_X!=End_X+Dir_X;Cur_X+=Dir_X)
+        {
+            /* Draw the dot and the white space alternatively */
+            if((Cur_X&0x01)!=0)
+                RMP_POINT(Cur_X,Cur_Y,Dot);
+            else
+            {
+                if(Space!=RMP_TRANS)
+                    RMP_POINT(Cur_X,Cur_Y,Space);
+            }
+            Error+=Trav_Y;
+            if((Error<<1)>=Trav_X)
+            {
+                Cur_Y+=Dir_Y;
+                Error-=Trav_X;
+            }
+        }
+    }
+    else
+    {
+        Cur_X=Start_X;
+        for(Cur_Y=Start_Y;Cur_Y!=End_Y+Dir_Y;Cur_Y+=Dir_Y)
+        {
+            /* Draw the dot and the white space alternatively */
+            if((Cur_Y&0x01)!=0)
+                RMP_POINT(Cur_X,Cur_Y,Dot);
+            else
+            {
+                if(Space!=RMP_TRANS)
+                    RMP_POINT(Cur_X,Cur_Y,Space);
+            }
+
+            Error+=Trav_X;
+            if((Error<<1)>=Trav_Y)
+            {
+                Cur_X+=Dir_X;
+                Error-=Trav_Y;
+            }
+        }
+    }
+}
+/* End Function:RMP_Dot_Line *************************************************/
+
+/*Begin Function:RMP_Rectangle ************************************************
+Description : Draw a rectangle on the screen. You can choose whether the rectangle 
+              is filled or not. By setting the fill color to "RMP_TRANS", the 
+              rectangle is not filled.
+              The border can also be transparent.
+Input       : cnt_t Coord_X -The X position of The top-left corner.
+              cnt_t Coord_Y -The Y position of The top-left corner.
+		 	  cnt_t Length - The length of the rectangle.
+			  cnt_t Width - The width of the rectangle. 
+			  ptr_t Border - The color of its boundary.
+			  ptr_t Fill - The color filled within its boundary.
+Output      : None.
+Return      : None.
+******************************************************************************/
+void RMP_Rectangle(cnt_t Coord_X, cnt_t Coord_Y, cnt_t Length, cnt_t Width, ptr_t Border, ptr_t Fill)
+{
+    cnt_t Line_Cnt;
+    
+	if(Fill!=RMP_TRANS)
+	{
+        for(Line_Cnt=0;Line_Cnt<Width;Line_Cnt++)
+            RMP_Line(Coord_X,Coord_Y+Line_Cnt,Coord_X+Length-1,Coord_Y+Line_Cnt,Fill);
+	}
+
+    if(Border!=RMP_TRANS)
+    {
+        RMP_Line(Coord_X,Coord_Y,Coord_X+Length-1,Coord_Y,Border);
+        RMP_Line(Coord_X+Length-1,Coord_Y,Coord_X+Length-1,Coord_Y+Width-1,Border);
+        RMP_Line(Coord_X+Length-1,Coord_Y+Width-1,Coord_X,Coord_Y+Width-1,Border);
+        RMP_Line(Coord_X,Coord_Y+Width-1,Coord_X,Coord_Y,Border);
+    }
+}
+/* End Function:RMP_Rectangle ************************************************/
+
+/* Begin Function:RMP_Circle **************************************************
+Description : Draw a circle on the screen. You can choose whether the circle 
+              is filled or not. By setting the fill color to "RMP_TRANS", the 
+              circle is not filled. Here, the arc function is not supported.
+              Here we utilize the Bresenham algorithm to draw the circle.
+              In this algorithm, we draw a 1/8 circle first, then we make use of
+              the symmetry of the circle to get the rest of the circle.
+Input       : cnt_t Center_X - The circle center's X coordinate.
+              cnt_t Center_Y - The circle center's Y coordinate.
+			  cnt_t Radius - The radius of the circle.
+			  ptr_t Border -The color of its boundary.
+			  ptr_t Fill - The color filled within its boundary.
+Output      : None.
+Return      : None.
+******************************************************************************/
+void RMP_Circle(cnt_t Center_X, cnt_t Center_Y, cnt_t Radius, ptr_t Border, ptr_t Fill)
+{
+    cnt_t Cur_X;
+    cnt_t Cur_Y;
+    cnt_t Fill_Y;
+    cnt_t Error;  
+    cnt_t Quick;
+
+    Cur_X=0;
+    Cur_Y=Radius;
+    Error=3-(Radius<<1);
+
+    if(Fill!=RMP_TRANS)
+    {  
+        /* When we are filling the circle, we can try not to fill the areas that have been filled
+         * using the rectangle fill method to increase fill speed.
+         * Square 2 is 1.414. Here we let the condition to be 1.5. */
+        Quick=(Radius<<1)/3;
+        /* First, fill the square hole using the fast direct-fill method */
+        RMP_Rectangle(Center_X-Quick,Center_Y-Quick, (Quick<<1)+1,(Quick<<1)+1, Fill, Fill);  
+
+        while(Cur_X<=Cur_Y) 
+        {  
+            if(Cur_X<Quick)
+            {
+                for(Fill_Y=Cur_X;Fill_Y<=Cur_Y;Fill_Y++)  
+                {
+                    if(Fill_Y<Quick)
+                        continue;
+                    
+                    RMP_POINT(Center_X+Cur_X,Center_Y+Fill_Y,Fill);  
+                    RMP_POINT(Center_X-Cur_X,Center_Y+Fill_Y,Fill);  
+                    RMP_POINT(Center_X+Cur_X,Center_Y-Fill_Y,Fill); 
+                    RMP_POINT(Center_X-Cur_X,Center_Y-Fill_Y,Fill);  
+                    RMP_POINT(Center_X+Fill_Y,Center_Y+Cur_X,Fill); 
+                    RMP_POINT(Center_X-Fill_Y,Center_Y+Cur_X,Fill);  
+                    RMP_POINT(Center_X+Fill_Y,Center_Y-Cur_X,Fill);  
+                    RMP_POINT(Center_X-Fill_Y,Center_Y-Cur_X,Fill);
+                }
+            }
+            /* Here the "Cur_X" is already out of range. We do not check the conditions anymore */
+            else
+            {
+                for(Fill_Y=Cur_X;Fill_Y<=Cur_Y;Fill_Y++)  
+                {                   
+                    RMP_POINT(Center_X+Cur_X,Center_Y+Fill_Y,Fill);  
+                    RMP_POINT(Center_X-Cur_X,Center_Y+Fill_Y,Fill);  
+                    RMP_POINT(Center_X+Cur_X,Center_Y-Fill_Y,Fill); 
+                    RMP_POINT(Center_X-Cur_X,Center_Y-Fill_Y,Fill);  
+                    RMP_POINT(Center_X+Fill_Y,Center_Y+Cur_X,Fill); 
+                    RMP_POINT(Center_X-Fill_Y,Center_Y+Cur_X,Fill);  
+                    RMP_POINT(Center_X+Fill_Y,Center_Y-Cur_X,Fill);  
+                    RMP_POINT(Center_X-Fill_Y,Center_Y-Cur_X,Fill);
+                }
+            }
+            RMP_POINT(Center_X+Cur_X,Center_Y+Cur_Y,Border);  
+            RMP_POINT(Center_X-Cur_X,Center_Y+Cur_Y,Border);  
+            RMP_POINT(Center_X+Cur_X,Center_Y-Cur_Y,Border); 
+            RMP_POINT(Center_X-Cur_X,Center_Y-Cur_Y,Border);  
+            RMP_POINT(Center_X+Cur_Y,Center_Y+Cur_X,Border); 
+            RMP_POINT(Center_X-Cur_Y,Center_Y+Cur_X,Border);  
+            RMP_POINT(Center_X+Cur_Y,Center_Y-Cur_X,Border);  
+            RMP_POINT(Center_X-Cur_Y,Center_Y-Cur_X,Border);
+
+            if(Error<0) 
+                Error=Error+(Cur_X<<2)+6;
+            else 
+            {  
+                Error=Error+((Cur_X-Cur_Y)<<2)+10;  
+                Cur_Y--;  
+            }  
+            Cur_X++;  
+        }
+    }
+    else 
+    {  
+        /* Border only */ 
+        while(Cur_X<=Cur_Y) 
+        {
+            RMP_POINT(Center_X+Cur_X,Center_Y+Cur_Y,Border);  
+            RMP_POINT(Center_X-Cur_X,Center_Y+Cur_Y,Border);  
+            RMP_POINT(Center_X+Cur_X,Center_Y-Cur_Y,Border); 
+            RMP_POINT(Center_X-Cur_X,Center_Y-Cur_Y,Border);  
+            RMP_POINT(Center_X+Cur_Y,Center_Y+Cur_X,Border); 
+            RMP_POINT(Center_X-Cur_Y,Center_Y+Cur_X,Border);  
+            RMP_POINT(Center_X+Cur_Y,Center_Y-Cur_X,Border);  
+            RMP_POINT(Center_X-Cur_Y,Center_Y-Cur_X,Border);
+
+            if(Error<0)
+                Error=Error+(Cur_X<<2)+6;
+            else 
+            {
+                Error=Error+((Cur_X-Cur_Y)<<2);
+                Cur_Y--;
+            }
+            Cur_X++;  
+        }  
+    }
+}
+/* End Function:RMP_Circle ***************************************************/
+
+/* Begin Function:RMP_Matrix **************************************************
+Description : Display a monochrome bit map in the given color.
+Input       : cnt_t Coord_X - The X coordinate.
+              cnt_t Coord_Y - The Y coordinate.
+              const u8* Matrix - The data matrix.
+              cnt_t Length - The length of the picture.
+              cnt_t Width - The width of the picture.
+              ptr_t Color - The color to display this with.
+Output      : None.
+Return      : None.
+******************************************************************************/
+void RMP_Matrix(cnt_t Coord_X, cnt_t Coord_Y, const u8* Matrix,
+                cnt_t Bit_Order, cnt_t Length, cnt_t Width, ptr_t Color)
+{
+    cnt_t Len_Cnt;
+    cnt_t Wid_Cnt;
+    cnt_t Mat_Pos;
+    
+    if((Matrix==0)||((Length&0x07)!=0)||(Length==0)||(Width==0))
+        return;
+    
+    Mat_Pos=0;
+    /* Natural order */
+    if(Bit_Order==RMP_MAT_BIG)
+    {
+        for(Wid_Cnt=Coord_Y;Wid_Cnt<Width+Coord_Y;Wid_Cnt++)
+        {
+            for(Len_Cnt=Coord_X;Len_Cnt<Length+Coord_X;Len_Cnt++)
+            {
+                if(RMP_MAT_BPOS(Matrix,Mat_Pos)!=0)
+                    RMP_Point(Len_Cnt,Wid_Cnt,Color);
+                Mat_Pos++;
+            }
+        }
+    }
+    /* Small order */
+    else
+    {
+        for(Wid_Cnt=Coord_Y;Wid_Cnt<Width+Coord_Y;Wid_Cnt++)
+        {
+            for(Len_Cnt=Coord_X;Len_Cnt<Length+Coord_X;Len_Cnt++)
+            {
+                if(RMP_MAT_SPOS(Matrix,Mat_Pos)!=0)
+                    RMP_Point(Len_Cnt,Wid_Cnt,Color);
+                Mat_Pos++;
+            }
+        }
+    }
+}
+/* End Function:RMP_Matrix ***************************************************/
+
+/* Begin Function:RMP_Matrix_AA ***********************************************
+Description : Display a monochrome bit map in the given color, with simple 
+              anti-aliasing (FXAA algorithm).
+              When using this, three color mixing macros must be provided.
+           
+Input       : cnt_t Coord_X - The X coordinate.
+              cnt_t Coord_Y - The Y coordinate.
+              const u8* Matrix - The data matrix.
+              cnt_t Length - The length of the picture.
+              cnt_t Width - The width of the picture.
+              ptr_t Color - The color to display this with.
+              ptr_t Back - The background color, for anti-aliasing.
+Output      : None.
+Return      : None.
+******************************************************************************/
+#ifdef RMP_COLOR_25P
+#ifdef RMP_COLOR_50P
+#ifdef RMP_COLOR_75P
+void RMP_Matrix_AA(cnt_t Coord_X, cnt_t Coord_Y, const u8* Matrix,
+                   cnt_t Bit_Order, cnt_t Length, cnt_t Width, ptr_t Color, ptr_t Back)
+{
+    cnt_t Len_Cnt;
+    cnt_t Wid_Cnt;
+    cnt_t Mat_Pos;
+    cnt_t Anti_Alias;
+    ptr_t Color_25;
+    ptr_t Color_50;
+    ptr_t Color_75;
+    ptr_t Total;
+    
+    if((Matrix==0)||((Length&0x07)!=0)||(Length==0)||(Width==0))
+        return;
+    
+    Mat_Pos=0;
+    Total=Length*Width;
+    Color_25=RMP_COLOR_25P(Color,Back);
+    Color_50=RMP_COLOR_50P(Color,Back);
+    Color_75=RMP_COLOR_75P(Color,Back);
+    
+    /* Natural order */
+    if(Bit_Order==RMP_MAT_BIG)
+    {
+        for(Wid_Cnt=Coord_Y;Wid_Cnt<Width+Coord_Y;Wid_Cnt++)
+        {
+            for(Len_Cnt=Coord_X;Len_Cnt<Length+Coord_X;Len_Cnt++)
+            {
+                if(RMP_MAT_BPOS(Matrix,Mat_Pos)!=0)
+                    RMP_Point(Len_Cnt,Wid_Cnt,Color);
+                else
+                {
+                    /* Anti-aliasing */
+                    Anti_Alias=0;
+                    
+                    if(Mat_Pos-1>=0)
+                    {
+                        if((Len_Cnt!=Coord_X)&&(RMP_MAT_BPOS(Matrix,Mat_Pos-1)!=0))
+                            Anti_Alias++;
+                        if((Mat_Pos-Length>=0)&&(RMP_MAT_BPOS(Matrix,Mat_Pos-Length)!=0))
+                            Anti_Alias++;
+                    }
+                    
+                    if(Mat_Pos+1<Total)
+                    {
+                        if((Len_Cnt!=Coord_X+Length-1)&&(RMP_MAT_BPOS(Matrix,Mat_Pos+1)!=0))
+                            Anti_Alias++;
+                        if((Mat_Pos+Length<Total)&&(RMP_MAT_BPOS(Matrix,Mat_Pos+Length)!=0))
+                            Anti_Alias++;
+                    }
+                    
+                    switch(Anti_Alias)
+                    {
+                        case 1:RMP_Point(Len_Cnt,Wid_Cnt,Color_25);break;
+                        case 2:RMP_Point(Len_Cnt,Wid_Cnt,Color_50);break;
+                        case 3:RMP_Point(Len_Cnt,Wid_Cnt,Color_75);break;
+                        default:break;
+                    }
+                }
+                
+                Mat_Pos++;
+            }
+        }
+    }
+    /* Small order */
+    else
+    {
+        for(Wid_Cnt=Coord_Y;Wid_Cnt<Width+Coord_Y;Wid_Cnt++)
+        {
+            for(Len_Cnt=Coord_X;Len_Cnt<Length+Coord_X;Len_Cnt++)
+            {
+                if(RMP_MAT_SPOS(Matrix,Mat_Pos)!=0)
+                    RMP_Point(Len_Cnt,Wid_Cnt,Color);
+                else
+                {
+                    /* Anti-aliasing */
+                    Anti_Alias=0;
+                    
+                    if(Mat_Pos-1>=0)
+                    {
+                        if((Len_Cnt!=Coord_X)&&(RMP_MAT_SPOS(Matrix,Mat_Pos-1)!=0))
+                            Anti_Alias++;
+                        if((Mat_Pos-Length>=0)&&(RMP_MAT_SPOS(Matrix,Mat_Pos-Length)!=0))
+                            Anti_Alias++;
+                    }
+                    
+                    if(Mat_Pos+1<Total)
+                    {
+                        if((Len_Cnt!=Coord_X+Length-1)&&(RMP_MAT_SPOS(Matrix,Mat_Pos+1)!=0))
+                            Anti_Alias++;
+                        if((Mat_Pos+Length<Total)&&(RMP_MAT_SPOS(Matrix,Mat_Pos+Length)!=0))
+                            Anti_Alias++;
+                    }
+                    
+                    switch(Anti_Alias)
+                    {
+                        case 1:RMP_Point(Len_Cnt,Wid_Cnt,Color_25);break;
+                        case 2:RMP_Point(Len_Cnt,Wid_Cnt,Color_50);break;
+                        case 3:RMP_Point(Len_Cnt,Wid_Cnt,Color_75);break;
+                        default:break;
+                    }
+                }
+                
+                Mat_Pos++;
+            }
+        }
+    }
+}
+#endif
+#endif
+#endif
+#endif
+/* End Function:RMP_Matrix_AA ************************************************/
+
+/* Begin Function:RMP_Checkbox_Set ********************************************
+Description : Set the checbox (tick it).
+Input       : cnt_t Coord_X - The X coordinate.
+              cnt_t Coord_Y - The Y coordinate.
+              cnt_t Length - The length of the checkbox(also the width).
+Output      : None.
+Return      : None.
+******************************************************************************/
+#ifdef RMP_POINT
+#ifdef RMP_CTL_WHITE
+#ifdef RMP_CTL_LGREY
+#ifdef RMP_CTL_GREY
+#ifdef RMP_CTL_DGREY
+#ifdef RMP_CTL_DARK
+#ifdef RMP_CTL_DDARK
+#ifdef RMP_CTL_BLACK
+void RMP_Checkbox_Set(cnt_t Coord_X, cnt_t Coord_Y, cnt_t Length)
+{
+    cnt_t Count;
+    
+    /* Draw a tick inside */
+    for(Count=0;Count<=2*Length/13;Count++)
+    {
+        RMP_Line(Coord_X+4*Length/13+Count,Coord_Y+6*Length/13+Count,
+                 Coord_X+4*Length/13+Count,Coord_Y+8*Length/13+Count,RMP_CTL_BLACK);
+    }
+    for(Count=0;Count<=4*Length/13;Count++)
+    {
+        RMP_Line(Coord_X+6*Length/13+Count,Coord_Y+8*Length/13-Count,
+                 Coord_X+6*Length/13+Count,Coord_Y+10*Length/13-Count,RMP_CTL_BLACK);
+    }
+}
+/* End Function:RMP_Checkbox_Set *********************************************/
+
+/* Begin Function:RMP_Checkbox_Clr ********************************************
+Description : Clear the checbox (reset it).
+Input       : cnt_t Coord_X - The X coordinate.
+              cnt_t Coord_Y - The Y coordinate.
+              cnt_t Length - The length of the checkbox(also the width).
+Output      : None.
+Return      : None.
+******************************************************************************/
+void RMP_Checkbox_Clr(cnt_t Coord_X, cnt_t Coord_Y, cnt_t Length)
+{
+    cnt_t Count;
+    
+    /* Erase the tick inside */
+    for(Count=0;Count<=2*Length/13;Count++)
+    {
+        RMP_Line(Coord_X+4*Length/13+Count,Coord_Y+6*Length/13+Count,
+                 Coord_X+4*Length/13+Count,Coord_Y+8*Length/13+Count,RMP_CTL_WHITE);
+    }
+    for(Count=0;Count<=4*Length/13;Count++)
+    {
+        RMP_Line(Coord_X+6*Length/13+Count,Coord_Y+8*Length/13-Count,
+                 Coord_X+6*Length/13+Count,Coord_Y+10*Length/13-Count,RMP_CTL_WHITE);
+    }
+}
+/* End Function:RMP_Checkbox_Clr *********************************************/
+
+/* Begin Function:RMP_Checkbox ************************************************
+Description : Draw the checkbox according to the parameters.
+Input       : cnt_t Coord_X - The X coordinate.
+              cnt_t Coord_Y - The Y coordinate.
+              cnt_t Length - The length of the checkbox(also the width).
+              ptr_t Status - The checkbox status.
+Output      : None.
+Return      : None.
+******************************************************************************/
+void RMP_Checkbox(cnt_t Coord_X, cnt_t Coord_Y, cnt_t Length, ptr_t Status)	
+{   
+    /* Clear the area */
+    RMP_Rectangle(Coord_X,Coord_Y,Length,Length,RMP_CTL_WHITE,RMP_CTL_WHITE);
+																	 
+	/* Draw checkbox outline */
+	RMP_Line(Coord_X,Coord_Y,Coord_X+Length-1,Coord_Y,RMP_CTL_DARK);			     
+	RMP_Line(Coord_X+Length-1,Coord_Y,Coord_X+Length-1,Coord_Y+Length-1,RMP_CTL_WHITE);
+	RMP_Line(Coord_X+Length-1,Coord_Y+Length-1,Coord_X,Coord_Y+Length-1,RMP_CTL_WHITE);
+	RMP_Line(Coord_X,Coord_Y+Length-1,Coord_X,Coord_Y,RMP_CTL_DARK);
+
+	RMP_Line(Coord_X+1,Coord_Y+1,Coord_X+Length-2,Coord_Y+1,RMP_CTL_BLACK);
+	RMP_Line(Coord_X+Length-2,Coord_Y+1,Coord_X+Length-2,Coord_Y+Length-2,RMP_CTL_DARK);
+	RMP_Line(Coord_X+Length-2,Coord_Y+Length-2,Coord_X,Coord_Y+Length-2,RMP_CTL_DARK);
+	RMP_Line(Coord_X+1,Coord_Y+Length-2,Coord_X+1,Coord_Y+1,RMP_CTL_BLACK);
+    
+    if(Status!=0)
+        RMP_Checkbox_Set(Coord_X, Coord_Y, Length);
+}
+/* End Function:RMP_Checkbox *************************************************/
+
+/* Begin Function:RMP_Cmdbtn_Down *********************************************
+Description : Turn the command button to a pushed-down version.
+Input       : cnt_t Coord_X -The X coordinate of its top-left corner.
+              cnt_t Coord_Y -The Y coordinate of its top-left corner.
+			  cnt_t Length - The length of the button.
+			  cnt_t Width - The width of the button.
+Output      : None.
+Return      : None.
+******************************************************************************/
+void RMP_Cmdbtn_Down(cnt_t Coord_X, cnt_t Coord_Y, cnt_t Length, cnt_t Width)
+{
+    RMP_Line(Coord_X,Coord_Y,Coord_X+Length-1,Coord_Y,RMP_CTL_BLACK);
+    RMP_Line(Coord_X+Length-1,Coord_Y,Coord_X+Length-1,Coord_Y+Width-1,RMP_CTL_WHITE);
+    RMP_Line(Coord_X+Length-1,Coord_Y+Width-1,Coord_X,Coord_Y+Width-1,RMP_CTL_WHITE);
+    RMP_Line(Coord_X,Coord_Y+Width-1,Coord_X,Coord_Y,RMP_CTL_BLACK);
+    /* Clear the old shadow */
+    RMP_Line(Coord_X+Length-2,Coord_Y+Width-2,Coord_X+1,Coord_Y+Width-2,RMP_CTL_GREY);	
+    RMP_Line(Coord_X+Length-2,Coord_Y+1,Coord_X+Length-2,Coord_Y+Width-2,RMP_CTL_GREY);	
+    /* The shadow */					   	 
+    RMP_Line(Coord_X+1,Coord_Y+Width-2,Coord_X+1,Coord_Y+1,RMP_CTL_DARK);	
+    RMP_Line(Coord_X+1,Coord_Y+1,Coord_X+Length-2,Coord_Y+1,RMP_CTL_DARK);	
+}
+/* End Function:RMP_Cmdbtn_Down **********************************************/
+
+/* Begin Function:RMP_Cmdbtn_Up ***********************************************
+Description : Turn the command button to a popped-up version.
+Input       : cnt_t Coord_X -The X coordinate of its top-left corner.
+              cnt_t Coord_Y -The Y coordinate of its top-left corner.
+			  cnt_t Length - The length of the button.
+			  cnt_t Width - The width of the button.
+Output      : None.
+Return      : None.
+******************************************************************************/
+void RMP_Cmdbtn_Up(cnt_t Coord_X, cnt_t Coord_Y, cnt_t Length, cnt_t Width)
+{
+    RMP_Line(Coord_X,Coord_Y,Coord_X+Length-1,Coord_Y,RMP_CTL_WHITE);
+    RMP_Line(Coord_X+Length-1,Coord_Y,Coord_X+Length-1,Coord_Y+Width-1,RMP_CTL_BLACK);
+    RMP_Line(Coord_X+Length-1,Coord_Y+Width-1,Coord_X,Coord_Y+Width-1,RMP_CTL_BLACK);
+    RMP_Line(Coord_X,Coord_Y+Width-1,Coord_X,Coord_Y,RMP_CTL_WHITE);
+    /* Clear the old shadow */
+    RMP_Line(Coord_X+1,Coord_Y+Width-2,Coord_X+1,Coord_Y+1,RMP_CTL_GREY);	
+    RMP_Line(Coord_X+1,Coord_Y+1,Coord_X+Length-2,Coord_Y+1,RMP_CTL_GREY);	
+    /* The shadow */
+    RMP_Line(Coord_X+Length-2,Coord_Y+Width-2,Coord_X+1,Coord_Y+Width-2,RMP_CTL_DARK);	
+    RMP_Line(Coord_X+Length-2,Coord_Y+1,Coord_X+Length-2,Coord_Y+Width-2,RMP_CTL_DARK);	
+}
+/* End Function:RMP_Cmdbtn_Up ************************************************/
+
+/* Begin Function:RMP_Cmdbtn **************************************************
+Description : Draw a command button.
+Input       : cnt_t Coord_X -The X coordinate of its top-left corner.
+              cnt_t Coord_Y -The Y coordinate of its top-left corner.
+			  cnt_t Length - The length of the button.
+			  cnt_t Width - The width of the button.
+			  ptr_t Status - The status of the command button.
+Output      : None.
+Return      : None.
+******************************************************************************/
+void RMP_Cmdbtn(cnt_t Coord_X, cnt_t Coord_Y, cnt_t Length, cnt_t Width, ptr_t Status)
+{
+    RMP_Rectangle(Coord_X,Coord_Y,Length,Width,RMP_CTL_GREY,RMP_CTL_GREY);
+
+	if(Status!=0)
+        RMP_Cmdbtn_Down(Coord_X, Coord_Y, Length, Width);
+	else
+        RMP_Cmdbtn_Up(Coord_X, Coord_Y, Length, Width);
+}
+/* End Function:RMP_Cmdbtn ***************************************************/
+
+/* Begin Function:RMP_Lineedit_Clr ********************************************
+Description : Clear a portion of the line edit box.
+Input       : cnt_t Coord_X -The X coordinate of its top-left corner.
+              cnt_t Coord_Y -The Y coordinate of its top-left corner.
+			  cnt_t Length - The length of the line edit box.
+			  cnt_t Width - The width of the line edit box.
+			  cnt_t Clr_X - The X coordinate to start clearing.
+			  cnt_t Clr_Len - The length to clear.
+Output      : None.
+Return      : None.
+******************************************************************************/
+void RMP_Lineedit_Clr(cnt_t Coord_X, cnt_t Coord_Y, cnt_t Length,
+                      cnt_t Width, cnt_t Clr_X, cnt_t Clr_Len)
+{
+    RMP_Rectangle(Clr_X,Coord_Y+1,Clr_Len,Width-2,RMP_CTL_WHITE,RMP_CTL_WHITE);
+}
+/* End Function:RMP_Lineedit_Clr *********************************************/
+
+/* Begin Function:RMP_Lineedit ************************************************
+Description : Draw a line edit box with string on it.
+Input       : cnt_t Coord_X -The X coordinate of its top-left corner.
+              cnt_t Coord_Y -The Y coordinate of its top-left corner.
+			  cnt_t Length - The length of the line edit box.
+			  cnt_t Width - The width of the line edit box.
+Output      : None.
+Return      : None.
+******************************************************************************/
+void RMP_Lineedit(cnt_t Coord_X, cnt_t Coord_Y, cnt_t Length, cnt_t Width)
+{
+    RMP_Rectangle(Coord_X,Coord_Y,Length,Width,RMP_CTL_WHITE,RMP_CTL_WHITE);
+    
+    /* Now draw the border */
+    RMP_Line(Coord_X,Coord_Y,Coord_X+Length-1,Coord_Y,RMP_CTL_DARK);
+	RMP_Line(Coord_X+Length-1,Coord_Y,Coord_X+Length-1,Coord_Y+Width-1,RMP_CTL_WHITE);
+	RMP_Line(Coord_X+Length-1,Coord_Y+Width-1,Coord_X,Coord_Y+Width-1,RMP_CTL_WHITE);
+    RMP_Line(Coord_X,Coord_Y+Width-1,Coord_X,Coord_Y,RMP_CTL_DARK);
+    /* The shadow */
+    RMP_Line(Coord_X+1,Coord_Y+Width-2,Coord_X+1,Coord_Y+1,RMP_CTL_BLACK);	
+    RMP_Line(Coord_X+1,Coord_Y+1,Coord_X+Length-2,Coord_Y+1,RMP_CTL_BLACK);
+}
+/* End Function:RMP_Lineedit *************************************************/
+
+/* Begin Function:RMP_Radiobtn_Circle *****************************************
+Description : Draw the radio button outside circle according to the parameters.
+Input       : cnt_t Coord_X - The X coordinate.
+              cnt_t Coord_Y - The Y coordinate.
+              cnt_t Length - The length of the radio button(also the width).         
+Output      : None.
+Return      : None.
+******************************************************************************/
+void RMP_Radiobtn_Circle(cnt_t Coord_X,cnt_t Coord_Y,cnt_t Length)
+{   
+    cnt_t Radius;
+    cnt_t Center_X;
+    cnt_t Center_Y;
+    cnt_t Cur_X;
+    cnt_t Cur_Y;
+    cnt_t Error;
+    
+    /* The radius is the length/2 */
+    Radius=Length>>1;
+    Center_X=Coord_X+Radius;
+    Center_Y=Coord_Y+Radius;
+    
+    /* Now we begin to draw the inner halfcircle */
+    Cur_X=0;
+    Cur_Y=Radius-1;
+    Error=3-((Radius-1)<<1);  
+    
+    while(Cur_X<=Cur_Y) 
+    {  
+        /* This is the upper-left part */
+        RMP_POINT(Center_X+Cur_X,Center_Y-Cur_Y,RMP_CTL_DDARK);
+        RMP_POINT(Center_X-Cur_X,Center_Y-Cur_Y,RMP_CTL_DDARK);
+        RMP_POINT(Center_X-Cur_Y,Center_Y-Cur_X,RMP_CTL_DDARK);
+        RMP_POINT(Center_X-Cur_Y,Center_Y+Cur_X,RMP_CTL_DDARK);
+        
+        /* This is the lower-right part */
+        RMP_POINT(Center_X+Cur_X,Center_Y+Cur_Y,RMP_CTL_LGREY);
+        RMP_POINT(Center_X-Cur_X,Center_Y+Cur_Y,RMP_CTL_LGREY);  
+        RMP_POINT(Center_X+Cur_Y,Center_Y+Cur_X,RMP_CTL_LGREY); 
+        RMP_POINT(Center_X+Cur_Y,Center_Y-Cur_X,RMP_CTL_LGREY);  
+        
+        if(Error<0) 
+        {
+            Error=Error+(Cur_X<<2)+6;
+        }
+        else 
+        {
+            Error=Error+((Cur_X-Cur_Y)<<2);
+            Cur_Y--;
+        }
+        Cur_X++;
+    } 
+    
+    /* Now we begin to draw the outer halfcircle */
+    Cur_X=0;
+    Cur_Y=Radius;
+    Error=3-(Radius<<1);  
+    
+    while(Cur_X<=Cur_Y) 
+    {  
+        /* This is the upper-left part */
+        RMP_POINT(Center_X+Cur_X,Center_Y-Cur_Y,RMP_CTL_DGREY);
+        RMP_POINT(Center_X-Cur_X,Center_Y-Cur_Y,RMP_CTL_DGREY);
+        RMP_POINT(Center_X-Cur_Y,Center_Y-Cur_X,RMP_CTL_DGREY);
+        RMP_POINT(Center_X-Cur_Y,Center_Y+Cur_X,RMP_CTL_DGREY);
+        
+        /* This is the lower-right part */
+        RMP_POINT(Center_X+Cur_X,Center_Y+Cur_Y,RMP_CTL_WHITE);
+        RMP_POINT(Center_X-Cur_X,Center_Y+Cur_Y,RMP_CTL_WHITE);  
+        RMP_POINT(Center_X+Cur_Y,Center_Y+Cur_X,RMP_CTL_WHITE); 
+        RMP_POINT(Center_X+Cur_Y,Center_Y-Cur_X,RMP_CTL_WHITE);  
+        
+        if(Error<0) 
+        {  
+            Error=Error+(Cur_X<<2)+6;  
+        } 
+        else 
+        {  
+            Error=Error+((Cur_X-Cur_Y)<<2);  
+            Cur_Y--;  
+        }  
+        Cur_X++;  
+    } 
+}
+/* End Function:RMP_Radiobtn_Circle ******************************************/
+
+/* Begin Function:RMP_Radiobtn_Set ********************************************
+Description : Set the radio button (select it).
+Input       : cnt_t Coord_X - The X coordinate.
+              cnt_t Coord_Y - The Y coordinate.
+              cnt_t Length - The length of the radio button(also the width).
+Output      : None.
+Return      : None.
+******************************************************************************/
+void RMP_Radiobtn_Set(cnt_t Coord_X, cnt_t Coord_Y, cnt_t Length)
+{
+    RMP_Circle(Coord_X+Length/2,Coord_Y+Length/2,Length/6,RMP_CTL_BLACK,RMP_CTL_BLACK);
+}
+/* End Function:RMP_Radiobtn_Set *********************************************/
+
+/* Begin Function:RMP_Radiobtn_Clr ********************************************
+Description : Set the radio button (reset it).
+Input       : cnt_t Coord_X - The X coordinate.
+              cnt_t Coord_Y - The Y coordinate.
+              cnt_t Length - The length of the radio button(also the width).
+Output      : None.
+Return      : None.
+******************************************************************************/
+void RMP_Radiobtn_Clr(cnt_t Coord_X, cnt_t Coord_Y, cnt_t Length)
+{
+    RMP_Circle(Coord_X+Length/2,Coord_Y+Length/2,Length/6,RMP_CTL_GREY,RMP_CTL_GREY);
+}
+/* End Function:RMP_Radiobtn_Clr *********************************************/
+
+/* Begin Function:RMP_Radiobtn ************************************************
+Description : Draw the radio button according to the parameters.
+Input       : cnt_t Coord_X - The X coordinate.
+              cnt_t Coord_Y - The Y coordinate.
+              cnt_t Length - The length of the radio button(also the width).
+              ptr_t Status - The radio button status.
+Output      : None.
+Return      : None.
+******************************************************************************/
+void RMP_Radiobtn(cnt_t Coord_X, cnt_t Coord_Y, cnt_t Length, ptr_t Status)
+{   
+    /* Fill the area with rect */
+    RMP_Rectangle(Coord_X,Coord_Y,Length,Length,RMP_CTL_GREY,RMP_CTL_GREY);
+    
+    /* Draw the circle first */
+    RMP_Radiobtn_Circle(Coord_X,Coord_Y,Length);
+    
+    /* See if the radio button is selected */
+    if(Status==RMP_RBTN_SEL)
+        RMP_Radiobtn_Set(Coord_X, Coord_Y, Length);
+}
+/* End Function:RMP_Radiobtn *************************************************/
+
+/* Begin Function:RMP_Progbar_Set ********************************************
+Description : Set the progress of a progress bar.
+Input       : cnt_t Coord_X -The X coordinate of its top-left corner.
+              cnt_t Coord_Y -The Y coordinate of its top-left corner.
+			  cnt_t Length - The length of the button.
+			  cnt_t Width - The width of the button.
+              cnt_t Style - The style of the progress.
+              cnt_t Old_Prog - The old progress of this bar. 
+              cnt_t New_Prog - The new progress of this bar. 
+              ptr_t Fore - The foreground color.
+              ptr_t Back - The background color.      
+Output      : None.
+Return      : None.
+******************************************************************************/
+void RMP_Progbar_Set(cnt_t Coord_X, cnt_t Coord_Y, cnt_t Length, cnt_t Width,
+                     cnt_t Style, cnt_t Old_Prog, cnt_t New_Prog, ptr_t Fore, ptr_t Back)
+{
+    /* The critical values for drawing the bar */
+    ptr_t Old_Pivot;
+    ptr_t New_Pivot;
+    
+    /* If things does not change, return to save time */
+    if(Old_Prog==New_Prog)
+        return;
+    
+    switch(Style)
+    {
+        case RMP_PBAR_L2R:
+        {
+            Old_Pivot=(Length-2)*Old_Prog/100;
+            New_Pivot=(Length-2)*New_Prog/100;
+            /* Progress decreased */
+            if(Old_Pivot>New_Pivot)
+                RMP_Rectangle(Coord_X+1+New_Pivot,Coord_Y+1,Old_Pivot-New_Pivot,Width-2,Back,Back);
+            /* Progress increased */
+            else
+                RMP_Rectangle(Coord_X+1+Old_Pivot,Coord_Y+1,New_Pivot-Old_Pivot,Width-2,Fore,Fore);
+            break;
+        }
+        case RMP_PBAR_D2U:
+        {
+            Old_Pivot=(Width-2)*Old_Prog/100;
+            New_Pivot=(Width-2)*New_Prog/100;
+            /* Progress decreased */
+            if(Old_Pivot>New_Pivot)
+                RMP_Rectangle(Coord_X+1,Coord_Y-1+Width-Old_Pivot,Length-2,Old_Pivot-New_Pivot,Back,Back);
+            /* Progress increased */
+            else
+                RMP_Rectangle(Coord_X+1,Coord_Y-1+Width-New_Pivot,Length-2,New_Pivot-Old_Pivot,Fore,Fore);
+            break;
+        }
+        case RMP_PBAR_R2L:
+        {
+            Old_Pivot=(Length-2)*Old_Prog/100;
+            New_Pivot=(Length-2)*New_Prog/100;
+            /* Progress decreased */
+            if(Old_Pivot>New_Pivot)
+                RMP_Rectangle(Coord_X-1+Length-Old_Pivot,Coord_Y+1,Old_Pivot-New_Pivot,Width-2,Back,Back);
+            /* Progress increased */
+            else
+                RMP_Rectangle(Coord_X-1+Length-New_Pivot,Coord_Y+1,New_Pivot-Old_Pivot,Width-2,Fore,Fore);
+            break;
+        }
+        case RMP_PBAR_U2D:
+        {
+            Old_Pivot=(Width-2)*Old_Prog/100;
+            New_Pivot=(Width-2)*New_Prog/100;
+            /* Progress decreased */
+            if(Old_Pivot>New_Pivot)
+                RMP_Rectangle(Coord_X+1,Coord_Y+1+New_Pivot,Length-2,Old_Pivot-New_Pivot,Back,Back);
+            /* Progress increased */
+            else
+                RMP_Rectangle(Coord_X+1,Coord_Y+1+Old_Pivot,Length-2,New_Pivot-Old_Pivot,Fore,Fore);
+            break;
+        }
+        default: break;
+    }
+}
+/* End Function:RMP_Progbar_Set **********************************************/
+
+/* Begin Function:RMP_Progbar_Prog ********************************************
+Description : Draw a progress bar's progress part.
+Input       : cnt_t Coord_X -The X coordinate of its top-left corner.
+              cnt_t Coord_Y -The Y coordinate of its top-left corner.
+			  cnt_t Length - The length of the button.
+			  cnt_t Width - The width of the button.
+              cnt_t Style - The style of the progress.
+              cnt_t Prog - The progress of the progress bar.    
+              ptr_t Fore - The foreground color.
+              ptr_t Back - The background color.   
+Output      : None.
+Return      : None.
+******************************************************************************/
+void RMP_Progbar_Prog(cnt_t Coord_X, cnt_t Coord_Y, cnt_t Length, cnt_t Width,
+                      cnt_t Style, cnt_t Prog, ptr_t Fore, ptr_t Back)
+{
+    /* The critical value for drawing the bar */
+    ptr_t Pivot;
+    
+    switch(Style)
+    {
+        case RMP_PBAR_L2R:
+        {
+            Pivot=Length*Prog/100;
+            if(Prog!=0)
+                RMP_Rectangle(Coord_X,Coord_Y,Pivot,Width,Fore,Fore);
+            if(Prog!=100)
+                RMP_Rectangle(Coord_X+Pivot,Coord_Y,Length-Pivot,Width,Back,Back);
+            break;
+        }
+        case RMP_PBAR_D2U:
+        {
+            Pivot=Width*Prog/100;
+            if(Prog!=0)
+                RMP_Rectangle(Coord_X,Coord_Y+Width-Pivot,Length,Pivot,Fore,Fore);
+            if(Prog!=100)
+                RMP_Rectangle(Coord_X,Coord_Y,Length,Width-Pivot,Back,Back);
+            break;
+        }
+        case RMP_PBAR_R2L:
+        {
+            Pivot=Length*Prog/100;
+            if(Prog!=0)
+                RMP_Rectangle(Coord_X+Length-Pivot,Coord_Y,Pivot,Width,Fore,Fore);
+            if(Prog!=100)
+                RMP_Rectangle(Coord_X,Coord_Y,Length-Pivot,Width,Back,Back);
+            break;
+        }
+        case RMP_PBAR_U2D:
+        {
+            Pivot=Width*Prog/100;
+            if(Prog!=0)
+                RMP_Rectangle(Coord_X,Coord_Y,Length,Pivot,Fore,Fore);
+            if(Prog!=100)
+                RMP_Rectangle(Coord_X,Coord_Y+Pivot,Length,Width-Pivot,Back,Back);
+            break;
+        }
+        default: break;
+    }
+}
+/* End Function:RMP_Progbar_Prog *********************************************/
+
+/* Begin Function:RMP_Progbar *************************************************
+Description : Draw a progress bar with string on it.
+Input       : cnt_t Coord_X -The X coordinate of its top-left corner.
+              cnt_t Coord_Y -The Y coordinate of its top-left corner.
+			  cnt_t Length - The length of the button.
+			  cnt_t Width - The width of the button.
+              cnt_t Style - The style of the progress.
+              cnt_t Prog - The progress of the progress bar. 
+              ptr_t Fore - The foreground color.
+              ptr_t Back - The background color.
+Output      : None.
+Return      : None.
+******************************************************************************/
+void RMP_Progbar(cnt_t Coord_X, cnt_t Coord_Y, cnt_t Length, cnt_t Width,
+                 cnt_t Style, cnt_t Prog, ptr_t Fore, ptr_t Back)
+{
+    /* Draw the progress bar according to the style of the progress bar */
+    RMP_Progbar_Prog(Coord_X,Coord_Y,Length,Width,Style,Prog,Fore,Back);
+    /* Now draw the border */
+    RMP_Line(Coord_X,Coord_Y,Coord_X+Length-1,Coord_Y,RMP_CTL_BLACK);
+	RMP_Line(Coord_X+Length-1,Coord_Y,Coord_X+Length-1,Coord_Y+Width-1,RMP_CTL_BLACK);
+	RMP_Line(Coord_X+Length-1,Coord_Y+Width-1,Coord_X,Coord_Y+Width-1,RMP_CTL_BLACK);
+    RMP_Line(Coord_X,Coord_Y+Width-1,Coord_X,Coord_Y,RMP_CTL_BLACK);
+}
+#endif
+#endif
+#endif
+#endif
+#endif
+#endif
+#endif
+#endif
+/* End Function:RMP_Progbar **************************************************/
+
 /* End Of File ***************************************************************/
 
 /* Copyright (C) Evo-Devo Instrum. All rights reserved ***********************/

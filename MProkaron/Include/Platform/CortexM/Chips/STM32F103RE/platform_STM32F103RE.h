@@ -69,6 +69,7 @@ do \
     NVIC_SetPriority(BusFault_IRQn, 0xFF); \
     NVIC_SetPriority(UsageFault_IRQn, 0xFF); \
     NVIC_SetPriority(DebugMonitor_IRQn, 0xFF); \
+    SysTick_Config(RMP_CMX_SYSTICK_VAL); \
 } \
 while(0)
 

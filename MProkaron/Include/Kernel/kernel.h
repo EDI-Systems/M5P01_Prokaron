@@ -77,9 +77,9 @@ Description : The header file for the kernel.
 
 /* Stack offset macros */
 /* Head offset, for ascending stacks */
-#define RMP_INIT_STACK_HEAD(X)   (((ptr_t)RMP_Init_Stack)+(X)*sizeof(ptr_t))
+#define RMP_INIT_STACK_HEAD(X) (((ptr_t)RMP_Init_Stack)+(X)*sizeof(ptr_t))
 /* Tail offset, for descending stacks */
-#define RMP_INIT_STACK_TAIL(X)   (((ptr_t)RMP_Init_Stack)+RMP_INIT_STACK_SIZE-(X)*sizeof(ptr_t))
+#define RMP_INIT_STACK_TAIL(X) (((ptr_t)RMP_Init_Stack)+RMP_INIT_STACK_SIZE-(X)*sizeof(ptr_t))
 
 /* Get the thread from delay list */
 #define RMP_DLY2THD(X)         ((struct RMP_Thd*)(((ptr_t)(X))-sizeof(struct RMP_List)))
@@ -88,6 +88,22 @@ Description : The header file for the kernel.
 #define RMP_PRINTK_I(INT)      RMP_Print_Int((INT))
 #define RMP_PRINTK_U(UINT)     RMP_Print_Uint((UINT))
 #define RMP_PRINTK_S(STR)      RMP_Print_String((s8*)(STR))
+
+/* Built-in graphics */
+#ifdef RMP_POINT
+#define RMP_TRANS              (0x01)
+#define RMP_MAT_SMALL          (0)
+#define RMP_MAT_BIG            (1)
+#define RMP_MAT_BPOS(MAT,POS)  ((MAT)[(POS)>>3]&(1<<(7-((POS)&0x07))))
+#define RMP_MAT_SPOS(MAT,POS)  ((MAT)[(POS)>>3]&(1<<((POS)&0x07)))
+#define RMP_CBOX_CHECK         (1)
+#define RMP_CBTN_DOWN          (1)
+#define RMP_RBTN_SEL           (1)
+#define RMP_PBAR_L2R           (0)
+#define RMP_PBAR_D2U           (1)
+#define RMP_PBAR_R2L           (2)
+#define RMP_PBAR_U2D           (3)
+#endif
     
 /* Assert macro */
 #define RMP_ASSERT(X) \
@@ -257,6 +273,24 @@ static void _RMP_Mem_Block(volatile struct RMP_Mem_Head* Addr, ptr_t Size);
 static void _RMP_Mem_Ins(volatile void* Pool, volatile struct RMP_Mem_Head* Mem_Head);
 static void _RMP_Mem_Del(volatile void* Pool, volatile struct RMP_Mem_Head* Mem_Head);
 static ret_t _RMP_Mem_Search(volatile void* Pool, ptr_t Size, cnt_t* FLI_Level, cnt_t* SLI_Level);
+
+#ifdef RMP_CTL_WHITE
+#ifdef RMP_CTL_LGREY
+#ifdef RMP_CTL_GREY
+#ifdef RMP_CTL_DGREY
+#ifdef RMP_CTL_DARK
+#ifdef RMP_CTL_DDARK
+#ifdef RMP_CTL_BLACK
+static void RMP_Radiobtn_Circle(cnt_t Coord_X,cnt_t Coord_Y,cnt_t Length);
+static void RMP_Progbar_Prog(cnt_t Coord_X, cnt_t Coord_Y, cnt_t Length, cnt_t Width,
+                             cnt_t Style, cnt_t Prog, ptr_t Fore, ptr_t Back);
+#endif
+#endif
+#endif
+#endif
+#endif
+#endif
+#endif
 /*****************************************************************************/
 #define __EXTERN__
 /* End Private C Function Prototypes *****************************************/
@@ -333,6 +367,62 @@ __EXTERN__ ret_t RMP_Sem_Post_ISR(volatile struct RMP_Sem* Semaphore, ptr_t Numb
 __EXTERN__ ret_t RMP_Mem_Init(volatile void* Pool, ptr_t Size);
 __EXTERN__ void* RMP_Malloc(volatile void* Pool, ptr_t Size);
 __EXTERN__ void RMP_Free(volatile void* Pool, void* Mem_Ptr);
+
+/* Built-in graphics */
+#ifdef RMP_POINT
+EXTERN void RMP_POINT(cnt_t,cnt_t,ptr_t);
+__EXTERN__ void RMP_Line(cnt_t Start_X, cnt_t Start_Y, cnt_t End_X, cnt_t End_Y, ptr_t Color);
+__EXTERN__ void RMP_Dot_Line(cnt_t Start_X, cnt_t Start_Y, cnt_t End_X,cnt_t End_Y, ptr_t Dot, ptr_t Space);
+__EXTERN__ void RMP_Rectangle(cnt_t Coord_X, cnt_t Coord_Y, cnt_t Length, cnt_t Width, ptr_t Border, ptr_t Fill);
+__EXTERN__ void RMP_Circle(cnt_t Center_X, cnt_t Center_Y, cnt_t Radius, ptr_t Border, ptr_t Fill);
+__EXTERN__ void RMP_Matrix(cnt_t Coord_X, cnt_t Coord_Y, const u8* Matrix,
+                           cnt_t Bit_Order, cnt_t Length, cnt_t Width, ptr_t Color);
+/* This is only exported when color mixing macros available */
+#ifdef RMP_COLOR_25P
+#ifdef RMP_COLOR_50P
+#ifdef RMP_COLOR_75P
+__EXTERN__ void RMP_Matrix_AA(cnt_t Coord_X, cnt_t Coord_Y, const u8* Matrix,
+                              cnt_t Bit_Order, cnt_t Length, cnt_t Width, ptr_t Color, ptr_t Back);
+#endif
+#endif
+#endif
+/* These are only provided when all used colors are predefined */
+#ifdef RMP_CTL_WHITE
+#ifdef RMP_CTL_LGREY
+#ifdef RMP_CTL_GREY
+#ifdef RMP_CTL_DGREY
+#ifdef RMP_CTL_DARK
+#ifdef RMP_CTL_DDARK
+#ifdef RMP_CTL_BLACK
+/* Built-in easy controls */
+__EXTERN__ void RMP_Checkbox_Set(cnt_t Coord_X, cnt_t Coord_Y, cnt_t Length);
+__EXTERN__ void RMP_Checkbox_Clr(cnt_t Coord_X, cnt_t Coord_Y, cnt_t Length);
+__EXTERN__ void RMP_Checkbox(cnt_t Coord_X, cnt_t Coord_Y, cnt_t Length, ptr_t Status);
+
+__EXTERN__ void RMP_Cmdbtn_Down(cnt_t Coord_X, cnt_t Coord_Y, cnt_t Length, cnt_t Width);
+__EXTERN__ void RMP_Cmdbtn_Up(cnt_t Coord_X, cnt_t Coord_Y, cnt_t Length, cnt_t Width);
+__EXTERN__ void RMP_Cmdbtn(cnt_t Coord_X, cnt_t Coord_Y, cnt_t Length, cnt_t Width, ptr_t Status);
+
+__EXTERN__ void RMP_Lineedit_Clr(cnt_t Coord_X, cnt_t Coord_Y, cnt_t Length,
+                                 cnt_t Width, cnt_t Clr_X, cnt_t Clr_Len);
+__EXTERN__ void RMP_Lineedit(cnt_t Coord_X,cnt_t Coord_Y, cnt_t Length, cnt_t Width);
+
+__EXTERN__ void RMP_Radiobtn_Set(cnt_t Coord_X, cnt_t Coord_Y, cnt_t Length);
+__EXTERN__ void RMP_Radiobtn_Clr(cnt_t Coord_X, cnt_t Coord_Y, cnt_t Length);
+__EXTERN__ void RMP_Radiobtn(cnt_t Coord_X, cnt_t Coord_Y, cnt_t Length, ptr_t Status);
+
+__EXTERN__ void RMP_Progbar_Set(cnt_t Coord_X, cnt_t Coord_Y, cnt_t Length, cnt_t Width,
+                                cnt_t Style, cnt_t Old_Prog, cnt_t New_Prog, ptr_t Fore, ptr_t Back);
+__EXTERN__ void RMP_Progbar(cnt_t Coord_X, cnt_t Coord_Y, cnt_t Length, cnt_t Width,
+                            cnt_t Style, cnt_t Prog, ptr_t Fore, ptr_t Back);
+#endif
+#endif
+#endif
+#endif
+#endif
+#endif
+#endif
+#endif
 
 /* Hook functions */
 #if(RMP_USE_HOOKS==RMP_TRUE)
