@@ -17,7 +17,7 @@ This software is **triple-licensed**: it is either **[LGPL v3](LICENSE.md)** or 
 
 ## Quick Demo
 ### Linux minimal runnable binary
-Download the precompiled 32-bit linux binary **[here](Project/ECLIPSE-GCC-LINUX/RMP/Debug/RMP)** and watch benchmark results!
+&ensp;&ensp;&ensp;&ensp;Download the precompiled 32-bit linux binary **[here](Project/ECLIPSE-GCC-LINUX/RMP/Debug/RMP)** and watch benchmark results!
 
 ### Built-in graphics library demo
 ![Controls](https://raw.githubusercontent.com/EDI-Systems/M5P1_MuProkaron/master/Documents/Demo/Controls.png)
@@ -208,12 +208,14 @@ All compiler options are the highest optimization (usually -O3) and optimized fo
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+&ensp;&ensp;&ensp;&ensp;These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
 
 ### Prerequisites
 
 &ensp;&ensp;&ensp;&ensp;You need **_Cortex-M or Cortex-R or MIPS or MSP430_** microcontroller development kits to run the tests. This RTOS focuses on value-line MCUs and do not concentrate on high-end MCUs or MPUs. Do not use QEMU simulator to test the projects because they do not behave correctly in many scenarios.  
+
 &ensp;&ensp;&ensp;&ensp;If you don't have a development board, a **_x86-based Linux port_** of RMP is also available. However, running RMP on top of linux uses the [ptrace](https://en.wikipedia.org/wiki/Ptrace) system call and [signal](https://en.wikipedia.org/wiki/Signal_(IPC)) system, thus it is not particularly fast. Just run the example and observe benchmark output.  
+
 &ensp;&ensp;&ensp;&ensp;Other platform supports should be simple to implement, however they are not scheduled yet. For Cortex-A and other CPUs with a memory management unit ([MMU](https://en.wikipedia.org/wiki/Memory_management_unit)), go [M7M1_MuEukaron](https://github.com/EDI-Systems/M7M1_MuEukaron) _Real-Time Multi-Core Microkernel_ instead; M7M1 supports some Cortex-Ms and Cortex-Rs as well.
 
 ### Compilation
@@ -223,6 +225,7 @@ These instructions will get you a copy of the project up and running on your loc
 ## Running the tests
 
 &ensp;&ensp;&ensp;&ensp;To run the sample programs, simply download them into the development board and start step-by-step debugging. Some examples will use one or two LEDs to indicate the system status. In that case, it is necessary to fill the LED blinking wrapper functions.  
+
 &ensp;&ensp;&ensp;&ensp;To use the graphics library and other advanced features, please refer to the user manual.
 
 ## Deployment
@@ -243,4 +246,4 @@ These instructions will get you a copy of the project up and running on your loc
 &ensp;&ensp;&ensp;&ensp;Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
 
 ## EDI Project Information
-Mutate - Protero - Prokaron (M5P1 R4T1)
+&ensp;&ensp;&ensp;&ensp;Mutate - Protero - Prokaron (M5P1 R4T1)
