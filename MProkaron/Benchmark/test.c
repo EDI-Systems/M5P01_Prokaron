@@ -380,7 +380,6 @@ void RMP_Init_Hook(void)
 #endif
 }
 
-volatile unsigned int count;
 void RMP_Init_Idle(void)
 {
     return;
