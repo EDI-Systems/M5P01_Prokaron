@@ -334,7 +334,7 @@
               <MiscControls></MiscControls>
               <Define>STM32F767xx,USE_HAL_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\MProkaron\Include;..\..\..\M0P0_Library\STM32F7xx_HAL_Driver\Core;..\..\..\M0P0_Library\STM32F7xx_HAL_Driver\Inc;.\Source</IncludePath>
+              <IncludePath>..\..\MProkaron\Include;..\..\..\M0P0_Library\STM32F7xx_HAL_Driver\Core;..\..\..\M0P0_Library\STM32F7xx_HAL_Driver\Inc;.\Source;.\Drivers</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -492,20 +492,25 @@
               <FileType>1</FileType>
               <FilePath>.\Source\fulltest.c</FilePath>
             </File>
-            <File>
-              <FileName>ltdc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Source\ltdc.c</FilePath>
-            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Drivers</GroupName>
+          <Files>
             <File>
               <FileName>lcd.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\Source\lcd.c</FilePath>
+              <FilePath>.\Drivers\lcd.c</FilePath>
+            </File>
+            <File>
+              <FileName>ltdc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Drivers\ltdc.c</FilePath>
             </File>
             <File>
               <FileName>sdram.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\Source\sdram.c</FilePath>
+              <FilePath>.\Drivers\sdram.c</FilePath>
             </File>
           </Files>
         </Group>
