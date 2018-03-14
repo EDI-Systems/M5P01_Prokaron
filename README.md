@@ -19,7 +19,7 @@ This software is **triple-licensed**: it is either **[LGPL v3](LICENSE.md)** or 
 ### Linux minimal runnable binary
 &ensp;&ensp;&ensp;&ensp;Download the precompiled 32-bit linux binary **[here](Project/ECLIPSE-GCC-LINUX/RMP/Debug/RMP)** and watch benchmark results!
 
-### Built-in graphics library demo : widgets and anti-aliasing interfaces
+### Built-in graphics library : widgets and anti-aliasing
 &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;![Controls](https://raw.githubusercontent.com/EDI-Systems/M5P1_MuProkaron/master/Documents/Demo/Controls.png)
 &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;![Anti-aliasing](https://raw.githubusercontent.com/EDI-Systems/M5P1_MuProkaron/master/Documents/Demo/Calc.png)
 
