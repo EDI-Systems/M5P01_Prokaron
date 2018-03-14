@@ -5,20 +5,20 @@
 #define LCD_LED(n)              (n?HAL_GPIO_WritePin(GPIOB,GPIO_PIN_5,GPIO_PIN_SET):HAL_GPIO_WritePin(GPIOB,GPIO_PIN_5,GPIO_PIN_RESET))
 
 typedef struct  
-{							 
-	u32 pwidth;
-	u32 pheight;
-	u16 hsw;
-	u16 vsw;
-	u16 hbp;
-	u16 vbp;
-	u16 hfp;
-	u16 vfp;
-	u8 activelayer;
-	u8 dir;
-	u16 width;
-	u16 height;
-	u32 pixsize;
+{                             
+    u32 pwidth;
+    u32 pheight;
+    u16 hsw;
+    u16 vsw;
+    u16 hbp;
+    u16 vbp;
+    u16 hfp;
+    u16 vfp;
+    u8 activelayer;
+    u8 dir;
+    u16 width;
+    u16 height;
+    u32 pixsize;
 }_ltdc_dev; 
 
 extern _ltdc_dev lcdltdc;
@@ -34,9 +34,9 @@ extern DMA2D_HandleTypeDef DMA2D_Handler;
 #define LCD_PIXEL_FORMAT_AL44           0X06     
 #define LCD_PIXEL_FORMAT_AL88           0X07      
 
-#define LCD_PIXFORMAT				LCD_PIXEL_FORMAT_RGB565
-#define LTDC_BACKLAYERCOLOR			0X00000000
-#define LCD_FRAME_BUF_ADDR			0XC0000000  
+#define LCD_PIXFORMAT                LCD_PIXEL_FORMAT_RGB565
+#define LTDC_BACKLAYERCOLOR            0X00000000
+#define LCD_FRAME_BUF_ADDR            0XC0000000  
 
 void LTDC_Switch(u8 sw);
 void LTDC_Layer_Switch(u8 layerx,u8 sw);

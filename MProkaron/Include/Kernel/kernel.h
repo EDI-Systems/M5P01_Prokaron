@@ -103,6 +103,19 @@ Description : The header file for the kernel.
 #define RMP_PBAR_D2U           (1)
 #define RMP_PBAR_R2L           (2)
 #define RMP_PBAR_U2D           (3)
+
+#define RMP_CUR_NORM           (0)
+#define RMP_CUR_BUSY           (1)
+#define RMP_CUR_QUESTION       (2)
+#define RMP_CUR_HAND           (3)
+#define RMP_CUR_TEXT           (4)
+#define RMP_CUR_STOP           (5)
+#define RMP_CUR_MOVE           (6)
+#define RMP_CUR_LR             (7)
+#define RMP_CUR_UD             (8)
+#define RMP_CUR_ULBR           (9)
+#define RMP_CUR_URBL           (10)
+#define RMP_CUR_CROSS          (11)
 #endif
     
 /* Assert macro */
@@ -395,6 +408,7 @@ __EXTERN__ void RMP_Matrix_AA(cnt_t Coord_X, cnt_t Coord_Y, const u8* Matrix,
 #ifdef RMP_CTL_DDARK
 #ifdef RMP_CTL_BLACK
 /* Built-in easy controls */
+__EXTERN__ void RMP_Cursor(cnt_t Coord_X, cnt_t Coord_Y, ptr_t Style);
 __EXTERN__ void RMP_Checkbox_Set(cnt_t Coord_X, cnt_t Coord_Y, cnt_t Length);
 __EXTERN__ void RMP_Checkbox_Clr(cnt_t Coord_X, cnt_t Coord_Y, cnt_t Length);
 __EXTERN__ void RMP_Checkbox(cnt_t Coord_X, cnt_t Coord_Y, cnt_t Length, ptr_t Status);
@@ -421,6 +435,13 @@ __EXTERN__ void RMP_Progbar(cnt_t Coord_X, cnt_t Coord_Y, cnt_t Length, cnt_t Wi
 #endif
 #endif
 #endif
+#endif
+#endif
+
+/* Other utilities */
+#ifdef __U8__
+#ifdef __U16__
+__EXTERN__ ptr_t RMP_CRC16(u8* Data, ptr_t Length);
 #endif
 #endif
 
