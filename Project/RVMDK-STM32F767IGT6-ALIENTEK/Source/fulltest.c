@@ -1273,13 +1273,23 @@ const u8 Big_Zero[]=
 };
 
 /* 480*272 screen - Y 480 X 272 */
+volatile u16 Screen[272*480];
+
+void Capture(void)
+{
+    int i,j;
+    for(i=0;i<272;i++)
+        for(j=0;j<480;j++)
+            Screen[i*480+j]=LTDC_Read_Point(i,j);
+}
+
 void Func_1(void)
 {
     cnt_t State;
     SDRAM_Init();
     LCD_Init();
 
-    LCD_Clear(WHITE);
+    LCD_Clear(RMP_CTL_GREY);
     MPU_Init();
     
     /* Draw line */
@@ -1326,6 +1336,8 @@ void Func_1(void)
     {
         State++;
         RMP_Thd_Delay(10000);
+        
+        Capture();
         
         if(State%2==0)
         {
@@ -1377,6 +1389,8 @@ void Func_1(void)
     RMP_Matrix_AA(XPOS_1, YPOS_3, Num_Dot, RMP_MAT_BIG, 56, 56, NUM_FR, KEYS_BG);
     RMP_Matrix_AA(XPOS_2, YPOS_3, Op_Equal, RMP_MAT_BIG, 56, 56, OP_FR, KEYS_BG);
     RMP_Matrix_AA(XPOS_3, YPOS_3, Op_Plus, RMP_MAT_BIG, 56, 56, OP_FR, KEYS_BG);
+    
+    Capture();
     while(1);
 }
 
