@@ -174,7 +174,7 @@ This software is **triple-licensed**: it is either **[LGPL v3](LICENSE.md)** or 
 - MIPS M14k is evaluated with PIC32MZ2048EFM100.
 - X86 Linux is evaluated with Ubuntu 16.04 on i7-4820k @ 3.7GHz.
 
-All compiler options are the highest optimization (usually -O3) and optimized for time. 
+&ensp;&ensp;&ensp;&ensp;All compiler options are the highest optimization (usually -O3) and optimized for time. 
 - Yield    : The time to yield between different threads.  
 - Mail     : The mailbox communication time between two threads.  
 - Sem      : The semaphore communication time between two threads.  
