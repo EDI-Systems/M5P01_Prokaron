@@ -20,7 +20,7 @@ For vendor-supplied packages and hardware abstraction libraries, please refer to
 Download the precompiled 32-bit linux binary **[here](Project/ECLIPSE-GCC-LINUX/RMP/Debug/RMP)** and watch benchmark results!
 
 ### Built-in graphics library
-![Controls](https://raw.githubusercontent.com/EDI-Systems/M5P1_MuProkaron/master/Documents/Demo/Controls.gif)
+![Controls](https://raw.githubusercontent.com/EDI-Systems/M5P1_MuProkaron/master/Documents/Demo/Controls.png)
 ![Anti-aliasing](https://raw.githubusercontent.com/EDI-Systems/M5P1_MuProkaron/master/Documents/Demo/Calc.png)
 
 ### Basic thread operations
