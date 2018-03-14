@@ -5,7 +5,7 @@
 #include "stm32f7xx_hal.h"
 #include "stm32f7xx_hal_conf.h"
 
-#define SYSTEM_SUPPORT_OS		0
+#define SYSTEM_SUPPORT_OS        0
 
 typedef int32_t  s32;
 typedef int16_t s16;
@@ -39,8 +39,8 @@ typedef __I uint32_t vuc32;
 typedef __I uint16_t vuc16; 
 typedef __I uint8_t vuc8;  
 
-#define ON	1
-#define OFF	0
+#define ON    1
+#define OFF    0
 #define Write_Through() (*(__IO uint32_t*)0XE000EF9C=1UL<<2)
 
 void Cache_Enable(void);

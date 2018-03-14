@@ -25,25 +25,25 @@ void SDRAM_Init(void)
     SDRAM_Timing.RPDelay=2;
     SDRAM_Timing.RCDDelay=2;
     HAL_SDRAM_Init(&SDRAM_Handler,&SDRAM_Timing);
-	SDRAM_Initialization_Sequence(&SDRAM_Handler);
+    SDRAM_Initialization_Sequence(&SDRAM_Handler);
 }
 
 extern void delay_us(u32 nus);
 void SDRAM_Initialization_Sequence(SDRAM_HandleTypeDef *hsdram)
 {
-	u32 temp=0;
+    u32 temp=0;
     SDRAM_Send_Cmd(0,FMC_SDRAM_CMD_CLK_ENABLE,1,0);
     delay_us(500);
     SDRAM_Send_Cmd(0,FMC_SDRAM_CMD_PALL,1,0);
     SDRAM_Send_Cmd(0,FMC_SDRAM_CMD_AUTOREFRESH_MODE,8,0);
 
-	temp=(u32)SDRAM_MODEREG_BURST_LENGTH_1          |
+    temp=(u32)SDRAM_MODEREG_BURST_LENGTH_1          |
               SDRAM_MODEREG_BURST_TYPE_SEQUENTIAL   |
               SDRAM_MODEREG_CAS_LATENCY_3           |
               SDRAM_MODEREG_OPERATING_MODE_STANDARD |
               SDRAM_MODEREG_WRITEBURST_MODE_SINGLE;
     SDRAM_Send_Cmd(0,FMC_SDRAM_CMD_LOAD_MODE,1,temp);
-	HAL_SDRAM_ProgramRefreshRate(&SDRAM_Handler,823);	
+    HAL_SDRAM_ProgramRefreshRate(&SDRAM_Handler,823);    
 
 }
 
@@ -98,19 +98,19 @@ u8 SDRAM_Send_Cmd(u8 bankx,u8 cmd,u8 refresh,u16 regval)
 
 void FMC_SDRAM_WriteBuffer(u8 *pBuffer,u32 WriteAddr,u32 n)
 {
-	for(;n!=0;n--)
-	{
-		*(vu8*)(Bank5_SDRAM_ADDR+WriteAddr)=*pBuffer;
-		WriteAddr++;
-		pBuffer++;
-	}
+    for(;n!=0;n--)
+    {
+        *(vu8*)(Bank5_SDRAM_ADDR+WriteAddr)=*pBuffer;
+        WriteAddr++;
+        pBuffer++;
+    }
 }
 
 void FMC_SDRAM_ReadBuffer(u8 *pBuffer,u32 ReadAddr,u32 n)
 {
-	for(;n!=0;n--)
-	{
-		*pBuffer++=*(vu8*)(Bank5_SDRAM_ADDR+ReadAddr);
-		ReadAddr++;
-	}
+    for(;n!=0;n--)
+    {
+        *pBuffer++=*(vu8*)(Bank5_SDRAM_ADDR+ReadAddr);
+        ReadAddr++;
+    }
 }

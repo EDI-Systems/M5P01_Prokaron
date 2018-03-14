@@ -1,32 +1,32 @@
 #ifndef __LCD_H
-#define __LCD_H		
+#define __LCD_H        
 #include "sys.h"
 #include "stdlib.h" 
 
 typedef struct  
-{		 	 
-	u16 width;
-	u16 height;
-	u16 id;
-	u8  dir;
-	u16	wramcmd;
-	u16 setxcmd;
-	u16 setycmd;
-}_lcd_dev; 	  
+{              
+    u16 width;
+    u16 height;
+    u16 id;
+    u8  dir;
+    u16    wramcmd;
+    u16 setxcmd;
+    u16 setycmd;
+}_lcd_dev;       
 
 extern _lcd_dev lcddev;
 extern u32  POINT_COLOR;
 extern u32  BACK_COLOR;
 
-#define LCD_REGION_NUMBER		MPU_REGION_NUMBER4
-#define LCD_ADDRESS_START		(0X60000000)
-#define LCD_REGION_SIZE			MPU_REGION_SIZE_256MB
+#define LCD_REGION_NUMBER        MPU_REGION_NUMBER4
+#define LCD_ADDRESS_START        (0X60000000)
+#define LCD_REGION_SIZE            MPU_REGION_SIZE_256MB
 
 #define LCD_LED(n) (n?HAL_GPIO_WritePin(GPIOB,GPIO_PIN_5,GPIO_PIN_SET):HAL_GPIO_WritePin(GPIOB,GPIO_PIN_5,GPIO_PIN_RESET)) 
 typedef struct
 {
-	vu16 LCD_REG;
-	vu16 LCD_RAM;
+    vu16 LCD_REG;
+    vu16 LCD_RAM;
 } LCD_TypeDef;
 
 #define LCD_BASE        ((u32)(0x60000000 | 0x0007FFFE))
@@ -44,32 +44,32 @@ typedef struct
 
 #define DFT_SCAN_DIR  L2R_U2D
 
-#define WHITE         	 0xFFFF
-#define BLACK         	 0x0000	  
-#define BLUE         	 0x001F  
+#define WHITE              0xFFFF
+#define BLACK              0x0000      
+#define BLUE              0x001F  
 #define BRED             0XF81F
-#define GRED 			 0XFFE0
-#define GBLUE			 0X07FF
-#define RED           	 0xF800
-#define MAGENTA       	 0xF81F
-#define GREEN         	 0x07E0
-#define CYAN          	 0x7FFF
-#define YELLOW        	 0xFFE0
-#define BROWN 			 0XBC40
-#define BRRED 			 0XFC07
-#define GRAY  			 0X8430
+#define GRED              0XFFE0
+#define GBLUE             0X07FF
+#define RED                0xF800
+#define MAGENTA            0xF81F
+#define GREEN              0x07E0
+#define CYAN               0x7FFF
+#define YELLOW             0xFFE0
+#define BROWN              0XBC40
+#define BRRED              0XFC07
+#define GRAY               0X8430
 
-#define DARKBLUE      	 0X01CF
-#define LIGHTBLUE      	 0X7D7C
-#define GRAYBLUE       	 0X5458
+#define DARKBLUE           0X01CF
+#define LIGHTBLUE           0X7D7C
+#define GRAYBLUE            0X5458
 
-#define LIGHTGREEN     	 0X841F
+#define LIGHTGREEN          0X841F
 #define LIGHTGRAY        0XEF5B
-#define LGRAY 			 0XC618
+#define LGRAY              0XC618
 
 #define LGRAYBLUE        0XA651
 #define LBBLUE           0X2B12
-	    															  
+                                                                      
 void LCD_Init(void);
 void LCD_DisplayOn(void);
 void LCD_DisplayOff(void);
@@ -97,20 +97,20 @@ void LCD_Scan_Dir(u8 dir);
 void LCD_Display_Dir(u8 dir);
 void LCD_Set_Window(u16 sx,u16 sy,u16 width,u16 height);
 
-#define SSD_HOR_RESOLUTION		800
-#define SSD_VER_RESOLUTION		480
+#define SSD_HOR_RESOLUTION        800
+#define SSD_VER_RESOLUTION        480
 
-#define SSD_HOR_PULSE_WIDTH		1
-#define SSD_HOR_BACK_PORCH		46
-#define SSD_HOR_FRONT_PORCH		210
+#define SSD_HOR_PULSE_WIDTH        1
+#define SSD_HOR_BACK_PORCH        46
+#define SSD_HOR_FRONT_PORCH        210
 
-#define SSD_VER_PULSE_WIDTH		1
-#define SSD_VER_BACK_PORCH		23
-#define SSD_VER_FRONT_PORCH		22
+#define SSD_VER_PULSE_WIDTH        1
+#define SSD_VER_BACK_PORCH        23
+#define SSD_VER_FRONT_PORCH        22
 
-#define SSD_HT	(SSD_HOR_RESOLUTION+SSD_HOR_BACK_PORCH+SSD_HOR_FRONT_PORCH)
-#define SSD_HPS	(SSD_HOR_BACK_PORCH)
-#define SSD_VT 	(SSD_VER_RESOLUTION+SSD_VER_BACK_PORCH+SSD_VER_FRONT_PORCH)
+#define SSD_HT    (SSD_HOR_RESOLUTION+SSD_HOR_BACK_PORCH+SSD_HOR_FRONT_PORCH)
+#define SSD_HPS    (SSD_HOR_BACK_PORCH)
+#define SSD_VT     (SSD_VER_RESOLUTION+SSD_VER_BACK_PORCH+SSD_VER_FRONT_PORCH)
 #define SSD_VPS (SSD_VER_BACK_PORCH)
 
 #endif 

@@ -16,25 +16,25 @@ ptr_t Stack_2[256];
 void
 MPU_Init(void)
 {
-	/* Enable MPU access to all the code section, and the peripheral section */
-	MPU_Region_InitTypeDef MPU_Initure;
-	HAL_MPU_Disable();
+    /* Enable MPU access to all the code section, and the peripheral section */
+    MPU_Region_InitTypeDef MPU_Initure;
+    HAL_MPU_Disable();
 
-	/* The STM32 peripheral/SDRAM section - directly expose to peripherals */
-	MPU_Initure.Enable=MPU_REGION_ENABLE;			   //Enable this area
-	MPU_Initure.Number=MPU_REGION_NUMBER6;			   //Set the protection area
-	MPU_Initure.BaseAddress=(u32)0x00000000;	           //Set the base address
-	MPU_Initure.Size=MPU_REGION_SIZE_4GB;			   //Set the protection area size
-	MPU_Initure.SubRegionDisable=0X03;                         //We disable the first 2 subregions now
-	MPU_Initure.TypeExtField=MPU_TEX_LEVEL0;                   //Type expansion area:level0
-	MPU_Initure.AccessPermission=(u8)MPU_REGION_FULL_ACCESS; //Set the access permissions
-	MPU_Initure.DisableExec=MPU_INSTRUCTION_ACCESS_ENABLE;	   //Executable
-	MPU_Initure.IsShareable=MPU_ACCESS_NOT_SHAREABLE;          //Not sharable
-	MPU_Initure.IsCacheable=MPU_ACCESS_NOT_CACHEABLE;          //Not cacheable
-	MPU_Initure.IsBufferable=MPU_ACCESS_NOT_BUFFERABLE;        //Not bufferable
-	HAL_MPU_ConfigRegion(&MPU_Initure);                        //Initialize the MPU
+    /* The STM32 peripheral/SDRAM section - directly expose to peripherals */
+    MPU_Initure.Enable=MPU_REGION_ENABLE;               //Enable this area
+    MPU_Initure.Number=MPU_REGION_NUMBER6;               //Set the protection area
+    MPU_Initure.BaseAddress=(u32)0x00000000;               //Set the base address
+    MPU_Initure.Size=MPU_REGION_SIZE_4GB;               //Set the protection area size
+    MPU_Initure.SubRegionDisable=0X03;                         //We disable the first 2 subregions now
+    MPU_Initure.TypeExtField=MPU_TEX_LEVEL0;                   //Type expansion area:level0
+    MPU_Initure.AccessPermission=(u8)MPU_REGION_FULL_ACCESS; //Set the access permissions
+    MPU_Initure.DisableExec=MPU_INSTRUCTION_ACCESS_ENABLE;       //Executable
+    MPU_Initure.IsShareable=MPU_ACCESS_NOT_SHAREABLE;          //Not sharable
+    MPU_Initure.IsCacheable=MPU_ACCESS_NOT_CACHEABLE;          //Not cacheable
+    MPU_Initure.IsBufferable=MPU_ACCESS_NOT_BUFFERABLE;        //Not bufferable
+    HAL_MPU_ConfigRegion(&MPU_Initure);                        //Initialize the MPU
 
-	HAL_MPU_Enable(MPU_PRIVILEGED_DEFAULT);
+    HAL_MPU_Enable(MPU_PRIVILEGED_DEFAULT);
 }
 
 const u8 Num_0[]=
@@ -1296,12 +1296,12 @@ void Func_1(void)
     cnt_t Wid_Cnt;
     u16 Data[5];
     u16 R,G,B;
-	SDRAM_Init();
-	LCD_Init();
+    SDRAM_Init();
+    LCD_Init();
 
-	POINT_COLOR=KEYS_BG;
-	LCD_Clear(KEYS_BG);
-	MPU_Init();
+    POINT_COLOR=KEYS_BG;
+    LCD_Clear(KEYS_BG);
+    MPU_Init();
     
 //    /* Draw line */
 //    RMP_Line(10,10,90,90,RED);
@@ -1366,7 +1366,20 @@ void Func_1(void)
 
 #define YPOS_DISP YPOS_0-56*3-12
     
-    RMP_Round_Rect(12, YPOS_DISP, 272-24, 56*3, 20, DISP_BG, KEYS_BG);
+    RMP_Round_Rect(12, YPOS_DISP, 272-24, 56*3, 20, WHITE, KEYS_BG);
+    
+    RMP_Cursor(20,50,RMP_CUR_NORM);
+    RMP_Cursor(40,50,RMP_CUR_BUSY);
+    RMP_Cursor(60,50,RMP_CUR_QUESTION);
+    RMP_Cursor(80,50,RMP_CUR_HAND);
+    RMP_Cursor(100,50,RMP_CUR_TEXT);
+    RMP_Cursor(120,50,RMP_CUR_STOP);
+    RMP_Cursor(140,50,RMP_CUR_MOVE);
+    RMP_Cursor(160,50,RMP_CUR_LR);
+    RMP_Cursor(180,50,RMP_CUR_UD);
+    RMP_Cursor(200,50,RMP_CUR_ULBR);
+    RMP_Cursor(220,50,RMP_CUR_URBL);
+    RMP_Cursor(240,50,RMP_CUR_CROSS);
     
     RMP_Matrix_AA(12, 6, Ico_LTE, RMP_MAT_BIG, 24, 24, WHITE, KEYS_BG);
     RMP_Matrix_AA(12+24+8, 6, Ico_Wifi, RMP_MAT_BIG, 24, 24, WHITE, KEYS_BG);
