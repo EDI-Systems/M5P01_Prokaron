@@ -1,4 +1,31 @@
 #include "RMP.h"
+#include "lcd.h"
+#include "ltdc.h"
+#include "sdram.h"
+
+/* 12-8-8-8-12 layout */
+#define XPOS_0  12
+#define XPOS_1  12+56+8
+#define XPOS_2  12+56+8+56+8
+#define XPOS_3  12+56+8+56+8+56+8
+
+#define YPOS_0  412-56-8-56-8-56-8
+#define YPOS_1  412-56-8-56-8
+#define YPOS_2  412-56-8
+#define YPOS_3  412
+
+#define YPOS_DISP YPOS_0-56*3-12
+
+#define RGB565(R,G,B) ((((R)>>3)<<11)|(((G)>>2)<<5)|((B)>>3))
+#define KEYS_BG       RGB565(51,55,56)
+#define DISP_BG       RGB565(23,23,23)
+#define NUM_FR        RGB565(65,227,192)
+#define OP_FR         RGB565(255,244,75)
+
+struct RMP_Thd Thd_1;
+struct RMP_Thd Thd_2;
+ptr_t Stack_1[256];
+ptr_t Stack_2[256];
 
 void RMP_Point(cnt_t Point_X, cnt_t Point_Y, ptr_t Color)
 {
@@ -6,15 +33,7 @@ void RMP_Point(cnt_t Point_X, cnt_t Point_Y, ptr_t Color)
         LTDC_Draw_Point(Point_X,Point_Y,Color);
 }
 
-struct RMP_Thd Thd_1;
-struct RMP_Thd Thd_2;
-ptr_t Stack_1[256];
-ptr_t Stack_2[256];
-
-#include "lcd.h"
-
-void
-MPU_Init(void)
+void MPU_Init(void)
 {
     /* Enable MPU access to all the code section, and the peripheral section */
     MPU_Region_InitTypeDef MPU_Initure;
@@ -1253,133 +1272,82 @@ const u8 Big_Zero[]=
 ,0x00,0x00,0x00,0x1f,0xf8,0x00,0x00,0x00
 };
 
-#define RGB565(R,G,B) ((((R)>>3)<<11)|(((G)>>2)<<5)|((B)>>3))
-#define RGB(R,G,B)    (((R)<<11)|((G)<<5)|(B))
-#define KEYS_BG       RGB565(51,55,56)
-#define DISP_BG       RGB565(23,23,23)
-#define NUM_FR        RGB565(65,227,192)
-#define OP_FR         RGB565(255,244,75)
-
-void RMP_Round_Rect(cnt_t Coord_X, cnt_t Coord_Y, cnt_t Length, cnt_t Width, 
-                    cnt_t Round, ptr_t Fore, ptr_t Back)
-{
-    cnt_t Cir_X_0;
-    cnt_t Cir_X_1;
-    cnt_t Cir_Y_0;
-    cnt_t Cir_Y_1;
-    
-    Cir_X_0=Coord_X+Round+1;
-    Cir_X_1=Coord_X+Length-Round-1;
-    Cir_Y_0=Coord_Y+Round+1;
-    Cir_Y_1=Coord_Y+Width-Round-1;
-    
-    RMP_Rectangle(Coord_X,Coord_Y,Length,Width,Fore,Fore);
-    
-    RMP_Rectangle(Cir_X_0-Round-1,Cir_Y_0-Round-1,Round+1,Round+1,Back,Back);
-    RMP_Rectangle(Cir_X_1,Cir_Y_0-Round-1,Round+1,Round+1,Back,Back);
-    RMP_Rectangle(Cir_X_0-Round-1,Cir_Y_1,Round+1,Round+1,Back,Back);
-    RMP_Rectangle(Cir_X_1,Cir_Y_1,Round+1,Round+1,Back,Back);
-    
-    RMP_Circle(Cir_X_0,Cir_Y_0,Round,Fore,Fore);
-    RMP_Circle(Cir_X_1,Cir_Y_0,Round,Fore,Fore);
-    RMP_Circle(Cir_X_0,Cir_Y_1,Round,Fore,Fore);
-    RMP_Circle(Cir_X_1,Cir_Y_1,Round,Fore,Fore);
-}
-    
-    
-
 /* 480*272 screen - Y 480 X 272 */
 void Func_1(void)
 {
     cnt_t State;
-    cnt_t Len_Cnt;
-    cnt_t Wid_Cnt;
-    u16 Data[5];
-    u16 R,G,B;
     SDRAM_Init();
     LCD_Init();
 
-    POINT_COLOR=KEYS_BG;
-    LCD_Clear(KEYS_BG);
+    LCD_Clear(WHITE);
     MPU_Init();
     
-//    /* Draw line */
-//    RMP_Line(10,10,90,90,RED);
-//    RMP_Line(10,90,90,10,BLUE);
-//    RMP_Line(10,90,90,90,RED);
-//    RMP_Line(90,90,90,10,GREEN);
-//    RMP_Dot_Line(10,10,90,50,BLUE,RMP_TRANS);
-//    RMP_Dot_Line(50,90,10,10,RED,RMP_TRANS);
-//    
-//    /* Draw Rectangle */
-//    RMP_Rectangle(110, 10, 90, 30, GREEN, RED);
-//    RMP_Rectangle(110, 50, 30, 40, RED, GREEN);
-//    
-//    /* Draw circle */
-//    RMP_Circle(170, 70, 20, GREEN, RED);
-//    
-//    /* Draw controls */
-//    RMP_Checkbox(10, 110, 90, RMP_CBOX_CHECK);
-//    RMP_Radiobtn(110, 110, 90, RMP_RBTN_SEL);
-//    RMP_Cmdbtn(10, 210, 90, 90, RMP_CBTN_DOWN);
-//    RMP_Lineedit(110, 210, 90, 90);
-//    
-//    RMP_Progbar(10, 310, 150, 30, RMP_PBAR_L2R, 10, BLUE, WHITE);
-//    RMP_Progbar(170, 310, 30, 110, RMP_PBAR_U2D, 10, BLUE, WHITE);
-//    RMP_Progbar(50, 430, 150, 30, RMP_PBAR_R2L, 10, BLUE, WHITE);
-//    RMP_Progbar(10, 350, 30, 110, RMP_PBAR_D2U, 10, BLUE, WHITE);
-//    RMP_Matrix(0, 0, Data_0, RMP_MAT_BIG, 56, 56, BLUE);
-//    State=0;
-//    while(1)
-//    {
-//        State++;
-//        RMP_Thd_Delay(10000);
-//        
-//        if(State%2==0)
-//        {
-//            RMP_Checkbox_Set(10, 110, 90);
-//            RMP_Radiobtn_Set(110, 110, 90);
-//            RMP_Cmdbtn_Up(10, 210, 90, 90);
-//        }
-//        else
-//        {
-//            RMP_Checkbox_Clr(10, 110, 90);
-//            RMP_Radiobtn_Clr(110, 110, 90);
-//            RMP_Cmdbtn_Down(10, 210, 90, 90);
-//        }
-//        
-//        RMP_Progbar_Set(10, 310, 150, 30, RMP_PBAR_L2R, (State*10)%110, (State*10+10)%110, BLUE, WHITE);
-//        RMP_Progbar_Set(170, 310, 30, 110, RMP_PBAR_U2D, (State*10)%110, (State*10+10)%110, BLUE, WHITE);
-//        RMP_Progbar_Set(50, 430, 150, 30, RMP_PBAR_R2L, (State*10)%110, (State*10+10)%110, BLUE, WHITE);
-//        RMP_Progbar_Set(10, 350, 30, 110, RMP_PBAR_D2U, (State*10)%110, (State*10+10)%110, BLUE, WHITE);
-//    }
-/* 12-8-8-8-12 layout */
-#define XPOS_0  12
-#define XPOS_1  12+56+8
-#define XPOS_2  12+56+8+56+8
-#define XPOS_3  12+56+8+56+8+56+8
-
-#define YPOS_0  412-56-8-56-8-56-8
-#define YPOS_1  412-56-8-56-8
-#define YPOS_2  412-56-8
-#define YPOS_3  412
-
-#define YPOS_DISP YPOS_0-56*3-12
+    /* Draw line */
+    RMP_Line(10,10,90,90,RED);
+    RMP_Line(10,90,90,10,BLUE);
+    RMP_Line(10,90,90,90,RED);
+    RMP_Line(90,90,90,10,GREEN);
+    RMP_Dot_Line(10,10,90,50,BLUE,RMP_TRANS);
+    RMP_Dot_Line(50,90,10,10,RED,RMP_TRANS);
     
-    RMP_Round_Rect(12, YPOS_DISP, 272-24, 56*3, 20, WHITE, KEYS_BG);
+    /* Draw Rectangle */
+    RMP_Rectangle(110, 10, 90, 30, GREEN, RED);
+    RMP_Rectangle(110, 50, 30, 40, RED, GREEN);
     
-    RMP_Cursor(20,50,RMP_CUR_NORM);
-    RMP_Cursor(40,50,RMP_CUR_BUSY);
-    RMP_Cursor(60,50,RMP_CUR_QUESTION);
-    RMP_Cursor(80,50,RMP_CUR_HAND);
-    RMP_Cursor(100,50,RMP_CUR_TEXT);
-    RMP_Cursor(120,50,RMP_CUR_STOP);
-    RMP_Cursor(140,50,RMP_CUR_MOVE);
-    RMP_Cursor(160,50,RMP_CUR_LR);
-    RMP_Cursor(180,50,RMP_CUR_UD);
-    RMP_Cursor(200,50,RMP_CUR_ULBR);
-    RMP_Cursor(220,50,RMP_CUR_URBL);
-    RMP_Cursor(240,50,RMP_CUR_CROSS);
+    /* Draw circle */
+    RMP_Circle(170, 70, 20, GREEN, RED);
+    
+    /* Draw controls */
+    RMP_Checkbox(10, 110, 90, RMP_CBOX_CHECK);
+    RMP_Radiobtn(110, 110, 90, RMP_RBTN_SEL);
+    RMP_Cmdbtn(10, 210, 90, 90, RMP_CBTN_DOWN);
+    RMP_Lineedit(110, 210, 90, 90);
+    
+    RMP_Progbar(10, 310, 150, 30, RMP_PBAR_L2R, 10, BLUE, WHITE);
+    RMP_Progbar(170, 310, 30, 110, RMP_PBAR_U2D, 10, BLUE, WHITE);
+    RMP_Progbar(50, 430, 150, 30, RMP_PBAR_R2L, 10, BLUE, WHITE);
+    RMP_Progbar(10, 350, 30, 110, RMP_PBAR_D2U, 10, BLUE, WHITE);
+    
+    RMP_Cursor(230,20-8,RMP_CUR_NORM);
+    RMP_Cursor(230,60-8,RMP_CUR_BUSY);
+    RMP_Cursor(230,100-8,RMP_CUR_QUESTION);
+    RMP_Cursor(230,140-8,RMP_CUR_HAND);
+    RMP_Cursor(230,180-8,RMP_CUR_TEXT);
+    RMP_Cursor(230,220-8,RMP_CUR_STOP);
+    RMP_Cursor(230,260-8,RMP_CUR_MOVE);
+    RMP_Cursor(230,300-8,RMP_CUR_LR);
+    RMP_Cursor(230,340-8,RMP_CUR_UD);
+    RMP_Cursor(230,380-8,RMP_CUR_ULBR);
+    RMP_Cursor(230,420-8,RMP_CUR_URBL);
+    RMP_Cursor(230,460-8,RMP_CUR_CROSS);
+    
+    State=0;
+    while(State<=20)
+    {
+        State++;
+        RMP_Thd_Delay(10000);
+        
+        if(State%2==0)
+        {
+            RMP_Checkbox_Set(10, 110, 90);
+            RMP_Radiobtn_Set(110, 110, 90);
+            RMP_Cmdbtn_Up(10, 210, 90, 90);
+        }
+        else
+        {
+            RMP_Checkbox_Clr(10, 110, 90);
+            RMP_Radiobtn_Clr(110, 110, 90);
+            RMP_Cmdbtn_Down(10, 210, 90, 90);
+        }
+        
+        RMP_Progbar_Set(10, 310, 150, 30, RMP_PBAR_L2R, (State*10)%110, (State*10+10)%110, BLUE, WHITE);
+        RMP_Progbar_Set(170, 310, 30, 110, RMP_PBAR_U2D, (State*10)%110, (State*10+10)%110, BLUE, WHITE);
+        RMP_Progbar_Set(50, 430, 150, 30, RMP_PBAR_R2L, (State*10)%110, (State*10+10)%110, BLUE, WHITE);
+        RMP_Progbar_Set(10, 350, 30, 110, RMP_PBAR_D2U, (State*10)%110, (State*10+10)%110, BLUE, WHITE);
+    }
+
+    LCD_Clear(KEYS_BG);
+    RMP_Round_Rect(12, YPOS_DISP, 272-24, 56*3, 20, DISP_BG, KEYS_BG);
     
     RMP_Matrix_AA(12, 6, Ico_LTE, RMP_MAT_BIG, 24, 24, WHITE, KEYS_BG);
     RMP_Matrix_AA(12+24+8, 6, Ico_Wifi, RMP_MAT_BIG, 24, 24, WHITE, KEYS_BG);
@@ -1409,31 +1377,6 @@ void Func_1(void)
     RMP_Matrix_AA(XPOS_1, YPOS_3, Num_Dot, RMP_MAT_BIG, 56, 56, NUM_FR, KEYS_BG);
     RMP_Matrix_AA(XPOS_2, YPOS_3, Op_Equal, RMP_MAT_BIG, 56, 56, OP_FR, KEYS_BG);
     RMP_Matrix_AA(XPOS_3, YPOS_3, Op_Plus, RMP_MAT_BIG, 56, 56, OP_FR, KEYS_BG);
-/* Anti-aliasing too much mem, not useful 
-#define GET_R(X) ((X)>>11)
-#define GET_G(X) (((X)>>5)&0x3F)
-#define GET_B(X) (X&0x1F)
-    for(Len_Cnt=12;Len_Cnt<260;Len_Cnt++)
-    {
-        for(Wid_Cnt=12;Wid_Cnt<480-12;Wid_Cnt++)
-        {
-            Data[0]=LCD_ReadPoint(Len_Cnt,Wid_Cnt);
-            Data[1]=LCD_ReadPoint(Len_Cnt+1,Wid_Cnt);
-            Data[2]=LCD_ReadPoint(Len_Cnt-1,Wid_Cnt);
-            Data[3]=LCD_ReadPoint(Len_Cnt,Wid_Cnt+1);
-            Data[4]=LCD_ReadPoint(Len_Cnt,Wid_Cnt-1);
-            
-            R=GET_R(Data[1])+GET_R(Data[2])+GET_R(Data[3])+GET_R(Data[4]);
-            G=GET_G(Data[1])+GET_G(Data[2])+GET_G(Data[3])+GET_G(Data[4]);
-            B=GET_B(Data[1])+GET_B(Data[2])+GET_B(Data[3])+GET_B(Data[4]);
-            
-            R=(R+GET_R(Data[0])*4)/8;
-            G=(G+GET_G(Data[0])*4)/8;
-            B=(B+GET_B(Data[0])*4)/8;
-            
-            RMP_Point(Len_Cnt,Wid_Cnt,RGB(R,G,B));
-        }
-    }*/
     while(1);
 }
 
@@ -1442,27 +1385,18 @@ void Func_2(void)
     while(1);
 }
 
-/* Begin Function:RMP_Init ****************************************************
-Description : The init thread hook functions.
-Input       : None.
-Output      : None.
-Return      : None.
-******************************************************************************/
 void RMP_Init_Hook(void)
 {
-#ifndef MINIMAL_SIZE
     /* Clean up the structures */
     RMP_Clear(&Thd_1,sizeof(struct RMP_Thd));
     RMP_Clear(&Thd_2,sizeof(struct RMP_Thd));
     /* Start threads */
     RMP_Thd_Crt(&Thd_1, Func_1, &Stack_1[200], (void*)0x1234, 1, 5);
     RMP_Thd_Crt(&Thd_2, Func_2, &Stack_2[200], (void*)0x4321, 1, 3);
-#endif
 }
 
 void RMP_Init_Idle(void)
 {
     return;
 }
-/* End Function:RMP_Init *****************************************************/
 

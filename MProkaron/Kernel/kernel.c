@@ -2282,6 +2282,45 @@ void RMP_Rectangle(cnt_t Coord_X, cnt_t Coord_Y, cnt_t Length, cnt_t Width, ptr_
 }
 /* End Function:RMP_Rectangle ************************************************/
 
+/* Begin Function:RMP_Round_Rect **********************************************
+Description : Draw a rectangle with rounded corners.
+Input       : cnt_t Coord_X -The X position of The top-left corner.
+              cnt_t Coord_Y -The Y position of The top-left corner.
+              cnt_t Length - The length of the rectangle.
+              cnt_t Width - The width of the rectangle. 
+              cnt_t Round - The raduis of the round corner. 
+              ptr_t Fore - The foreground color (the color of the rectangle).
+              ptr_t Fill - The background color.
+Output      : None.
+Return      : None.
+******************************************************************************/
+void RMP_Round_Rect(cnt_t Coord_X, cnt_t Coord_Y, cnt_t Length, cnt_t Width, 
+                    cnt_t Round, ptr_t Fore, ptr_t Back)
+{
+    cnt_t Cir_X_0;
+    cnt_t Cir_X_1;
+    cnt_t Cir_Y_0;
+    cnt_t Cir_Y_1;
+    
+    Cir_X_0=Coord_X+Round+1;
+    Cir_X_1=Coord_X+Length-Round-1;
+    Cir_Y_0=Coord_Y+Round+1;
+    Cir_Y_1=Coord_Y+Width-Round-1;
+    
+    RMP_Rectangle(Coord_X,Coord_Y,Length,Width,Fore,Fore);
+    
+    RMP_Rectangle(Cir_X_0-Round-1,Cir_Y_0-Round-1,Round+1,Round+1,Back,Back);
+    RMP_Rectangle(Cir_X_1,Cir_Y_0-Round-1,Round+1,Round+1,Back,Back);
+    RMP_Rectangle(Cir_X_0-Round-1,Cir_Y_1,Round+1,Round+1,Back,Back);
+    RMP_Rectangle(Cir_X_1,Cir_Y_1,Round+1,Round+1,Back,Back);
+    
+    RMP_Circle(Cir_X_0,Cir_Y_0,Round,Fore,Fore);
+    RMP_Circle(Cir_X_1,Cir_Y_0,Round,Fore,Fore);
+    RMP_Circle(Cir_X_0,Cir_Y_1,Round,Fore,Fore);
+    RMP_Circle(Cir_X_1,Cir_Y_1,Round,Fore,Fore);
+}
+/* End Function:RMP_Round_Rect ***********************************************/
+
 /* Begin Function:RMP_Circle **************************************************
 Description : Draw a circle on the screen. You can choose whether the circle 
               is filled or not. By setting the fill color to "RMP_TRANS", the 
