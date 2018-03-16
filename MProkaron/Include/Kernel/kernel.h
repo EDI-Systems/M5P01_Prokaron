@@ -443,7 +443,7 @@ __EXTERN__ void RMP_Progbar(cnt_t Coord_X, cnt_t Coord_Y, cnt_t Length, cnt_t Wi
 /* Other utilities */
 #ifdef __U8__
 #ifdef __U16__
-__EXTERN__ ptr_t RMP_CRC16(u8* Data, ptr_t Length);
+__EXTERN__ ptr_t RMP_CRC16(const u8* Data, ptr_t Length);
 #endif
 #endif
 
