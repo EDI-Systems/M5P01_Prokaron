@@ -234,6 +234,25 @@ void RMP_List_Del(volatile struct RMP_List* Prev,volatile struct RMP_List* Next)
 }
 /* End Function:RMP_List_Del *************************************************/
 
+/* Begin Function:RMP_List_Ins ************************************************
+Description : Insert a node to the doubly-linked list.
+Input       : volatile struct RMP_List* New - The new node to insert.
+              volatile struct RMP_List* Prev - The previous node.
+              volatile struct RMP_List* Next - The next node.
+Output      : None.
+Return      : None.
+******************************************************************************/
+void RMP_List_Ins(volatile struct RMP_List* New,
+                  volatile struct RMP_List* Prev,
+                  volatile struct RMP_List* Next)
+{
+    Next->Prev=(struct RMP_List*)New;
+    New->Next=(struct RMP_List*)Next;
+    New->Prev=(struct RMP_List*)Prev;
+    Prev->Next=(struct RMP_List*)New;
+}
+/* End Function:RMP_List_Ins *************************************************/
+
 /* Begin Function:RMP_CRC16 ***************************************************
 Description    : CRC16 checksum calculation. Polynomial=0xA001.
 Input          : const u8* Data - The pointer to the dataset.
@@ -317,25 +336,6 @@ ptr_t RMP_CRC16(const u8* Data, ptr_t Length)
 #endif
 #endif
 /* End Function:RMP_CRC16 ****************************************************/
-
-/* Begin Function:RMP_List_Ins ************************************************
-Description : Insert a node to the doubly-linked list.
-Input       : volatile struct RMP_List* New - The new node to insert.
-              volatile struct RMP_List* Prev - The previous node.
-              volatile struct RMP_List* Next - The next node.
-Output      : None.
-Return      : None.
-******************************************************************************/
-void RMP_List_Ins(volatile struct RMP_List* New,
-                  volatile struct RMP_List* Prev,
-                  volatile struct RMP_List* Next)
-{
-    Next->Prev=(struct RMP_List*)New;
-    New->Next=(struct RMP_List*)Next;
-    New->Prev=(struct RMP_List*)Prev;
-    Prev->Next=(struct RMP_List*)New;
-}
-/* End Function:RMP_List_Ins *************************************************/
 
 /* Begin Function:RMP_Lock_Sched **********************************************
 Description : The function locks the scheduler. The locking can be stacked.
