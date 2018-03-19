@@ -273,7 +273,7 @@
               <OCR_RVCT4>
                 <Type>1</Type>
                 <StartAddress>0x8020000</StartAddress>
-                <Size>0x100000</Size>
+                <Size>0xe0000</Size>
               </OCR_RVCT4>
               <OCR_RVCT5>
                 <Type>1</Type>
@@ -334,7 +334,7 @@
               <MiscControls></MiscControls>
               <Define>STM32F767xx,USE_HAL_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\MProkaron\Include;..\..\..\M0P0_Library\STM32F7xx_HAL_Driver\Core;..\..\..\M0P0_Library\STM32F7xx_HAL_Driver\Inc;..\..\..\M0P0_Library\STM32F7xx_HAL_Driver\Inc\Conf</IncludePath>
+              <IncludePath>..\..\MProkaron\Include;..\..\..\M0P0_Library\STM32F7xx_HAL_Driver\Core;..\..\..\M0P0_Library\STM32F7xx_HAL_Driver\Inc;..\..\..\M0P0_Library\STM32F7xx_HAL_Driver\Inc\Conf;..\..\..\M7M2_MuAmmonite\MAmmonite\Guest\CortexM;..\..\MProkaron\Include\Platform\CortexM_RVM</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -401,6 +401,18 @@
         </Group>
         <Group>
           <GroupName>Lib</GroupName>
+          <Files>
+            <File>
+              <FileName>guest_cmx.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\M7M2_MuAmmonite\MAmmonite\Guest\CortexM\guest_cmx.c</FilePath>
+            </File>
+            <File>
+              <FileName>guest_cmx.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\..\..\M7M2_MuAmmonite\MAmmonite\Guest\CortexM\guest_cmx.s</FilePath>
+            </File>
+          </Files>
         </Group>
         <Group>
           <GroupName>Benchmark</GroupName>

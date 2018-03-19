@@ -314,8 +314,8 @@ ret_t _RMP_Get_Int(void)
         /* See if context switch required */
         if((Pos>1)&&(RMP_Ctxsw!=0))
         {
-                RMP_Ctxsw=0;
-                Pos=1;
+            RMP_Ctxsw=0;
+            Pos=1;
         }
         _RMP_Fetch_And(&RMP_Flag.Flags[Count],~(((ptr_t)1)<<Pos));
     }
@@ -323,8 +323,8 @@ ret_t _RMP_Get_Int(void)
     {
         if(RMP_Ctxsw!=0)
         {
-                RMP_Ctxsw=0;
-                Pos=1;
+            RMP_Ctxsw=0;
+            Pos=1;
         }
     }
     

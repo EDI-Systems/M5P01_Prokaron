@@ -151,7 +151,7 @@ Click **[HERE](README.md)** for English version.
 |Cortex-M0+   |Keil uVision 5|6.25 |1.65|334  |607  |544  |588     |552    |N/A  |
 |Cortex-M3    |Keil uVision 5|2.60 |1.65|246  |456  |422  |443     |409    |308  |
 |Cortex-M3    |GCC           |     |    |     |     |     |        |       |     |
-|Cortex-M4    |Keil uVision 5|2.70 |1.66|184  |339  |325  |374     |361    |244  |
+|Cortex-M4    |Keil uVision 5|5.46 |1.66|188  |386  |353  |361     |329    |233  |
 |Cortex-M4    |GCC           |     |    |     |     |     |        |       |     |
 |Cortex-M7    |Keil uVision 5|6.66 |1.65|170  |256  |230  |274     |268    |180  |
 |Cortex-M7    |GCC           |     |    |     |     |     |        |       |     |
@@ -162,7 +162,7 @@ Click **[HERE](README.md)** for English version.
 |MIPS M14k    |XC32-GCC      |17.2 |2.46|264  |358  |340  |421     |415    |213  |
 |X86-LINUX    |GCC           |N/A  |N/A |33000|35000|33000|35000   |33000  |136  |
 
-&emsp;&emsp;**Flash和SRAM消耗以kB计，其他数据以CPU指令周期计。这里列出的所有值都是典型（有意义的系统配置）值而非绝对意义上的最小值，因为纯技术层面的最小配置在实际工程中很少是真正有用的。**
+&emsp;&emsp;**Flash和SRAM消耗以kB计，其他数据以CPU指令周期计。这里列出的所有值都是典型（有意义的系统配置）值而非绝对意义上的最小值，因为纯技术层面的最小配置在实际工程中很少是真正有用的。HAL库所造成的额外存储器消耗也被计算在内。**
 
 - MSP430平台使用MSP430FR5994进行评估。
 - Cortex-M0平台使用STM32F030F4P6进行评估。
