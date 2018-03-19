@@ -10,6 +10,7 @@ Description: The configuration file for STM32F405RG.
 /* The HAL library */
 #include "stm32f4xx.h"
 #include "core_cm4.h"
+#include "stm32f4xx_hal.h"
 /* The maximum number of preemption priority levels in the system.
  * This parameter must be divisible by the word length - 32 is usually sufficient */
 #define RMP_MAX_PREEMPT_PRIO         32
@@ -35,35 +36,69 @@ Description: The configuration file for STM32F405RG.
 #define RMP_CMX_LOW_LEVEL_INIT() \
 do \
 { \
-    USART_InitTypeDef USART1_Init; \
-    GPIO_InitTypeDef GPIOB_Init; \
-    RMP_Clear(&USART1_Init, sizeof(USART_InitTypeDef)); \
-    RMP_Clear(&GPIOB_Init, sizeof(GPIO_InitTypeDef)); \
+    RCC_ClkInitTypeDef RCC_ClkInitStruct; \
+    RCC_OscInitTypeDef RCC_OscInitStruct; \
+    UART_HandleTypeDef UART1_Handle; \
+    GPIO_InitTypeDef GPIO_Init; \
+    RMP_Clear(&RCC_ClkInitStruct, sizeof(RCC_ClkInitStruct)); \
+    RMP_Clear(&RCC_OscInitStruct, sizeof(RCC_OscInitStruct)); \
+    RMP_Clear(&UART1_Handle, sizeof(UART_HandleTypeDef)); \
+    RMP_Clear(&GPIO_Init, sizeof(GPIO_InitTypeDef)); \
     \
-    GPIOB_Init.GPIO_Mode=GPIO_Mode_AF; \
-    GPIOB_Init.GPIO_Pin=GPIO_Pin_6; \
-    GPIOB_Init.GPIO_Speed=GPIO_Speed_50MHz; \
-	GPIOB_Init.GPIO_OType=GPIO_OType_PP; \
-	GPIOB_Init.GPIO_PuPd=GPIO_PuPd_UP; \
-    RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB, ENABLE); \
-    GPIO_Init(GPIOB, &GPIOB_Init); \
-	GPIO_PinAFConfig(GPIOB, GPIO_PinSource6, GPIO_AF_USART1); \
+    /* Enable Power Control clock */ \
+    __HAL_RCC_PWR_CLK_ENABLE(); \
+    __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1); \
     \
-    USART1_Init.USART_BaudRate=115200; \
-    USART1_Init.USART_WordLength=USART_WordLength_8b; \
-    USART1_Init.USART_StopBits=USART_StopBits_1; \
-    USART1_Init.USART_Parity=USART_Parity_No; \
-    USART1_Init.USART_HardwareFlowControl=USART_HardwareFlowControl_None; \
-    USART1_Init.USART_Mode=USART_Mode_Tx; \
+    /* Enable HSE Oscillator and activate PLL with HSE as source */ \
+    RCC_OscInitStruct.OscillatorType=RCC_OSCILLATORTYPE_HSE; \
+    RCC_OscInitStruct.HSEState=RCC_HSE_ON; \
+    RCC_OscInitStruct.PLL.PLLState=RCC_PLL_ON; \
+    RCC_OscInitStruct.PLL.PLLSource=RCC_PLLSOURCE_HSE; \
+    RCC_OscInitStruct.PLL.PLLM=8; \
+    RCC_OscInitStruct.PLL.PLLN=336; \
+    RCC_OscInitStruct.PLL.PLLP=RCC_PLLP_DIV2; \
+    RCC_OscInitStruct.PLL.PLLQ=7; \
+    HAL_RCC_OscConfig(&RCC_OscInitStruct); \
     \
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE); \
-    USART_Init(USART1, &USART1_Init); \
-    USART_Cmd(USART1, ENABLE); \
+    /* Select PLL as system clock source and configure the HCLK, PCLK1 and PCLK2 clocks dividers */ \
+    RCC_ClkInitStruct.ClockType=(RCC_CLOCKTYPE_SYSCLK|RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2); \
+    RCC_ClkInitStruct.SYSCLKSource=RCC_SYSCLKSOURCE_PLLCLK; \
+    RCC_ClkInitStruct.AHBCLKDivider=RCC_SYSCLK_DIV1; \
+    RCC_ClkInitStruct.APB1CLKDivider=RCC_HCLK_DIV4; \
+    RCC_ClkInitStruct.APB2CLKDivider=RCC_HCLK_DIV2; \
+    HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_5); \
+    __HAL_FLASH_INSTRUCTION_CACHE_ENABLE(); \
+    __HAL_FLASH_DATA_CACHE_ENABLE(); \
+    /* STM32F405x/407x/415x/417x Revision Z/1/2 devices: prefetch is supported */ \
+    if(HAL_GetREVID()!=0x1000) \
+        __HAL_FLASH_PREFETCH_BUFFER_ENABLE();\
+    \
+    /* Enable USART 1 for user-level operations */ \
+    /* Clock enabling */ \
+    __HAL_RCC_GPIOB_CLK_ENABLE(); \
+	__HAL_RCC_USART1_CLK_ENABLE(); \
+    /* UART IO initialization */ \
+	GPIO_Init.Pin=GPIO_PIN_6; \
+	GPIO_Init.Mode=GPIO_MODE_AF_PP; \
+	GPIO_Init.Pull=GPIO_PULLUP; \
+	GPIO_Init.Speed=GPIO_SPEED_FREQ_HIGH; \
+	GPIO_Init.Alternate=GPIO_AF7_USART1; \
+	HAL_GPIO_Init(GPIOB,&GPIO_Init); \
+    /* UART initialization */ \
+	UART1_Handle.Instance=USART1; \
+	UART1_Handle.Init.BaudRate=115200; \
+	UART1_Handle.Init.WordLength=UART_WORDLENGTH_8B; \
+	UART1_Handle.Init.StopBits=UART_STOPBITS_1; \
+	UART1_Handle.Init.Parity=UART_PARITY_NONE; \
+	UART1_Handle.Init.HwFlowCtl=UART_HWCONTROL_NONE; \
+	UART1_Handle.Init.Mode=UART_MODE_TX; \
+	HAL_UART_Init(&UART1_Handle); \
     RMP_CMX_PUTCHAR('\r'); \
     RMP_CMX_PUTCHAR('\n'); \
+    \
     /* Enable all fault handlers */ \
     SCB->SHCSR|=RMP_CMX_SHCSR_USGFAULTENA|RMP_CMX_SHCSR_BUSFAULTENA|RMP_CMX_SHCSR_MEMFAULTENA; \
-     \
+    \
     /* Set the priority of timer, svc and faults to the lowest */ \
     NVIC_SetPriorityGrouping(RMP_CMX_NVIC_GROUPING); \
     NVIC_SetPriority(SVCall_IRQn, 0xFF); \

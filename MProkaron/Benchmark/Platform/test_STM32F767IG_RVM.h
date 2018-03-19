@@ -23,10 +23,7 @@ typedef ptr_t tim_t;
 #ifndef MINIMAL_SIZE
 void Int_Handler(void);
 ptr_t Stack_1[256];
-struct RMP_Thd Thd_1={0};
 ptr_t Stack_2[256];
-struct RMP_Thd Thd_2={0};
-struct RMP_Sem Sem_1={0};
 
 /* Page table stuff */
 const struct RVM_Hdr_Pgtbl RMP_Pgtbl[1]=

@@ -151,7 +151,7 @@ This software is **triple-licensed**: it is either **[LGPL v3](LICENSE.md)** or 
 |Cortex-M0+   |Keil uVision 5|6.25 |1.65|334  |607  |544  |588     |552    |N/A  |
 |Cortex-M3    |Keil uVision 5|2.60 |1.65|246  |456  |422  |443     |409    |308  |
 |Cortex-M3    |GCC           |     |    |     |     |     |        |       |     |
-|Cortex-M4    |Keil uVision 5|2.70 |1.66|184  |339  |325  |374     |361    |244  |
+|Cortex-M4    |Keil uVision 5|5.46 |1.66|188  |386  |353  |361     |329    |233  |
 |Cortex-M4    |GCC           |     |    |     |     |     |        |       |     |
 |Cortex-M7    |Keil uVision 5|6.66 |1.65|170  |256  |230  |274     |268    |180  |
 |Cortex-M7    |GCC           |     |    |     |     |     |        |       |     |
@@ -162,7 +162,7 @@ This software is **triple-licensed**: it is either **[LGPL v3](LICENSE.md)** or 
 |MIPS M14k    |XC32-GCC      |17.2 |2.46|264  |358  |340  |421     |415    |213  |
 |X86-LINUX    |GCC           |N/A  |N/A |33000|35000|33000|35000   |33000  |136  |
 
-&ensp;&ensp;&ensp;&ensp;**Flash and SRAM consumption is calculated in kB, while the other figures are calculated in CPU clock cycles. All values listed here are typical (useful system) values, not minimum values, because minimum values on system size seldom make any real sense.**
+&ensp;&ensp;&ensp;&ensp;**Flash and SRAM consumption is calculated in kB, while the other figures are calculated in CPU clock cycles. All values listed here are typical (useful system) values, not minimum values, because minimum values on system size seldom make any real sense. HAL library are also included in the size numbers.**
 
 - MSP430 is evaluated with MSP430FR5994.
 - Cortex-M0 is evaluated with STM32F030F4P6.

@@ -22,10 +22,6 @@ Description: The configuration file for STM32F767IG.
 #define RMP_USE_HOOKS                RMP_FALSE
 /* The stzck size of the init thread */
 #define RMP_INIT_STACK_SIZE          256
-
-/* The virtual machine settings */
-/* The maximum interrupt vectors for each virtual machine */
-#define RVM_MAX_INTVECT              32
 /* End Defines ***************************************************************/
 
 /* End Of File ***************************************************************/
