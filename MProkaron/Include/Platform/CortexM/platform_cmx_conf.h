@@ -7,7 +7,7 @@ Description: The configuration file for Cortex-M HAL.
 ******************************************************************************/
 
 /* Config Includes ***********************************************************/
-#include "../../Project/RVMDK-STM32F767IGT6-ALIENTEK/Source/platform_STM32F767IG_ALIENTEK.h"
+#include "Platform/CortexM/Chips/STM32F405RG/platform_STM32F405RG.h"
 /* End Config Includes *******************************************************/
 
 /* End Of File ***************************************************************/

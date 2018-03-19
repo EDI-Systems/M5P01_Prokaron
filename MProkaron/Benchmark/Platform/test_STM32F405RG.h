@@ -29,8 +29,8 @@ typedef u16 tim_t;
 void Int_Handler(void);
 ptr_t Stack_1[256];
 ptr_t Stack_2[256];
-TIM_TimeBaseInitTypeDef TIM2_Handle={0};   
-TIM_TimeBaseInitTypeDef TIM4_Handle={0};
+TIM_HandleTypeDef TIM2_Handle={0};
+TIM_HandleTypeDef TIM4_Handle={0};
 /* End Globals ***************************************************************/
 
 /* Begin Function:Timer_Init **************************************************
@@ -43,15 +43,14 @@ Return      : None.
 void Timer_Init(void)
 {
     /* TIM2 clock = 1/2 CPU clock */
-    RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
-    TIM_DeInit(TIM2);
-    TIM2_Handle.TIM_Period=(ptr_t)(-1); 
-    TIM2_Handle.TIM_Prescaler=0;
-    TIM2_Handle.TIM_ClockDivision=TIM_CKD_DIV1;
-    TIM2_Handle.TIM_CounterMode=TIM_CounterMode_Up;
-    TIM_TimeBaseInit(TIM2, &TIM2_Handle);     
-    TIM_ClearFlag(TIM2, TIM_FLAG_Update); 
-    TIM_Cmd(TIM2, ENABLE);
+    TIM2_Handle.Instance=TIM2;
+    TIM2_Handle.Init.Prescaler=0;
+    TIM2_Handle.Init.CounterMode=TIM_COUNTERMODE_UP;
+    TIM2_Handle.Init.Period=(unsigned int)(-1);
+    TIM2_Handle.Init.ClockDivision=TIM_CLOCKDIVISION_DIV1;
+    HAL_TIM_Base_Init(&TIM2_Handle);
+    __HAL_RCC_TIM2_CLK_ENABLE();
+    __HAL_TIM_ENABLE(&TIM2_Handle);
 }
 /* End Function:Timer_Init ***************************************************/
 
@@ -65,25 +64,37 @@ Return      : None.
 void Int_Init(void)
 {
     /* TIM4 clock = 1/2 CPU clock */
-    RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4, ENABLE);
-    TIM_DeInit(TIM4);
-    TIM4_Handle.TIM_Period=16800; 
-    TIM4_Handle.TIM_Prescaler=0;
-    TIM4_Handle.TIM_ClockDivision=TIM_CKD_DIV1;
-    TIM4_Handle.TIM_CounterMode=TIM_CounterMode_Down;
-    TIM_TimeBaseInit(TIM4, &TIM4_Handle);     
-    TIM_ClearFlag(TIM4, TIM_FLAG_Update); 
-    TIM_ITConfig(TIM4,TIM_IT_Update,ENABLE);
-    TIM_Cmd(TIM4, ENABLE);
-    
-    /* Enable Timer 4 IRQ */
-    NVIC_SetPriority(TIM4_IRQn, 0xFF);
-    NVIC_EnableIRQ(TIM4_IRQn);
+    TIM4_Handle.Instance=TIM4;
+    TIM4_Handle.Init.Prescaler=0;
+    TIM4_Handle.Init.CounterMode=TIM_COUNTERMODE_DOWN;
+    TIM4_Handle.Init.Period=16800;
+    TIM4_Handle.Init.ClockDivision=TIM_CLOCKDIVISION_DIV1;
+	TIM4_Handle.Init.RepetitionCounter=0;
+    HAL_TIM_Base_Init(&TIM4_Handle);
+    __HAL_RCC_TIM4_CLK_ENABLE();
+    __HAL_TIM_ENABLE(&TIM4_Handle);
+	/* Clear interrupt pending bit, because we used EGR to update the registers */
+	__HAL_TIM_CLEAR_IT(&TIM4_Handle, TIM_IT_UPDATE);
+	HAL_TIM_Base_Start_IT(&TIM4_Handle);
 }
+
+void HAL_TIM_Base_MspInit(TIM_HandleTypeDef *htim)
+{
+	if(htim->Instance==TIM4) 
+    {
+		/* Set the interrupt priority */
+		NVIC_SetPriority(TIM4_IRQn,0xFF);
+		/* Enable timer 4 interrupt */
+		NVIC_EnableIRQ(TIM4_IRQn);
+		/* Enable timer 4 clock */
+		__HAL_RCC_TIM4_CLK_ENABLE();
+	}
+}
+
 /* The interrupt handler */
 void TIM4_IRQHandler(void)
 {
-    TIM4->SR=~TIM_FLAG_Update;
+    TIM4->SR=~TIM_FLAG_UPDATE;
     Int_Handler();
 }
 /* End Function:Int_Init *****************************************************/
