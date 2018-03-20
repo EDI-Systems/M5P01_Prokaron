@@ -146,19 +146,14 @@ Click **[HERE](README.md)** for English version.
 |Machine      |Toolchain     |Flash|SRAM|Yield|Mail |Sem  |Mail/Int|Sem/Int|Mem  |
 |:-----------:|:------------:|:---:|:--:|:---:|:---:|:---:|:------:|:-----:|:---:|
 |MSP430       |TI CCS7       |2.90 |0.64|495  |906  |786  |830     |736    |1575 |
-|MSP430       |GCC           |     |    |     |     |     |        |       |     |
 |Cortex-M0    |Keil uVision 5|4.94 |1.65|374  |663  |616  |659     |617    |N/A  |
 |Cortex-M0+   |Keil uVision 5|6.25 |1.65|334  |607  |544  |588     |552    |N/A  |
 |Cortex-M3    |Keil uVision 5|2.60 |1.65|246  |456  |422  |443     |409    |308  |
-|Cortex-M3    |GCC           |     |    |     |     |     |        |       |     |
 |Cortex-M4    |Keil uVision 5|5.46 |1.66|188  |386  |353  |361     |329    |233  |
-|Cortex-M4    |GCC           |     |    |     |     |     |        |       |     |
 |Cortex-M7    |Keil uVision 5|6.66 |1.65|196  |288  |277  |296     |296    |183  |
-|Cortex-M7    |GCC           |     |    |     |     |     |        |       |     |
+|Cortex-M7-RVM|Keil uVision 5|2.09 |2.29|     |     |     |        |       |     |
 |Cortex-R4    |TI CCS7       |     |    |     |     |     |        |       |     |
-|Cortex-R4    |GCC           |     |    |     |     |     |        |       |     |
 |Cortex-R5    |TI CCS7       |18.2 |3.72|305  |471  |426  |472     |432    |267  |
-|Cortex-R5    |GCC           |     |    |     |     |     |        |       |     |
 |MIPS M14k    |XC32-GCC      |17.2 |2.46|264  |358  |340  |421     |415    |213  |
 |X86-LINUX    |GCC           |N/A  |N/A |33000|35000|33000|35000   |33000  |136  |
 
@@ -171,6 +166,7 @@ Click **[HERE](README.md)** for English version.
 - Cortex-M3平台使用STM32F103RET6进行评估。
 - Cortex-M4平台使用STM32F405RGT6进行评估。
 - Cortex-M7平台使用STM32F767IGT6进行评估。
+- Cortex-M7-RVM平台使用STM32F767IGT6进行评估，而且RMP此时是作为客户机运行在**[RVM](https://github.com/EDI-Systems/M7M2_MuAmmonite)**嵌入式虚拟机监视器上.
 - Cortex-R4平台使用TMS570LS0432进行评估。
 - Cortex-R5平台使用TMS570LC4357进行评估。
 - MIPS M14k平台使用PIC32MZ2048EFM100进行评估。
