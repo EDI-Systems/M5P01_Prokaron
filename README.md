@@ -153,7 +153,7 @@ This software is **triple-licensed**: it is either **[LGPL v3](LICENSE.md)** or 
 |Cortex-M3    |GCC           |     |    |     |     |     |        |       |     |
 |Cortex-M4    |Keil uVision 5|5.46 |1.66|188  |386  |353  |361     |329    |233  |
 |Cortex-M4    |GCC           |     |    |     |     |     |        |       |     |
-|Cortex-M7    |Keil uVision 5|6.66 |1.65|170  |256  |230  |274     |268    |180  |
+|Cortex-M7    |Keil uVision 5|6.66 |1.65|196  |288  |277  |296     |296    |183  |
 |Cortex-M7    |GCC           |     |    |     |     |     |        |       |     |
 |Cortex-R4    |TI CCS7       |     |    |     |     |     |        |       |     |
 |Cortex-R4    |GCC           |     |    |     |     |     |        |       |     |
