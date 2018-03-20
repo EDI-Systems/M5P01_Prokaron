@@ -29,20 +29,15 @@
 ;/* End Header ***************************************************************/
 
 ;/* Begin Exports ************************************************************/
-                ;The entry stub
-                EXPORT          _RMP_Entry
                 ;Get the MSB                              
                 EXPORT          RMP_MSB_Get
                 ;Start the first thread
-                EXPORT          _RMP_Start
-                ;The PendSV trigger
-                EXPORT          _RMP_Yield            
+                EXPORT          _RMP_Start          
 ;/* End Exports **************************************************************/
 
 ;/* Begin Imports ************************************************************/
-                ;Save and load extra contexts, such as FPU, peripherals and MPU
-                IMPORT          RMP_Save_Ctx
-                IMPORT          RMP_Load_Ctx
+                ;The context switch flag
+                IMPORT          RVM_Ctxsw
 ;/* End Imports **************************************************************/
 
 ;/* Begin Function:RMP_MSB_Get ************************************************
@@ -58,26 +53,6 @@ RMP_MSB_Get
                 SUB      R0,R1
                 BX       LR
 ;/* End Function:RMP_MSB_Get *************************************************/
-
-;/* Begin Function:_RMP_Yield *************************************************
-;Description : Trigger a yield to another thread. This will actually send a interrupt
-;              to the interrupt thread.
-;Input       : None.
-;Output      : None.                                      
-;*****************************************************************************/
-_RMP_Yield
-                PUSH       {R4-R5}       ; Manual clobbering
-                LDR        R4,=RMP_Ctxsw ; Set the context switch flag 
-                MOV        R5,#0x01      ; Flag & capability number
-                STR        R5,[R4]
-                MOV        R4,#0x20000   ; Asynchronous send
-                
-                SVC        #0x00         ; System call
-                ISB                      ; Instruction barrier - wait for instruction to complete.
-                
-                POP        {R4-R5}       ; Manual recovering
-                BX         LR            ; Return from the call                                             
-;/* End Function:_RMP_Yield **************************************************/
 
 ;/* Begin Function:_RMP_Start *************************************************
 ;Description : Jump to the user function and will never return from it.
