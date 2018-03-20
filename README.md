@@ -173,7 +173,7 @@ This software is **triple-licensed**: it is either **[LGPL v3](LICENSE.md)** or 
 - Cortex-M3 is evaluated with STM32F103RET6.
 - Cortex-M4 is evaluated with STM32F405RGT6.
 - Cortex-M7 is evaluated with STM32F767IGT6.
-- Cortex-M7-RVM is evaluated with STM32F767IGT6, and the RMP runs as a guest OS in the **[RVM](https://github.com/EDI-Systems/M7M2_MuAmmonite)**.
+- Cortex-M7-RVM is evaluated with STM32F767IGT6, and the RMP runs as a guest OS in the **[RVM](https://github.com/EDI-Systems/M7M2_MuAmmonite)** embedded hypervisor.
 - Cortex-R4 is evaluated with TMS570LS0432.
 - Cortex-R5 is evaluated with TMS570LC4357.
 - MIPS M14k is evaluated with PIC32MZ2048EFM100.
