@@ -207,7 +207,7 @@
             <Ra1Chk>0</Ra1Chk>
             <Ra2Chk>0</Ra2Chk>
             <Ra3Chk>0</Ra3Chk>
-            <Im1Chk>1</Im1Chk>
+            <Im1Chk>0</Im1Chk>
             <Im2Chk>1</Im2Chk>
             <OnChipMemories>
               <Ocm1>
@@ -334,7 +334,7 @@
               <MiscControls></MiscControls>
               <Define>STM32F767xx,USE_HAL_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\MProkaron\Include;..\..\..\M0P0_Library\STM32F7xx_HAL_Driver\Core;..\..\..\M0P0_Library\STM32F7xx_HAL_Driver\Inc;..\..\..\M0P0_Library\STM32F7xx_HAL_Driver\Inc\Conf</IncludePath>
+              <IncludePath>..\..\MProkaron\Include;..\..\..\M0P0_Library\STM32Cube_FW_F7_V1.11.0\Drivers\CMSIS\Include;..\..\..\M0P0_Library\STM32Cube_FW_F7_V1.11.0\Drivers\STM32F7xx_HAL_Driver\Inc;..\..\..\M0P0_Library\STM32Cube_FW_F7_V1.11.0\Drivers\STM32F7xx_HAL_Driver\Inc\Conf;..\..\..\M0P0_Library\STM32Cube_FW_F7_V1.11.0\Drivers\CMSIS\Device\ST\STM32F7xx\Include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -403,64 +403,64 @@
           <GroupName>Lib</GroupName>
           <Files>
             <File>
-              <FileName>stm32f7xx_hal_pwr_ex.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\M0P0_Library\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal_pwr_ex.c</FilePath>
-            </File>
-            <File>
               <FileName>stm32f7xx_hal_rcc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\M0P0_Library\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal_rcc.c</FilePath>
+              <FilePath>..\..\..\M0P0_Library\STM32Cube_FW_F7_V1.11.0\Drivers\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal_rcc.c</FilePath>
             </File>
             <File>
               <FileName>stm32f7xx_hal_cortex.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\M0P0_Library\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal_cortex.c</FilePath>
+              <FilePath>..\..\..\M0P0_Library\STM32Cube_FW_F7_V1.11.0\Drivers\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal_cortex.c</FilePath>
             </File>
             <File>
               <FileName>stm32f7xx_hal.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\M0P0_Library\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal.c</FilePath>
+              <FilePath>..\..\..\M0P0_Library\STM32Cube_FW_F7_V1.11.0\Drivers\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal.c</FilePath>
             </File>
             <File>
               <FileName>stm32f7xx_hal_gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\M0P0_Library\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal_gpio.c</FilePath>
+              <FilePath>..\..\..\M0P0_Library\STM32Cube_FW_F7_V1.11.0\Drivers\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal_gpio.c</FilePath>
             </File>
             <File>
               <FileName>stm32f7xx_hal_tim.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\M0P0_Library\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal_tim.c</FilePath>
+              <FilePath>..\..\..\M0P0_Library\STM32Cube_FW_F7_V1.11.0\Drivers\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal_tim.c</FilePath>
             </File>
             <File>
               <FileName>stm32f7xx_hal_tim_ex.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\M0P0_Library\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal_tim_ex.c</FilePath>
+              <FilePath>..\..\..\M0P0_Library\STM32Cube_FW_F7_V1.11.0\Drivers\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal_tim_ex.c</FilePath>
             </File>
             <File>
               <FileName>stm32f7xx_hal_dma.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\M0P0_Library\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal_dma.c</FilePath>
+              <FilePath>..\..\..\M0P0_Library\STM32Cube_FW_F7_V1.11.0\Drivers\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal_dma.c</FilePath>
             </File>
             <File>
               <FileName>stm32f7xx_hal_dma_ex.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\M0P0_Library\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal_dma_ex.c</FilePath>
+              <FilePath>..\..\..\M0P0_Library\STM32Cube_FW_F7_V1.11.0\Drivers\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal_dma_ex.c</FilePath>
             </File>
             <File>
               <FileName>stm32f7xx_hal_uart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\M0P0_Library\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal_uart.c</FilePath>
+              <FilePath>..\..\..\M0P0_Library\STM32Cube_FW_F7_V1.11.0\Drivers\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal_uart.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f7xx_hal_pwr_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\M0P0_Library\STM32Cube_FW_F7_V1.11.0\Drivers\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal_pwr_ex.c</FilePath>
             </File>
             <File>
               <FileName>startup_stm32f767xx.s</FileName>
               <FileType>2</FileType>
-              <FilePath>..\..\..\M0P0_Library\STM32F7xx_HAL_Driver\Core\startup_stm32f767xx.s</FilePath>
+              <FilePath>..\..\..\M0P0_Library\STM32Cube_FW_F7_V1.11.0\Drivers\CMSIS\Device\ST\STM32F7xx\Source\Templates\arm\startup_stm32f767xx.s</FilePath>
             </File>
             <File>
               <FileName>system_stm32f7xx.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\M0P0_Library\STM32F7xx_HAL_Driver\Core\system_stm32f7xx.c</FilePath>
+              <FilePath>..\..\..\M0P0_Library\STM32Cube_FW_F7_V1.11.0\Drivers\CMSIS\Device\ST\STM32F7xx\Source\Templates\system_stm32f7xx.c</FilePath>
             </File>
           </Files>
         </Group>
