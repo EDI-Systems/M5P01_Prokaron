@@ -63,18 +63,9 @@ Return      : None.
 ******************************************************************************/
 void _RMP_Low_Level_Init(void)
 {
-    cnt_t Count;
-    /* Clear all VM-related flags and registration tables */
-    RMP_Ctxsw=0;
-    for(Count=0;Count<RVM_VECT_BITMAP;Count++)
-        RMP_Flag.Flags[Count]=0;
-    for(Count=0;Count<RVM_MAX_INTVECT;Count++)
-        RMP_Vect[Count]=0;
-    /* Install systick and pendsv handlers */
-    RMP_Vect[0]=(ptr_t)RMP_SysTick_Handler;
-    RMP_Vect[1]=(ptr_t)RMP_PendSV_Handler;
-    
-    /* Clean up the console */
+    RVM_Init();
+    RVM_Handler_Install(0, RMP_SysTick_Handler);
+    RVM_Handler_Install(1, RMP_PendSV_Handler);
     RMP_Console_Ptr=0;
 }
 /* End Function:_RMP_Low_Level_Init ******************************************/
@@ -102,261 +93,33 @@ void RMP_Putchar(char Char)
     /* If we are not changing lines, and buffer not full */
     if((Char!='\r')&&(Char!='\n')&&(Char!='\0')&&(RMP_Console_Ptr<RMP_KERNEL_DEBUG_MAX_STR-1))
     {
-        RMP_Console[RMP_Console_Ptr++]=Char;
+        RVM_Console[RMP_Console_Ptr++]=Char;
     }
     else
     {
         RMP_Lock_Sched();
-        RMP_Console[RMP_Console_Ptr]='\0';
+        RVM_Console[RMP_Console_Ptr]='\0';
         RMP_Console_Ptr=0;
-        RVM_Hyp_Print();
+        RVM_Print();
         RMP_Unlock_Sched();
     }
 }
 /* End Function:RMP_Putchar **************************************************/
 
-/* Begin Function:RMP_Hypercall ***********************************************
-Description : Do a hypercall to the virtual machine.
-Input       : ptr_t Number - The hypercall number.
-              ptr_t Param1 - The second input.
-              ptr_t Param2 - The third input.
-              ptr_t Param3 - The fourth ptr_t Param4
-Output      : None.
-Return      : None.
-******************************************************************************/
-ret_t RMP_Hypercall(ptr_t Number, ptr_t Param1, ptr_t Param2, ptr_t Param3, ptr_t Param4)
-{
-    /* Pass the parameters */
-    RMP_Param.Number=Number;
-    RMP_Param.Param[0]=Param1;
-    RMP_Param.Param[1]=Param2;
-    RMP_Param.Param[2]=Param3;
-    RMP_Param.Param[3]=Param4;
-    
-    /* Do the hypercall */
-    _RMP_Hypercall();
-    
-    /* Return the result */
-    return RMP_Param.Param[0];
-}
-/* End Function:RMP_Hypercall ************************************************/
-
-/* Begin Function:RMP_Enable_Int **********************************************
-Description : Enable interrupts.
-Input       : None.
-Output      : None.
-Return      : None.
-******************************************************************************/
-void RMP_Enable_Int(void)
-{
-    /* Must be successful */
-    RMP_ASSERT(RMP_Hypercall(RVM_HYP_ENAINT,0,0,0,0)==0);
-}
-/* End Function:RMP_Enable_Int ***********************************************/
-
-/* Begin Function:RMP_Disable_Int *********************************************
-Description : Disable interrupts.
-Input       : None.
-Output      : None.
-Return      : None.
-******************************************************************************/
 void RMP_Disable_Int(void)
 {
-    /* Must be successful */
-    RMP_ASSERT(RMP_Hypercall(RVM_HYP_DISINT,0,0,0,0)==0);
+    RVM_Disable_Int();
 }
-/* End Function:RMP_Disable_Int **********************************************/
 
-/* Begin Function:RMP_Hyp_Reg_Evt *********************************************
-Description : Register an event channel for the current virtal machine.
-Input       : ptr_t Int_Num - The interrupt number for this channel.
-              ptr_t VMID - The sender's VMID. Only the VM with this ID is allowed to
-                           send to the channel.
-Output      : None.
-Return      : ret_t - If successful, 0; else an error code.
-******************************************************************************/
-ret_t RMP_Hyp_Reg_Evt(ptr_t Int_Num, ptr_t VMID)
+void RMP_Enable_Int(void)
 {
-    return RMP_Hypercall(RVM_HYP_REGEVT,Int_Num,VMID,0,0);
+    RVM_Enable_Int();
 }
-/* End Function:RMP_Hyp_Reg_Evt **********************************************/
 
-/* Begin Function:RMP_Hyp_Del_Evt *********************************************
-Description : Delete an event channel.
-Input       : ptr_t Evt_ID - The event channel to delete. The event channel must be
-                             created by this VM.
-Output      : None.
-Return      : ret_t - If successful, 0; else an error code.
-******************************************************************************/
-ret_t RMP_Hyp_Del_Evt(cnt_t Evt_ID)
+void _RMP_Yield(void)
 {
-    return RMP_Hypercall(RVM_HYP_DELEVT,Evt_ID,0,0,0);
+    RVM_Yield();
 }
-/* End Function:RMP_Hyp_Del_Evt **********************************************/
-
-/* Begin Function:RVM_Hyp_Wait_Evt ********************************************
-Description : Wait for an event. The interrupt must be enabled for this VM.
-Input       : None.
-Output      : None.
-Return      : ret_t - If successful, 0; else an error code.
-******************************************************************************/
-ret_t RVM_Hyp_Wait_Evt(void)
-{
-    return RMP_Hypercall(RVM_HYP_WAITEVT,0,0,0,0);
-}
-/* End Function:RVM_Hyp_Wait_Evt *********************************************/
-
-/* Begin Function:RVM_Hyp_Send_Evt ********************************************
-Description : Send an event to the event channel. This VM must have permissions
-              to send to that channel.
-Input       : ptr_t Evt_ID - The event channel to send to.
-Output      : None.
-Return      : ret_t - If successful, 0; else an error code.
-******************************************************************************/
-ret_t RVM_Hyp_Send_Evt(ptr_t Evt_ID)
-{
-    return RMP_Hypercall(RVM_HYP_SENDEVT,Evt_ID,0,0,0);
-}
-/* End Function:RVM_Hyp_Send_Evt *********************************************/
-
-/* Begin Function:RVM_Hyp_Query_Evt *******************************************
-Description : See if there is a channel in the target VM that this VM can send to.
-Input       : None.
-Output      : None.
-Return      : ret_t - If successful, the channel ID; else an error code.
-******************************************************************************/
-ret_t RVM_Hyp_Query_Evt(ptr_t VMID)
-{
-    return RMP_Hypercall(RVM_HYP_QUERYEVT,VMID,0,0,0);
-}
-/* End Function:RVM_Hyp_Query_Evt ********************************************/
-
-/* Begin Function:RVM_Hyp_Query ***********************************************
-Description : See if there is a VM with this name. If there is, return its VM ID.
-Input       : s8* Name - The name of the VM.
-Output      : None.
-Return      : ret_t - If successful, 0; else an error code.
-******************************************************************************/
-ret_t RVM_Hyp_Query(s8* Name)
-{
-    cnt_t Count;
-    s8* Name_Array;
-    
-    /* Pass the parameters */
-    RMP_Param.Number=RVM_HYP_SENDEVT;
-    Name_Array=(s8*)(RMP_Param.Param);
-    for(Count=0;Count<16;Count++)
-    {
-        if(Name[Count]=='\0')
-            break;
-        Name_Array[Count]=Name[Count];
-    }
-    
-    /* Do the hypercall */
-    _RMP_Hypercall();
-    
-    /* Return the result */
-    return RMP_Param.Param[0];
-}
-/* End Function:RVM_Hyp_Query ************************************************/
-
-/* Begin Function:RVM_Hyp_Tim_Prog ********************************************
-Description : See if there is a VM with this name. If there is, return its VM ID.
-Input       : ptr_t Period - The new period of timer interrupts.
-Output      : None.
-Return      : ret_t - If successful, 0; else an error code.
-******************************************************************************/
-ret_t RVM_Hyp_Tim_Prog(ptr_t Period)
-{
-    return RMP_Hypercall(RVM_HYP_TIMPROG,Period,0,0,0);
-}
-/* End Function:RVM_Hyp_Tim_Prog *********************************************/
-
-/* Begin Function:RVM_Hyp_Print ***********************************************
-Description : Trigger a print to the console. The print address is predetermined.
-Input       : None.
-Output      : None.
-Return      : ret_t - If successful, 0; else -1.
-******************************************************************************/
-ret_t RVM_Hyp_Print(void)
-{
-    return RMP_Hypercall(RVM_HYP_PRINT,0,0,0,0);
-}
-/* End Function:RVM_Hyp_Print ************************************************/
-
-/* Begin Function:_RMP_Get_Int ************************************************
-Description : Get the interrupt number to handle. After returning the vector, clean
-              up the corresponding bit.
-Input       : None.
-Output      : None.
-Return      : ret_t - If there is interrupt pending, the interrupt number; else -1.
-******************************************************************************/
-ret_t _RMP_Get_Int(void)
-{
-    cnt_t Count;
-    cnt_t Pos;
-    
-    /* See which one is ready, and pick it */
-    Pos=-1;
-    for(Count=RVM_VECT_BITMAP-1;Count>=0;Count--)
-    {
-        if(RMP_Flag.Flags[Count]==0)
-            continue;
-        
-        Pos=RMP_MSB_Get(RMP_Flag.Flags[Count]);
-        Pos+=(Count<<RMP_WORD_ORDER);
-        break;
-    }
-    
-    /* Now kill the bit */
-    if(Pos>=0)
-    {
-        /* See if context switch required */
-        if((Pos>1)&&(RMP_Ctxsw!=0))
-        {
-            RMP_Ctxsw=0;
-            Pos=1;
-        }
-        _RMP_Fetch_And(&RMP_Flag.Flags[Count],~(((ptr_t)1)<<Pos));
-    }
-    else 
-    {
-        if(RMP_Ctxsw!=0)
-        {
-            RMP_Ctxsw=0;
-            Pos=1;
-        }
-    }
-    
-    return Pos;
-}
-/* End Function:_RMP_Get_Int *************************************************/
-
-/* Begin Function:_RMP_Int ****************************************************
-Description : The interrupt entry of RMP.
-Input       : None.
-Output      : None.
-Return      : None.
-******************************************************************************/
-void _RMP_Int(void)
-{
-    cnt_t Int_Num;
-    
-    while(1)
-    {
-        _RMP_Int_Rcv();
-        /* Look for interrupts to handle from the first */
-        Int_Num=_RMP_Get_Int();
-        /* Handle the interrupt here - the interrupt is tail-chained */
-        while(Int_Num>=0)
-        {
-            if(RMP_Vect[Int_Num]!=0)
-                ((void(*)(void))RMP_Vect[Int_Num])();
-            Int_Num=_RMP_Get_Int();
-        }
-    }
-}
-/* End Function:_RMP_Int *****************************************************/
 
 /* Begin Function:RMP_PendSV_Handler ******************************************
 Description : The PendSV interrupt routine.
@@ -371,16 +134,16 @@ void RMP_PendSV_Handler(void)
     /* Spill all the registers onto the user stack
      * MRS       R0,PSP
      * STMDB     R0!,{R4-R11,LR} */
-    SP=(ptr_t*)(RMP_Regs.Reg.SP);    
-    *(--SP)=RMP_Regs.Reg.LR;
-    *(--SP)=RMP_Regs.Reg.R11;
-    *(--SP)=RMP_Regs.Reg.R10;
-    *(--SP)=RMP_Regs.Reg.R9;
-    *(--SP)=RMP_Regs.Reg.R8;
-    *(--SP)=RMP_Regs.Reg.R7;
-    *(--SP)=RMP_Regs.Reg.R6;
-    *(--SP)=RMP_Regs.Reg.R5;
-    *(--SP)=RMP_Regs.Reg.R4;
+    SP=(ptr_t*)(RVM_Regs.Reg.SP);    
+    *(--SP)=RVM_Regs.Reg.LR;
+    *(--SP)=RVM_Regs.Reg.R11;
+    *(--SP)=RVM_Regs.Reg.R10;
+    *(--SP)=RVM_Regs.Reg.R9;
+    *(--SP)=RVM_Regs.Reg.R8;
+    *(--SP)=RVM_Regs.Reg.R7;
+    *(--SP)=RVM_Regs.Reg.R6;
+    *(--SP)=RVM_Regs.Reg.R5;
+    *(--SP)=RVM_Regs.Reg.R4;
     
     /* Save extra context
      * BL       RMP_Save_Ctx */
@@ -407,16 +170,16 @@ void RMP_PendSV_Handler(void)
     /* Load registers from user stack
      * LDMIA     R0!,{R4-R11,LR}
      * MSR       PSP,R0 */
-    RMP_Regs.Reg.R4=*(SP++);
-    RMP_Regs.Reg.R5=*(SP++);
-    RMP_Regs.Reg.R6=*(SP++);
-    RMP_Regs.Reg.R7=*(SP++);
-    RMP_Regs.Reg.R8=*(SP++);
-    RMP_Regs.Reg.R9=*(SP++);
-    RMP_Regs.Reg.R10=*(SP++);
-    RMP_Regs.Reg.R11=*(SP++);
-    RMP_Regs.Reg.LR=*(SP++);
-    RMP_Regs.Reg.SP=(ptr_t)SP;
+    RVM_Regs.Reg.R4=*(SP++);
+    RVM_Regs.Reg.R5=*(SP++);
+    RVM_Regs.Reg.R6=*(SP++);
+    RVM_Regs.Reg.R7=*(SP++);
+    RVM_Regs.Reg.R8=*(SP++);
+    RVM_Regs.Reg.R9=*(SP++);
+    RVM_Regs.Reg.R10=*(SP++);
+    RVM_Regs.Reg.R11=*(SP++);
+    RVM_Regs.Reg.LR=*(SP++);
+    RVM_Regs.Reg.SP=(ptr_t)SP;
                 
     /* Here the LR will indicate whether we are using FPU
      * BX        LR */
