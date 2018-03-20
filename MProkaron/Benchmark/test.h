@@ -7,7 +7,7 @@ Description: The configuration file for testing program.
 ******************************************************************************/
 
 /* Config Includes ***********************************************************/
-#include "Platform/test_STM32F405RG.h"
+#include "Platform/test_STM32F767IG.h"
 /* End Config Includes *******************************************************/
 
 /* End Of File ***************************************************************/
