@@ -146,22 +146,24 @@ This software is **triple-licensed**: it is either **[LGPL v3](LICENSE.md)** or 
 |Machine      |Toolchain     |Flash|SRAM|Yield|Mail |Sem  |Mail/Int|Sem/Int|Mem  |
 |:-----------:|:------------:|:---:|:--:|:---:|:---:|:---:|:------:|:-----:|:---:|
 |MSP430       |TI CCS7       |2.90 |0.64|495  |906  |786  |830     |736    |1575 |
-<!-- |MSP430       |GCC           |     |    |     |     |     |        |       |     | -->
-<!-- |RL78         |GCC           |     |    |     |     |     |        |       |     | -->
 |Cortex-M0    |Keil uVision 5|4.94 |1.65|374  |663  |616  |659     |617    |N/A  |
 |Cortex-M0+   |Keil uVision 5|6.25 |1.65|334  |607  |544  |588     |552    |N/A  |
 |Cortex-M3    |Keil uVision 5|2.60 |1.65|246  |456  |422  |443     |409    |308  |
-<!-- |Cortex-M3    |GCC           |     |    |     |     |     |        |       |     | -->
 |Cortex-M4    |Keil uVision 5|5.46 |1.66|188  |386  |353  |361     |329    |233  |
-<!-- |Cortex-M4    |GCC           |     |    |     |     |     |        |       |     | -->
 |Cortex-M7    |Keil uVision 5|6.66 |1.65|196  |288  |277  |296     |296    |183  |
-<!-- |Cortex-M7    |GCC           |     |    |     |     |     |        |       |     | -->
+|Cortex-M7-RVM|Keil uVision 5|2.09 |2.29|     |     |     |        |       |     |
 |Cortex-R4    |TI CCS7       |     |    |     |     |     |        |       |     |
-<!-- |Cortex-R4    |GCC           |     |    |     |     |     |        |       |     | -->
 |Cortex-R5    |TI CCS7       |18.2 |3.72|305  |471  |426  |472     |432    |267  |
-<!-- |Cortex-R5    |GCC           |     |    |     |     |     |        |       |     | -->
 |MIPS M14k    |XC32-GCC      |17.2 |2.46|264  |358  |340  |421     |415    |213  |
 |X86-LINUX    |GCC           |N/A  |N/A |33000|35000|33000|35000   |33000  |136  |
+
+<!-- |MSP430       |GCC           |     |    |     |     |     |        |       |     | -->
+<!-- |RL78         |GCC           |     |    |     |     |     |        |       |     | -->
+<!-- |Cortex-M3    |GCC           |     |    |     |     |     |        |       |     | -->
+<!-- |Cortex-M4    |GCC           |     |    |     |     |     |        |       |     | -->
+<!-- |Cortex-M7    |GCC           |     |    |     |     |     |        |       |     | -->
+<!-- |Cortex-R4    |GCC           |     |    |     |     |     |        |       |     | -->
+<!-- |Cortex-R5    |GCC           |     |    |     |     |     |        |       |     | -->
 
 &ensp;&ensp;&ensp;&ensp;**Flash and SRAM consumption is calculated in kB, while the other figures are calculated in CPU clock cycles. All values listed here are typical (useful system) values, not minimum values, because minimum values on system size seldom make any real sense. HAL library are also included in the size numbers.**
 
@@ -171,6 +173,7 @@ This software is **triple-licensed**: it is either **[LGPL v3](LICENSE.md)** or 
 - Cortex-M3 is evaluated with STM32F103RET6.
 - Cortex-M4 is evaluated with STM32F405RGT6.
 - Cortex-M7 is evaluated with STM32F767IGT6.
+- Cortex-M7-RVM is evaluated with STM32F767IGT6, and the RMP runs as a guest OS in the **[RVM](https://github.com/EDI-Systems/M7M2_MuAmmonite)**.
 - Cortex-R4 is evaluated with TMS570LS0432.
 - Cortex-R5 is evaluated with TMS570LC4357.
 - MIPS M14k is evaluated with PIC32MZ2048EFM100.
