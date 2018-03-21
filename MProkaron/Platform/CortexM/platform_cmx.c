@@ -64,9 +64,9 @@ Output      : None.
 Return      : None.
 ******************************************************************************/
 void _RMP_Low_Level_Init(void)
-{   
+{    
     RMP_CMX_LOW_LEVEL_INIT();
-
+  
     RMP_Disable_Int();
 }
 /* End Function:_RMP_Low_Level_Init ******************************************/
