@@ -1,8 +1,5 @@
-<p style="text-align:center"><img src=""></p>
-
 <h1 align="center">
 	<img width="300" src="https://raw.githubusercontent.com/EDI-Systems/M5P1_MuProkaron/master/Documents/Demo/logo.png" alt="logo">
-	<br>
 </h1>
 
 # One RTOS (RMP)
