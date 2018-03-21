@@ -1,4 +1,6 @@
-![LOGO](https://raw.githubusercontent.com/EDI-Systems/M5P1_MuProkaron/master/Documents/Demo/logo.png)
+<h1 align="center">
+	<img width="300" src="https://raw.githubusercontent.com/EDI-Systems/M5P1_MuProkaron/master/Documents/Demo/logo.png" alt="logo">
+</h1>
 
 # One RTOS (RMP)
 ![language](https://img.shields.io/badge/language-C-orange.svg)
