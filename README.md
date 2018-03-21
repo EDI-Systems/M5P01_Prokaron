@@ -152,7 +152,7 @@ This software is **triple-licensed**: it is either **[LGPL v3](LICENSE.md)** or 
 |MSP430       |TI CCS7       |2.90 |0.64|495  |906  |786  |830     |736    |1575 |
 |Cortex-M0    |Keil uVision 5|4.94 |1.65|374  |663  |616  |659     |617    |N/A  |
 |Cortex-M0+   |Keil uVision 5|6.25 |1.65|334  |607  |544  |588     |552    |N/A  |
-|Cortex-M3    |Keil uVision 5|2.60 |1.65|246  |456  |422  |443     |409    |308  |
+|Cortex-M3    |Keil uVision 5|5.31 |1.65|252  |513  |448  |465     |418    |311  |
 |Cortex-M4    |Keil uVision 5|5.46 |1.66|188  |386  |353  |361     |329    |233  |
 |Cortex-M7    |Keil uVision 5|6.66 |1.65|196  |288  |277  |296     |296    |183  |
 |Cortex-M7-RVM|Keil uVision 5|2.09 |2.29|     |     |     |        |       |     |

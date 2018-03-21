@@ -8,7 +8,8 @@ Description: The configuration file for STM32F103RE.
 
 /* Defines *******************************************************************/
 /* The HAL library */
-#include "stm32f10x_conf.h"
+#include "stm32f1xx_hal.h"
+#include "stm32f1xx_hal_conf.h"
 #include "core_cm3.h"
 /* The maximum number of preemption priority levels in the system.
  * This parameter must be divisible by the word length - 32 is usually sufficient */
@@ -35,32 +36,54 @@ Description: The configuration file for STM32F103RE.
 #define RMP_CMX_LOW_LEVEL_INIT() \
 do \
 { \
-    USART_InitTypeDef USART1_Init; \
+    RCC_OscInitTypeDef Osc_Init; \
+    RCC_ClkInitTypeDef Clk_Init; \
+    UART_HandleTypeDef USART1_Handle; \
     GPIO_InitTypeDef GPIOA_Init; \
-    RMP_Clear(&USART1_Init, sizeof(USART_InitTypeDef)); \
+    HAL_Init(); \
+    RMP_Clear(&Osc_Init, sizeof(RCC_OscInitTypeDef)); \
+    RMP_Clear(&Clk_Init, sizeof(RCC_ClkInitTypeDef)); \
+    RMP_Clear(&USART1_Handle, sizeof(UART_HandleTypeDef)); \
     RMP_Clear(&GPIOA_Init, sizeof(GPIO_InitTypeDef)); \
     \
-    GPIOA_Init.GPIO_Mode=GPIO_Mode_AF_PP; \
-    GPIOA_Init.GPIO_Pin=GPIO_Pin_9; \
-    GPIOA_Init.GPIO_Speed=GPIO_Speed_50MHz; \
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE); \
-    GPIO_Init(GPIOA, &GPIOA_Init); \
+    /* Enable HSE Oscillator and activate PLL with HSE as source */ \
+    Osc_Init.OscillatorType=RCC_OSCILLATORTYPE_HSE; \
+    Osc_Init.HSEState=RCC_HSE_ON; \
+    Osc_Init.HSEPredivValue=RCC_HSE_PREDIV_DIV1; \
+    Osc_Init.PLL.PLLState=RCC_PLL_ON; \
+    Osc_Init.PLL.PLLSource=RCC_PLLSOURCE_HSE; \
+    Osc_Init.PLL.PLLMUL=RCC_PLL_MUL9; \
+    RMP_ASSERT(HAL_RCC_OscConfig(&Osc_Init)==HAL_OK); \
     \
-    USART1_Init.USART_BaudRate=115200; \
-    USART1_Init.USART_WordLength=USART_WordLength_8b; \
-    USART1_Init.USART_StopBits=USART_StopBits_1; \
-    USART1_Init.USART_Parity=USART_Parity_No; \
-    USART1_Init.USART_HardwareFlowControl=USART_HardwareFlowControl_None; \
-    USART1_Init.USART_Mode=USART_Mode_Tx; \
+    /* Secect PLL as system clock source and configure the HCLK, PCLK1 and PCLK2 clocks dividers */ \
+    Clk_Init.ClockType=(RCC_CLOCKTYPE_SYSCLK|RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2); \
+    Clk_Init.SYSCLKSource=RCC_SYSCLKSOURCE_PLLCLK; \
+    Clk_Init.AHBCLKDivider=RCC_SYSCLK_DIV1; \
+    Clk_Init.APB2CLKDivider=RCC_HCLK_DIV1; \
+    Clk_Init.APB1CLKDivider=RCC_HCLK_DIV2; \
+    RMP_ASSERT(HAL_RCC_ClockConfig(&Clk_Init, FLASH_LATENCY_2)==HAL_OK); \
+     __HAL_FLASH_PREFETCH_BUFFER_ENABLE(); \
     \
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE); \
-    USART_Init(USART1, &USART1_Init); \
-    USART_Cmd(USART1, ENABLE); \
+    __HAL_RCC_GPIOA_CLK_ENABLE(); \
+	__HAL_RCC_USART1_CLK_ENABLE(); \
+    GPIOA_Init.Mode=GPIO_MODE_AF_PP; \
+    GPIOA_Init.Pin=GPIO_PIN_9; \
+    GPIOA_Init.Speed=GPIO_SPEED_FREQ_HIGH; \
+    HAL_GPIO_Init(GPIOA, &GPIOA_Init); \
+    \
+    USART1_Handle.Instance=USART1; \
+    USART1_Handle.Init.BaudRate=115200; \
+    USART1_Handle.Init.WordLength=UART_WORDLENGTH_8B; \
+    USART1_Handle.Init.StopBits=UART_STOPBITS_1; \
+    USART1_Handle.Init.Parity=UART_PARITY_NONE; \
+    USART1_Handle.Init.HwFlowCtl=UART_HWCONTROL_NONE; \
+    USART1_Handle.Init.Mode=UART_MODE_TX; \
+    HAL_UART_Init(&USART1_Handle); \
     RMP_CMX_PUTCHAR('\r'); \
     RMP_CMX_PUTCHAR('\n'); \
     /* Enable all fault handlers */ \
     SCB->SHCSR|=RMP_CMX_SHCSR_USGFAULTENA|RMP_CMX_SHCSR_BUSFAULTENA|RMP_CMX_SHCSR_MEMFAULTENA; \
-     \
+    \
     /* Set the priority of timer, svc and faults to the lowest */ \
     NVIC_SetPriorityGrouping(RMP_CMX_NVIC_GROUPING); \
     NVIC_SetPriority(SVCall_IRQn, 0xFF); \
