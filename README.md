@@ -156,7 +156,7 @@ This software is **triple-licensed**: it is either **[LGPL v3](LICENSE.md)** or 
 |Cortex-M4    |Keil uVision 5|5.46 |1.66|188  |386  |353  |361     |329    |233  |
 |Cortex-M7    |Keil uVision 5|6.66 |1.65|196  |288  |277  |296     |296    |183  |
 |Cortex-M7-RVM|Keil uVision 5|2.09 |2.29|     |     |     |        |       |     |
-|Cortex-R4    |TI CCS7       |     |    |     |     |     |        |       |     |
+|Cortex-R4    |TI CCS7       |15.1 |1.42|281  |458  |406  |424     |368    |274  |
 |Cortex-R5    |TI CCS7       |18.2 |3.72|305  |471  |426  |472     |432    |267  |
 |MIPS M14k    |XC32-GCC      |17.2 |2.46|264  |358  |340  |421     |415    |213  |
 |X86-LINUX    |GCC           |N/A  |N/A |33000|35000|33000|35000   |33000  |136  |
@@ -169,7 +169,7 @@ This software is **triple-licensed**: it is either **[LGPL v3](LICENSE.md)** or 
 <!-- |Cortex-R4    |GCC           |     |    |     |     |     |        |       |     | -->
 <!-- |Cortex-R5    |GCC           |     |    |     |     |     |        |       |     | -->
 
-&ensp;&ensp;&ensp;&ensp;**Flash and SRAM consumption is calculated in kB, while the other figures are calculated in CPU clock cycles. All values listed here are typical (useful system) values, not minimum values, because minimum values on system size seldom make any real sense. HAL library are also included in the size numbers.**
+&ensp;&ensp;&ensp;&ensp;**Flash and SRAM consumption is calculated in kB, while the other figures are calculated in CPU clock cycles. All values listed here are typical (useful system) values, not minimum values, because minimum values on system size seldom make any real sense. HAL library are also included in the size numbers. The absolute minimum value for RMP is about 1k ROM/0.5k RAM.**
 
 - MSP430 is evaluated with MSP430FR5994.
 - Cortex-M0 is evaluated with STM32F030F4P6.
