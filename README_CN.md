@@ -1,3 +1,4 @@
+<img src="https://raw.githubusercontent.com/EDI-Systems/M5P1_MuProkaron/master/Documents/Demo/logo.png" alt="logo" align="middle">
 ![LOGO](https://raw.githubusercontent.com/EDI-Systems/M5P1_MuProkaron/master/Documents/Demo/logo.png)
 
 # One RTOS (RMP)
