@@ -1,4 +1,6 @@
-# MuProkaron
+![LOGO](https://raw.githubusercontent.com/EDI-Systems/M5P1_MuProkaron/master/Documents/Demo/logo.png)
+
+# One RTOS (RMP)
 ![language](https://img.shields.io/badge/language-C-orange.svg)
 ![Build](https://travis-ci.org/EDI-Systems/M5P1_MuProkaron.svg?branch=master) 
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/1684/badge)](https://bestpractices.coreinfrastructure.org/projects/1684) 
