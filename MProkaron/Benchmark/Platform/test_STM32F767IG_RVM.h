@@ -109,7 +109,7 @@ Return      : None.
 void Int_Init(void)
 {
     /* Interrupt generation is initialized too, here we only register our handler */
-    RVM_Handler_Install(2,Int_Handler);
+    RVM_Vect_Init(2,Int_Handler);
 }
 /* End Function:Int_Init *****************************************************/
 
@@ -123,7 +123,7 @@ Return      : None.
 void Int_Disable(void)
 {
     /* Reverse registration */
-    RVM_Handler_Install(2,0);
+    RVM_Vect_Init(2,0);
 }
 #endif
 /* End Function:Int_Disable **************************************************/

@@ -114,10 +114,6 @@ do \
     SysTick_Config(RMP_CMX_SYSTICK_VAL); \
 } \
 while(0)
-    
-
-//	GPIO_Init.Pin=GPIO_PIN_10; \
-//	HAL_GPIO_Init(GPIOA,&GPIO_Init); \
 
 /* This is for debugging output */
 #define RMP_CMX_PUTCHAR(CHAR) \
