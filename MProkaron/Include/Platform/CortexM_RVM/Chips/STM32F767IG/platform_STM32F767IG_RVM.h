@@ -7,6 +7,10 @@ Description: The configuration file for STM32F767IG.
 ******************************************************************************/
 
 /* Defines *******************************************************************/
+/* The HAL library */
+#include "stm32f7xx.h"
+#include "core_cm7.h"
+#include "stm32f7xx_hal.h"
 /* The maximum number of preemption priority levels in the system.
  * This parameter must be divisible by the word length - 32 is usually sufficient */
 #define RMP_MAX_PREEMPT_PRIO         32

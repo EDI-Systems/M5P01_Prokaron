@@ -15,7 +15,7 @@ Description : The testbench for STM32F767IG, running in the RVM.
 #define THD1_STACK        (&Stack_1[230])
 #define THD2_STACK        (&Stack_2[230])
 /* How to read counter */
-#define COUNTER_READ()    0/* ((TIM2->CNT)<<1) */
+#define COUNTER_READ()    ((TIM2->CNT)<<1)
 /* Are we testing the memory pool? */
 #define TEST_MEM_POOL     8192
 /* Are we doing minimal measurements? */
@@ -29,6 +29,8 @@ typedef ptr_t tim_t;
 void Int_Handler(void);
 ptr_t Stack_1[256];
 ptr_t Stack_2[256];
+TIM_HandleTypeDef TIM2_Handle={0};
+TIM_HandleTypeDef TIM4_Handle={0};
 /* End Globals ***************************************************************/
 
 /* Begin Function:Timer_Init **************************************************
@@ -38,9 +40,62 @@ Input       : None.
 Output      : None.
 Return      : None.
 ******************************************************************************/
+void TIM_Base_SetConfig(TIM_TypeDef *TIMx, TIM_Base_InitTypeDef *Structure)
+{
+  uint32_t tmpcr1 = 0;
+  tmpcr1 = TIMx->CR1;
+  
+  /* Set TIM Time Base Unit parameters ---------------------------------------*/
+  if(IS_TIM_CC3_INSTANCE(TIMx) != RESET)   
+  {
+    /* Select the Counter Mode */
+    tmpcr1 &= ~(TIM_CR1_DIR | TIM_CR1_CMS);
+    tmpcr1 |= Structure->CounterMode;
+  }
+ 
+  if(IS_TIM_CC1_INSTANCE(TIMx) != RESET)  
+  {
+    /* Set the clock division */
+    tmpcr1 &= ~TIM_CR1_CKD;
+    tmpcr1 |= (uint32_t)Structure->ClockDivision;
+  }
+
+  /* Set the auto-reload preload */
+  MODIFY_REG(tmpcr1, TIM_CR1_ARPE, Structure->AutoReloadPreload);
+
+  TIMx->CR1 = tmpcr1;
+
+  /* Set the Auto-reload value */
+  TIMx->ARR = (uint32_t)Structure->Period ;
+ 
+  /* Set the Prescaler value */
+  TIMx->PSC = (uint32_t)Structure->Prescaler;
+    
+  if(IS_TIM_ADVANCED_INSTANCE(TIMx) != RESET)  
+  {
+    /* Set the Repetition Counter value */
+    TIMx->RCR = Structure->RepetitionCounter;
+  }
+
+  /* Generate an update event to reload the Prescaler 
+     and the repetition counter(only for TIM1 and TIM8) value immediately */
+  TIMx->EGR = TIM_EGR_UG;
+}
+
 void Timer_Init(void)
 {
-    /* Timer is initialized on startup by the M7M1 kernel */
+    /* TIM2 clock = 1/2 CPU clock */
+    TIM2_Handle.Instance=TIM2;
+    TIM2_Handle.Init.Prescaler=0;
+    TIM2_Handle.Init.CounterMode=TIM_COUNTERMODE_UP;
+    TIM2_Handle.Init.Period=(unsigned int)(-1);
+    TIM2_Handle.Init.ClockDivision=TIM_CLOCKDIVISION_DIV1;
+    /* Set the Time Base configuration */
+    TIM_Base_SetConfig(TIM2_Handle.Instance, &(TIM2_Handle.Init)); 
+    TIM2_Handle.State=HAL_TIM_STATE_READY;
+  
+    __HAL_RCC_TIM2_CLK_ENABLE();
+    __HAL_TIM_ENABLE(&TIM2_Handle);
 }
 /* End Function:Timer_Init ***************************************************/
 

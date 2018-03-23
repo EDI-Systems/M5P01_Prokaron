@@ -155,12 +155,13 @@ This software is **triple-licensed**: it is either **[LGPL v3](LICENSE.md)** or 
 |Cortex-M3    |Keil uVision 5|5.31 |1.65|252  |513  |448  |465     |418    |311  |
 |Cortex-M4    |Keil uVision 5|5.46 |1.66|188  |386  |353  |361     |329    |233  |
 |Cortex-M7    |Keil uVision 5|6.66 |1.65|196  |288  |277  |296     |296    |183  |
-|Cortex-M7-RVM|Keil uVision 5|2.09 |2.29|     |     |     |        |       |     |
+|Cortex-M7-RVM|Keil uVision 5|2.09 |2.29|2365 |2667 |2878 |        |       |     |
 |Cortex-R4    |TI CCS7       |15.1 |1.42|281  |458  |406  |424     |368    |274  |
 |Cortex-R5    |TI CCS7       |18.2 |3.72|305  |471  |426  |472     |432    |267  |
 |MIPS M14k    |XC32-GCC      |17.2 |2.46|264  |358  |340  |421     |415    |213  |
 |X86-LINUX    |GCC           |N/A  |N/A |33000|35000|33000|35000   |33000  |136  |
 
+*As a comparison, Linux4.12's context switch time on Cortex-M7 is bigger than 25000 cycles.
 <!-- |MSP430       |GCC           |     |    |     |     |     |        |       |     | -->
 <!-- |RL78         |GCC           |     |    |     |     |     |        |       |     | -->
 <!-- |Cortex-M3    |GCC           |     |    |     |     |     |        |       |     | -->
