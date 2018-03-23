@@ -288,6 +288,11 @@ void Func_2(void)
     Semaphore_Time=Total/10000;
     RMP_PRINTK_I(Semaphore_Time);
     RMP_PRINTK_S(" cycles.\r\n");
+    
+    /* Memory pool tests */
+#ifdef TEST_MEM_POOL
+    Test_Mem_Pool();
+#endif
 
     /* Mailbox from interrupt tests */
     Total=0;
@@ -307,11 +312,6 @@ void Func_2(void)
     Semaphore_ISR_Time=Total/10000;
     RMP_PRINTK_I(Semaphore_ISR_Time);
     RMP_PRINTK_S(" cycles.\r\n");
-    
-    /* Memory pool tests */
-#ifdef TEST_MEM_POOL
-    Test_Mem_Pool();
-#endif
     
     while(1);
 }
