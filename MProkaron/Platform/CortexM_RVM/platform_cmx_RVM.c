@@ -106,20 +106,41 @@ void RMP_Putchar(char Char)
 }
 /* End Function:RMP_Putchar **************************************************/
 
+/* Begin Function:RMP_Disable_Int *********************************************
+Description : Disable interrupts.
+Input       : None.
+Output      : None.
+Return      : None.
+******************************************************************************/
 void RMP_Disable_Int(void)
 {
     RVM_Disable_Int();
 }
+/* End Function:RMP_Disable_Int **********************************************/
 
+/* Begin Function:RMP_Enable_Int **********************************************
+Description : Enable interrupts.
+Input       : None.
+Output      : None.
+Return      : None.
+******************************************************************************/
 void RMP_Enable_Int(void)
 {
     RVM_Enable_Int();
 }
+/* End Function:RMP_Enable_Int ***********************************************/
 
+/* Begin Function:_RMP_Yield **************************************************
+Description : Trigger a yield to a different thread.
+Input       : None.
+Output      : None.
+Return      : None.
+******************************************************************************/
 void _RMP_Yield(void)
 {
     RVM_Yield();
 }
+/* End Function:_RMP_Yield ***************************************************/
 
 /* Begin Function:RMP_PendSV_Handler ******************************************
 Description : The PendSV interrupt routine.
@@ -130,7 +151,6 @@ Return      : None.
 void RMP_PendSV_Handler(void)
 {
     ptr_t* SP;
-    
     /* Spill all the registers onto the user stack
      * MRS       R0,PSP
      * STMDB     R0!,{R4-R11,LR} */
