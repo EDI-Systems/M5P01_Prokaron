@@ -64,8 +64,8 @@ Return      : None.
 void _RMP_Low_Level_Init(void)
 {
     RVM_Init();
-    RVM_Handler_Install(0, RMP_SysTick_Handler);
-    RVM_Handler_Install(1, RMP_PendSV_Handler);
+    RVM_Vect_Init(0, RMP_SysTick_Handler);
+    RVM_Vect_Init(1, RMP_PendSV_Handler);
     RMP_Console_Ptr=0;
 }
 /* End Function:_RMP_Low_Level_Init ******************************************/
