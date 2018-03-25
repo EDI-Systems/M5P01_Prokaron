@@ -108,8 +108,30 @@ Return      : None.
 ******************************************************************************/
 void Int_Init(void)
 {
+    /* Connect the physical interrupt to our machine */
+    RMP_ASSERT(RVM_Hyp_Reg_Int(RVM_TIM4_INT_IRQ30, 2)==0);
+    /* Set the priority of the physical interrupt and enable it */
+    RMP_ASSERT(RVM_HW_Int_Enable(RVM_TIM4_INT_IRQ30)==0);
+    RMP_ASSERT(RVM_HW_Int_Prio(RVM_TIM4_INT_IRQ30,0xFF)==0);
     /* Interrupt generation is initialized too, here we only register our handler */
     RVM_Vect_Init(2,Int_Handler);
+    
+    /* TIM4 clock = 1/2 CPU clock */
+    TIM4_Handle.Instance=TIM4;
+    TIM4_Handle.Init.Prescaler=0;
+    TIM4_Handle.Init.CounterMode=TIM_COUNTERMODE_DOWN;
+    TIM4_Handle.Init.Period=21600;
+    TIM4_Handle.Init.ClockDivision=TIM_CLOCKDIVISION_DIV1;
+	TIM4_Handle.Init.RepetitionCounter=0;
+    TIM_Base_SetConfig(TIM4_Handle.Instance, &(TIM4_Handle.Init)); 
+    TIM4_Handle.State=HAL_TIM_STATE_READY;
+    __HAL_RCC_TIM4_CLK_ENABLE();
+	/* Clear interrupt pending bit, because we used EGR to update the registers */
+	__HAL_TIM_CLEAR_IT(&TIM4_Handle, TIM_IT_UPDATE);
+      /* Enable the TIM Update interrupt */
+    __HAL_TIM_ENABLE_IT(&TIM4_Handle, TIM_IT_UPDATE);
+    /* Enable the Peripheral */
+    __HAL_TIM_ENABLE(&TIM4_Handle);
 }
 /* End Function:Int_Init *****************************************************/
 
@@ -122,6 +144,8 @@ Return      : None.
 ******************************************************************************/
 void Int_Disable(void)
 {
+    /* Disable interrupt */
+    RMP_ASSERT(RVM_HW_Int_Enable(RVM_TIM4_INT_IRQ30)==0);
     /* Reverse registration */
     RVM_Vect_Init(2,0);
 }
