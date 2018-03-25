@@ -161,7 +161,7 @@ This software is **triple-licensed**: it is either **[LGPL v3](LICENSE.md)** or 
 |MIPS M14k    |XC32-GCC      |17.2 |2.46|264  |358  |340  |421     |415    |213  |
 |X86-LINUX    |GCC           |N/A  |N/A |33000|35000|33000|35000   |33000  |136  |
 
-*As a comparison, Linux4.12's context switch time on Cortex-M7 is bigger than 25000 cycles.
+*As a comparison, RT-Linux 4.12's best context switch time on Cortex-M7 is bigger than 25000 cycles. This is measured with futex; if other forms of IPC such as pipes are used, this time is even longer.
 <!-- |MSP430       |GCC           |     |    |     |     |     |        |       |     | -->
 <!-- |RL78         |GCC           |     |    |     |     |     |        |       |     | -->
 <!-- |Cortex-M3    |GCC           |     |    |     |     |     |        |       |     | -->
