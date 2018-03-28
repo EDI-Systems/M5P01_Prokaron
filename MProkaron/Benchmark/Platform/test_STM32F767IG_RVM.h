@@ -109,7 +109,7 @@ Return      : None.
 void Int_Init(void)
 {
     /* Connect the physical interrupt to our machine */
-    RMP_ASSERT(RVM_Hyp_Reg_Int(RVM_TIM4_INT_IRQ30, 2)==0);
+    RMP_ASSERT(RVM_Reg_Int(RVM_TIM4_INT_IRQ30, 2)==0);
     /* Set the priority of the physical interrupt and enable it */
     RMP_ASSERT(RVM_HW_Int_Enable(RVM_TIM4_INT_IRQ30)==0);
     RMP_ASSERT(RVM_HW_Int_Prio(RVM_TIM4_INT_IRQ30,0xFF)==0);
@@ -145,7 +145,7 @@ Return      : None.
 void Int_Disable(void)
 {
     /* Disable interrupt */
-    RMP_ASSERT(RVM_HW_Int_Enable(RVM_TIM4_INT_IRQ30)==0);
+    RMP_ASSERT(RVM_HW_Int_Disable(RVM_TIM4_INT_IRQ30)==0);
     /* Reverse registration */
     RVM_Vect_Init(2,0);
 }
