@@ -244,7 +244,7 @@ Click **[HERE](README.md)** for English version.
 - Keil uVision 5 (armcc)
 - Code composer studio
 - MPLAB X XC32
-- gcc/clang-llvm
+- GCC/Clang-LLVM
 
 &emsp;&emsp;其他的工具链现在不推荐或者当前不受支持，虽然要增加新的支持应该也很简单。
 
