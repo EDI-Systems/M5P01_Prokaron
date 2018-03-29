@@ -3,6 +3,8 @@
 </h1>
 
 # One RTOS (RMP)
+[![Github release](https://img.shields.io/github/release/EDI-Systems/M5P1_MuProkaron.svg)](https://github.com/EDI-Systems/M5P1_MuProkaron/releases/latest)
+[![Github commits](https://img.shields.io/github/commits-since/EDI-Systems/M5P1_MuProkaron/master@{30day}.svg)](https://github.com/EDI-Systems/M5P1_MuProkaron/compare/master@{30day}...master)
 ![language](https://img.shields.io/badge/language-C-orange.svg)
 ![Build](https://travis-ci.org/EDI-Systems/M5P1_MuProkaron.svg?branch=master) 
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/1684/badge)](https://bestpractices.coreinfrastructure.org/projects/1684) 
