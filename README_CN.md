@@ -147,7 +147,7 @@ Click **[HERE](README.md)** for English version.
 ```
 
 ### 所有被支持架构上的典型性能数据
-|Machine      |Toolchain     |Flash|SRAM|Yield|Mail |Sem  |Mail/Int|Sem/Int|Mem  |
+|架构          |工具链        |Flash|SRAM|Yield|Mail |Sem  |Mail/Int|Sem/Int|Mem  |
 |:-----------:|:------------:|:---:|:--:|:---:|:---:|:---:|:------:|:-----:|:---:|
 |MSP430       |TI CCS7       |2.90 |0.64|495  |906  |786  |830     |736    |1575 |
 |Cortex-M0    |Keil uVision 5|4.94 |1.65|374  |663  |616  |659     |617    |N/A  |
