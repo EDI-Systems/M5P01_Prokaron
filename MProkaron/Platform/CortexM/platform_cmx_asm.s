@@ -117,8 +117,6 @@ RMP_MSB_Get
 ;Output      : None.                                      
 ;*****************************************************************************/
 _RMP_Yield
-                PUSH            {R0-R1}
-                
                 LDR             R0,=0xE000ED04         ;The NVIC_INT_CTRL register
                 LDR             R1,=0x10000000         ;Trigger the PendSV          
                 STR             R1,[R0]
@@ -126,7 +124,6 @@ _RMP_Yield
                 DSB                                    ;Data and instruction barrier
                 ISB
                 
-                POP             {R0-R1}                
                 BX              LR                                                   
 ;/* End Function:_RMP_Yield **************************************************/
 
