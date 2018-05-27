@@ -8,6 +8,7 @@
 ![language](https://img.shields.io/badge/language-C-orange.svg)
 ![Build](https://travis-ci.org/EDI-Systems/M5P1_MuProkaron.svg?branch=master) 
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/1684/badge)](https://bestpractices.coreinfrastructure.org/projects/1684) 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/be656c1e1f014a6abf038b4455b03bba)](https://www.codacy.com/app/EDI-Systems/M5P1_MuProkaron?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=EDI-Systems/M5P1_MuProkaron&amp;utm_campaign=Badge_Grade) 
 [![Join the chat at https://gitter.im/M5P1_MuProkaron/Lobby](https://badges.gitter.im/M5P1_MuProkaron/Lobby.svg)](https://gitter.im/M5P1_MuProkaron/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 Click **[HERE](README.md)** for English version.
