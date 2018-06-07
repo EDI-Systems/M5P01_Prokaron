@@ -71,7 +71,7 @@ Description : The header file for the kernel.
 
 /* Word sizes settings */
 #define RMP_WORD_SIZE          (((ptr_t)1)<<RMP_WORD_ORDER)
-#define RMP_WORD_MASK          (~(((ptr_t)(-1))<<(RMP_WORD_ORDER-1)))
+#define RMP_WORD_MASK          (~(((ptr_t)(-1))<<RMP_WORD_ORDER))
 #define RMP_BITMAP_SIZE        ((RMP_MAX_PREEMPT_PRIO-1)/RMP_WORD_SIZE+1)
 #define RMP_ALLBITS            ((ptr_t)(-1))
 
@@ -137,6 +137,28 @@ do \
     } \
 } \
 while(0)
+    
+/* Coverage switch - not to be enabled in most cases; user should not touch this */
+/* #define RMP_COVERAGE */
+
+/* Test marker macro */
+#ifdef RMP_COVERAGE
+#define RMP_COVERAGE_LINES   (6144)
+#define RMP_COVERAGE_MARKER() \
+do \
+{ \
+    RMP_Coverage[__LINE__]++; \
+    RMP_Coverage[0]=RMP_Coverage[__LINE__]; \
+} \
+while(0)
+#else
+#define RMP_COVERAGE_MARKER() \
+do \
+{ \
+    \
+} \
+while(0)
+#endif
 /*****************************************************************************/
 /* __KERNEL_H_DEFS__ */
 #endif
@@ -222,6 +244,7 @@ struct RMP_Mem_Tail
 /* The memory control block structure */
 struct RMP_Mem
 {
+    /* This is maintained to perform introspection on the system. Not actually useful */
     struct RMP_List Alloc;
     ptr_t FLI_Num;
     ptr_t Start;
@@ -255,13 +278,15 @@ struct RMP_Mem
 /* If the header is not used in the public mode */
 #ifndef __HDR_PUBLIC_MEMBERS__
 /*****************************************************************************/
+#ifdef RMP_COVERAGE
+/* For coverage use only */
+static volatile ptr_t RMP_Coverage[RMP_COVERAGE_LINES];
+#endif
 /* The scheduler bitmap */
 static volatile ptr_t RMP_Bitmap[RMP_BITMAP_SIZE];
 static volatile struct RMP_List RMP_Run[RMP_MAX_PREEMPT_PRIO];
 static volatile struct RMP_List RMP_Delay;
 
-/* The timestamp value */
-static volatile ptr_t RMP_Tick;
 /* Scheduler lock */
 static volatile ptr_t RMP_Sched_Lock_Cnt;
 static volatile ptr_t RMP_Sched_Locked;
@@ -316,6 +341,8 @@ static void RMP_Progbar_Prog(cnt_t Coord_X, cnt_t Coord_Y, cnt_t Length, cnt_t W
 #endif
 
 /*****************************************************************************/
+/* The current tick counter value - can be read by the application to determine their time */
+__EXTERN__ volatile ptr_t RMP_Tick;
 /* The current thread - the pointer itself is volatile but not its contents */
 __EXTERN__ struct RMP_Thd* volatile RMP_Cur_Thd;
 __EXTERN__ volatile ptr_t RMP_Cur_SP;
@@ -452,16 +479,20 @@ __EXTERN__ ptr_t RMP_CRC16(const u8* Data, ptr_t Length);
     EXTERN void RMP_Start_Hook(void);
     EXTERN void RMP_Save_Ctx(void);
     EXTERN void RMP_Load_Ctx(void);
+    EXTERN void RMP_Sched_Hook(void);
     EXTERN void RMP_Tick_Hook(ptr_t Ticks);
 #else
-    __EXTERN__ void RMP_Start_Hook(void);
     __EXTERN__ void RMP_Save_Ctx(void);
     __EXTERN__ void RMP_Load_Ctx(void);
-    __EXTERN__ void RMP_Tick_Hook(ptr_t Ticks);
 #endif
 
 EXTERN void RMP_Init_Hook(void);
 EXTERN void RMP_Init_Idle(void);
+
+/* Coverage test */
+#ifdef RMP_COVERAGE
+__EXTERN__ void RMP_Print_Coverage(void);
+#endif
 /*****************************************************************************/
 /* Undefine "__EXTERN__" to avoid redefinition */
 #undef __EXTERN__
