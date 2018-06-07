@@ -7,6 +7,8 @@ Description : The RMP RTOS single-file kernel.
               This is a single-process kernel that does nothing but simple thread
               context switches. This operating system's kernel object allocation
               policy is totally exported, so the user assume full control over this.
+              The white-box coverage of 100% of all kernel branches have been reached.
+              Formal verification in progress.
 ******************************************************************************/
 
 /* Includes ******************************************************************/
@@ -27,6 +29,34 @@ Description : The RMP RTOS single-file kernel.
 #include "Platform/RMP_platform.h"
 #undef __HDR_PUBLIC_MEMBERS__
 /* End Includes **************************************************************/
+
+/* Begin Function:RMP_Print_Coverage ******************************************
+Description : The coverage data printer. Should always be disabled for all cases
+              except where a kernel coverage test is needed. This should never
+              be called ny any user application; for EDI coverage testing only.
+Input       : volatile void* Addr - The address to clear.
+              ptr_t Size - The size to clear.
+Output      : None.
+Return      : None.
+******************************************************************************/
+#ifdef RMP_COVERAGE
+void RMP_Print_Coverage(void)
+{
+    cnt_t Count;
+    
+    for(Count=1;Count<RMP_COVERAGE_LINES;Count++)
+    {
+        if(RMP_Coverage[Count]!=0)
+        {
+            RMP_PRINTK_I(Count);
+            RMP_PRINTK_S(":");
+            RMP_PRINTK_I(RMP_Coverage[Count]);
+            RMP_PRINTK_S("\r\n");
+        }
+    }
+}
+#endif
+/* End Function:RMP_Print_Coverage *******************************************/
 
 /* Begin Function:RMP_Clear ***************************************************
 Description : Memset a memory area to zero.
@@ -361,6 +391,7 @@ void RMP_Unlock_Sched(void)
 {
     if(RMP_Sched_Lock_Cnt==1)
     {
+        RMP_COVERAGE_MARKER();
         /* Clear the count before enabling */
         RMP_Sched_Lock_Cnt=0;
         RMP_Sched_Locked=0;
@@ -368,15 +399,22 @@ void RMP_Unlock_Sched(void)
          * period. If yes, perform a schedule now */
         if(RMP_Sched_Pend!=0)
         {
+            RMP_COVERAGE_MARKER();
             /* Reset the count and trigger the context switch */
             RMP_Sched_Pend=0;
             _RMP_Yield();
         }
+        else
+            RMP_COVERAGE_MARKER();
+        
         RMP_UNMASK_INT();
     }
     else if(RMP_Sched_Lock_Cnt>1)
+    {
+        RMP_COVERAGE_MARKER();
         RMP_Sched_Lock_Cnt--;
-    /* Trying to unlock a scheduler that is not locked */
+    }
+    /* Trying to unlock a scheduler that is not locked - should never happen */
     else
         while(1);
 }
@@ -392,12 +430,16 @@ void RMP_Yield(void)
 {
     if(RMP_Sched_Locked==0)
     {
+        RMP_COVERAGE_MARKER();
         /* Now see if the scheduler scheduling action is pended in the lock-unlock 
          * period. If yes, perform a schedule now */
         _RMP_Yield();
     }
     else
+    {
+        RMP_COVERAGE_MARKER();
         RMP_Sched_Pend=1;
+    }
 }
 /* End Function:RMP_Yield ****************************************************/
 
@@ -418,15 +460,21 @@ void _RMP_Timer_Proc(void)
         /* If the value is more than this, then it means that the time have
          * already passed and we have to process this */
         if((RMP_Tick-Thread->Timeout)>(RMP_ALLBITS>>1))
+        {
+            RMP_COVERAGE_MARKER();
             break;
+        }
+        else
+            RMP_COVERAGE_MARKER();
         
         /* This thread should be processed */
         RMP_List_Del(Thread->Dly_Head.Prev,Thread->Dly_Head.Next);
         switch(RMP_THD_STATE(Thread->State))
         {
-            case RMP_THD_SNDDLY:
+            case RMP_THD_SNDDLY:RMP_COVERAGE_MARKER();
             case RMP_THD_SEMDLY:
             {
+                RMP_COVERAGE_MARKER();
                 RMP_List_Del(Thread->Run_Head.Prev,Thread->Run_Head.Next);
                 Thread->Retval=RMP_ERR_OPER;
                 break;
@@ -434,34 +482,26 @@ void _RMP_Timer_Proc(void)
             
             case RMP_THD_RCVDLY:
             {
+                RMP_COVERAGE_MARKER();
                 Thread->Retval=RMP_ERR_OPER;
                 break;
             }
             
-            case RMP_THD_DELAYED:break;
+            case RMP_THD_DELAYED:RMP_COVERAGE_MARKER();break;
             /* Should not get here */
-            default:break;
+            default:while(1);
         }
 
         RMP_THD_STATE_SET(Thread->State,RMP_THD_RUNNING);
-        /* Is it suspended? If yes, we can't directly set it running */
-        if((Thread->State&RMP_THD_SUSPENDED)==0)
-        {
-            /* Insert this into the corresponding runqueue */
-            RMP_List_Ins(&(Thread->Run_Head),RMP_Run[Thread->Prio].Prev,&(RMP_Run[Thread->Prio]));
-            /* Set this runlevel as active */
-            RMP_Bitmap[Thread->Prio>>RMP_WORD_ORDER]|=1<<(Thread->Prio&RMP_WORD_MASK);
-            /* See if we need to pend a scheduling event */
-            if(Thread->Prio>RMP_Cur_Thd->Prio)
-                RMP_Sched_Pend=1;
-        }
+        /* Set to ready if not suspended */
+        _RMP_Set_Rdy(Thread);
     }
 }
 /* Begin Function:_RMP_Timer_Proc ********************************************/
 
 /* Begin Function:_RMP_Get_High_Rdy *******************************************
-Description : Get the highest priority ready thread. The return value will be written
-              into the global variables.
+Description : Get the highest priority ready thread. The return value will be
+              written into the global variables.
 Input       : None.
 Output      : None.
 Return      : None.
@@ -473,33 +513,32 @@ void _RMP_Get_High_Rdy(void)
     /* Write the SP value to thread structure */
     RMP_Cur_Thd->Stack=RMP_Cur_SP;
     
-    /* Is the scheduler locked on other threads? If yes, we return without doing anything */
-    if(RMP_Sched_Locked!=0)
-        return;
-    
-    if(RMP_Timer_Pend==1)
-    {
-        RMP_Timer_Pend=0;
-        _RMP_Timer_Proc();
-    }
-    
+    /* No need to detect scheduler locks - if this interrupt can be entered, the scheduler is not locked */
     RMP_Sched_Pend=0;
     /* See which one is ready, and pick it */
     for(Count=RMP_BITMAP_SIZE-1;Count>=0;Count--)
     {
         if(RMP_Bitmap[Count]==0)
+        {
+            RMP_COVERAGE_MARKER();
             continue;
+        }
+        else
+            RMP_COVERAGE_MARKER();
         
         Count=RMP_MSB_Get(RMP_Bitmap[Count])+(Count<<RMP_WORD_ORDER);
         
         /* See if the current thread and the next thread are the same. If yes, place the current at the end of the queue */
         if(RMP_Cur_Thd==(struct RMP_Thd*)(RMP_Run[Count].Next))
         {
+            RMP_COVERAGE_MARKER();
             RMP_List_Del(RMP_Cur_Thd->Run_Head.Prev, RMP_Cur_Thd->Run_Head.Next);
             RMP_List_Ins(&(RMP_Cur_Thd->Run_Head),
                          RMP_Run[RMP_Cur_Thd->Prio].Prev,
                          &(RMP_Run[RMP_Cur_Thd->Prio]));
         }
+        else
+            RMP_COVERAGE_MARKER();
         
         /* Replenish timeslices */
         RMP_Cur_Thd->Slices_Left=RMP_Cur_Thd->Slices;
@@ -509,6 +548,10 @@ void _RMP_Get_High_Rdy(void)
     
     /* Load the SP value from thread structure */
     RMP_Cur_SP=RMP_Cur_Thd->Stack;
+    
+#if(RMP_USE_HOOKS==RMP_TRUE)
+    RMP_Sched_Hook();
+#endif
 }
 /* End Function:_RMP_Get_High_Rdy ********************************************/
 
@@ -523,41 +566,60 @@ void _RMP_Tick_Handler(ptr_t Ticks)
     struct RMP_Thd* Thread;
     /* Increase the timestamp as always */
     RMP_Tick+=Ticks;
-#if(RMP_USE_HOOKS==RMP_TRUE)
-    RMP_Tick_Hook(Ticks);
-#endif
-    /* See if the current thread expired. If yes, trigger a scheduler event */
-    if(Ticks>=RMP_Cur_Thd->Slices_Left)
-        RMP_Sched_Pend=1;
-    else
-        RMP_Cur_Thd->Slices_Left-=Ticks;
     
-    /* Is the scheduler locked? If yes, we cannot process timer events here and will have to pend them */
+    /* See if the current thread expired. If yes, trigger a scheduler event */
+    if(Ticks>RMP_Cur_Thd->Slices_Left)
+    {
+        RMP_COVERAGE_MARKER();
+        RMP_Sched_Pend=1;
+    }
+    else
+    {
+        RMP_COVERAGE_MARKER();
+        RMP_Cur_Thd->Slices_Left-=Ticks;
+    }
+    
+    /* Check if there are any timer events */
     if((&RMP_Delay)!=RMP_Delay.Next)
     {
+        RMP_COVERAGE_MARKER();
         Thread=RMP_DLY2THD(RMP_Delay.Next);
         /* If the value is less than this, then it means that the time have
          * already passed and we have to process this */
         if((RMP_Tick-Thread->Timeout)<=(RMP_ALLBITS>>1))
         {
-            /* If scheduler locked, we pend the processing until it is unlocked */
-            if(RMP_Sched_Locked!=0)
-                RMP_Timer_Pend=1;
-            else
-                _RMP_Timer_Proc();
+            RMP_COVERAGE_MARKER();
+            /* No need to care about scheduler locks if this interrupt can be entered
+             * - we have disabled timer and scheduler interrupts in scheduler lock */
+            _RMP_Timer_Proc();
         }
+        else
+            RMP_COVERAGE_MARKER();
     }
+    else
+        RMP_COVERAGE_MARKER();
     
-    if((RMP_Sched_Locked==0)&&(RMP_Sched_Pend!=0))
+    if(RMP_Sched_Pend!=0)
     {
+        RMP_COVERAGE_MARKER();
         RMP_Sched_Pend=0;
         _RMP_Yield();
     }
+    else
+        RMP_COVERAGE_MARKER();
+    
+#if(RMP_USE_HOOKS==RMP_TRUE)
+    RMP_Tick_Hook(Ticks);
+#endif
 }
 /* End Function:_RMP_Tick_Handler ********************************************/
 
 /* Begin Function:_RMP_Get_Near_Ticks *****************************************
-Description : Get the nearest timer interrupt arrival time.
+Description : Get the nearest timer interrupt arrival time. This is used to set
+              the timer after the body of tick handler have been executed. This
+              can be called in the ticker hook and scheduler hook to set the next
+              timeout value to implement a tickless kernel. If a tickless kernel
+              is not desired, this function can be ignored.
 Input       : None.
 Output      : None.
 Return      : ptr_t Ticks - How many ticks until the next timeout.
@@ -573,17 +635,21 @@ ptr_t _RMP_Get_Near_Ticks(void)
     /* What is the nearest timer timeout value? */
     if((&RMP_Delay)!=RMP_Delay.Next)
     {
+        RMP_COVERAGE_MARKER();
         Thread=RMP_DLY2THD(RMP_Delay.Next);
         /* See if it is nearer - don't worry about the situation that the timer
          * have overflown, because if that is to happen, it would have been 
-         * already processed by the timeout processing routine just called above. */
+         * already processed by the timeout processing routine just before. */
         if((Thread->Timeout-RMP_Tick)<Value)
+        {
+            RMP_COVERAGE_MARKER();
             Value=Thread->Timeout-RMP_Tick;
+        }
+        else
+            RMP_COVERAGE_MARKER();
     }
-    
-    /* The timer setting is at least 1 tick */
-    if(Value==0)
-        Value=1;
+    else
+        RMP_COVERAGE_MARKER();
     
     return Value;
 }
@@ -593,42 +659,74 @@ ptr_t _RMP_Get_Near_Ticks(void)
 Description : Set the thread as ready to schedule. That means, put the thread into
               the runqueue. When this is called, please make sure that the scheduler
               is locked.
+              This function will also try to identify if this thread is currently 
+              suspended. If yes, it will not be placed into the queue.
 Input       : volatile struct RMP_Thd* Thread - The thread to put into the runqueue.
 Output      : None.
 Return      : None.
 ******************************************************************************/
 void _RMP_Set_Rdy(volatile struct RMP_Thd* Thread)
-{
-    /* Insert this into the corresponding runqueue */
-    RMP_List_Ins(&(Thread->Run_Head),RMP_Run[Thread->Prio].Prev,&(RMP_Run[Thread->Prio]));
-    /* Set this runlevel as active */
-    RMP_Bitmap[Thread->Prio>>RMP_WORD_ORDER]|=((ptr_t)1)<<(Thread->Prio&RMP_WORD_MASK);
-    
-    /* Compare this with the current one to see if we need a context switch */
-    if(Thread->Prio>RMP_Cur_Thd->Prio)
-        RMP_Sched_Pend=1;
+{        
+    /* Is it suspended? If yes, we can't directly set it running */
+    if((Thread->State&RMP_THD_SUSPENDED)==0)
+    {
+        RMP_COVERAGE_MARKER();
+        /* Insert this into the corresponding runqueue */
+        RMP_List_Ins(&(Thread->Run_Head),RMP_Run[Thread->Prio].Prev,&(RMP_Run[Thread->Prio]));
+        /* Set this runlevel as active */
+        RMP_Bitmap[Thread->Prio>>RMP_WORD_ORDER]|=((ptr_t)1)<<(Thread->Prio&RMP_WORD_MASK);
+        
+        /* Compare this with the current one to see if we need a context switch */
+        if(Thread->Prio>RMP_Cur_Thd->Prio)
+        {
+            RMP_COVERAGE_MARKER();
+            RMP_Sched_Pend=1;
+        }
+        else
+            RMP_COVERAGE_MARKER();
+    }
+    else
+        RMP_COVERAGE_MARKER();
 }
 /* End Function:_RMP_Set_Rdy *************************************************/
 
 /* Begin Function:_RMP_Clr_Rdy ************************************************
 Description : Clear the thread from the runqueue. When this is called, please 
-              make sure that the scheduler is locked.
+              make sure that the scheduler is locked. This function also checks whether
+              the thread is suspended. If yes, it will not remove it from the queue.
 Input       : volatile struct RMP_Thd* Thread - The thread to clear from the runqueue.
 Output      : None.
 Return      : None.
 ******************************************************************************/
 void _RMP_Clr_Rdy(volatile struct RMP_Thd* Thread)
 {
-    /* See if it is the last thread on the priority level */
-    if(Thread->Run_Head.Prev==Thread->Run_Head.Next)
-        RMP_Bitmap[Thread->Prio>>RMP_WORD_ORDER]&=~(((ptr_t)1)<<(Thread->Prio&RMP_WORD_MASK));
-    
-    /* Insert this into the corresponding runqueue */
-    RMP_List_Del(Thread->Run_Head.Prev,Thread->Run_Head.Next);
-    
-    /* If it is the current thread, request a context switch */
-    if(Thread==RMP_Cur_Thd)
-        RMP_Sched_Pend=1;
+    /* Is it suspended? If yes, no need to delete again */
+    if((Thread->State&RMP_THD_SUSPENDED)==0)
+    {
+        RMP_COVERAGE_MARKER();
+        /* See if it is the last thread on the priority level */
+        if(Thread->Run_Head.Prev==Thread->Run_Head.Next)
+        {
+            RMP_COVERAGE_MARKER();
+            RMP_Bitmap[Thread->Prio>>RMP_WORD_ORDER]&=~(((ptr_t)1)<<(Thread->Prio&RMP_WORD_MASK));
+        }
+        else
+            RMP_COVERAGE_MARKER();
+        
+        /* Insert this into the corresponding runqueue */
+        RMP_List_Del(Thread->Run_Head.Prev,Thread->Run_Head.Next);
+        
+        /* If it is the current thread, request a context switch */
+        if(Thread==RMP_Cur_Thd)
+        {
+            RMP_COVERAGE_MARKER();
+            RMP_Sched_Pend=1;
+        }
+        else
+            RMP_COVERAGE_MARKER();
+    }
+    else
+        RMP_COVERAGE_MARKER();
 }
 /* End Function:_RMP_Clr_Rdy *************************************************/
 
@@ -645,12 +743,20 @@ void _RMP_Dly_Ins(volatile struct RMP_Thd* Thread, ptr_t Slices)
     struct RMP_List* Trav_Ptr;
     struct RMP_Thd* Trav_Thd;
     
+    /* Find a place to insert this timer */
     Trav_Ptr=(struct RMP_List*)RMP_Delay.Next;
     while(Trav_Ptr!=&(RMP_Delay))
     {
         Trav_Thd=RMP_DLY2THD(Trav_Ptr);
         if((Trav_Thd->Timeout-RMP_Tick)>Slices)
+        {
+            RMP_COVERAGE_MARKER();
             break;
+        }
+        else
+            RMP_COVERAGE_MARKER();
+        
+        Trav_Ptr=(struct RMP_List*)(Trav_Ptr->Next);
     }
 
     /* Insert this into the list */
@@ -676,21 +782,40 @@ ret_t RMP_Thd_Crt(volatile struct RMP_Thd* Thread, void* Entry, void* Stack, voi
 {
     /* Check if the priority and timeslice range is correct */
     if(Prio>=RMP_MAX_PREEMPT_PRIO)
+    {
+        RMP_COVERAGE_MARKER();
         return RMP_ERR_PRIO;
+    }
+    else
+        RMP_COVERAGE_MARKER();
+    
     if((Slices==0)||(Slices>=RMP_MAX_SLICES))
+    {
+        RMP_COVERAGE_MARKER();
         return RMP_ERR_SLICE;
+    }
+    else
+        RMP_COVERAGE_MARKER();
     
     /* Check if this thread structure could possibly be in use */
     if(Thread==0)
+    {
+        RMP_COVERAGE_MARKER();
         return RMP_ERR_THD;
+    }
+    else
+        RMP_COVERAGE_MARKER();
     
     RMP_Lock_Sched();
     
     if(RMP_THD_STATE(Thread->State)!=RMP_THD_FREE)
     {
+        RMP_COVERAGE_MARKER();
         RMP_Unlock_Sched();
         return RMP_ERR_THD;
     }
+    else
+        RMP_COVERAGE_MARKER();
     
     /* Create the thread and insert it into the list */
     Thread->Prio=Prio;
@@ -721,19 +846,26 @@ Return      : ret_t - If successful, 0; or an error code.
 ret_t RMP_Thd_Del(volatile struct RMP_Thd* Thread)
 {
     struct RMP_Thd* Release;
-    ptr_t Self_Del;
     
     /* Check if this thread structure could possibly be in use */
     if(Thread==0)
+    {
+        RMP_COVERAGE_MARKER();
         return RMP_ERR_THD;
+    }
+    else
+        RMP_COVERAGE_MARKER();
     
     RMP_Lock_Sched();
     
     if(RMP_THD_STATE(Thread->State)==RMP_THD_FREE)
     {
+        RMP_COVERAGE_MARKER();
         RMP_Unlock_Sched();
         return RMP_ERR_THD;
     }
+    else
+        RMP_COVERAGE_MARKER();
     
     /* See if anyone waiting to send to this thread. If there is, release all these threads */
     while(&(Thread->Snd_List)!=Thread->Snd_List.Next)
@@ -741,64 +873,81 @@ ret_t RMP_Thd_Del(volatile struct RMP_Thd* Thread)
         Release=(struct RMP_Thd*)(Thread->Snd_List.Next);
         RMP_List_Del(Release->Run_Head.Prev,Release->Run_Head.Next);
         if(RMP_THD_STATE(Release->State)==RMP_THD_SNDDLY)
+        {
+            RMP_COVERAGE_MARKER();
             RMP_List_Del(Release->Dly_Head.Prev,Release->Dly_Head.Next);
-
-        RMP_THD_STATE_SET(Release->State,RMP_THD_RUNNING);
-
-        /* Is it suspended? If yes, we can't directly send it running */
-        if((Release->State&RMP_THD_SUSPENDED)==0)
-           _RMP_Set_Rdy(Release);
+        }
+        else
+            RMP_COVERAGE_MARKER();
         
+        RMP_THD_STATE_SET(Release->State,RMP_THD_RUNNING);
+        /* Set ready if not suspended */
+        _RMP_Set_Rdy(Release);
         Release->Retval=RMP_ERR_OPER;
     }
     
-    /* See what is it state */
-    Self_Del=0;
-    if(RMP_Cur_Thd==Thread)
-        Self_Del=1;
-    
+    /* See what is its state */
     switch(RMP_THD_STATE(Thread->State))
     {
         case RMP_THD_RUNNING:
         {
-            if((Thread->State&RMP_THD_SUSPENDED)==0)
-                _RMP_Clr_Rdy(Thread);
+            RMP_COVERAGE_MARKER();
+            /* Clear ready if not suspended */
+            _RMP_Clr_Rdy(Thread);
             break;
         }
         
-        case RMP_THD_SNDDLY:
+        /* Do nothing if it is blocked on receive */
+        case RMP_THD_RCVBLK:
+        {
+            RMP_COVERAGE_MARKER();
+            break;
+        }
+        
+        case RMP_THD_SNDBLK:RMP_COVERAGE_MARKER();
+        case RMP_THD_SEMBLK:
+        {
+            RMP_COVERAGE_MARKER();
+            RMP_List_Del(Thread->Run_Head.Prev,Thread->Run_Head.Next);
+            break;
+        }
+        
+        case RMP_THD_SNDDLY:RMP_COVERAGE_MARKER();
         case RMP_THD_SEMDLY:
         {
-            if((Thread->State&RMP_THD_SUSPENDED)==0)
-                RMP_List_Del(Thread->Run_Head.Prev,Thread->Run_Head.Next);
-            RMP_List_Del(Thread->Dly_Head.Prev,Thread->Dly_Head.Next);
-            Thread->Retval=RMP_ERR_OPER;
-            break;
+            RMP_COVERAGE_MARKER();
+            RMP_List_Del(Thread->Run_Head.Prev,Thread->Run_Head.Next);
+            /* Fall-through case */
         }
-            
-        case RMP_THD_RCVDLY:
-        {
-            RMP_List_Del(Thread->Dly_Head.Prev,Thread->Dly_Head.Next);
-            Thread->Retval=RMP_ERR_OPER;
-            break;
-        }
-            
+        case RMP_THD_RCVDLY:RMP_COVERAGE_MARKER();
         case RMP_THD_DELAYED:
         {
+            RMP_COVERAGE_MARKER();
             RMP_List_Del(Thread->Dly_Head.Prev,Thread->Dly_Head.Next);
-            Thread->Retval=RMP_ERR_OPER;
             break;
         }
         /* Should not get here */
-        default:break;
+        default:while(1);
     }
+    /* Set return value to failure anyway */
+    Thread->Retval=RMP_ERR_OPER;
     Thread->State=RMP_THD_FREE;
+    /* If we are deleting ourself, pend a yield */
+    if(Thread==RMP_Cur_Thd)
+    {
+        RMP_COVERAGE_MARKER();
+        RMP_Sched_Pend=1;
+    }
+    else
+        RMP_COVERAGE_MARKER();
     
     RMP_Unlock_Sched();
     
     /* If we are deleting ourself, just stop the execution here */
-    if(Self_Del!=0)
+    if(Thread==RMP_Cur_Thd)
         while(1);
+    else
+        RMP_COVERAGE_MARKER();
 
     return 0;
 }
@@ -818,48 +967,87 @@ ret_t RMP_Thd_Set(volatile struct RMP_Thd* Thread, ptr_t Prio, ptr_t Slices)
 {
     /* Check if the priority and timeslice range is correct */
     if(Slices==0)
+    {
+        RMP_COVERAGE_MARKER();
         return RMP_ERR_SLICE;
+    }
+    else
+        RMP_COVERAGE_MARKER();
     
     /* Check if this thread structure could possibly be in use */
     if(Thread==0)
+    {
+        RMP_COVERAGE_MARKER();
         return RMP_ERR_THD;
+    }
+    else
+        RMP_COVERAGE_MARKER();
     
     RMP_Lock_Sched();
     
     if(RMP_THD_STATE(Thread->State)==RMP_THD_FREE)
     {
+        RMP_COVERAGE_MARKER();
         RMP_Unlock_Sched();
         return RMP_ERR_THD;
     }
+    else
+        RMP_COVERAGE_MARKER();
     
     /* See if the thread is in running state */
     if(RMP_THD_STATE(Thread->State)==RMP_THD_RUNNING)
     {
+        RMP_COVERAGE_MARKER();
+        
         /* See if we are gonna change one of it or both */
         if(Prio<RMP_MAX_PREEMPT_PRIO)
         {
+            RMP_COVERAGE_MARKER();
             if(Thread->Prio!=Prio)
             {
+                RMP_COVERAGE_MARKER();
+                /* It doesn't matter whether this is suspended or not. 
+                 * If suspended, the operations will not be conducted. */
                 _RMP_Clr_Rdy(Thread);
                 Thread->Prio=Prio;
                 _RMP_Set_Rdy(Thread);
             }
+            else
+                RMP_COVERAGE_MARKER();
         }
+        else
+            RMP_COVERAGE_MARKER();
         
         if(Slices<RMP_MAX_SLICES)
+        {
+            RMP_COVERAGE_MARKER();
             Thread->Slices=Slices;
+        }
+        else
+            RMP_COVERAGE_MARKER();
     }
     else
     {
+        RMP_COVERAGE_MARKER();
+        
         if(Prio<RMP_MAX_PREEMPT_PRIO)
+        {
+            RMP_COVERAGE_MARKER();
             Thread->Prio=Prio;
+        }
+        else
+            RMP_COVERAGE_MARKER();
         
         if(Slices<RMP_MAX_SLICES)
+        {
+            RMP_COVERAGE_MARKER();
             Thread->Slices=Slices;
+        }
+        else
+            RMP_COVERAGE_MARKER();
     }
     
     RMP_Unlock_Sched();
-    
     return 0;
 }
 /* End Function:RMP_Thd_Set **************************************************/
@@ -874,30 +1062,57 @@ ret_t RMP_Thd_Suspend(volatile struct RMP_Thd* Thread)
 {
     /* Check if this thread structure could possibly be in use */
     if(Thread==0)
+    {
+        RMP_COVERAGE_MARKER();
         return RMP_ERR_THD;
+    }
+    else
+        RMP_COVERAGE_MARKER();
     
     RMP_Lock_Sched();
     
     if(RMP_THD_STATE(Thread->State)==RMP_THD_FREE)
     {
+        RMP_COVERAGE_MARKER();
         RMP_Unlock_Sched();
         return RMP_ERR_THD;
     }
+    else
+        RMP_COVERAGE_MARKER();
     
     /* Suspend it */
     if((Thread->State&RMP_THD_SUSPENDED)!=0)
     {
+        RMP_COVERAGE_MARKER();
         RMP_Unlock_Sched();
         return RMP_ERR_STATE;
     }
+    else
+        RMP_COVERAGE_MARKER();
+    
+    /* Only when it is running do we clear this. If we are clearing this, it is not
+     * suspended, so trhe running queue removal is guaranteed to succceed */
+    if(RMP_THD_STATE(Thread->State)==RMP_THD_RUNNING)
+    {
+        RMP_COVERAGE_MARKER();
+        _RMP_Clr_Rdy(Thread);
+    }
+    else
+        RMP_COVERAGE_MARKER();
+    
     /* Mark this as suspended */
     Thread->State|=RMP_THD_SUSPENDED;
-    /* Only when it is running do we clear this */
-    if(RMP_THD_STATE(Thread->State)==RMP_THD_RUNNING)
-        _RMP_Clr_Rdy(Thread);
+    
+    /* If we are suspending ourself, pend a yield */
+    if(Thread==RMP_Cur_Thd)
+    {
+        RMP_COVERAGE_MARKER();
+        RMP_Sched_Pend=1;
+    }
+    else
+        RMP_COVERAGE_MARKER();
     
     RMP_Unlock_Sched();
-
     return 0;
 }
 /* End Function:RMP_Thd_Suspend **********************************************/
@@ -914,27 +1129,48 @@ ret_t RMP_Thd_Resume(volatile struct RMP_Thd* Thread)
     
     /* Check if this thread structure could possibly be in use */
     if(Thread==0)
+    {
+        RMP_COVERAGE_MARKER();
         return RMP_ERR_THD;
+    }
+    else
+        RMP_COVERAGE_MARKER();
 
     RMP_Lock_Sched();
     
     if(RMP_THD_STATE(Thread->State)==RMP_THD_FREE)
     {
+        RMP_COVERAGE_MARKER();
         RMP_Unlock_Sched();
         return RMP_ERR_THD;
     }
+    else
+        RMP_COVERAGE_MARKER();
     
     /* Check if the thread is suspended, if not, then throw an error */
     if((Thread->State&RMP_THD_SUSPENDED)!=0)
     {
+        RMP_COVERAGE_MARKER();
+        
         /* Suspended */
         Thread->State&=~RMP_THD_SUSPENDED;
+        /* Only when it is running will we put it back. It can't be suspended here, 
+         * so the set ready operation will surely put it back */
         if(RMP_THD_STATE(Thread->State)==RMP_THD_RUNNING)
+        {
+            RMP_COVERAGE_MARKER();
             _RMP_Set_Rdy(Thread);
+        }
+        else
+            RMP_COVERAGE_MARKER();
+        
         Retval=0;
     }
     else
+    {
+        RMP_COVERAGE_MARKER();
         Retval=RMP_ERR_STATE;
+    }
     
     RMP_Unlock_Sched();
 
@@ -955,34 +1191,50 @@ ret_t RMP_Thd_Snd(volatile struct RMP_Thd* Thread, ptr_t Data, ptr_t Slices)
 {
     /* Check if this thread structure could possibly be in use */
     if(Thread==0)
+    {
+        RMP_COVERAGE_MARKER();
         return RMP_ERR_THD;
+    }
+    else
+        RMP_COVERAGE_MARKER();
     
     RMP_Lock_Sched();
     
     if(RMP_THD_STATE(Thread->State)==RMP_THD_FREE)
     {
+        RMP_COVERAGE_MARKER();
         RMP_Unlock_Sched();
         return RMP_ERR_THD;
     }
+    else
+        RMP_COVERAGE_MARKER();
     
     /* Are we sending to ourself? This is not allowed */
     if(RMP_Cur_Thd==Thread)
     {
+        RMP_COVERAGE_MARKER();
         RMP_Unlock_Sched();
         return RMP_ERR_OPER;
     }
+    else
+        RMP_COVERAGE_MARKER();
     
     RMP_Cur_Thd->Retval=0;
 
     /* See if there are already a value in the mailbox, if there is, we block */
     if((Thread->State&RMP_THD_MBOXFUL)!=0)
     {
+        RMP_COVERAGE_MARKER();
+        
         /* Mailbox full, we block, and put ourself into the queue */
         if(Slices==0)
         {
+            RMP_COVERAGE_MARKER();
             RMP_Unlock_Sched();
             return RMP_ERR_OPER;
         }
+        else
+            RMP_COVERAGE_MARKER();
 
         /* We must be running */
         _RMP_Clr_Rdy(RMP_Cur_Thd);
@@ -990,30 +1242,43 @@ ret_t RMP_Thd_Snd(volatile struct RMP_Thd* Thread, ptr_t Data, ptr_t Slices)
 
         if(Slices<RMP_MAX_SLICES)
         {
+            RMP_COVERAGE_MARKER();
             _RMP_Dly_Ins(RMP_Cur_Thd, Slices);
             RMP_THD_STATE_SET(RMP_Cur_Thd->State,RMP_THD_SNDDLY);
         }
         else
+        {
+            RMP_COVERAGE_MARKER();
             RMP_THD_STATE_SET(RMP_Cur_Thd->State,RMP_THD_SNDBLK);
+        }
 
         RMP_Cur_Thd->Data=Data;
     }
     else
     {
+        RMP_COVERAGE_MARKER();
+        
         /* Mailbox not full. We need to check if the receiver is waiting for us */
         if((RMP_THD_STATE(Thread->State)==RMP_THD_RCVBLK)||
            (RMP_THD_STATE(Thread->State)==RMP_THD_RCVDLY))
         {
+            RMP_COVERAGE_MARKER();
+            
             /* The receiver is blocked, wake it up and return the value */
             if(RMP_THD_STATE(Thread->State)==RMP_THD_RCVDLY)
+            {
+                RMP_COVERAGE_MARKER();
                 RMP_List_Del(Thread->Dly_Head.Prev,Thread->Dly_Head.Next);
+            }
+            else
+                RMP_COVERAGE_MARKER();
             
             RMP_THD_STATE_SET(Thread->State,RMP_THD_RUNNING);
-
-            /* Is it suspended? If yes, we can't directly send it running */
-            if((Thread->State&RMP_THD_SUSPENDED)==0)
-                _RMP_Set_Rdy(Thread);
+            /* Set to running if not suspended */
+            _RMP_Set_Rdy(Thread);
         }
+        else
+            RMP_COVERAGE_MARKER();
         
         /* Set the mailbox */
         Thread->Mailbox=Data;
@@ -1030,6 +1295,8 @@ ret_t RMP_Thd_Snd(volatile struct RMP_Thd* Thread, ptr_t Data, ptr_t Slices)
 Description : Send to a real-time thread's mailbox. If the mailbox is full, then
               this operation will just fail. This function can only be called from
               an ISR whose priority is below or equal to the context switch handler's.
+              We do not check whether the scheduler is locked; if we are calling this
+              function, we're pretty sure that it's not.
 Input       : volatile struct RMP_Thd* Thread - The thread structure of the thread to send to.
               ptr_t Data - The data to send to that thread.
 Output      : None.
@@ -1039,37 +1306,61 @@ ret_t RMP_Thd_Snd_ISR(volatile struct RMP_Thd* Thread, ptr_t Data)
 {
     /* Check if this thread structure could possibly be in use */
     if(Thread==0)
+    {
+        RMP_COVERAGE_MARKER();
         return RMP_ERR_THD;
+    }
+    else
+        RMP_COVERAGE_MARKER();
     
     if(RMP_THD_STATE(Thread->State)==RMP_THD_FREE)
+    {
+        RMP_COVERAGE_MARKER();
         return RMP_ERR_THD;
-    
-    if(RMP_Sched_Locked!=0)
-        return RMP_ERR_OPER;
+    }
+    else
+        RMP_COVERAGE_MARKER();
 
     /* See if there are already a value in the mailbox, if there is, we abort */
     if((Thread->State&RMP_THD_MBOXFUL)!=0)
+    {
+        RMP_COVERAGE_MARKER();
         return RMP_ERR_OPER;
+    }
     else
     {
+        RMP_COVERAGE_MARKER();
+        
         /* Mailbox not full. We need to check if the receiver is waiting for us */
         if((RMP_THD_STATE(Thread->State)==RMP_THD_RCVBLK)||
            (RMP_THD_STATE(Thread->State)==RMP_THD_RCVDLY))
         {
+            RMP_COVERAGE_MARKER();
+            
             /* The receiver is blocked, wake it up and return the value */
             if(RMP_THD_STATE(Thread->State)==RMP_THD_RCVDLY)
+            {
+                RMP_COVERAGE_MARKER();
                 RMP_List_Del(Thread->Dly_Head.Prev,Thread->Dly_Head.Next);
+            }
+            else
+                RMP_COVERAGE_MARKER();
             
             RMP_THD_STATE_SET(Thread->State,RMP_THD_RUNNING);
-
-            /* Is it suspended? If yes, we can't directly send it running */
-            if((Thread->State&RMP_THD_SUSPENDED)==0)
+            /* Set to running if not suspended */
+            _RMP_Set_Rdy(Thread);
+            /* If schedule pending, trigger it now because we are in ISR */
+            if(RMP_Sched_Pend!=0)
             {
-                _RMP_Set_Rdy(Thread);
-                if(Thread->Prio>RMP_Cur_Thd->Prio)
-                    _RMP_Yield();
+                RMP_COVERAGE_MARKER();
+                RMP_Sched_Pend=0;
+                _RMP_Yield();
             }
+            else
+                RMP_COVERAGE_MARKER();
         }
+        else
+            RMP_COVERAGE_MARKER();
         
         /* Set the mailbox */
         Thread->Mailbox=Data;
@@ -1090,71 +1381,109 @@ ret_t RMP_Thd_Rcv(ptr_t* Data, ptr_t Slices)
 {
     struct RMP_Thd* Sender;
     
+    if(Data==0)
+    {
+        RMP_COVERAGE_MARKER();
+        return RMP_ERR_OPER;
+    }
+    else
+        RMP_COVERAGE_MARKER();
+    
     RMP_Lock_Sched();
+    
+    /* Is there any other guy waiting on us? If there is, unblock it and set it running */
+    Sender=0;
+    if(&(RMP_Cur_Thd->Snd_List)!=RMP_Cur_Thd->Snd_List.Next)
+    {
+        RMP_COVERAGE_MARKER();
+        /* Read the data */
+        Sender=(struct RMP_Thd*)(RMP_Cur_Thd->Snd_List.Next);
+        RMP_List_Del(Sender->Run_Head.Prev,Sender->Run_Head.Next);
+        *Data=Sender->Data;
+        /* Now we unblock it - what state is it in? */
+        if((RMP_THD_STATE(Sender->State)==RMP_THD_SNDDLY))
+        {
+            RMP_COVERAGE_MARKER();
+            RMP_List_Del(Sender->Dly_Head.Prev,Sender->Dly_Head.Next);
+        }
+        else
+            RMP_COVERAGE_MARKER();
+        
+        RMP_THD_STATE_SET(Sender->State,RMP_THD_RUNNING);
+        /* Set to running if not suspended */
+        _RMP_Set_Rdy(Sender);
+    }
 
     /* Check if there is a value in our mailbox. If yes, we return with that value */
     if((RMP_Cur_Thd->State&RMP_THD_MBOXFUL)!=0)
     {
+        RMP_COVERAGE_MARKER();
         /* Get the value from mailbox */
         *Data=RMP_Cur_Thd->Mailbox;
-        RMP_Cur_Thd->State&=~RMP_THD_MBOXFUL;
+        /* See if we unblocked a sender. If yes, we place the new value into 
+         * our mailbox and it is still full */
+        if(Sender!=0)
+            RMP_Cur_Thd->Mailbox=Sender->Data;
+        else
+            RMP_Cur_Thd->State&=~RMP_THD_MBOXFUL;
+        
         RMP_Unlock_Sched();
         return 0;
     }
     else
     {
-        /* Is there any other guy waiting on us? If there is, unblock it and set it running */
-        if(&(RMP_Cur_Thd->Snd_List)!=RMP_Cur_Thd->Snd_List.Next)
+        RMP_COVERAGE_MARKER();
+        
+        /* Box empty. Do we have somebody waiting? */
+        if(Sender!=0)
         {
-            /* Read the data */
-            Sender=(struct RMP_Thd*)(RMP_Cur_Thd->Snd_List.Next);
-            RMP_List_Del(Sender->Run_Head.Prev,Sender->Run_Head.Next);
-            *Data=Sender->Data;
-            /* Now we unblock it - what state is it in? */
-            if((RMP_THD_STATE(Sender->State)==RMP_THD_SNDDLY))
-                RMP_List_Del(Sender->Dly_Head.Prev,Sender->Dly_Head.Next);
-            
-            RMP_THD_STATE_SET(Sender->State,RMP_THD_RUNNING);
-
-            /* Is it suspended? If yes, we can't directly send it running */
-            if((Sender->State&RMP_THD_SUSPENDED)==0)
-                _RMP_Set_Rdy(Sender);
-            
+            RMP_COVERAGE_MARKER();
+            RMP_Cur_Thd->Mailbox=Sender->Data;
             RMP_Unlock_Sched();
+            return 0;
         }
-        /* No sender waiting on us, we need to block */
+        /* No sender waiting on us and box empty, we need to block */
         else
         {
-            /* No such value in our mailbox, we need to block */
+            RMP_COVERAGE_MARKER();
+            
             if(Slices==0)
             {
+                RMP_COVERAGE_MARKER();
                 RMP_Unlock_Sched();
                 return RMP_ERR_OPER;
             }
+            else
+                RMP_COVERAGE_MARKER();
 
-            /* We must be running */
+            /* We must be running and not suspended so we will surely be deleted from queue */
             _RMP_Clr_Rdy(RMP_Cur_Thd);
 
             if(Slices<RMP_MAX_SLICES)
             {
+                RMP_COVERAGE_MARKER();
                 _RMP_Dly_Ins(RMP_Cur_Thd, Slices);
                 RMP_THD_STATE_SET(RMP_Cur_Thd->State,RMP_THD_RCVDLY);
             }
             else
+            {
+                RMP_COVERAGE_MARKER();
                 RMP_THD_STATE_SET(RMP_Cur_Thd->State,RMP_THD_RCVBLK);
-            
+            }
             RMP_Unlock_Sched();
+            
             /* Dummy read - to separate the lock & unlock. If the compiler optimizes these two
              * functions(inline them) on some architectures sometimes we never block. */
             *Data=RMP_Cur_Thd->Mailbox;
+            
             /* We've been unblocked. There must be something in our mbox, or we should have failed */
             RMP_Lock_Sched();
             *Data=RMP_Cur_Thd->Mailbox;
             RMP_Cur_Thd->State&=~RMP_THD_MBOXFUL;
-            RMP_Unlock_Sched();
         }
     }
     
+    RMP_Unlock_Sched();
     return RMP_Cur_Thd->Retval;
 }
 /* End Function:RMP_Thd_Rcv **************************************************/
@@ -1168,19 +1497,22 @@ Return      : ret_t - If successful, 0; or an error code.
 ret_t RMP_Thd_Delay(ptr_t Slices)
 {
     if((Slices==0)||(Slices>=RMP_MAX_SLICES))
+    {
+        RMP_COVERAGE_MARKER();
         return RMP_ERR_SLICE;
+    }
+    else
+        RMP_COVERAGE_MARKER();
     
     RMP_Lock_Sched();
 
-    /* We must be running */
+    /* We must be running and not suspended so we will be out of running queue */
     _RMP_Clr_Rdy(RMP_Cur_Thd);
     RMP_THD_STATE_SET(RMP_Cur_Thd->State,RMP_THD_DELAYED);
     _RMP_Dly_Ins(RMP_Cur_Thd, Slices);
 
     RMP_Cur_Thd->Retval=0;
-    
     RMP_Unlock_Sched();
-    
     /* Need to return if successful or not */
     return RMP_Cur_Thd->Retval;
 }
@@ -1196,29 +1528,33 @@ ret_t RMP_Thd_Cancel(volatile struct RMP_Thd* Thread)
 {
     /* Check if this thread structure could possibly be in use */
     if(Thread==0)
+    {
+        RMP_COVERAGE_MARKER();
         return RMP_ERR_THD;
+    }
+    else
+        RMP_COVERAGE_MARKER();
     
     RMP_Lock_Sched();
     
     /* Is it delayed? */
     if(RMP_THD_STATE(Thread->State)!=RMP_THD_DELAYED)
     {
+        RMP_COVERAGE_MARKER();
         RMP_Unlock_Sched();
         return RMP_ERR_STATE;
     }
+    else
+        RMP_COVERAGE_MARKER();
 
     /* Delete it from the delay list */
     RMP_List_Del(Thread->Dly_Head.Prev,Thread->Dly_Head.Next);
     RMP_THD_STATE_SET(Thread->State,RMP_THD_RUNNING);
-    
-    /* Only when when this thread is not suspended do we change it back */
-    if((Thread->State&RMP_THD_SUSPENDED)==0)
-        _RMP_Set_Rdy(Thread);
+    /* Set to running if not suspended */
+    _RMP_Set_Rdy(Thread);
     
     Thread->Retval=RMP_ERR_OPER;
-    
     RMP_Unlock_Sched();
-
     return 0;
 }
 /* End Function:RMP_Thd_Cancel ***********************************************/
@@ -1234,22 +1570,33 @@ ret_t RMP_Sem_Crt(volatile struct RMP_Sem* Semaphore, ptr_t Number)
 {
     /* Check if this semaphore structure could possibly be in use */
     if(Semaphore==0)
+    {
+        RMP_COVERAGE_MARKER();
         return RMP_ERR_SEM;
+    }
+    else
+        RMP_COVERAGE_MARKER();
     
     RMP_Lock_Sched();
     
     if(Semaphore->State!=RMP_SEM_FREE)
     {
+        RMP_COVERAGE_MARKER();
         RMP_Unlock_Sched();
         return RMP_ERR_SEM;
     }
+    else
+        RMP_COVERAGE_MARKER();
     
     /* Is the number too great to initialize? */
     if(Number>=RMP_SEM_MAX_NUM)
     {
+        RMP_COVERAGE_MARKER();
         RMP_Unlock_Sched();
         return RMP_ERR_OPER;
     }
+    else
+        RMP_COVERAGE_MARKER();
 
     /* Initialize contents */
     Semaphore->Cur_Num=Number;
@@ -1274,30 +1621,41 @@ ret_t RMP_Sem_Del(volatile struct RMP_Sem* Semaphore)
     
     /* Check if this semaphore structure could possibly be in use */
     if(Semaphore==0)
+    {
+        RMP_COVERAGE_MARKER();
         return RMP_ERR_SEM;
+    }
+    else
+        RMP_COVERAGE_MARKER();
     
     RMP_Lock_Sched();
     
     if(Semaphore->State!=RMP_SEM_USED)
     {
+        RMP_COVERAGE_MARKER();
         RMP_Unlock_Sched();
         return RMP_ERR_SEM;
     }
+    else
+        RMP_COVERAGE_MARKER();
 
     /* Get rid of all guys waiting on it */
     while(&(Semaphore->Wait_List)!=Semaphore->Wait_List.Next)
     {
         Thread=(struct RMP_Thd*)(Semaphore->Wait_List.Next);
         RMP_List_Del(Thread->Run_Head.Prev,Thread->Run_Head.Next);
+        
         if(RMP_THD_STATE(Thread->State)==RMP_THD_SEMDLY)
+        {
+            RMP_COVERAGE_MARKER();
             RMP_List_Del(Thread->Dly_Head.Prev,Thread->Dly_Head.Next);
+        }
+        else
+            RMP_COVERAGE_MARKER();
 
         RMP_THD_STATE_SET(Thread->State,RMP_THD_RUNNING);
-
-        /* Is it suspended? If yes, we can't directly send it running */
-        if((Thread->State&RMP_THD_SUSPENDED)==0)
-           _RMP_Set_Rdy(Thread);
-        
+        /* Set to running if not suspended */
+        _RMP_Set_Rdy(Thread);
         Thread->Retval=RMP_ERR_OPER;
     }
     Semaphore->State=RMP_SEM_FREE;
@@ -1319,31 +1677,44 @@ ret_t RMP_Sem_Pend(volatile struct RMP_Sem* Semaphore, ptr_t Slices)
 {
     /* Check if this semaphore structure could possibly be in use */
     if(Semaphore==0)
+    {
+        RMP_COVERAGE_MARKER();
         return RMP_ERR_SEM;
+    }
+    else
+        RMP_COVERAGE_MARKER();
     
     RMP_Lock_Sched();
     
     if(Semaphore->State!=RMP_SEM_USED)
     {
+        RMP_COVERAGE_MARKER();
         RMP_Unlock_Sched();
         return RMP_ERR_SEM;
     }
+    else
+        RMP_COVERAGE_MARKER();
     
     /* Check if we can get one immediately */
     if(Semaphore->Cur_Num!=0)
     {
+        RMP_COVERAGE_MARKER();
         Semaphore->Cur_Num--;
         RMP_Unlock_Sched();
         return Semaphore->Cur_Num;
     }
     else
     {
+        RMP_COVERAGE_MARKER();
         /* Cannot get one, we need to block */
         if(Slices==0)
         {
+            RMP_COVERAGE_MARKER();
             RMP_Unlock_Sched();
             return RMP_ERR_OPER;
         }
+        else
+            RMP_COVERAGE_MARKER();
 
         /* We must be running - place into waitlist now */
         _RMP_Clr_Rdy(RMP_Cur_Thd);
@@ -1351,11 +1722,15 @@ ret_t RMP_Sem_Pend(volatile struct RMP_Sem* Semaphore, ptr_t Slices)
         
         if(Slices<RMP_MAX_SLICES)
         {
+            RMP_COVERAGE_MARKER();
             _RMP_Dly_Ins(RMP_Cur_Thd, Slices);
             RMP_THD_STATE_SET(RMP_Cur_Thd->State,RMP_THD_SEMDLY);
         }
         else
+        {
+            RMP_COVERAGE_MARKER();
             RMP_THD_STATE_SET(RMP_Cur_Thd->State,RMP_THD_SEMBLK);
+        }
         
         RMP_Cur_Thd->Retval=0;
     }
@@ -1376,47 +1751,57 @@ ret_t RMP_Sem_Abort(volatile struct RMP_Thd* Thread)
 {
     /* Check if this thread structure could possibly be in use */
     if(Thread==0)
+    {
+        RMP_COVERAGE_MARKER();
         return RMP_ERR_THD;
+    }
+    else
+        RMP_COVERAGE_MARKER();
 
     RMP_Lock_Sched();
     
     if(RMP_THD_STATE(Thread->State)==RMP_THD_FREE)
     {
+        RMP_COVERAGE_MARKER();
         RMP_Unlock_Sched();
         return RMP_ERR_THD;
     }
+    else
+        RMP_COVERAGE_MARKER();
     
     /* Is it waiting on a semaphore? If no, we abort and return an error code */
     if((RMP_THD_STATE(Thread->State)!=RMP_THD_SEMBLK)&&
        (RMP_THD_STATE(Thread->State)!=RMP_THD_SEMDLY))
     {
+        RMP_COVERAGE_MARKER();
         RMP_Unlock_Sched();
         return RMP_ERR_STATE;
     }
+    else
+        RMP_COVERAGE_MARKER();
 
     /* Waiting for a semaphore. We abort it and return */
     RMP_List_Del(Thread->Run_Head.Prev,Thread->Run_Head.Next);
     if(RMP_THD_STATE(Thread->State)==RMP_THD_SEMDLY)
+    {
+        RMP_COVERAGE_MARKER();
         RMP_List_Del(Thread->Dly_Head.Prev,Thread->Dly_Head.Next);
+    }
+    else
+        RMP_COVERAGE_MARKER();
     
     RMP_THD_STATE_SET(Thread->State,RMP_THD_RUNNING);
-
-    /* Only when when this thread is not suspended do we change it back */
-    if((Thread->State&RMP_THD_SUSPENDED)==0)
-        _RMP_Set_Rdy(Thread);
+    /* Set to running if not suspended */
+    _RMP_Set_Rdy(Thread);
     
     Thread->Retval=RMP_ERR_OPER;
-    
     RMP_Unlock_Sched();
-
     return 0;
 }
 /* End Function:RMP_Sem_Abort ************************************************/
 
 /* Begin Function:RMP_Sem_Post ************************************************
-Description : Post a number of semaphores to the list. This function can only be
-              called from an ISR whose priority is below or equal to the context
-              switch handler's.
+Description : Post a number of semaphores to the list.
 Input       : volatile struct RMP_Sem* Semaphore - The pointer to the semaphore structure.
               ptr_t Number - The number to post.
 Output      : None.
@@ -1428,22 +1813,33 @@ ret_t RMP_Sem_Post(volatile struct RMP_Sem* Semaphore, ptr_t Number)
     
     /* Check if this semaphore structure could possibly be in use */
     if((Semaphore==0)||(Number==0))
+    {
+        RMP_COVERAGE_MARKER();
         return RMP_ERR_SEM;
+    }
+    else
+        RMP_COVERAGE_MARKER();
     
     RMP_Lock_Sched();
     
     if(Semaphore->State!=RMP_SEM_USED)
     {
+        RMP_COVERAGE_MARKER();
         RMP_Unlock_Sched();
         return RMP_ERR_SEM;
     }
+    else
+        RMP_COVERAGE_MARKER();
     
     /* Would the maximum value be exceeded if this is posted? */
     if((Semaphore->Cur_Num+Number)>=RMP_SEM_MAX_NUM)
     {
+        RMP_COVERAGE_MARKER();
         RMP_Unlock_Sched();
         return RMP_ERR_OPER;
     }
+    else
+        RMP_COVERAGE_MARKER();
     
     Semaphore->Cur_Num+=Number;
     /* Is there any thread waiting on it? If there are, clean them up*/
@@ -1451,13 +1847,18 @@ ret_t RMP_Sem_Post(volatile struct RMP_Sem* Semaphore, ptr_t Number)
     {
         Thread=(struct RMP_Thd*)(Semaphore->Wait_List.Next);
         RMP_List_Del(Thread->Run_Head.Prev,Thread->Run_Head.Next);
+        
         if(RMP_THD_STATE(Thread->State)==RMP_THD_SEMDLY)
+        {
+            RMP_COVERAGE_MARKER();
             RMP_List_Del(Thread->Dly_Head.Prev,Thread->Dly_Head.Next);
+        }
+        else
+            RMP_COVERAGE_MARKER();
+        
         RMP_THD_STATE_SET(Thread->State,RMP_THD_RUNNING);
-
-        /* Only when when this thread is not suspended do we change it back */
-        if((Thread->State&RMP_THD_SUSPENDED)==0)
-            _RMP_Set_Rdy(Thread);
+        /* Set to running if not suspended */
+        _RMP_Set_Rdy(Thread);
 
         /* Finally, return success */
         Thread->Retval=0;
@@ -1465,13 +1866,14 @@ ret_t RMP_Sem_Post(volatile struct RMP_Sem* Semaphore, ptr_t Number)
     }
 
     RMP_Unlock_Sched();
-
     return 0;
 }
 /* End Function:RMP_Sem_Post *************************************************/
 
 /* Begin Function:RMP_Sem_Post_ISR ********************************************
 Description : Post a number of semaphores to the list.
+              We do not check whether the scheduler is locked; if we are calling this
+              function, we're pretty sure that it's not.
 Input       : volatile struct RMP_Sem* Semaphore - The pointer to the semaphore structure.
               ptr_t Number - The number to post.
 Output      : None.
@@ -1482,17 +1884,29 @@ ret_t RMP_Sem_Post_ISR(volatile struct RMP_Sem* Semaphore, ptr_t Number)
     struct RMP_Thd* Thread;
     /* Check if this semaphore structure could possibly be in use */
     if((Semaphore==0)||(Number==0))
+    {
+        RMP_COVERAGE_MARKER();
         return RMP_ERR_SEM;
+    }
+    else
+        RMP_COVERAGE_MARKER();
     
     if(Semaphore->State!=RMP_SEM_USED)
+    {
+        RMP_COVERAGE_MARKER();
         return RMP_ERR_SEM;
-
-    if(RMP_Sched_Locked!=0)
-        return RMP_ERR_OPER;
+    }
+    else
+        RMP_COVERAGE_MARKER();
 
     /* Would the maximum value be exceeded if this is posted? */
     if((Semaphore->Cur_Num+Number)>=RMP_SEM_MAX_NUM)
+    {
+        RMP_COVERAGE_MARKER();
         return RMP_ERR_OPER;
+    }
+    else
+        RMP_COVERAGE_MARKER();
     
     Semaphore->Cur_Num+=Number;
     /* Is there any thread waiting on it? If there are, clean them up*/
@@ -1501,17 +1915,26 @@ ret_t RMP_Sem_Post_ISR(volatile struct RMP_Sem* Semaphore, ptr_t Number)
         Thread=(struct RMP_Thd*)(Semaphore->Wait_List.Next);
         RMP_List_Del(Thread->Run_Head.Prev,Thread->Run_Head.Next);
         if(RMP_THD_STATE(Thread->State)==RMP_THD_SEMDLY)
+        {
+            RMP_COVERAGE_MARKER();
             RMP_List_Del(Thread->Dly_Head.Prev,Thread->Dly_Head.Next);
+        }
+        else
+            RMP_COVERAGE_MARKER();
         
         RMP_THD_STATE_SET(Thread->State,RMP_THD_RUNNING);
-
-        /* Only when when this thread is not suspended do we change it back */
-        if((Thread->State&RMP_THD_SUSPENDED)==0)
+        /* Set to running if not suspended */
+        _RMP_Set_Rdy(Thread);
+        
+        /* If schedule pending, trigger it now because we are in ISR */
+        if(RMP_Sched_Pend!=0)
         {
-            _RMP_Set_Rdy(Thread);
-            if(Thread->Prio>RMP_Cur_Thd->Prio)
-                _RMP_Yield();
+            RMP_COVERAGE_MARKER();
+            RMP_Sched_Pend=0;
+            _RMP_Yield();   
         }
+        else
+            RMP_COVERAGE_MARKER();
 
         /* Finally, return success */
         Thread->Retval=0;
@@ -1521,21 +1944,6 @@ ret_t RMP_Sem_Post_ISR(volatile struct RMP_Sem* Semaphore, ptr_t Number)
     return 0;
 }
 /* End Function:RMP_Sem_Post_ISR *********************************************/
-
-/* Begin Function:RMP_Start_Hook **********************************************
-Description : Initialization hook for low-level hardware, executed immediately
-              after the kernel's low-level initialization.
-Input       : None.
-Output      : None.
-Return      : None.
-******************************************************************************/
-#if(RMP_USE_HOOKS==RMP_FALSE)
-void RMP_Start_Hook(void)
-{
-    return;
-}
-#endif
-/* End Function:RMP_Start_Hook ***********************************************/
 
 /* Begin Function:RMP_Save_Ctx ************************************************
 Description : Save hook for extra context, such as FPU, peripherals and MPU.
@@ -1565,23 +1973,6 @@ void RMP_Load_Ctx(void)
 #endif
 /* End Function:RMP_Load_Ctx *************************************************/
 
-/* Begin Function:RMP_Tick_Hook ***********************************************
-Description : Save hook for extra context, such as FPU, peripherals and MPU.
-Input       : ptr_t Ticks - The number of ticks passed. For constant rate ticking
-                            applications this is always 1; For tickless systems this
-                            could be anything.
-Output      : None.
-Return      : None.
-******************************************************************************/
-#if(RMP_USE_HOOKS==RMP_FALSE)
-void RMP_Tick_Hook(ptr_t Ticks)
-{
-    Ticks=Ticks;
-    return;
-}
-#endif
-/* End Function:RMP_Tick_Hook ************************************************/
-
 /* Begin Function:RMP_Init ****************************************************
 Description : The entry of the user thread. This is the first user thread that
               will be created.
@@ -1602,9 +1993,7 @@ void RMP_Init(void)
     RMP_Unlock_Sched();
     
     while(1)
-    {
         RMP_Init_Idle();
-    };
 }
 /* End Function:RMP_Init *****************************************************/
 
@@ -1618,6 +2007,13 @@ Return      : int - This function never returns.
 int main(void)
 {
     ptr_t Count;
+    
+#ifdef RMP_COVERAGE
+    /* Initialize coverage markers if coverage enabled */
+    for(Count=0;Count<RMP_COVERAGE_LINES;Count++)
+        RMP_Coverage[Count]=0;
+#endif
+    
     /* Initialize the kernel data structures first */
     _RMP_Low_Level_Init();
     
@@ -1725,21 +2121,15 @@ ptr_t RMP_RBIT_Get(ptr_t Val)
 /* End Function:RMP_RBIT_Get *************************************************/
 
 /* Begin Function:RMP_LSB_Get *************************************************
-Description : Get the LSB in a word. If the word is all zero, a negative value
-              will be returned.
+Description : Get the LSB in a word. If the word is all zero, a value that is 
+              equal to the processor word size will be returned.
 Input       : ptr_t Val - The input value.
 Output      : None.
 Return      : ptr_t - The LSB found.
 ******************************************************************************/
 ptr_t RMP_LSB_Get(ptr_t Val)
 {
-#if(RMP_WORD_ORDER==4)
-    return 15-RMP_MSB_Get(RMP_RBIT_Get(Val));
-#elif(RMP_WORD_ORDER==5)
-    return 31-RMP_MSB_Get(RMP_RBIT_Get(Val));
-#else
-    return 63-RMP_MSB_Get(RMP_RBIT_Get(Val));
-#endif 
+    return RMP_WORD_SIZE-1-RMP_MSB_Get(RMP_RBIT_Get(Val));
 }
 /* End Function:RMP_LSB_Get **************************************************/
 
@@ -1747,7 +2137,8 @@ ptr_t RMP_LSB_Get(ptr_t Val)
 Description : Initialize a trunk of memory as the memory pool. The TLSF allocator's
               FLI will be decided upon the memory block size. All memory allocation
               functions does not lock the scheduler; decide whether you need to lock
-              in your code.
+              in your code. This allocator can handle no more than 128MB of memory;
+              this hard-coded.
               The TLSF memory allocator is consisted of FLI, SLI and allocatable
               memory. The FLI is classified by 2^n, and the SLI segregates the 
               FLI section by an power of 2, i.e. 8 or 16. Thus, when we need 
@@ -1786,11 +2177,21 @@ ret_t RMP_Mem_Init(volatile void* Pool, ptr_t Size)
     
     /* See if the memory pool is large enough to enable dynamic allocation - at least 4096 words */
     if((Pool==0)||(Size<(4096*sizeof(ptr_t)))||((Size>>27)>0))
+    {
+        RMP_COVERAGE_MARKER();
         return RMP_ERR_MEM;
+    }
+    else
+        RMP_COVERAGE_MARKER();
     
     /* See if the address and size is word-aligned */
-    if((((ptr_t)Pool&(RMP_WORD_MASK>>2))!=0)||((Size&(RMP_WORD_MASK>>2))!=0))
+    if((((ptr_t)Pool&(RMP_WORD_MASK>>3))!=0)||((Size&(RMP_WORD_MASK>>3))!=0))
+    {
+        RMP_COVERAGE_MARKER();
         return RMP_ERR_MEM;
+    }
+    else
+        RMP_COVERAGE_MARKER();
         
     Mem=(volatile struct RMP_Mem*)Pool;
     Mem->Size=Size;
@@ -1883,9 +2284,12 @@ void _RMP_Mem_Ins(volatile void* Pool, volatile struct RMP_Mem_Head* Mem_Head)
     /* See if there are any blocks in the level, equal means no. So what we inserted is the first block */
     if(Slot==Slot->Next)
     {
+        RMP_COVERAGE_MARKER();
         /* Set the corresponding bit in the TLSF bitmap */
         Mem->Bitmap[Level>>RMP_WORD_ORDER]|=1<<(Level&RMP_WORD_MASK);
     }
+    else
+        RMP_COVERAGE_MARKER();
 
     /* Insert the node now */
     RMP_List_Ins(&(Mem_Head->Head), Slot, Slot->Next);
@@ -1927,9 +2331,12 @@ void _RMP_Mem_Del(volatile void* Pool, volatile struct RMP_Mem_Head* Mem_Head)
      * what we deleted is the last block */
     if(Slot==Slot->Next)
     {
+        RMP_COVERAGE_MARKER();
         /* Clear the corresponding bit in the TLSF bitmap */
         Mem->Bitmap[Level>>RMP_WORD_ORDER]&=~(1<<(Level&RMP_WORD_MASK));
     }
+    else
+        RMP_COVERAGE_MARKER();
 }
 /* End Function:_RMP_Mem_Del *************************************************/
 
@@ -1955,32 +2362,43 @@ ret_t _RMP_Mem_Search(volatile void* Pool, ptr_t Size, cnt_t* FLI_Level, cnt_t* 
     
     /* Decide the SLI level directly from the FLI level. We plus the number by one here
      * so that we can avoid the list search. However, when the allocated memory is just
-     * an order of 2, then we do not need to jump to the next level and can fit directly */
-    if(((cnt_t)Size)==((1<<6)<<FLI_Level_Temp))
-        SLI_Level_Temp=(Size>>(FLI_Level_Temp+3))&0x07;
-    else
+     * one of the levels, then we don't need to jump to the next level and can fit directly */
+    SLI_Level_Temp=(Size>>(FLI_Level_Temp+3))&0x07;
+    if(((cnt_t)Size)!=((1<<(FLI_Level_Temp+3))*(SLI_Level_Temp+8)))
     {
-        SLI_Level_Temp=((Size>>(FLI_Level_Temp+3))&0x07)+1;
+        RMP_COVERAGE_MARKER();
+        SLI_Level_Temp++;
         
         /* If the SLI level is the largest of the SLI level, then jump to the next FLI level */
         if(SLI_Level_Temp==8)
         {
+            RMP_COVERAGE_MARKER();
             FLI_Level_Temp+=1;
             SLI_Level_Temp=0;
         }
+        else
+            RMP_COVERAGE_MARKER();
     }
+    else
+        RMP_COVERAGE_MARKER();
     
     /* Check if the FLI level is over the boundary */
     Mem=(volatile struct RMP_Mem*)Pool;
     if((ptr_t)FLI_Level_Temp>=Mem->FLI_Num)
+    {
+        RMP_COVERAGE_MARKER();
         return -1;
+    }
+    else
+        RMP_COVERAGE_MARKER();
     
     /* Try to find one position on this processor word level */
     Level=(FLI_Level_Temp<<3)+SLI_Level_Temp;
     LSB=RMP_LSB_Get(Mem->Bitmap[Level>>RMP_WORD_ORDER]>>(Level&RMP_WORD_MASK));
     /* If there's at least one block that matches the query, return the level */
-    if(LSB<32)
+    if(LSB<RMP_WORD_SIZE)
     {
+        RMP_COVERAGE_MARKER();
         Level=(Level&(~RMP_WORD_MASK))+LSB+(Level&RMP_WORD_MASK);
         *FLI_Level=Level>>3;
         *SLI_Level=Level&0x07;
@@ -1989,18 +2407,22 @@ ret_t _RMP_Mem_Search(volatile void* Pool, ptr_t Size, cnt_t* FLI_Level, cnt_t* 
     /* No one exactly fits */
     else
     {
-        /* From the next word, query one by one */
+        RMP_COVERAGE_MARKER();
+        /* From the next word, query one by one. 5 is because we never have more than 128MB memory */
         for(Level=(Level>>RMP_WORD_ORDER)+1;Level<5;Level++)
         {
             /* if the level has blocks of one FLI level */
             if(Mem->Bitmap[Level]!=0)
             {
+                RMP_COVERAGE_MARKER();
                 /* Find the actual level */ 
                 LSB=RMP_LSB_Get(Mem->Bitmap[Level]);
                 *FLI_Level=((Level<<RMP_WORD_ORDER)+LSB)>>3;
                 *SLI_Level=LSB&0x07;
                 return 0;
             }
+            else
+                RMP_COVERAGE_MARKER();
         }
     }
 
@@ -2027,18 +2449,27 @@ void* RMP_Malloc(volatile void* Pool, ptr_t Size)
     volatile struct RMP_Mem_Head* New_Mem;
     ptr_t New_Size;
     
-    if(Size==0)
+    if((Pool==0)||(Size==0))
+    {
+        RMP_COVERAGE_MARKER();
         return (void*)(0);
+    }
+    else
+        RMP_COVERAGE_MARKER();
     
-    /* Round up the size:a multiple of 8 and bigger than 64B. In fact, we will add
-     * extra 8 bytes at the end if the size is a multiple of 8 for safety. */
+    /* Round up the size:a multiple of 8 and bigger than 64B */
     Rounded_Size=(((Size-1)>>3)+1)<<3;
     /* See if it is smaller than the smallest block */
     Rounded_Size=(Rounded_Size>64)?Rounded_Size:64;
 
     /* See if such block exists, if not, abort */
     if(_RMP_Mem_Search(Pool,Rounded_Size,&FLI_Level,&SLI_Level)!=0)
+    {
+        RMP_COVERAGE_MARKER();
         return (void*)(0);
+    }
+    else
+        RMP_COVERAGE_MARKER();
     
     Mem=(volatile struct RMP_Mem*)Pool;
     
@@ -2049,8 +2480,9 @@ void* RMP_Malloc(volatile void* Pool, ptr_t Size)
     /* Allocate and calculate if the space left could be big enough to be a new 
      * block. If so, we will put the block back into the TLSF table */
     New_Size=(ptr_t)(Mem_Head->Tail)-((ptr_t)Mem_Head)-sizeof(struct RMP_Mem_Head)-Rounded_Size;
-    if(New_Size>=sizeof(struct RMP_Mem_Head)+64+sizeof(struct RMP_Mem_Tail))
+    if(New_Size>=(sizeof(struct RMP_Mem_Head)+64+sizeof(struct RMP_Mem_Tail)))
     {
+        RMP_COVERAGE_MARKER();
         Old_Size=sizeof(struct RMP_Mem_Head)+Rounded_Size+sizeof(struct RMP_Mem_Tail);
         New_Mem=(volatile struct RMP_Mem_Head*)(((ptr_t)Mem_Head)+Old_Size);
 
@@ -2060,6 +2492,8 @@ void* RMP_Malloc(volatile void* Pool, ptr_t Size)
         /* Put the extra block back */
         _RMP_Mem_Ins(Pool, New_Mem);
     }
+    else
+        RMP_COVERAGE_MARKER();
 
     /* Insert the allocated block into the lists */
     RMP_List_Ins(&(Mem_Head->Head),&(Mem->Alloc),Mem->Alloc.Next);
@@ -2086,15 +2520,34 @@ void RMP_Free(volatile void* Pool, void* Mem_Ptr)
     volatile struct RMP_Mem_Head* Right_Head;
     cnt_t Merge_Left;
 
+    /* Check if pointer is null */
+    if((Pool==0)||(Mem_Ptr==0))
+    {
+        RMP_COVERAGE_MARKER();
+        return;
+    }
+    else
+        RMP_COVERAGE_MARKER();
+    
     /* See if the address is within the allocatable address range. If not, abort directly. */
     Mem=(volatile struct RMP_Mem*)Pool;
     if((((ptr_t)Mem_Ptr)<=((ptr_t)Mem))||(((ptr_t)Mem_Ptr)>=(((ptr_t)Mem)+Mem->Size)))
+    {
+        RMP_COVERAGE_MARKER();
         return;
+    }
+    else
+        RMP_COVERAGE_MARKER();
 
     Mem_Head=(struct RMP_Mem_Head*)(((ptr_t)Mem_Ptr)-sizeof(struct RMP_Mem_Head));
-    /* See if the block can really be freed by this PID. If cannot, return directly */
+    /* See if the block can really be freed */
     if(Mem_Head->State==RMP_MEM_FREE)
+    {
+        RMP_COVERAGE_MARKER();
         return;
+    }
+    else
+        RMP_COVERAGE_MARKER();
 
     /* Now we are sure that it can be freed. Delete it from the allocated list now */
     RMP_List_Del(Mem_Head->Head.Prev,Mem_Head->Head.Next);
@@ -2104,25 +2557,33 @@ void RMP_Free(volatile void* Pool, void* Mem_Ptr)
     Right_Head=(struct RMP_Mem_Head*)(((ptr_t)(Mem_Head->Tail))+sizeof(struct RMP_Mem_Tail));
     if(((ptr_t)Right_Head)!=(((ptr_t)Mem)+Mem->Size))
     {
+        RMP_COVERAGE_MARKER();
         /* If this one is unoccupied */
         if((Right_Head->State)==RMP_MEM_FREE)
         {
+            RMP_COVERAGE_MARKER();
             /* Delete, merge */
             _RMP_Mem_Del(Pool,Right_Head);
             _RMP_Mem_Block(Mem_Head,
                            ((ptr_t)(Right_Head->Tail))+sizeof(struct RMP_Mem_Tail)-(ptr_t)Mem_Head);
         }
+        else
+            RMP_COVERAGE_MARKER();
     }
+    else
+        RMP_COVERAGE_MARKER();
 
     /* Now check if we can merge it with the lower blocks */
     Merge_Left=0;
     if((ptr_t)Mem_Head!=Mem->Start)
     {
+        RMP_COVERAGE_MARKER();
         Left_Head=((struct RMP_Mem_Tail*)(((ptr_t)Mem_Head)-sizeof(struct RMP_Mem_Tail)))->Head;
 
         /* If this one is unoccupied */
         if(Left_Head->State==RMP_MEM_FREE)
         {
+            RMP_COVERAGE_MARKER();
             /* Delete, merge */
             _RMP_Mem_Del(Pool, Left_Head);
             _RMP_Mem_Block(Left_Head,
@@ -2132,14 +2593,24 @@ void RMP_Free(volatile void* Pool, void* Mem_Ptr)
              * Thus there's no need to insert it into the list again */
             Merge_Left=1;
         }
+        else
+            RMP_COVERAGE_MARKER();
     }
+    else
+        RMP_COVERAGE_MARKER();
 
     /* If we did not merge it with the left-side blocks, insert the original pointer's block 
      * into the TLSF table(Merging with the right-side one won't disturb this) */
     if(Merge_Left==0)
+    {
+        RMP_COVERAGE_MARKER();
         _RMP_Mem_Ins(Pool, Mem_Head);
+    }
     else
+    {
+        RMP_COVERAGE_MARKER();
         _RMP_Mem_Ins(Pool, Left_Head);
+    }
 }
 /* End Function:RMP_Free *****************************************************/
 

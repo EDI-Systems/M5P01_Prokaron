@@ -13,7 +13,7 @@ Description: The configuration file for STM32F767IG.
 #include "stm32f7xx_hal.h"
 /* The maximum number of preemption priority levels in the system.
  * This parameter must be divisible by the word length - 32 is usually sufficient */
-#define RMP_MAX_PREEMPT_PRIO         32
+#define RMP_MAX_PREEMPT_PRIO         64
 /* The maximum number of slices allowed */
 #define RMP_MAX_SLICES               100000
 /* The maximum number of semaphore counts allowed */
