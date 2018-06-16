@@ -24,8 +24,8 @@ Description: The configuration file for STM32F767IG.
 #define RMP_INIT_STACK_SIZE          256
 
 /* The mask/unmask interrupt operations - do not need on RVM */
-#define RMP_MASK_INT()               
-#define RMP_UNMASK_INT()             
+#define RMP_MASK_INT()               RVM_Mask_Int()
+#define RMP_UNMASK_INT()             RVM_Unmask_Int()
 /* End Defines ***************************************************************/
 
 /* End Of File ***************************************************************/

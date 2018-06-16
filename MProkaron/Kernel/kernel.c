@@ -1221,7 +1221,7 @@ ret_t RMP_Thd_Snd(volatile struct RMP_Thd* Thread, ptr_t Data, ptr_t Slices)
     
     RMP_Cur_Thd->Retval=0;
 
-    /* See if there are already a value in the mailbox, if there is, we block */
+    /* See if there is already a value in the mailbox, if yes, we block */
     if((Thread->State&RMP_THD_MBOXFUL)!=0)
     {
         RMP_COVERAGE_MARKER();
@@ -1321,7 +1321,7 @@ ret_t RMP_Thd_Snd_ISR(volatile struct RMP_Thd* Thread, ptr_t Data)
     else
         RMP_COVERAGE_MARKER();
 
-    /* See if there are already a value in the mailbox, if there is, we abort */
+    /* See if there is already a value in the mailbox, if yes, we abort */
     if((Thread->State&RMP_THD_MBOXFUL)!=0)
     {
         RMP_COVERAGE_MARKER();
@@ -1998,7 +1998,7 @@ void RMP_Init(void)
 /* End Function:RMP_Init *****************************************************/
 
 /* Begin Function:main ********************************************************
-Description : The entrance of the operating system. This function is for 
+Description : The entry of the operating system. This function is for 
               compatibility with the ARM toolchain.
 Input       : None.
 Output      : None.
