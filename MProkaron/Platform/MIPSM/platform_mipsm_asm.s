@@ -351,12 +351,12 @@ _RMP_Yield:
                 .end             _RMP_Yield                                           
 /* End Function:_RMP_Yield ***************************************************/
 
-;/* Begin Function:_RMP_Start *************************************************
-;Description : Jump to the user function and will never return from it.
-;Input       : R0 - The address to branch to.
+/* Begin Function:_RMP_Start **************************************************
+Description : Jump to the user function and will never return from it.
+Input       : R0 - The address to branch to.
                R1 - The stack to use.
-;Output      : None.                                      
-;*****************************************************************************/
+Output      : None.
+******************************************************************************/
                	.set             nomips16
                 .set             nomicromips
                 .set             noreorder
