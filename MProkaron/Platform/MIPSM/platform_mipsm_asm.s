@@ -106,7 +106,7 @@ R31    $ra        return address (used by function call)
 .macro	SAVE_CONTEXT
                 /* Make room for the context */
                 addiu            $sp,$sp,-CTX_SIZE
-                /* Save three regs first so that we can enable interrupts as soon as possible */
+                /* Save 4 regs first so that we can enable interrupts as soon as possible */
                 sw               $23,132($sp)
                 sw               $22,128($sp)
                 sw               $21,124($sp)
@@ -401,7 +401,7 @@ Output      : None.
 PendSV_Handler:
                 /* Make room for the context */
                 addiu            $sp,$sp,-CTX_SIZE
-                /* Save three regs first so that we can ena \ble interrupts as soon as possible */
+                /* Save three regs first so that we can enable interrupts as soon as possible */
                 sw               $23,132($sp)
                 sw               $22,128($sp)
                 sw               $21,124($sp)

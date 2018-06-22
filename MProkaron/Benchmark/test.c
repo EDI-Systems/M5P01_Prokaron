@@ -105,7 +105,6 @@ void Test_Yield_2(void)
         Total+=(tim_t)(End-Start);
     };
 }
-
 void Test_Mail_2(void)
 {
     ptr_t Data;
@@ -116,7 +115,7 @@ void Test_Mail_2(void)
         /* Read counter here */
         End=COUNTER_READ();
         Total+=(tim_t)(End-Start);
-    };
+    }
 }
 
 void Test_Sem_2(void)
@@ -128,7 +127,7 @@ void Test_Sem_2(void)
         /* Read counter here */
         End=COUNTER_READ();
         Total+=(tim_t)(End-Start);
-    };
+    }
 }
 
 void Test_Mail_ISR(void)
@@ -141,7 +140,7 @@ void Test_Mail_ISR(void)
         /* Read counter here */
         End=COUNTER_READ();
         Total+=(tim_t)(End-Start);
-    };
+    }
 }
 
 void Test_Sem_ISR(void)
@@ -153,7 +152,7 @@ void Test_Sem_ISR(void)
         /* Read counter here */
         End=COUNTER_READ();
         Total+=(tim_t)(End-Start);
-    };
+    }
 }
 
 #ifdef TEST_MEM_POOL
@@ -369,6 +368,7 @@ void Test_Set_1(ptr_t Param)
 /* The second test set - semaphore pending and timing */
 void Test_Set_2(ptr_t Param)
 {
+	volatile ptr_t Middle;
     switch(Param)
     {
         case 0:

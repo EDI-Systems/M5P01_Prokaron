@@ -164,10 +164,11 @@ Click **[HERE](README.md)** for English version.
 |Cortex-R4    |TI CCS7       |15.1 |1.42|281  |458  |406  |424     |368    |274  |
 |Cortex-R5    |TI CCS7       |18.2 |3.72|305  |471  |426  |472     |432    |267  |
 |MIPS M14k    |XC32-GCC      |17.2 |2.46|264  |358  |340  |421     |415    |213  |
+|RV32IMAC     |GCC           |2.24 |2.89|261  |585  |506  |~800**  |~800** |N/A  |
 |X86-LINUX    |GCC           |N/A  |N/A |33000|35000|33000|35000   |33000  |136  |
 
 *作为对比，RT-Linux 4.12在Cortex-M7上的最好线程切换时间是25000时钟周期。这是使用futex测得的；如使用其他IPC如管道等，则结果更差。
-
+**该值仅供参考；评估所使用的器件依赖于SPI Flash来运行代码，有时候一个指令缓存落空就会导致45000周期的延迟。传统上，依赖于外部SPI Flash的器件在做测量时需要很大的内部内存来运行这些代码，但是该器件没有如此多的内存可供使用。
 &emsp;&emsp;**Flash和SRAM消耗以kB计，其他数据以CPU指令周期计。这里列出的所有值都是典型（有意义的系统配置）值而非绝对意义上的最小值，因为纯技术层面的最小配置在实际工程中很少是真正有用的。HAL库所造成的额外存储器消耗也被计算在内。本系统的绝对最小值在1k ROM/0.5k RAM左右。**
 
 - MSP430平台使用MSP430FR5994进行评估。
@@ -180,6 +181,7 @@ Click **[HERE](README.md)** for English version.
 - Cortex-R4平台使用TMS570LS0432进行评估。
 - Cortex-R5平台使用TMS570LC4357进行评估。
 - MIPS M14k平台使用PIC32MZ2048EFM100进行评估。
+- RV32IMAC平台使用FE310-G000进行评估。
 - X86 Linux平台使用Ubuntu 16.04和i7-4820k @ 3.7GHz进行评估。
 
 &emsp;&emsp;所有的编译器优化选项都被设为最高（通常是-O3），而且时间优化选项也被打开。 
@@ -196,7 +198,6 @@ Click **[HERE](README.md)** for English version.
 |PIC24/33/dsPIC |常用16位单片机 |:star::star::star::star::star:|
 |RL78           |常用16位单片机 |:star::star::star:            |
 |TI C2000       |常用DSP架构   |:star::star:                  |
-|RISC-V         |新兴RISC架构  |:star::star::star::star:      |
 |MicroBlaze     |常用软核      |:star:                        |
 |NIOS II        |常用软核      |:star:                        |
 

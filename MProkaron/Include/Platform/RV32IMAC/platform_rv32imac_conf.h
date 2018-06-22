@@ -1,13 +1,13 @@
 /******************************************************************************
-Filename   : test.h
+Filename   : platform_rv32imac_conf.h
 Author     : pry
 Date       : 24/06/2017
 Licence    : LGPL v3+; see COPYING for details.
-Description: The configuration file for testing program.
+Description: The configuration file for RV32IMAC HAL.
 ******************************************************************************/
 
 /* Config Includes ***********************************************************/
-#include "Platform/test_FE310-G000.h"
+#include "Platform/RV32IMAC/Chips/FE310-G000/platform_FE310-G000.h"
 /* End Config Includes *******************************************************/
 
 /* End Of File ***************************************************************/
