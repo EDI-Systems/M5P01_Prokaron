@@ -164,9 +164,11 @@ This software is **triple-licensed**: it is either **[LGPL v3](LICENSE.md)** or 
 |Cortex-R4    |TI CCS7       |15.1 |1.42|281  |458  |406  |424     |368    |274  |
 |Cortex-R5    |TI CCS7       |18.2 |3.72|305  |471  |426  |472     |432    |267  |
 |MIPS M14k    |XC32-GCC      |17.2 |2.46|264  |358  |340  |421     |415    |213  |
+|RV32IMAC     |GCC           |2.24 |2.89|261  |585  |506  |~800**  |~800** |N/A  |
 |X86-LINUX    |GCC           |N/A  |N/A |33000|35000|33000|35000   |33000  |136  |
 
 *As a comparison, RT-Linux 4.12's best context switch time on Cortex-M7 is bigger than 25000 cycles. This is measured with futex; if other forms of IPC such as pipes are used, this time is even longer.
+**This is for reference only; the part used for evaluation relies on SPI Flash interface and can sometimes have a response time of 45000 cycles on a single miss. Conventionally external SPI-Flash based device need large internal memory to run their code from to make these measurements, however this part simply does not have that much memory.
 <!-- |MSP430       |GCC           |     |    |     |     |     |        |       |     | -->
 <!-- |RL78         |GCC           |     |    |     |     |     |        |       |     | -->
 <!-- |Cortex-M3    |GCC           |     |    |     |     |     |        |       |     | -->
@@ -187,6 +189,7 @@ This software is **triple-licensed**: it is either **[LGPL v3](LICENSE.md)** or 
 - Cortex-R4 is evaluated with TMS570LS0432.
 - Cortex-R5 is evaluated with TMS570LC4357.
 - MIPS M14k is evaluated with PIC32MZ2048EFM100.
+- RV32IMAC is evaluated with FE310-G000.
 - X86 Linux is evaluated with Ubuntu 16.04 on i7-4820k @ 3.7GHz.
 
 &ensp;&ensp;&ensp;&ensp;All compiler options are the highest optimization (usually -O3) and optimized for time. 
@@ -203,7 +206,6 @@ This software is **triple-licensed**: it is either **[LGPL v3](LICENSE.md)** or 
 |PIC24/33/dsPIC |Largely used 16-bit MCU|:star::star::star::star::star:|
 |RL78           |Largely used 16-bit MCU|:star::star::star:            |
 |TI C2000       |Largely used DSP       |:star::star:                  |
-|RISC-V         |New RISC architecture  |:star::star::star::star:      |
 |MicroBlaze     |Largely used soft core |:star:                        |
 |NIOS II        |Largely used soft core |:star:                        |
 

@@ -115,7 +115,7 @@ cnt_t RMP_Print_Int(cnt_t Int)
         /* How many digits are there? */
         Count=0;
         Div=1;
-        Iter=-Int;
+        Iter=(ptr_t)(-Int);
         while(Iter!=0)
         {
             Iter/=10;
@@ -713,7 +713,7 @@ void _RMP_Clr_Rdy(volatile struct RMP_Thd* Thread)
         else
             RMP_COVERAGE_MARKER();
         
-        /* Insert this into the corresponding runqueue */
+        /* Delete this from the corresponding runqueue */
         RMP_List_Del(Thread->Run_Head.Prev,Thread->Run_Head.Next);
         
         /* If it is the current thread, request a context switch */
@@ -1336,7 +1336,7 @@ ret_t RMP_Thd_Snd_ISR(volatile struct RMP_Thd* Thread, ptr_t Data)
            (RMP_THD_STATE(Thread->State)==RMP_THD_RCVDLY))
         {
             RMP_COVERAGE_MARKER();
-            
+
             /* The receiver is blocked, wake it up and return the value */
             if(RMP_THD_STATE(Thread->State)==RMP_THD_RCVDLY)
             {
@@ -1347,8 +1347,10 @@ ret_t RMP_Thd_Snd_ISR(volatile struct RMP_Thd* Thread, ptr_t Data)
                 RMP_COVERAGE_MARKER();
             
             RMP_THD_STATE_SET(Thread->State,RMP_THD_RUNNING);
+
             /* Set to running if not suspended */
             _RMP_Set_Rdy(Thread);
+
             /* If schedule pending, trigger it now because we are in ISR */
             if(RMP_Sched_Pend!=0)
             {

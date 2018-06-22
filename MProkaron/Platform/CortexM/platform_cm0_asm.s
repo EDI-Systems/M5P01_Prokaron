@@ -111,6 +111,9 @@ $Label.Skip
                 
                 ;Always 21 instructions no matter what
 RMP_MSB_Get
+                ;See if the word passed in is zero. In this case, we return -1.
+                CMP             R0,#0
+                BEQ             ZERO
                 MOVS            R1,R0
                 MOVS            R0,#0
 HEX             CHECK_BITS      16
@@ -118,10 +121,9 @@ OCT             CHECK_BITS      8
 QUAD            CHECK_BITS      4
 BIN             CHECK_BITS      2
 ONE             CHECK_BITS      1
-                
-                ;CLZ             R1,R0
-                ;MOVS            R0,#31
-                ;SUBS            R0,R1
+                BX              LR
+ZERO
+                SUB             R0,#1
                 BX              LR
 ;/* End Function:RMP_MSB_Get *************************************************/
 
