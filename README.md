@@ -168,7 +168,7 @@ This software is **triple-licensed**: it is either **[LGPL v3](LICENSE.md)** or 
 |X86-LINUX    |GCC           |N/A  |N/A |33000|35000|33000|35000   |33000  |136  |
 
 *As a comparison, RT-Linux 4.12's best context switch time on Cortex-M7 is bigger than 25000 cycles. This is measured with futex; if other forms of IPC such as pipes are used, this time is even longer.  
-**This is for reference only; the part used for evaluation relies on SPI Flash interface and can sometimes have a response time of 45000 cycles on a single miss. Conventionally external SPI-Flash based device need large internal memory to run their code from to make these measurements, however this part simply does not have that much memory.
+**This is for reference only; the part used for evaluation relies on SPI Flash interface and can sometimes have a response time of 45000 cycles on a single instruction cache miss. Conventionally external SPI-Flash based device need large internal memory to run their code from to make these measurements, however this part simply does not have that much memory.
 <!-- |MSP430       |GCC           |     |    |     |     |     |        |       |     | -->
 <!-- |RL78         |GCC           |     |    |     |     |     |        |       |     | -->
 <!-- |Cortex-M3    |GCC           |     |    |     |     |     |        |       |     | -->
