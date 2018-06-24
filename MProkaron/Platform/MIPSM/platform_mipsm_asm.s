@@ -49,205 +49,211 @@ R31    $ra        return address (used by function call)
 ******************************************************************************/
     
 /* Begin Header **************************************************************/
-                .text
-                .align 4
+    .text
+    .align 4
 /* End Header ****************************************************************/
 
 /* Begin Exports *************************************************************/
-                /* Disable all interrupts */
-                .global          RMP_Disable_Int      
-                /* Enable all interrupts */        
-                .global          RMP_Enable_Int   
-                /* Get the MSB */
-                .global          RMP_MSB_Get
-                /* Start the first thread */
-                .global          _RMP_Start
-                /* The context switch trigger */
-                .global          _RMP_Yield
-                /* The system pending service routine */
-                .global          PendSV_Handler 
-                /* The systick timer routine */
-                .global          SysTick_Handler
-                /* Set timer overflow value */
-                .global          _RMP_Set_Timer
+    /* Disable all interrupts */
+    .global             RMP_Disable_Int      
+    /* Enable all interrupts */        
+    .global             RMP_Enable_Int   
+    /* Get the MSB */
+    .global             RMP_MSB_Get
+    /* Start the first thread */
+    .global             _RMP_Start
+    /* The context switch trigger */
+    .global             _RMP_Yield
+    /* The system pending service routine */
+    .global             PendSV_Handler 
+    /* The systick timer routine */
+    .global             SysTick_Handler
+    /* Set timer overflow value */
+    .global             _RMP_Set_Timer
 /* End Exports ***************************************************************/
 
 /* Begin Imports *************************************************************/
-                /* The real task switch handling function */
-                .extern         _RMP_Get_High_Rdy 
-                /* The real systick handler function */
-                .extern          _RMP_Tick_Handler
-                /* The PID of the current thread */
-                .extern          RMP_Cur_Thd
-                /* The stack address of current thread */
-                .extern          RMP_Cur_SP
-                /* Save and load extra contexts, such as FPU, peripherals and MPU */
-                .extern          RMP_Save_Ctx
-                .extern          RMP_Load_Ctx
-                /* The place where we store the kernel gp/sp value */
-                .extern          RMP_GP_Val
-                .extern          RMP_SP_Val
-                /* The interrupt nesting value */
-                .extern          RMP_Int_Nest
-                /* Clear timer & software interrupt flags */
-                .extern          _RMP_Clear_Soft_Flag
-                .extern          _RMP_Clear_Timer_Flag
+    /* The real task switch handling function */
+    .extern             _RMP_Get_High_Rdy 
+    /* The real systick handler function */
+    .extern             _RMP_Tick_Handler
+    /* The PID of the current thread */
+    .extern             RMP_Cur_Thd
+    /* The stack address of current thread */
+    .extern             RMP_Cur_SP
+    /* Save and load extra contexts, such as FPU, peripherals and MPU */
+    .extern             RMP_Save_Ctx
+    .extern             RMP_Load_Ctx
+    /* The place where we store the kernel gp/sp value */
+    .extern             RMP_GP_Val
+    .extern             RMP_SP_Val
+    /* The interrupt nesting value */
+    .extern             RMP_Int_Nest
+    /* Clear timer & software interrupt flags */
+    .extern             _RMP_Clear_Soft_Flag
+    .extern             _RMP_Clear_Timer_Flag
 /* End Imports ***************************************************************/
 
 /* Begin Macros **************************************************************/
-                .equ             CP0_COUNT,$9
-                .equ             CP0_COMPARE,$11
-                .equ             CP0_STATUS,$12
-                .equ             CP0_CAUSE,$13
-                .equ             CP0_EPC,$14
-                .equ             CTX_SIZE,136
-                .equ             CORE_SW0,0x100
-/* Interrupt context - this is for generic support. These interrupts should not use DSP & FPU */
+    .equ                CP0_COUNT,$9
+    .equ                CP0_COMPARE,$11
+    .equ                CP0_STATUS,$12
+    .equ                CP0_CAUSE,$13
+    .equ                CP0_EPC,$14
+    .equ                CTX_SIZE,136
+    .equ                CORE_SW0,0x100
+    /* Interrupt context saving. These interrupts should not use DSP & FPU */
 .macro	SAVE_CONTEXT
-                /* Make room for the context */
-                addiu            $sp,$sp,-CTX_SIZE
-                /* Save 4 regs first so that we can enable interrupts as soon as possible */
-                sw               $23,132($sp)
-                sw               $22,128($sp)
-                sw               $21,124($sp)
-                sw               $20,120($sp)
-                /* Increase interrupt nesting count */
-                lui              $23,%hi(RMP_Int_Nest)
-                ori              $23,$23,%lo(RMP_Int_Nest)
-                lw               $22,($23)
-                nop
-                addiu            $21,$22,1
-                sw               $21,($23)
-                /* Branch taken when already in system stack */
-                bne              $22,$0,1f 
-                nop
-                /* Need to save the old sp first */
-                lui              $23,%hi(RMP_Old_SP_Val)
-                ori              $23,$23,%lo(RMP_Old_SP_Val)
-                sw               $sp,($23)
-                move             $20,$sp
-                /* We need to swap to system stack for execution */
-                lui              $23,%hi(RMP_SP_Val)
-                ori              $23,$23,%lo(RMP_SP_Val)
-                lw               $sp,($23)
-                b                2f
-                nop
-1:              move             $20,$sp
-                /* Save all status registers, except for CAUSE */
-2:              mfc0             $23,CP0_EPC
-                mfc0             $22,CP0_CAUSE
-	            mfc0             $21,CP0_STATUS
-                sw               $23,116($20)
-                sw               $21,112($20)
-                /* Now we reenable interrupts */
-                ins              $21,$0,1,15             /* Clear IPL, UM, ERL, EXL from STATUS */
-                ext              $23,$22,10,6            /* Extract RIPL from CAUSE */
-                ins              $21,$23,10,6            /* Set current IPL */
-                mtc0             $21,CP0_STATUS          /* Write status back */
-                /* Save mutiply/divide registers */
-                mfhi             $23
-                mflo             $22
-                sw               $23,108($20)
-                sw               $22,104($20)
-                /* Save "kernel only" registers - we do not expect the user to abide by the rule */
-                sw               $28,100($20)
-                sw               $27,96($20)
-                sw               $26,92($20)
-                /* Save everything else */
-                sw               $31,88($20)
-                sw               $30,84($20)
-                sw               $25,80($20)
-                sw               $24,76($20)
-                sw               $19,72($20)
-                sw               $18,68($20)
-                sw               $17,64($20)
-                sw               $16,60($20)
-                sw               $15,56($20)
-                sw               $14,52($20)
-                sw               $13,48($20)
-                sw               $12,44($20)
-                sw               $11,40($20)
-                sw               $10,36($20)
-                sw               $9,32($20)
-                sw               $8,28($20)
-                sw               $7,24($20)
-                sw               $6,20($20)
-                sw               $5,16($20)
-                sw               $4,12($20)
-                sw               $3,8($20)
-                sw               $2,4($20)
-                sw               $1,0($20)
+    /* Make room for the context */
+    ADDIU               $sp,$sp,-CTX_SIZE
+    /* Save 4 regs first so that we can enable interrupts as soon as possible */
+    SW                  $23,132($sp)
+    SW                  $22,128($sp)
+    SW                  $21,124($sp)
+    SW                  $20,120($sp)
+    /* Increase interrupt nesting count */
+    LUI                 $23,%hi(RMP_Int_Nest)
+    ORI                 $23,$23,%lo(RMP_Int_Nest)
+    LW                  $22,($23)
+    NOP
+    ADDIU               $21,$22,1
+    SW                  $21,($23)
+    /* Temporarily save current stack */
+    MOVE                $20,$sp
+    /* Branch taken when already in system stack */
+    BNE                 $22,$0,1f 
+    NOP
+    /* Need to save the old sp first, then switch to system stack to continue execution */
+    LUI                 $23,%hi(RMP_Cur_SP)
+    ORI                 $23,$23,%lo(RMP_Cur_SP)
+    SW                  $sp,($23)
+    /* We need to swap to system stack for execution */
+    LUI                 $23,%hi(RMP_SP_Val)
+    ORI                 $23,$23,%lo(RMP_SP_Val)
+    LW                  $sp,($23)
+    /* Save all status registers, except for CAUSE */
+1:  MFC0                $23,CP0_EPC
+    MFC0                $22,CP0_CAUSE
+    MFC0                $21,CP0_STATUS
+    SW                  $23,116($20)
+    SW                  $21,112($20)
+    /* Now we reenable interrupts */
+    INS                 $21,$0,1,15                 /* Clear IPL, UM, ERL, EXL from STATUS */
+    EXT                 $23,$22,10,6                /* Extract RIPL from CAUSE */
+    INS                 $21,$23,10,6                /* Set current IPL */
+    MTC0                $21,CP0_STATUS              /* Write status back */
+    /* Save mutiply/divide registers */
+    MFHI                $23
+    MFLO                $22
+    SW                  $23,108($20)
+    SW                  $22,104($20)
+    /* Save "kernel only" registers - we do not expect the user to abide by the rule */
+    SW                  $28,100($20)
+    SW                  $27,96($20)
+    SW                  $26,92($20)
+    /* Save everything else */
+    SW                  $31,88($20)
+    SW                  $30,84($20)
+    SW                  $25,80($20)
+    SW                  $24,76($20)
+    SW                  $19,72($20)
+    SW                  $18,68($20)
+    SW                  $17,64($20)
+    SW                  $16,60($20)
+    SW                  $15,56($20)
+    SW                  $14,52($20)
+    SW                  $13,48($20)
+    SW                  $12,44($20)
+    SW                  $11,40($20)
+    SW                  $10,36($20)
+    SW                  $9,32($20)
+    SW                  $8,28($20)
+    SW                  $7,24($20)
+    SW                  $6,20($20)
+    SW                  $5,16($20)
+    SW                  $4,12($20)
+    SW                  $3,8($20)
+    SW                  $2,4($20)
+    SW                  $1,0($20)
+    /* Load kernel GP for kernel execution */
+    LUI                 $gp,%hi(RMP_GP_Val)
+    ORI                 $gp,$gp,%lo(RMP_GP_Val)
+    LW                  $gp,($gp)
 .endm
                 
-                /* Context restoring */
+    /* Context restoring */
 .macro LOAD_CONTEXT
-                /* Protect access to c0 registers */
-                di
-                ehb
-                /* Decrease interrupt nesting count */
-                lui              $23,%hi(RMP_Int_Nest)
-                ori              $23,$23,%lo(RMP_Int_Nest)
-                lw               $22,($23)
-                nop
-                addiu            $21,$22,-1
-                sw               $21,($23)
-                /* Branch taken when going to return to user stack */
-                bne              $21,$0,1f 
-                nop
-                /* Need to load back the old sp */
-                lui              $23,%hi(RMP_Old_SP_Val)
-                ori              $23,$23,%lo(RMP_Old_SP_Val)
-                lw               $sp,($23)
-                nop
-1:              move             $20,$sp
-                /* Restore all status registers, except for CAUSE */
-                lw               $21,112($20)
-                lw               $23,116($20)
-                mtc0             $23,CP0_EPC
-                /* Make sure status is recovered at last */
-	            mtc0             $21,CP0_STATUS
-                /* Restore everything else */
-                lw               $1,0($20)
-                lw               $2,4($20)
-                lw               $3,8($20)
-                lw               $4,12($20)
-                lw               $5,16($20)
-                lw               $6,20($20)
-                lw               $7,24($20)
-                lw               $8,28($20)
-                lw               $9,32($20)
-                lw               $10,36($20)
-                lw               $11,40($20)
-                lw               $12,44($20)
-                lw               $13,48($20)
-                lw               $14,52($20)
-                lw               $15,56($20)
-                lw               $16,60($20)
-                lw               $17,64($20)
-                lw               $18,68($20)
-                lw               $19,72($20)
-                lw               $24,76($20)
-                lw               $25,80($20)
-                lw               $30,84($20)
-                lw               $31,88($20)
-                /* Restore "kernel only" registers */
-                lw               $26,92($20)
-                lw               $27,96($20)
-                lw               $28,100($20)
-                /* Restore mutiply/divide registers */
-                lw               $22,104($20)
-                lw               $23,108($20)
-                mtlo             $22
-                mthi             $23
-                /* Restore four temporary regs */
-                lw               $20,120($sp)
-                lw               $21,124($sp)
-                lw               $22,128($sp)
-                lw               $23,132($sp)
-                /* Restore the SP */
-                addiu            $sp,$sp,CTX_SIZE
-                eret
-                nop
+    /* Protect access to c0 registers */
+    DI
+    EHB
+    /* Decrease interrupt nesting count */
+    LUI                 $23,%hi(RMP_Int_Nest)
+    ORI                 $23,$23,%lo(RMP_Int_Nest)
+    LW                  $22,($23)
+    NOP
+    ADDIU               $21,$22,-1
+    SW                  $21,($23)
+    /* Branch taken when going to return to user stack */
+    BNE                 $21,$0,1f 
+    NOP
+    /* Need to load back the old sp */
+    LUI                 $23,%hi(RMP_Cur_SP)
+    ORI                 $23,$23,%lo(RMP_Cur_SP)
+    LW                  $sp,($23)
+    NOP
+1:  MOVE                $20,$sp
+    /* Restore all status registers, except for CAUSE */
+    LW                  $21,112($20)
+    LW                  $23,116($20)
+    MTC0                $23,CP0_EPC
+    /* Interrupts NOT enabled by this status restoration. This is because the EXL
+     * bit is present when the interrupt comes in, and we saved it before we clear.
+     * it out. We also set EXL in the task initialization, and all this will keep
+     * the interrupt disabled when we are exiting the context restoration section.
+     * READ THE COMMENT ABOVE BEFORE REPORTING IT AS A BUG! */
+    MTC0                $21,CP0_STATUS
+    /* Restore everything else */
+    LW                  $1,0($20)
+    LW                  $2,4($20)
+    LW                  $3,8($20)
+    LW                  $4,12($20)
+    LW                  $5,16($20)
+    LW                  $6,20($20)
+    LW                  $7,24($20)
+    LW                  $8,28($20)
+    LW                  $9,32($20)
+    LW                  $10,36($20)
+    LW                  $11,40($20)
+    LW                  $12,44($20)
+    LW                  $13,48($20)
+    LW                  $14,52($20)
+    LW                  $15,56($20)
+    LW                  $16,60($20)
+    LW                  $17,64($20)
+    LW                  $18,68($20)
+    LW                  $19,72($20)
+    LW                  $24,76($20)
+    LW                  $25,80($20)
+    LW                  $30,84($20)
+    LW                  $31,88($20)
+    /* Restore "kernel only" registers */
+    LW                  $26,92($20)
+    LW                  $27,96($20)
+    LW                  $28,100($20)
+    /* Restore mutiply/divide registers */
+    LW                  $22,104($20)
+    LW                  $23,108($20)
+    MTLO                $22
+    MTHI                $23
+    /* Restore four temporary regs */
+    LW                  $20,120($sp)
+    LW                  $21,124($sp)
+    LW                  $22,128($sp)
+    LW                  $23,132($sp)
+    /* Restore the SP */
+    ADDIU               $sp,$sp,CTX_SIZE
+    ERET
+    NOP
 .endm
 /* End Macros ****************************************************************/
 
@@ -257,17 +263,17 @@ Input          : None.
 Output         : None.    
 Register Usage : None.                                  
 ******************************************************************************/
-               	.set             nomips16
-                .set             nomicromips
-                .set             noreorder
-                .set             noat
-                .ent             RMP_Disable_Int
+    .set                nomips16
+    .set                nomicromips
+    .set                noreorder
+    .set                noat
+    .ent                RMP_Disable_Int
 RMP_Disable_Int:
-                /* Disable all interrupts */
-                di
-                jr               $ra
-                nop
-                .end             RMP_Disable_Int
+    /* Disable all interrupts */
+    DI
+    JR                  $ra
+    NOP
+    .end                RMP_Disable_Int
 /* End Function:RMP_Disable_Int **********************************************/
 
 /* Begin Function:RMP_Enable_Int **********************************************
@@ -276,17 +282,17 @@ Input          : None.
 Output         : None.    
 Register Usage : None.                                  
 ******************************************************************************/
-               	.set             nomips16
-                .set             nomicromips
-                .set             noreorder
-                .set             noat
-                .ent             RMP_Enable_Int
+    .set                nomips16
+    .set                nomicromips
+    .set                noreorder
+    .set                noat
+    .ent                RMP_Enable_Int
 RMP_Enable_Int:
-                /* Enable all interrupts */
-                ei
-                jr               $ra
-                nop
-                .end             RMP_Enable_Int
+    /* Enable all interrupts */
+    EI
+    JR                  $ra
+    NOP
+    .end                RMP_Enable_Int
 /* End Function:RMP_Enable_Int ***********************************************/
 
 /* Begin Function:_RMP_Set_Timer **********************************************
@@ -295,18 +301,18 @@ Input          : $a0 - Timer overflow value.
 Output         : None.    
 Register Usage : None.                                  
 ******************************************************************************/
-               	.set             nomips16
-                .set             nomicromips
-                .set             noreorder
-                .set             noat
-                .ent             _RMP_Set_Timer
+    .set                nomips16
+    .set                nomicromips
+    .set                noreorder
+    .set                noat
+    .ent                _RMP_Set_Timer
 _RMP_Set_Timer:
-                mtc0             $a0,CP0_COMPARE
-                li               $a0,0
-                mtc0             $a0,CP0_COUNT
-                jr               $ra
-                nop
-                .end             _RMP_Set_Timer
+    MTC0                $a0,CP0_COMPARE
+    LI                  $a0,0
+    MTC0                $a0,CP0_COUNT
+    JR                  $ra
+    NOP
+    .end                _RMP_Set_Timer
 /* End Function:_RMP_Set_Timer ***********************************************/
 
 /* Begin Function:RMP_MSB_Get *************************************************
@@ -316,18 +322,18 @@ Output         : None.
 Return         : ptr_t - The MSB position.   
 Register Usage : None. 
 ******************************************************************************/
-               	.set             nomips16
-                .set             nomicromips
-                .set             noreorder
-                .set             noat
-                .ent             RMP_MSB_Get
+    .set                nomips16
+    .set                nomicromips
+    .set                noreorder
+    .set                noat
+    .ent                RMP_MSB_Get
 RMP_MSB_Get:
-                clz              $a0,$a0
-                li               $v0,31
-                sub              $v0,$a0
-                jr               $ra
-                nop
-                .end             RMP_MSB_Get
+    CLZ                 $a0,$a0
+    LI                  $v0,31
+    SUB                 $v0,$a0
+    JR                  $ra
+    NOP
+    .end                RMP_MSB_Get
 /* End Function:RMP_MSB_Get **************************************************/
 
 /* Begin Function:_RMP_Yield **************************************************
@@ -335,48 +341,49 @@ Description : Trigger a yield to another thread.
 Input       : None.
 Output      : None.                                      
 ******************************************************************************/
-               	.set             nomips16
-                .set             nomicromips
-                .set             noreorder
-                .set             noat
-                .ent             _RMP_Yield
+    .set                nomips16
+    .set                nomicromips
+    .set                noreorder
+    .set                noat
+    .ent                _RMP_Yield
 _RMP_Yield:
-                /* Get the cause for this */
-                mfc0             $t0,$13
-                or               $t0,CORE_SW0
-                /* Now write back to trigger the software interrupt */
-                mtc0             $t0,$13
-                jr               $ra
-                nop
-                .end             _RMP_Yield                                           
+    /* Get the cause for this */
+    MFC0                $t0,$13
+    OR                  $t0,CORE_SW0
+    /* Now write back to trigger the software interrupt */
+    MTC0                $t0,$13
+    JR                  $ra
+    NOP
+    .end                _RMP_Yield                                           
 /* End Function:_RMP_Yield ***************************************************/
 
 /* Begin Function:_RMP_Start **************************************************
 Description : Jump to the user function and will never return from it.
-Input       : R0 - The address to branch to.
-               R1 - The stack to use.
+Input       : $a0 - The address to branch to.
+              $a1 - The stack to use.
 Output      : None.
 ******************************************************************************/
-               	.set             nomips16
-                .set             nomicromips
-                .set             noreorder
-                .set             noat
-                .ent             _RMP_Start
+    .set                nomips16
+    .set                nomicromips
+    .set                noreorder
+    .set                noat
+    .ent                _RMP_Start
 _RMP_Start:
-                lui              $a2,%hi(RMP_SP_Val)          /* Store the SP to a global */
-                ori              $a2,$a2,%lo(RMP_SP_Val)
-                sw               $sp,($a2)
+    LUI                 $a2,%hi(RMP_SP_Val)         /* Store the SP to a global */
+    ORI                 $a2,$a2,%lo(RMP_SP_Val)
+    SW                  $sp,($a2)
                 
-                lui              $a2,%hi(RMP_GP_Val)          /* Store the GP to a global */
-                ori              $a2,$a2,%lo(RMP_GP_Val)
-                sw               $gp,($a2)
+    LUI                 $a2,%hi(RMP_GP_Val)         /* Store the GP to a global */
+    ORI                 $a2,$a2,%lo(RMP_GP_Val)
+    SW                  $gp,($a2)
                 
-                sub              $sp,$a1,128                  /* Set the new SP */
-                jal              $a0                          /* Branch to target */
-                nop
-__Loop:         j                __Loop                       /* Dead loop to capture faults */
-                nop
-                .end             _RMP_Start
+    SUB                 $sp,$a1,128                 /* Set the new SP */
+    JAL                 $a0                         /* Branch to target */
+    NOP
+__Loop: 
+    J                   __Loop                      /* Dead loop to capture faults */
+    NOP
+    .end                _RMP_Start
 /* End Function:_RMP_Start ***************************************************/
 
 /* Begin Function:PendSV_Handler **********************************************
@@ -387,175 +394,43 @@ Description : The PendSV interrupt routine. In fact, it will call a C function
               can make way around this problem.
               However, if your compiler support inline assembly functions, this
               can also be written in C.
+              This vector is at the bottom of all priority levels, thus we can use
+              a customized prologue and epilogue; However, we don't do this here for
+              maintenance reasons. A fully customized one can get you 9 cycles faster.
 Input       : None.
 Output      : None.                                      
 ******************************************************************************/
-               	.set             nomips16
-                .set             nomicromips
-                .set             noreorder
-                .set             noat
-                .equ             __vector_dispatch_1,PendSV_Handler
-                .global          __vector_dispatch_1
-                .section         .vector_1,code
-                .ent             PendSV_Handler
+    .set                nomips16
+    .set                nomicromips
+    .set                noreorder
+    .set                noat
+    .equ                __vector_dispatch_1,PendSV_Handler
+    .global             __vector_dispatch_1
+    .section            .vector_1,code
+    .ent                PendSV_Handler
 PendSV_Handler:
-                /* Make room for the context */
-                addiu            $sp,$sp,-CTX_SIZE
-                /* Save three regs first so that we can enable interrupts as soon as possible */
-                sw               $23,132($sp)
-                sw               $22,128($sp)
-                sw               $21,124($sp)
-                sw               $20,120($sp)
-                /* Increase interrupt nesting count */
-                lui              $23,%hi(RMP_Int_Nest)
-                ori              $23,$23,%lo(RMP_Int_Nest)
-                lw               $22,($23)
-                nop
-                addiu            $21,$22,1
-                sw               $21,($23)
-                /* We always need to swap to system stack for execution */
-                lui              $23,%hi(RMP_SP_Val)
-                ori              $23,$23,%lo(RMP_SP_Val)
-                move             $20,$sp
-                lw               $sp,($23)
-                /* Save all status registers, except for CAUSE */
-                mfc0             $23,CP0_EPC
-                mfc0             $22,CP0_CAUSE
-	            mfc0             $21,CP0_STATUS
-                sw               $23,116($20)
-                sw               $21,112($20)
-                /* Clear the software interrupt in the core */
-                mfc0             $22,CP0_CAUSE
-                ins              $22,$0,8,1
-                mtc0             $22,CP0_CAUSE
-                ehb
-                /* Now we reenable interrupts */
-                ins              $21,$0,1,15             /* Clear IPL, UM, ERL, EXL from STATUS */
-                ext              $23,$22,10,6            /* Extract RIPL from CAUSE */
-                ins              $21,$23,10,6            /* Set current IPL */
-                mtc0             $21,CP0_STATUS          /* Write status back */
-                ehb
-                /* Save mutiply/divide registers */
-                mfhi             $23
-                mflo             $22
-                sw               $23,108($20)
-                sw               $22,104($20)
-                /* Save "kernel only" registers - we do not expect the user to abide by the rule */
-                sw               $28,100($20)
-                sw               $27,96($20)
-                sw               $26,92($20)
-                /* Save everything else */
-                sw               $31,88($20)
-                sw               $30,84($20)
-                sw               $25,80($20)
-                sw               $24,76($20)
-                sw               $19,72($20)
-                sw               $18,68($20)
-                sw               $17,64($20)
-                sw               $16,60($20)
-                sw               $15,56($20)
-                sw               $14,52($20)
-                sw               $13,48($20)
-                sw               $12,44($20)
-                sw               $11,40($20)
-                sw               $10,36($20)
-                sw               $9,32($20)
-                sw               $8,28($20)
-                sw               $7,24($20)
-                sw               $6,20($20)
-                sw               $5,16($20)
-                sw               $4,12($20)
-                sw               $3,8($20)
-                sw               $2,4($20)
-                sw               $1,0($20)
+    SAVE_CONTEXT
+    
+    /* Clear the software interrupt in the core */
+    MFC0                $22,CP0_CAUSE
+    INS                 $22,$0,8,1
+    MTC0                $22,CP0_CAUSE
+    EHB
+    /* Save extra registers */
+    JAL                 RMP_Save_Ctx
+    NOP
+    /* Get the highest priority ready task */
+    JAL                 _RMP_Get_High_Rdy
+    NOP
+    /* Restore extra registers */
+    JAL                 RMP_Load_Ctx
+    NOP
+    /* Clear the interrupt flag in the chip's interrupt controller */
+    JAL                 _RMP_Clear_Soft_Flag
+    NOP
                 
-                /* Save the SP to control block */
-                lui              $a0,%hi(RMP_Cur_SP)
-                ori              $a0,$a0,%lo(RMP_Cur_SP)
-                sw               $20,($a0)
-                /* Now load our own gp for system use */
-                lui              $gp,%hi(RMP_GP_Val)
-                ori              $gp,$gp,%lo(RMP_GP_Val)
-                lw               $gp,($gp)
-                /* Save extra registers */
-                jal              RMP_Save_Ctx
-                nop
-                /* Get the highest priority ready task */
-                jal              _RMP_Get_High_Rdy
-                nop
-                /* Restore extra registers */
-                jal              RMP_Load_Ctx
-                nop
-                /* Load the SP from control block */
-                lui              $a0,%hi(RMP_Cur_SP)
-                ori              $a0,$a0, %lo(RMP_Cur_SP)
-                lw               $20,($a0)
-                nop
-                /* Clear the interrupt flag */
-                jal              _RMP_Clear_Soft_Flag
-                nop
-                
-                /* Restore everything else */
-                lw               $1,0($20)
-                lw               $2,4($20)
-                lw               $3,8($20)
-                lw               $4,12($20)
-                lw               $5,16($20)
-                lw               $6,20($20)
-                lw               $7,24($20)
-                lw               $8,28($20)
-                lw               $9,32($20)
-                lw               $10,36($20)
-                lw               $11,40($20)
-                lw               $12,44($20)
-                lw               $13,48($20)
-                lw               $14,52($20)
-                lw               $15,56($20)
-                lw               $16,60($20)
-                lw               $17,64($20)
-                lw               $18,68($20)
-                lw               $19,72($20)
-                lw               $24,76($20)
-                lw               $25,80($20)
-                lw               $30,84($20)
-                lw               $31,88($20)
-                /* Restore "kernel only" registers */
-                lw               $26,92($20)
-                lw               $27,96($20)
-                lw               $28,100($20)
-                /* Restore mutiply/divide registers */
-                lw               $22,104($20)
-                lw               $23,108($20)
-                mtlo             $22
-                mthi             $23
-                /* Protect access to c0 registers */
-                di
-                ehb
-                /* Switch back to the user stack */
-                move             $sp,$20
-                /* Decrease interrupt nesting count */
-                lui              $23,%hi(RMP_Int_Nest)
-                ori              $23,$23,%lo(RMP_Int_Nest)
-                lw               $22,($23)
-                nop
-                addiu            $21,$22,-1
-                sw               $21,($23)
-                /* Restore all status registers, except for CAUSE */
-                lw               $21,112($20)
-                lw               $23,116($20)
-                mtc0             $23,CP0_EPC
-                /* Make sure status is recovered at last */
-	            mtc0             $21,CP0_STATUS
-                /* Restore four temporary regs */
-                lw               $20,120($sp)
-                lw               $21,124($sp)
-                lw               $22,128($sp)
-                lw               $23,132($sp)
-                /* Restore the SP */
-                addiu            $sp,$sp,CTX_SIZE
-                eret
-                nop
-                .end             PendSV_Handler
+    LOAD_CONTEXT
+    .end                PendSV_Handler
 /* End Function:PendSV_Handler ***********************************************/
 
 /* Begin Function:SysTick_Handler *********************************************
@@ -566,30 +441,33 @@ Description : The SysTick interrupt routine. In fact, it will call a C function
               can make way around this problem.
               However, if your compiler support inline assembly functions, this
               can also be written in C.
+              This vector is at the bottom of all priority levels, thus we can use
+              a customized prologue and epilogue; However, we don't do this here for
+              maintenance reasons. A fully customized one can get you 9 cycles faster.
 Input       : None.
 Output      : None.                                      
 ******************************************************************************/
-               	.set             nomips16
-                .set             nomicromips
-                .set             noreorder
-                .set             noat
-                .equ             __vector_dispatch_0,SysTick_Handler
-                .global          __vector_dispatch_0
-                .section         .vector_0,code,keep
-                .ent             SysTick_Handler
+    .set                nomips16
+    .set                nomicromips
+    .set                noreorder
+    .set                noat
+    .equ                __vector_dispatch_0,SysTick_Handler
+    .global             __vector_dispatch_0
+    .section            .vector_0,code,keep
+    .ent                SysTick_Handler
 SysTick_Handler:
-                /* Note the system that we have entered an interrupt. We are not using tickless */
-                SAVE_CONTEXT
+    /* Note the system that we have entered an interrupt. We are not using tickless */
+    SAVE_CONTEXT
                 
-                li               $a0,1
-                jal              _RMP_Tick_Handler
-                nop
-                /* Clear the interrupt flag */
-                jal              _RMP_Clear_Timer_Flag
-                nop
+    LI                  $a0,1
+    JAL                 _RMP_Tick_Handler
+    NOP
+    /* Clear the interrupt flag */
+    JAL                 _RMP_Clear_Timer_Flag
+    NOP
                 
-                LOAD_CONTEXT
-                .end SysTick_Handler
+    LOAD_CONTEXT
+    .end SysTick_Handler
 /* End Function:SysTick_Handler **********************************************/
                 
 /* End Of File ***************************************************************/

@@ -163,7 +163,7 @@ This software is **triple-licensed**: it is either **[LGPL v3](LICENSE.md)** or 
 |Cortex-M7-RVM|Keil uVision 5|2.09 |2.29|1068 |1256 |1195 |884     |866    |176  |
 |Cortex-R4    |TI CCS7       |15.1 |1.42|281  |458  |406  |424     |368    |274  |
 |Cortex-R5    |TI CCS7       |18.2 |3.72|305  |471  |426  |472     |432    |267  |
-|MIPS M14k    |XC32-GCC      |17.2 |2.46|264  |358  |340  |421     |415    |213  |
+|MIPS M14k    |XC32-GCC      |17.2 |2.46|261  |381  |353  |424     |412    |211  |
 |RV32IMAC     |GCC           |2.24 |2.89|261  |585  |506  |~800**  |~800** |N/A  |
 |X86-LINUX    |GCC           |N/A  |N/A |33000|35000|33000|35000   |33000  |136  |
 
