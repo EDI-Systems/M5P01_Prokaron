@@ -7,7 +7,7 @@ Description: The configuration file for testing program.
 ******************************************************************************/
 
 /* Config Includes ***********************************************************/
-#include "Platform/test_PIC32MZ2048EFM100.h"
+#include "Platform/test_DSPIC33EP512MU810.h"
 /* End Config Includes *******************************************************/
 
 /* End Of File ***************************************************************/

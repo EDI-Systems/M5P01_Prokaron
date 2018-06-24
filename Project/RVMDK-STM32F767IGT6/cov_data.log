@@ -1,6 +1,6 @@
-﻿Yield: 261 cycles.
-Mailbox: 381 cycles.
-Semaphore: 353 cycles.
+﻿Yield: 263 cycles.
+Mailbox: 378 cycles.
+Semaphore: 358 cycles.
 Memory: 211 cycles.
-Mailbox-ISR: 424 cycles.
-Semaphore-ISR: 412 cycles.
+Mailbox-ISR: 430 cycles.
+Semaphore-ISR: 420 cycles.

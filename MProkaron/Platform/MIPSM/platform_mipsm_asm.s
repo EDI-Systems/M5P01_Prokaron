@@ -133,12 +133,20 @@ R31    $ra        return address (used by function call)
     LW                  $sp,($23)
     /* Save all status registers, except for CAUSE */
 1:  MFC0                $23,CP0_EPC
-    MFC0                $22,CP0_CAUSE
     MFC0                $21,CP0_STATUS
     SW                  $23,116($20)
     SW                  $21,112($20)
-    /* Now we reenable interrupts */
-    INS                 $21,$0,1,15                 /* Clear IPL, UM, ERL, EXL from STATUS */
+    /* See if it is safe to reenable interrupt on register popping. If yes, we 
+     * allow that by storing a new version of STATUS that does not have UM,ERL,EXL 
+     * bits set. This can only happen when this is already a nested interrupt (
+     * we are already on kernel stack so this is fine) */
+    BEQ                 $22,$0,2f
+    NOP
+    INS                 $21,$0,1,7                  /* Clear UM, ERL, EXL from STATUS */
+    SW                  $21,112($20)
+    /* Now we reenable interrupts - only IPL[10:15] is supported; IPL[17:16] kept at 0 */
+2:  INS                 $21,$0,1,15                 /* Clear IPL from STATUS */
+    MFC0                $22,CP0_CAUSE
     EXT                 $23,$22,10,6                /* Extract RIPL from CAUSE */
     INS                 $21,$23,10,6                /* Set current IPL */
     MTC0                $21,CP0_STATUS              /* Write status back */
@@ -206,10 +214,11 @@ R31    $ra        return address (used by function call)
     LW                  $21,112($20)
     LW                  $23,116($20)
     MTC0                $23,CP0_EPC
-    /* Interrupts NOT enabled by this status restoration. This is because the EXL
-     * bit is present when the interrupt comes in, and we saved it before we clear.
+    /* Interrupts NOT enabled by this status restoration if this is the last interrupt
+     * nesting level. This is because the EXL, etc. bit is present when the first
+     * interrupt comes in (but not in nested interrupts), and we saved it before we clear
      * it out. We also set EXL in the task initialization, and all this will keep
-     * the interrupt disabled when we are exiting the context restoration section.
+     * the interrupt disabled when we are exiting the last context restoration section.
      * READ THE COMMENT ABOVE BEFORE REPORTING IT AS A BUG! */
     MTC0                $21,CP0_STATUS
     /* Restore everything else */
