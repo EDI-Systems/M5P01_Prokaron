@@ -107,7 +107,7 @@ void _RMP_Stack_Init(ptr_t Entry, ptr_t Stack, ptr_t Arg)
     Stack_Ptr[26]=0x15151515;                                    /* LO */
     Stack_Ptr[27]=0x51515151;                                    /* HI */
 #endif
-    /* Status registers */
+    /* Status registers - The EXL prevents premature interrupt enabling */
     Stack_Ptr[28]=RMP_MIPSM_STATUS_IE|RMP_MIPSM_STATUS_EXL;     /* CP0_STATUS */
     Stack_Ptr[29]=Entry;                                        /* CP0_EPC */
 #if(RMP_MIPSM_INIT_EXTRA==RMP_TRUE)
