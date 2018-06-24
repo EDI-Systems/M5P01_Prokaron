@@ -102,16 +102,8 @@ typedef s32 ret_t;
 #define RMP_MIPSM_STATUS_FR         (0x04000000)  /* Enable 64 bit floating point registers */
 
 /* Bits within the CP0 CAUSE register */
-#define RMP_MIPSM_CAUSE_CORESW0     (0x00000100)  /*  */
-#define RMP_MIPSM_CAUSE_CORESW1     (0x00000200)  /*  */
-
-/* The EXL bit is set to ensure interrupts do not occur while the context of
-the first task is being restored. */
-#if ( __mips_hard_float == 1 )
-    #define portINITIAL_SR			( portIE_BIT | portEXL_BIT | portMX_BIT | portFR_BIT | portCU1_BIT )
-#else
-    #define portINITIAL_SR			( portIE_BIT | portEXL_BIT | portMX_BIT )
-#endif
+#define RMP_MIPSM_CAUSE_CORESW0     (0x00000100)
+#define RMP_MIPSM_CAUSE_CORESW1     (0x00000200)
 /*****************************************************************************/
 /* __PLATFORM_MIPSM_H_DEFS__ */
 #endif
@@ -175,9 +167,7 @@ the first task is being restored. */
 /*****************************************************************************/
 __EXTERN__ volatile ptr_t RMP_GP_Val;
 __EXTERN__ volatile ptr_t RMP_SP_Val;
-__EXTERN__ volatile ptr_t RMP_Old_SP_Val;
 __EXTERN__ volatile ptr_t RMP_Int_Nest;
-
 /*****************************************************************************/
 
 /* End Public Global Variables ***********************************************/

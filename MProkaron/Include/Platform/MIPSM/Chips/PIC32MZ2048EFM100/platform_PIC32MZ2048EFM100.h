@@ -65,7 +65,7 @@ do \
     U1MODE=0; \
     U1STAbits.UTXEN=1; \
     U1MODEbits.BRGH=1; \
-    U1BRG=86; /* Refer to datasheet for calculation */ \
+    U1BRG=86; /* 115200 - Refer to datasheet for calculation */ \
     /* RPD15 used as TX port */ \
     RPD15Rbits.RPD15R=1; \
     U1MODESET=(1<<15); \
