@@ -48,12 +48,6 @@ typedef unsigned char  u8;
 /* End Basic Types ***********************************************************/
 
 /* Begin Extended Types ******************************************************/
-#ifndef __TID_T__
-#define __TID_T__
-/* The typedef for the Thread ID */
-typedef s32 tid_t;
-#endif
-
 #ifndef __PTR_T__
 #define __PTR_T__
 /* The typedef for the pointers - This is the raw style. Pointers must be unsigned */
@@ -64,12 +58,6 @@ typedef u32 ptr_t;
 #define __CNT_T__
 /* The typedef for the count variables */
 typedef s32 cnt_t;
-#endif
-
-#ifndef __CID_T__
-#define __CID_T__
-/* The typedef for capability ID */
-typedef s32 cid_t;
 #endif
 
 #ifndef __RET_T__

@@ -249,8 +249,12 @@ struct RMP_Mem
     ptr_t FLI_Num;
     ptr_t Start;
     ptr_t Size;
-    /* The bitmap - in no case will the system manage more than 128MB of mmeory */
+    /* The bitmap - in no case will the system manage more than 128MB of memory */
+#if(RMP_WORD_ORDER==4)
+    ptr_t Bitmap[10];
+#else
     ptr_t Bitmap[5];
+#endif
     /* There are at least this number of levels - 16kB thus 8*8 */
     struct RMP_List Table[8*8];
 };

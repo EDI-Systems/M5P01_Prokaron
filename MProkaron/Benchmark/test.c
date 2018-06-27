@@ -16,8 +16,13 @@ Description : The performance testbench for RMP. Do not modify this file; what
 #ifndef MINIMAL_SIZE
 volatile tim_t Start=0;
 volatile tim_t End=0;
+#ifdef PTR_16_BIT
+volatile u32 Total=0;
+volatile u32 Temp=0;
+#else
 volatile ptr_t Total=0;
 volatile ptr_t Temp=0;
+#endif
 /* Test results also written here */
 volatile ptr_t Yield_Time=0;
 volatile ptr_t Mailbox_Time=0;
