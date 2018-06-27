@@ -67,26 +67,12 @@ Return      : None.
 ******************************************************************************/
 void RMP_Clear(volatile void* Addr, ptr_t Size)
 {
-    ptr_t* Word_Inc;
-    u8* Byte_Inc;
-    ptr_t Words;
-    ptr_t Bytes;
-    
-    /* On processors not that fast, copy by word is really important */
-    Word_Inc=(ptr_t*)Addr;
-    for(Words=Size/sizeof(ptr_t);Words>0;Words--)
-    {
-        *Word_Inc=0;
-        Word_Inc++;
-    }
-    
-    /* Get the final bytes */
-    Byte_Inc=(u8*)Word_Inc;
-    for(Bytes=Size%sizeof(ptr_t);Bytes>0;Bytes--)
-    {
-        *Byte_Inc=0;
-        Byte_Inc++;
-    }
+    u8* Ptr;
+    cnt_t Count;
+   
+    Ptr=(u8*)Addr;
+    for(Count=0;Count<Size;Count++)
+        Ptr[Count]=0;
 }
 /* End Function:RMP_Clear ****************************************************/
 
@@ -2001,7 +1987,7 @@ void RMP_Init(void)
 
 /* Begin Function:main ********************************************************
 Description : The entry of the operating system. This function is for 
-              compatibility with the ARM toolchain.
+              compatibility with the toolchains.
 Input       : None.
 Output      : None.
 Return      : int - This function never returns.
@@ -2093,11 +2079,13 @@ static const u8 RMP_RBIT_Table[256]=
 ptr_t RMP_RBIT_Get(ptr_t Val)
 {
     ptr_t Ret;
+    ptr_t Src;
     u8* To;
     u8* From;
     
+    Src=Val;
     To=(u8*)(&Ret);
-    From=(u8*)(&Val);
+    From=(u8*)(&Src);
     
 #if(RMP_WORD_ORDER==4)
     To[0]=RMP_RBIT_Table[From[1]];
@@ -2177,8 +2165,9 @@ ret_t RMP_Mem_Init(volatile void* Pool, ptr_t Size)
     volatile struct RMP_Mem* Mem;
     volatile struct RMP_Mem_Head* Mem_Head;
     
-    /* See if the memory pool is large enough to enable dynamic allocation - at least 4096 words */
-    if((Pool==0)||(Size<(4096*sizeof(ptr_t)))||((Size>>27)>0))
+    /* See if the memory pool is large enough to enable dynamic allocation - at
+     * least 4096 words and no more than 128MB */
+    if((Pool==0)||(Size<(4096*sizeof(ptr_t)))||(((Size>>15)>>12)>0))
     {
         RMP_COVERAGE_MARKER();
         return RMP_ERR_MEM;
@@ -2481,7 +2470,7 @@ void* RMP_Malloc(volatile void* Pool, ptr_t Size)
 
     /* Allocate and calculate if the space left could be big enough to be a new 
      * block. If so, we will put the block back into the TLSF table */
-    New_Size=(ptr_t)(Mem_Head->Tail)-((ptr_t)Mem_Head)-sizeof(struct RMP_Mem_Head)-Rounded_Size;
+    New_Size=((ptr_t)(Mem_Head->Tail))-((ptr_t)Mem_Head)-sizeof(struct RMP_Mem_Head)-Rounded_Size;
     if(New_Size>=(sizeof(struct RMP_Mem_Head)+64+sizeof(struct RMP_Mem_Tail)))
     {
         RMP_COVERAGE_MARKER();
