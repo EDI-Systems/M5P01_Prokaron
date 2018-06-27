@@ -154,6 +154,7 @@ This software is **triple-licensed**: it is either **[LGPL v3](LICENSE.md)** or 
 ### Typical performance figures for all supported architectures
 |Machine      |Toolchain     |Flash|SRAM|Yield|Mail |Sem  |Mail/Int|Sem/Int|Mem  |
 |:-----------:|:------------:|:---:|:--:|:---:|:---:|:---:|:------:|:-----:|:---:|
+|DSPIC33E     |XC16-GCC      |4.46 |1.15|526  |828  |750  |914     |884    |579  |
 |MSP430       |TI CCS7       |2.90 |0.64|495  |906  |786  |830     |736    |1575 |
 |Cortex-M0    |Keil uVision 5|4.94 |1.65|374  |663  |616  |659     |617    |N/A  |
 |Cortex-M0+   |Keil uVision 5|6.25 |1.65|334  |607  |544  |588     |552    |N/A  |
@@ -179,6 +180,7 @@ This software is **triple-licensed**: it is either **[LGPL v3](LICENSE.md)** or 
 
 &ensp;&ensp;&ensp;&ensp;**Flash and SRAM consumption is calculated in kB, while the other figures are calculated in CPU clock cycles. All values listed here are typical (useful system) values, not minimum values, because minimum values on system size seldom make any real sense. HAL library are also included in the size numbers. The absolute minimum value for RMP is about 1k ROM/0.5k RAM.**
 
+- DSPIC33E is evaluated with DSPIC33EP512MU810.
 - MSP430 is evaluated with MSP430FR5994.
 - Cortex-M0 is evaluated with STM32F030F4P6.
 - Cortex-M0+ is evaluated with STM32L053C8T6.
@@ -203,10 +205,9 @@ This software is **triple-licensed**: it is either **[LGPL v3](LICENSE.md)** or 
 ### Possible New Architecture Supports
 |Architecture   |Reason                 |Priority                      |
 |:-------------:|:---------------------:|:----------------------------:|
-|PIC24/33/dsPIC |Largely used 16-bit MCU|:star::star::star::star::star:|
-|RL78           |Largely used 16-bit MCU|:star::star::star:            |
-|TI C2000       |Largely used DSP       |:star::star:                  |
-|MicroBlaze     |Largely used soft core |:star:                        |
+|RL78           |Largely used 16-bit MCU|:star::star::star::star::star:|
+|TI C2000       |Largely used DSP       |:star::star::star::star:      |
+|MicroBlaze     |Largely used soft core |:star::star:                  |
 |NIOS II        |Largely used soft core |:star:                        |
 
 ### Architectures NOT Supported

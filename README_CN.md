@@ -154,6 +154,7 @@ Click **[HERE](README.md)** for English version.
 ### 所有被支持架构上的典型性能数据
 |架构          |工具链        |Flash|SRAM|Yield|Mail |Sem  |Mail/Int|Sem/Int|Mem  |
 |:-----------:|:------------:|:---:|:--:|:---:|:---:|:---:|:------:|:-----:|:---:|
+|DSPIC33E     |XC16-GCC      |4.46 |1.15|526  |828  |750  |914     |884    |579  |
 |MSP430       |TI CCS7       |2.90 |0.64|495  |906  |786  |830     |736    |1575 |
 |Cortex-M0    |Keil uVision 5|4.94 |1.65|374  |663  |616  |659     |617    |N/A  |
 |Cortex-M0+   |Keil uVision 5|6.25 |1.65|334  |607  |544  |588     |552    |N/A  |
@@ -171,6 +172,7 @@ Click **[HERE](README.md)** for English version.
 **该值仅供参考；评估所使用的器件依赖于SPI Flash来运行代码，有时候一个指令缓存落空就会导致45000周期的延迟。传统上，依赖于外部SPI Flash的器件在做测量时需要很大的内部内存来运行这些代码，但是该器件没有如此多的内存可供使用。
 &emsp;&emsp;**Flash和SRAM消耗以kB计，其他数据以CPU指令周期计。这里列出的所有值都是典型（有意义的系统配置）值而非绝对意义上的最小值，因为纯技术层面的最小配置在实际工程中很少是真正有用的。HAL库所造成的额外存储器消耗也被计算在内。本系统的绝对最小值在1k ROM/0.5k RAM左右。**
 
+- DSPIC33E平台使用DSPIC33EP512MU810进行评估。
 - MSP430平台使用MSP430FR5994进行评估。
 - Cortex-M0平台使用STM32F030F4P6进行评估。
 - Cortex-M0+平台使用STM32L053C8T6进行评估。
@@ -195,10 +197,9 @@ Click **[HERE](README.md)** for English version.
 ### 将来可能支持的新架构
 |架构           |原因           |支持优先度                     |
 |:-------------:|:------------:|:----------------------------:|
-|PIC24/33/dsPIC |常用16位单片机 |:star::star::star::star::star:|
-|RL78           |常用16位单片机 |:star::star::star:            |
-|TI C2000       |常用DSP架构   |:star::star:                  |
-|MicroBlaze     |常用软核      |:star:                        |
+|RL78           |常用16位单片机 |:star::star::star::star::star:|
+|TI C2000       |常用DSP架构   |:star::star::star::star:      |
+|MicroBlaze     |常用软核      |:star::star:                  |
 |NIOS II        |常用软核      |:star:                        |
 
 ### 明确不考虑支持的架构
