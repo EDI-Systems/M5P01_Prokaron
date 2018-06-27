@@ -1,0 +1,3 @@
+*cc1:+ -mafrlcsj
+
+*cc1plus:+ -mafrlcsj
