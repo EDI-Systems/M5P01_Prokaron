@@ -57,17 +57,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=../../../MProkaron/Benchmark/test.c ../../../MProkaron/Kernel/kernel.c ../../../MProkaron/Platform/DSPIC/platform_dspic.c ../../../MProkaron/Platform/DSPIC/platform_dspic_asm.s ../../../MProkaron/Benchmark/Platform/test_DSPIC33EP512MU810_extra.s
+SOURCEFILES_QUOTED_IF_SPACED=../../../MProkaron/Benchmark/test.c ../../../MProkaron/Benchmark/Platform/test_DSPIC33EP512MU810_extra.s ../../../MProkaron/Kernel/kernel.c ../../../MProkaron/Platform/DSPIC/platform_dspic.c ../../../MProkaron/Platform/DSPIC/platform_dspic_asm.s
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/_ext/1372619718/test.o ${OBJECTDIR}/_ext/878830112/kernel.o ${OBJECTDIR}/_ext/320537406/platform_dspic.o ${OBJECTDIR}/_ext/320537406/platform_dspic_asm.o ${OBJECTDIR}/_ext/1850200776/test_DSPIC33EP512MU810_extra.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/_ext/1372619718/test.o.d ${OBJECTDIR}/_ext/878830112/kernel.o.d ${OBJECTDIR}/_ext/320537406/platform_dspic.o.d ${OBJECTDIR}/_ext/320537406/platform_dspic_asm.o.d ${OBJECTDIR}/_ext/1850200776/test_DSPIC33EP512MU810_extra.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/_ext/1372619718/test.o ${OBJECTDIR}/_ext/1850200776/test_DSPIC33EP512MU810_extra.o ${OBJECTDIR}/_ext/878830112/kernel.o ${OBJECTDIR}/_ext/320537406/platform_dspic.o ${OBJECTDIR}/_ext/320537406/platform_dspic_asm.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/_ext/1372619718/test.o.d ${OBJECTDIR}/_ext/1850200776/test_DSPIC33EP512MU810_extra.o.d ${OBJECTDIR}/_ext/878830112/kernel.o.d ${OBJECTDIR}/_ext/320537406/platform_dspic.o.d ${OBJECTDIR}/_ext/320537406/platform_dspic_asm.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/_ext/1372619718/test.o ${OBJECTDIR}/_ext/878830112/kernel.o ${OBJECTDIR}/_ext/320537406/platform_dspic.o ${OBJECTDIR}/_ext/320537406/platform_dspic_asm.o ${OBJECTDIR}/_ext/1850200776/test_DSPIC33EP512MU810_extra.o
+OBJECTFILES=${OBJECTDIR}/_ext/1372619718/test.o ${OBJECTDIR}/_ext/1850200776/test_DSPIC33EP512MU810_extra.o ${OBJECTDIR}/_ext/878830112/kernel.o ${OBJECTDIR}/_ext/320537406/platform_dspic.o ${OBJECTDIR}/_ext/320537406/platform_dspic_asm.o
 
 # Source Files
-SOURCEFILES=../../../MProkaron/Benchmark/test.c ../../../MProkaron/Kernel/kernel.c ../../../MProkaron/Platform/DSPIC/platform_dspic.c ../../../MProkaron/Platform/DSPIC/platform_dspic_asm.s ../../../MProkaron/Benchmark/Platform/test_DSPIC33EP512MU810_extra.s
+SOURCEFILES=../../../MProkaron/Benchmark/test.c ../../../MProkaron/Benchmark/Platform/test_DSPIC33EP512MU810_extra.s ../../../MProkaron/Kernel/kernel.c ../../../MProkaron/Platform/DSPIC/platform_dspic.c ../../../MProkaron/Platform/DSPIC/platform_dspic_asm.s
 
 
 CFLAGS=
@@ -155,13 +155,6 @@ endif
 # ------------------------------------------------------------------------------------
 # Rules for buildStep: assemble
 ifeq ($(TYPE_IMAGE), DEBUG_RUN)
-${OBJECTDIR}/_ext/320537406/platform_dspic_asm.o: ../../../MProkaron/Platform/DSPIC/platform_dspic_asm.s  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} "${OBJECTDIR}/_ext/320537406" 
-	@${RM} ${OBJECTDIR}/_ext/320537406/platform_dspic_asm.o.d 
-	@${RM} ${OBJECTDIR}/_ext/320537406/platform_dspic_asm.o 
-	${MP_CC} $(MP_EXTRA_AS_PRE)  ../../../MProkaron/Platform/DSPIC/platform_dspic_asm.s  -o ${OBJECTDIR}/_ext/320537406/platform_dspic_asm.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1  -omf=elf -DXPRJ_dspic33ep512mu810_pim=$(CND_CONF)  -no-legacy-libc  -specs=specs.txt -I"../../../MProkaron/Include" -Wa,-MD,"${OBJECTDIR}/_ext/320537406/platform_dspic_asm.o.d",--defsym=__MPLAB_BUILD=1,--defsym=__ICD2RAM=1,--defsym=__MPLAB_DEBUG=1,--defsym=__DEBUG=1,--defsym=__MPLAB_DEBUGGER_PK3=1,-g,--no-relax$(MP_EXTRA_AS_POST)
-	@${FIXDEPS} "${OBJECTDIR}/_ext/320537406/platform_dspic_asm.o.d"  $(SILENT)  -rsi ${MP_CC_DIR}../  
-	
 ${OBJECTDIR}/_ext/1850200776/test_DSPIC33EP512MU810_extra.o: ../../../MProkaron/Benchmark/Platform/test_DSPIC33EP512MU810_extra.s  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}/_ext/1850200776" 
 	@${RM} ${OBJECTDIR}/_ext/1850200776/test_DSPIC33EP512MU810_extra.o.d 
@@ -169,20 +162,27 @@ ${OBJECTDIR}/_ext/1850200776/test_DSPIC33EP512MU810_extra.o: ../../../MProkaron/
 	${MP_CC} $(MP_EXTRA_AS_PRE)  ../../../MProkaron/Benchmark/Platform/test_DSPIC33EP512MU810_extra.s  -o ${OBJECTDIR}/_ext/1850200776/test_DSPIC33EP512MU810_extra.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1  -omf=elf -DXPRJ_dspic33ep512mu810_pim=$(CND_CONF)  -no-legacy-libc  -specs=specs.txt -I"../../../MProkaron/Include" -Wa,-MD,"${OBJECTDIR}/_ext/1850200776/test_DSPIC33EP512MU810_extra.o.d",--defsym=__MPLAB_BUILD=1,--defsym=__ICD2RAM=1,--defsym=__MPLAB_DEBUG=1,--defsym=__DEBUG=1,--defsym=__MPLAB_DEBUGGER_PK3=1,-g,--no-relax$(MP_EXTRA_AS_POST)
 	@${FIXDEPS} "${OBJECTDIR}/_ext/1850200776/test_DSPIC33EP512MU810_extra.o.d"  $(SILENT)  -rsi ${MP_CC_DIR}../  
 	
-else
 ${OBJECTDIR}/_ext/320537406/platform_dspic_asm.o: ../../../MProkaron/Platform/DSPIC/platform_dspic_asm.s  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}/_ext/320537406" 
 	@${RM} ${OBJECTDIR}/_ext/320537406/platform_dspic_asm.o.d 
 	@${RM} ${OBJECTDIR}/_ext/320537406/platform_dspic_asm.o 
-	${MP_CC} $(MP_EXTRA_AS_PRE)  ../../../MProkaron/Platform/DSPIC/platform_dspic_asm.s  -o ${OBJECTDIR}/_ext/320537406/platform_dspic_asm.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -omf=elf -DXPRJ_dspic33ep512mu810_pim=$(CND_CONF)  -no-legacy-libc  -specs=specs.txt -I"../../../MProkaron/Include" -Wa,-MD,"${OBJECTDIR}/_ext/320537406/platform_dspic_asm.o.d",--defsym=__MPLAB_BUILD=1,-g,--no-relax$(MP_EXTRA_AS_POST)
+	${MP_CC} $(MP_EXTRA_AS_PRE)  ../../../MProkaron/Platform/DSPIC/platform_dspic_asm.s  -o ${OBJECTDIR}/_ext/320537406/platform_dspic_asm.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1  -omf=elf -DXPRJ_dspic33ep512mu810_pim=$(CND_CONF)  -no-legacy-libc  -specs=specs.txt -I"../../../MProkaron/Include" -Wa,-MD,"${OBJECTDIR}/_ext/320537406/platform_dspic_asm.o.d",--defsym=__MPLAB_BUILD=1,--defsym=__ICD2RAM=1,--defsym=__MPLAB_DEBUG=1,--defsym=__DEBUG=1,--defsym=__MPLAB_DEBUGGER_PK3=1,-g,--no-relax$(MP_EXTRA_AS_POST)
 	@${FIXDEPS} "${OBJECTDIR}/_ext/320537406/platform_dspic_asm.o.d"  $(SILENT)  -rsi ${MP_CC_DIR}../  
 	
+else
 ${OBJECTDIR}/_ext/1850200776/test_DSPIC33EP512MU810_extra.o: ../../../MProkaron/Benchmark/Platform/test_DSPIC33EP512MU810_extra.s  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}/_ext/1850200776" 
 	@${RM} ${OBJECTDIR}/_ext/1850200776/test_DSPIC33EP512MU810_extra.o.d 
 	@${RM} ${OBJECTDIR}/_ext/1850200776/test_DSPIC33EP512MU810_extra.o 
 	${MP_CC} $(MP_EXTRA_AS_PRE)  ../../../MProkaron/Benchmark/Platform/test_DSPIC33EP512MU810_extra.s  -o ${OBJECTDIR}/_ext/1850200776/test_DSPIC33EP512MU810_extra.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -omf=elf -DXPRJ_dspic33ep512mu810_pim=$(CND_CONF)  -no-legacy-libc  -specs=specs.txt -I"../../../MProkaron/Include" -Wa,-MD,"${OBJECTDIR}/_ext/1850200776/test_DSPIC33EP512MU810_extra.o.d",--defsym=__MPLAB_BUILD=1,-g,--no-relax$(MP_EXTRA_AS_POST)
 	@${FIXDEPS} "${OBJECTDIR}/_ext/1850200776/test_DSPIC33EP512MU810_extra.o.d"  $(SILENT)  -rsi ${MP_CC_DIR}../  
+	
+${OBJECTDIR}/_ext/320537406/platform_dspic_asm.o: ../../../MProkaron/Platform/DSPIC/platform_dspic_asm.s  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}/_ext/320537406" 
+	@${RM} ${OBJECTDIR}/_ext/320537406/platform_dspic_asm.o.d 
+	@${RM} ${OBJECTDIR}/_ext/320537406/platform_dspic_asm.o 
+	${MP_CC} $(MP_EXTRA_AS_PRE)  ../../../MProkaron/Platform/DSPIC/platform_dspic_asm.s  -o ${OBJECTDIR}/_ext/320537406/platform_dspic_asm.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -omf=elf -DXPRJ_dspic33ep512mu810_pim=$(CND_CONF)  -no-legacy-libc  -specs=specs.txt -I"../../../MProkaron/Include" -Wa,-MD,"${OBJECTDIR}/_ext/320537406/platform_dspic_asm.o.d",--defsym=__MPLAB_BUILD=1,-g,--no-relax$(MP_EXTRA_AS_POST)
+	@${FIXDEPS} "${OBJECTDIR}/_ext/320537406/platform_dspic_asm.o.d"  $(SILENT)  -rsi ${MP_CC_DIR}../  
 	
 endif
 
