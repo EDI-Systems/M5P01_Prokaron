@@ -1,3 +1,3 @@
 cd ..
-cp -f RMP_platform.h ../../../MProkaron/Include/Platform/RMP_platform.h
-cp -f test.h ../../../MProkaron/Benchmark/test.h
+cp -f rmp_platform.h ../../../MProkaron/Include/Platform/rmp_platform.h
+cp -f rmp_test.h ../../../MProkaron/Benchmark/rmp_test.h
