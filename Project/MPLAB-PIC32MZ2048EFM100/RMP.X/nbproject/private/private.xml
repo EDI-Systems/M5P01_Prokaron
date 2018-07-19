@@ -11,12 +11,10 @@
             <file>file:/C:/E/Dev/FreeRTOS/WorkingCopy/FreeRTOS/Source/portable/MPLAB/PIC32MZ/port_asm.S</file>
         </group>
         <group>
-            <file>file:/F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/MIPSM/platform_mipsm_asm.s</file>
-            <file>file:/F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/MIPSM/platform_mipsm.c</file>
-            <file>file:/F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/kernel.c</file>
-            <file>file:/F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Benchmark/test.c</file>
-            <file>file:/F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Benchmark/Platform/test_PIC32MZ2048EFM100.h</file>
-            <file>file:/F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Benchmark/test.h</file>
+            <file>file:/F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/MIPSM/rmp_platform_mipsm_asm.s</file>
+            <file>file:/F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c</file>
+            <file>file:/F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/MIPSM/rmp_platform_mipsm.c</file>
+            <file>file:/F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Benchmark/Platform/rmp_test_PIC32MZ2048EFM100.h</file>
         </group>
     </open-files>
 </project-private>

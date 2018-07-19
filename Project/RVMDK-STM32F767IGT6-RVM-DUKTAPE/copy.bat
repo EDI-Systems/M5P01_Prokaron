@@ -1,3 +1,3 @@
-copy platform_cmx_RVM_conf.h ..\..\MProkaron\Include\Platform\CortexM_RVM\platform_cmx_RVM_conf.h
-copy RMP_platform.h ..\..\MProkaron\Include\Platform\RMP_platform.h
-copy test.h ..\..\MProkaron\Benchmark\test.h
+copy rmp_platform_cmx_rvm_conf.h ..\..\MProkaron\Include\Platform\CortexM_RVM\rmp_platform_cmx_rvm_conf.h
+copy rmp_platform.h ..\..\MProkaron\Include\Platform\rmp_platform.h
+copy rmp_test.h ..\..\MProkaron\Benchmark\rmp_test.h

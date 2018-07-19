@@ -46,14 +46,19 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>Benchmark/test.c</name>
+			<name>Benchmark/rmp_test.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/MProkaron/Benchmark/test.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/MProkaron/Benchmark/rmp_test.c</locationURI>
 		</link>
 		<link>
-			<name>Kernel/kernel.c</name>
+			<name>Debug/rmp_test.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/MProkaron/Kernel/kernel.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/MProkaron/Benchmark/rmp_test.c</locationURI>
+		</link>
+		<link>
+			<name>Kernel/rmp_kernel.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/MProkaron/Kernel/rmp_kernel.c</locationURI>
 		</link>
 		<link>
 			<name>Lib/esm.c</name>
@@ -131,14 +136,14 @@
 			<locationURI>PARENT-4-PROJECT_LOC/M0P0_Library/TMS570LS04x/source/system.c</locationURI>
 		</link>
 		<link>
-			<name>Platform/platform_crx.c</name>
+			<name>Platform/rmp_platform_crx.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/MProkaron/Platform/CortexR/platform_crx.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/MProkaron/Platform/CortexR/rmp_platform_crx.c</locationURI>
 		</link>
 		<link>
-			<name>Platform/platform_crx_asm.asm</name>
+			<name>Platform/rmp_platform_crx_asm.asm</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/MProkaron/Platform/CortexR/platform_crx_asm.asm</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/MProkaron/Platform/CortexR/rmp_platform_crx_asm.asm</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>
