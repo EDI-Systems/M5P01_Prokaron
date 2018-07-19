@@ -8,16 +8,8 @@ Description : The performance testbench for RMP. Do not modify this file; what
               header.
 ******************************************************************************/
 
-/******************************************************************************
-Filename    : test_STM32F767IG_RVM.h
-Author      : pry 
-Date        : 22/07/2017
-Licence     : LGPL v3+; see COPYING for details.
-Description : The testbench for STM32F767IG, running in the RVM.
-******************************************************************************/
-
 /* Includes ******************************************************************/
-#include "RMP.h"
+#include "rmp.h"
 #include "lua.h"
 #include "lauxlib.h"
 #include "time.h"
@@ -32,8 +24,8 @@ Description : The testbench for STM32F767IG, running in the RVM.
 /* End Defines ***************************************************************/
 
 /* Globals *******************************************************************/
-ptr_t Stack_1[8192];
-ptr_t Stack_2[8192];
+rmp_ptr_t Stack_1[8192];
+rmp_ptr_t Stack_2[8192];
 /* End Globals ***************************************************************/
 
 /* Globals *******************************************************************/
@@ -42,11 +34,11 @@ volatile struct RMP_Thd Thd_1;
 volatile struct RMP_Thd Thd_2;
 volatile struct RMP_Sem Sem_1;
 /* Memory pool */
-volatile ptr_t Pool[TEST_MEM_POOL]={0};
+volatile rmp_ptr_t Pool[TEST_MEM_POOL]={0};
 /* End Globals ***************************************************************/
 char Buf[1024]={0};
 
-void RMP_Point(cnt_t X, cnt_t Y, ptr_t C)
+void RMP_Point(rmp_cnt_t X, rmp_cnt_t Y, rmp_ptr_t C)
 {
 
 }

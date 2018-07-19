@@ -1,5 +1,5 @@
 /******************************************************************************
-Filename    : RMP.h
+Filename    : rmp.h
 Author      : pry
 Date        : 01/04/2017
 Licence     : LGPL v3+; see COPYING for details.
@@ -12,18 +12,18 @@ Description : The header of the RMP RTOS. This header defines the error codes,
 #define __RMP_H__
 
 #define __HDR_DEFS__
-#include "Platform/RMP_platform.h"
-#include "Kernel/kernel.h"
+#include "Platform/rmp_platform.h"
+#include "Kernel/rmp_kernel.h"
 #undef __HDR_DEFS__
 
 #define __HDR_STRUCTS__
-#include "Platform/RMP_platform.h"
-#include "Kernel/kernel.h"
+#include "Platform/rmp_platform.h"
+#include "Kernel/rmp_kernel.h"
 #undef __HDR_STRUCTS__
 
 #define __HDR_PUBLIC_MEMBERS__
-#include "Platform/RMP_platform.h"
-#include "Kernel/kernel.h"
+#include "Platform/rmp_platform.h"
+#include "Kernel/rmp_kernel.h"
 #undef __HDR_PUBLIC_MEMBERS__
 
 #endif /* __RMP_H__ */

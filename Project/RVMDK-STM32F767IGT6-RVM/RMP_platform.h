@@ -1,5 +1,5 @@
 /******************************************************************************
-Filename    : RMP_platform.h
+Filename    : rmp_platform.h
 Author      : pry 
 Date        : 22/07/2017
 Licence     : LGPL v3+; see COPYING for details.
@@ -7,7 +7,7 @@ Description : The platform specific types for RMP.
 ******************************************************************************/
 
 /* Platform Includes *********************************************************/
-#include "Platform/CortexM_RVM/platform_cmx_RVM.h"
+#include "Platform/CortexM_RVM/rmp_platform_cmx_rvm.h"
 /* End Platform Includes *****************************************************/
 
 /* End Of File ***************************************************************/

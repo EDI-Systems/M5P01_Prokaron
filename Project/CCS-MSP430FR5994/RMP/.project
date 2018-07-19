@@ -46,14 +46,14 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>Benchmark/test.c</name>
+			<name>Benchmark/rmp_test.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/MProkaron/Benchmark/test.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/MProkaron/Benchmark/rmp_test.c</locationURI>
 		</link>
 		<link>
-			<name>Kernel/kernel.c</name>
+			<name>Kernel/rmp_kernel.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/MProkaron/Kernel/kernel.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/MProkaron/Kernel/rmp_kernel.c</locationURI>
 		</link>
 		<link>
 			<name>Lib/cs.c</name>
@@ -81,19 +81,19 @@
 			<locationURI>PARENT-4-PROJECT_LOC/M0P0_Library/MSP430FR5xx_6xx/timer_a.c</locationURI>
 		</link>
 		<link>
-			<name>Platform/platform_msp430.c</name>
+			<name>Platform/rmp_platform_msp430.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/MProkaron/Platform/MSP430/platform_msp430.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/MProkaron/Platform/MSP430/rmp_platform_msp430.c</locationURI>
 		</link>
 		<link>
-			<name>Platform/platform_msp430_asm.s</name>
+			<name>Platform/rmp_platform_msp430_asm.s</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/MProkaron/Platform/MSP430/platform_msp430_asm.s</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/MProkaron/Platform/MSP430/rmp_platform_msp430_asm.s</locationURI>
 		</link>
 		<link>
-			<name>Platform/platform_msp430x_asm.s</name>
+			<name>Platform/rmp_platform_msp430x_asm.s</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/MProkaron/Platform/MSP430/platform_msp430x_asm.s</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/MProkaron/Platform/MSP430/rmp_platform_msp430x_asm.s</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>
