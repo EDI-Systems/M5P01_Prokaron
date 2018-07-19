@@ -1,6 +1,5 @@
-﻿Yield: 263 cycles.
-Mailbox: 378 cycles.
-Semaphore: 358 cycles.
-Memory: 211 cycles.
-Mailbox-ISR: 430 cycles.
-Semaphore-ISR: 420 cycles.
+﻿Hello,I am lua!
+               --this is newline printf
+sum =   0
+and sum = 2^11 =        2048.0002442147
+exp(200) =      7.225970017079e+86

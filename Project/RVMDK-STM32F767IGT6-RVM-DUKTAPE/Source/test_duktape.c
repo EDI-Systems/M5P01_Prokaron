@@ -8,16 +8,8 @@ Description : The performance testbench for RMP. Do not modify this file; what
               header.
 ******************************************************************************/
 
-/******************************************************************************
-Filename    : test_STM32F767IG_RVM.h
-Author      : pry 
-Date        : 22/07/2017
-Licence     : LGPL v3+; see COPYING for details.
-Description : The testbench for STM32F767IG, running in the RVM.
-******************************************************************************/
-
 /* Includes ******************************************************************/
-#include "RMP.h"
+#include "rmp.h"
 #include "duktape.h"
 /* End Includes **************************************************************/
 

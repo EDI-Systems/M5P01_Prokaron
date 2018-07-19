@@ -378,9 +378,9 @@
           <GroupName>MProkaron</GroupName>
           <Files>
             <File>
-              <FileName>kernel.c</FileName>
+              <FileName>rmp_kernel.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\MProkaron\Kernel\kernel.c</FilePath>
+              <FilePath>..\..\MProkaron\Kernel\rmp_kernel.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -388,14 +388,14 @@
           <GroupName>Platform</GroupName>
           <Files>
             <File>
-              <FileName>platform_cmx.c</FileName>
+              <FileName>rmp_platform_cmx.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\MProkaron\Platform\CortexM\platform_cmx.c</FilePath>
+              <FilePath>..\..\MProkaron\Platform\CortexM\rmp_platform_cmx.c</FilePath>
             </File>
             <File>
-              <FileName>platform_cmx_asm.s</FileName>
+              <FileName>rmp_platform_cmx_asm.s</FileName>
               <FileType>2</FileType>
-              <FilePath>..\..\MProkaron\Platform\CortexM\platform_cmx_asm.s</FilePath>
+              <FilePath>..\..\MProkaron\Platform\CortexM\rmp_platform_cmx_asm.s</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -435,9 +435,9 @@
               </FileOption>
             </File>
             <File>
-              <FileName>platform_cm0_asm.s</FileName>
+              <FileName>rmp_platform_cm0_asm.s</FileName>
               <FileType>2</FileType>
-              <FilePath>..\..\MProkaron\Platform\CortexM\platform_cm0_asm.s</FilePath>
+              <FilePath>..\..\MProkaron\Platform\CortexM\rmp_platform_cm0_asm.s</FilePath>
             </File>
           </Files>
         </Group>
@@ -576,9 +576,9 @@
           <GroupName>Benchmark</GroupName>
           <Files>
             <File>
-              <FileName>test.c</FileName>
+              <FileName>rmp_test.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\MProkaron\Benchmark\test.c</FilePath>
+              <FilePath>..\..\MProkaron\Benchmark\rmp_test.c</FilePath>
             </File>
           </Files>
         </Group>
