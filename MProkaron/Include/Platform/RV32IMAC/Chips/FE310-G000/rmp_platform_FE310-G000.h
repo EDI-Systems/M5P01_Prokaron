@@ -1,9 +1,9 @@
 /******************************************************************************
-Filename   : platform_FE310-G000.h
-Author     : pry
-Date       : 24/06/2017
-Licence    : LGPL v3+; see COPYING for details.
-Description: The configuration file for FE310-G000.
+Filename    : rmp_platform_FE310-G000.h
+Author      : pry
+Date        : 24/06/2017
+Licence     : LGPL v3+; see COPYING for details.
+Description : The configuration file for FE310-G000.
 ******************************************************************************/
 
 /* Defines *******************************************************************/
@@ -38,7 +38,7 @@ Description: The configuration file for FE310-G000.
 
 /* Other low-level initialization stuff - clock and serial */
 #define RMP_RV32IMAC_LOW_LEVEL_INIT() \
-cnt_t Count; \
+rmp_cnt_t Count; \
 plic_instance_t RMP_Global_PLIC; \
 do \
 { \
@@ -55,7 +55,7 @@ do \
                  -1, /* We don't care about HFROSC */ \
                  -1); \
     /* Initialize trap vectors */ \
-    _RMP_Set_MTVEC((ptr_t)Interrupt_Handler); \
+    _RMP_Set_MTVEC((rmp_ptr_t)Interrupt_Handler); \
     \
     /* Initialize the serial port */ \
     /* Select IOF0 for UART0 RX & TX pins */ \
@@ -79,7 +79,7 @@ while(0)
 do \
 { \
     while(UART0_REG(UART_REG_TXFIFO)&0x80000000); \
-    UART0_REG(UART_REG_TXFIFO)=(ptr_t)(CHAR); \
+    UART0_REG(UART_REG_TXFIFO)=(rmp_ptr_t)(CHAR); \
 } \
 while(0)
 /* End Defines ***************************************************************/

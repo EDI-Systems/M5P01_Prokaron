@@ -1,5 +1,5 @@
 /******************************************************************************
-Filename    : rmp_test_X86_LINUX.h
+Filename    : rmp_test_X86_linux.h
 Author      : pry 
 Date        : 22/07/2017
 Licence     : LGPL v3+; see COPYING for details.
@@ -32,7 +32,7 @@ static __inline__ unsigned long long rdtsc(void)
 /* Are we doing minimal measurements? */
 /* #define MINIMAL_SIZE */
 /* The POSIX timers are all 64 bits, so */
-typedef unsigned long long tim_t;
+typedef unsigned long long rmp_tim_t;
 
 /* Interrupt interval in usec */
 #define TEST_INT_INTERVAL 10000
@@ -41,8 +41,8 @@ typedef unsigned long long tim_t;
 /* Globals *******************************************************************/
 #ifndef MINIMAL_SIZE
 void Int_Handler(void);
-ptr_t Stack_1[65536];
-ptr_t Stack_2[65536];
+rmp_ptr_t Stack_1[65536];
+rmp_ptr_t Stack_2[65536];
 /* End Globals ***************************************************************/
 
 /* Begin Function:Timer_Init **************************************************

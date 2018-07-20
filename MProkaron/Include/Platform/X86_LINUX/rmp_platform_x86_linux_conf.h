@@ -1,5 +1,5 @@
 /******************************************************************************
-Filename   : platform_x86_posix_conf.h
+Filename   : platform_x86_linux_conf.h
 Author     : pry
 Date       : 24/06/2017
 Licence    : LGPL v3+; see COPYING for details.

@@ -21,14 +21,14 @@ Description : The testbench for FE310-G000.
 /* Are we doing minimal measurements? */
 /* #define MINIMAL_SIZE */
 /* The FE310 timers are all 64 bits, however we only need last 32 bits */
-typedef u32 tim_t;
+typedef rmp_u32_t rmp_tim_t;
 /* End Defines ***************************************************************/
 
 /* Globals *******************************************************************/
 #ifndef MINIMAL_SIZE
 void Int_Handler(void);
-ptr_t Stack_1[512];
-ptr_t Stack_2[512];
+rmp_ptr_t Stack_1[512];
+rmp_ptr_t Stack_2[512];
 /* End Globals ***************************************************************/
 
 /* Begin Function:Timer_Init **************************************************
@@ -69,7 +69,7 @@ void Int_Init(void)
 {
     plic_instance_t RMP_Global_PLIC;
 	/* Set interrupt to the interrupt handler array */
-	RMP_Periph_Vect_Table[INT_WDOGCMP]=(ptr_t)WDT_Interrupt;
+	RMP_Periph_Vect_Table[INT_WDOGCMP]=(rmp_ptr_t)WDT_Interrupt;
     /* WDT clock = 32.768kHz. Setting counter to 16 to obtain 500us intervals */
     AON_REG(AON_WDOGKEY)=AON_WDOGKEY_VALUE;
     AON_REG(AON_WDOGCMP)=16;

@@ -7,7 +7,7 @@ Description : The platform specific types for RMP.
 ******************************************************************************/
 
 /* Platform Includes *********************************************************/
-#include "Platform/MSP430/rmp_platform_msp430.h"
+#include "Platform/RV32IMAC/rmp_platform_rv32imac.h"
 /* End Platform Includes *****************************************************/
 
 /* End Of File ***************************************************************/
