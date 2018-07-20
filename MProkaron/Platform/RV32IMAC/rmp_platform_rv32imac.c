@@ -1,5 +1,5 @@
 /******************************************************************************
-Filename    : platform_rv32imac.c
+Filename    : rmp_platform_rv32imac.c
 Author      : pry
 Date        : 04/02/2018
 Licence     : LGPL v3+; see COPYING for details.
@@ -17,20 +17,20 @@ Description : The platform specific file for RV32IMAC (FE310). This port is for
 
 /* Includes ******************************************************************/
 #define __HDR_DEFS__
-#include "Platform/RV32IMAC/platform_rv32imac.h"
-#include "Kernel/kernel.h"
+#include "Platform/RV32IMAC/rmp_platform_rv32imac.h"
+#include "Kernel/rmp_kernel.h"
 #undef __HDR_DEFS__
 
 #define __HDR_STRUCTS__
-#include "Platform/RV32IMAC/platform_rv32imac.h"
-#include "Kernel/kernel.h"
+#include "Platform/RV32IMAC/rmp_platform_rv32imac.h"
+#include "Kernel/rmp_kernel.h"
 #undef __HDR_STRUCTS__
 
 /* Private include */
-#include "Platform/RV32IMAC/platform_rv32imac.h"
+#include "Platform/RV32IMAC/rmp_platform_rv32imac.h"
 
 #define __HDR_PUBLIC_MEMBERS__
-#include "Kernel/kernel.h"
+#include "Kernel/rmp_kernel.h"
 #undef __HDR_PUBLIC_MEMBERS__
 /* End Includes **************************************************************/
 
@@ -39,32 +39,32 @@ Description : The platform specific file for RV32IMAC (FE310). This port is for
  * compilers, this needs to be changed. The linker script should also be changed
  * as well. */
 /* Address of the data section */
-extern ptr_t  __data_load_addr__;
+extern rmp_ptr_t  __data_load_addr__;
 /* Begin address for the .data section */
-extern ptr_t __data_begin__;
+extern rmp_ptr_t __data_begin__;
 /* End address for the .data section */
-extern ptr_t __data_end__;
+extern rmp_ptr_t __data_end__;
 /* Begin address for the .bss section */
-extern ptr_t __bss_begin__;
+extern rmp_ptr_t __bss_begin__;
 /* End address for the .bss section */
-extern ptr_t __bss_end__;
+extern rmp_ptr_t __bss_end__;
 /* Global pointer address */
-extern ptr_t __global_pointer$;
+extern rmp_ptr_t __global_pointer$;
 /* The entry address */
 extern int main(void);
 void _start(void);
 void _start(void)
 {
-    u8* Src;
-    u8* Dst;
+    rmp_u8_t* Src;
+    rmp_u8_t* Dst;
 
-    Src=(u8*)&__data_load_addr__;
-    Dst=(u8*)&__data_begin__;
-    while((ptr_t)Dst<(ptr_t)&__data_end__)
+    Src=(rmp_u8_t*)&__data_load_addr__;
+    Dst=(rmp_u8_t*)&__data_begin__;
+    while((rmp_ptr_t)Dst<(rmp_ptr_t)&__data_end__)
         *Dst++=*Src++;
 
-    Dst=(u8*)&__bss_begin__;
-    while((ptr_t)Dst<(ptr_t)&__bss_end__)
+    Dst=(rmp_u8_t*)&__bss_begin__;
+    while((rmp_ptr_t)Dst<(rmp_ptr_t)&__bss_end__)
         *Dst++=0;
 
     /* Call main function */
@@ -75,17 +75,17 @@ void _start(void)
 /* Begin Function:_RMP_Stack_Init *********************************************
 Description : Initiate the process stack when trying to start a process. Never
               call this function in user application.
-Input       : ptr_t Entry - The entry of the thread.
-              ptr_t Stack - The stack address of the thread.
-              ptr_t Arg - The argument to pass to the thread.
+Input       : rmp_ptr_t Entry - The entry of the thread.
+              rmp_ptr_t Stack - The stack address of the thread.
+              rmp_ptr_t Arg - The argument to pass to the thread.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void _RMP_Stack_Init(ptr_t Entry, ptr_t Stack, ptr_t Arg)
+void _RMP_Stack_Init(rmp_ptr_t Entry, rmp_ptr_t Stack, rmp_ptr_t Arg)
 {
-    ptr_t* Stack_Ptr;
+    rmp_ptr_t* Stack_Ptr;
 
-    Stack_Ptr=(ptr_t*)Stack;
+    Stack_Ptr=(rmp_ptr_t*)Stack;
 
     /* This is where PC is saved */
     Stack_Ptr[0]=Entry;
@@ -93,7 +93,7 @@ void _RMP_Stack_Init(ptr_t Entry, ptr_t Stack, ptr_t Arg)
     /* We always initialize the mstatus register to this */
     Stack_Ptr[2]=0x1880;
     /* We always initialize GP to a known value. If the thread modifies this later, it is fine */
-    Stack_Ptr[3]=(ptr_t)(&__global_pointer$);
+    Stack_Ptr[3]=(rmp_ptr_t)(&__global_pointer$);
     Stack_Ptr[4]=0x04040404;
     Stack_Ptr[5]=0x05050505;
     Stack_Ptr[6]=0x06060606;
@@ -217,7 +217,7 @@ Return      : None.
 void Periph_Handler(void)
 {
     plic_instance_t RMP_Global_PLIC;
-    ptr_t Int_Number;
+    rmp_ptr_t Int_Number;
 
     RMP_Global_PLIC.base_addr=PLIC_CTRL_ADDR;
     /* Read PLIC for the interrupt number, and try to dispatch it to there */
@@ -241,7 +241,7 @@ Return      : None.
 ******************************************************************************/
 void _RMP_Int_Handler(void)
 {
-    ptr_t MCAUSE;
+    rmp_ptr_t MCAUSE;
     MCAUSE=_RMP_Get_MCAUSE();
 
     /* If this is an exception, die here */
