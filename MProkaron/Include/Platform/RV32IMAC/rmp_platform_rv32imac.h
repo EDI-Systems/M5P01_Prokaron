@@ -1,81 +1,65 @@
 /******************************************************************************
-Filename    : platform_rv32imac.h
+Filename    : rmp_platform_rv32imac.h
 Author      : pry
 Date        : 01/04/2017
 Licence     : LGPL v3+; see COPYING for details.
-Description : The header of "platform_rv32imac.c".
+Description : The header of "rmp_platform_rv32imac.c".
 ******************************************************************************/
 
 /* Defines *******************************************************************/
 #ifdef __HDR_DEFS__
-#ifndef __PLATFORM_RV32IMAC_H_DEFS__
-#define __PLATFORM_RV32IMAC_H_DEFS__
+#ifndef __RMP_PLATFORM_RV32IMAC_H_DEFS__
+#define __RMP_PLATFORM_RV32IMAC_H_DEFS__
 /*****************************************************************************/
 /* Basic Types ***************************************************************/
-#if(DEFINE_BASIC_TYPES==TRUE)
-
-#ifndef __S32__
-#define __S32__
-typedef signed int  s32;
+#ifndef __RMP_S32_T__
+#define __RMP_S32_T__
+typedef signed int rmp_s32_t;
 #endif
 
-#ifndef __S16__
-#define __S16__
-typedef signed short s16;
+#ifndef __RMP_S16_T__
+#define __RMP_S16_T__
+typedef signed short rmp_s16_t;
 #endif
 
-#ifndef __S8__
-#define __S8__
-typedef signed char  s8;
+#ifndef __RMP_S8_T__
+#define __RMP_S8_T__
+typedef signed char rmp_s8_t;
 #endif
 
-#ifndef __U32__
-#define __U32__
-typedef unsigned int  u32;
+#ifndef __RMP_U32_T__
+#define __RMP_U32_T__
+typedef unsigned int rmp_u32_t;
 #endif
 
-#ifndef __U16__
-#define __U16__
-typedef unsigned short u16;
+#ifndef __RMP_U16_T__
+#define __RMP_U16_T__
+typedef unsigned short rmp_u16_t;
 #endif
 
-#ifndef __U8__
-#define __U8__
-typedef unsigned char  u8;
-#endif
-
+#ifndef __RMP_U8_T__
+#define __RMP_U8_T__
+typedef unsigned char rmp_u8_t;
 #endif
 /* End Basic Types ***********************************************************/
 
 /* Begin Extended Types ******************************************************/
-#ifndef __TID_T__
-#define __TID_T__
-/* The typedef for the Thread ID */
-typedef s32 tid_t;
-#endif
-
-#ifndef __PTR_T__
-#define __PTR_T__
+#ifndef __RMP_rmp_ptr_t__
+#define __RMP_rmp_ptr_t__
 /* The typedef for the pointers - This is the raw style. Pointers must be unsigned */
-typedef u32 ptr_t;
+typedef rmp_u32_t rmp_ptr_t;
 #endif
 
-#ifndef __CNT_T__
-#define __CNT_T__
+#ifndef __RMP_CNT_T__
+#define __RMP_CNT_T__
 /* The typedef for the count variables */
-typedef s32 cnt_t;
+typedef rmp_s32_t rmp_cnt_t;
 #endif
 
-#ifndef __CID_T__
-#define __CID_T__
-/* The typedef for capability ID */
-typedef s32 cid_t;
-#endif
-
-#ifndef __RET_T__
-#define __RET_T__
+#ifndef __RMP_RET_T__
+#define __RMP_RET_T__
 /* The type for process return value */
-typedef s32 ret_t;
+typedef rmp_s32_t rmp_ret_t;
 #endif
 /* End Extended Types ********************************************************/
 
@@ -90,13 +74,13 @@ typedef s32 ret_t;
 #define RMP_INIT_STACK           RMP_INIT_STACK_TAIL(17)
 
 /* The CPU and application specific macros are here */
-#include "platform_rv32imac_conf.h"
+#include "rmp_platform_rv32imac_conf.h"
 /* End System macros *********************************************************/
 
 /* RV32IMAC specific macros **************************************************/
 
 /*****************************************************************************/
-/* __PLATFORM_RV32IMAC_H_DEFS__ */
+/* __RMP_PLATFORM_RV32IMAC_H_DEFS__ */
 #endif
 /* __HDR_DEFS__ */
 #endif
@@ -104,8 +88,8 @@ typedef s32 ret_t;
 
 /* Structs *******************************************************************/
 #ifdef __HDR_STRUCTS__
-#ifndef __PLATFORM_RV32IMAC_H_STRUCTS__
-#define __PLATFORM_RV32IMAC_H_STRUCTS__
+#ifndef __RMP_PLATFORM_RV32IMAC_H_STRUCTS__
+#define __RMP_PLATFORM_RV32IMAC_H_STRUCTS__
 /* We used structs in the header */
 
 /* Use defines in these headers */
@@ -114,7 +98,7 @@ typedef s32 ret_t;
 /*****************************************************************************/
 
 /*****************************************************************************/
-/* __PLATFORM_RV32IMAC_H_STRUCTS__ */
+/* __RMP_PLATFORM_RV32IMAC_H_STRUCTS__ */
 #endif
 /* __HDR_STRUCTS__ */
 #endif
@@ -122,8 +106,8 @@ typedef s32 ret_t;
 
 /* Private Global Variables **************************************************/
 #if(!(defined __HDR_DEFS__||defined __HDR_STRUCTS__))
-#ifndef __PLATFORM_RV32IMAC_MEMBERS__
-#define __PLATFORM_RV32IMAC_MEMBERS__
+#ifndef __RMP_PLATFORM_RV32IMAC_MEMBERS__
+#define __RMP_PLATFORM_RV32IMAC_MEMBERS__
 
 /* In this way we can use the data structures and definitions in the headers */
 #define __HDR_DEFS__
@@ -156,7 +140,7 @@ typedef s32 ret_t;
 #endif
 
 /*****************************************************************************/
-__EXTERN__ ptr_t RMP_Periph_Vect_Table[RMP_RV32IMAC_INT_NUMBER];
+__EXTERN__ rmp_ptr_t RMP_Periph_Vect_Table[RMP_RV32IMAC_INT_NUMBER];
 /*****************************************************************************/
 
 /* End Public Global Variables ***********************************************/
@@ -166,21 +150,21 @@ __EXTERN__ ptr_t RMP_Periph_Vect_Table[RMP_RV32IMAC_INT_NUMBER];
 /* Interrupts */
 EXTERN void RMP_Disable_Int(void);
 EXTERN void RMP_Enable_Int(void);
-EXTERN void RMP_Mask_Int(ptr_t Level);
+EXTERN void RMP_Mask_Int(rmp_ptr_t Level);
 
-EXTERN ptr_t RMP_MSB_Get(ptr_t Val);
-EXTERN void _RMP_Start(ptr_t Entry, ptr_t Stack);
+EXTERN rmp_ptr_t RMP_MSB_Get(rmp_ptr_t Val);
+EXTERN void _RMP_Start(rmp_ptr_t Entry, rmp_ptr_t Stack);
 __EXTERN__ void _RMP_Yield(void);
 
 /* Platform specific */
-EXTERN ptr_t Interrupt_Handler(void);
-EXTERN ptr_t _RMP_Get_MCAUSE(void);
-EXTERN void _RMP_Set_MTVEC(ptr_t MTVEC);
-EXTERN ptr_t _RMP_Get_MCYCLE(void);
+EXTERN rmp_ptr_t Interrupt_Handler(void);
+EXTERN rmp_ptr_t _RMP_Get_MCAUSE(void);
+EXTERN void _RMP_Set_MTVEC(rmp_ptr_t MTVEC);
+EXTERN rmp_ptr_t _RMP_Get_MCYCLE(void);
 EXTERN void _RMP_Mem_FENCE(void);
 
 /* Initialization */
-__EXTERN__ void _RMP_Stack_Init(ptr_t Entry, ptr_t Stack, ptr_t Arg);
+__EXTERN__ void _RMP_Stack_Init(rmp_ptr_t Entry, rmp_ptr_t Stack, rmp_ptr_t Arg);
 __EXTERN__ void _RMP_Low_Level_Init(void);
 __EXTERN__ void RMP_Putchar(char Char);
 __EXTERN__ void _RMP_Plat_Hook(void);
@@ -193,7 +177,7 @@ __EXTERN__ void _RMP_Int_Handler(void);
 /*****************************************************************************/
 /* Undefine "__EXTERN__" to avoid redefinition */
 #undef __EXTERN__
-/* __PLATFORM_RV32IMAC_MEMBERS__ */
+/* __RMP_PLATFORM_RV32IMAC_MEMBERS__ */
 #endif
 /* !(defined __HDR_DEFS__||defined __HDR_STRUCTS__) */
 #endif

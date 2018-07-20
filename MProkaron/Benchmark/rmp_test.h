@@ -7,7 +7,7 @@ Description : The configuration file for testing program.
 ******************************************************************************/
 
 /* Config Includes ***********************************************************/
-#include "Platform/rmp_test_MSP430FR5994.h"
+#include "Platform/rmp_test_FE310-G000.h"
 /* End Config Includes *******************************************************/
 
 /* End Of File ***************************************************************/
