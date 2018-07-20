@@ -257,3 +257,6 @@ Click **[HERE](README.md)** for English version.
 
 ## EDI 工程信息
 &emsp;&emsp;演进 - 远古 - 原核 (M5P1 R4T1)
+
+## 杰出贡献者
+&emsp;&emsp;宋磊锋 - ARM Cortex M3/4/7的GCC汇编支持。

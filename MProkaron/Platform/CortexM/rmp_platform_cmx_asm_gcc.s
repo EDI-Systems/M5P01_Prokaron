@@ -1,8 +1,9 @@
 ;/*****************************************************************************
-;Filename    : platform_cmx_asm.s
-;Author      : pry songleifeng
+;Filename    : rmp_platform_cmx_asm_gcc.s
+;Author      : songleifeng, pry
 ;Date        : 07/19/2018
-;Description : The assembly part of the RMP RTOS. This is for Cortex-M3/4/7.
+;Description : The assembly part of the RMP RTOS. This is for Cortex-M3/4/7, and
+;              is used on gcc.
 ;*****************************************************************************/
 
 ;/* The ARM Cortex-M Structure ************************************************
@@ -15,97 +16,96 @@
 ;APSR                         Application Program Status Register.
 ;EPSR                         Execute Program Status Register.
 ;The above 3 registers are saved into the stack in combination(xPSR).
-;
-;The ARM Cortex-M4/7 also include a single-accuracy FPU.
+;The ARM Cortex-M4/7 also include a FPU.
 ;*****************************************************************************/
             
 ;/* Begin Header *************************************************************/  
-    .syntax unified
+    .syntax             unified
     .thumb
-    .section ".text"
-    .align  3
+    .section            ".text"
+    .align              3
 ;/* End Header ***************************************************************/
 
 ;/* Begin Exports ************************************************************/
-    .global          RMP_Disable_Int       
-    .global          RMP_Enable_Int
-    .global          RMP_Mask_Int     
-    .global          RMP_MSB_Get
-    .global          _RMP_Start
-    .global          _RMP_Yield        
-    .global          PendSV_Handler 
-    .global          SysTick_Handler                               
+    .global             RMP_Disable_Int       
+    .global             RMP_Enable_Int
+    .global             RMP_Mask_Int     
+    .global             RMP_MSB_Get
+    .global             _RMP_Start
+    .global             _RMP_Yield        
+    .global             PendSV_Handler 
+    .global             SysTick_Handler                               
 ;/* End Exports **************************************************************/
 
 ;/* Begin Imports ************************************************************/
-    .extern          _RMP_Get_High_Rdy 
-    .extern          _RMP_Tick_Handler     
-    .extern          RMP_Cur_Thd
-    .extern          RMP_Cur_SP        
-    .extern          RMP_Save_Ctx
-    .extern          RMP_Load_Ctx
+    .extern             _RMP_Get_High_Rdy 
+    .extern             _RMP_Tick_Handler     
+    .extern             RMP_Cur_Thd
+    .extern             RMP_Cur_SP        
+    .extern             RMP_Save_Ctx
+    .extern             RMP_Load_Ctx
 ;/* End Imports **************************************************************/
 
 ;/* Begin Function:RMP_Disable_Int ********************************************
-;Description    : The function for disabling all interrupts. Does not allow nesting.
-;Input          : None.
-;Output         : None.    
-;Register Usage : None.                                  
+;Description : The function for disabling all interrupts. Does not allow nesting.
+;Input       : None.
+;Output      : None.
+;Return      : None.                                  
 ;*****************************************************************************/    
-.thumb_func
+    .thumb_func
 RMP_Disable_Int:
     .fnstart
     .cantunwind
-    CPSID           I                                                       
-    BX              LR       
+    CPSID               I                                                       
+    BX                  LR       
     .fnend				
 ;/* End Function:RMP_Disable_Int *********************************************/
 
 ;/* Begin Function:RMP_Enable_Int *********************************************
-;Description    : The function for enabling all interrupts. Does not allow nesting.
-;Input          : None.
-;Output         : None.    
-;Register Usage : None.                                  
+;Description : The function for enabling all interrupts. Does not allow nesting.
+;Input       : None.
+;Output      : None.
+;Return      : None.                                 
 ;*****************************************************************************/
 .thumb_func
 RMP_Enable_Int:
     .fnstart
     .cantunwind
-    CPSIE           I               
-    BX              LR
+    CPSIE               I               
+    BX                  LR
     .fnend				
 ;/* End Function:RMP_Enable_Int **********************************************/
 
 ;/* Begin Function:RMP_Mask_Int ***********************************************
-;Description    : The function for masking & unmasking interrupts. Does not allow masking.
-;Input          : R0 - The new basepri to set.
-;Output         : None.    
-;Register Usage : None.                                  
+;Description : The function for masking & unmasking interrupts. Does not allow nesting.
+;Input       : rmp_ptr_t R0 - The new BASEPRI to set.
+;Output      : None.
+;Return      : None.                                
 ;*****************************************************************************/
-.thumb_func
+    .thumb_func
 RMP_Mask_Int:
     .fnstart
     .cantunwind
-    MSR             BASEPRI,R0                                                        
-    BX              LR
+    MSR                 BASEPRI,R0                                                        
+    BX                  LR
     .fnend
 ;/* End Function:RMP_Mask_Int ************************************************/
 
 ;/* Begin Function:RMP_MSB_Get ************************************************
 ;Description    : Get the MSB of the word.
-;Input          : ptr_t Val - The value.
+;Input          : rmp_ptr_t R0 - The value.
 ;Output         : None.
 ;Return         : ptr_t - The MSB position.   
 ;Register Usage : None. 
 ;*****************************************************************************/
-.thumb_func
+    .thumb_func
 RMP_MSB_Get:
     .fnstart
     .cantunwind
-    CLZ             R1,R0
-    MOVS            R0,#31
-    SUBS            R0,R1
-    BX              LR
+    CLZ                 R1,R0
+    MOVS                R0,#31
+    SUBS                R0,R1
+    BX                  LR
     .fnend
 ;/* End Function:RMP_MSB_Get *************************************************/
 
@@ -114,16 +114,16 @@ RMP_MSB_Get:
 ;Input       : None.
 ;Output      : None.                                      
 ;*****************************************************************************/
-.thumb_func
+    .thumb_func
 _RMP_Yield:
     .fnstart
     .cantunwind
-    LDR             R0,=0xE000ED04        
-    LDR             R1,=0x10000000        
-    STR             R1,[R0]
-    DSB                                    
+    LDR                 R0,=0xE000ED04        
+    LDR                 R1,=0x10000000        
+    STR                 R1,[R0]
+                   
     ISB 
-    BX              LR         
+    BX                  LR         
     .fnend
 ;/* End Function:_RMP_Yield **************************************************/
 
@@ -132,20 +132,17 @@ _RMP_Yield:
 ;Input       : None.
 ;Output      : None.                                      
 ;*****************************************************************************/
-.thumb_func
+    .thumb_func
 _RMP_Start:
     .fnstart
     .cantunwind
-    SUBS            R1,#64               
-    MSR             PSP,R1                
-    MOVS            R4,#0x02              
-    MSR             CONTROL,R4
-    
-    DSB                                  
+    SUBS                R1,#64               
+    MSR                 PSP,R1                
+    MOVS                R4,#0x02              
+    MSR                 CONTROL,R4
+                                 
     ISB
-    
-    BLX             R0                    
-    B               .                    
+    BLX                 R0              
     .fnend
 ;/* End Function:_RMP_Start **************************************************/
 
@@ -160,29 +157,29 @@ _RMP_Start:
 ;Input       : None.
 ;Output      : None.                                      
 ;*****************************************************************************/
-.thumb_func
+    .thumb_func
 PendSV_Handler:
     .fnstart
     .cantunwind
-    MRS       R0,PSP                    
-    STMDB     R0!,{R4-R11,LR}
+    MRS                 R0,PSP                    
+    STMDB               R0!,{R4-R11,LR}
     
-    BL        RMP_Save_Ctx               
+    BL                  RMP_Save_Ctx               
     
-    LDR       R1,=RMP_Cur_SP          
-    STR       R0,[R1]
+    LDR                 R1,=RMP_Cur_SP          
+    STR                 R0,[R1]
     
-    BL        _RMP_Get_High_Rdy        
+    BL                  _RMP_Get_High_Rdy        
     
-    LDR       R1,=RMP_Cur_SP           
-    LDR       R0,[R1]
+    LDR                 R1,=RMP_Cur_SP           
+    LDR                 R0,[R1]
     
-    BL        RMP_Load_Ctx             
+    BL                  RMP_Load_Ctx             
     
-    LDMIA     R0!,{R4-R11,LR}
-    MSR       PSP,R0
+    LDMIA               R0!,{R4-R11,LR}
+    MSR                 PSP,R0
     
-    BX        LR                       
+    BX                  LR                       
     .fnend				
 ;/* End Function:PendSV_Handler **********************************************/
 
@@ -197,16 +194,16 @@ PendSV_Handler:
 ;Input       : None.
 ;Output      : None.                                      
 ;*****************************************************************************/
-.thumb_func
+    .thumb_func
 SysTick_Handler:
     .fnstart
     .cantunwind
-    PUSH      {LR}
+    PUSH                {LR}
     
-    MOVS      R0,#0x01                    
-    BL        _RMP_Tick_Handler
+    MOVS                R0,#0x01                    
+    BL                  _RMP_Tick_Handler
     
-    POP       {PC}
+    POP                 {PC}
     NOP
     .fnend
 ;/* End Function:SysTick_Handler *********************************************/
