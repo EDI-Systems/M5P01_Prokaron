@@ -255,7 +255,7 @@ This software is **triple-licensed**: it is either **[LGPL v3](LICENSE.md)** or 
 - Keil uVision 5 (armcc)
 - Code composer studio
 - MPLAB X XC32
-- gcc/clang-llvm
+- GCC/Clang-LLVM
 
 &ensp;&ensp;&ensp;&ensp;Other toolchains are not recommended nor supported at this point, though it might be possible to support them later on.
 
@@ -265,3 +265,6 @@ This software is **triple-licensed**: it is either **[LGPL v3](LICENSE.md)** or 
 
 ## EDI Project Information
 &ensp;&ensp;&ensp;&ensp;Mutate - Protero - Prokaron (M5P1 R4T1)
+
+## Starring Contributors
+&ensp;&ensp;&ensp;&ensp;Leifeng Song - ARM Cortex-M3/4/7 assembly port.
