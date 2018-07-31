@@ -6,7 +6,7 @@
 [![Github release](https://img.shields.io/github/release/EDI-Systems/M5P1_MuProkaron.svg)](https://github.com/EDI-Systems/M5P1_MuProkaron/releases/latest)
 [![Github commits](https://img.shields.io/github/commits-since/EDI-Systems/M5P1_MuProkaron/master@{30day}.svg)](https://github.com/EDI-Systems/M5P1_MuProkaron/compare/master@{30day}...master)
 ![language](https://img.shields.io/badge/language-C-orange.svg)
-![Build](https://travis-ci.org/EDI-Systems/M5P1_MuProkaron.svg?branch=master) 
+[![Build](https://travis-ci.org/EDI-Systems/M5P1_MuProkaron.svg?branch=master)](https://travis-ci.org/EDI-Systems/M5P1_MuProkaron) 
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/1684/badge)](https://bestpractices.coreinfrastructure.org/projects/1684) 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/be656c1e1f014a6abf038b4455b03bba)](https://www.codacy.com/app/EDI-Systems/M5P1_MuProkaron?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=EDI-Systems/M5P1_MuProkaron&amp;utm_campaign=Badge_Grade) 
 [![Join the chat at https://gitter.im/M5P1_MuProkaron/Lobby](https://badges.gitter.im/M5P1_MuProkaron/Lobby.svg)](https://gitter.im/M5P1_MuProkaron/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
