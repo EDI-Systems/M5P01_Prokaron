@@ -59,15 +59,15 @@ GUARD:Guard daemon start complete.
 TIMD:Timer daemon start complete.
 VMMD:VMMD initialization complete.
 INTD:Interrupt daemon start complete.
-VM Domain 01 : Yield: 1030 cycles.
+VM Domain 01 : Yield: 1033 cycles.
 VM Domain 01 : 
-VM Domain 01 : Mailbox: 1215 cycles.
+VM Domain 01 : Mailbox: 1214 cycles.
 VM Domain 01 : 
-VM Domain 01 : Semaphore: 1174 cycles.
+VM Domain 01 : Semaphore: 1168 cycles.
 VM Domain 01 : 
 VM Domain 01 : Memory: 174 cycles.
 VM Domain 01 : 
 VM Domain 01 : Mailbox-ISR: 860 cycles.
 VM Domain 01 : 
-VM Domain 01 : Semaphore-ISR: 860 cycles.
+VM Domain 01 : Semaphore-ISR: 825 cycles.
 VM Domain 01 : 
