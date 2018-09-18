@@ -7,7 +7,7 @@ Description : The configuration file for testing program.
 ******************************************************************************/
 
 /* Config Includes ***********************************************************/
-#include "Platform/rmp_test_FE310-G000.h"
+#include "Platform/rmp_test_STM32F767IG_rvm.h"
 /* End Config Includes *******************************************************/
 
 /* End Of File ***************************************************************/

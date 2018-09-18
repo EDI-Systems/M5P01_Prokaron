@@ -1,9 +1,9 @@
 /******************************************************************************
-Filename    : rmp_platform_cmx_rvm_conf.h
-Author      : pry
-Date        : 24/06/2017
-Licence     : LGPL v3+; see COPYING for details.
-Description : The configuration file for Cortex-M HAL.
+Filename   : rmp_platform_cmx_rvm_conf.h
+Author     : pry
+Date       : 24/06/2017
+Licence    : LGPL v3+; see COPYING for details.
+Description: The configuration file for Cortex-M HAL.
 ******************************************************************************/
 
 /* Config Includes ***********************************************************/

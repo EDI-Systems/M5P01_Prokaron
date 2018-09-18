@@ -42,7 +42,7 @@ const struct RVM_Hdr_Pgtbl RVM_Pgtbl[RVM_PGTBL_NUM]=
     }
 };
 /* Kernel capability stuff */
-const ptr_t RVM_Kcap[RVM_KCAP_NUM]=
+const rvm_ptr_t RVM_Kcap[RVM_KCAP_NUM]=
 {
     /* Timer 4 is at IRQ30 */
     30
