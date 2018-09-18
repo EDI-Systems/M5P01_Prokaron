@@ -403,14 +403,14 @@
           <GroupName>Lib</GroupName>
           <Files>
             <File>
-              <FileName>guest_cmx.c</FileName>
+              <FileName>rvm_guest_cmx.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\M7M2_MuAmmonite\MAmmonite\Guest\CortexM\guest_cmx.c</FilePath>
+              <FilePath>..\..\..\M7M2_MuAmmonite\MAmmonite\Guest\CortexM\rvm_guest_cmx.c</FilePath>
             </File>
             <File>
-              <FileName>guest_cmx.s</FileName>
+              <FileName>rvm_guest_cmx.s</FileName>
               <FileType>2</FileType>
-              <FilePath>..\..\..\M7M2_MuAmmonite\MAmmonite\Guest\CortexM\guest_cmx.s</FilePath>
+              <FilePath>..\..\..\M7M2_MuAmmonite\MAmmonite\Guest\CortexM\rvm_guest_cmx.s</FilePath>
             </File>
           </Files>
         </Group>

@@ -19,37 +19,38 @@
                     Microcontroller User-level Platform!
 -------------------------------------------------------------------------------
 Init:Preparation - priority raised.
+Init:Start creating kernel objects @ kernel virtual address base 0x40006400.
 -------------------------------------------------------------------------------
 Init:Virtual machine database initialization complete.
-Init:Created GuardD fault endpoint CID 12 @ address 0x20003400.
-Init:Created Guard daemon CID 11 @ address 0x20003410.
+Init:Created GuardD fault endpoint CID 12 @ address 0x400.
+Init:Created Guard daemon CID 11 @ address 0x410.
 Init:Guard daemon initialization complete.
-Init:Created Timer daemon CID 13 @ address 0x200034D0.
+Init:Created Timer daemon CID 13 @ address 0x4D0.
 Init:Timer daemon initialization complete.
-Init:Created VMMD endpoint CID 15 @ address 0x20003590.
-Init:Created VMM daemon CID 14 @ address 0x200035A0.
+Init:Created VMMD endpoint CID 15 @ address 0x590.
+Init:Created VMM daemon CID 14 @ address 0x5A0.
 Init:VMM daemon initialization complete.
-Init:Created Interrupt daemon CID 16 @ address 0x20003660.
+Init:Created Interrupt daemon CID 16 @ address 0x660.
 Init:Interrupt daemon initialization complete.
 Init:Daemon time budget initialization complete.
 Init:Daemon initialization done.
 Init:First VM address 0x802214C.
 Init:Total virtual machine count 1.
 Init:Total page table count 1.
-Init:Virtual machine process/captbl table size 2 @ address 0x20003720.
-Init:Virtual machine userthd/intthd/intsig table size 3 @ address 0x20003760.
-Init:Virtual machine pgtbl table size 1 @ address 0x200037C0.
+Init:Virtual machine process/captbl table size 2 @ address 0x720.
+Init:Virtual machine userthd/intthd/intsig table size 3 @ address 0x760.
+Init:Virtual machine pgtbl table size 1 @ address 0x7C0.
 -------------------------------------------------------------------------------
 Init:Found VM image header @ address 0x802214C.
 Init:Virtual machine system shared memory mapping check complete.
-Init:CortexM:Created top-level page table number 0 @ address 200037E0.
+Init:CortexM:Created top-level page table number 0 @ address 7E0.
 Init:Created 1 page tables.
-Init:Created virtual machine capability table CID 0 @ address 0x20003910.
+Init:Created virtual machine capability table CID 0 @ address 0x910.
 Init:Virtual machine capability table size 3.
-Init:Created virtual machine process CID 1 @ address 0x20003970.
-Init:Created virual machine user thread CID 0 @ address 0x20003980 internal TID 1.
-Init:Created virual machine interrupt thread CID 1 @ address 0x20003A40 internal TID 2.
-Init:Created virual machine interrupt endpoint CID 2 @ address 0x20003B00.
+Init:Created virtual machine process CID 1 @ address 0x970.
+Init:Created virual machine user thread CID 0 @ address 0x980 internal TID 1.
+Init:Created virual machine interrupt thread CID 1 @ address 0xA40 internal TID 2.
+Init:Created virual machine interrupt endpoint CID 2 @ address 0xB00.
 Init:Thread initialization complete.
 Init:Virtual machine image initialization done.
 Init:Job finished - lowering priority.
@@ -59,15 +60,15 @@ GUARD:Guard daemon start complete.
 TIMD:Timer daemon start complete.
 VMMD:VMMD initialization complete.
 INTD:Interrupt daemon start complete.
-VM Domain 01 : Yield: 1033 cycles.
+VM Domain 01 : Yield: 1039 cycles.
 VM Domain 01 : 
-VM Domain 01 : Mailbox: 1214 cycles.
+VM Domain 01 : Mailbox: 1218 cycles.
 VM Domain 01 : 
-VM Domain 01 : Semaphore: 1168 cycles.
+VM Domain 01 : Semaphore: 1175 cycles.
 VM Domain 01 : 
 VM Domain 01 : Memory: 174 cycles.
 VM Domain 01 : 
-VM Domain 01 : Mailbox-ISR: 860 cycles.
+VM Domain 01 : Mailbox-ISR: 883 cycles.
 VM Domain 01 : 
-VM Domain 01 : Semaphore-ISR: 825 cycles.
+VM Domain 01 : Semaphore-ISR: 851 cycles.
 VM Domain 01 : 
