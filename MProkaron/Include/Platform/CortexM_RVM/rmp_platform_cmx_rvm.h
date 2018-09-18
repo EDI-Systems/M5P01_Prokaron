@@ -74,7 +74,7 @@ typedef rmp_s32_t rmp_ret_t;
 #define RMP_INIT_STACK           RMP_INIT_STACK_TAIL(17)
 
 /* The virtual machine configs are here */
-#include "guest_cmx.h"
+#include "rvm_guest_cmx.h"
 
 /* The CPU and application specific macros are here */
 #include "rmp_platform_cmx_rvm_conf.h"
@@ -120,7 +120,7 @@ typedef rmp_s32_t rmp_ret_t;
 /* If the header is not used in the public mode */
 #ifndef __HDR_PUBLIC_MEMBERS__
 /*****************************************************************************/
-static ptr_t RMP_Console_Ptr;
+static rvm_ptr_t RMP_Console_Ptr;
 /*****************************************************************************/
 /* End Private Global Variables **********************************************/
 
@@ -151,12 +151,12 @@ static void RMP_SysTick_Handler(void);
 __EXTERN__ void RMP_Disable_Int(void);
 __EXTERN__ void RMP_Enable_Int(void);
 
-EXTERN ptr_t RMP_MSB_Get(ptr_t Val);
-EXTERN void _RMP_Start(ptr_t Entry, ptr_t Stack);
+EXTERN rvm_ptr_t RMP_MSB_Get(rvm_ptr_t Val);
+EXTERN void _RMP_Start(rvm_ptr_t Entry, rvm_ptr_t Stack);
 __EXTERN__ void _RMP_Yield(void);
 
 /* Initialization */
-__EXTERN__ void _RMP_Stack_Init(ptr_t Entry, ptr_t Stack, ptr_t Arg);
+__EXTERN__ void _RMP_Stack_Init(rvm_ptr_t Entry, rvm_ptr_t Stack, rvm_ptr_t Arg);
 __EXTERN__ void _RMP_Low_Level_Init(void);
 __EXTERN__ void RMP_Putchar(char Char);
 __EXTERN__ void _RMP_Plat_Hook(void);
