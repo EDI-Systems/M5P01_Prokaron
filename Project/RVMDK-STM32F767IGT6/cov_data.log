@@ -19,7 +19,7 @@
                     Microcontroller User-level Platform!
 -------------------------------------------------------------------------------
 Init:Preparation - priority raised.
-Init:Start creating kernel objects @ kernel virtual address base 0x40006400.
+Init:Start creating kernel objects @ kernel virtual address base 0x20003400.
 -------------------------------------------------------------------------------
 Init:Virtual machine database initialization complete.
 Init:Created GuardD fault endpoint CID 12 @ address 0x400.
@@ -60,15 +60,15 @@ GUARD:Guard daemon start complete.
 TIMD:Timer daemon start complete.
 VMMD:VMMD initialization complete.
 INTD:Interrupt daemon start complete.
-VM Domain 01 : Yield: 1039 cycles.
-VM Domain 01 : 
-VM Domain 01 : Mailbox: 1218 cycles.
-VM Domain 01 : 
-VM Domain 01 : Semaphore: 1175 cycles.
-VM Domain 01 : 
-VM Domain 01 : Memory: 174 cycles.
-VM Domain 01 : 
-VM Domain 01 : Mailbox-ISR: 883 cycles.
-VM Domain 01 : 
-VM Domain 01 : Semaphore-ISR: 851 cycles.
-VM Domain 01 : 
+Dom1 : Yield: 1039 cycles.
+Dom1 : 
+Dom1 : Mailbox: 1220 cycles.
+Dom1 : 
+Dom1 : Semaphore: 1174 cycles.
+Dom1 : 
+Dom1 : Memory: 174 cycles.
+Dom1 : 
+Dom1 : Mailbox-ISR: 883 cycles.
+Dom1 : 
+Dom1 : Semaphore-ISR: 849 cycles.
+Dom1 : 
