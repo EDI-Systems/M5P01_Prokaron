@@ -60,15 +60,15 @@ GUARD:Guard daemon start complete.
 TIMD:Timer daemon start complete.
 VMMD:VMMD initialization complete.
 INTD:Interrupt daemon start complete.
-Dom1 : Yield: 1039 cycles.
+Dom1 : Yield: 1029 cycles.
 Dom1 : 
 Dom1 : Mailbox: 1220 cycles.
 Dom1 : 
-Dom1 : Semaphore: 1174 cycles.
+Dom1 : Semaphore: 1184 cycles.
 Dom1 : 
 Dom1 : Memory: 174 cycles.
 Dom1 : 
 Dom1 : Mailbox-ISR: 883 cycles.
 Dom1 : 
-Dom1 : Semaphore-ISR: 849 cycles.
+Dom1 : Semaphore-ISR: 852 cycles.
 Dom1 : 
