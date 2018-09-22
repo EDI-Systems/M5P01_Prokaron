@@ -1,32 +1,32 @@
-;/*****************************************************************************
-;Filename    : rmp_platform_cmx_asm_gcc.s
-;Author      : songleifeng, pry
-;Date        : 07/19/2018
-;Description : The assembly part of the RMP RTOS. This is for Cortex-M3/4/7, and
-;              is used on gcc.
-;*****************************************************************************/
+/******************************************************************************
+Filename    : rmp_platform_cmx_asm_gcc.S
+Author      : songleifeng
+Date        : 07/19/2018
+Description : The assembly part of the RMP RTOS. This is for Cortex-M3/4/7, and
+              is used on gcc. This is derived from the MDK version.
+******************************************************************************/
 
-;/* The ARM Cortex-M Structure ************************************************
-;R0-R7:General purpose registers that are accessible. 
-;R8-R12:general purpose registers that can only be reached by 32-bit instructions.
-;R13:SP/SP_process/SP_main    Stack pointer
-;R14:LR                       Link Register(used for returning from a subfunction)
-;R15:PC                       Program counter.
-;IPSR                         Interrupt Program Status Register.
-;APSR                         Application Program Status Register.
-;EPSR                         Execute Program Status Register.
-;The above 3 registers are saved into the stack in combination(xPSR).
-;The ARM Cortex-M4/7 also include a FPU.
-;*****************************************************************************/
+/* The ARM Cortex-M Architeture ***********************************************
+R0-R7:General purpose registers that are accessible.
+R8-R12:general purpose registers that can only be reached by 32-bit instructions.
+R13:SP/SP_process/SP_main    Stack pointer
+R14:LR                       Link Register(used for returning from a subfunction)
+R15:PC                       Program counter.
+IPSR                         Interrupt Program Status Register.
+APSR                         Application Program Status Register.
+EPSR                         Execute Program Status Register.
+The above 3 registers are saved into the stack in combination(xPSR).
+The ARM Cortex-M4/7 also include a FPU.
+******************************************************************************/
             
-;/* Begin Header *************************************************************/  
+/* Begin Header **************************************************************/
     .syntax             unified
     .thumb
     .section            ".text"
     .align              3
-;/* End Header ***************************************************************/
+/* End Header ****************************************************************/
 
-;/* Begin Exports ************************************************************/
+/* Begin Exports *************************************************************/
     .global             RMP_Disable_Int       
     .global             RMP_Enable_Int
     .global             RMP_Mask_Int     
@@ -35,23 +35,23 @@
     .global             _RMP_Yield        
     .global             PendSV_Handler 
     .global             SysTick_Handler                               
-;/* End Exports **************************************************************/
+/* End Exports ***************************************************************/
 
-;/* Begin Imports ************************************************************/
+/* Begin Imports *************************************************************/
     .extern             _RMP_Get_High_Rdy 
     .extern             _RMP_Tick_Handler     
     .extern             RMP_Cur_Thd
     .extern             RMP_Cur_SP        
     .extern             RMP_Save_Ctx
     .extern             RMP_Load_Ctx
-;/* End Imports **************************************************************/
+/* End Imports ***************************************************************/
 
-;/* Begin Function:RMP_Disable_Int ********************************************
-;Description : The function for disabling all interrupts. Does not allow nesting.
-;Input       : None.
-;Output      : None.
-;Return      : None.                                  
-;*****************************************************************************/    
+/* Begin Function:RMP_Disable_Int *********************************************
+Description : The function for disabling all interrupts. Does not allow nesting.
+Input       : None.
+Output      : None.
+Return      : None.
+******************************************************************************/
     .thumb_func
 RMP_Disable_Int:
     .fnstart
@@ -59,14 +59,14 @@ RMP_Disable_Int:
     CPSID               I                                                       
     BX                  LR       
     .fnend				
-;/* End Function:RMP_Disable_Int *********************************************/
+/* End Function:RMP_Disable_Int **********************************************/
 
-;/* Begin Function:RMP_Enable_Int *********************************************
-;Description : The function for enabling all interrupts. Does not allow nesting.
-;Input       : None.
-;Output      : None.
-;Return      : None.                                 
-;*****************************************************************************/
+/* Begin Function:RMP_Enable_Int **********************************************
+Description : The function for enabling all interrupts. Does not allow nesting.
+Input       : None.
+Output      : None.
+Return      : None.
+******************************************************************************/
 .thumb_func
 RMP_Enable_Int:
     .fnstart
@@ -74,14 +74,14 @@ RMP_Enable_Int:
     CPSIE               I               
     BX                  LR
     .fnend				
-;/* End Function:RMP_Enable_Int **********************************************/
+/* End Function:RMP_Enable_Int ***********************************************/
 
-;/* Begin Function:RMP_Mask_Int ***********************************************
-;Description : The function for masking & unmasking interrupts. Does not allow nesting.
-;Input       : rmp_ptr_t R0 - The new BASEPRI to set.
-;Output      : None.
-;Return      : None.                                
-;*****************************************************************************/
+/* Begin Function:RMP_Mask_Int ************************************************
+Description : The function for masking & unmasking interrupts. Does not allow nesting.
+Input       : rmp_ptr_t R0 - The new BASEPRI to set.
+Output      : None.
+Return      : None.
+******************************************************************************/
     .thumb_func
 RMP_Mask_Int:
     .fnstart
@@ -89,15 +89,14 @@ RMP_Mask_Int:
     MSR                 BASEPRI,R0                                                        
     BX                  LR
     .fnend
-;/* End Function:RMP_Mask_Int ************************************************/
+/* End Function:RMP_Mask_Int *************************************************/
 
-;/* Begin Function:RMP_MSB_Get ************************************************
-;Description    : Get the MSB of the word.
-;Input          : rmp_ptr_t R0 - The value.
-;Output         : None.
-;Return         : ptr_t - The MSB position.   
-;Register Usage : None. 
-;*****************************************************************************/
+/* Begin Function:RMP_MSB_Get *************************************************
+Description : Get the MSB of the word.
+Input       : rmp_ptr_t R0 - The value.
+Output      : None.
+Return      : ptr_t - The MSB position.
+******************************************************************************/
     .thumb_func
 RMP_MSB_Get:
     .fnstart
@@ -107,13 +106,14 @@ RMP_MSB_Get:
     SUBS                R0,R1
     BX                  LR
     .fnend
-;/* End Function:RMP_MSB_Get *************************************************/
+/* End Function:RMP_MSB_Get **************************************************/
 
-;/* Begin Function:_RMP_Yield *************************************************
-;Description : Trigger a yield to another thread.
-;Input       : None.
-;Output      : None.                                      
-;*****************************************************************************/
+/* Begin Function:_RMP_Yield **************************************************
+Description : Trigger a yield to another thread.
+Input       : None.
+Output      : None.
+Return      : None.
+******************************************************************************/
     .thumb_func
 _RMP_Yield:
     .fnstart
@@ -125,13 +125,14 @@ _RMP_Yield:
     ISB 
     BX                  LR         
     .fnend
-;/* End Function:_RMP_Yield **************************************************/
+/* End Function:_RMP_Yield ***************************************************/
 
-;/* Begin Function:_RMP_Start *************************************************
-;Description : Jump to the user function and will never return from it.
-;Input       : None.
-;Output      : None.                                      
-;*****************************************************************************/
+/* Begin Function:_RMP_Start **************************************************
+Description : Jump to the user function and will never return from it.
+Input       : None.
+Output      : None.
+Return      : None.
+******************************************************************************/
     .thumb_func
 _RMP_Start:
     .fnstart
@@ -144,19 +145,20 @@ _RMP_Start:
     ISB
     BLX                 R0              
     .fnend
-;/* End Function:_RMP_Start **************************************************/
+/* End Function:_RMP_Start ***************************************************/
 
-;/* Begin Function:PendSV_Handler *********************************************
-;Description : The PendSV interrupt routine. In fact, it will call a C function
-;              directly. The reason why the interrupt routine must be an assembly
-;              function is that the compiler may deal with the stack in a different 
-;              way when different optimization level is chosen. An assembly function
-;              can make way around this problem.
-;              However, if your compiler support inline assembly functions, this
-;              can also be written in C.
-;Input       : None.
-;Output      : None.                                      
-;*****************************************************************************/
+/* Begin Function:PendSV_Handler **********************************************
+Description : The PendSV interrupt routine. In fact, it will call a C function
+              directly. The reason why the interrupt routine must be an assembly
+              function is that the compiler may deal with the stack in a different
+              way when different optimization level is chosen. An assembly function
+              can make way around this problem.
+              However, if your compiler support inline assembly functions, this
+              can also be written in C.
+Input       : None.
+Output      : None.
+Return      : None.
+******************************************************************************/
     .thumb_func
 PendSV_Handler:
     .fnstart
@@ -181,19 +183,20 @@ PendSV_Handler:
     
     BX                  LR                       
     .fnend				
-;/* End Function:PendSV_Handler **********************************************/
+/* End Function:PendSV_Handler ***********************************************/
 
-;/* Begin Function:SysTick_Handler ********************************************
-;Description : The SysTick interrupt routine. In fact, it will call a C function
-;              directly. The reason why the interrupt routine must be an assembly
-;              function is that the compiler may deal with the stack in a different 
-;              way when different optimization level is chosen. An assembly function
-;              can make way around this problem.
-;              However, if your compiler support inline assembly functions, this
-;              can also be written in C.
-;Input       : None.
-;Output      : None.                                      
-;*****************************************************************************/
+/* Begin Function:SysTick_Handler *********************************************
+Description : The SysTick interrupt routine. In fact, it will call a C function
+              directly. The reason why the interrupt routine must be an assembly
+              function is that the compiler may deal with the stack in a different
+              way when different optimization level is chosen. An assembly function
+              can make way around this problem.
+              However, if your compiler support inline assembly functions, this
+              can also be written in C.
+Input       : None.
+Output      : None.
+Return      : None.
+******************************************************************************/
     .thumb_func
 SysTick_Handler:
     .fnstart
@@ -206,9 +209,9 @@ SysTick_Handler:
     POP                 {PC}
     NOP
     .fnend
-;/* End Function:SysTick_Handler *********************************************/
+/* End Function:SysTick_Handler **********************************************/
 
     .end
-;/* End Of File **************************************************************/
+/* End Of File ***************************************************************/
 
-;/* Copyright (C) Evo-Devo Instrum. All rights reserved **********************/
+/* Copyright (C) Evo-Devo Instrum. All rights reserved ***********************/

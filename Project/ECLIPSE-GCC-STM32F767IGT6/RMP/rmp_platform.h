@@ -1,14 +1,14 @@
 /******************************************************************************
-Filename    : rmp_test.h
-Author      : pry
-Date        : 24/06/2017
+Filename    : rmp_platform.h
+Author      : pry 
+Date        : 22/07/2017
 Licence     : LGPL v3+; see COPYING for details.
-Description : The configuration file for testing program.
+Description : The platform specific types for RMP.
 ******************************************************************************/
 
-/* Config Includes ***********************************************************/
-#include "Platform/test_STM32F767IG_rvm.h"
-/* End Config Includes *******************************************************/
+/* Platform Includes *********************************************************/
+#include "Platform/CortexM/rmp_platform_cmx.h"
+/* End Platform Includes *****************************************************/
 
 /* End Of File ***************************************************************/
 

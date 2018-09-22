@@ -408,9 +408,9 @@
               <FilePath>..\..\..\M7M2_MuAmmonite\MAmmonite\Guest\CortexM\rvm_guest_cmx.c</FilePath>
             </File>
             <File>
-              <FileName>rvm_guest_cmx.s</FileName>
+              <FileName>rvm_guest_cmx_asm.s</FileName>
               <FileType>2</FileType>
-              <FilePath>..\..\..\M7M2_MuAmmonite\MAmmonite\Guest\CortexM\rvm_guest_cmx.s</FilePath>
+              <FilePath>..\..\..\M7M2_MuAmmonite\MAmmonite\Guest\CortexM\rvm_guest_cmx_asm.s</FilePath>
             </File>
           </Files>
         </Group>
