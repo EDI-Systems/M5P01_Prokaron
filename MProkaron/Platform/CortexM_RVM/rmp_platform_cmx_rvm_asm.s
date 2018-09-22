@@ -34,10 +34,6 @@
     EXPORT              _RMP_Start          
 ;/* End Exports **************************************************************/
 
-;/* Begin Imports ************************************************************/
-
-;/* End Imports **************************************************************/
-
 ;/* Begin Function:RMP_MSB_Get ************************************************
 ;Description : Get the MSB of the word.
 ;Input       : rmp_ptr_t R0 - The value.
@@ -70,4 +66,4 @@ _RMP_Start
     END
 ;/* End Of File **************************************************************/
 
-;/* Copyright (C) 2011-2013 Evo-Devo Instrum. All rights reserved ************/
+;/* Copyright (C) Evo-Devo Instrum. All rights reserved **********************/
