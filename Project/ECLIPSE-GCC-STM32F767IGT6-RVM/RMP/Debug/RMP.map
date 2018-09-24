@@ -22,20 +22,14 @@ Archive member included to satisfy reference by file (symbol)
 Allocating common symbols
 Common symbol       size              file
 
-Stack_2             0x400             ./User/rmp_test.o
 RVM_Regs            0x68              ./Lib/rvm_guest_cmx.o
 RMP_Cur_SP          0x4               ./Kernel/rmp_kernel.o
 RMP_Cur_Thd         0x4               ./Kernel/rmp_kernel.o
 RMP_Tick            0x4               ./Kernel/rmp_kernel.o
-Sem_1               0x10              ./User/rmp_test.o
-Thd_2               0x3c              ./User/rmp_test.o
 RVM_Flag            0x4               ./Lib/rvm_guest_cmx.o
 RVM_Param           0x14              ./Lib/rvm_guest_cmx.o
 RVM_Vect            0x80              ./Lib/rvm_guest_cmx.o
-Thd_1               0x3c              ./User/rmp_test.o
 RVM_Console         0x80              ./Lib/rvm_guest_cmx.o
-Thd_Test            0x3c              ./User/rmp_test.o
-Stack_1             0x400             ./User/rmp_test.o
 
 Discarded input sections
 
@@ -176,14 +170,6 @@ Discarded input sections
  .text          0x00000000        0x0 ./User/rmp_test.o
  .data          0x00000000        0x0 ./User/rmp_test.o
  .bss           0x00000000        0x0 ./User/rmp_test.o
- .text.Timer_Init
-                0x00000000       0x5c ./User/rmp_test.o
- .text.Int_Disable
-                0x00000000       0x6c ./User/rmp_test.o
- .text.Test_Yield_1
-                0x00000000       0x20 ./User/rmp_test.o
- .text.Rand     0x00000000       0x1c ./User/rmp_test.o
- .text.Swap     0x00000000        0xc ./User/rmp_test.o
  .group         0x00000000        0x8 ./Platform/rmp_platform_cmx_rvm.o
  .group         0x00000000        0x8 ./Platform/rmp_platform_cmx_rvm.o
  .group         0x00000000        0x8 ./Platform/rmp_platform_cmx_rvm.o
@@ -306,6 +292,10 @@ Discarded input sections
  .text          0x00000000        0x0 ./Platform/rmp_platform_cmx_rvm.o
  .data          0x00000000        0x0 ./Platform/rmp_platform_cmx_rvm.o
  .bss           0x00000000        0x0 ./Platform/rmp_platform_cmx_rvm.o
+ .text._RMP_Stack_Init
+                0x00000000       0x1c ./Platform/rmp_platform_cmx_rvm.o
+ .text.RMP_Putchar
+                0x00000000       0x48 ./Platform/rmp_platform_cmx_rvm.o
  .text.RMP_Disable_Int
                 0x00000000        0x4 ./Platform/rmp_platform_cmx_rvm.o
  .text.RMP_Enable_Int
@@ -439,6 +429,8 @@ Discarded input sections
  .bss           0x00000000        0x0 ./Lib/rvm_guest_cmx.o
  .text.RVM_Disable_Int
                 0x00000000       0x24 ./Lib/rvm_guest_cmx.o
+ .text.RVM_Reg_Int
+                0x00000000       0x28 ./Lib/rvm_guest_cmx.o
  .text.RVM_Del_Int
                 0x00000000       0x20 ./Lib/rvm_guest_cmx.o
  .text.RVM_Reg_Evt
@@ -455,6 +447,14 @@ Discarded input sections
                 0x00000000       0x74 ./Lib/rvm_guest_cmx.o
  .text.RVM_Tim_Prog
                 0x00000000       0x20 ./Lib/rvm_guest_cmx.o
+ .text.RVM_Print
+                0x00000000       0x20 ./Lib/rvm_guest_cmx.o
+ .text.RVM_HW_Int_Enable
+                0x00000000       0x14 ./Lib/rvm_guest_cmx.o
+ .text.RVM_HW_Int_Disable
+                0x00000000       0x14 ./Lib/rvm_guest_cmx.o
+ .text.RVM_HW_Int_Prio
+                0x00000000       0x14 ./Lib/rvm_guest_cmx.o
  .debug_macro   0x00000000      0x886 ./Lib/rvm_guest_cmx.o
  .debug_macro   0x00000000      0x227 ./Lib/rvm_guest_cmx.o
  .debug_macro   0x00000000       0x46 ./Lib/rvm_guest_cmx.o
@@ -582,8 +582,14 @@ Discarded input sections
  .text          0x00000000        0x0 ./Kernel/rmp_kernel.o
  .data          0x00000000        0x0 ./Kernel/rmp_kernel.o
  .bss           0x00000000        0x0 ./Kernel/rmp_kernel.o
+ .text.RMP_Clear
+                0x00000000       0x98 ./Kernel/rmp_kernel.o
+ .text.RMP_Print_Int
+                0x00000000       0xcc ./Kernel/rmp_kernel.o
  .text.RMP_Print_Uint
                 0x00000000       0x58 ./Kernel/rmp_kernel.o
+ .text.RMP_Print_String
+                0x00000000       0x20 ./Kernel/rmp_kernel.o
  .text.RMP_List_Crt
                 0x00000000        0x8 ./Kernel/rmp_kernel.o
  .text.RMP_List_Del
@@ -592,28 +598,58 @@ Discarded input sections
                 0x00000000        0xc ./Kernel/rmp_kernel.o
  .text.RMP_CRC16
                 0x00000000       0x4c ./Kernel/rmp_kernel.o
+ .text.RMP_Lock_Sched
+                0x00000000       0x20 ./Kernel/rmp_kernel.o
+ .text.RMP_Yield
+                0x00000000       0x1c ./Kernel/rmp_kernel.o
  .text._RMP_Get_Near_Ticks
                 0x00000000       0x30 ./Kernel/rmp_kernel.o
+ .text.RMP_Thd_Crt
+                0x00000000      0x168 ./Kernel/rmp_kernel.o
  .text.RMP_Thd_Del
                 0x00000000      0x1d4 ./Kernel/rmp_kernel.o
+ .text.RMP_Thd_Set
+                0x00000000      0x188 ./Kernel/rmp_kernel.o
  .text.RMP_Thd_Suspend
                 0x00000000      0x14c ./Kernel/rmp_kernel.o
  .text.RMP_Thd_Resume
                 0x00000000      0x138 ./Kernel/rmp_kernel.o
+ .text.RMP_Thd_Snd
+                0x00000000      0x2b8 ./Kernel/rmp_kernel.o
+ .text.RMP_Thd_Snd_ISR
+                0x00000000       0xd8 ./Kernel/rmp_kernel.o
+ .text.RMP_Thd_Rcv
+                0x00000000      0x334 ./Kernel/rmp_kernel.o
  .text.RMP_Thd_Delay
                 0x00000000      0x118 ./Kernel/rmp_kernel.o
  .text.RMP_Thd_Cancel
                 0x00000000      0x11c ./Kernel/rmp_kernel.o
+ .text.RMP_Sem_Crt
+                0x00000000       0xe4 ./Kernel/rmp_kernel.o
  .text.RMP_Sem_Del
                 0x00000000      0x170 ./Kernel/rmp_kernel.o
+ .text.RMP_Sem_Pend
+                0x00000000      0x214 ./Kernel/rmp_kernel.o
  .text.RMP_Sem_Abort
                 0x00000000      0x178 ./Kernel/rmp_kernel.o
+ .text.RMP_Sem_Post
+                0x00000000      0x1d8 ./Kernel/rmp_kernel.o
+ .text.RMP_Sem_Post_ISR
+                0x00000000      0x108 ./Kernel/rmp_kernel.o
  .text.RMP_RBIT_Get
                 0x00000000       0x38 ./Kernel/rmp_kernel.o
  .text.RMP_LSB_Get
                 0x00000000       0x40 ./Kernel/rmp_kernel.o
+ .text.RMP_Mem_Init
+                0x00000000      0x14c ./Kernel/rmp_kernel.o
+ .text.RMP_Malloc
+                0x00000000      0x2a8 ./Kernel/rmp_kernel.o
+ .text.RMP_Free
+                0x00000000      0x1b8 ./Kernel/rmp_kernel.o
  .rodata        0x00000000      0x100 ./Kernel/rmp_kernel.o
  .rodata.CRC16_High.12476
+                0x00000000      0x100 ./Kernel/rmp_kernel.o
+ .rodata.RMP_RBIT_Table
                 0x00000000      0x100 ./Kernel/rmp_kernel.o
  .debug_macro   0x00000000      0x886 ./Kernel/rmp_kernel.o
  .debug_macro   0x00000000       0x58 ./Kernel/rmp_kernel.o
@@ -807,7 +843,7 @@ LOAD /home/pry/eclipse/gcc-arm-none-eabi-5_4-2016q3/bin/../lib/gcc/arm-none-eabi
                 [!provide]                PROVIDE (_Heap_Begin, _end_noinit)
                 [!provide]                PROVIDE (_Heap_Limit, (__stack - __Main_Stack_Size))
 
-.text           0x08020000     0x3154
+.text           0x08020000      0x864
  *rvm_guest_cmx_asm_gcc.o(.text .text.*)
  .text          0x08020000       0xf0 ./Lib/rvm_guest_cmx_asm_gcc.o
                 0x08020004                _RVM_Entry
@@ -820,415 +856,239 @@ LOAD /home/pry/eclipse/gcc-arm-none-eabi-5_4-2016q3/bin/../lib/gcc/arm-none-eabi
                 0x080200b8                _RVM_Kern
  *(.text .text.*)
  .text          0x080200f0       0x5c /home/pry/eclipse/gcc-arm-none-eabi-5_4-2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7e-m/softfp/crtbegin.o
- .text.Int_Handler
-                0x0802014c      0x100 ./User/rmp_test.o
-                0x0802014c                Int_Handler
- .text.TIM_Base_SetConfig
-                0x0802024c      0x120 ./User/rmp_test.o
-                0x0802024c                TIM_Base_SetConfig
- .text.Int_Init
-                0x0802036c      0x150 ./User/rmp_test.o
-                0x0802036c                Int_Init
- .text.Test_Mail_1
-                0x080204bc       0x40 ./User/rmp_test.o
-                0x080204bc                Test_Mail_1
- .text.Test_Sem_1
-                0x080204fc       0x28 ./User/rmp_test.o
-                0x080204fc                Test_Sem_1
- .text.Func_1   0x08020524       0x3c ./User/rmp_test.o
-                0x08020524                Func_1
- .text.Test_Yield_2
-                0x08020560       0x48 ./User/rmp_test.o
-                0x08020560                Test_Yield_2
- .text.Test_Mail_2
-                0x080205a8       0x54 ./User/rmp_test.o
-                0x080205a8                Test_Mail_2
- .text.Test_Sem_2
-                0x080205fc       0x54 ./User/rmp_test.o
-                0x080205fc                Test_Sem_2
- .text.Test_Mail_ISR
-                0x08020650       0x68 ./User/rmp_test.o
-                0x08020650                Test_Mail_ISR
- .text.Test_Sem_ISR
-                0x080206b8       0x64 ./User/rmp_test.o
-                0x080206b8                Test_Sem_ISR
- .text.Test_Mem_Pool
-                0x0802071c      0x6c4 ./User/rmp_test.o
-                0x0802071c                Test_Mem_Pool
- .text.Func_2   0x08020de0      0x118 ./User/rmp_test.o
-                0x08020de0                Func_2
  .text.RMP_Init_Hook
-                0x08020ef8       0xd4 ./User/rmp_test.o
-                0x08020ef8                RMP_Init_Hook
+                0x0802014c        0x4 ./User/rmp_test.o
+                0x0802014c                RMP_Init_Hook
  .text.RMP_Init_Idle
-                0x08020fcc        0x4 ./User/rmp_test.o
-                0x08020fcc                RMP_Init_Idle
+                0x08020150        0x4 ./User/rmp_test.o
+                0x08020150                RMP_Init_Idle
  .text.RMP_PendSV_Handler
-                0x08020fd0       0x84 ./Platform/rmp_platform_cmx_rvm.o
+                0x08020154       0x84 ./Platform/rmp_platform_cmx_rvm.o
  .text.RMP_SysTick_Handler
-                0x08021054        0x8 ./Platform/rmp_platform_cmx_rvm.o
- .text._RMP_Stack_Init
-                0x0802105c       0x1c ./Platform/rmp_platform_cmx_rvm.o
-                0x0802105c                _RMP_Stack_Init
+                0x080201d8        0x8 ./Platform/rmp_platform_cmx_rvm.o
  .text._RMP_Low_Level_Init
-                0x08021078       0x2c ./Platform/rmp_platform_cmx_rvm.o
-                0x08021078                _RMP_Low_Level_Init
+                0x080201e0       0x2c ./Platform/rmp_platform_cmx_rvm.o
+                0x080201e0                _RMP_Low_Level_Init
  .text._RMP_Plat_Hook
-                0x080210a4        0x4 ./Platform/rmp_platform_cmx_rvm.o
-                0x080210a4                _RMP_Plat_Hook
- .text.RMP_Putchar
-                0x080210a8       0x48 ./Platform/rmp_platform_cmx_rvm.o
-                0x080210a8                RMP_Putchar
+                0x0802020c        0x4 ./Platform/rmp_platform_cmx_rvm.o
+                0x0802020c                _RMP_Plat_Hook
  .text._RMP_Yield
-                0x080210f0        0x4 ./Platform/rmp_platform_cmx_rvm.o
-                0x080210f0                _RMP_Yield
- *fill*         0x080210f4        0x4 
- .text          0x080210f8       0x1c ./Platform/rmp_platform_cmx_rvm_asm_gcc.o
-                0x080210f8                RMP_MSB_Get
-                0x08021106                _RMP_Start
- .text.RVM_Int  0x08021114       0x94 ./Lib/rvm_guest_cmx.o
+                0x08020210        0x4 ./Platform/rmp_platform_cmx_rvm.o
+                0x08020210                _RMP_Yield
+ *fill*         0x08020214        0x4 
+ .text          0x08020218       0x1c ./Platform/rmp_platform_cmx_rvm_asm_gcc.o
+                0x08020218                RMP_MSB_Get
+                0x08020226                _RMP_Start
+ .text.RVM_Int  0x08020234       0x94 ./Lib/rvm_guest_cmx.o
  .text.RVM_Init
-                0x080211a8       0x3c ./Lib/rvm_guest_cmx.o
-                0x080211a8                RVM_Init
+                0x080202c8       0x3c ./Lib/rvm_guest_cmx.o
+                0x080202c8                RVM_Init
  .text.RVM_Vect_Init
-                0x080211e4       0x1c ./Lib/rvm_guest_cmx.o
-                0x080211e4                RVM_Vect_Init
+                0x08020304       0x1c ./Lib/rvm_guest_cmx.o
+                0x08020304                RVM_Vect_Init
  .text.RVM_Enable_Int
-                0x08021200       0x20 ./Lib/rvm_guest_cmx.o
-                0x08021200                RVM_Enable_Int
+                0x08020320       0x20 ./Lib/rvm_guest_cmx.o
+                0x08020320                RVM_Enable_Int
  .text.RVM_Mask_Int
-                0x08021220       0x14 ./Lib/rvm_guest_cmx.o
-                0x08021220                RVM_Mask_Int
+                0x08020340       0x14 ./Lib/rvm_guest_cmx.o
+                0x08020340                RVM_Mask_Int
  .text.RVM_Unmask_Int
-                0x08021234       0x20 ./Lib/rvm_guest_cmx.o
-                0x08021234                RVM_Unmask_Int
- .text.RVM_Reg_Int
-                0x08021254       0x28 ./Lib/rvm_guest_cmx.o
-                0x08021254                RVM_Reg_Int
- .text.RVM_Print
-                0x0802127c       0x20 ./Lib/rvm_guest_cmx.o
-                0x0802127c                RVM_Print
+                0x08020354       0x20 ./Lib/rvm_guest_cmx.o
+                0x08020354                RVM_Unmask_Int
  .text.RVM_Yield
-                0x0802129c       0x38 ./Lib/rvm_guest_cmx.o
-                0x0802129c                RVM_Yield
- .text.RVM_HW_Int_Enable
-                0x080212d4       0x14 ./Lib/rvm_guest_cmx.o
-                0x080212d4                RVM_HW_Int_Enable
- .text.RVM_HW_Int_Disable
-                0x080212e8       0x14 ./Lib/rvm_guest_cmx.o
-                0x080212e8                RVM_HW_Int_Disable
- .text.RVM_HW_Int_Prio
-                0x080212fc       0x14 ./Lib/rvm_guest_cmx.o
-                0x080212fc                RVM_HW_Int_Prio
- .text.RMP_Clear
-                0x08021310       0x98 ./Kernel/rmp_kernel.o
-                0x08021310                RMP_Clear
- .text.RMP_Print_Int
-                0x080213a8       0xcc ./Kernel/rmp_kernel.o
-                0x080213a8                RMP_Print_Int
- .text.RMP_Print_String
-                0x08021474       0x20 ./Kernel/rmp_kernel.o
-                0x08021474                RMP_Print_String
- .text.RMP_Lock_Sched
-                0x08021494       0x20 ./Kernel/rmp_kernel.o
-                0x08021494                RMP_Lock_Sched
+                0x08020374       0x38 ./Lib/rvm_guest_cmx.o
+                0x08020374                RVM_Yield
  .text.RMP_Unlock_Sched
-                0x080214b4       0x4c ./Kernel/rmp_kernel.o
-                0x080214b4                RMP_Unlock_Sched
+                0x080203ac       0x4c ./Kernel/rmp_kernel.o
+                0x080203ac                RMP_Unlock_Sched
  .text.RMP_Init
-                0x08021500       0x30 ./Kernel/rmp_kernel.o
-                0x08021500                RMP_Init
- .text.RMP_Yield
-                0x08021530       0x1c ./Kernel/rmp_kernel.o
-                0x08021530                RMP_Yield
+                0x080203f8       0x30 ./Kernel/rmp_kernel.o
+                0x080203f8                RMP_Init
  .text._RMP_Get_High_Rdy
-                0x0802154c       0x88 ./Kernel/rmp_kernel.o
-                0x0802154c                _RMP_Get_High_Rdy
+                0x08020428       0x88 ./Kernel/rmp_kernel.o
+                0x08020428                _RMP_Get_High_Rdy
  .text._RMP_Tick_Handler
-                0x080215d4      0x130 ./Kernel/rmp_kernel.o
-                0x080215d4                _RMP_Tick_Handler
- .text.RMP_Thd_Crt
-                0x08021704      0x168 ./Kernel/rmp_kernel.o
-                0x08021704                RMP_Thd_Crt
- .text.RMP_Thd_Set
-                0x0802186c      0x188 ./Kernel/rmp_kernel.o
-                0x0802186c                RMP_Thd_Set
- .text.RMP_Thd_Snd
-                0x080219f4      0x2b8 ./Kernel/rmp_kernel.o
-                0x080219f4                RMP_Thd_Snd
- .text.RMP_Thd_Snd_ISR
-                0x08021cac       0xd8 ./Kernel/rmp_kernel.o
-                0x08021cac                RMP_Thd_Snd_ISR
- .text.RMP_Thd_Rcv
-                0x08021d84      0x334 ./Kernel/rmp_kernel.o
-                0x08021d84                RMP_Thd_Rcv
- .text.RMP_Sem_Crt
-                0x080220b8       0xe4 ./Kernel/rmp_kernel.o
-                0x080220b8                RMP_Sem_Crt
- .text.RMP_Sem_Pend
-                0x0802219c      0x214 ./Kernel/rmp_kernel.o
-                0x0802219c                RMP_Sem_Pend
- .text.RMP_Sem_Post
-                0x080223b0      0x1d8 ./Kernel/rmp_kernel.o
-                0x080223b0                RMP_Sem_Post
- .text.RMP_Sem_Post_ISR
-                0x08022588      0x108 ./Kernel/rmp_kernel.o
-                0x08022588                RMP_Sem_Post_ISR
+                0x080204b0      0x130 ./Kernel/rmp_kernel.o
+                0x080204b0                _RMP_Tick_Handler
  .text.RMP_Save_Ctx
-                0x08022690        0x4 ./Kernel/rmp_kernel.o
-                0x08022690                RMP_Save_Ctx
+                0x080205e0        0x4 ./Kernel/rmp_kernel.o
+                0x080205e0                RMP_Save_Ctx
  .text.RMP_Load_Ctx
-                0x08022694        0x4 ./Kernel/rmp_kernel.o
-                0x08022694                RMP_Load_Ctx
+                0x080205e4        0x4 ./Kernel/rmp_kernel.o
+                0x080205e4                RMP_Load_Ctx
  .text.startup.main
-                0x08022698       0xc4 ./Kernel/rmp_kernel.o
-                0x08022698                main
- .text.RMP_Mem_Init
-                0x0802275c      0x14c ./Kernel/rmp_kernel.o
-                0x0802275c                RMP_Mem_Init
- .text.RMP_Malloc
-                0x080228a8      0x2a8 ./Kernel/rmp_kernel.o
-                0x080228a8                RMP_Malloc
- .text.RMP_Free
-                0x08022b50      0x1b8 ./Kernel/rmp_kernel.o
-                0x08022b50                RMP_Free
+                0x080205e8       0xc4 ./Kernel/rmp_kernel.o
+                0x080205e8                main
  .text.__libc_init_array
-                0x08022d08       0x50 /home/pry/eclipse/gcc-arm-none-eabi-5_4-2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7e-m/softfp/libc.a(lib_a-init.o)
-                0x08022d08                __libc_init_array
+                0x080206ac       0x50 /home/pry/eclipse/gcc-arm-none-eabi-5_4-2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7e-m/softfp/libc.a(lib_a-init.o)
+                0x080206ac                __libc_init_array
  .text.startup.register_fini
-                0x08022d58       0x14 /home/pry/eclipse/gcc-arm-none-eabi-5_4-2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7e-m/softfp/libc.a(lib_a-__call_atexit.o)
- .text.atexit   0x08022d6c        0xc /home/pry/eclipse/gcc-arm-none-eabi-5_4-2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7e-m/softfp/libc.a(lib_a-atexit.o)
-                0x08022d6c                atexit
+                0x080206fc       0x14 /home/pry/eclipse/gcc-arm-none-eabi-5_4-2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7e-m/softfp/libc.a(lib_a-__call_atexit.o)
+ .text.atexit   0x08020710        0xc /home/pry/eclipse/gcc-arm-none-eabi-5_4-2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7e-m/softfp/libc.a(lib_a-atexit.o)
+                0x08020710                atexit
  .text.__libc_fini_array
-                0x08022d78       0x28 /home/pry/eclipse/gcc-arm-none-eabi-5_4-2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7e-m/softfp/libc.a(lib_a-fini.o)
-                0x08022d78                __libc_fini_array
+                0x0802071c       0x28 /home/pry/eclipse/gcc-arm-none-eabi-5_4-2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7e-m/softfp/libc.a(lib_a-fini.o)
+                0x0802071c                __libc_fini_array
  .text.__register_exitproc
-                0x08022da0       0xa4 /home/pry/eclipse/gcc-arm-none-eabi-5_4-2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7e-m/softfp/libc.a(lib_a-__atexit.o)
-                0x08022da0                __register_exitproc
+                0x08020744       0xa4 /home/pry/eclipse/gcc-arm-none-eabi-5_4-2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7e-m/softfp/libc.a(lib_a-__atexit.o)
+                0x08020744                __register_exitproc
  *(.rodata .rodata.* .constdata .constdata.*)
- .rodata.str1.4
-                0x08022e44      0x194 ./User/rmp_test.o
-                                0x198 (size before relaxing)
  .rodata.RVM_Img
-                0x08022fd8       0x60 ./Lib/rvm_guest_cmx.o
-                0x08022fd8                RVM_Img
+                0x080207e8       0x60 ./Lib/rvm_guest_cmx.o
+                0x080207e8                RVM_Img
  .rodata.RVM_Pgtbl
-                0x08023038       0x14 ./Lib/rvm_guest_cmx.o
-                0x08023038                RVM_Pgtbl
+                0x08020848       0x14 ./Lib/rvm_guest_cmx.o
+                0x08020848                RVM_Pgtbl
  .rodata.RVM_Kcap
-                0x0802304c        0x4 ./Lib/rvm_guest_cmx.o
-                0x0802304c                RVM_Kcap
- .rodata.RMP_RBIT_Table
-                0x08023050      0x100 ./Kernel/rmp_kernel.o
+                0x0802085c        0x4 ./Lib/rvm_guest_cmx.o
+                0x0802085c                RVM_Kcap
  .rodata._global_impure_ptr
-                0x08023150        0x4 /home/pry/eclipse/gcc-arm-none-eabi-5_4-2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7e-m/softfp/libc.a(lib_a-impure.o)
-                0x08023150                _global_impure_ptr
+                0x08020860        0x4 /home/pry/eclipse/gcc-arm-none-eabi-5_4-2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7e-m/softfp/libc.a(lib_a-impure.o)
+                0x08020860                _global_impure_ptr
 
-.eh_frame       0x08023154        0x0
- .eh_frame      0x08023154        0x0 /home/pry/eclipse/gcc-arm-none-eabi-5_4-2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7e-m/softfp/crtbegin.o
+.eh_frame       0x08020864        0x0
+ .eh_frame      0x08020864        0x0 /home/pry/eclipse/gcc-arm-none-eabi-5_4-2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7e-m/softfp/crtbegin.o
 
-.glue_7         0x08023154        0x0
- .glue_7        0x08023154        0x0 linker stubs
+.glue_7         0x08020864        0x0
+ .glue_7        0x08020864        0x0 linker stubs
 
-.glue_7t        0x08023154        0x0
- .glue_7t       0x08023154        0x0 linker stubs
+.glue_7t        0x08020864        0x0
+ .glue_7t       0x08020864        0x0 linker stubs
 
-.vfp11_veneer   0x08023154        0x0
- .vfp11_veneer  0x08023154        0x0 linker stubs
+.vfp11_veneer   0x08020864        0x0
+ .vfp11_veneer  0x08020864        0x0 linker stubs
 
-.v4_bx          0x08023154        0x0
- .v4_bx         0x08023154        0x0 linker stubs
+.v4_bx          0x08020864        0x0
+ .v4_bx         0x08020864        0x0 linker stubs
 
-.iplt           0x08023154        0x0
- .iplt          0x08023154        0x0 /home/pry/eclipse/gcc-arm-none-eabi-5_4-2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7e-m/softfp/crtbegin.o
+.iplt           0x08020864        0x0
+ .iplt          0x08020864        0x0 /home/pry/eclipse/gcc-arm-none-eabi-5_4-2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7e-m/softfp/crtbegin.o
 
-.rel.dyn        0x08023154        0x0
- .rel.iplt      0x08023154        0x0 /home/pry/eclipse/gcc-arm-none-eabi-5_4-2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7e-m/softfp/crtbegin.o
+.rel.dyn        0x08020864        0x0
+ .rel.iplt      0x08020864        0x0 /home/pry/eclipse/gcc-arm-none-eabi-5_4-2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7e-m/softfp/crtbegin.o
 
-.inits          0x08023154       0x38
-                0x08023154                __data_regions_array_start = .
-                0x08023154        0x4 LONG 0x8024000 LOADADDR (.data)
-                0x08023158        0x4 LONG 0x20020000 ADDR (.data)
-                0x0802315c        0x4 LONG 0x20020430 (ADDR (.data) + SIZEOF (.data))
-                0x08023160                __data_regions_array_end = .
-                0x08023160                __bss_regions_array_start = .
-                0x08023160        0x4 LONG 0x20020430 ADDR (.bss)
-                0x08023164        0x4 LONG 0x20029214 (ADDR (.bss) + SIZEOF (.bss))
-                0x08023168                __bss_regions_array_end = .
+.inits          0x08020864       0x38
+                0x08020864                __data_regions_array_start = .
+                0x08020864        0x4 LONG 0x8022000 LOADADDR (.data)
+                0x08020868        0x4 LONG 0x20020000 ADDR (.data)
+                0x0802086c        0x4 LONG 0x20020428 (ADDR (.data) + SIZEOF (.data))
+                0x08020870                __data_regions_array_end = .
+                0x08020870                __bss_regions_array_start = .
+                0x08020870        0x4 LONG 0x20020428 ADDR (.bss)
+                0x08020874        0x4 LONG 0x20020838 (ADDR (.bss) + SIZEOF (.bss))
+                0x08020878                __bss_regions_array_end = .
  *(.init)
- .init          0x08023168        0x4 /home/pry/eclipse/gcc-arm-none-eabi-5_4-2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7e-m/softfp/crti.o
-                0x08023168                _init
- .init          0x0802316c        0x8 /home/pry/eclipse/gcc-arm-none-eabi-5_4-2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7e-m/softfp/crtn.o
+ .init          0x08020878        0x4 /home/pry/eclipse/gcc-arm-none-eabi-5_4-2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7e-m/softfp/crti.o
+                0x08020878                _init
+ .init          0x0802087c        0x8 /home/pry/eclipse/gcc-arm-none-eabi-5_4-2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7e-m/softfp/crtn.o
  *(.fini)
- .fini          0x08023174        0x4 /home/pry/eclipse/gcc-arm-none-eabi-5_4-2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7e-m/softfp/crti.o
-                0x08023174                _fini
- .fini          0x08023178        0x8 /home/pry/eclipse/gcc-arm-none-eabi-5_4-2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7e-m/softfp/crtn.o
-                0x08023180                . = ALIGN (0x4)
-                0x08023180                PROVIDE (__preinit_array_start, .)
+ .fini          0x08020884        0x4 /home/pry/eclipse/gcc-arm-none-eabi-5_4-2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7e-m/softfp/crti.o
+                0x08020884                _fini
+ .fini          0x08020888        0x8 /home/pry/eclipse/gcc-arm-none-eabi-5_4-2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7e-m/softfp/crtn.o
+                0x08020890                . = ALIGN (0x4)
+                0x08020890                PROVIDE (__preinit_array_start, .)
  *(.preinit_array_sysinit .preinit_array_sysinit.*)
  *(.preinit_array_platform .preinit_array_platform.*)
  *(.preinit_array .preinit_array.*)
-                0x08023180                PROVIDE (__preinit_array_end, .)
-                0x08023180                . = ALIGN (0x4)
-                0x08023180                PROVIDE (__init_array_start, .)
+                0x08020890                PROVIDE (__preinit_array_end, .)
+                0x08020890                . = ALIGN (0x4)
+                0x08020890                PROVIDE (__init_array_start, .)
  *(SORT(.init_array.*))
  .init_array.00000
-                0x08023180        0x4 /home/pry/eclipse/gcc-arm-none-eabi-5_4-2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7e-m/softfp/libc.a(lib_a-__call_atexit.o)
+                0x08020890        0x4 /home/pry/eclipse/gcc-arm-none-eabi-5_4-2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7e-m/softfp/libc.a(lib_a-__call_atexit.o)
  *(.init_array)
- .init_array    0x08023184        0x4 /home/pry/eclipse/gcc-arm-none-eabi-5_4-2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7e-m/softfp/crtbegin.o
-                0x08023188                PROVIDE (__init_array_end, .)
-                0x08023188                . = ALIGN (0x4)
-                0x08023188                PROVIDE (__fini_array_start, .)
+ .init_array    0x08020894        0x4 /home/pry/eclipse/gcc-arm-none-eabi-5_4-2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7e-m/softfp/crtbegin.o
+                0x08020898                PROVIDE (__init_array_end, .)
+                0x08020898                . = ALIGN (0x4)
+                0x08020898                PROVIDE (__fini_array_start, .)
  *(SORT(.fini_array.*))
  *(.fini_array)
- .fini_array    0x08023188        0x4 /home/pry/eclipse/gcc-arm-none-eabi-5_4-2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7e-m/softfp/crtbegin.o
-                0x0802318c                PROVIDE (__fini_array_end, .)
-                0x08024000                _sidata = LOADADDR (.data)
+ .fini_array    0x08020898        0x4 /home/pry/eclipse/gcc-arm-none-eabi-5_4-2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7e-m/softfp/crtbegin.o
+                0x0802089c                PROVIDE (__fini_array_end, .)
+                0x08022000                _sidata = LOADADDR (.data)
 
-.data           0x20020000      0x430 load address 0x08024000
+.data           0x20020000      0x428 load address 0x08022000
  FILL mask 0xff
                 0x20020000                _sdata = .
                 0x20020000                __data_start__ = .
  *(.data_begin .data_begin.*)
  *(.data .data.*)
- .data.LFSR.12484
-                0x20020000        0x4 ./User/rmp_test.o
- *fill*         0x20020004        0x4 ff
  .data.impure_data
-                0x20020008      0x428 /home/pry/eclipse/gcc-arm-none-eabi-5_4-2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7e-m/softfp/libc.a(lib_a-impure.o)
+                0x20020000      0x428 /home/pry/eclipse/gcc-arm-none-eabi-5_4-2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7e-m/softfp/libc.a(lib_a-impure.o)
  *(.data_end .data_end.*)
-                0x20020430                . = ALIGN (0x4)
-                0x20020430                _edata = .
-                0x20020430                __data_end__ = .
+                0x20020428                . = ALIGN (0x4)
+                0x20020428                _edata = .
+                0x20020428                __data_end__ = .
 
-.jcr            0x20020430        0x0 load address 0x08024430
- .jcr           0x20020430        0x0 /home/pry/eclipse/gcc-arm-none-eabi-5_4-2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7e-m/softfp/crtbegin.o
+.jcr            0x20020428        0x0 load address 0x08022428
+ .jcr           0x20020428        0x0 /home/pry/eclipse/gcc-arm-none-eabi-5_4-2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7e-m/softfp/crtbegin.o
 
-.igot.plt       0x20020430        0x0 load address 0x08024430
- .igot.plt      0x20020430        0x0 /home/pry/eclipse/gcc-arm-none-eabi-5_4-2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7e-m/softfp/crtbegin.o
+.igot.plt       0x20020428        0x0 load address 0x08022428
+ .igot.plt      0x20020428        0x0 /home/pry/eclipse/gcc-arm-none-eabi-5_4-2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7e-m/softfp/crtbegin.o
 
-.bss            0x20020430     0x8de4 load address 0x08024430
-                0x20020430                __bss_start__ = .
-                0x20020430                _sbss = .
+.bss            0x20020428      0x410 load address 0x08022428
+                0x20020428                __bss_start__ = .
+                0x20020428                _sbss = .
  *(.bss_begin .bss_begin.*)
  *(.bss .bss.*)
- .bss           0x20020430       0x1c /home/pry/eclipse/gcc-arm-none-eabi-5_4-2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7e-m/softfp/crtbegin.o
- .bss.Semaphore_ISR_Time
-                0x2002044c        0x4 ./User/rmp_test.o
-                0x2002044c                Semaphore_ISR_Time
- .bss.Count.12477
-                0x20020450        0x4 ./User/rmp_test.o
- .bss.Pool      0x20020454     0x8000 ./User/rmp_test.o
-                0x20020454                Pool
- .bss.Alloc.12494
-                0x20028454        0x8 ./User/rmp_test.o
- .bss.End       0x2002845c        0x4 ./User/rmp_test.o
-                0x2002845c                End
- .bss.Mem.12493
-                0x20028460       0x20 ./User/rmp_test.o
- .bss.Mailbox_Time
-                0x20028480        0x4 ./User/rmp_test.o
-                0x20028480                Mailbox_Time
- .bss.Count.12470
-                0x20028484        0x4 ./User/rmp_test.o
- .bss.Yield_Time
-                0x20028488        0x4 ./User/rmp_test.o
-                0x20028488                Yield_Time
- .bss.Count.12517
-                0x2002848c        0x4 ./User/rmp_test.o
- .bss.Start     0x20028490        0x4 ./User/rmp_test.o
-                0x20028490                Start
- .bss.Free.12495
-                0x20028494        0x8 ./User/rmp_test.o
- .bss.Amount.12497
-                0x2002849c       0x20 ./User/rmp_test.o
- .bss.Temp      0x200284bc        0x4 ./User/rmp_test.o
-                0x200284bc                Temp
- .bss.TIM4_Handle
-                0x200284c0       0x40 ./User/rmp_test.o
-                0x200284c0                TIM4_Handle
- .bss.Mailbox_ISR_Time
-                0x20028500        0x4 ./User/rmp_test.o
-                0x20028500                Mailbox_ISR_Time
- .bss.Size.12496
-                0x20028504        0x8 ./User/rmp_test.o
- .bss.Semaphore_Time
-                0x2002850c        0x4 ./User/rmp_test.o
-                0x2002850c                Semaphore_Time
- .bss.Total     0x20028510        0x4 ./User/rmp_test.o
-                0x20028510                Total
- .bss.Memory_Time
-                0x20028514        0x4 ./User/rmp_test.o
-                0x20028514                Memory_Time
- .bss.TIM2_Handle
-                0x20028518       0x40 ./User/rmp_test.o
-                0x20028518                TIM2_Handle
- .bss.Count.12429
-                0x20028558        0x4 ./User/rmp_test.o
+ .bss           0x20020428       0x1c /home/pry/eclipse/gcc-arm-none-eabi-5_4-2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7e-m/softfp/crtbegin.o
  .bss.RMP_Console_Ptr
-                0x2002855c        0x4 ./Platform/rmp_platform_cmx_rvm.o
+                0x20020444        0x4 ./Platform/rmp_platform_cmx_rvm.o
  .bss.RVM_Int_Pend
-                0x20028560        0x4 ./Lib/rvm_guest_cmx.o
+                0x20020448        0x4 ./Lib/rvm_guest_cmx.o
  .bss.RVM_Int_Enable
-                0x20028564        0x4 ./Lib/rvm_guest_cmx.o
+                0x2002044c        0x4 ./Lib/rvm_guest_cmx.o
  .bss.RVM_Int_Active
-                0x20028568        0x4 ./Lib/rvm_guest_cmx.o
+                0x20020450        0x4 ./Lib/rvm_guest_cmx.o
  .bss.RMP_Init_Stack
-                0x2002856c      0x100 ./Kernel/rmp_kernel.o
+                0x20020454      0x100 ./Kernel/rmp_kernel.o
  .bss.RMP_Bitmap
-                0x2002866c        0x4 ./Kernel/rmp_kernel.o
+                0x20020554        0x4 ./Kernel/rmp_kernel.o
  .bss.RMP_Sched_Pend
-                0x20028670        0x4 ./Kernel/rmp_kernel.o
- .bss.RMP_Run   0x20028674      0x100 ./Kernel/rmp_kernel.o
+                0x20020558        0x4 ./Kernel/rmp_kernel.o
+ .bss.RMP_Run   0x2002055c      0x100 ./Kernel/rmp_kernel.o
  .bss.RMP_Sched_Lock_Cnt
-                0x20028774        0x4 ./Kernel/rmp_kernel.o
+                0x2002065c        0x4 ./Kernel/rmp_kernel.o
  .bss.RMP_Timer_Pend
-                0x20028778        0x4 ./Kernel/rmp_kernel.o
+                0x20020660        0x4 ./Kernel/rmp_kernel.o
  .bss.RMP_Init_Thd
-                0x2002877c       0x3c ./Kernel/rmp_kernel.o
+                0x20020664       0x3c ./Kernel/rmp_kernel.o
  .bss.RMP_Delay
-                0x200287b8        0x8 ./Kernel/rmp_kernel.o
+                0x200206a0        0x8 ./Kernel/rmp_kernel.o
  .bss.RMP_Sched_Locked
-                0x200287c0        0x4 ./Kernel/rmp_kernel.o
+                0x200206a8        0x4 ./Kernel/rmp_kernel.o
  *(COMMON)
- COMMON         0x200287c4      0x8c4 ./User/rmp_test.o
-                0x200287c4                Stack_2
-                0x20028bc4                Sem_1
-                0x20028bd4                Thd_2
-                0x20028c10                Thd_1
-                0x20028c4c                Thd_Test
-                0x20028c88                Stack_1
- COMMON         0x20029088      0x180 ./Lib/rvm_guest_cmx.o
-                0x20029088                RVM_Regs
-                0x200290f0                RVM_Flag
-                0x200290f4                RVM_Param
-                0x20029108                RVM_Vect
-                0x20029188                RVM_Console
- COMMON         0x20029208        0xc ./Kernel/rmp_kernel.o
-                0x20029208                RMP_Cur_SP
-                0x2002920c                RMP_Cur_Thd
-                0x20029210                RMP_Tick
+ COMMON         0x200206ac      0x180 ./Lib/rvm_guest_cmx.o
+                0x200206ac                RVM_Regs
+                0x20020714                RVM_Flag
+                0x20020718                RVM_Param
+                0x2002072c                RVM_Vect
+                0x200207ac                RVM_Console
+ COMMON         0x2002082c        0xc ./Kernel/rmp_kernel.o
+                0x2002082c                RMP_Cur_SP
+                0x20020830                RMP_Cur_Thd
+                0x20020834                RMP_Tick
  *(.bss_end .bss_end.*)
-                0x20029214                . = ALIGN (0x4)
-                0x20029214                __bss_end__ = .
-                0x20029214                _ebss = .
+                0x20020838                . = ALIGN (0x4)
+                0x20020838                __bss_end__ = .
+                0x20020838                _ebss = .
 
-.noinit         0x20029214      0x500 load address 0x08024430
-                0x20029214                _noinit = .
+.noinit         0x20020838      0x500 load address 0x08022428
+                0x20020838                _noinit = .
  *(.noinit .noinit.*)
- .noinit        0x20029214      0x500 ./Lib/rvm_guest_cmx_asm_gcc.o
-                0x20029214                RVM_User_Stack
-                0x20029314                RVM_Int_Stack
-                0x20029714                . = ALIGN (0x4)
-                0x20029714                _end_noinit = .
+ .noinit        0x20020838      0x500 ./Lib/rvm_guest_cmx_asm_gcc.o
+                0x20020838                RVM_User_Stack
+                0x20020938                RVM_Int_Stack
+                0x20020d38                . = ALIGN (0x4)
+                0x20020d38                _end_noinit = .
                 [!provide]                PROVIDE (end, _end_noinit)
                 [!provide]                PROVIDE (_end, _end_noinit)
                 [!provide]                PROVIDE (__end, _end_noinit)
                 [!provide]                PROVIDE (__end__, _end_noinit)
 
-._check_stack   0x20029214      0x100 load address 0x08024430
-                0x20029314                . = (. + _Minimum_Stack_Size)
- *fill*         0x20029214      0x100 
+._check_stack   0x20020838      0x100 load address 0x08022428
+                0x20020938                . = (. + _Minimum_Stack_Size)
+ *fill*         0x20020838      0x100 
 LOAD ./User/rmp_test.o
 LOAD ./Platform/rmp_platform_cmx_rvm.o
 LOAD ./Platform/rmp_platform_cmx_rvm_asm_gcc.o
@@ -1283,41 +1143,35 @@ OUTPUT(RMP elf32-littlearm)
  .comment       0x0000006e       0x6f ./Lib/rvm_guest_cmx.o
  .comment       0x0000006e       0x6f ./Kernel/rmp_kernel.o
 
-.debug_info     0x00000000     0x5e1b
- .debug_info    0x00000000     0x1c0b ./User/rmp_test.o
- .debug_info    0x00001c0b      0x4b3 ./Platform/rmp_platform_cmx_rvm.o
- .debug_info    0x000020be      0xcc7 ./Lib/rvm_guest_cmx.o
- .debug_info    0x00002d85     0x3096 ./Kernel/rmp_kernel.o
+.debug_info     0x00000000     0x42c9
+ .debug_info    0x00000000       0xb9 ./User/rmp_test.o
+ .debug_info    0x000000b9      0x4b3 ./Platform/rmp_platform_cmx_rvm.o
+ .debug_info    0x0000056c      0xcc7 ./Lib/rvm_guest_cmx.o
+ .debug_info    0x00001233     0x3096 ./Kernel/rmp_kernel.o
 
-.debug_abbrev   0x00000000      0xbbf
- .debug_abbrev  0x00000000      0x35a ./User/rmp_test.o
- .debug_abbrev  0x0000035a      0x196 ./Platform/rmp_platform_cmx_rvm.o
- .debug_abbrev  0x000004f0      0x331 ./Lib/rvm_guest_cmx.o
- .debug_abbrev  0x00000821      0x39e ./Kernel/rmp_kernel.o
+.debug_abbrev   0x00000000      0x8d8
+ .debug_abbrev  0x00000000       0x73 ./User/rmp_test.o
+ .debug_abbrev  0x00000073      0x196 ./Platform/rmp_platform_cmx_rvm.o
+ .debug_abbrev  0x00000209      0x331 ./Lib/rvm_guest_cmx.o
+ .debug_abbrev  0x0000053a      0x39e ./Kernel/rmp_kernel.o
 
-.debug_loc      0x00000000     0x3fde
- .debug_loc     0x00000000      0x213 ./User/rmp_test.o
- .debug_loc     0x00000213      0x134 ./Platform/rmp_platform_cmx_rvm.o
- .debug_loc     0x00000347      0x60b ./Lib/rvm_guest_cmx.o
- .debug_loc     0x00000952     0x368c ./Kernel/rmp_kernel.o
-
-.debug_aranges  0x00000000      0x310
+.debug_aranges  0x00000000      0x278
  .debug_aranges
-                0x00000000       0xb8 ./User/rmp_test.o
+                0x00000000       0x20 ./User/rmp_test.o
  .debug_aranges
-                0x000000b8       0x58 ./Platform/rmp_platform_cmx_rvm.o
+                0x00000020       0x58 ./Platform/rmp_platform_cmx_rvm.o
  .debug_aranges
-                0x00000110       0xb8 ./Lib/rvm_guest_cmx.o
+                0x00000078       0xb8 ./Lib/rvm_guest_cmx.o
  .debug_aranges
-                0x000001c8      0x148 ./Kernel/rmp_kernel.o
+                0x00000130      0x148 ./Kernel/rmp_kernel.o
 
-.debug_ranges   0x00000000     0x1288
- .debug_ranges  0x00000000      0x558 ./User/rmp_test.o
- .debug_ranges  0x00000558       0x48 ./Platform/rmp_platform_cmx_rvm.o
- .debug_ranges  0x000005a0       0xf8 ./Lib/rvm_guest_cmx.o
- .debug_ranges  0x00000698      0xbf0 ./Kernel/rmp_kernel.o
+.debug_ranges   0x00000000      0xd40
+ .debug_ranges  0x00000000       0x10 ./User/rmp_test.o
+ .debug_ranges  0x00000010       0x48 ./Platform/rmp_platform_cmx_rvm.o
+ .debug_ranges  0x00000058       0xf8 ./Lib/rvm_guest_cmx.o
+ .debug_ranges  0x00000150      0xbf0 ./Kernel/rmp_kernel.o
 
-.debug_macro    0x00000000    0x2bfbc
+.debug_macro    0x00000000    0x2bfc2
  .debug_macro   0x00000000      0x56e ./User/rmp_test.o
  .debug_macro   0x0000056e      0x886 ./User/rmp_test.o
  .debug_macro   0x00000df4       0x10 ./User/rmp_test.o
@@ -1441,37 +1295,42 @@ OUTPUT(RMP elf32-littlearm)
  .debug_macro   0x0002b3b3       0x10 ./User/rmp_test.o
  .debug_macro   0x0002b3c3       0x30 ./User/rmp_test.o
  .debug_macro   0x0002b3f3       0x35 ./User/rmp_test.o
- .debug_macro   0x0002b428       0x1c ./User/rmp_test.o
- .debug_macro   0x0002b444      0x560 ./Platform/rmp_platform_cmx_rvm.o
- .debug_macro   0x0002b9a4       0x30 ./Platform/rmp_platform_cmx_rvm.o
- .debug_macro   0x0002b9d4       0x35 ./Lib/rvm_guest_cmx.o
- .debug_macro   0x0002ba09       0x12 ./Lib/rvm_guest_cmx.o
- .debug_macro   0x0002ba1b      0x56c ./Kernel/rmp_kernel.o
- .debug_macro   0x0002bf87       0x35 ./Kernel/rmp_kernel.o
+ .debug_macro   0x0002b428       0x22 ./User/rmp_test.o
+ .debug_macro   0x0002b44a      0x560 ./Platform/rmp_platform_cmx_rvm.o
+ .debug_macro   0x0002b9aa       0x30 ./Platform/rmp_platform_cmx_rvm.o
+ .debug_macro   0x0002b9da       0x35 ./Lib/rvm_guest_cmx.o
+ .debug_macro   0x0002ba0f       0x12 ./Lib/rvm_guest_cmx.o
+ .debug_macro   0x0002ba21      0x56c ./Kernel/rmp_kernel.o
+ .debug_macro   0x0002bf8d       0x35 ./Kernel/rmp_kernel.o
 
-.debug_line     0x00000000     0x4fce
- .debug_line    0x00000000     0x17b7 ./User/rmp_test.o
- .debug_line    0x000017b7     0x10d8 ./Platform/rmp_platform_cmx_rvm.o
- .debug_line    0x0000288f      0x3a7 ./Lib/rvm_guest_cmx.o
- .debug_line    0x00002c36     0x2398 ./Kernel/rmp_kernel.o
+.debug_line     0x00000000     0x49ab
+ .debug_line    0x00000000     0x1194 ./User/rmp_test.o
+ .debug_line    0x00001194     0x10d8 ./Platform/rmp_platform_cmx_rvm.o
+ .debug_line    0x0000226c      0x3a7 ./Lib/rvm_guest_cmx.o
+ .debug_line    0x00002613     0x2398 ./Kernel/rmp_kernel.o
 
-.debug_str      0x00000000   0x12ab23
- .debug_str     0x00000000   0x12a283 ./User/rmp_test.o
-                             0x12a662 (size before relaxing)
- .debug_str     0x0012a283      0x1f1 ./Platform/rmp_platform_cmx_rvm.o
+.debug_str      0x00000000   0x12a4e5
+ .debug_str     0x00000000   0x129a30 ./User/rmp_test.o
+                             0x129d39 (size before relaxing)
+ .debug_str     0x00129a30      0x21c ./Platform/rmp_platform_cmx_rvm.o
                              0x129e83 (size before relaxing)
- .debug_str     0x0012a474      0x2f7 ./Lib/rvm_guest_cmx.o
+ .debug_str     0x00129c4c      0x353 ./Lib/rvm_guest_cmx.o
                                0x327e (size before relaxing)
- .debug_str     0x0012a76b      0x3b8 ./Kernel/rmp_kernel.o
+ .debug_str     0x00129f9f      0x546 ./Kernel/rmp_kernel.o
                              0x12a2f8 (size before relaxing)
 
-.debug_frame    0x00000000      0xcdc
- .debug_frame   0x00000000      0x28c ./User/rmp_test.o
- .debug_frame   0x0000028c       0xd0 ./Platform/rmp_platform_cmx_rvm.o
- .debug_frame   0x0000035c      0x1f4 ./Lib/rvm_guest_cmx.o
- .debug_frame   0x00000550      0x688 ./Kernel/rmp_kernel.o
- .debug_frame   0x00000bd8       0x2c /home/pry/eclipse/gcc-arm-none-eabi-5_4-2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7e-m/softfp/libc.a(lib_a-init.o)
- .debug_frame   0x00000c04       0x50 /home/pry/eclipse/gcc-arm-none-eabi-5_4-2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7e-m/softfp/libc.a(lib_a-__call_atexit.o)
- .debug_frame   0x00000c54       0x20 /home/pry/eclipse/gcc-arm-none-eabi-5_4-2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7e-m/softfp/libc.a(lib_a-atexit.o)
- .debug_frame   0x00000c74       0x34 /home/pry/eclipse/gcc-arm-none-eabi-5_4-2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7e-m/softfp/libc.a(lib_a-fini.o)
- .debug_frame   0x00000ca8       0x34 /home/pry/eclipse/gcc-arm-none-eabi-5_4-2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7e-m/softfp/libc.a(lib_a-__atexit.o)
+.debug_frame    0x00000000      0xa80
+ .debug_frame   0x00000000       0x30 ./User/rmp_test.o
+ .debug_frame   0x00000030       0xd0 ./Platform/rmp_platform_cmx_rvm.o
+ .debug_frame   0x00000100      0x1f4 ./Lib/rvm_guest_cmx.o
+ .debug_frame   0x000002f4      0x688 ./Kernel/rmp_kernel.o
+ .debug_frame   0x0000097c       0x2c /home/pry/eclipse/gcc-arm-none-eabi-5_4-2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7e-m/softfp/libc.a(lib_a-init.o)
+ .debug_frame   0x000009a8       0x50 /home/pry/eclipse/gcc-arm-none-eabi-5_4-2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7e-m/softfp/libc.a(lib_a-__call_atexit.o)
+ .debug_frame   0x000009f8       0x20 /home/pry/eclipse/gcc-arm-none-eabi-5_4-2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7e-m/softfp/libc.a(lib_a-atexit.o)
+ .debug_frame   0x00000a18       0x34 /home/pry/eclipse/gcc-arm-none-eabi-5_4-2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7e-m/softfp/libc.a(lib_a-fini.o)
+ .debug_frame   0x00000a4c       0x34 /home/pry/eclipse/gcc-arm-none-eabi-5_4-2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7e-m/softfp/libc.a(lib_a-__atexit.o)
+
+.debug_loc      0x00000000     0x3dcb
+ .debug_loc     0x00000000      0x134 ./Platform/rmp_platform_cmx_rvm.o
+ .debug_loc     0x00000134      0x60b ./Lib/rvm_guest_cmx.o
+ .debug_loc     0x0000073f     0x368c ./Kernel/rmp_kernel.o
