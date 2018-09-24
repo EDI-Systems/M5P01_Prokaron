@@ -19,7 +19,7 @@ Description : The testbench for STM32F767IG, running in the RVM.
 /* Are we testing the memory pool? */
 #define TEST_MEM_POOL     8192
 /* Are we doing minimal measurements? */
-/* #define MINIMAL_SIZE */
+#define MINIMAL_SIZE
 /* The STM32F7 timers are all 32 bits, so */
 typedef rmp_ptr_t rmp_tim_t;
 /* End Defines ***************************************************************/
