@@ -6,7 +6,7 @@ Description : The assembly part of the RMP RTOS. This is for Cortex-M3/4/7, and
               is used on gcc. This is derived from the MDK version.
 ******************************************************************************/
 
-/* The ARM Cortex-M Architeture ***********************************************
+/* The ARM Cortex-M Architecture **********************************************
 R0-R7:General purpose registers that are accessible.
 R8-R12:general purpose registers that can only be reached by 32-bit instructions.
 R13:SP/SP_process/SP_main    Stack pointer
