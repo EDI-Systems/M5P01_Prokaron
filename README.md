@@ -20,7 +20,7 @@
 &ensp;&ensp;&ensp;&ensp;The manual of the operating system can be found **[here](https://github.com/EDI-Systems/M5P1_MuProkaron/blob/master/Documents/M5P1_Light-Weight-RTOS-User-Manual.pdf)**.
 
 &ensp;&ensp;&ensp;&ensp;Read **[Contributing](CONTRIBUTING.md)** and **[Code of Conduct](CODE_OF_CONDUCT.md)** if you want to contribute, and **[Pull Request Template](PULL_REQUEST_TEMPLATE.md)** when you make pull requests.
-This software is **triple-licensed**: it is either **[LGPL v3](LICENSE.md)** or **[modified MIT license](MODMIT.md)**. **Commercial** licenses are also available upon request. **There are exceptions to the LGPLv3**: if the kernel itself is not modified, even if it is statically linked to the application or incoporated into the application project, **it is considered as normal use, and the applications can always be held proprietary**. Adding a new port to the kernel **is** a modification to the kernel, however adding a new driver **is not**.
+This software is **triple-licensed**: it is either **[LGPL v3](LICENSE.md)** or **[modified MIT license](MODMIT.md)**. **Commercial** licenses are also available upon request. **There are exceptions to the LGPLv3**: if the kernel itself is not modified, even if it is statically linked to the application/driver or incoporated into the application project, **it is considered as normal use, and the applications can always be held proprietary**. Adding a new port to the kernel **is** a modification to the kernel, however adding a new driver **is not**.
 
 &ensp;&ensp;&ensp;&ensp;For vendor-supplied packages and hardware abstraction libraries, please refer to the **[M0P0_Library](https://github.com/EDI-Systems/M0P0_Library)** repo to download and use them properly.
 
