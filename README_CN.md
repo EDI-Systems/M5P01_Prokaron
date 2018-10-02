@@ -20,7 +20,7 @@ Click **[HERE](README.md)** for English version.
 &emsp;&emsp;本系统的手册可以在 **[这里](https://github.com/EDI-Systems/M7M1_MuEukaron/blob/master/Documents/M7M1_%E5%BE%AE%E5%86%85%E6%A0%B8%E5%AE%9E%E6%97%B6%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F_%E6%8A%80%E6%9C%AF%E6%89%8B%E5%86%8C.pdf)** 找到。
 
 &emsp;&emsp;如果想要参与开发，请阅读 **[参与](CONTRIBUTING.md)** 和 **[规范](CODE_OF_CONDUCT.md)** 两个指导文档。如果要提交拉取请求，请使用 **[拉取请求模板](PULL_REQUEST_TEMPLATE.md)** 。
-本软件采用 **三种不同的授权** ：你可以选择 **[LGPL v3](LICENSE.md)** ，也可以选择 **[经修改的MIT协议](MODMIT.md)** 。 如果有特殊需求， 也可以联系我们请求**商业授权**。  **LGPLv3协议是有例外的** ：如果内核本身未经修改，即便它和应用程序或驱动静态链接或被包含进了工程之内，那么这种用法被看作是正常使用，而且应用程序本身仍然可以是私有的。给内核增加一个移植 **是** 对内核本身的修改，但增加一个驱动则 **不是** 。
+本软件采用 **三种不同的授权** ：你可以选择 **[LGPL v3](LICENSE.md)** ，也可以选择 **[经修改的MIT协议](MODMIT.md)** 。 如果有特殊需求， 也可以联系我们请求**商业授权**。 **LGPLv3协议是有例外的** ：如果内核本身未经修改，即便它和应用程序或驱动静态链接或被包含进了工程之内，那么这种用法被看作是正常使用，而且应用程序本身仍然可以是私有的。给内核增加一个移植 **是** 对内核本身的修改，但增加一个驱动则 **不是** 。
 
 &emsp;&emsp;对于那些由微控制器厂商提供的硬件抽象层软件包，请到 **[M0P0_Library](https://github.com/EDI-Systems/M0P0_Library)** 软件仓库自行下载。
 
