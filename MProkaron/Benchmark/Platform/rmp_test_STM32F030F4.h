@@ -17,7 +17,7 @@ Description : The testbench for STM32F030F4.
 /* How to read counter */
 #define COUNTER_READ()    (TIM3->CNT)
 /* Are we doing minimal measurements? */
-#define MINIMAL_SIZE
+/* #define MINIMAL_SIZE */
 /* The STM32F0 timers are all 16 bits, so */
 typedef rmp_u16_t rmp_tim_t;
 /* End Defines ***************************************************************/
@@ -25,8 +25,8 @@ typedef rmp_u16_t rmp_tim_t;
 /* Globals *******************************************************************/
 #ifndef MINIMAL_SIZE
 void Int_Handler(void);
-ptr_t Stack_1[128];
-ptr_t Stack_2[128];
+rmp_ptr_t Stack_1[128];
+rmp_ptr_t Stack_2[128];
 TIM_HandleTypeDef TIM3_Handle={0};
 TIM_HandleTypeDef TIM14_Handle={0};
 /* End Globals ***************************************************************/
@@ -44,7 +44,7 @@ void Timer_Init(void)
     TIM3_Handle.Instance=TIM3;
     TIM3_Handle.Init.Prescaler=0;
     TIM3_Handle.Init.CounterMode=TIM_COUNTERMODE_UP;
-    TIM3_Handle.Init.Period=(u16)(-1);
+    TIM3_Handle.Init.Period=(rmp_u16_t)(-1);
     TIM3_Handle.Init.ClockDivision=TIM_CLOCKDIVISION_DIV1;
     HAL_TIM_Base_Init(&TIM3_Handle);
     __HAL_RCC_TIM3_CLK_ENABLE();

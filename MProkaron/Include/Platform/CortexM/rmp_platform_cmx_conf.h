@@ -7,7 +7,7 @@ Description : The configuration file for Cortex-M HAL.
 ******************************************************************************/
 
 /* Config Includes ***********************************************************/
-#include "Platform/CortexM/Chips/STM32F767IG/rmp_platform_STM32F767IG.h"
+#include "Platform/CortexM/Chips/STM32F030F4/rmp_platform_STM32F030F4.h"
 /* End Config Includes *******************************************************/
 
 /* End Of File ***************************************************************/
