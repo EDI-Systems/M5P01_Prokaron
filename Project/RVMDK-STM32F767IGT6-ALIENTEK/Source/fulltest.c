@@ -1359,7 +1359,7 @@ void Func_1(void)
     }
 
     LCD_Clear(KEYS_BG);
-    RMP_Round_Rect(12, YPOS_DISP, 272-24, 56*3, 20, DISP_BG, KEYS_BG);
+    RMP_Round_Rect(12, YPOS_DISP, 272-24, 56*3, 20, DISP_BG);
     
     RMP_Matrix_AA(12, 6, Ico_LTE, RMP_MAT_BIG, 24, 24, WHITE, KEYS_BG);
     RMP_Matrix_AA(12+24+8, 6, Ico_Wifi, RMP_MAT_BIG, 24, 24, WHITE, KEYS_BG);

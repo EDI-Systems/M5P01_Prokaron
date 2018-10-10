@@ -30,7 +30,10 @@ Description: The configuration file for PIC32MZ2048EFM100.
 /* Do we initialize the rest of the registers when initializing the thread? */
 #define RMP_MIPSM_INIT_EXTRA         RMP_TRUE
 
-/* Other low-level initialization stuff - clock and serial */
+/* Other low-level initialization stuff - clock and serial. 
+ * This is the default initialization sequence. If you wish to supply
+ * your own, just redirect this macro to a custom function, or do your
+ * initialization stuff in the initialization hook (RMP_Start_Hook). */
 #define RMP_MIPSM_LOW_LEVEL_INIT() \
 do \
 { \

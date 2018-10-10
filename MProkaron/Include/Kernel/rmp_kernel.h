@@ -12,110 +12,117 @@ Description : The header file for the kernel.
 #define __RMP_KERNEL_H_DEFS__
 /*****************************************************************************/
 /* Constants */
-#define RMP_TRUE               1
-#define RMP_FALSE              0
+#define RMP_TRUE                    1
+#define RMP_FALSE                   0
 /* States of threads */
-#define RMP_THD_STATE(X)       ((X)&0xFF)
-#define RMP_THD_FLAG(X)        ((X)&~0xFF)
-#define RMP_THD_STATE_SET(X,S) ((X)=(RMP_THD_FLAG(X)|(S)))
+#define RMP_THD_STATE(X)            ((X)&0xFF)
+#define RMP_THD_FLAG(X)             ((X)&~0xFF)
+#define RMP_THD_STATE_SET(X,S)      ((X)=(RMP_THD_FLAG(X)|(S)))
 
 /* Memory pool position lookup */
-#define RMP_MEM_POS(FLI,SLI)   ((SLI)+((FLI)<<3))
+#define RMP_MEM_POS(FLI,SLI)        ((SLI)+((FLI)<<3))
 
 /* This thread is currently unused */
-#define RMP_THD_FREE           (0)
+#define RMP_THD_FREE                (0)
 /* This thread is currently running */
-#define RMP_THD_RUNNING        (1)
+#define RMP_THD_RUNNING             (1)
 /* Blocked on a send endpoint */
-#define RMP_THD_SNDBLK         (2)
+#define RMP_THD_SNDBLK              (2)
 /* Blocked on a send endpoint with a timeout */
-#define RMP_THD_SNDDLY         (3)
+#define RMP_THD_SNDDLY              (3)
 /* Blocked on its own receive endpoint */
-#define RMP_THD_RCVBLK         (4)
+#define RMP_THD_RCVBLK              (4)
 /* Blocked on its own receive endpoint with a timeout */
-#define RMP_THD_RCVDLY         (5)
+#define RMP_THD_RCVDLY              (5)
 /* Just on the timer delay */
-#define RMP_THD_DELAYED        (6)
+#define RMP_THD_DELAYED             (6)
 /* Blocked on a semaphore */
-#define RMP_THD_SEMBLK         (7)
+#define RMP_THD_SEMBLK              (7)
 /* Blocked on a semaphore with a timeout */
-#define RMP_THD_SEMDLY         (8)
+#define RMP_THD_SEMDLY              (8)
 /* Suspended */
-#define RMP_THD_SUSPENDED      (1<<8)
+#define RMP_THD_SUSPENDED           (1<<8)
 /* Mailbox valid */
-#define RMP_THD_MBOXFUL        (RMP_THD_SUSPENDED<<1)
+#define RMP_THD_MBOXFUL             (RMP_THD_SUSPENDED<<1)
     
 /* States of semaphores */
-#define RMP_SEM_FREE           (0)
-#define RMP_SEM_USED           (1)
+#define RMP_SEM_FREE                (0)
+#define RMP_SEM_USED                (1)
 
 /* States of memory blocks */
-#define RMP_MEM_FREE           (0)
-#define RMP_MEM_USED           (1)
+#define RMP_MEM_FREE                (0)
+#define RMP_MEM_USED                (1)
 
 /* Error codes */
 /* This error is thread related */
-#define RMP_ERR_THD            (-1)
+#define RMP_ERR_THD                 (-1)
 /* This error is priority related */
-#define RMP_ERR_PRIO           (-2)
+#define RMP_ERR_PRIO                (-2)
 /* This error is timeslice related */
-#define RMP_ERR_SLICE          (-3)
+#define RMP_ERR_SLICE               (-3)
 /* This error is thread state related */
-#define RMP_ERR_STATE          (-4)
+#define RMP_ERR_STATE               (-4)
 /* This error is operation related */
-#define RMP_ERR_OPER           (-5)
+#define RMP_ERR_OPER                (-5)
 /* This error is semaphore related */
-#define RMP_ERR_SEM            (-6)
+#define RMP_ERR_SEM                 (-6)
 /* This error is memory related */
-#define RMP_ERR_MEM            (-7)
+#define RMP_ERR_MEM                 (-7)
+
+/* Power and rounding */
+#define RMP_POW2(POW)               (((rmp_ptr_t)1)<<(POW))
+#define RMP_ROUND_DOWN(NUM,POW)     (((NUM)>>(POW))<<(POW))
+#define RMP_ROUND_UP(NUM,POW)       RMP_ROUND_DOWN((NUM)+RMP_POW2(POW)-1,POW)
 
 /* Word sizes settings */
-#define RMP_WORD_SIZE          (((rmp_ptr_t)1)<<RMP_WORD_ORDER)
-#define RMP_WORD_MASK          (~(((rmp_ptr_t)(-1))<<RMP_WORD_ORDER))
-#define RMP_BITMAP_SIZE        ((RMP_MAX_PREEMPT_PRIO-1)/RMP_WORD_SIZE+1)
-#define RMP_ALLBITS            ((rmp_ptr_t)(-1))
+#define RMP_ALLBITS                 ((rmp_ptr_t)(-1))
+#define RMP_WORD_SIZE               RMP_POW2(RMP_WORD_ORDER)
+#define RMP_WORD_MASK               (~(RMP_ALLBITS<<RMP_WORD_ORDER))
+#define RMP_ALIGN_ORDER             (RMP_WORD_ORDER-3)
+#define RMP_ALIGN_MASK              (~(RMP_ALLBITS<<RMP_ALIGN_ORDER))
+#define RMP_BITMAP_SIZE             ((RMP_MAX_PREEMPT_PRIO-1)/RMP_WORD_SIZE+1)
 
 /* Stack offset macros */
 /* Head offset, for ascending stacks */
-#define RMP_INIT_STACK_HEAD(X) (((rmp_ptr_t)RMP_Init_Stack)+(X)*sizeof(rmp_ptr_t))
+#define RMP_INIT_STACK_HEAD(X)      (((rmp_ptr_t)RMP_Init_Stack)+(X)*sizeof(rmp_ptr_t))
 /* Tail offset, for descending stacks */
-#define RMP_INIT_STACK_TAIL(X) (((rmp_ptr_t)RMP_Init_Stack)+RMP_INIT_STACK_SIZE-(X)*sizeof(rmp_ptr_t))
+#define RMP_INIT_STACK_TAIL(X)      (((rmp_ptr_t)RMP_Init_Stack)+RMP_INIT_STACK_SIZE-(X)*sizeof(rmp_ptr_t))
 
 /* Get the thread from delay list */
-#define RMP_DLY2THD(X)         ((struct RMP_Thd*)(((rmp_ptr_t)(X))-sizeof(struct RMP_List)))
+#define RMP_DLY2THD(X)              ((struct RMP_Thd*)(((rmp_ptr_t)(X))-sizeof(struct RMP_List)))
 
 /* Printk macros */
-#define RMP_PRINTK_I(INT)      RMP_Print_Int((INT))
-#define RMP_PRINTK_U(UINT)     RMP_Print_Uint((UINT))
-#define RMP_PRINTK_S(STR)      RMP_Print_String((rmp_s8_t*)(STR))
+#define RMP_PRINTK_I(INT)           RMP_Print_Int((INT))
+#define RMP_PRINTK_U(UINT)          RMP_Print_Uint((UINT))
+#define RMP_PRINTK_S(STR)           RMP_Print_String((rmp_s8_t*)(STR))
 
 /* Built-in graphics */
 #ifdef RMP_POINT
-#define RMP_TRANS              (0x01)
-#define RMP_MAT_SMALL          (0)
-#define RMP_MAT_BIG            (1)
-#define RMP_MAT_BPOS(MAT,POS)  ((MAT)[(POS)>>3]&(1<<(7-((POS)&0x07))))
-#define RMP_MAT_SPOS(MAT,POS)  ((MAT)[(POS)>>3]&(1<<((POS)&0x07)))
-#define RMP_CBOX_CHECK         (1)
-#define RMP_CBTN_DOWN          (1)
-#define RMP_RBTN_SEL           (1)
-#define RMP_PBAR_L2R           (0)
-#define RMP_PBAR_D2U           (1)
-#define RMP_PBAR_R2L           (2)
-#define RMP_PBAR_U2D           (3)
+#define RMP_TRANS                   (0x01)
+#define RMP_MAT_SMALL               (0)
+#define RMP_MAT_BIG                 (1)
+#define RMP_MAT_BPOS(MAT,POS)       ((MAT)[(POS)>>3]&(1<<(7-((POS)&0x07))))
+#define RMP_MAT_SPOS(MAT,POS)       ((MAT)[(POS)>>3]&(1<<((POS)&0x07)))
+#define RMP_CBOX_CHECK              (1)
+#define RMP_CBTN_DOWN               (1)
+#define RMP_RBTN_SEL                (1)
+#define RMP_PBAR_L2R                (0)
+#define RMP_PBAR_D2U                (1)
+#define RMP_PBAR_R2L                (2)
+#define RMP_PBAR_U2D                (3)
 
-#define RMP_CUR_NORM           (0)
-#define RMP_CUR_BUSY           (1)
-#define RMP_CUR_QUESTION       (2)
-#define RMP_CUR_HAND           (3)
-#define RMP_CUR_TEXT           (4)
-#define RMP_CUR_STOP           (5)
-#define RMP_CUR_MOVE           (6)
-#define RMP_CUR_LR             (7)
-#define RMP_CUR_UD             (8)
-#define RMP_CUR_ULBR           (9)
-#define RMP_CUR_URBL           (10)
-#define RMP_CUR_CROSS          (11)
+#define RMP_CUR_NORM                (0)
+#define RMP_CUR_BUSY                (1)
+#define RMP_CUR_QUESTION            (2)
+#define RMP_CUR_HAND                (3)
+#define RMP_CUR_TEXT                (4)
+#define RMP_CUR_STOP                (5)
+#define RMP_CUR_MOVE                (6)
+#define RMP_CUR_LR                  (7)
+#define RMP_CUR_UD                  (8)
+#define RMP_CUR_ULBR                (9)
+#define RMP_CUR_URBL                (10)
+#define RMP_CUR_CROSS               (11)
 #endif
     
 /* Assert macro */
@@ -143,7 +150,7 @@ while(0)
 
 /* Test marker macro */
 #ifdef RMP_COVERAGE
-#define RMP_COVERAGE_LINES   (6144)
+#define RMP_COVERAGE_LINES          (6144)
 #define RMP_COVERAGE_MARKER() \
 do \
 { \
@@ -241,22 +248,20 @@ struct RMP_Mem_Tail
     volatile struct RMP_Mem_Head* Head;
 };
 
-/* The memory control block structure */
+/* The memory control header block structure */
 struct RMP_Mem
 {
-    /* This is maintained to perform introspection on the system. Not actually useful */
-    struct RMP_List Alloc;
+    /* The number of FLIs in the system */
     rmp_ptr_t FLI_Num;
+    /* The start address of the actual memory pool */
     rmp_ptr_t Start;
+    /* The size of this pool, including the header, bitmap and list table */
     rmp_ptr_t Size;
-    /* The bitmap - in no case will the system manage more than 128MB of memory */
-#if(RMP_WORD_ORDER==4)
-    rmp_ptr_t Bitmap[10];
-#else
-    rmp_ptr_t Bitmap[5];
-#endif
-    /* There are at least this number of levels - 16kB thus 8*8 */
-    struct RMP_List Table[8*8];
+    /* The location of the list table itself */
+    struct RMP_List* Table;
+    /* The bitmap - This is actually an array that have an indefinite length, and will
+     * be decided at runtime. Don't fuss if lint says that this can overflow; it is safe. */
+    rmp_ptr_t Bitmap[1];
 };
 /*****************************************************************************/
 /* __RMP_KERNEL_H_STRUCTS__ */
@@ -418,8 +423,8 @@ EXTERN void RMP_POINT(rmp_cnt_t,rmp_cnt_t,rmp_ptr_t);
 __EXTERN__ void RMP_Line(rmp_cnt_t Start_X, rmp_cnt_t Start_Y, rmp_cnt_t End_X, rmp_cnt_t End_Y, rmp_ptr_t Color);
 __EXTERN__ void RMP_Dot_Line(rmp_cnt_t Start_X, rmp_cnt_t Start_Y, rmp_cnt_t End_X,rmp_cnt_t End_Y, rmp_ptr_t Dot, rmp_ptr_t Space);
 __EXTERN__ void RMP_Rectangle(rmp_cnt_t Coord_X, rmp_cnt_t Coord_Y, rmp_cnt_t Length, rmp_cnt_t Width, rmp_ptr_t Border, rmp_ptr_t Fill);
-__EXTERN__ void RMP_Round_Rect(rmp_cnt_t Coord_X, rmp_cnt_t Coord_Y, rmp_cnt_t Length, rmp_cnt_t Width, 
-                               rmp_cnt_t Round, rmp_ptr_t Fore, rmp_ptr_t Back);
+__EXTERN__ void RMP_Round_Rect(rmp_cnt_t Coord_X, rmp_cnt_t Coord_Y,
+                               rmp_cnt_t Length, rmp_cnt_t Width, rmp_cnt_t Round, rmp_ptr_t Color);
 __EXTERN__ void RMP_Circle(rmp_cnt_t Center_X, rmp_cnt_t Center_Y, rmp_cnt_t Radius, rmp_ptr_t Border, rmp_ptr_t Fill);
 __EXTERN__ void RMP_Matrix(rmp_cnt_t Coord_X, rmp_cnt_t Coord_Y, const rmp_u8_t* Matrix,
                            rmp_cnt_t Bit_Order, rmp_cnt_t Length, rmp_cnt_t Width, rmp_ptr_t Color);
