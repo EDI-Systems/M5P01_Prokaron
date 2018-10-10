@@ -2168,7 +2168,7 @@ rmp_ret_t RMP_Mem_Init(volatile void* Pool, rmp_ptr_t Size)
     
     /* See if the memory pool is large enough to enable dynamic allocation - at
      * least 1024 machine words or pool initialization will be refused */
-    if((Pool==0)||(Size<(1024*sizeof(rmp_ptr_t))))
+    if((Pool==0)||(Size<(1024*sizeof(rmp_ptr_t)))||((((rmp_ptr_t)Pool)+Size)<Size))
     {
         RMP_COVERAGE_MARKER();
         return RMP_ERR_MEM;
