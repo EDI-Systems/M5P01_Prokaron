@@ -30,11 +30,14 @@ Description: The configuration file for TMS570LS0432.
 
 #define RMP_CRX_SYSTICK_VAL          10000
 
-/* Other low-level initialization stuff - clock and serial  */
+/* Other low-level initialization stuff - clock and serial. 
+ * This is the default initialization sequence. If you wish to supply
+ * your own, just redirect this macro to a custom function, or do your
+ * initialization stuff in the initialization hook (RMP_Start_Hook). */
 #define RMP_CRX_LOW_LEVEL_INIT() \
 do \
 { \
-    /* The TI library is in charge of all the initialization of interrupts and clocks */\
+    /* The TI library is in charge of all the initialization of interrupts and clocks */ \
     rtiInit(); \
     rtiSetPeriod(rtiCOMPARE0, RMP_CRX_SYSTICK_VAL); \
     rtiEnableNotification(rtiNOTIFICATION_COMPARE0); \

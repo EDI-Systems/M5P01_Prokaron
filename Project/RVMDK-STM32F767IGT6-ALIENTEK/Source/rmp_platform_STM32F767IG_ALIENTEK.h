@@ -53,7 +53,10 @@ Description: The configuration file for STM32F767IG on ALIENTEK developement boa
 /* Other low-level initialization stuff - clock and serial
  * STM32F7xx APB1<45MHz, APB2<90MHz. When running at 216MHz,
  * actually we are overdriving the bus a little, which might
- * be fine. */
+ * be fine.
+ * This is the default initialization sequence. If you wish to supply
+ * your own, just redirect this macro to a custom function, or do your
+ * initialization stuff in the initialization hook (RMP_Start_Hook). */
 #define RMP_CMX_LOW_LEVEL_INIT() \
 do \
 { \

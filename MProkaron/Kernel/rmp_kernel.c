@@ -2125,10 +2125,9 @@ rmp_ptr_t RMP_LSB_Get(rmp_ptr_t Val)
 
 /* Begin Function:RMP_Mem_Init ************************************************
 Description : Initialize a trunk of memory as the memory pool. The TLSF allocator's
-              FLI will be decided upon the memory block size. All memory allocation
-              functions does not lock the scheduler; decide whether you need to lock
-              in your code. This allocator can handle no more than 128MB of memory;
-              this hard-coded.
+              FLI will be decided upon the memory block size. Memory allocation does
+              not lock the scheduler by itself; it is up to you to decide whether a
+              scheduler lock is needed.
               The TLSF memory allocator is consisted of FLI, SLI and allocatable
               memory. The FLI is classified by 2^n, and the SLI segregates the 
               FLI section by an power of 2, i.e. 8 or 16. Thus, when we need 
@@ -2154,20 +2153,22 @@ Description : Initialize a trunk of memory as the memory pool. The TLSF allocato
               When a lower FLI has no blocks for allocation, it will "borrow"
               a block from the nearest FLI block that is big enough.
 Input       : volatile void* Pool - The start address of the memory pool, word-aligned.
-              rmp_ptr_t Size - The size of the memory pool, word-aligned.
+              rmp_ptr_t Size - The size of the memory pool, word-aligned. Must be 
+                               more than 1024 machine words, or pool creation will not
+                               be successful.
 Output      : None.
 Return      : rmp_ret_t - If successful, 0; else an error code.
 ******************************************************************************/
 rmp_ret_t RMP_Mem_Init(volatile void* Pool, rmp_ptr_t Size)
 {
     rmp_cnt_t FLI_Cnt;
-    rmp_ptr_t Usable_Size;
+    rmp_ptr_t Offset;
+    rmp_ptr_t Bitmap_Size;
     volatile struct RMP_Mem* Mem;
-    volatile struct RMP_Mem_Head* Mem_Head;
     
     /* See if the memory pool is large enough to enable dynamic allocation - at
-     * least 4096 words and no more than 128MB */
-    if((Pool==0)||(Size<(4096*sizeof(rmp_ptr_t)))||(((Size>>15)>>12)>0))
+     * least 1024 machine words or pool initialization will be refused */
+    if((Pool==0)||(Size<(1024*sizeof(rmp_ptr_t))))
     {
         RMP_COVERAGE_MARKER();
         return RMP_ERR_MEM;
@@ -2176,21 +2177,31 @@ rmp_ret_t RMP_Mem_Init(volatile void* Pool, rmp_ptr_t Size)
         RMP_COVERAGE_MARKER();
     
     /* See if the address and size is word-aligned */
-    if((((rmp_ptr_t)Pool&(RMP_WORD_MASK>>3))!=0)||((Size&(RMP_WORD_MASK>>3))!=0))
+    if(((((rmp_ptr_t)Pool)&RMP_ALIGN_MASK)!=0)||((Size&RMP_ALIGN_MASK)!=0))
     {
         RMP_COVERAGE_MARKER();
         return RMP_ERR_MEM;
     }
     else
         RMP_COVERAGE_MARKER();
-        
+
     Mem=(volatile struct RMP_Mem*)Pool;
     Mem->Size=Size;
-    /* Initialize the allocated block list */
-    RMP_List_Crt(&(Mem->Alloc));
     /* Calculate the FLI value needed for this - we always align to 64 byte */
     Mem->FLI_Num=RMP_MSB_Get(Size-sizeof(struct RMP_Mem))-6+1;
-    /* Initialize the TLSF allocation table first */
+    
+    /* Decide the location of the bitmap */
+    Offset=sizeof(struct RMP_Mem);
+    Bitmap_Size=RMP_ROUND_UP(Mem->FLI_Num,RMP_ALIGN_ORDER);
+    /* Initialize the bitmap */
+    for(FLI_Cnt=0;FLI_Cnt<(rmp_cnt_t)(Bitmap_Size>>RMP_ALIGN_ORDER);FLI_Cnt++)
+        Mem->Bitmap[FLI_Cnt]=0;
+    
+    /* Decide the location of the allocation table - "-sizeof(rmp_ptr_t)" is
+     * because we defined the length=1 in our struct already */
+    Offset+=Bitmap_Size-sizeof(rmp_ptr_t);
+    Mem->Table=(struct RMP_List*)(((rmp_ptr_t)Mem)+Offset);
+    /* Initialize the allocation table */
     for(FLI_Cnt=0;FLI_Cnt<(rmp_cnt_t)(Mem->FLI_Num);FLI_Cnt++)
     {
         RMP_List_Crt(&(Mem->Table[RMP_MEM_POS(FLI_Cnt,0)]));
@@ -2202,20 +2213,17 @@ rmp_ret_t RMP_Mem_Init(volatile void* Pool, rmp_ptr_t Size)
         RMP_List_Crt(&(Mem->Table[RMP_MEM_POS(FLI_Cnt,6)]));
         RMP_List_Crt(&(Mem->Table[RMP_MEM_POS(FLI_Cnt,7)]));
     }
-    for(FLI_Cnt=0;FLI_Cnt<5;FLI_Cnt++)
-        Mem->Bitmap[FLI_Cnt]=0;
     
-    /* Get the big memory block's size and position */
-    Usable_Size=sizeof(struct RMP_Mem)+(sizeof(struct RMP_List)<<3)*(Mem->FLI_Num-8);
-    Mem_Head=(struct RMP_Mem_Head*)(((rmp_ptr_t)Pool)+Usable_Size);
-    Mem->Start=(rmp_ptr_t)Mem_Head;
-    Usable_Size=Size-Usable_Size;
+    /* Calculate the offset of the actual allocatable memory - each FLI have
+     * 8 SLIs, and each SLI has a corresponding table header */
+    Offset+=sizeof(struct RMP_List)*8*Mem->FLI_Num;
+    Mem->Start=((rmp_ptr_t)Mem)+Offset;
     
-    /* Initialize the big block */
-    _RMP_Mem_Block(Mem_Head,Usable_Size);
-    
+    /* Initialize the first big block */
+    _RMP_Mem_Block((struct RMP_Mem_Head*)(Mem->Start),Size-Offset);
     /* Insert the memory into the corresponding level */
-    _RMP_Mem_Ins(Pool, Mem_Head);
+    _RMP_Mem_Ins(Pool,(struct RMP_Mem_Head*)(Mem->Start));
+    
     return 0;
 }
 /* End Function:RMP_Mem_Init *************************************************/
@@ -2253,8 +2261,8 @@ Return      : None.
 ******************************************************************************/
 void _RMP_Mem_Ins(volatile void* Pool, volatile struct RMP_Mem_Head* Mem_Head)
 {
-    rmp_cnt_t FLI_Level;
-    rmp_cnt_t SLI_Level;
+    rmp_ptr_t FLI_Level;
+    rmp_ptr_t SLI_Level;
     rmp_ptr_t Level;
     rmp_ptr_t Size;
     volatile struct RMP_Mem* Mem;
@@ -2268,16 +2276,17 @@ void _RMP_Mem_Ins(volatile void* Pool, volatile struct RMP_Mem_Head* Mem_Head)
     FLI_Level=RMP_MSB_Get(Size)-6;
     /* Decide the SLI level directly from the FLI level */
     SLI_Level=(Size>>(FLI_Level+3))&0x07;
-    Level=(FLI_Level<<3)+SLI_Level;
+    /* Calculate the bit position */
+    Level=RMP_MEM_POS(FLI_Level,SLI_Level);
     /* Get the slot */
-    Slot=&(Mem->Table[RMP_MEM_POS(FLI_Level,SLI_Level)]);
+    Slot=&(Mem->Table[Level]);
 
     /* See if there are any blocks in the level, equal means no. So what we inserted is the first block */
     if(Slot==Slot->Next)
     {
         RMP_COVERAGE_MARKER();
         /* Set the corresponding bit in the TLSF bitmap */
-        Mem->Bitmap[Level>>RMP_WORD_ORDER]|=1<<(Level&RMP_WORD_MASK);
+        Mem->Bitmap[Level>>RMP_WORD_ORDER]|=RMP_POW2(Level&RMP_WORD_MASK);
     }
     else
         RMP_COVERAGE_MARKER();
@@ -2297,8 +2306,8 @@ Return      : None.
 ******************************************************************************/
 void _RMP_Mem_Del(volatile void* Pool, volatile struct RMP_Mem_Head* Mem_Head)
 {
-    rmp_cnt_t FLI_Level;
-    rmp_cnt_t SLI_Level;
+    rmp_ptr_t FLI_Level;
+    rmp_ptr_t SLI_Level;
     rmp_ptr_t Level;
     rmp_ptr_t Size;
     volatile struct RMP_Mem* Mem;
@@ -2312,19 +2321,21 @@ void _RMP_Mem_Del(volatile void* Pool, volatile struct RMP_Mem_Head* Mem_Head)
     FLI_Level=RMP_MSB_Get(Size)-6;
     /* Decide the SLI level directly from the FLI level */
     SLI_Level=(Size>>(FLI_Level+3))&0x07;
-    Level=(FLI_Level<<3)+SLI_Level;
+    /* Calculate the bit position */
+    Level=RMP_MEM_POS(FLI_Level,SLI_Level);
     /* Get the slot */
-    Slot=&(Mem->Table[RMP_MEM_POS(FLI_Level,SLI_Level)]);
-   
+    Slot=&(Mem->Table[Level]);
+
+    /* Delete the node now */
     RMP_List_Del(Mem_Head->Head.Prev,Mem_Head->Head.Next);
 
     /* See if there are any blocks in the level, equal means no. So
-     * what we deleted is the last block */
+     * what we deleted is the last blockm need to clear the flag */
     if(Slot==Slot->Next)
     {
         RMP_COVERAGE_MARKER();
         /* Clear the corresponding bit in the TLSF bitmap */
-        Mem->Bitmap[Level>>RMP_WORD_ORDER]&=~(1<<(Level&RMP_WORD_MASK));
+        Mem->Bitmap[Level>>RMP_WORD_ORDER]&=~RMP_POW2(Level&RMP_WORD_MASK);
     }
     else
         RMP_COVERAGE_MARKER();
@@ -2342,9 +2353,11 @@ Return      : rmp_ret_t - If successful, 0; else -1 for failure.
 ******************************************************************************/
 rmp_ret_t _RMP_Mem_Search(volatile void* Pool, rmp_ptr_t Size, rmp_cnt_t* FLI_Level, rmp_cnt_t* SLI_Level)
 {
-    rmp_cnt_t FLI_Level_Temp;
-    rmp_cnt_t SLI_Level_Temp;
+    rmp_ptr_t FLI_Level_Temp;
+    rmp_ptr_t SLI_Level_Temp;
     rmp_cnt_t Level;
+    rmp_cnt_t Word;
+    rmp_cnt_t Limit;
     rmp_ptr_t LSB;
     volatile struct RMP_Mem* Mem;
 
@@ -2355,7 +2368,7 @@ rmp_ret_t _RMP_Mem_Search(volatile void* Pool, rmp_ptr_t Size, rmp_cnt_t* FLI_Le
      * so that we can avoid the list search. However, when the allocated memory is just
      * one of the levels, then we don't need to jump to the next level and can fit directly */
     SLI_Level_Temp=(Size>>(FLI_Level_Temp+3))&0x07;
-    if(((rmp_cnt_t)Size)!=((1<<(FLI_Level_Temp+3))*(SLI_Level_Temp+8)))
+    if(Size!=(RMP_POW2(FLI_Level_Temp+3)*(SLI_Level_Temp+8)))
     {
         RMP_COVERAGE_MARKER();
         SLI_Level_Temp++;
@@ -2375,7 +2388,7 @@ rmp_ret_t _RMP_Mem_Search(volatile void* Pool, rmp_ptr_t Size, rmp_cnt_t* FLI_Le
     
     /* Check if the FLI level is over the boundary */
     Mem=(volatile struct RMP_Mem*)Pool;
-    if((rmp_ptr_t)FLI_Level_Temp>=Mem->FLI_Num)
+    if(FLI_Level_Temp>=Mem->FLI_Num)
     {
         RMP_COVERAGE_MARKER();
         return -1;
@@ -2384,7 +2397,7 @@ rmp_ret_t _RMP_Mem_Search(volatile void* Pool, rmp_ptr_t Size, rmp_cnt_t* FLI_Le
         RMP_COVERAGE_MARKER();
     
     /* Try to find one position on this processor word level */
-    Level=(FLI_Level_Temp<<3)+SLI_Level_Temp;
+    Level=RMP_MEM_POS(FLI_Level_Temp,SLI_Level_Temp);
     LSB=RMP_LSB_Get(Mem->Bitmap[Level>>RMP_WORD_ORDER]>>(Level&RMP_WORD_MASK));
     /* If there's at least one block that matches the query, return the level */
     if(LSB<RMP_WORD_SIZE)
@@ -2399,16 +2412,17 @@ rmp_ret_t _RMP_Mem_Search(volatile void* Pool, rmp_ptr_t Size, rmp_cnt_t* FLI_Le
     else
     {
         RMP_COVERAGE_MARKER();
-        /* From the next word, query one by one. 5 is because we never have more than 128MB memory */
-        for(Level=(Level>>RMP_WORD_ORDER)+1;Level<5;Level++)
+        Limit=RMP_ROUND_UP(Mem->FLI_Num,RMP_ALIGN_ORDER)>>RMP_ALIGN_ORDER;
+        /* From the next word, query one by one */
+        for(Word=(Level>>RMP_WORD_ORDER)+1;Word<Limit;Word++)
         {
-            /* if the level has blocks of one FLI level */
-            if(Mem->Bitmap[Level]!=0)
+            /* If the level has blocks of one FLI level */
+            if(Mem->Bitmap[Word]!=0)
             {
                 RMP_COVERAGE_MARKER();
                 /* Find the actual level */ 
-                LSB=RMP_LSB_Get(Mem->Bitmap[Level]);
-                *FLI_Level=((Level<<RMP_WORD_ORDER)+LSB)>>3;
+                LSB=RMP_LSB_Get(Mem->Bitmap[Word]);
+                *FLI_Level=((Word<<RMP_WORD_ORDER)+LSB)>>3;
                 *SLI_Level=LSB&0x07;
                 return 0;
             }
@@ -2449,7 +2463,7 @@ void* RMP_Malloc(volatile void* Pool, rmp_ptr_t Size)
         RMP_COVERAGE_MARKER();
     
     /* Round up the size:a multiple of 8 and bigger than 64B */
-    Rounded_Size=(((Size-1)>>3)+1)<<3;
+    Rounded_Size=RMP_ROUND_UP(Size,3);
     /* See if it is smaller than the smallest block */
     Rounded_Size=(Rounded_Size>64)?Rounded_Size:64;
 
@@ -2486,8 +2500,7 @@ void* RMP_Malloc(volatile void* Pool, rmp_ptr_t Size)
     else
         RMP_COVERAGE_MARKER();
 
-    /* Insert the allocated block into the lists */
-    RMP_List_Ins(&(Mem_Head->Head),&(Mem->Alloc),Mem->Alloc.Next);
+    /* Mark the block as in use */
     Mem_Head->State=RMP_MEM_USED;
 
     /* Finally, return the start address */
@@ -2540,8 +2553,7 @@ void RMP_Free(volatile void* Pool, void* Mem_Ptr)
     else
         RMP_COVERAGE_MARKER();
 
-    /* Now we are sure that it can be freed. Delete it from the allocated list now */
-    RMP_List_Del(Mem_Head->Head.Prev,Mem_Head->Head.Next);
+    /* Mark it as free */
     Mem_Head->State=RMP_MEM_FREE;
     
     /* Now check if we can merge it with the higher blocks */
@@ -2834,14 +2846,13 @@ Input       : rmp_cnt_t Coord_X -The X position of The top-left corner.
               rmp_cnt_t Coord_Y -The Y position of The top-left corner.
               rmp_cnt_t Length - The length of the rectangle.
               rmp_cnt_t Width - The width of the rectangle. 
-              rmp_cnt_t Round - The raduis of the round corner. 
-              rmp_ptr_t Fore - The foreground color (the color of the rectangle).
-              rmp_ptr_t Fill - The background color.
+              rmp_cnt_t Round - The radius of the round corner. 
+              rmp_ptr_t Color - The color of the rectangle.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void RMP_Round_Rect(rmp_cnt_t Coord_X, rmp_cnt_t Coord_Y, rmp_cnt_t Length, rmp_cnt_t Width, 
-                    rmp_cnt_t Round, rmp_ptr_t Fore, rmp_ptr_t Back)
+void RMP_Round_Rect(rmp_cnt_t Coord_X, rmp_cnt_t Coord_Y,
+                    rmp_cnt_t Length, rmp_cnt_t Width, rmp_cnt_t Round, rmp_ptr_t Color)
 {
     rmp_cnt_t Cir_X_0;
     rmp_cnt_t Cir_X_1;
@@ -2853,17 +2864,20 @@ void RMP_Round_Rect(rmp_cnt_t Coord_X, rmp_cnt_t Coord_Y, rmp_cnt_t Length, rmp_
     Cir_Y_0=Coord_Y+Round+1;
     Cir_Y_1=Coord_Y+Width-Round-1;
     
-    RMP_Rectangle(Coord_X,Coord_Y,Length,Width,Fore,Fore);
+    /* Draw the innermost one rectangle */
+    RMP_Rectangle(Coord_X+Round+1,Coord_Y+Round+1,Length-Round-Round-2,Width-Round-Round-2,Color,Color);
+
+    /* Draw 4 small side rectangles */
+    RMP_Rectangle(Coord_X,Cir_Y_0,Round+1,Width-Round-Round-2,Color,Color);
+    RMP_Rectangle(Cir_X_1,Cir_Y_0,Round+1,Width-Round-Round-2,Color,Color);
+    RMP_Rectangle(Cir_X_0,Cir_Y_1,Length-Round-Round-2,Round+1,Color,Color);
+    RMP_Rectangle(Cir_X_0,Coord_Y,Length-Round-Round-2,Round+1,Color,Color);
     
-    RMP_Rectangle(Cir_X_0-Round-1,Cir_Y_0-Round-1,Round+1,Round+1,Back,Back);
-    RMP_Rectangle(Cir_X_1,Cir_Y_0-Round-1,Round+1,Round+1,Back,Back);
-    RMP_Rectangle(Cir_X_0-Round-1,Cir_Y_1,Round+1,Round+1,Back,Back);
-    RMP_Rectangle(Cir_X_1,Cir_Y_1,Round+1,Round+1,Back,Back);
-    
-    RMP_Circle(Cir_X_0,Cir_Y_0,Round,Fore,Fore);
-    RMP_Circle(Cir_X_1,Cir_Y_0,Round,Fore,Fore);
-    RMP_Circle(Cir_X_0,Cir_Y_1,Round,Fore,Fore);
-    RMP_Circle(Cir_X_1,Cir_Y_1,Round,Fore,Fore);
+    /* Draw 4 circles */
+    RMP_Circle(Cir_X_0,Cir_Y_0,Round,Color,Color);
+    RMP_Circle(Cir_X_1,Cir_Y_0,Round,Color,Color);
+    RMP_Circle(Cir_X_0,Cir_Y_1,Round,Color,Color);
+    RMP_Circle(Cir_X_1,Cir_Y_1,Round,Color,Color);
 }
 /* End Function:RMP_Round_Rect ***********************************************/
 
