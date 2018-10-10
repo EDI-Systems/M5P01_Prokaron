@@ -30,7 +30,10 @@ Description: The configuration file for TMS570LC4357.
 
 #define RMP_CRX_SYSTICK_VAL          3750
 
-/* Other low-level initialization stuff - clock and serial  */
+/* Other low-level initialization stuff - clock and serial. 
+ * This is the default initialization sequence. If you wish to supply
+ * your own, just redirect this macro to a custom function, or do your
+ * initialization stuff in the initialization hook (RMP_Start_Hook). */
 #define RMP_CRX_LOW_LEVEL_INIT() \
 do \
 { \

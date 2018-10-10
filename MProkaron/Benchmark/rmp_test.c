@@ -373,7 +373,7 @@ void Test_Set_1(rmp_ptr_t Param)
 /* The second test set - semaphore pending and timing */
 void Test_Set_2(rmp_ptr_t Param)
 {
-	volatile rmp_ptr_t Middle;
+    volatile rmp_ptr_t Middle;
     switch(Param)
     {
         case 0:
@@ -682,17 +682,16 @@ void Test_Coverage_2(void)
     RMP_Thd_Del(&Thd_1);
     
     /* Memory pool fuzzing */
-    RMP_Malloc(Pool, TEST_MEM_POOL*sizeof(rmp_ptr_t)*2);            /* Allocate more memory than we have */
+    RMP_Malloc(Pool, TEST_MEM_POOL*sizeof(rmp_ptr_t)*2);        /* Allocate more memory than we have */
     RMP_Free(Pool,0);                                           /* NULL pointer */
     RMP_Free(Pool,(void*)1);                                    /* Not in freeable range */
     RMP_Free(0,(void*)100);                                     /* NULL pointer */
     RMP_Malloc(0,100);                                          /* NULL pointer */
-    RMP_Malloc(Pool,100);                                       /* Allocate zero size */
-    Data=(rmp_ptr_t)RMP_Malloc(Pool, 256);                          /* - */
+    RMP_Malloc(Pool,0);                                         /* Allocate zero size */
+    Data=(rmp_ptr_t)RMP_Malloc(Pool, 256);                      /* - */
     RMP_Free(Pool,(void*)Data);                                 /* - */
     RMP_Free(Pool,(void*)Data);                                 /* Double free */
-    RMP_Mem_Init(0, TEST_MEM_POOL*sizeof(rmp_ptr_t));               /* NULL pointer */
-    RMP_Mem_Init(Pool, (1<<30));                                /* Memory too large */
+    RMP_Mem_Init(0, TEST_MEM_POOL*sizeof(rmp_ptr_t));           /* NULL pointer */
     RMP_Mem_Init(Pool, 0);                                      /* Memory too small */
     RMP_Mem_Init((void*)(((rmp_ptr_t)Pool)+1), TEST_MEM_POOL*sizeof(rmp_ptr_t)); /* Memory not aligned */
     

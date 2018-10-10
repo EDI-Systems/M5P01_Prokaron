@@ -1,13 +1,13 @@
 /******************************************************************************
-Filename    : rmp_platform_cmx_conf.h
-Author      : pry
-Date        : 24/06/2017
-Licence     : LGPL v3+; see COPYING for details.
-Description : The configuration file for Cortex-M HAL.
+Filename   : rmp_platform_cmx_conf.h
+Author     : pry
+Date       : 24/06/2017
+Licence    : LGPL v3+; see COPYING for details.
+Description: The configuration file for Cortex-M HAL.
 ******************************************************************************/
 
 /* Config Includes ***********************************************************/
-#include "Platform/CortexM/Chips/STM32F030F4/rmp_platform_STM32F030F4.h"
+#include "../../Project/RVMDK-STM32F767IGT6-ALIENTEK/Source/rmp_platform_STM32F767IG_ALIENTEK.h"
 /* End Config Includes *******************************************************/
 
 /* End Of File ***************************************************************/

@@ -69,26 +69,26 @@ void Int_Init(void)
     TIM4_Handle.Init.CounterMode=TIM_COUNTERMODE_DOWN;
     TIM4_Handle.Init.Period=21600;
     TIM4_Handle.Init.ClockDivision=TIM_CLOCKDIVISION_DIV1;
-	TIM4_Handle.Init.RepetitionCounter=0;
+    TIM4_Handle.Init.RepetitionCounter=0;
     HAL_TIM_Base_Init(&TIM4_Handle);
     __HAL_RCC_TIM4_CLK_ENABLE();
     __HAL_TIM_ENABLE(&TIM4_Handle);
-	/* Clear interrupt pending bit, because we used EGR to update the registers */
-	__HAL_TIM_CLEAR_IT(&TIM4_Handle, TIM_IT_UPDATE);
-	HAL_TIM_Base_Start_IT(&TIM4_Handle);
+    /* Clear interrupt pending bit, because we used EGR to update the registers */
+    __HAL_TIM_CLEAR_IT(&TIM4_Handle, TIM_IT_UPDATE);
+    HAL_TIM_Base_Start_IT(&TIM4_Handle);
 }
 
 void HAL_TIM_Base_MspInit(TIM_HandleTypeDef *htim)
 {
-	if(htim->Instance==TIM4) 
+    if(htim->Instance==TIM4) 
     {
-		/* Set the interrupt priority */
-		NVIC_SetPriority(TIM4_IRQn,0xFF);
-		/* Enable timer 4 interrupt */
-		NVIC_EnableIRQ(TIM4_IRQn);
-		/* Enable timer 4 clock */
-		__HAL_RCC_TIM4_CLK_ENABLE();
-	}
+        /* Set the interrupt priority */
+        NVIC_SetPriority(TIM4_IRQn,0xFF);
+        /* Enable timer 4 interrupt */
+        NVIC_EnableIRQ(TIM4_IRQn);
+        /* Enable timer 4 clock */
+        __HAL_RCC_TIM4_CLK_ENABLE();
+    }
 }
 
 /* The interrupt handler */

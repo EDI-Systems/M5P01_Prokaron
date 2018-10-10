@@ -32,7 +32,10 @@ Description: The configuration file for STM32F405RG.
 #define RMP_CMX_SYSTICK_VAL          16800
 
 /* Other low-level initialization stuff - clock and serial
- * STM32F405 APB1<42MHz, APB2<84MHz */
+ * STM32F405 APB1<42MHz, APB2<84MHz. 
+ * This is the default initialization sequence. If you wish to supply
+ * your own, just redirect this macro to a custom function, or do your
+ * initialization stuff in the initialization hook (RMP_Start_Hook). */
 #define RMP_CMX_LOW_LEVEL_INIT() \
 do \
 { \

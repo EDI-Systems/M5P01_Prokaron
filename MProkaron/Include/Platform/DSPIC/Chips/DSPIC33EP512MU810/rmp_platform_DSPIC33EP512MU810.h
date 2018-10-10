@@ -38,7 +38,10 @@ Description: The configuration file for PIC32MZ2048EFM100.
  * dividing it by 16 with regards to CPU clock rate */
 #define RMP_DSPIC_TICK_PRESC         RMP_DSPIC_TIMER_PRESC8
 
-/* Other low-level initialization stuff - clock and serial */
+/* Other low-level initialization stuff - clock and serial. 
+ * This is the default initialization sequence. If you wish to supply
+ * your own, just redirect this macro to a custom function, or do your
+ * initialization stuff in the initialization hook (RMP_Start_Hook). */
 #define RMP_DSPIC_LOW_LEVEL_INIT() \
 do \
 { \
@@ -53,7 +56,7 @@ do \
 while(0)
 
 /* Because we need to choose an unused timer as our system timer, we make it flexible 
- * here. You may choose one timer that is never used. By default, we use timer 1 */
+ * here. You may choose one timer that is never used. By default, we use timer 1. */
 #define RMP_DSPIC_SET_TIMER(TICKS) \
 do \
 { \
@@ -78,7 +81,7 @@ do \
 while(0)
 
 /* Because we need to choose an unused peripheral to trigger the software interrupt,
- * we make it flexible here. You may choose one interrupt source that is never used */
+ * we make it flexible here. You may choose one interrupt source that is never used. */
 #define RMP_DSPIC_YIELD() \
 do \
 { \

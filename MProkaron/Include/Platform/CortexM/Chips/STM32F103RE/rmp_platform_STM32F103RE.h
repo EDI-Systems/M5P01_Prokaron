@@ -32,7 +32,10 @@ Description: The configuration file for STM32F103RE.
 #define RMP_CMX_SYSTICK_VAL          7200
 
 /* Other low-level initialization stuff - clock and serial
- * STM32F10x APB1<36MHz, APB2<72MHz */
+ * STM32F10x APB1<36MHz, APB2<72MHz. 
+ * This is the default initialization sequence. If you wish to supply
+ * your own, just redirect this macro to a custom function, or do your
+ * initialization stuff in the initialization hook (RMP_Start_Hook). */
 #define RMP_CMX_LOW_LEVEL_INIT() \
 do \
 { \
