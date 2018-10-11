@@ -44,8 +44,8 @@ typedef unsigned char rmp_u8_t;
 /* End Basic Types ***********************************************************/
 
 /* Begin Extended Types ******************************************************/
-#ifndef __RMP_rmp_ptr_t__
-#define __RMP_rmp_ptr_t__
+#ifndef __RMP_PTR_T__
+#define __RMP_PTR_T__
 /* The typedef for the pointers - This is the raw style. Pointers must be unsigned */
 typedef rmp_u32_t rmp_ptr_t;
 #endif
