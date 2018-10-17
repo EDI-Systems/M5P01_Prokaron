@@ -1,6 +1,6 @@
 /******************************************************************************
 Filename   : rmp_platform_STM32F103ZE.h
-Author     : pry
+Author     : pry,lzy
 Date       : 24/06/2017
 Licence    : LGPL v3+; see COPYING for details.
 Description: The configuration file for STM32F103ZE.
