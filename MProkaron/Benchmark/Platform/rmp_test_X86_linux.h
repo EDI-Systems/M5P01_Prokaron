@@ -54,7 +54,7 @@ Return      : None.
 ******************************************************************************/
 void Timer_Init(void)
 {
-	/* Already initialized on power-on, this is x86 and we have RDTSC */
+    /* Already initialized on power-on, this is x86 and we have RDTSC */
 }
 /* End Function:Timer_Init ***************************************************/
 
@@ -68,25 +68,25 @@ Return      : None.
 /* The interrupt handler */
 void TIM_IRQHandler(void)
 {
-	Int_Handler();
+    Int_Handler();
 }
 
 /* This is used to send interrupt signal to the parent thread */
 void Int_Init(void)
 {
-	struct itimerval Tick;
-	/* Setup the external interrupt handler */
-	RMP_Eint_Handler=TIM_IRQHandler;
+    struct itimerval Tick;
+    /* Setup the external interrupt handler */
+    RMP_Eint_Handler=TIM_IRQHandler;
 
-	/* Set up the timer */
-	memset(&Tick, 0, sizeof(Tick));
-	/* First timeout */
-	Tick.it_value.tv_sec=0;
-	Tick.it_value.tv_usec=TEST_INT_INTERVAL;
-	/* Interval time to run function */
-	Tick.it_interval.tv_sec=0;
-	Tick.it_interval.tv_usec=TEST_INT_INTERVAL;
-	RMP_ASSERT(setitimer(ITIMER_REAL, &Tick, NULL)>=0);
+    /* Set up the timer */
+    memset(&Tick, 0, sizeof(Tick));
+    /* First timeout */
+    Tick.it_value.tv_sec=0;
+    Tick.it_value.tv_usec=TEST_INT_INTERVAL;
+    /* Interval time to run function */
+    Tick.it_interval.tv_sec=0;
+    Tick.it_interval.tv_usec=TEST_INT_INTERVAL;
+    RMP_ASSERT(setitimer(ITIMER_REAL, &Tick, NULL)>=0);
     RMP_PRINTK_S("Timer init done - testing interrupts.\r\n");
 }
 
@@ -101,14 +101,14 @@ Return      : None.
 ******************************************************************************/
 void Int_Disable(void)
 {
-	struct itimerval Tick;
-	/* Erase handler */
-	RMP_Eint_Handler=0;
+    struct itimerval Tick;
+    /* Erase handler */
+    RMP_Eint_Handler=0;
 
-	/* Set up the timer */
-	memset(&Tick, 0, sizeof(Tick));
-	/* Stop the itimer */
-	RMP_ASSERT(setitimer(ITIMER_REAL, &Tick, NULL)>=0);
+    /* Set up the timer */
+    memset(&Tick, 0, sizeof(Tick));
+    /* Stop the itimer */
+    RMP_ASSERT(setitimer(ITIMER_REAL, &Tick, NULL)>=0);
 }
 #endif
 /* End Function:Int_Disable **************************************************/

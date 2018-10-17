@@ -122,12 +122,12 @@ void Int_Init(void)
     TIM4_Handle.Init.CounterMode=TIM_COUNTERMODE_DOWN;
     TIM4_Handle.Init.Period=21600;
     TIM4_Handle.Init.ClockDivision=TIM_CLOCKDIVISION_DIV1;
-	TIM4_Handle.Init.RepetitionCounter=0;
+    TIM4_Handle.Init.RepetitionCounter=0;
     TIM_Base_SetConfig(TIM4_Handle.Instance, &(TIM4_Handle.Init)); 
     TIM4_Handle.State=HAL_TIM_STATE_READY;
     __HAL_RCC_TIM4_CLK_ENABLE();
-	/* Clear interrupt pending bit, because we used EGR to update the registers */
-	__HAL_TIM_CLEAR_IT(&TIM4_Handle, TIM_IT_UPDATE);
+    /* Clear interrupt pending bit, because we used EGR to update the registers */
+    __HAL_TIM_CLEAR_IT(&TIM4_Handle, TIM_IT_UPDATE);
       /* Enable the TIM Update interrupt */
     __HAL_TIM_ENABLE_IT(&TIM4_Handle, TIM_IT_UPDATE);
     /* Enable the Peripheral */

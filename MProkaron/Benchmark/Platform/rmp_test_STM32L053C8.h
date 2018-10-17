@@ -70,22 +70,22 @@ void Int_Init(void)
     HAL_TIM_Base_Init(&TIM21_Handle);
     __HAL_RCC_TIM21_CLK_ENABLE();
     __HAL_TIM_ENABLE(&TIM21_Handle);
-	/* Clear interrupt pending bit, because we used EGR to update the registers */
-	__HAL_TIM_CLEAR_IT(&TIM21_Handle, TIM_IT_UPDATE);
-	HAL_TIM_Base_Start_IT(&TIM21_Handle);
+    /* Clear interrupt pending bit, because we used EGR to update the registers */
+    __HAL_TIM_CLEAR_IT(&TIM21_Handle, TIM_IT_UPDATE);
+    HAL_TIM_Base_Start_IT(&TIM21_Handle);
 }
 
 void HAL_TIM_Base_MspInit(TIM_HandleTypeDef *htim)
 {
-	if(htim->Instance==TIM21) 
+    if(htim->Instance==TIM21) 
     {
-		/* Set the interrupt priority */
-		NVIC_SetPriority(TIM21_IRQn,0xFF);
-		/* Enable timer 21 interrupt */
-		NVIC_EnableIRQ(TIM21_IRQn);
-		/* Enable timer 21 clock */
-		__HAL_RCC_TIM21_CLK_ENABLE();
-	}
+        /* Set the interrupt priority */
+        NVIC_SetPriority(TIM21_IRQn,0xFF);
+        /* Enable timer 21 interrupt */
+        NVIC_EnableIRQ(TIM21_IRQn);
+        /* Enable timer 21 clock */
+        __HAL_RCC_TIM21_CLK_ENABLE();
+    }
 }
 
 /* The interrupt handler */
