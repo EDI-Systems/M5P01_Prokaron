@@ -1,6 +1,6 @@
 /******************************************************************************
 Filename    : rmp_test_STM32F103ZE.h
-Author      : pry 
+Author      : pry,lzy
 Date        : 22/07/2017
 Licence     : LGPL v3+; see COPYING for details.
 Description : The testbench for STM32F103ZE.
@@ -72,9 +72,9 @@ void Int_Init(void)
     HAL_TIM_Base_Init(&TIM4_Handle);
     __HAL_RCC_TIM4_CLK_ENABLE();
     __HAL_TIM_ENABLE(&TIM4_Handle);
-	/* Clear interrupt pending bit, because we used EGR to update the registers */
-	__HAL_TIM_CLEAR_IT(&TIM4_Handle, TIM_IT_UPDATE);
-	HAL_TIM_Base_Start_IT(&TIM4_Handle);
+    /* Clear interrupt pending bit, because we used EGR to update the registers */
+    __HAL_TIM_CLEAR_IT(&TIM4_Handle, TIM_IT_UPDATE);
+    HAL_TIM_Base_Start_IT(&TIM4_Handle);
 }
 
 void HAL_TIM_Base_MspInit(TIM_HandleTypeDef *htim)
