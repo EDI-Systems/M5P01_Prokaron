@@ -1,6 +1,6 @@
 /******************************************************************************
 Filename    : rmp_test_STM32F103ZE.h
-Author      : pry 
+Author      : pry,lzy
 Date        : 22/07/2017
 Licence     : LGPL v3+; see COPYING for details.
 Description : The testbench for STM32F103ZE.
