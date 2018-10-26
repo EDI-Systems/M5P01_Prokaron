@@ -410,6 +410,7 @@ void Test_Coverage_2(void)
 {
     rmp_ptr_t Data;
     rmp_ptr_t Temp;
+    rmp_ptr_t Stub;
     
     /* Scenario 0: Miscellaneous tests */
     RMP_Lock_Sched();
@@ -695,6 +696,43 @@ void Test_Coverage_2(void)
     RMP_Mem_Init(Pool, 0);                                      /* Memory too small */
     RMP_Mem_Init((void*)(((rmp_ptr_t)Pool)+1), TEST_MEM_POOL*sizeof(rmp_ptr_t)); /* Memory not aligned */
     
+    /* Testing reallocations */
+    RMP_Realloc(0, (void*)0, 100);                              /* Realloc no pool */
+    RMP_Realloc(Pool, (void*)1, 100);                           /* Realloc out of range */
+    
+    /* Realloc-based memory allocations */
+    Data=(rmp_ptr_t)RMP_Realloc(Pool, (void*)0, TEST_MEM_POOL*sizeof(rmp_ptr_t)/2); /* Realloc some memory - malloc */
+    Data=(rmp_ptr_t)RMP_Realloc(Pool, (void*)Data, TEST_MEM_POOL*sizeof(rmp_ptr_t)/2); /* Realloc the same size - no change at all */
+    Data=(rmp_ptr_t)RMP_Realloc(Pool, (void*)Data, TEST_MEM_POOL*sizeof(rmp_ptr_t)/4); /* Decrease the amount of memory */
+    Data=(rmp_ptr_t)RMP_Realloc(Pool, (void*)Data, TEST_MEM_POOL*sizeof(rmp_ptr_t)/4*3); /* Increase the amount of memory */
+    
+    /* Increase to merge the right side until failure */
+    Temp=0;
+    while(1)
+    {
+        Temp+=32;
+        if(RMP_Realloc(Pool, (void*)Data, TEST_MEM_POOL*sizeof(rmp_ptr_t)/4*3+Temp)==0)
+            break;
+    }
+    RMP_Realloc(Pool, (void*)Data, TEST_MEM_POOL*sizeof(rmp_ptr_t)/4*3+Temp-256); /* Back off some memory */
+    RMP_Realloc(Pool, (void*)Data, TEST_MEM_POOL*sizeof(rmp_ptr_t)/4*3+Temp+512); /* Overrun the right side */
+    RMP_Realloc(Pool, (void*)Data, TEST_MEM_POOL*sizeof(rmp_ptr_t)/4*3+Temp-256); /* Shrink back */
+    Stub=(rmp_ptr_t)RMP_Malloc(Pool, 128);                      /* Malloc to make right side allocated */
+    RMP_Realloc(Pool, (void*)Data, TEST_MEM_POOL*sizeof(rmp_ptr_t)/4*3+Temp-32); /* This expansion should fail */
+    /* Realloc to the new boundary */
+    Temp-=256;
+    while(1)
+    {
+        Temp+=32;
+        if(RMP_Realloc(Pool, (void*)Data, TEST_MEM_POOL*sizeof(rmp_ptr_t)/4*3+Temp)==0)
+            break;
+    }
+    RMP_Realloc(Pool, (void*)Data, TEST_MEM_POOL*sizeof(rmp_ptr_t)/4*3+Temp-64); /* Shrink with right side allocated and less than 64B stub */
+    RMP_Realloc(Pool, (void*)Data, 0);                          /* Realloc zero size - equivalent to free */
+    RMP_Realloc(Pool, (void*)Data, 100);                        /* Realloc something already freed */
+    Stub=(rmp_ptr_t)RMP_Realloc(Pool, (void*)Stub, TEST_MEM_POOL*sizeof(rmp_ptr_t)/2); /* Realloc to move memory content and expand size */
+    RMP_Free(Pool, (void*)Stub);                                /* Kill the stub now */
+    
     /* Memory allocations */
     Data=(rmp_ptr_t)RMP_Malloc(Pool, TEST_MEM_POOL*sizeof(rmp_ptr_t)/5*4); /* Should find it on the first try */
     
@@ -712,6 +750,7 @@ void Test_Coverage_2(void)
         _RMP_Get_Near_Ticks();
         RMP_Unlock_Sched();
     }
+    RMP_Realloc(Pool,(void*)Temp,256);                          /* Test realloc cannot expand */
     RMP_Free(Pool,(void*)Temp);                                 /* Test cannot merge with right side */
     
     RMP_Thd_Crt(&Thd_1, Test_Set_2, THD1_STACK, (void*)4, 2, 1);

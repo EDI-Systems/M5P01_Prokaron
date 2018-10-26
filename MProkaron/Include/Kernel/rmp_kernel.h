@@ -416,6 +416,7 @@ __EXTERN__ rmp_ret_t RMP_Sem_Post_ISR(volatile struct RMP_Sem* Semaphore, rmp_pt
 __EXTERN__ rmp_ret_t RMP_Mem_Init(volatile void* Pool, rmp_ptr_t Size);
 __EXTERN__ void* RMP_Malloc(volatile void* Pool, rmp_ptr_t Size);
 __EXTERN__ void RMP_Free(volatile void* Pool, void* Mem_Ptr);
+__EXTERN__ void* RMP_Realloc(volatile void* Pool, void* Mem_Ptr, rmp_ptr_t Size);
 
 /* Built-in graphics */
 #ifdef RMP_POINT
