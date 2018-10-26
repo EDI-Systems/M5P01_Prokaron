@@ -1,104 +1,99 @@
-;/*****************************************************************************
-;Filename    : rmp_platform_cm0_asm.s
-;Author      : pry
-;Date        : 10/04/2012
-;Description : The assembly part of the RMP RTOS. This is for Cortex-M0/0+/1.
-;*****************************************************************************/
+/******************************************************************************
+Filename    : rmp_platform_cm0_asm_gcc.s
+Author      : pry
+Date        : 10/04/2012
+Description : The assembly part of the RMP RTOS. This is for Cortex-M0/0+/1.
+******************************************************************************/
 
-;/* The ARM Cortex-M0 Architecture ********************************************
-;R0-R7:General purpose registers that are accessible. 
-;R8-R12:General purpose registers that can only be reached by 32-bit instructions.
-;R13:SP/SP_process/SP_main    Stack pointer
-;R14:LR                       Link Register(used for returning from a subfunction)
-;R15:PC                       Program counter.
-;IPSR                         Interrupt Program Status Register.
-;APSR                         Application Program Status Register.
-;EPSR                         Execute Program Status Register.
-;The above 3 registers are saved into the stack in combination(xPSR).
-;*****************************************************************************/
+/* The ARM Cortex-M0 Architecture *********************************************
+R0-R7:General purpose registers that are accessible. 
+R8-R12:General purpose registers that can only be reached by 32-bit instructions.
+R13:SP/SP_process/SP_main    Stack pointer
+R14:LR                       Link Register(used for returning from a subfunction)
+R15:PC                       Program counter.
+IPSR                         Interrupt Program Status Register.
+APSR                         Application Program Status Register.
+EPSR                         Execute Program Status Register.
+The above 3 registers are saved into the stack in combination(xPSR).
+******************************************************************************/
             
-;/* Begin Header *************************************************************/
-    ;2^3=8 byte alignment.
-    AREA                ARCH,CODE,READONLY,ALIGN=3                     
-                
-    THUMB
-    REQUIRE8
-    PRESERVE8
-;/* End Header ***************************************************************/
+/* Begin Header **************************************************************/
+    .syntax             unified
+    .thumb
+    .section            ".text"
+    .align              3
+/* End Header ****************************************************************/
 
-;/* Begin Exports ************************************************************/
-    ;Disable all interrupts
-    EXPORT              RMP_Disable_Int      
-    ;Enable all interrupts            
-    EXPORT              RMP_Enable_Int
-    ;Mask/unmask interrupt dummy
-    EXPORT              RMP_Mask_Int
-    ;Get the MSB                              
-    EXPORT              RMP_MSB_Get
-    ;Start the first thread
-    EXPORT              _RMP_Start
-    ;The PendSV trigger
-    EXPORT              _RMP_Yield
-    ;The system pending service routine              
-    EXPORT              PendSV_Handler 
-    ;The systick timer routine              
-    EXPORT              SysTick_Handler                               
-;/* End Exports **************************************************************/
+/* Begin Exports *************************************************************/
+    .global             RMP_Disable_Int       
+    .global             RMP_Enable_Int
+    .global             RMP_Mask_Int     
+    .global             RMP_MSB_Get
+    .global             _RMP_Start
+    .global             _RMP_Yield        
+    .global             PendSV_Handler 
+    .global             SysTick_Handler                               
+/* End Exports ***************************************************************/
 
-;/* Begin Imports ************************************************************/
-    ;The real task switch handling function
-    IMPORT              _RMP_Get_High_Rdy 
-    ;The real systick handler function
-    IMPORT              _RMP_Tick_Handler
-    ;The PID of the current thread                     
-    IMPORT              RMP_Cur_Thd
-    ;The stack address of current thread
-    IMPORT              RMP_Cur_SP        
-    ;Save and load extra contexts, such as FPU, peripherals and MPU
-    IMPORT              RMP_Save_Ctx
-    IMPORT              RMP_Load_Ctx
-;/* End Imports **************************************************************/
+/* Begin Imports *************************************************************/
+    .extern             _RMP_Get_High_Rdy 
+    .extern             _RMP_Tick_Handler     
+    .extern             RMP_Cur_Thd
+    .extern             RMP_Cur_SP        
+    .extern             RMP_Save_Ctx
+    .extern             RMP_Load_Ctx
+/* End Imports ***************************************************************/
 
-;/* Begin Function:RMP_Disable_Int ********************************************
-;Description : The function for disabling all interrupts. Does not allow nesting.
-;Input       : None.
-;Output      : None.
-;Return      : None.
-;*****************************************************************************/    
-RMP_Disable_Int
-    ;Disable all interrupts (I is primask,F is Faultmask.)
+/* Begin Function:RMP_Disable_Int *********************************************
+Description : The function for disabling all interrupts. Does not allow nesting.
+Input       : None.
+Output      : None.
+Return      : None.
+******************************************************************************/
+    .thumb_func
+RMP_Disable_Int:
+    .fnstart
+    .cantunwind
     CPSID               I                                                       
-    BX                  LR                                                 
-;/* End Function:RMP_Disable_Int *********************************************/
+    BX                  LR       
+    .fnend				
+/* End Function:RMP_Disable_Int **********************************************/
 
-;/* Begin Function:RMP_Enable_Int *********************************************
-;Description : The function for enabling all interrupts. Does not allow nesting.
-;Input       : None.
-;Output      : None.
-;Return      : None.
-;*****************************************************************************/
-RMP_Enable_Int
-    ;Enable all interrupts.
-    CPSIE               I                                                          
+/* Begin Function:RMP_Enable_Int **********************************************
+Description : The function for enabling all interrupts. Does not allow nesting.
+Input       : None.
+Output      : None.
+Return      : None.
+******************************************************************************/
+.thumb_func
+RMP_Enable_Int:
+    .fnstart
+    .cantunwind
+    CPSIE               I               
     BX                  LR
-;/* End Function:RMP_Enable_Int **********************************************/
+    .fnend				
+/* End Function:RMP_Enable_Int ***********************************************/
 
-;/* Begin Function:RMP_Mask_Int ***********************************************
-;Description : Cortex-M0 does not allow masking and this is provided as dummy.
-;Input       : rmp_ptr_t R0 - The new BASEPRI to set.
-;Output      : None.
-;Return      : None.
-;*****************************************************************************/
-RMP_Mask_Int                                                   
+/* Begin Function:RMP_Mask_Int ************************************************
+Description : Cortex-M0 does not allow masking and this is provided as dummy.
+Input       : rmp_ptr_t R0 - The new BASEPRI to set.
+Output      : None.
+Return      : None.
+******************************************************************************/
+    .thumb_func
+RMP_Mask_Int:
+    .fnstart
+    .cantunwind                                                     
     BX                  LR
-;/* End Function:RMP_Mask_Int ************************************************/
+    .fnend
+/* End Function:RMP_Mask_Int *************************************************/
 
-;/* Begin Function:RMP_MSB_Get ************************************************
-;Description : Get the MSB of the word.
-;Input       : rmp_ptr_t R0 - The value.
-;Output      : None.
-;Return      : rmp_ptr_t R0 - The MSB position. 
-;*****************************************************************************/
+/* Begin Function:RMP_MSB_Get *************************************************
+Description : Get the MSB of the word.
+Input       : rmp_ptr_t R0 - The value.
+Output      : None.
+Return      : rmp_ptr_t R0 - The MSB position. 
+******************************************************************************/
     MACRO
 $Label CHECK_BITS       $BITS
     LSRS                R2,R1,#$BITS
@@ -124,58 +119,68 @@ ONE CHECK_BITS          1
 ZERO
     SUBS                R0,#1
     BX                  LR
-;/* End Function:RMP_MSB_Get *************************************************/
+/* End Function:RMP_MSB_Get **************************************************/
 
-;/* Begin Function:_RMP_Yield *************************************************
-;Description : Trigger a yield to another thread.
-;Input       : None.
-;Output      : None.
-;Return      : None.
-;*****************************************************************************/
-_RMP_Yield
-    LDR                 R0,=0xE000ED04      ;The NVIC_INT_CTRL register
-    LDR                 R1,=0x10000000      ;Trigger the PendSV          
+/* Begin Function:_RMP_Yield **************************************************
+Description : Trigger a yield to another thread.
+Input       : None.
+Output      : None.
+Return      : None.
+******************************************************************************/
+    .thumb_func
+_RMP_Yield:
+    .fnstart
+    .cantunwind
+    LDR                 R0,=0xE000ED04        
+    LDR                 R1,=0x10000000        
     STR                 R1,[R0]
+                   
+    ISB 
+    BX                  LR         
+    .fnend
+/* End Function:_RMP_Yield ***************************************************/
 
-    ISB                                     ;Instruction barrier
-    BX                  LR
-;/* End Function:_RMP_Yield **************************************************/
-
-;/* Begin Function:_RMP_Start *************************************************
-;Description : Jump to the user function and will never return from it.
-;Input       : None.
-;Output      : None.
-;Return      : None.
-;*****************************************************************************/
-_RMP_Start
-    ;Should never reach here
-    SUBS                R1,#64              ;This is how we push our registers so move forward
-    MSR                 PSP,R1              ;Set the stack pointer
-    MOVS                R4,#0x02            ;Previleged thread mode
+/* Begin Function:_RMP_Start **************************************************
+Description : Jump to the user function and will never return from it.
+Input       : None.
+Output      : None.
+Return      : None.
+******************************************************************************/
+    .thumb_func
+_RMP_Start:
+    .fnstart
+    .cantunwind
+    SUBS                R1,#64               
+    MSR                 PSP,R1                
+    MOVS                R4,#0x02              
     MSR                 CONTROL,R4
+                                 
+    ISB
+    BLX                 R0              
+    .fnend
+/* End Function:_RMP_Start ***************************************************/
 
-    ISB                                     ;Data and instruction barrier
-    BLX                 R0                  ;Branch to our target
-;/* End Function:_RMP_Start **************************************************/
-
-;/* Begin Function:PendSV_Handler *********************************************
-;Description : The PendSV interrupt routine. In fact, it will call a C function
-;              directly. The reason why the interrupt routine must be an assembly
-;              function is that the compiler may deal with the stack in a different 
-;              way when different optimization level is chosen. An assembly function
-;              can make way around this problem.
-;              However, if your compiler support inline assembly functions, this
-;              can also be written in C.
-;Input       : None.
-;Output      : None.
-;Return      : None.
-;*****************************************************************************/
-PendSV_Handler
-    ; Make space for register list
-    MRS                 R0,PSP              ;Spill all the registers onto the user stack
+/* Begin Function:PendSV_Handler **********************************************
+Description : The PendSV interrupt routine. In fact, it will call a C function
+              directly. The reason why the interrupt routine must be an assembly
+              function is that the compiler may deal with the stack in a different
+              way when different optimization level is chosen. An assembly function
+              can make way around this problem.
+              However, if your compiler support inline assembly functions, this
+              can also be written in C.
+Input       : None.
+Output      : None.
+Return      : None.
+******************************************************************************/
+    .thumb_func
+PendSV_Handler:
+    .fnstart
+    .cantunwind
+    /* Make space for register list */
+    MRS                 R0,PSP              /* Spill all the registers onto the user stack */
     SUBS                R0,#36
     MOV                 R1,R0
-    STMIA               R1!,{R4-R7}         ;Save low register first due to limitation
+    STMIA               R1!,{R4-R7}         /* Save low register first due to limitation */
     MOV                 R7,LR
     MOV                 R6,R11
     MOV                 R5,R10
@@ -183,21 +188,21 @@ PendSV_Handler
     MOV                 R3,R8
     STMIA               R1!,{R3-R7}                
                 
-    BL                  RMP_Save_Ctx        ;Save extra context
+    BL                  RMP_Save_Ctx        /* Save extra context */
                 
-    LDR                 R1,=RMP_Cur_SP      ;Save The SP to control block.
+    LDR                 R1,=RMP_Cur_SP      /* Save The SP to control block */
     STR                 R0,[R1]
                 
-    BL                  _RMP_Get_High_Rdy   ;Get the highest ready task.
+    BL                  _RMP_Get_High_Rdy   /* Get the highest ready task */
                 
-    LDR                 R1,=RMP_Cur_SP      ;Load the SP.
+    LDR                 R1,=RMP_Cur_SP      /* Load the SP */
     LDR                 R0,[R1]
                 
-    BL                  RMP_Load_Ctx        ;Load extra context
+    BL                  RMP_Load_Ctx        /* Load extra context */
                 
     MOV                 R1,R0                      
     ADDS                R0,#16
-    LDMIA               R0!,{R3-R7}         ;Load high registers first due to limitation
+    LDMIA               R0!,{R3-R7}         /* Load high registers first due to limitation */
     MOV                 R8,R3
     MOV                 R9,R4
     MOV                 R10,R5
@@ -206,32 +211,38 @@ PendSV_Handler
     LDMIA               R1!,{R4-R7}
     MSR                 PSP,R0
 
-    BX                  LR                  ;Cortex-M0 will never have a FPU.
-;/* End Function:PendSV_Handler **********************************************/
+    BX                  LR                  /* Cortex-M0 will never have a FPU */
+    .fnend
+    .ltorg
+/* End Function:PendSV_Handler ***********************************************/
 
-;/* Begin Function:SysTick_Handler ********************************************
-;Description : The SysTick interrupt routine. In fact, it will call a C function
-;              directly. The reason why the interrupt routine must be an assembly
-;              function is that the compiler may deal with the stack in a different 
-;              way when different optimization level is chosen. An assembly function
-;              can make way around this problem.
-;              However, if your compiler support inline assembly functions, this
-;              can also be written in C.
-;Input       : None.
-;Output      : None.
-;Return      : None.
-;*****************************************************************************/
-SysTick_Handler
+/* Begin Function:SysTick_Handler *********************************************
+Description : The SysTick interrupt routine. In fact, it will call a C function
+              directly. The reason why the interrupt routine must be an assembly
+              function is that the compiler may deal with the stack in a different
+              way when different optimization level is chosen. An assembly function
+              can make way around this problem.
+              However, if your compiler support inline assembly functions, this
+              can also be written in C.
+Input       : None.
+Output      : None.
+Return      : None.
+******************************************************************************/
+    .thumb_func
+SysTick_Handler:
+    .fnstart
+    .cantunwind
     PUSH                {LR}
-
-    MOVS                R0,#0x01            ;We are not using tickless.
+    
+    MOVS                R0,#0x01                    
     BL                  _RMP_Tick_Handler
     
     POP                 {PC}
-    ALIGN
-;/* End Function:SysTick_Handler *********************************************/
+    NOP
+    .fnend
+/* End Function:SysTick_Handler **********************************************/
 
-    END
-;/* End Of File **************************************************************/
+    .end
+/* End Of File ***************************************************************/
 
-;/* Copyright (C) Evo-Devo Instrum. All rights reserved **********************/
+/* Copyright (C) Evo-Devo Instrum. All rights reserved ***********************/

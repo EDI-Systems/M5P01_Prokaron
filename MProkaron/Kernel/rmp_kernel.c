@@ -34,8 +34,7 @@ Description : The RMP RTOS single-file kernel.
 Description : The coverage data printer. Should always be disabled for all cases
               except where a kernel coverage test is needed. This should never
               be called ny any user application; for EDI coverage testing only.
-Input       : volatile void* Addr - The address to clear.
-              rmp_ptr_t Size - The size to clear.
+Input       : None.
 Output      : None.
 Return      : None.
 ******************************************************************************/
@@ -2345,8 +2344,8 @@ void _RMP_Mem_Del(volatile void* Pool, volatile struct RMP_Mem_Head* Mem_Head)
 /* Begin Function:_RMP_Mem_Search *********************************************
 Description : The TLSF memory searcher.
 Input       : rmp_ptr_t Size - The memory size, must be bigger than 64. This must be
-                           guaranteed before calling this function or an error
-                           will unavoidably occur.
+                               guaranteed before calling this function or an error
+                               will unavoidably occur.
 Output      : rmp_cnt_t* FLI_Level - The FLI level found.
               rmp_cnt_t* SLI_Level - The SLI level found.
 Return      : rmp_ret_t - If successful, 0; else -1 for failure.
@@ -2443,7 +2442,7 @@ Input       : volatile void* Pool - The pool to allocate from.
 Output      : None.
 Return      : void* - The pointer to the memory. If no memory available, 0 is returned.
 ******************************************************************************/
-void* RMP_Malloc(volatile void* Pool, rmp_ptr_t Size)                                                       
+void* RMP_Malloc(volatile void* Pool, rmp_ptr_t Size)
 {    
     rmp_cnt_t FLI_Level;
     rmp_cnt_t SLI_Level;
@@ -2518,7 +2517,7 @@ Return      : None.
 ******************************************************************************/
 void RMP_Free(volatile void* Pool, void* Mem_Ptr)
 {
-    volatile struct RMP_Mem* Mem; 
+    volatile struct RMP_Mem* Mem;
     volatile struct RMP_Mem_Head* Mem_Head;
     volatile struct RMP_Mem_Head* Left_Head;
     volatile struct RMP_Mem_Head* Right_Head;
@@ -2616,6 +2615,256 @@ void RMP_Free(volatile void* Pool, void* Mem_Ptr)
     }
 }
 /* End Function:RMP_Free *****************************************************/
+
+/* Begin Function:RMP_Realloc *************************************************
+Description : Expand or shrink an allocation to the desired size. The behavior
+              of this function equals RMP_Malloc if the Mem_Ptr passed in is 0,
+              or RMP_Free if the Size passed in is 0.
+Input       : volatile void* Pool - The pool to allocate from.
+              void* Mem_Ptr - The old memory block to expand.
+              rmp_ptr_t Size - The size of the RAM needed to resize to.
+Output      : None.
+Return      : void* - The pointer to the memory. If no memory available or an
+                      error occurred, 0 is returned.
+******************************************************************************/
+void* RMP_Realloc(volatile void* Pool, void* Mem_Ptr, rmp_ptr_t Size)
+{
+    /* The size of the original memory block */
+    rmp_ptr_t Mem_Size;
+    /* The rounded size of the new memory request */
+    rmp_ptr_t Rounded_Size;
+    rmp_ptr_t Count;
+    /* The pointer to the pool */
+    volatile struct RMP_Mem* Mem;
+    /* The head of the old memory */
+    volatile struct RMP_Mem_Head* Mem_Head;
+    /* The right-side block head */
+    volatile struct RMP_Mem_Head* Right_Head;
+    /* The pointer to the residue memory head */
+    volatile struct RMP_Mem_Head* Res_Mem;
+    /* The new memory block */
+    void* New_Mem;
+    /* The size of the memory block including the header sizes */
+    rmp_ptr_t Old_Size;
+    /* The size of the residue memory block including the header sizes */
+    rmp_ptr_t Res_Size;
+    
+    /* Check if no pool present */
+    if(Pool==0)
+    {
+        RMP_COVERAGE_MARKER();
+        return 0;
+    }
+    else
+        RMP_COVERAGE_MARKER();
+    
+    /* Are we passing in a NULL pointer? */
+    if(Mem_Ptr==0)
+    {
+        RMP_COVERAGE_MARKER();
+        return RMP_Malloc(Pool,Size);
+    }
+    else
+        RMP_COVERAGE_MARKER();
+    
+    /* Is the size passed in zero? If yes, we free directly */
+    if(Size==0)
+    {
+        RMP_COVERAGE_MARKER();
+        RMP_Free(Pool,Mem_Ptr);
+        return 0;
+    }
+    else
+        RMP_COVERAGE_MARKER();
+    
+    /* See if the address is within the allocatable address range. If not, abort directly. */
+    Mem=(volatile struct RMP_Mem*)Pool;
+    if((((rmp_ptr_t)Mem_Ptr)<=((rmp_ptr_t)Mem))||(((rmp_ptr_t)Mem_Ptr)>=(((rmp_ptr_t)Mem)+Mem->Size)))
+    {
+        RMP_COVERAGE_MARKER();
+        return 0;
+    }
+    else
+        RMP_COVERAGE_MARKER();
+
+    /* Yes, get the location of the header of the memory */
+    Mem_Head=(struct RMP_Mem_Head*)(((rmp_ptr_t)Mem_Ptr)-sizeof(struct RMP_Mem_Head));
+    /* See if the block can really be realloced */
+    if(Mem_Head->State==RMP_MEM_FREE)
+    {
+        RMP_COVERAGE_MARKER();
+        return 0;
+    }
+    else
+        RMP_COVERAGE_MARKER();
+    
+    /* Round up the size:a multiple of 8 and bigger than 64B */
+    Rounded_Size=RMP_ROUND_UP(Size,3);
+    /* See if it is smaller than the smallest block */
+    Rounded_Size=(Rounded_Size>64)?Rounded_Size:64;
+    
+    Mem_Size=((rmp_ptr_t)Mem_Head->Tail)-((rmp_ptr_t)Mem_Ptr);
+    /* Does the right-side head exist at all? */
+    Right_Head=(struct RMP_Mem_Head*)(((rmp_ptr_t)(Mem_Head->Tail))+sizeof(struct RMP_Mem_Tail));
+    if(((rmp_ptr_t)Right_Head)==(((rmp_ptr_t)Mem)+Mem->Size))
+    {
+        RMP_COVERAGE_MARKER();
+        Right_Head=0;
+    }
+    else
+        RMP_COVERAGE_MARKER();
+    
+    /* Are we gonna expand it? */
+    if(Mem_Size<Rounded_Size)
+    {
+        /* Expanding */
+        RMP_COVERAGE_MARKER();
+        /* Does the right side exist at all? */
+        if(Right_Head!=0)
+        {
+            RMP_COVERAGE_MARKER();
+            /* Is it allocated? */
+            if(Right_Head->State==RMP_MEM_FREE)
+            {
+                RMP_COVERAGE_MARKER();
+                /* Right-side exists and is free. How big is its usable size? Is it sufficient for our realloc? */
+                if((((rmp_ptr_t)Right_Head->Tail)-((rmp_ptr_t)Mem_Ptr))>=Rounded_Size)
+                {
+                    RMP_COVERAGE_MARKER();
+                    /* Remove the right-side from the free list so we can operate on it */
+                    _RMP_Mem_Del(Pool, Right_Head);   
+                    /* Allocate and calculate if the space left could be big enough to be a new 
+                     * block. If so, we will put the block back into the TLSF table */
+                    Res_Size=((rmp_ptr_t)(Right_Head->Tail))-((rmp_ptr_t)Mem_Ptr)-Rounded_Size;
+                    /* Is the residue big enough to be a block? */
+                    if(Res_Size>=(sizeof(struct RMP_Mem_Head)+64+sizeof(struct RMP_Mem_Tail)))
+                    {
+                        RMP_COVERAGE_MARKER();
+                        Old_Size=sizeof(struct RMP_Mem_Head)+Rounded_Size+sizeof(struct RMP_Mem_Tail);
+                        Res_Mem=(volatile struct RMP_Mem_Head*)(((rmp_ptr_t)Mem_Head)+Old_Size);
+
+                        _RMP_Mem_Block(Mem_Head, Old_Size);
+                        _RMP_Mem_Block(Res_Mem, Res_Size);
+
+                        /* Put the extra block back */
+                        _RMP_Mem_Ins(Pool, Res_Mem);
+                    }
+                    else
+                    {
+                        /* Residue too small. Merging the whole thing in is the only option */
+                        RMP_COVERAGE_MARKER();
+                        Old_Size=((rmp_ptr_t)(Right_Head->Tail))-((rmp_ptr_t)Mem_Head)+sizeof(struct RMP_Mem_Tail);
+                        _RMP_Mem_Block(Mem_Head, Old_Size);
+                    }
+                    
+                    /* Mark the block as in use (making new block clears this flag) */
+                    Mem_Head->State=RMP_MEM_USED;
+                    /* Return the old pointer because we expanded it */
+                    return Mem_Ptr;
+                }
+                /* Right-side not large enough, have to go malloc then memcpy */
+                else
+                    RMP_COVERAGE_MARKER();
+            }
+            /* It is allocated, have to go malloc then memcpy */
+            else
+                RMP_COVERAGE_MARKER();
+        }
+        /* Right-side doesn't exist, have to go malloc then memcpy */
+        else
+            RMP_COVERAGE_MARKER();
+        
+        New_Mem=RMP_Malloc(Pool,Rounded_Size);
+        /* See if we can allocate this much, if we can't at all, exit */
+        if(New_Mem==0)
+        {
+            RMP_COVERAGE_MARKER();
+            return 0;
+        }
+        else
+            RMP_COVERAGE_MARKER();
+        
+        /* Copy old memory to new memory - we know that this is always aligned, so this is fine */
+        for(Count=0;Count<(Mem_Size>>RMP_ALIGN_ORDER);Count++)
+            ((rmp_ptr_t*)New_Mem)[Count]=((rmp_ptr_t*)Mem_Ptr)[Count];
+        
+        /* Free old memory then return */
+        RMP_Free(Pool,Mem_Ptr);
+        return New_Mem;
+    }
+    /* Shrinking or keeping */
+    else
+        RMP_COVERAGE_MARKER();
+    
+    /* Are we keeping the size? */
+    if(Mem_Size==Rounded_Size)
+    {
+        RMP_COVERAGE_MARKER();
+        return Mem_Ptr;
+    }
+    else
+        RMP_COVERAGE_MARKER();
+    
+    /* Does the right side exist at all? */
+    if(Right_Head!=0)
+    {
+        RMP_COVERAGE_MARKER();
+        /* Is it allocated? */
+        if(Right_Head->State==RMP_MEM_FREE)
+        {
+            /* Right-side not allocated. Need to merge the block */
+            RMP_COVERAGE_MARKER();
+            /* Remove the right-side from the allocation list so we can operate on it */
+            _RMP_Mem_Del(Pool, Right_Head);
+            Res_Size=((rmp_ptr_t)(Right_Head->Tail))-((rmp_ptr_t)Mem_Ptr)-Rounded_Size;
+            Old_Size=sizeof(struct RMP_Mem_Head)+Rounded_Size+sizeof(struct RMP_Mem_Tail);
+            Res_Mem=(volatile struct RMP_Mem_Head*)(((rmp_ptr_t)Mem_Head)+Old_Size);
+
+            _RMP_Mem_Block(Mem_Head, Old_Size);
+            _RMP_Mem_Block(Res_Mem, Res_Size);
+
+            /* Put the extra block back */
+            _RMP_Mem_Ins(Pool, Res_Mem);
+            
+            /* Mark the block as in use (making new block clears this flag) */
+            Mem_Head->State=RMP_MEM_USED;
+            /* Return the old pointer because we shrinked it */
+            return Mem_Ptr;
+        }
+        /* Allocated. Need to see if the residue block itself is large enough to be inserted back */
+        else
+            RMP_COVERAGE_MARKER();
+    }
+    else
+        RMP_COVERAGE_MARKER();
+    
+    /* The right-side head either does not exist or is allocated. Calculate the resulting residue size */
+    Res_Size=Mem_Size-Rounded_Size;
+    if(Res_Size<(sizeof(struct RMP_Mem_Head)+64+sizeof(struct RMP_Mem_Tail)))
+    {
+        RMP_COVERAGE_MARKER();
+        /* The residue block wouldn't even count as a small one. Do nothing and quit */
+        return Mem_Ptr;
+    }
+    else
+        RMP_COVERAGE_MARKER();
+    
+    /* The residue will be big enough to become a standalone block. We need to place it back */ 
+    Old_Size=sizeof(struct RMP_Mem_Head)+Rounded_Size+sizeof(struct RMP_Mem_Tail);
+    Res_Mem=(volatile struct RMP_Mem_Head*)(((rmp_ptr_t)Mem_Head)+Old_Size);
+
+    _RMP_Mem_Block(Mem_Head, Old_Size);
+    _RMP_Mem_Block(Res_Mem, Res_Size);
+
+    /* Put the extra block back */
+    _RMP_Mem_Ins(Pool, Res_Mem);
+            
+    /* Mark the block as in use (making new block clears this flag) */
+    Mem_Head->State=RMP_MEM_USED;
+    /* Return the old pointer because we shrinked it */
+    return Mem_Ptr;
+}
+/* End Function:RMP_Realloc **************************************************/
 
 /* Begin Function:RMP_Line ****************************************************
 Description : Draw a line given the start and end coordinates.
