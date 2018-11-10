@@ -1076,7 +1076,7 @@ rmp_ret_t RMP_Thd_Suspend(volatile struct RMP_Thd* Thread)
         RMP_COVERAGE_MARKER();
     
     /* Only when it is running do we clear this. If we are clearing this, it is not
-     * suspended, so trhe running queue removal is guaranteed to succceed */
+     * suspended, so the running queue removal is guaranteed to succceed */
     if(RMP_THD_STATE(Thread->State)==RMP_THD_RUNNING)
     {
         RMP_COVERAGE_MARKER();
