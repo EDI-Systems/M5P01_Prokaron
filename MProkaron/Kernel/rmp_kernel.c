@@ -3060,8 +3060,8 @@ Description : Draw a rectangle on the screen. You can choose whether the rectang
               is filled or not. By setting the fill color to "RMP_TRANS", the 
               rectangle is not filled.
               The border can also be transparent.
-Input       : rmp_cnt_t Coord_X -The X position of The top-left corner.
-              rmp_cnt_t Coord_Y -The Y position of The top-left corner.
+Input       : rmp_cnt_t Coord_X - The X position of The top-left corner.
+              rmp_cnt_t Coord_Y - The Y position of The top-left corner.
                rmp_cnt_t Length - The length of the rectangle.
               rmp_cnt_t Width - The width of the rectangle. 
               rmp_ptr_t Border - The color of its boundary.
@@ -3091,8 +3091,8 @@ void RMP_Rectangle(rmp_cnt_t Coord_X, rmp_cnt_t Coord_Y, rmp_cnt_t Length, rmp_c
 
 /* Begin Function:RMP_Round_Rect **********************************************
 Description : Draw a rectangle with rounded corners.
-Input       : rmp_cnt_t Coord_X -The X position of The top-left corner.
-              rmp_cnt_t Coord_Y -The Y position of The top-left corner.
+Input       : rmp_cnt_t Coord_X - The X position of The top-left corner.
+              rmp_cnt_t Coord_Y - The Y position of The top-left corner.
               rmp_cnt_t Length - The length of the rectangle.
               rmp_cnt_t Width - The width of the rectangle. 
               rmp_cnt_t Round - The radius of the round corner. 
@@ -3710,8 +3710,8 @@ void RMP_Checkbox(rmp_cnt_t Coord_X, rmp_cnt_t Coord_Y, rmp_cnt_t Length, rmp_pt
 
 /* Begin Function:RMP_Cmdbtn_Down *********************************************
 Description : Turn the command button to a pushed-down version.
-Input       : rmp_cnt_t Coord_X -The X coordinate of its top-left corner.
-              rmp_cnt_t Coord_Y -The Y coordinate of its top-left corner.
+Input       : rmp_cnt_t Coord_X - The X coordinate of its top-left corner.
+              rmp_cnt_t Coord_Y - The Y coordinate of its top-left corner.
               rmp_cnt_t Length - The length of the button.
               rmp_cnt_t Width - The width of the button.
 Output      : None.
@@ -3734,8 +3734,8 @@ void RMP_Cmdbtn_Down(rmp_cnt_t Coord_X, rmp_cnt_t Coord_Y, rmp_cnt_t Length, rmp
 
 /* Begin Function:RMP_Cmdbtn_Up ***********************************************
 Description : Turn the command button to a popped-up version.
-Input       : rmp_cnt_t Coord_X -The X coordinate of its top-left corner.
-              rmp_cnt_t Coord_Y -The Y coordinate of its top-left corner.
+Input       : rmp_cnt_t Coord_X - The X coordinate of its top-left corner.
+              rmp_cnt_t Coord_Y - The Y coordinate of its top-left corner.
               rmp_cnt_t Length - The length of the button.
               rmp_cnt_t Width - The width of the button.
 Output      : None.
@@ -3758,8 +3758,8 @@ void RMP_Cmdbtn_Up(rmp_cnt_t Coord_X, rmp_cnt_t Coord_Y, rmp_cnt_t Length, rmp_c
 
 /* Begin Function:RMP_Cmdbtn **************************************************
 Description : Draw a command button.
-Input       : rmp_cnt_t Coord_X -The X coordinate of its top-left corner.
-              rmp_cnt_t Coord_Y -The Y coordinate of its top-left corner.
+Input       : rmp_cnt_t Coord_X - The X coordinate of its top-left corner.
+              rmp_cnt_t Coord_Y - The Y coordinate of its top-left corner.
               rmp_cnt_t Length - The length of the button.
               rmp_cnt_t Width - The width of the button.
               rmp_ptr_t Status - The status of the command button.
@@ -3779,8 +3779,8 @@ void RMP_Cmdbtn(rmp_cnt_t Coord_X, rmp_cnt_t Coord_Y, rmp_cnt_t Length, rmp_cnt_
 
 /* Begin Function:RMP_Lineedit_Clr ********************************************
 Description : Clear a portion of the line edit box.
-Input       : rmp_cnt_t Coord_X -The X coordinate of its top-left corner.
-              rmp_cnt_t Coord_Y -The Y coordinate of its top-left corner.
+Input       : rmp_cnt_t Coord_X - The X coordinate of its top-left corner.
+              rmp_cnt_t Coord_Y - The Y coordinate of its top-left corner.
               rmp_cnt_t Length - The length of the line edit box.
               rmp_cnt_t Width - The width of the line edit box.
               rmp_cnt_t Clr_X - The X coordinate to start clearing.
@@ -3797,8 +3797,8 @@ void RMP_Lineedit_Clr(rmp_cnt_t Coord_X, rmp_cnt_t Coord_Y, rmp_cnt_t Length,
 
 /* Begin Function:RMP_Lineedit ************************************************
 Description : Draw a line edit box with string on it.
-Input       : rmp_cnt_t Coord_X -The X coordinate of its top-left corner.
-              rmp_cnt_t Coord_Y -The Y coordinate of its top-left corner.
+Input       : rmp_cnt_t Coord_X - The X coordinate of its top-left corner.
+              rmp_cnt_t Coord_Y - The Y coordinate of its top-left corner.
               rmp_cnt_t Length - The length of the line edit box.
               rmp_cnt_t Width - The width of the line edit box.
 Output      : None.
@@ -3958,8 +3958,8 @@ void RMP_Radiobtn(rmp_cnt_t Coord_X, rmp_cnt_t Coord_Y, rmp_cnt_t Length, rmp_pt
 
 /* Begin Function:RMP_Progbar_Set ********************************************
 Description : Set the progress of a progress bar.
-Input       : rmp_cnt_t Coord_X -The X coordinate of its top-left corner.
-              rmp_cnt_t Coord_Y -The Y coordinate of its top-left corner.
+Input       : rmp_cnt_t Coord_X - The X coordinate of its top-left corner.
+              rmp_cnt_t Coord_Y - The Y coordinate of its top-left corner.
               rmp_cnt_t Length - The length of the button.
               rmp_cnt_t Width - The width of the button.
               rmp_cnt_t Style - The style of the progress.
@@ -4038,8 +4038,8 @@ void RMP_Progbar_Set(rmp_cnt_t Coord_X, rmp_cnt_t Coord_Y, rmp_cnt_t Length, rmp
 
 /* Begin Function:RMP_Progbar_Prog ********************************************
 Description : Draw a progress bar's progress part.
-Input       : rmp_cnt_t Coord_X -The X coordinate of its top-left corner.
-              rmp_cnt_t Coord_Y -The Y coordinate of its top-left corner.
+Input       : rmp_cnt_t Coord_X - The X coordinate of its top-left corner.
+              rmp_cnt_t Coord_Y - The Y coordinate of its top-left corner.
               rmp_cnt_t Length - The length of the button.
               rmp_cnt_t Width - The width of the button.
               rmp_cnt_t Style - The style of the progress.
@@ -4100,8 +4100,8 @@ void RMP_Progbar_Prog(rmp_cnt_t Coord_X, rmp_cnt_t Coord_Y, rmp_cnt_t Length, rm
 
 /* Begin Function:RMP_Progbar *************************************************
 Description : Draw a progress bar with string on it.
-Input       : rmp_cnt_t Coord_X -The X coordinate of its top-left corner.
-              rmp_cnt_t Coord_Y -The Y coordinate of its top-left corner.
+Input       : rmp_cnt_t Coord_X - The X coordinate of its top-left corner.
+              rmp_cnt_t Coord_Y - The Y coordinate of its top-left corner.
               rmp_cnt_t Length - The length of the button.
               rmp_cnt_t Width - The width of the button.
               rmp_cnt_t Style - The style of the progress.
