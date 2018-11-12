@@ -2127,7 +2127,7 @@ Description : Initialize a trunk of memory as the memory pool. The TLSF allocato
               FLI will be decided upon the memory block size. Memory allocation does
               not lock the scheduler by itself; it is up to you to decide whether a
               scheduler lock is needed.
-              The TLSF memory allocator is consisted of FLI, SLI and allocatable
+              The TLSF memory allocator consists of FLI, SLI and allocatable
               memory. The FLI is classified by 2^n, and the SLI segregates the 
               FLI section by an power of 2, i.e. 8 or 16. Thus, when we need 
               an memory block, we try to find it in the corresponding FLI, and
