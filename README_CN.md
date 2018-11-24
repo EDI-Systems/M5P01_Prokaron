@@ -154,6 +154,7 @@ Click **[HERE](README.md)** for English version.
 ### 所有被支持架构上的典型性能数据
 
 &emsp;&emsp;Flash和SRAM消耗以kB计，其他数据以CPU指令周期计。下表列出的所有值都是**典型（有意义的系统配置）值**而非绝对意义上的**最小值**，因为纯技术层面的最小配置在实际工程中很少是真正有用的。HAL库所造成的额外存储器消耗也被计算在内。  
+
 &emsp;&emsp;本系统的**绝对最小值**在**1.6k ROM和432Byte RAM**左右，这个大小是在HC32L136K8TA（Cortex-M0+）的移植上达到的，并包括了第一个线程的60Byte的线程控制块和256Byte的线程栈。操作系统内核和最精简的HAL库一共仅占用了**116Byte**存储。
 
 |架构          |工具链        |Flash|SRAM|Yield|Mail |Sem  |Mail/Int|Sem/Int|Mem  |
