@@ -152,6 +152,9 @@ This software is **triple-licensed**: it is either **[LGPL v3](LICENSE.md)** or 
 ```
 
 ### Typical performance figures for all supported architectures
+
+&ensp;&ensp;&ensp;&ensp;**Flash and SRAM consumption is calculated in kB, while the other figures are calculated in CPU clock cycles. All values listed in the table below are typical (useful system) values, not minimum values, because minimum values on system size seldom make any real sense. HAL library are also included in the size numbers. The absolute minimum value for RMP is about 1.6k ROM and 432 Byte RAM, and this value is reached on the HC32L136K8TA (Cortex-M0+) port, and this number even included the 60-byte thread control block and 256-byte stack of the first thread. The OS kernel and the stripped down HAL only consumes 116 bytes of memory combined.**
+
 |Machine      |Toolchain     |Flash|SRAM|Yield|Mail |Sem  |Mail/Int|Sem/Int|Mem  |
 |:-----------:|:------------:|:---:|:--:|:---:|:---:|:---:|:------:|:-----:|:---:|
 |DSPIC33E     |XC16-GCC      |4.46 |1.15|526  |828  |750  |914     |884    |579  |
@@ -179,8 +182,6 @@ This software is **triple-licensed**: it is either **[LGPL v3](LICENSE.md)** or 
 <!-- |Cortex-M7    |GCC           |     |    |     |     |     |        |       |     | -->
 <!-- |Cortex-R4    |GCC           |     |    |     |     |     |        |       |     | -->
 <!-- |Cortex-R5    |GCC           |     |    |     |     |     |        |       |     | -->
-
-&ensp;&ensp;&ensp;&ensp;**Flash and SRAM consumption is calculated in kB, while the other figures are calculated in CPU clock cycles. All values listed here are typical (useful system) values, not minimum values, because minimum values on system size seldom make any real sense. HAL library are also included in the size numbers. The absolute minimum value for RMP is about 1k ROM/0.5k RAM.**
 
 - DSPIC33E is evaluated with DSPIC33EP512MU810.
 - MSP430 is evaluated with MSP430FR5994.
