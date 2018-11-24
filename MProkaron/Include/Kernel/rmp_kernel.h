@@ -190,6 +190,7 @@ struct RMP_List
     volatile struct RMP_List* Next;
 };
 
+/* Thread structure - 15 words */
 struct RMP_Thd
 {
     /* The head to insert into the status queue */

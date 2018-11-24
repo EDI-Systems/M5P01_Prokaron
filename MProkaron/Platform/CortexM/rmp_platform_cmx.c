@@ -52,7 +52,6 @@ Other       : When the system stack safe redundancy is set to zero, the stack
 ******************************************************************************/
 void _RMP_Stack_Init(rmp_ptr_t Entry, rmp_ptr_t Stack, rmp_ptr_t Arg)
 {
-    /* The "9" here is because we also pushed other registers to PSP */
     /* This is the LR value indicating that we never used the FPU */
     ((rmp_ptr_t*)Stack)[0+8]=0xFFFFFFFD;    
     /* Cortex-M:Pass the parameter */                            
