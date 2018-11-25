@@ -155,7 +155,7 @@ This software is **triple-licensed**: it is either **[LGPL v3](LICENSE.md)** or 
 
 &ensp;&ensp;&ensp;&ensp;Flash and SRAM consumption is calculated in kB, while the other figures are calculated in CPU clock cycles. All values listed in the table below are **typical** (useful system) values, not **minimum** values, because minimum values on system size seldom make any real sense. HAL library are also included in the size numbers.  
 
-&ensp;&ensp;&ensp;&ensp;The **absolute minimum** value for RMP is about **1.6k ROM and 432 byte RAM**, which is reached on the HC32L136K8TA (Cortex-M0+) port, and this number even included the 60-byte thread control block and 256-byte stack of the first thread. The OS kernel and the stripped down HAL only consumes **116 bytes** of memory combined. If you are willing to push this limit even further, then the **manufacturer HAL is a rip-off for you** and you can roll your own.  
+&ensp;&ensp;&ensp;&ensp;The **absolute minimum** value for RMP is about **1.6k ROM and 432 byte RAM**, which is reached on the HC32L136K8TA (Cortex-M0+) port, and this number even included the 60-byte thread control block and 256-byte stack of the first thread, and a 64-byte kernel interrupt response stack. The OS kernel and the stripped down HAL only consumes **52 bytes** of memory combined. If you are willing to push this limit even further, then the **manufacturer HAL is a rip-off for you** and you can roll your own.  
 
 |Machine      |Toolchain     |Flash|SRAM|Yield|Mail |Sem  |Mail/Int|Sem/Int|Mem  |
 |:-----------:|:------------:|:---:|:--:|:---:|:---:|:---:|:------:|:-----:|:---:|
