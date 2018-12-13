@@ -18,11 +18,11 @@ R0     $zero      constant 0
 R1     $at        reserved for assembler
 R2     $v0        expression evaluation and results of a function
 R3     $v1        expression evaluation and results of a function
-R4     $a0	      argument 1
-R5     $a1  	  argument 2
+R4     $a0        argument 1
+R5     $a1        argument 2
 R6     $a2        argument 3
 R7     $a3        argument 4
-R8     $t0  	  temporary (not preserved across call)
+R8     $t0        temporary (not preserved across call)
 R9     $t1        temporary (not preserved across call)
 R10    $t2        temporary (not preserved across call)
 R11    $t3        temporary (not preserved across call)
@@ -103,7 +103,7 @@ R31    $ra        return address (used by function call)
     .equ                CTX_SIZE,136
     .equ                CORE_SW0,0x100
     /* Interrupt context saving. These interrupts should not use DSP & FPU */
-.macro	SAVE_CONTEXT
+.macro    SAVE_CONTEXT
     /* Make room for the context */
     ADDIU               $sp,$sp,-CTX_SIZE
     /* Save 4 regs first so that we can enable interrupts as soon as possible */
