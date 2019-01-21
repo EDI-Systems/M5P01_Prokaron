@@ -43,7 +43,7 @@ do \
 { \
     RCC_OscInitTypeDef RCC_OscInitStructure; \
     RCC_ClkInitTypeDef RCC_ClkInitStructure; \
-	GPIO_InitTypeDef GPIO_Init; \
+    GPIO_InitTypeDef GPIO_Init; \
     UART_HandleTypeDef UART1_Handle; \
     RMP_Clear(&RCC_OscInitStructure, sizeof(RCC_OscInitTypeDef)); \
     RMP_Clear(&RCC_ClkInitStructure, sizeof(RCC_ClkInitTypeDef)); \
@@ -86,23 +86,23 @@ do \
     /* Enable USART 1 for user-level operations */ \
     /* Clock enabling */ \
     __HAL_RCC_GPIOA_CLK_ENABLE(); \
-	__HAL_RCC_USART1_CLK_ENABLE(); \
+    __HAL_RCC_USART1_CLK_ENABLE(); \
     /* UART IO initialization */ \
-	GPIO_Init.Pin=GPIO_PIN_9; \
-	GPIO_Init.Mode=GPIO_MODE_AF_PP; \
-	GPIO_Init.Pull=GPIO_PULLUP; \
-	GPIO_Init.Speed=GPIO_SPEED_HIGH; \
-	GPIO_Init.Alternate=GPIO_AF7_USART1; \
-	HAL_GPIO_Init(GPIOA,&GPIO_Init); \
+    GPIO_Init.Pin=GPIO_PIN_9; \
+    GPIO_Init.Mode=GPIO_MODE_AF_PP; \
+    GPIO_Init.Pull=GPIO_PULLUP; \
+    GPIO_Init.Speed=GPIO_SPEED_HIGH; \
+    GPIO_Init.Alternate=GPIO_AF7_USART1; \
+    HAL_GPIO_Init(GPIOA,&GPIO_Init); \
     /* UART initialization */ \
-	UART1_Handle.Instance=USART1; \
-	UART1_Handle.Init.BaudRate=115200; \
-	UART1_Handle.Init.WordLength=UART_WORDLENGTH_8B; \
-	UART1_Handle.Init.StopBits=UART_STOPBITS_1; \
-	UART1_Handle.Init.Parity=UART_PARITY_NONE; \
-	UART1_Handle.Init.HwFlowCtl=UART_HWCONTROL_NONE; \
-	UART1_Handle.Init.Mode=UART_MODE_TX; \
-	HAL_UART_Init(&UART1_Handle); \
+    UART1_Handle.Instance=USART1; \
+    UART1_Handle.Init.BaudRate=115200; \
+    UART1_Handle.Init.WordLength=UART_WORDLENGTH_8B; \
+    UART1_Handle.Init.StopBits=UART_STOPBITS_1; \
+    UART1_Handle.Init.Parity=UART_PARITY_NONE; \
+    UART1_Handle.Init.HwFlowCtl=UART_HWCONTROL_NONE; \
+    UART1_Handle.Init.Mode=UART_MODE_TX; \
+    HAL_UART_Init(&UART1_Handle); \
     /* Enable all fault handlers */ \
     SCB->SHCSR|=RMP_CMX_SHCSR_USGFAULTENA|RMP_CMX_SHCSR_BUSFAULTENA|RMP_CMX_SHCSR_MEMFAULTENA; \
      \
