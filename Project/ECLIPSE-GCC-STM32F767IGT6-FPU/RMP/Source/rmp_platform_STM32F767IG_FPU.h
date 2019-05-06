@@ -3,7 +3,7 @@ Filename   : rmp_platform_STM32F767IG_FPU.h
 Author     : pry
 Date       : 24/06/2017
 Licence    : LGPL v3+; see COPYING for details.
-Description: The configuration file for STM32F767IG using the FPU.
+Description: The configuration file for STM32F767IG on ALIENTEK developement board.
 ******************************************************************************/
 
 /* Defines *******************************************************************/
@@ -25,25 +25,6 @@ Description: The configuration file for STM32F767IG using the FPU.
 /* The mask/unmask interrupt operations - can be adjusted to fit your own levels */
 #define RMP_MASK_INT()               RMP_Mask_Int(0xFF)
 #define RMP_UNMASK_INT()             RMP_Mask_Int(0x00)
-
-/* Graphics */
-#define RMP_POINT                    RMP_Point
-/* If you want to use anti-aliasing, these color mixing macros must be provided */
-#define R(C)                         ((C)>>11)
-#define G(C)                         (((C)>>5)&0x3F)
-#define B(C)                         ((C)&0x1F)
-#define RGB(R,G,B)                   (((R)<<11)|((G)<<5)|(B))
-#define RMP_COLOR_25P(C1,C2)         RGB((R(C1)+R(C2)*3)>>2,(G(C1)+G(C2)*3)>>2,(B(C1)+B(C2)*3)>>2)
-#define RMP_COLOR_50P(C1,C2)         RGB((R(C1)+R(C2))>>1,(G(C1)+G(C2))>>1,(B(C1)+B(C2))>>1)
-#define RMP_COLOR_75P(C1,C2)         RGB((R(C1)*3+R(C2))>>2,(G(C1)*3+G(C2))>>2,(B(C1)*3+B(C2))>>2)
-/* If you want to use the control drawing library, these color macros must be provided */
-#define RMP_CTL_WHITE                0xFFFF
-#define RMP_CTL_LGREY                (28<<11)|(56<<5)|(28)
-#define RMP_CTL_GREY                 (23<<11)|(46<<5)|(23)
-#define RMP_CTL_DGREY                (20<<11)|(40<<5)|(20)
-#define RMP_CTL_DARK                 (15<<11)|(31<<5)|(15)
-#define RMP_CTL_DDARK                (13<<11)|(26<<5)|(13)
-#define RMP_CTL_BLACK                0x0000
 
 /* What is the NVIC priority grouping? */
 #define RMP_CMX_NVIC_GROUPING        RMP_CMX_NVIC_GROUPING_P2S6
