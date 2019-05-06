@@ -163,7 +163,11 @@ Return      : None.
 PendSV_Handler:
     .fnstart
     .cantunwind
-    MRS                 R0,PSP                    
+    MRS                 R0,PSP
+    TST                 LR,#0x10            /* Are we using the FPU or not at all? */
+    .hword              0xBF08              /* IT EQ (.hword for compatibility with no FPU support) */
+    .hword              0xED20              /* VSTMDBEQ R0!,{S16-S31} */
+    .hword              0x8A10              /* Save FPU registers not saved by lazy stacking. */
     STMDB               R0!,{R4-R11,LR}
     
     BL                  RMP_Save_Ctx               
@@ -179,6 +183,10 @@ PendSV_Handler:
     BL                  RMP_Load_Ctx             
     
     LDMIA               R0!,{R4-R11,LR}
+    TST                 LR,#0x10            /* Are we using the FPU or not at all? */
+    .hword              0xBF08              /* IT EQ (.hword for compatibility with no FPU support) */
+    .hword              0xECB0              /* VLDMIAEQ R0!,{S16-S31} */
+    .hword              0x8A10              /* Load FPU registers not loaded by lazy stacking. */
     MSR                 PSP,R0
     
     BX                  LR                       
