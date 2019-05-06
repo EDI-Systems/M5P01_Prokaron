@@ -79,23 +79,23 @@ do \
     /* Enable USART 1 for user-level operations */ \
     /* Clock enabling */ \
     __HAL_RCC_GPIOB_CLK_ENABLE(); \
-	__HAL_RCC_USART1_CLK_ENABLE(); \
+    __HAL_RCC_USART1_CLK_ENABLE(); \
     /* UART IO initialization */ \
-	GPIO_Init.Pin=GPIO_PIN_6; \
-	GPIO_Init.Mode=GPIO_MODE_AF_PP; \
-	GPIO_Init.Pull=GPIO_PULLUP; \
-	GPIO_Init.Speed=GPIO_SPEED_FREQ_HIGH; \
-	GPIO_Init.Alternate=GPIO_AF7_USART1; \
-	HAL_GPIO_Init(GPIOB,&GPIO_Init); \
+    GPIO_Init.Pin=GPIO_PIN_6; \
+    GPIO_Init.Mode=GPIO_MODE_AF_PP; \
+    GPIO_Init.Pull=GPIO_PULLUP; \
+    GPIO_Init.Speed=GPIO_SPEED_FREQ_HIGH; \
+    GPIO_Init.Alternate=GPIO_AF7_USART1; \
+    HAL_GPIO_Init(GPIOB,&GPIO_Init); \
     /* UART initialization */ \
-	UART1_Handle.Instance=USART1; \
-	UART1_Handle.Init.BaudRate=115200; \
-	UART1_Handle.Init.WordLength=UART_WORDLENGTH_8B; \
-	UART1_Handle.Init.StopBits=UART_STOPBITS_1; \
-	UART1_Handle.Init.Parity=UART_PARITY_NONE; \
-	UART1_Handle.Init.HwFlowCtl=UART_HWCONTROL_NONE; \
-	UART1_Handle.Init.Mode=UART_MODE_TX; \
-	HAL_UART_Init(&UART1_Handle); \
+    UART1_Handle.Instance=USART1; \
+    UART1_Handle.Init.BaudRate=115200; \
+    UART1_Handle.Init.WordLength=UART_WORDLENGTH_8B; \
+    UART1_Handle.Init.StopBits=UART_STOPBITS_1; \
+    UART1_Handle.Init.Parity=UART_PARITY_NONE; \
+    UART1_Handle.Init.HwFlowCtl=UART_HWCONTROL_NONE; \
+    UART1_Handle.Init.Mode=UART_MODE_TX; \
+    HAL_UART_Init(&UART1_Handle); \
     RMP_CMX_PUTCHAR('\r'); \
     RMP_CMX_PUTCHAR('\n'); \
     \
