@@ -41,7 +41,7 @@ do \
 { \
     RCC_OscInitTypeDef RCC_OscInitStruct; \
     RCC_ClkInitTypeDef RCC_ClkInitStruct; \
-	GPIO_InitTypeDef GPIO_Init; \
+    GPIO_InitTypeDef GPIO_Init; \
     UART_HandleTypeDef UART1_Handle; \
     RMP_Clear(&RCC_OscInitStruct, sizeof(RCC_OscInitTypeDef)); \
     RMP_Clear(&RCC_ClkInitStruct, sizeof(RCC_ClkInitTypeDef)); \
@@ -64,8 +64,7 @@ do \
     RCC_OscInitStruct.PLL.PLLDIV=RCC_PLL_DIV2; \
     RCC_OscInitStruct.HSICalibrationValue=0x10; \
     HAL_RCC_OscConfig(&RCC_OscInitStruct); \
-    /* Select PLL as system clock source and configure the HCLK, PCLK1 and PCLK2  \
-     * clocks dividers */ \
+    /* Select PLL as system clock source and configure the HCLK, PCLK1 and PCLK2 clock dividers */ \
     RCC_ClkInitStruct.ClockType=(RCC_CLOCKTYPE_SYSCLK|RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2); \
     RCC_ClkInitStruct.SYSCLKSource=RCC_SYSCLKSOURCE_PLLCLK; \
     RCC_ClkInitStruct.AHBCLKDivider=RCC_SYSCLK_DIV1; \
@@ -76,23 +75,23 @@ do \
     /* Enable USART 1 for user-level operations */ \
     /* Clock enabling */ \
     __HAL_RCC_GPIOA_CLK_ENABLE(); \
-	__HAL_RCC_USART1_CLK_ENABLE(); \
+    __HAL_RCC_USART1_CLK_ENABLE(); \
     /* UART IO initialization */ \
-	GPIO_Init.Pin=GPIO_PIN_9; \
-	GPIO_Init.Mode=GPIO_MODE_AF_PP; \
-	GPIO_Init.Pull=GPIO_PULLUP; \
-	GPIO_Init.Speed=GPIO_SPEED_HIGH; \
-	GPIO_Init.Alternate=GPIO_AF4_USART1; \
-	HAL_GPIO_Init(GPIOA,&GPIO_Init); \
+    GPIO_Init.Pin=GPIO_PIN_9; \
+    GPIO_Init.Mode=GPIO_MODE_AF_PP; \
+    GPIO_Init.Pull=GPIO_PULLUP; \
+    GPIO_Init.Speed=GPIO_SPEED_HIGH; \
+    GPIO_Init.Alternate=GPIO_AF4_USART1; \
+    HAL_GPIO_Init(GPIOA,&GPIO_Init); \
     /* UART initialization */ \
-	UART1_Handle.Instance=USART1; \
-	UART1_Handle.Init.BaudRate=115200; \
-	UART1_Handle.Init.WordLength=UART_WORDLENGTH_8B; \
-	UART1_Handle.Init.StopBits=UART_STOPBITS_1; \
-	UART1_Handle.Init.Parity=UART_PARITY_NONE; \
-	UART1_Handle.Init.HwFlowCtl=UART_HWCONTROL_NONE; \
-	UART1_Handle.Init.Mode=UART_MODE_TX; \
-	HAL_UART_Init(&UART1_Handle); \
+    UART1_Handle.Instance=USART1; \
+    UART1_Handle.Init.BaudRate=115200; \
+    UART1_Handle.Init.WordLength=UART_WORDLENGTH_8B; \
+    UART1_Handle.Init.StopBits=UART_STOPBITS_1; \
+    UART1_Handle.Init.Parity=UART_PARITY_NONE; \
+    UART1_Handle.Init.HwFlowCtl=UART_HWCONTROL_NONE; \
+    UART1_Handle.Init.Mode=UART_MODE_TX; \
+    HAL_UART_Init(&UART1_Handle); \
     RMP_CMX_PUTCHAR('\r'); \
     RMP_CMX_PUTCHAR('\n'); \
     \
