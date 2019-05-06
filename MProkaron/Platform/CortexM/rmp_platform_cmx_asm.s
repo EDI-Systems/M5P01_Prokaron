@@ -93,7 +93,9 @@ RMP_Enable_Int
 ;*****************************************************************************/
 RMP_Mask_Int
     ;Mask some interrupts.
-    MSR                 BASEPRI,R0                                                        
+    MSR                 BASEPRI,R0
+    ;We are not influenced by errata #837070 as the next instruction is BX LR.
+    ;Thus we have a free window because the following BX LR falls into it.
     BX                  LR
 ;/* End Function:RMP_Mask_Int ************************************************/
 
@@ -153,8 +155,12 @@ _RMP_Start
 ;*****************************************************************************/
 PendSV_Handler
     MRS                 R0,PSP              ;Spill all the registers onto the user stack
-    STMDB               R0!,{R4-R11,LR}
-                
+    TST                 LR,#0x10            ;Are we using the FPU or not at all?
+    DCI                 0xBF08              ;IT EQ ;If yes, (DCI for compatibility with no FPU support)
+    DCI                 0xED20              ;VSTMDBEQ R0!,{S16-S31}
+    DCI                 0x8A10              ;Save FPU registers not saved by lazy stacking.
+    STMDB               R0!,{R4-R11,LR}     ;Save the general purpose registers.
+    
     BL                  RMP_Save_Ctx        ;Save extra context
                 
     LDR                 R1,=RMP_Cur_SP      ;Save The SP to control block.
@@ -167,10 +173,16 @@ PendSV_Handler
                 
     BL                  RMP_Load_Ctx        ;Load extra context
 
-    LDMIA               R0!,{R4-R11,LR}
+    LDMIA               R0!,{R4-R11,LR}     ;Load the general purpose registers.
+    TST                 LR,#0x10            ;Are we using the FPU or not at all?
+    DCI                 0xBF08              ;IT EQ ;If yes, (DCI for compatibility with no FPU support)
+    DCI                 0xECB0              ;VLDMIAEQ R0!,{S16-S31}
+    DCI                 0x8A10              ;Load FPU registers not loaded by lazy stacking.
     MSR                 PSP,R0
-                
-    BX                  LR                  ;The LR will indicate whether we are using FPU.     
+    
+    ;There are some chips that may corrupt on this branch, such as XMC4xxx step AA/step AB
+    ;chips. For those chips, you must manually edit this to PUSH {LR} then POP {PC}. 
+    BX                  LR                  ;The LR will indicate whether we are using FPU.    
 ;/* End Function:PendSV_Handler **********************************************/
 
 ;/* Begin Function:SysTick_Handler ********************************************

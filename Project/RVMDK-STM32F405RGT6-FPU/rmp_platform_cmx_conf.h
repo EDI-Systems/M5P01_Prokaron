@@ -7,7 +7,7 @@ Description : The configuration file for Cortex-M HAL.
 ******************************************************************************/
 
 /* Config Includes ***********************************************************/
-#include "../../Project/ECLIPSE-GCC-STM32F767IGT6-FPU/RMP/Source/rmp_platform_STM32F767IG_FPU.h"
+#include "../../Project/RVMDK-STM32F405RGT6-FPU/Source/rmp_platform_STM32F405RG_FPU.h"
 /* End Config Includes *******************************************************/
 
 /* End Of File ***************************************************************/

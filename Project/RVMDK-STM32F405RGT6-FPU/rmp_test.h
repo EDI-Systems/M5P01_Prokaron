@@ -1,13 +1,13 @@
 /******************************************************************************
-Filename    : rmp_platform_cmx_conf.h
+Filename    : rmp_test.h
 Author      : pry
 Date        : 24/06/2017
 Licence     : LGPL v3+; see COPYING for details.
-Description : The configuration file for Cortex-M HAL.
+Description : The configuration file for testing program.
 ******************************************************************************/
 
 /* Config Includes ***********************************************************/
-#include "../../Project/ECLIPSE-GCC-STM32F767IGT6-FPU/RMP/Source/rmp_platform_STM32F767IG_FPU.h"
+#include "Platform/rmp_test_STM32F405RG.h"
 /* End Config Includes *******************************************************/
 
 /* End Of File ***************************************************************/
