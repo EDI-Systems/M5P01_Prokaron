@@ -187,7 +187,7 @@ Click **[HERE](README.md)** for English version.
 - Cortex-M3平台使用STM32F103RET6进行评估。
 - Cortex-M4平台使用STM32F405RGT6进行评估。
 - Cortex-M7平台使用STM32F767IGT6进行评估。
-- Cortex-M7-RVM平台使用STM32F767IGT6进行评估，而且RMP此时是作为客户机运行在 **[RVM](https://github.com/EDI-Systems/M7M2_MuAmmonite)** 嵌入式虚拟机监视器上.
+- Cortex-M7-RVM平台使用STM32F767IGT6进行评估，而且RMP此时是作为客户机运行在 **[RVM](https://github.com/EDI-Systems/M7M2_MuAmmonite)** 嵌入式虚拟机监视器上。
 - Cortex-R4平台使用TMS570LS0432进行评估。
 - Cortex-R5平台使用TMS570LC4357进行评估。
 - MIPS M14k平台使用PIC32MZ2048EFM100进行评估。
