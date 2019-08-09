@@ -2,7 +2,7 @@
 Filename    : rmp_platform_x86_linux.c
 Author      : pry
 Date        : 04/02/2018
-Licence     : LGPL v3+; see COPYING for details.
+Licence     : The Unlicense; see LICENSE for details.
 Description : The platform specific file for x86 Linux port.
 ******************************************************************************/
 
