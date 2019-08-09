@@ -2,7 +2,7 @@
 Filename    : rmp_test_PIC32MZ2048EFM100.h
 Author      : pry 
 Date        : 22/07/2017
-Licence     : LGPL v3+; see COPYING for details.
+Licence     : The Unlicense; see LICENSE for details.
 Description : The testbench for PIC32MZ2048EFM100.
 ******************************************************************************/
 

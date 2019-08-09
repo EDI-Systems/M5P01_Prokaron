@@ -2,7 +2,7 @@
 Filename    : rmp_test_TMS570LC4357.h
 Author      : pry 
 Date        : 22/07/2017
-Licence     : LGPL v3+; see COPYING for details.
+Licence     : The Unlicense; see LICENSE for details.
 Description : The testbench for TMS570LC4357.
 ******************************************************************************/
 

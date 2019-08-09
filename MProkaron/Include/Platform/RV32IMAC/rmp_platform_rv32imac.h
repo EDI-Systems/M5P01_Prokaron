@@ -2,7 +2,7 @@
 Filename    : rmp_platform_rv32imac.h
 Author      : pry
 Date        : 01/04/2017
-Licence     : LGPL v3+; see COPYING for details.
+Licence     : The Unlicense; see LICENSE for details.
 Description : The header of "rmp_platform_rv32imac.c".
 ******************************************************************************/
 

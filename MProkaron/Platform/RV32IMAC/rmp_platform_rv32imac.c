@@ -2,7 +2,7 @@
 Filename    : rmp_platform_rv32imac.c
 Author      : pry
 Date        : 04/02/2018
-Licence     : LGPL v3+; see COPYING for details.
+Licence     : The Unlicense; see LICENSE for details.
 Description : The platform specific file for RV32IMAC (FE310). This port is for
               experimental purposes only and not fit for production right now.
               The real-time performance of this port is not great due to intermittent

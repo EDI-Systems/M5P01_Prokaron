@@ -2,7 +2,7 @@
 Filename    : rmp_platform_dspic.h
 Author      : pry
 Date        : 23/02/2018
-Licence     : LGPL v3+; see COPYING for details.
+Licence     : The Unlicense; see LICENSE for details.
 Description : The header of "rmp_platform_dspic.c".
 ******************************************************************************/
 

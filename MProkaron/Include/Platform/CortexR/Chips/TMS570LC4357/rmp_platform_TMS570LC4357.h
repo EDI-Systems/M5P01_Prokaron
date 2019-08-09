@@ -2,7 +2,7 @@
 Filename   : rmp_platform_TMS570LC4357.h
 Author     : pry
 Date       : 24/06/2017
-Licence    : LGPL v3+; see COPYING for details.
+Licence    : The Unlicense; see LICENSE for details.
 Description: The configuration file for TMS570LC4357.
 ******************************************************************************/
 
