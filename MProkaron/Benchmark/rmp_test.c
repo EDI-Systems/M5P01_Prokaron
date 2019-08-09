@@ -2,7 +2,7 @@
 Filename    : rmp_test.c
 Author      : pry 
 Date        : 22/07/2017
-Licence     : LGPL v3+; see COPYING for details.
+Licence     : The Unlicense; see LICENSE for details.
 Description : The performance testbench for RMP. Do not modify this file; what
               you need to modify is the test chip header and the platform chip
               header.

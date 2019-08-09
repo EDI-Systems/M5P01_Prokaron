@@ -2,7 +2,7 @@
 Filename    : rmp.h
 Author      : pry
 Date        : 01/04/2017
-Licence     : LGPL v3+; see COPYING for details.
+Licence     : The Unlicense; see LICENSE for details.
 Description : The header of the RMP RTOS. This header defines the error codes,
               operation flags and system call numbers in a generic way.
 ******************************************************************************/

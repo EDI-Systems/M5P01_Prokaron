@@ -2,7 +2,7 @@
 Filename    : rmp_platform_mipsm.c
 Author      : pry
 Date        : 04/02/2018
-Licence     : LGPL v3+; see COPYING for details.
+Licence     : The Unlicense; see LICENSE for details.
 Description : The platform specific file for MIPS M-class. 
               Currently M4k and M14kF is supported.
               Beware that sometimes GCC-based compilers will use the LWX 

@@ -2,7 +2,7 @@
 Filename    : rmp_platform_msp430_conf.h
 Author      : pry
 Date        : 24/06/2017
-Licence     : LGPL v3+; see COPYING for details.
+Licence     : The Unlicense; see LICENSE for details.
 Description : The configuration file for MSP430 MCUs.
 ******************************************************************************/
 

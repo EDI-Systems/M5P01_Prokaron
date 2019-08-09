@@ -2,7 +2,7 @@
 Filename    : rmp_test_X86_linux.h
 Author      : pry 
 Date        : 22/07/2017
-Licence     : LGPL v3+; see COPYING for details.
+Licence     : The Unlicense; see LICENSE for details.
 Description : The testbench for linux OS. This is not particularly fast due to
               system emulation, and thus suffers a long run time. It can take
               30000 clock cycles to do a context switch and send operations can
