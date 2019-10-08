@@ -2,12 +2,12 @@
 Filename    : rmp_platform.h
 Author      : pry 
 Date        : 22/07/2017
-Licence     : The Unlicense; see LICENSE for details.
+Licence     : LGPL v3+; see COPYING for details.
 Description : The platform specific types for RMP.
 ******************************************************************************/
 
 /* Platform Includes *********************************************************/
-#include "Platform/CortexM/rmp_platform_cmx.h"
+#include "Platform/A7M_RVM/rmp_platform_a7m_rvm.h"
 /* End Platform Includes *****************************************************/
 
 /* End Of File ***************************************************************/

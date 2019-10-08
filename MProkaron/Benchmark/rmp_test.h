@@ -2,12 +2,12 @@
 Filename    : rmp_test.h
 Author      : pry
 Date        : 24/06/2017
-Licence     : The Unlicense; see LICENSE for details.
+Licence     : LGPL v3+; see COPYING for details.
 Description : The configuration file for testing program.
 ******************************************************************************/
 
 /* Config Includes ***********************************************************/
-#include "Platform/rmp_test_STM32F767IG.h"
+#include "Platform/rmp_test_STM32F767IG_rvm.h"
 /* End Config Includes *******************************************************/
 
 /* End Of File ***************************************************************/

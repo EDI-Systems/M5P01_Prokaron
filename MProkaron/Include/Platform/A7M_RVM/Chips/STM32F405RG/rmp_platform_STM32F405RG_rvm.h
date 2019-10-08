@@ -1,16 +1,12 @@
 /******************************************************************************
-Filename   : rmp_platform_STM32F767IG_rvm.h
+Filename   : rmp_platform_STM32F405RG_rvm.h
 Author     : pry
 Date       : 24/06/2017
 Licence    : The Unlicense; see LICENSE for details.
-Description: The configuration file for STM32F767IG.
+Description: The configuration file for STM32F405RG.
 ******************************************************************************/
 
 /* Defines *******************************************************************/
-/* The HAL library */
-#include "stm32f7xx.h"
-#include "core_cm7.h"
-#include "stm32f7xx_hal.h"
 /* The maximum number of preemption priority levels in the system.
  * This parameter must be divisible by the word length - 32 is usually sufficient */
 #define RMP_MAX_PREEMPT_PRIO         32
@@ -23,9 +19,9 @@ Description: The configuration file for STM32F767IG.
 /* The stzck size of the init thread */
 #define RMP_INIT_STACK_SIZE          256
 
-/* The mask/unmask interrupt operations - do not need on RVM */
-#define RMP_MASK_INT()               RVM_Mask_Int()
-#define RMP_UNMASK_INT()             RVM_Unmask_Int()
+/* The mask/unmask interrupt operations */
+#define RMP_MASK_INT()               RMP_Mask_Int()
+#define RMP_UNMASK_INT()             RMP_Unmask_Int()
 /* End Defines ***************************************************************/
 
 /* End Of File ***************************************************************/
