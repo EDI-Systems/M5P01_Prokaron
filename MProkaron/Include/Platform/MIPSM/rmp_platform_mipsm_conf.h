@@ -2,7 +2,7 @@
 Filename    : rmp_platform_mipsm_conf.h
 Author      : pry
 Date        : 24/06/2017
-Licence     : The Unlicense; see LICENSE for details.
+Licence     : LGPL v3+; see COPYING for details.
 Description : The configuration file for MIPS M-class.
 ******************************************************************************/
 
