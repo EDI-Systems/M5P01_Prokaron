@@ -40,7 +40,8 @@ Return      : None.
 Other       : When the system stack safe redundancy is set to zero, the stack 
               looks like this when we try to step into the next process by 
               context switch:
-              HIGH-->  XPSR PC LR(1) R12 R3-R0 LR R11-R4 -->LOW 
+                        21  20  19    18 17-14 13  12-5     4      3-0
+              HIGH-->  XPSR PC LR(1) R12 R3-R0 LR R11-R4 Number Param[0-3] -->LOW 
               We need to set the stack correctly pretending that we are 
               returning from an systick timer interrupt. Thus, we set the XPSR
               to avoid INVSTATE; set PC to the pseudo-process entrance; set LR
@@ -49,15 +50,14 @@ Other       : When the system stack safe redundancy is set to zero, the stack
 ******************************************************************************/
 void _RMP_Stack_Init(rmp_ptr_t Entry, rmp_ptr_t Stack, rmp_ptr_t Arg)
 {
-    /* The "9" here is because we also pushed other registers to PSP */
     /* This is the LR value indicating that we never used the FPU */
-    ((rmp_ptr_t*)Stack)[0+8]=0xFFFFFFFD;       
-    /* CM3:Pass the parameter */                            
-    ((rmp_ptr_t*)Stack)[0+9]=Arg;       
-    /* CM3:for xPSR. fill the T bit,or an INVSTATE will happen */
-    ((rmp_ptr_t*)Stack)[6+9]=Entry;
-    /* CM3:Set the process entrance */                            
-    ((rmp_ptr_t*)Stack)[7+9]=0x01000200;      
+    ((rmp_ptr_t*)Stack)[0+8+5]=0xFFFFFFFD;       
+    /* Pass the parameter */                            
+    ((rmp_ptr_t*)Stack)[0+9+5]=Arg;
+    /* Set the process entry */
+    ((rmp_ptr_t*)Stack)[6+9+5]=Entry;
+    /* For xPSR. Fill the T bit,or an INVSTATE will happen */                          
+    ((rmp_ptr_t*)Stack)[7+9+5]=0x01000200;
 }
 /* End Function:_RMP_Stack_Init **********************************************/
 
@@ -168,9 +168,35 @@ void RMP_PendSV_Handler(void)
 {
     rmp_ptr_t* SP;
     /* Spill all the registers onto the user stack
-     * MRS       R0,PSP
-     * STMDB     R0!,{R4-R11,LR} */
-    SP=(rmp_ptr_t*)(RVM_REGS->Reg.SP);    
+     * MRS       R0,PSP */
+    SP=(rmp_ptr_t*)(RVM_REGS->Reg.SP);
+
+    /* Are we using the FPUs at all? If yes, push FPU registers onto stack */
+    /* TST                 LR,#0x10            ;Are we using the FPU or not at all?
+     * DCI                 0xBF08              ;IT EQ ;If yes, (DCI for compatibility with no FPU support)
+     * DCI                 0xED20              ;VSTMDBEQ R0!,{S16-S31}
+     * DCI                 0x8A10              ;Save FPU registers not saved by lazy stacking. */
+    if((RVM_REGS->Reg.LR&0x10)==0)
+    {
+        *(--SP)=RVM_REGS->Cop_Reg.S31;
+        *(--SP)=RVM_REGS->Cop_Reg.S30;
+        *(--SP)=RVM_REGS->Cop_Reg.S29;
+        *(--SP)=RVM_REGS->Cop_Reg.S28;
+        *(--SP)=RVM_REGS->Cop_Reg.S27;
+        *(--SP)=RVM_REGS->Cop_Reg.S26;
+        *(--SP)=RVM_REGS->Cop_Reg.S25;
+        *(--SP)=RVM_REGS->Cop_Reg.S24;
+        *(--SP)=RVM_REGS->Cop_Reg.S23;
+        *(--SP)=RVM_REGS->Cop_Reg.S22;
+        *(--SP)=RVM_REGS->Cop_Reg.S21;
+        *(--SP)=RVM_REGS->Cop_Reg.S20;
+        *(--SP)=RVM_REGS->Cop_Reg.S19;
+        *(--SP)=RVM_REGS->Cop_Reg.S18;
+        *(--SP)=RVM_REGS->Cop_Reg.S17;
+        *(--SP)=RVM_REGS->Cop_Reg.S16;
+    }
+
+    /* STMDB     R0!,{R4-R11,LR} */
     *(--SP)=RVM_REGS->Reg.LR;
     *(--SP)=RVM_REGS->Reg.R11;
     *(--SP)=RVM_REGS->Reg.R10;
@@ -180,7 +206,14 @@ void RMP_PendSV_Handler(void)
     *(--SP)=RVM_REGS->Reg.R6;
     *(--SP)=RVM_REGS->Reg.R5;
     *(--SP)=RVM_REGS->Reg.R4;
-    
+
+    /* Spill all the user-accessible hypercall structure to stack */
+    *(--SP)=RVM_PARAM->User.Number;
+    *(--SP)=RVM_PARAM->User.Param[0];
+    *(--SP)=RVM_PARAM->User.Param[1];
+    *(--SP)=RVM_PARAM->User.Param[2];
+    *(--SP)=RVM_PARAM->User.Param[3];
+
     /* Save extra context
      * BL       RMP_Save_Ctx */
     RMP_Save_Ctx();
@@ -202,6 +235,13 @@ void RMP_PendSV_Handler(void)
     /* Load extra context
      * BL        RMP_Load_Ctx */
     RMP_Load_Ctx();
+
+    /* Load the user-accessible hypercall structure to stack */
+    RVM_PARAM->User.Param[3]=*(SP++);
+    RVM_PARAM->User.Param[2]=*(SP++);
+    RVM_PARAM->User.Param[1]=*(SP++);
+    RVM_PARAM->User.Param[0]=*(SP++);
+    RVM_PARAM->User.Number=*(SP++);
      
     /* Load registers from user stack
      * LDMIA     R0!,{R4-R11,LR}
@@ -215,10 +255,36 @@ void RMP_PendSV_Handler(void)
     RVM_REGS->Reg.R10=*(SP++);
     RVM_REGS->Reg.R11=*(SP++);
     RVM_REGS->Reg.LR=*(SP++);
-    RVM_REGS->Reg.SP=(rmp_ptr_t)SP;
                 
-    /* Here the LR will indicate whether we are using FPU
-     * BX        LR */
+    /* If we use FPU, restore FPU context */
+    /* TST                 LR,#0x10            ;Are we using the FPU or not at all?
+     * DCI                 0xBF08              ;IT EQ ;If yes, (DCI for compatibility with no FPU support)
+     * DCI                 0xECB0              ;VLDMIAEQ R0!,{S16-S31}
+     * DCI                 0x8A10              ;Load FPU registers not loaded by lazy stacking. */
+    if((RVM_REGS->Reg.LR&0x10)==0)
+    {
+        RVM_REGS->Cop_Reg.S16=*(SP++);
+        RVM_REGS->Cop_Reg.S17=*(SP++);
+        RVM_REGS->Cop_Reg.S18=*(SP++);
+        RVM_REGS->Cop_Reg.S19=*(SP++);
+        RVM_REGS->Cop_Reg.S20=*(SP++);
+        RVM_REGS->Cop_Reg.S21=*(SP++);
+        RVM_REGS->Cop_Reg.S22=*(SP++);
+        RVM_REGS->Cop_Reg.S23=*(SP++);
+        RVM_REGS->Cop_Reg.S24=*(SP++);
+        RVM_REGS->Cop_Reg.S25=*(SP++);
+        RVM_REGS->Cop_Reg.S26=*(SP++);
+        RVM_REGS->Cop_Reg.S27=*(SP++);
+        RVM_REGS->Cop_Reg.S28=*(SP++);
+        RVM_REGS->Cop_Reg.S29=*(SP++);
+        RVM_REGS->Cop_Reg.S30=*(SP++);
+        RVM_REGS->Cop_Reg.S31=*(SP++);
+    }
+
+    RVM_REGS->Reg.SP=(rmp_ptr_t)SP;
+
+    /* Return from interrupt */
+    /* BX        LR */
     return;
 }
 /* End Function:RMP_PendSV_Handler *******************************************/
