@@ -24,9 +24,7 @@ void RMP_Init_Hook(void)
 
 void RMP_Init_Idle(void)
 {
-    RMP_Lock_Sched();
     RVM_Hyp_Wait_Vect();
-    RMP_Unlock_Sched();
 }
 /* End Function:RMP_Init *****************************************************/
 
