@@ -16,8 +16,8 @@ Description: The configuration file for STM32F405RG.
 #define RMP_SEM_MAX_NUM              1000
 /* Are we using custom hooks? */
 #define RMP_USE_HOOKS                RMP_FALSE
-/* The stzck size of the init thread */
-#define RMP_INIT_STACK_SIZE          256
+/* The stack size of the init thread */
+#define RMP_INIT_STACK_SIZE          1024
 
 /* The mask/unmask interrupt operations */
 #define RMP_MASK_INT()               RMP_Mask_Int()

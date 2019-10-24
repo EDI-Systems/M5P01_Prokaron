@@ -746,7 +746,7 @@ void _RMP_Dly_Ins(volatile struct RMP_Thd* Thread, rmp_ptr_t Slices)
 
     /* Insert this into the list */
     Thread->Timeout=RMP_Tick+Slices;
-    RMP_List_Ins(&Thread->Dly_Head,Trav_Ptr->Prev,Trav_Ptr);
+    RMP_List_Ins(&(Thread->Dly_Head),Trav_Ptr->Prev,Trav_Ptr);
 }
 /* End Function:_RMP_Dly_Ins *************************************************/
 

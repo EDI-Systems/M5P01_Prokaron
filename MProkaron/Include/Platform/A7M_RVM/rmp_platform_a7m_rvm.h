@@ -71,7 +71,7 @@ typedef rmp_s32_t rmp_ret_t;
 /* The maximum length of char printing - no need to change this in most cases */
 #define RMP_KERNEL_DEBUG_MAX_STR 128
 /* The offset of the stack when initializing */
-#define RMP_INIT_STACK           RMP_INIT_STACK_TAIL(17)
+#define RMP_INIT_STACK           RMP_INIT_STACK_TAIL(17+5)
 
 /* The virtual machine configs are here */
 #include "rvm_guest_a7m.h"
