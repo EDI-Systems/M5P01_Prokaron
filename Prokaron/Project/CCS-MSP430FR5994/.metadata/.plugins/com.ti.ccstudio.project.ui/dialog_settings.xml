@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="com.ti.ccstudio.project.ui.internal.wizards.project.ProjectSettingsPage">
+		<item value="" key="CCS.CONNECTION"/>
+		<item value="devices/msp430fr5994.xml" key="CCS.TARGET"/>
+		<section name="1">
+			<item value="" key="CCS.TOOL_CHAIN"/>
+			<item value="null" key="CCS.RUNTIME_SUPPORT_LIB"/>
+			<item value="" key="CCS.TOOL_VERSION"/>
+			<item value="null" key="CCS.LINKER_COMMAND_FILE"/>
+			<item value="" key="CCS.DEVICE_ENDIANNESS"/>
+			<item value="" key="CCS.OUTPUT_FORMAT"/>
+			<item value="executable" key="CCS.OUTPUT_TYPE"/>
+		</section>
+	</section>
+	<section name="com.ti.ccstudio.project.ui.internal.properties.DynamicPropertiesPageManager">
+	</section>
+	<section name="com.ti.ccstudio.project.ui.internal.preferences.DynamicPreferencePageManager">
+	</section>
+</section>

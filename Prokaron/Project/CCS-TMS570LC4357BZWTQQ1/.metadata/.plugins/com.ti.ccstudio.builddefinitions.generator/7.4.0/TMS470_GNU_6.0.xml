@@ -1,0 +1,1191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+
+<plugin>
+
+	<extension point="org.eclipse.cdt.managedbuilder.core.buildDefinitions"
+		id="TMS470_GNU_6.0"
+		name="ARM vGNU_6.0 Build Definitions">
+		
+		<managedBuildRevision fileVersion="3.1.0"/>
+		
+		<!-- =================== Executable project-type / Debug configuration =================== -->
+		<toolChain
+			id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.exe.DebugToolchain"
+			superClass="com.ti.ccstudio.buildDefinitions.core.toolChain"
+			targetTool="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.exe.linkerDebug">
+			<builder
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.exe.builderDebug"
+				superClass="com.ti.ccstudio.buildDefinitions.core.GNUMakeBuilder"/>
+			<targetPlatform
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.exe.targetPlatformDebug"
+				superClass="com.ti.ccstudio.buildDefinitions.core.targetPlatform"/>
+		</toolChain>
+		<tool
+			id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.exe.compilerDebug"
+			superClass="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compiler"/>
+		<tool
+			id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.exe.linkerDebug"
+			superClass="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.exeLinker"/>
+
+		<!-- ================== Executable project-type / Release configuration ================== -->
+		<toolChain
+			id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.exe.ReleaseToolchain"
+			superClass="com.ti.ccstudio.buildDefinitions.core.toolChain"
+			targetTool="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.exe.linkerRelease">
+			<builder
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.exe.builderRelease"
+				superClass="com.ti.ccstudio.buildDefinitions.core.GNUMakeBuilder"/>
+			<targetPlatform
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.exe.targetPlatformRelease"
+				superClass="com.ti.ccstudio.buildDefinitions.core.targetPlatform"/>
+		</toolChain>
+		<tool
+			id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.exe.compilerRelease"
+			superClass="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compiler">
+			<option
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compilerID.OPT_LEVEL.release"
+				defaultValue="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compilerID.OPT_LEVEL.2"
+				superClass="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compilerID.OPT_LEVEL"/>
+		</tool>
+		<tool
+			id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.exe.linkerRelease"
+			superClass="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.exeLinker"/>
+
+		<!-- ===================== Library project-type / Debug configuration ==================== -->
+		<toolChain
+			id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.libraryDebugToolchain"
+			superClass="com.ti.ccstudio.buildDefinitions.core.toolChain"
+			targetTool="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.library.librarianDebug">
+			<builder
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.library.builderDebug"
+				superClass="com.ti.ccstudio.buildDefinitions.core.GNUMakeBuilder"/>
+			<targetPlatform
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.library.targetPlatformDebug"
+				superClass="com.ti.ccstudio.buildDefinitions.core.targetPlatform"/>
+		</toolChain>
+		<tool
+			id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.library.compilerDebug"
+			superClass="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compiler"/>
+		<tool
+			id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.library.librarianDebug"
+			superClass="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.librarian"/>
+
+		<!-- ==================== Library project-type / Release configuration =================== -->
+		<toolChain
+			id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.library.ReleaseToolchain"
+			superClass="com.ti.ccstudio.buildDefinitions.core.toolChain"
+			targetTool="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.library.librarianRelease">
+			<builder
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.library.builderRelease"
+				superClass="com.ti.ccstudio.buildDefinitions.core.GNUMakeBuilder"/>
+			<targetPlatform
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.library.targetPlatformRelease"
+				superClass="com.ti.ccstudio.buildDefinitions.core.targetPlatform"/>
+		</toolChain>
+		<tool
+			id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.library.compilerRelease"
+			superClass="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compiler">
+			<option
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compilerID.OPT_LEVEL.library.release"
+				defaultValue="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compilerID.OPT_LEVEL.2"
+				superClass="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compilerID.OPT_LEVEL"/>
+		</tool>
+		<tool
+			id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.library.librarianRelease"
+			superClass="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.librarian"/>
+
+		<!-- ============================= Target Tool Definitions =============================== -->
+		<tool
+			id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compiler"
+			name="GNU Compiler"
+			isAbstract="true"
+			natureFilter="both"
+			commandLinePattern="${command} ${flags} ${output_flag}${output} ${inputs}"
+			errorParsers="org.eclipse.cdt.core.GmakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GASErrorParser"
+			commandLineGenerator="com.ti.ccstudio.project.core.internal.build.CompilerCommandLineGenerator"
+			optionPathConverter="com.ti.ccstudio.project.core.internal.build.OptionPathConverter"
+			superClass="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compilerID">
+			<inputType
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compiler.inputType__C_SRCS"
+				name="C Sources"
+				sourceContentType="org.eclipse.cdt.core.cSource"
+				dependencyContentType="org.eclipse.cdt.core.cHeader"
+				dependencyCalculator="org.eclipse.cdt.managedbuilder.makegen.gnu.DefaultGCCDependencyCalculator2"
+				scannerConfigDiscoveryProfileId="com.ti.ccstudio.project.core.CCSScannerDiscoveryProfile"
+				multipleOfType="false"/>
+			<inputType
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compiler.inputType__CPP_SRCS"
+				name="C++ Sources"
+				sourceContentType="org.eclipse.cdt.core.cxxSource"
+				dependencyContentType="org.eclipse.cdt.core.cxxHeader"
+				dependencyCalculator="org.eclipse.cdt.managedbuilder.makegen.gnu.DefaultGCCDependencyCalculator2"
+				scannerConfigDiscoveryProfileId="com.ti.ccstudio.project.core.CCSScannerDiscoveryProfile"
+				multipleOfType="false"/>
+			<inputType
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compiler.inputType__ASM_SRCS"
+				name="Assembly Sources"
+				sourceContentType="org.eclipse.cdt.core.asmSource"
+				scannerConfigDiscoveryProfileId="com.ti.ccstudio.project.core.CCSScannerDiscoveryProfile"
+				multipleOfType="false"/>
+			<inputType
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compiler.inputType__ASM2_SRCS"
+				name="Assembly Sources"
+				sourceContentType="com.ti.common.core.asmSource"
+				scannerConfigDiscoveryProfileId="com.ti.ccstudio.project.core.CCSScannerDiscoveryProfile"
+				multipleOfType="false"/>
+			<inputType
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compiler.inputType__GEN_OPTS"
+				name="Generated Command Option Files"
+				sourceContentType="com.ti.common.core.commandOptionFile"
+				buildVariable="GEN_OPTS"/>
+			<inputType
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compiler.inputType__GEN_HDRS"
+				name="Generated Header Files"
+				buildVariable="GEN_HDRS"/>
+			<outputType
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compiler.outputType__OBJS"
+				name="Object Files"
+				outputs="o"
+				multipleOfType="false"
+				primaryOutput="true"
+				buildVariable="OBJS"/>
+		</tool>
+		<tool
+			id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.exeLinker"
+			name="GNU Linker"
+			isAbstract="true"
+			natureFilter="both"
+			commandLineGenerator="com.ti.ccstudio.project.core.internal.build.LinkerCommandLineGenerator"
+			commandLinePattern="${command} ${flags} ${output_flag}${output} ${inputs}"
+			errorParsers="org.eclipse.cdt.core.GLDErrorParser"
+			superClass="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.linkerID">
+			<inputType
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.exeLinker.inputType__OBJS"
+				name="Object Files"
+				sourceContentType="org.eclipse.cdt.managedbuilder.core.compiledObjectFile"
+				multipleOfType="true"
+				buildVariable="OBJS"/>
+			<inputType
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.exeLinker.inputType__CMD_SRCS"
+				name="Linker Command Files"
+				sourceContentType="com.ti.common.core.linkerCommandFile"
+				multipleOfType="true"/>
+			<inputType
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.exeLinker.inputType__CMD2_SRCS"
+				name="Linker Command Files"
+				sourceContentType="com.ti.common.core.linkerCommandFile2"
+				multipleOfType="true"/>
+			<inputType
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.exeLinker.inputType__LIB_SRCS"
+				name="Runtime Support Libraries"
+				sourceContentType="org.eclipse.cdt.managedbuilder.core.staticLibrary"
+				multipleOfType="true"/>
+			<inputType
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.exeLinker.inputType__GEN_CMDS"
+				name="Generated Linker Command Files"
+				sourceContentType="com.ti.common.core.linkerCommandFile"
+				buildVariable="GEN_CMDS"/>
+			<outputType
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.exeLinker.outputType__EXE"
+				name="GNU Executable"
+				outputContentType="org.eclipse.cdt.managedbuilder.core.executableFile"
+				primaryOutput="true"
+				buildVariable="EXE_OUTPUTS"/>
+		</tool>
+		<tool
+			id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.librarian"
+			name="GNU Librarian"
+			isAbstract="true"
+			natureFilter="both"
+			commandLineGenerator="com.ti.ccstudio.project.core.internal.build.ArchiverCommandLineGenerator"
+			commandLinePattern="${command} ${flags} ${output} ${inputs}"
+			errorParsers="org.eclipse.cdt.core.GLDErrorParser"
+			superClass="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.archiverID">
+			<inputType
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.librarian.inputType__OBJS"
+				name="Object Files"
+				sourceContentType="org.eclipse.cdt.managedbuilder.core.compiledObjectFile"
+				multipleOfType="true"
+				buildVariable="OBJS"/>
+			<inputType
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.librarian.inputType__OBJ_SRCS"
+				name="Object Files"
+				sourceContentType="org.eclipse.cdt.managedbuilder.core.compiledObjectFile"
+				multipleOfType="true"/>
+			<inputType
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.librarian.inputType__CMD_SRCS"
+				name="Linker Command Files"
+				sourceContentType="com.ti.common.core.linkerCommandFile"
+				multipleOfType="true"/>
+			<inputType
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.librarian.inputType__CMD2_SRCS"
+				name="Linker Command Files"
+				sourceContentType="com.ti.common.core.linkerCommandFile2"
+				multipleOfType="true"/>
+			<inputType
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.librarian.inputType__LIB_SRCS"
+				name="Runtime Support Libraries"
+				sourceContentType="org.eclipse.cdt.managedbuilder.core.staticLibrary"
+				multipleOfType="true"/>
+			<outputType
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.librarian.outputType__LIB"
+				name="GNU Library"
+				outputs="a"
+				outputPrefix="lib"
+				primaryOutput="true"
+				buildVariable="LIB_OUTPUTS"/>
+		</tool>
+
+		<!-- ============================= Begin auto-generated body ============================= -->
+
+		<tool
+			id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compilerID"
+			superClass="com.ti.ccstudio.buildDefinitions.baseCompilerTool"
+			isAbstract="true"
+			name="GNU Compiler"
+			command="&quot;${CG_TOOL_GCC}&quot; -c"
+			outputFlag="-o">
+			<optionCategory
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.compilerID.RUNTIME"
+				name="Runtime"
+				owner="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compilerID"/>
+			<option
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compilerID.MCPU"
+				name="Target CPU (-mcpu)"
+				category="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.compilerID.RUNTIME"
+				command="-mcpu="
+				valueType="string"/>
+			<option
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compilerID.MTUNE"
+				name="Tune code for the given processor (-mtune)"
+				category="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.compilerID.RUNTIME"
+				command="-mtune="
+				valueType="string"/>
+			<option
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compilerID.MARCH"
+				name="Specify the name of the target architecture (-march)"
+				category="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.compilerID.RUNTIME"
+				command="-march="
+				valueType="string"/>
+			<option
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compilerID.CODE_STATE"
+				name="Code state"
+				category="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.compilerID.RUNTIME"
+				valueType="enumerated">
+				<enumeratedOptionValue
+					id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compilerID.CODE_STATE._none"
+					name=""
+					command=""/>
+				<enumeratedOptionValue
+					id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compilerID.CODE_STATE.ARM"
+					name="Compile for ARM (-marm)"
+					command="-marm"/>
+				<enumeratedOptionValue
+					id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compilerID.CODE_STATE.THUMB"
+					name="Compile for Thumb (-mthumb)"
+					command="-mthumb"/>
+			</option>
+			<option
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compilerID.MFLOAT_ABI"
+				name="Specify if floating point hardware should be used (-mfloat-abi)"
+				category="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.compilerID.RUNTIME"
+				command="-mfloat-abi="
+				valueType="string"/>
+			<option
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compilerID.MFPU"
+				name="Specify the name of the target floating point hardware/format (-mfpu)"
+				category="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.compilerID.RUNTIME"
+				command="-mfpu="
+				valueType="string"/>
+			<option
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compilerID.FRTTI"
+				name="Generate run time type descriptor information"
+				category="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.compilerID.RUNTIME"
+				applicabilityCalculator="com.ti.common.project.core.internal.options.VirtualOptionApplicability"
+				valueType="enumerated">
+				<enumeratedOptionValue
+					id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compilerID.FRTTI._none"
+					name=""
+					command=""/>
+				<enumeratedOptionValue
+					id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compilerID.FRTTI.ON"
+					name="on (-frtti)"
+					command="-frtti"/>
+				<enumeratedOptionValue
+					id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compilerID.FRTTI.OFF"
+					name="off (-fno-rtti)"
+					command="-fno-rtti"/>
+			</option>
+			<option
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compilerID.FEXCEPTIONS"
+				name="Enable exception handling"
+				category="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.compilerID.RUNTIME"
+				valueType="enumerated">
+				<enumeratedOptionValue
+					id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compilerID.FEXCEPTIONS._none"
+					name=""
+					command=""/>
+				<enumeratedOptionValue
+					id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compilerID.FEXCEPTIONS.ON"
+					name="on (-fexceptions)"
+					command="-fexceptions"/>
+				<enumeratedOptionValue
+					id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compilerID.FEXCEPTIONS.OFF"
+					name="off (-fno-exceptions)"
+					command="-fno-exceptions"/>
+			</option>
+			<option
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compilerID.MLONG_CALLS"
+				name="Generate call instructions as indirect calls, if necessary (-mlong-calls)"
+				category="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.compilerID.RUNTIME"
+				command="-mlong-calls"
+				valueType="boolean"/>
+			<optionCategory
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.compilerID.SYMBOLS"
+				name="Symbols"
+				owner="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compilerID"/>
+			<option
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compilerID.DEFINE"
+				name="Define symbols (-D)"
+				category="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.compilerID.SYMBOLS"
+				command="-D"
+				valueType="definedSymbols"/>
+			<option
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compilerID.UNDEFINE"
+				name="Undefine symbols (-U)"
+				category="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.compilerID.SYMBOLS"
+				command="-U"
+				valueType="stringList"/>
+			<optionCategory
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.compilerID.DIRS"
+				name="Directories"
+				owner="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compilerID"/>
+			<option
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compilerID.INCLUDE_PATH"
+				name="Include paths (-I)"
+				category="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.compilerID.DIRS"
+				command="-I"
+				commandGenerator="com.ti.common.project.core.internal.options.QuotedOptionCommandGenerator"
+				browseType="directory"
+				browseFilterPath="${CG_TOOL_ROOT}"
+				valueType="includePath"/>
+			<optionCategory
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.compilerID.OPTIM"
+				name="Optimization"
+				owner="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compilerID"/>
+			<option
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compilerID.OPT_LEVEL"
+				name="Optimization Level"
+				category="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.compilerID.OPTIM"
+				valueType="enumerated">
+				<enumeratedOptionValue
+					id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compilerID.OPT_LEVEL._none"
+					name=""
+					command=""/>
+				<enumeratedOptionValue
+					id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compilerID.OPT_LEVEL.0"
+					name="None (-O0)"
+					command="-O0"/>
+				<enumeratedOptionValue
+					id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compilerID.OPT_LEVEL.1"
+					name="Optimize (-O1)"
+					command="-O1"/>
+				<enumeratedOptionValue
+					id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compilerID.OPT_LEVEL.2"
+					name="Optimize more (-O2)"
+					command="-O2"/>
+				<enumeratedOptionValue
+					id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compilerID.OPT_LEVEL.3"
+					name="Optimize most (-O3)"
+					command="-O3"/>
+			</option>
+			<option
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compilerID.OPT_FOR_SPEED"
+				name="Optimize for speed disregarding exact standards compliance (-Ofast)"
+				category="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.compilerID.OPTIM"
+				command="-Ofast"
+				valueType="boolean"/>
+			<option
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compilerID.OPT_FOR_SPACE"
+				name="Optimize for space rather than speed (-Os)"
+				category="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.compilerID.OPTIM"
+				command="-Os"
+				valueType="boolean"/>
+			<option
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compilerID.UNSIGNED_CHAR"
+				name="Make 'char' unsigned by default (-funsigned-char)"
+				category="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.compilerID.OPTIM"
+				command="-funsigned-char"
+				valueType="boolean"/>
+			<option
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compilerID.FUNCTION_SECTIONS"
+				name="Place each function into its own section (-ffunction-sections)"
+				category="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.compilerID.OPTIM"
+				command="-ffunction-sections"
+				valueType="boolean"/>
+			<option
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compilerID.DATA_SECTIONS"
+				name="Place data items into their own section (-fdata-sections)"
+				category="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.compilerID.OPTIM"
+				command="-fdata-sections"
+				valueType="boolean"/>
+			<option
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compilerID.SINGLE_PRECISION_CONSTANT"
+				name="Convert floating point constants to single precision constants (-fsingle-precision-constant)"
+				category="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.compilerID.OPTIM"
+				command="-fsingle-precision-constant"
+				valueType="boolean"/>
+			<optionCategory
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.compilerID.PREPROC"
+				name="Preprocessor"
+				owner="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compilerID"/>
+			<option
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compilerID.PREPROC_ONLY"
+				name="Preprocess only; do not compile, assemble or link (-E)"
+				category="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.compilerID.PREPROC"
+				command="-E"
+				valueType="boolean"/>
+			<option
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compilerID.OTHER_PREPROC_FLAGS"
+				name="Other preprocessor flags (-Xpreprocessor)"
+				category="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.compilerID.PREPROC"
+				command="-Xpreprocessor ${value}"
+				valueType="stringList"/>
+			<optionCategory
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.compilerID.ASM"
+				name="Assembler"
+				owner="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compilerID"/>
+			<option
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compilerID.OTHER_ASM_FLAGS"
+				name="Other assembler flags (-Xassembler)"
+				category="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.compilerID.ASM"
+				command="-Xassembler ${value}"
+				valueType="stringList"/>
+			<optionCategory
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.compilerID.DEBUG"
+				name="Debugging"
+				owner="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compilerID"/>
+			<option
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compilerID.DEBUG"
+				name="Generate debug information (-g)"
+				category="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.compilerID.DEBUG"
+				command="-g"
+				valueType="boolean"/>
+			<option
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compilerID.DWARF_VERSION"
+				name="Generate debug information in DWARF version (-gdwarf-)"
+				category="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.compilerID.DEBUG"
+				command="-gdwarf-"
+				valueType="enumerated">
+				<enumeratedOptionValue
+					id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compilerID.DWARF_VERSION._none"
+					name=""
+					command=""/>
+				<enumeratedOptionValue
+					id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compilerID.DWARF_VERSION.2"
+					name="2"
+					command="-gdwarf-2"/>
+				<enumeratedOptionValue
+					id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compilerID.DWARF_VERSION.3"
+					name="3"
+					command="-gdwarf-3"/>
+				<enumeratedOptionValue
+					id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compilerID.DWARF_VERSION.4"
+					name="4"
+					command="-gdwarf-4"/>
+			</option>
+			<option
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compilerID.STRICT_DWARF"
+				name="Do not emit DWARF additions beyond selected version (-gstrict-dwarf)"
+				category="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.compilerID.DEBUG"
+				command="-gstrict-dwarf"
+				valueType="boolean"/>
+			<option
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compilerID.PROF"
+				name="Enable function profiling (-p)"
+				category="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.compilerID.DEBUG"
+				command="-p"
+				valueType="boolean"/>
+			<optionCategory
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.compilerID.DIAG"
+				name="Diagnostic Options"
+				owner="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compilerID"/>
+			<option
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compilerID.SYNTAX_ONLY"
+				name="Check for syntax errors, then stop (-fsyntax-only)"
+				category="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.compilerID.DIAG"
+				command="-fsyntax-only"
+				valueType="boolean"/>
+			<option
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compilerID.NOWARN"
+				name="Suppress warnings (-w)"
+				category="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.compilerID.DIAG"
+				command="-w"
+				valueType="boolean"/>
+			<option
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compilerID.ALLWARN"
+				name="Enable most warning messages (-Wall)"
+				category="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.compilerID.DIAG"
+				command="-Wall"
+				defaultValue="true"
+				valueType="boolean"/>
+			<option
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compilerID.WARNINGS_TOERRORS"
+				name="Treat all warnings as errors (-Werror)"
+				category="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.compilerID.DIAG"
+				command="-Werror"
+				valueType="boolean"/>
+			<option
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compilerID.VERBOSE"
+				name="Enable verbose output (-v)"
+				category="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.compilerID.DIAG"
+				command="-v"
+				valueType="boolean"/>
+			<optionCategory
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.compilerID.OTHER"
+				name="Miscellaneous"
+				owner="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compilerID"/>
+			<option
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compilerID.SPECS"
+				name="Override built-in specs with the contents of the specified file (-specs)"
+				category="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.compilerID.OTHER"
+				command="-specs="
+				commandGenerator="com.ti.common.project.core.internal.options.QuotedOptionCommandGenerator"
+				browseType="file"
+				valueType="string"/>
+			<option
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compilerID.CMD_FILE"
+				name="Read options from specified file (@)"
+				tip="Aliases: @&lt;BODY&gt;Read additional compile options from the specified file."
+				category="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.compilerID.OTHER"
+				applicabilityCalculator="com.ti.common.project.core.internal.options.VirtualOptionApplicability"
+				command="@"
+				commandGenerator="com.ti.common.project.core.internal.options.QuotedOptionCommandGenerator"
+				browseType="file"
+				browseFilterPath="${PROJECT_ROOT}"
+				valueType="stringList">
+			</option>
+			<option
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compilerID.C_SPECIFIC_FLAGS"
+				name="C source specific flags"
+				tip="Flags, listed here, would be used only when compiling C source files."
+				category="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.compilerID.OTHER"
+				applicabilityCalculator="com.ti.common.project.core.internal.options.VirtualOptionApplicability"
+				valueType="stringList"/>
+			<option
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compilerID.CPP_SPECIFIC_FLAGS"
+				name="C++ source specific flags"
+				tip="Flags, listed here, would be used only when compiling C++ source files."
+				category="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.compilerID.OTHER"
+				applicabilityCalculator="com.ti.common.project.core.internal.options.VirtualOptionApplicability"
+				valueType="stringList"/>
+			<option
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compilerID.ASM_SPECIFIC_FLAGS"
+				name="Assembly source specific flags"
+				tip="Flags, listed here, would be used only when compiling assembly source files."
+				category="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.compilerID.OTHER"
+				applicabilityCalculator="com.ti.common.project.core.internal.options.VirtualOptionApplicability"
+				valueType="stringList"/>
+			<option
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compilerID.OTHER_FLAGS"
+				name="Other flags"
+				category="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.compilerID.OTHER"
+				valueType="stringList"/>
+		</tool>
+		<tool
+			id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.linkerID"
+			superClass="com.ti.ccstudio.buildDefinitions.baseLinkerTool"
+			isAbstract="true"
+			name="GNU Linker"
+			command="&quot;${CG_TOOL_GCC}&quot;"
+			outputFlag="-o">
+			<optionCategory
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.linkerID.BASIC"
+				name="Basic"
+				owner="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.linkerID"/>
+			<option
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.linkerID.OUTPUT_FILE"
+				name="Output file (-o)"
+				category="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.linkerID.BASIC"
+				resourceFilter="project"
+				valueHandler="com.ti.ccstudio.project.core.internal.options.OutputFileOptionValueHandler"
+				applicabilityCalculator="com.ti.common.project.core.internal.options.VirtualOptionApplicability"
+				command="-o ${value}"
+				commandGenerator="com.ti.common.project.core.internal.options.QuotedOptionCommandGenerator"
+				browseType="file"
+				browseFilterPath="${PROJECT_ROOT}"
+				valueType="string"/>
+			<option
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.linkerID.MAP_FILE"
+				name="Write a map file (-Map)"
+				category="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.linkerID.BASIC"
+				resourceFilter="project"
+				command="-Wl,-Map,${value}"
+				commandGenerator="com.ti.common.project.core.internal.options.QuotedOptionCommandGenerator"
+				browseType="file"
+				browseFilterPath="${PROJECT_BUILD_DIR}"
+				browseFilterExtensions="*.map,*.*"
+				valueType="string"/>
+			<option
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.linkerID.ENTRY"
+				name="Set start address (-e, --entry)"
+				category="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.linkerID.BASIC"
+				resourceFilter="project"
+				command="--entry ${value}"
+				valueType="string"/>
+			<option
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.linkerID.NOSTARTFILES"
+				name="Do not use the standard system startup files when linking (-nostartfiles)"
+				category="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.linkerID.BASIC"
+				resourceFilter="project"
+				command="-nostartfiles"
+				valueType="boolean"/>
+			<option
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.linkerID.NODEFAULTLIBS"
+				name="Do not use the standard system libraries when linking (-nodefaultlibs)"
+				category="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.linkerID.BASIC"
+				resourceFilter="project"
+				command="-nodefaultlibs"
+				valueType="boolean"/>
+			<option
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.linkerID.NOSTDLIB"
+				name="Do not use the standard system startup files or libraries when linking (-nostdlib)"
+				category="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.linkerID.BASIC"
+				resourceFilter="project"
+				command="-nostdlib"
+				valueType="boolean"/>
+			<option
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.linkerID.STATIC"
+				name="Do not link with the shared libraries (-static)"
+				category="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.linkerID.BASIC"
+				resourceFilter="project"
+				command="-static"
+				valueType="boolean"/>
+			<option
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.linkerID.GC_SECTIONS"
+				name="Remove unused sections (--gc-sections)"
+				category="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.linkerID.BASIC"
+				resourceFilter="project"
+				command="-Wl,--gc-sections"
+				valueType="boolean"/>
+			<optionCategory
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.linkerID.LIBS"
+				name="Libraries"
+				owner="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.linkerID"/>
+			<option
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.linkerID.SCRIPTS"
+				name="Linker command files (-T, --script)"
+				category="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.linkerID.LIBS"
+				resourceFilter="project"
+				command="-Wl,-T"
+				commandGenerator="com.ti.common.project.core.internal.options.QuotedOptionCommandGenerator"
+				browseType="file"
+				browseFilterPath="${CG_TOOL_ROOT}"
+				browseFilterExtensions="*.ld,*.*"
+				valueType="stringList"/>
+			<option
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.linkerID.LIBRARY"
+				name="Libraries (-l, --library)"
+				category="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.linkerID.LIBS"
+				resourceFilter="project"
+				command="-l"
+				commandGenerator="com.ti.common.project.core.internal.options.QuotedOptionCommandGenerator"
+				browseType="file"
+				browseFilterPath="${CG_TOOL_ROOT}"
+				browseFilterExtensions="*.lib;*.a,*.*"
+				valueType="libs"/>
+			<option
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.linkerID.SEARCH_PATH"
+				name="Library search path (-L, --library-path)"
+				category="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.linkerID.LIBS"
+				resourceFilter="project"
+				command="-L"
+				commandGenerator="com.ti.common.project.core.internal.options.QuotedOptionCommandGenerator"
+				browseType="directory"
+				browseFilterPath="${CG_TOOL_ROOT}"
+				valueType="libPaths"/>
+			<option
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.linkerID.GROUP_LIBS"
+				name="Group libraries to resolve backward references (--start-group ... --end-group)"
+				category="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.linkerID.LIBS"
+				resourceFilter="project"
+				applicabilityCalculator="com.ti.common.project.core.internal.options.VirtualOptionApplicability"
+				defaultValue="true"
+				valueType="boolean"/>
+			<optionCategory
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.linkerID.SYMBOLS"
+				name="Symbols"
+				owner="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.linkerID"/>
+			<option
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.linkerID.DEFSYM"
+				name="Define a symbol (--defsym)"
+				category="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.linkerID.SYMBOLS"
+				resourceFilter="project"
+				command="-Wl,--defsym,${value}"
+				valueType="stringList"/>
+			<option
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.linkerID.UNDEFINED"
+				name="Start with undefined reference to SYMBOL (--undefined, -u)"
+				category="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.linkerID.SYMBOLS"
+				resourceFilter="project"
+				command="-Wl,--undefined,${value}"
+				valueType="stringList"/>
+			<optionCategory
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.linkerID.OTHER"
+				name="Miscellaneous"
+				owner="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.linkerID"/>
+			<option
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.linkerID.OTHER_FLAGS"
+				name="Other flags"
+				category="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.linkerID.OTHER"
+				resourceFilter="project"
+				valueType="stringList"/>
+		</tool>
+		<tool
+			id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.hex"
+			superClass="com.ti.ccstudio.buildDefinitions.baseHexTool"
+			name="GNU Objcopy Utility"
+			natureFilter="both"
+			commandLineGenerator="com.ti.ccstudio.project.core.internal.build.HexCommandLineGenerator"
+			commandLinePattern="${command} ${flags} ${inputs} ${output}"
+			command="&quot;${CG_TOOL_OBJCOPY}&quot;">
+			<inputType
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.hex.inputType__EXE"
+				name="Executable File"
+				sourceContentType="org.eclipse.cdt.managedbuilder.core.executableFile"
+				multipleOfType="true"
+				buildVariable="EXE_OUTPUTS">
+				<!-- >> NOTE [bbelyavsky]: Workaround for https://bugzilla.dal.design.ti.com/show_bug.cgi?id=9678 - CDT stops constructing build-description once it reaches target-tool (linker), so .hex files are not deleted during incremental build, since they're not part of build-description. Specifying the 'redundant' additional-input, 'EXE_OUTPUTS', happens to work around this problem.  -->
+				<additionalInput
+					kind="additionalinput"
+					paths="$(EXE_OUTPUTS)"/>
+				<!-- << -->
+			</inputType>
+			<outputType
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.hex.outputType__BIN"
+				name="Binary File"
+				outputContentType="com.ti.common.core.binFile"
+				nameProvider="com.ti.ccstudio.project.core.internal.build.HexOutputNameProvider"
+				primaryOutput="true"
+				buildVariable="BIN_OUTPUTS"/>
+			<option
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.hex.TOOL_ENABLE"
+				name="Enable tool"
+				category="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.hex"
+				valueType="boolean"/>
+			<optionCategory
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.hex.GENERAL"
+				name="General Options"
+				owner="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.hex"/>
+			<option
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.hex.OUTPUT_FILE"
+				name="Specify output file name"
+				tip="Specify output file name."
+				category="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.hex.GENERAL"
+				resourceFilter="project"
+				applicabilityCalculator="com.ti.common.project.core.internal.options.VirtualOptionApplicability"
+				command="${value}"
+				commandGenerator="com.ti.common.project.core.internal.options.QuotedOptionCommandGenerator"
+				browseType="file"
+				browseFilterPath="${PROJECT_ROOT}"
+				valueType="string"/>
+			<option
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.hex.INPUT_TARGET"
+				name="Assume input file is in format &lt;bfdname&gt; (-I, --input-target)"
+				tip="Aliases: -I, --input-target&lt;BODY&gt;Assume input file is in format &lt;bfdname&gt;."
+				category="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.hex.GENERAL"
+				resourceFilter="project"
+				valueType="enumerated">
+				<enumeratedOptionValue
+					id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.hex.INPUT_TARGET._none"
+					name=""
+					command=""/>
+				<enumeratedOptionValue
+					id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.hex.INPUT_TARGET.ELF32_LITTLEARM"
+					name="elf32-littlearm"
+					command="-I elf32-littlearm"/>
+				<enumeratedOptionValue
+					id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.hex.INPUT_TARGET.ELF32_BIGARM"
+					name="elf32-bigarm"
+					command="-I elf32-bigarm"/>
+				<enumeratedOptionValue
+					id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.hex.INPUT_TARGET.ELF32_LITTLE"
+					name="elf32-little"
+					command="-I elf32-little"/>
+				<enumeratedOptionValue
+					id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.hex.INPUT_TARGET.ELF32_BIG"
+					name="elf32-big"
+					command="-I elf32-big"/>
+				<enumeratedOptionValue
+					id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.hex.INPUT_TARGET.PLUGIN"
+					name="plugin"
+					command="-I plugin"/>
+				<enumeratedOptionValue
+					id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.hex.INPUT_TARGET.SREC"
+					name="srec"
+					command="-I srec"/>
+				<enumeratedOptionValue
+					id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.hex.INPUT_TARGET.SYMBOLSREC"
+					name="symbolsrec"
+					command="-I symbolsrec"/>
+				<enumeratedOptionValue
+					id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.hex.INPUT_TARGET.VERILOG"
+					name="verilog"
+					command="-I verilog"/>
+				<enumeratedOptionValue
+					id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.hex.INPUT_TARGET.TEKHEX"
+					name="tekhex"
+					command="-I tekhex"/>
+				<enumeratedOptionValue
+					id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.hex.INPUT_TARGET.BINARY"
+					name="binary"
+					command="-I binary"/>
+				<enumeratedOptionValue
+					id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.hex.INPUT_TARGET.IHEX"
+					name="ihex"
+					command="-I ihex"/>
+			</option>
+			<option
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.hex.OUTPUT_TARGET"
+				name="Create an output file in format &lt;bfdname&gt; (-O, --output-target)"
+				tip="Aliases: -O, --output-target&lt;BODY&gt;Create an output file in format &lt;bfdname&gt;."
+				category="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.hex.GENERAL"
+				resourceFilter="project"
+				valueType="enumerated">
+				<enumeratedOptionValue
+					id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.hex.OUTPUT_TARGET._none"
+					name=""
+					command=""/>
+				<enumeratedOptionValue
+					id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.hex.OUTPUT_TARGET.ELF32_LITTLEARM"
+					name="elf32-littlearm"
+					command="-O elf32-littlearm"/>
+				<enumeratedOptionValue
+					id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.hex.OUTPUT_TARGET.ELF32_BIGARM"
+					name="elf32-bigarm"
+					command="-O elf32-bigarm"/>
+				<enumeratedOptionValue
+					id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.hex.OUTPUT_TARGET.ELF32_LITTLE"
+					name="elf32-little"
+					command="-O elf32-little"/>
+				<enumeratedOptionValue
+					id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.hex.OUTPUT_TARGET.ELF32_BIG"
+					name="elf32-big"
+					command="-O elf32-big"/>
+				<enumeratedOptionValue
+					id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.hex.OUTPUT_TARGET.PLUGIN"
+					name="plugin"
+					command="-O plugin"/>
+				<enumeratedOptionValue
+					id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.hex.OUTPUT_TARGET.SREC"
+					name="srec"
+					command="-O srec"/>
+				<enumeratedOptionValue
+					id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.hex.OUTPUT_TARGET.SYMBOLSREC"
+					name="symbolsrec"
+					command="-O symbolsrec"/>
+				<enumeratedOptionValue
+					id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.hex.OUTPUT_TARGET.VERILOG"
+					name="verilog"
+					command="-O verilog"/>
+				<enumeratedOptionValue
+					id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.hex.OUTPUT_TARGET.TEKHEX"
+					name="tekhex"
+					command="-O tekhex"/>
+				<enumeratedOptionValue
+					id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.hex.OUTPUT_TARGET.BINARY"
+					name="binary"
+					command="-O binary"/>
+				<enumeratedOptionValue
+					id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.hex.OUTPUT_TARGET.IHEX"
+					name="ihex"
+					command="-O ihex"/>
+			</option>
+			<option
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.hex.BINARY_ARCH"
+				name="Set output arch, when input is arch-less (-B, --binary-architecture)"
+				tip="Aliases: -B, --binary-architecture&lt;BODY&gt;Set output arch, when input is arch-less."
+				category="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.hex.GENERAL"
+				resourceFilter="project"
+				command="--binary-architecture ${value}"
+				valueType="string"/>
+			<option
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.hex.DEBUGGING"
+				name="Convert debugging information, if possible (--debugging)"
+				tip="Aliases: --debugging&lt;BODY&gt;Convert debugging information, if possible."
+				category="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.hex.GENERAL"
+				resourceFilter="project"
+				defaultValue="false"
+				command="--debugging"
+				valueType="boolean"/>
+			<option
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.hex.PRESERVE_DATES"
+				name="Copy modified/access timestamps to the output (-p, --preserve-dates)"
+				tip="Aliases: -p, --preserve-dates&lt;BODY&gt;Copy modified/access timestamps to the output."
+				category="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.hex.GENERAL"
+				resourceFilter="project"
+				defaultValue="false"
+				command="--preserve-dates"
+				valueType="boolean"/>
+			<option
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.hex.REMOVE_SECTION"
+				name="Remove section &lt;name&gt; from the output (-R, --remove-section)"
+				tip="Aliases: -R, --remove-section&lt;BODY&gt;Remove section &lt;name&gt; from the output."
+				category="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.hex.GENERAL"
+				resourceFilter="project"
+				command="--remove-section ${value}"
+				valueType="stringList"/>
+			<option
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.hex.STRIP_ALL"
+				name="Remove all symbol and relocation information (-S, --strip-all)"
+				tip="Aliases: -S, --strip-all&lt;BODY&gt;Remove all symbol and relocation information."
+				category="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.hex.GENERAL"
+				resourceFilter="project"
+				defaultValue="false"
+				command="--strip-all"
+				valueType="boolean"/>
+			<option
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.hex.STRIP_DEBUG"
+				name="Remove all debugging symbols &amp; sections (-g, --strip-debug)"
+				tip="Aliases: -g, --strip-debug&lt;BODY&gt;Remove all debugging symbols &amp; sections."
+				category="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.hex.GENERAL"
+				resourceFilter="project"
+				defaultValue="false"
+				command="--strip-debug"
+				valueType="boolean"/>
+			<option
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.hex.STRIP_UNNEEDED"
+				name="Remove all symbols not needed by relocations (--strip-unneeded)"
+				tip="Aliases: --strip-unneeded&lt;BODY&gt;Remove all symbols not needed by relocations."
+				category="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.hex.GENERAL"
+				resourceFilter="project"
+				defaultValue="false"
+				command="--strip-unneeded"
+				valueType="boolean"/>
+			<option
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.hex.SET_START"
+				name="Set the start address to &lt;addr&gt; (--set-start)"
+				tip="Aliases: --set-start&lt;BODY&gt;Set the start address to &lt;addr&gt;."
+				category="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.hex.GENERAL"
+				resourceFilter="project"
+				command="--set-start"
+				valueType="string"/>
+			<option
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.hex.VERBOSE"
+				name="List all object files modified (-v, --verbose)"
+				tip="Aliases: -v, --verbose&lt;BODY&gt;List all object files modified."
+				category="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.hex.GENERAL"
+				resourceFilter="project"
+				defaultValue="false"
+				command="--verbose"
+				valueType="boolean"/>
+			<optionCategory
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.hex.OTHER"
+				name="Miscellaneous"
+				owner="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.hex"/>
+			<option
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.hex.OTHER_FLAGS"
+				name="Other flags"
+				category="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.hex.OTHER"
+				resourceFilter="project"
+				valueType="stringList"/>
+		</tool>
+
+		<!-- ============================== End auto-generated body ============================== -->
+
+		<tool
+			id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.archiverID"
+			superClass="com.ti.ccstudio.buildDefinitions.baseArchiverTool"
+			isAbstract="true"
+			name="GNU Archiver"
+			command="&quot;${CG_TOOL_AR}&quot;">
+			<optionCategory
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.archiverID.BASIC"
+				name="Basic"
+				owner="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.archiverID"/>
+			<option
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.archiverID.R"
+				category="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.archiverID.BASIC"
+				resourceFilter="project"
+				applicabilityCalculator="com.ti.common.project.core.internal.options.HiddenOptionApplicability"
+				command="-r"
+				value="true"
+				valueType="boolean"/>
+			<option
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.archiverID.OUTPUT_FILE"
+				name="Output file"
+				category="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.archiverID.BASIC"
+				resourceFilter="project"
+				valueHandler="com.ti.ccstudio.project.core.internal.options.OutputFileOptionValueHandler"
+				applicabilityCalculator="com.ti.common.project.core.internal.options.VirtualOptionApplicability"
+				command=""
+				browseType="file"
+				valueType="string"/>
+			<optionCategory
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.archiverID.OTHER"
+				name="Miscellaneous"
+				owner="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.archiverID"/>
+			<option
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.archiverID.CMD_FILE"
+				name="Read options from specified file (@)"
+				category="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.archiverID.OTHER"
+				resourceFilter="project"
+				applicabilityCalculator="com.ti.common.project.core.internal.options.VirtualOptionApplicability"
+				command="@"
+				browseType="file"
+				valueType="string"/>
+			<option
+				id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.archiverID.OTHER_FLAGS"
+				name="Other flags"
+				category="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.cat.archiverID.OTHER"
+				resourceFilter="project"
+				valueType="stringList"/>
+		</tool>
+
+	</extension>
+
+	<extension point="com.ti.common.project.core.toolOptionCommandIndex"
+		id="TMS470_GNU_6.0"
+		name="ARM vGNU_6.0 Build-option Command Index">
+	
+		<tool id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.compilerID" isCaseSensitive="true">
+			<option command="-mcpu" tag="MCPU"/>
+			<option command="-mtune" tag="MTUNE"/>
+			<option command="-march" tag="MARCH"/>
+			<option command="-marm" tag="CODE_STATE.ARM"/>
+			<option command="-mthumb" tag="CODE_STATE.THUMB"/>
+			<option command="-mfloat-abi" tag="MFLOAT_ABI"/>
+			<option command="-mfpu" tag="MFPU"/>
+			<option command="-frtti" tag="FRTTI.ON"/>
+			<option command="-fno-rtti" tag="FRTTI.OFF"/>
+			<option command="-fexceptions" tag="FEXCEPTIONS.ON"/>
+			<option command="-fno-exceptions" tag="FEXCEPTIONS.OFF"/>
+			<option command="-mlong-calls" tag="MLONG_CALLS"/>
+			<option command="-E" tag="PREPROC_ONLY"/>
+			<option command="-D" tag="DEFINE"/>
+			<option command="-U" tag="UNDEFINE"/>
+			<option command="-I" tag="INCLUDE_PATH"/>
+			<option command="-O" tag="OPT_LEVEL.1"/>
+			<option command="-O0" tag="OPT_LEVEL.0"/>
+			<option command="-O1" tag="OPT_LEVEL.1"/>
+			<option command="-O2" tag="OPT_LEVEL.2"/>
+			<option command="-O3" tag="OPT_LEVEL.3"/>
+			<option command="-Ofast" tag="OPT_FOR_SPEED"/>
+			<option command="-Os" tag="OPT_FOR_SPACE"/>
+			<option command="-funsigned-char" tag="UNSIGNED_CHAR"/>
+			<option command="-ffunction-sections" tag="FUNCTION_SECTIONS"/>
+			<option command="-fdata-sections" tag="DATA_SECTIONS"/>
+			<option command="-fsingle-precision-constant" tag="SINGLE_PRECISION_CONSTANT"/>
+			<option command="-g" tag="DEBUG"/>
+			<option command="-gdwarf-2" tag="DWARF_VERSION.2"/>
+			<option command="-gdwarf-3" tag="DWARF_VERSION.3"/>
+			<option command="-gdwarf-4" tag="DWARF_VERSION.4"/>
+			<option command="-gstrict-dwarf" tag="STRICT_DWARF"/>
+			<option command="-p" tag="PROF"/>
+			<option command="-fsyntax-only" tag="SYNTAX_ONLY"/>
+			<option command="-w" tag="NOWARN"/>
+			<option command="-Wall" tag="ALLWARN"/>
+			<option command="-Werror" tag="WARNINGS_TOERRORS"/>
+			<option command="-v" tag="VERBOSE"/>
+			<option command="-specs" tag="SPECS"/>
+			<option command="@" tag="CMD_FILE"/>
+		</tool>
+		<tool id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.linkerID" isCaseSensitive="true">
+			<option command="-o" tag="OUTPUT_FILE"/>
+			<option command="-Map" tag="MAP_FILE"/>
+			<option command="-Wl,-Map," tag="MAP_FILE"/>
+			<option command="-e" tag="ENTRY"/>
+			<option command="-Wl,-e" tag="ENTRY"/>
+			<option command="--entry" tag="ENTRY"/>
+			<option command="-Wl,--entry" tag="ENTRY"/>
+			<option command="-nostartfiles" tag="NOSTARTFILES"/>
+			<option command="-nodefaultlibs" tag="NODEFAULTLIBS"/>
+			<option command="-nostdlib" tag="NOSTDLIB"/>
+			<option command="-static" tag="STATIC"/>
+			<option command="--gc-sections" tag="GC_SECTIONS"/>
+			<option command="-Wl,--gc-sections" tag="GC_SECTIONS"/>
+			<option command="-T" tag="SCRIPTS"/>
+			<option command="-Wl,-T" tag="SCRIPTS"/>
+			<option command="--script" tag="SCRIPTS"/>
+			<option command="-Wl,--script" tag="SCRIPTS"/>
+			<option command="-l" tag="LIBRARY"/>
+			<option command="--library" tag="LIBRARY"/>
+			<option command="-L" tag="SEARCH_PATH"/>
+			<option command="--library-path" tag="SEARCH_PATH"/>
+			<option command="--defsym" tag="DEFSYM"/>
+			<option command="-Wl,--defsym," tag="DEFSYM"/>
+			<option command="--undefined" tag="UNDEFINED"/>
+			<option command="-Wl,--undefined," tag="UNDEFINED"/>
+			<option command="-u" tag="UNDEFINED"/>
+			<option command="-Wl,-u," tag="UNDEFINED"/>
+		</tool>
+		<tool id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.hex" isCaseSensitive="true">
+			<option command="-I elf32-littlearm" tag="INPUT_TARGET.ELF32_LITTLEARM"/>
+			<option command="--input-target elf32-littlearm" tag="INPUT_TARGET.ELF32_LITTLEARM"/>
+			<option command="-I elf32-bigarmm" tag="INPUT_TARGET.ELF32_BIGARM"/>
+			<option command="--input-target elf32-bigarm" tag="INPUT_TARGET.ELF32_BIGARM"/>
+			<option command="-I elf32-little" tag="INPUT_TARGET.ELF32_LITTLE"/>
+			<option command="--input-target elf32-little" tag="INPUT_TARGET.ELF32_LITTLE"/>
+			<option command="-I elf32-big" tag="INPUT_TARGET.ELF32_BIG"/>
+			<option command="--input-target elf32-big" tag="INPUT_TARGET.ELF32_BIG"/>
+			<option command="-I plugin" tag="INPUT_TARGET.PLUGIN"/>
+			<option command="--input-target plugin" tag="INPUT_TARGET.PLUGIN"/>
+			<option command="-I srec" tag="INPUT_TARGET.SREC"/>
+			<option command="--input-target srec" tag="INPUT_TARGET.SREC"/>
+			<option command="-I symbolsrec" tag="INPUT_TARGET.SYMBOLSREC"/>
+			<option command="--input-target symbolsrec" tag="INPUT_TARGET.SYMBOLSREC"/>
+			<option command="-I verilog" tag="INPUT_TARGET.VERILOG"/>
+			<option command="--input-target verilog" tag="INPUT_TARGET.VERILOG"/>
+			<option command="-I tekhex" tag="INPUT_TARGET.TEKHEX"/>
+			<option command="--input-target tekhex" tag="INPUT_TARGET.TEKHEX"/>
+			<option command="-I binary" tag="INPUT_TARGET.BINARY"/>
+			<option command="--input-target binary" tag="INPUT_TARGET.BINARY"/>
+			<option command="-I ihex" tag="INPUT_TARGET.IHEX"/>
+			<option command="--input-target ihex" tag="INPUT_TARGET.IHEX"/>
+			<option command="-O elf32-littlearm" tag="OUTPUT_TARGET.ELF32_LITTLEARM"/>
+			<option command="--output-target elf32-littlearm" tag="OUTPUT_TARGET.ELF32_LITTLEARM"/>
+			<option command="-O elf32-bigarmm" tag="OUTPUT_TARGET.ELF32_BIGARM"/>
+			<option command="--output-target elf32-bigarm" tag="OUTPUT_TARGET.ELF32_BIGARM"/>
+			<option command="-O elf32-little" tag="OUTPUT_TARGET.ELF32_LITTLE"/>
+			<option command="--output-target elf32-little" tag="OUTPUT_TARGET.ELF32_LITTLE"/>
+			<option command="-O elf32-big" tag="OUTPUT_TARGET.ELF32_BIG"/>
+			<option command="--output-target elf32-big" tag="OUTPUT_TARGET.ELF32_BIG"/>
+			<option command="-O plugin" tag="OUTPUT_TARGET.PLUGIN"/>
+			<option command="--output-target plugin" tag="OUTPUT_TARGET.PLUGIN"/>
+			<option command="-O srec" tag="OUTPUT_TARGET.SREC"/>
+			<option command="--output-target srec" tag="OUTPUT_TARGET.SREC"/>
+			<option command="-O symbolsrec" tag="OUTPUT_TARGET.SYMBOLSREC"/>
+			<option command="--output-target symbolsrec" tag="OUTPUT_TARGET.SYMBOLSREC"/>
+			<option command="-O verilog" tag="OUTPUT_TARGET.VERILOG"/>
+			<option command="--output-target verilog" tag="OUTPUT_TARGET.VERILOG"/>
+			<option command="-O tekhex" tag="OUTPUT_TARGET.TEKHEX"/>
+			<option command="--output-target tekhex" tag="OUTPUT_TARGET.TEKHEX"/>
+			<option command="-O binary" tag="OUTPUT_TARGET.BINARY"/>
+			<option command="--output-target binary" tag="OUTPUT_TARGET.BINARY"/>
+			<option command="-O ihex" tag="OUTPUT_TARGET.IHEX"/>
+			<option command="--output-target ihex" tag="OUTPUT_TARGET.IHEX"/>
+			<option command="-B" tag="BINARY_ARCH"/>
+			<option command="--binary-architecture" tag="BINARY_ARCH"/>
+			<option command="--debugging" tag="DEBUGGING"/>
+			<option command="-p" tag="PRESERVE_DATES"/>
+			<option command="--preserve-dates" tag="PRESERVE_DATES"/>
+			<option command="-R" tag="REMOVE_SECTION"/>
+			<option command="--remove-section" tag="REMOVE_SECTION"/>
+			<option command="-S" tag="STRIP_ALL"/>
+			<option command="--strip-all" tag="STRIP_ALL"/>
+			<option command="-g" tag="STRIP_DEBUG"/>
+			<option command="--strip-debug" tag="STRIP_DEBUG"/>
+			<option command="--strip-unneeded" tag="STRIP_UNNEEDED"/>
+			<option command="--set-start" tag="SET_START"/>
+			<option command="-v" tag="VERBOSE"/>
+			<option command="--verbose" tag="VERBOSE"/>
+		</tool>
+		<tool id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_6.0.archiverID" isCaseSensitive="true">
+			<option command="-o" tag="OUTPUT_FILE"/>
+			<option command="@" tag="CMD_FILE"/>
+		</tool>
+		
+	</extension>
+		
+</plugin>

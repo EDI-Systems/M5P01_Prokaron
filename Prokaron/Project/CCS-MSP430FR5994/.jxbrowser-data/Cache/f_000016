@@ -1,0 +1,536 @@
+<link rel="import" href="../../components/polymer/polymer.html">
+<link rel="import" href="../../components/paper-radio-group/paper-radio-group.html">
+<link rel="import" href="../../components/paper-radio-button/paper-radio-button.html">
+<link rel="import" href="../../components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../components/paper-button/paper-button.html">
+<link rel="import" href="../../components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../components/iron-fit-behavior/iron-fit-behavior.html">
+<link rel="import" href="../../components/paper-styles/paper-styles.html">
+
+<dom-module id="ti-rov-table">
+  <template>
+    <!-- include global rov styles -->
+    <style include="ti-rov-styles"></style>
+    <style is="custom-style">
+      :host {
+        display:block;
+      }
+      paper-checkbox {
+        --paper-checkbox-unchecked-background-color: white;
+        --paper-checkbox-unchecked-color: white;
+        --paper-checkbox-unchecked-ink-color: white;
+        --paper-checkbox-checked-color: white;
+        --paper-checkbox-checked-ink-color: white;
+        --paper-checkbox-checkmark-color: black;
+        --paper-checkbox-label-color: white;
+      }
+      #messageLabel {
+        margin-left: 15px;
+        margin-right: 15px;
+        font-family: var(--rovFontFamily);
+        font-size: var(--rovContentFontSize);
+      }
+      .rawNode {
+        display: table-cell;
+        padding: 3px 25px 0px 2px;
+        font-weight: normal;
+        cursor:  pointer;
+        background-color: var(--rovTableBackgroundColor);
+        font-family: var(--rovTableFontFamily);
+        font-size: var(--rovContentFontSize);
+      }
+      .treeTableNode {
+        padding: 3px 50px 0px 2px;
+        font-weight: normal;
+        background-color: rgb(0, 0, 0);
+        color: #ffffff;
+        cursor:  pointer;
+      }
+      .treeNodeIcon {
+        padding-right:8px;
+      }
+      .treeCell {
+        padding: 3px 50px 2px 7px;
+      }
+      .rawNodeIcon {
+        width: 18px;
+        height: 18px;
+        padding-right:8px;
+      }
+      .rawCell {
+        padding: 3px 50px 2px 7px;
+      }
+      .ttChildCell {
+        padding-left: 35px;
+      }
+      .childCell {
+        padding-left: 35px;
+        display: table-cell;
+        background-color: var(--rovTableBackgroundColor);
+        font-family: var(--rovTableFontFamily);
+        font-size: var(--rovContentFontSize);
+      }
+      .rovTableStyleCell {
+        background-color: var(--rovTableBackgroundColor);
+        font-family: var(--rovTableFontFamily);
+        font-size: var(--rovContentFontSize);
+      }
+      #columnsSelector {
+        font-family: var(--rovFontFamily);
+        font-size: var(--rovColumnsSelectorFontSize);
+        position: fixed;
+        @apply(--layout-vertical);
+        @apply(--layout-self-stretch);
+        background-color: var(--rovTitleToolbarBackground);
+        overflow-y: auto;
+        margin: 0;
+      }
+      .columnSelectCheckbox {
+        --paper-checkbox-size: 14px;
+        --paper-checkbox-unchecked-color: var(--rovTitleToolbarColor);
+        --paper-checkbox-unchecked-ink-color: transparent;
+        --paper-checkbox-checked-color: var(--rovTitleToolbarColor);
+        --paper-checkbox-checked-ink-color: transparent;
+        --paper-checkbox-checkmark-color: var(--rovTitleToolbarBackground);
+        --paper-checkbox-label-color: var(--rovTitleToolbarColor);
+      }
+      .columnSortIcon {
+        width: 16px;
+        height: 16px;
+        background-color: var(--rovTableHeaderBackground);
+        color: var(--rovTableHeaderColor);
+        float: right;
+      }
+      .cellList {
+        display: none;
+        margin-top: -18px;
+        margin-left: -4px;
+        padding: 0px;
+        border-width: 2px;
+        border-style: solid;
+        position: fixed;
+        list-style-type: none;
+        padding-bottom: 3px;
+        z-index: 9000;
+        background-color: var(--rovTableBackgroundColor);
+      }
+      .cellListItem {
+        margin-left: 2px;
+        margin-right: 5px;
+        margin-bottom: 3px;
+        background-color: var(--rovTableBackgroundColor);
+        font-family: var(--rovTableFontFamily);
+        font-size: var(--rovContentFontSize);
+      }
+      .cellDropIcon {
+        width: 16px;
+        height: 16px;
+        float: right;
+        color: lightslategray;
+      }
+      .columnSelectTd {
+        display: table-cell;
+        padding-left: 10px;
+        padding-top: 4px;
+      }
+      .columnSelectTh {
+        display: table-cell;
+        color: var(--rovTitleToolbarColor);
+        font-weight: normal;
+        text-align: center;
+        padding-top: 0px;
+      }
+      #columnConfigTable {
+        margin-top: 2px;
+        margin-bottom: 2px;
+        padding-left: 0px;
+        padding-right: 12px;
+      }
+      .instSelectIcon {
+        width: 24px;
+        height: 24px;
+        background-color: transparent;
+        color: black;
+        cursor: pointer;
+      }
+      #instSelectDiv {
+        margin-left: 14px;
+        margin-top: 0px;
+        margin-bottom: 5px;
+        white-space: nowrap;
+        font-family: var(--rovFontFamily);
+        font-size: var(--rovContentFontSize);
+      }
+      #selectInstanceDialog {
+        position: fixed;
+        margin-top: 0px;
+        --paper-dialog-background-color: white;
+        --paper-dialog-color: black;
+        @apply(--layout-vertical);
+        @apply(--layout-self-stretch);
+      }
+      #selectInstanceMenu {
+          padding-left: 0px;
+          margin-top: 2px;
+          margin-bottom: 2px;
+      }
+      .selectInstanceMenuItem {
+        font-family: var(--rovFontFamily);
+        font-size: var(--rovContentFontSize);
+        --paper-item-min-height: 24px;
+        cursor: pointer;
+        padding-left: 8px;
+        padding-right: 8px;
+      }
+      .rovTh {
+        display: table-cell;
+        border-right: 1px solid var(--rovTableBackgroundColor);
+        border-top: 1px solid var(--rovTableBackgroundColor);
+        border-bottom: 1px solid var(--rovTableBackgroundColor);
+        border-left: 1px solid var(--rovTableBackgroundColor);
+        padding: 2px 5px 3px 3px;
+        text-align: left;
+        background-color: var(--rovTableHeaderBackground);
+        color: var(--rovTableHeaderColor);
+        font-family: var(--rovFontFamily);
+        font-size: var(--rovContentFontSize);
+        font-weight: normal;
+      }
+      .rovTbody {
+        display: table-row-group;
+      }
+      .rovTd {
+        display: table-cell;
+        text-align:left;
+        padding-left: 4px;
+        padding-right: 5px;
+        white-space: nowrap;
+        background-color: var(--rovTableBackgroundColor);
+        font-family: var(--rovFontFamily);
+        font-size: var(--rovContentFontSize);
+      }
+      .treeNode {
+        display: table-cell;
+        padding: 3px 50px 0px 2px;
+        font-weight: normal;
+        cursor:  pointer;
+        background-color: var(--rovTableBackgroundColor);
+        font-family: var(--rovTableFontFamily);
+        font-size: var(--rovContentFontSize);
+      }
+      .rovThead {
+        display: table-header-group;
+      }
+      .rovTr {
+        display:table-row;
+      }
+      .rovTdDropdownCell {
+        background-color: var(--rovTableBackgroundColor);
+        font-family: var(--rovFontFamily);
+        font-size: var(--rovContentFontSize);
+      }
+      .rovTdDropdownCell:hover .cellList {
+        display: block;
+      }
+      .formatMenu {
+        margin-left: 0px;
+        margin-top: 0px;
+        --paper-menu-button: {
+          padding-top: 0px;
+          padding-bottom: 4px;
+        };
+        --paper-input-container: {
+          padding-top: 0px;
+          padding-bottom: 0px;
+        };
+        --paper-input-container-input: {
+          font-family: var(--rovFontFamily);
+          font-size: var(--rovColumnsSelectorFontSize);
+          color: var(--rovTitleToolbarColor);
+        };
+        --paper-input-container-label: {
+          font-family: var(--rovFontFamily);
+          font-size: var(--rovColumnsSelectorFontSize);
+          color: var(--rovTitleToolbarColor);
+        };
+      }
+      #formatListbox {
+        background-color: white;
+        padding-top: 4px;
+        padding-bottom: 2px;
+      }
+      .formatItem {
+        --paper-item-min-height: 20px;
+        height: 20px;
+        font-family: var(--rovFontFamily);
+        font-size: var(--rovColumnsSelectorFontSize);
+        color: black;
+        background-color: white;
+      }
+      #closeColumnsButton {
+        width: 18px;
+        height: 18px;
+        position: absolute;
+        right: 4px;
+        top: 4px;
+        padding: 0;
+        color: var(--rovTitleToolbarColor);
+      }
+    </style>
+    <span>
+      <paper-dialog id="columnsSelector" on-iron-overlay-closed="columnsSelectorClosed" on-keypress="columnsSelectorKeyPress">
+        <div><paper-icon-button id="closeColumnsButton" title="Close" on-click="closeColumnsSelector" icon="close" role="button" tabindex="0"></paper-icon-button></div>
+        <div style="display:table" id="columnConfigTable">
+          <div class="rovThead">
+            <div class="columnSelectTh">Columns</div>
+            <template is="dom-if" if="{{hasFormats}}">
+              <div class="columnSelectTh">Format</div>
+            </template>
+          </div>
+          <div class="rovTbody">
+            <template is="dom-repeat" items="{{columnStates}}" as="col">
+              <div class="rovTr">
+                <div class="columnSelectTd"><paper-checkbox class="columnSelectCheckbox" id$="{{col.name}}" on-click="colsChanged" checked$="{{col.checked}}">{{col.name}}</paper-checkbox></div>
+                <template is="dom-if" if="{{hasFormats}}" restamp="true">
+                  <template is="dom-if" if="{{col.hasFormat}}">
+                    <div class="columnSelectTd">
+                      <paper-dropdown-menu class="formatMenu" label="{{col.format}}" no-label-float no-animations on-iron-select="colFormatChanged" disabled="{{!col.checked}}">
+                          <paper-listbox id="formatListbox" class="dropdown-content" selected="{{col.format}}">
+                            <paper-item class="formatItem">Decimal</paper-item>
+                            <paper-item class="formatItem">Hex</paper-item>
+                            <paper-item class="formatItem">Scientific</paper-item>
+                          </paper-listbox>
+                      </paper-dropdown-menu>
+                    </div>
+                  </template>
+                  <template is="dom-if" if="{{!col.hasFormat}}" restamp="true">
+                    <div style="display:table-cell;"></div>
+                  </template>
+                </template>
+              </div>
+            </template>
+          </div>
+        </div>
+      </paper-dialog>
+      <paper-dialog id="selectInstanceDialog" alwaysOnTop>
+        <paper-menu id="selectInstanceMenu" on-iron-select="instanceSelected" class="attachedMenu">
+          <template is="dom-repeat" items="{{instanceDataTable.instNames}}" as="inst">
+            <paper-item class="selectInstanceMenuItem" role="menuitem">{{inst}}</paper-item>
+          </template>
+        </paper-menu>
+      </paper-dialog>
+    </span>
+    <template is="dom-if" if="{{showDataMessage}}">
+      <div style="margin-top:20px;margin-bottom:20px;"><label id="messageLabel">{{dataMessage}}</label></div>
+    </template>
+    <div style="display:table" id="rovInstanceTable" hidden$="{{!isInstanceView}}">
+      <div class="rovThead">
+          <div class="rovTr">
+            <template is="dom-repeat" items="{{instanceTable.displayColumns}}" as="colObj">
+              <template is="dom-if" if="{{colObj.isSortCol}}" restamp="true">
+                <div class="rovTh" draggable="{{colsDraggable}}" on-click="onColumnClick" on-dragstart="columnDragStart" on-dragover="columnDragOver" on-drop="columnDrop">{{colObj.name}}<iron-icon class="columnSortIcon" icon$="{{colObj.icon}}"></iron-icon></div>
+              </template>
+              <template is="dom-if" if="{{!colObj.isSortCol}}" restamp="true">
+                <div class="rovTh" draggable="{{colsDraggable}}" on-click="onColumnClick" on-dragstart="columnDragStart" on-dragover="columnDragOver" on-drop="columnDrop">{{colObj.name}}</div>
+              </template>
+            </template>
+          </div>
+      </div>
+      <div class="rovTbody">
+        <template id="rovInstanceTemplate" is="dom-repeat" items="{{instanceTable.rows}}" as="row">
+          <div class="rovTr">
+            <template is="dom-repeat" items="{{row}}" as="rowObj">
+              <template is="dom-if" if="{{rowObj.isArray}}" restamp="true">
+                  <div class="rovTdDropdownCell" style$="{{rowObj.style}}" title$="{{rowObj.title}}" on-mouseover="cellDropMouseOver">{{rowObj.val}}<iron-icon class="cellDropIcon" icon="more-vert"></iron-icon>
+                    <ul class="cellList">
+                      <template is="dom-repeat" items="{{rowObj.arrVals}}" as="arrVal">
+                        <li class="cellListItem">{{arrVal}}</li>
+                      </template>
+                    </ul>
+                  </div>
+              </template>
+              <template is="dom-if" if="{{!rowObj.isArray}}" restamp="true">
+                <div class="rovTd" style$="{{rowObj.style}}" title$="{{rowObj.title}}">{{rowObj.val}}</div>
+              </template>
+            </template>
+          </div>
+        </template>
+      </div>
+    </div>
+    <span hidden$="{{!isInstanceDataView}}">
+      <template is="dom-if" if="{{instanceDataTable.showInstSelect}}" restamp="true">
+        <div id="instSelectDiv">{{instanceDataTable.currentInst}}<iron-icon class="instSelectIcon" icon="arrow-drop-down" on-click="selectInstanceDialog"></iron-icon></div>
+      </template>
+      <div style="display:table" id="rovInstanceDataTable">
+      <div class="rovThead">
+        <div class="rovTr">
+          <template is="dom-repeat" items="{{instanceDataTable.displayColumns}}" as="colObj">
+            <template is="dom-if" if="{{colObj.isSortCol}}" restamp="true">
+              <div class="rovTh" draggable="{{colsDraggable}}" on-click="onColumnClick" on-dragstart="columnDragStart" on-dragover="columnDragOver" on-drop="columnDrop">{{colObj.name}}<iron-icon class="columnSortIcon" icon$="{{colObj.icon}}"></iron-icon></div>
+            </template>
+            <template is="dom-if" if="{{!colObj.isSortCol}}" restamp="true">
+              <div class="rovTh" draggable="{{colsDraggable}}" on-click="onColumnClick" on-dragstart="columnDragStart" on-dragover="columnDragOver" on-drop="columnDrop">{{colObj.name}}</div>
+            </template>
+          </template>
+        </div>
+      </div>
+      <div class="rovTbody">
+        <template id="rovInstanceDataTemplate" is="dom-repeat" items="{{instanceDataTable.rows}}" as="rowItem">
+          <template is="dom-if" if="{{rowItem.expanded}}" restamp="true">
+            <template is="dom-repeat" items="{{rowItem.rowVals}}" as="rowVals">
+              <div class="rovTr" style="padding-bottom:10px;">
+                <template is="dom-repeat" items="{{rowVals}}" as="rowValObj">
+                  <template is="dom-if" if="{{rowValObj.isArray}}" restamp="true">
+                    <div class="rovTdDropdownCell" style$="{{rowValObj.style}}" title$="{{rowValObj.title}}" on-mouseover="cellDropMouseOver">{{rowValObj.val}}<iron-icon class="cellDropIcon" icon="more-vert"></iron-icon>
+                      <ul class="cellList">
+                        <template is="dom-repeat" items="{{rowValObj.arrVals}}" as="arrVal">
+                          <li class="cellListItem">{{arrVal}}</li>
+                        </template>
+                      </ul>
+                    </div>
+                  </template>
+                  <template is="dom-if" if="{{!rowValObj.isArray}}" restamp="true">
+                    <div class="rovTableStyleCell" style$="{{rowValObj.style}}" title$="{{rowValObj.title}}">{{rowValObj.val}}</div>
+                  </template>
+                </template>
+              </div>
+            </template>
+          </template>
+        </template>
+      </div>
+      </div>
+    </span>
+    <div style="display:table" id="rovTreeTable" hidden$="{{!isTreeView}}">
+      <div class="rovThead">
+        <div class="rovTr">
+          <template is="dom-repeat" items="{{treeTable.columns}}">
+            <div class="rovTh">{{item}}</div>
+          </template>
+        </div>
+      </div>
+      <div style="display:table-row-group;">
+        <template id="rovTreeTemplate" is="dom-repeat" items="{{treeTable}}" as="treeItem">
+          <template is="dom-if" if="{{treeItem.expanded}}">
+            <div class="rovTr">
+              <div class="treeNode" style$="{{treeItem.style}}" id$="{{treeItem.parentNode}}" on-tap="treeNodeTapped"><iron-icon class="treeNodeIcon" icon="remove"></iron-icon>{{treeItem.parentNode}}</div>
+              <div class="rovTd"></div>
+            </div>
+            <template is="dom-repeat" items="{{treeItem.childRows}}" as="row">
+              <div class="rovTr">
+                <div class="childCell" style$="{{row.0.style}}">{{row.0.val}}</div>
+                <div class="rovTd" style$="{{row.1.style}}">{{row.1.val}}</div>
+              </div>
+            </template>
+          </template>
+          <template is="dom-if" if="{{!treeItem.expanded}}">
+            <div class="rovTr">
+              <div class="treeNode" style$="{{treeItem.style}}" id$="{{treeItem.parentNode}}" on-tap="treeNodeTapped"><iron-icon class="treeNodeIcon" icon="add"></iron-icon>{{treeItem.parentNode}}</div>
+              <div class="rovTd"></div>
+            </div>
+          </template>
+        </template>
+      </div>
+    </div>
+    <div style="display:table" id="rovTreeTableTable" hidden$="{{!isTreeTableView}}">
+      <div class="rovThead">
+        <div class="rovTr">
+          <div class="rovTh"></div>
+          <template is="dom-repeat" items="{{treeTableTable.columns}}">
+            <div class="rovTh" draggable="{{colsDraggable}}" on-dragstart="columnDragStart" on-dragover="columnDragOver" on-drop="columnDrop">{{item}}</div>
+          </template>
+        </div>
+      </div>
+      <div style="display:table-row-group;">
+        <template id="rovTreeTableTemplate" is="dom-repeat" items="{{treeTableTable}}" as="ttItem">
+          <template is="dom-if" if="{{ttItem.expanded}}" restamp="true">
+            <div class="rovTr">
+              <div class="rawNode" id$="{{ttItem.parentNode}}" on-tap="ttNodeTapped"><iron-icon class="rawNodeIcon" icon="remove"></iron-icon>{{ttItem.parentNode}}</div>
+            </div>
+            <template is="dom-repeat" items="{{ttItem.childRows}}" as="row">
+              <template is="dom-if" if="{{row.hasIcon}}" restamp="true">
+                <div class="rovTr">
+                  <div class="rovTableStyleCell" style$="{{row.style}}" id$="{{row.id}}" on-tap="chttNodeTapped"><iron-icon class="rawNodeIcon" icon$="{{row.icon}}"></iron-icon>{{row.name}}</div>
+                </div>
+              </template>
+              <template is="dom-if" if="{{!row.hasIcon}}" restamp="true">
+                <template is="dom-if" if="{{row.atMax}}">
+                  <div class="rovTr">
+                    <div class="rovTableStyleCell" style$="{{row.style}}">{{row.name}}</div>
+                    <div class="rovTd">Max depth</div>
+                  </div>
+                </template>
+                <template is="dom-if" if="{{!row.atMax}}">
+                  <div class="rovTr">
+                    <div class="rovTableStyleCell" style$="{{row.style}}"></div>
+                    <template is="dom-repeat" items="{{row.cells}}" as="cellObj">
+                      <template is="dom-if" if="{{cellObj.isArray}}" restamp="true">
+                        <div class="rovTdDropdownCell" style$="{{cellObj.style}}" title$="{{cellObj.title}}" on-mouseover="cellDropMouseOver">{{cellObj.val}}<iron-icon class="cellDropIcon" icon="more-vert"></iron-icon>
+                          <ul class="cellList">
+                            <template is="dom-repeat" items="{{cellObj.arrVals}}" as="arrVal">
+                              <li class="cellListItem">{{arrVal}}</li>
+                            </template>
+                          </ul>
+                        </div>
+                      </template>
+                      <template is="dom-if" if="{{!cellObj.isArray}}" restamp="true">
+                        <div class="rovTd" style$="{{cellObj.style}}" title$="{{cellObj.title}}">{{cellObj.val}}</div>
+                      </template>
+                    </template>
+                  </div>
+                </template>
+              </template>
+            </template>
+          </template>
+          <template is="dom-if" if="{{!ttItem.expanded}}">
+            <div class="rovTr">
+              <div class="rawNode" id$="{{ttItem.parentNode}}" on-tap="ttNodeTapped"><iron-icon class="rawNodeIcon" icon="add"></iron-icon>{{ttItem.parentNode}}</div>
+            </div>
+          </template>
+        </template>
+      </div>
+    </div>
+    <div style="display:table" id="rovRawTable" hidden$="{{!isRawView}}">
+      <div class="rovThead">
+        <div class="rovTr">
+          <template is="dom-repeat" items="{{rawTable.columns}}">
+            <div class="rovTh">{{item}}</div>
+          </template>
+        </div>
+      </div>
+      <div style="display:table-row-group;">
+        <template id="rovRawTemplate" is="dom-repeat" items="{{rawTable}}" as="rawItem">
+          <template is="dom-if" if="{{rawItem.expanded}}" restamp="true">
+            <div class="rovTr">
+              <div class="rawNode" id$="{{rawItem.parentNode}}" style$="{{rawItem.style}}" on-tap="rawNodeTapped"><iron-icon class="rawNodeIcon" icon="remove"></iron-icon>{{rawItem.parentNode}}</div>
+              <div class="rovTd"></div>
+            </div>
+            <template is="dom-repeat" items="{{rawItem.childRows}}" as="row">
+              <template is="dom-if" if="{{row.hasIcon}}">
+                <div class="rovTr">
+                  <div class="rovTableStyleCell" style$="{{row.style}}" id$="{{row.id}}" on-tap="chRawNodeTapped"><iron-icon class="rawNodeIcon" icon$="{{row.icon}}"></iron-icon>{{row.property}}</div>
+                  <div class="rovTd"></div>
+                </div>
+              </template>
+              <template is="dom-if" if="{{!row.hasIcon}}">
+                <div class="rovTr">
+                  <div class="rovTableStyleCell" style$="{{row.style}}">{{row.property}}</div>
+                  <div class="rovTableStyleCell" style$="{{row.valStyle}}" title$="{{row.valTitle}}">{{row.value}}</div>
+                </div>
+              </template>
+            </template>
+          </template>
+          <template is="dom-if" if="{{!rawItem.expanded}}">
+            <div class="rovTr">
+              <div class="rawNode" id$="{{rawItem.parentNode}}" style$="{{rawItem.style}}" on-tap="rawNodeTapped"><iron-icon class="rawNodeIcon" icon="add"></iron-icon>{{rawItem.parentNode}}</div>
+              <div class="rovTd"></div>
+            </div>
+          </template>
+        </template>
+      </div>
+    </div>
+  </template>
+  <script src="ti-rov-table.js"></script>
+</dom-module>
+

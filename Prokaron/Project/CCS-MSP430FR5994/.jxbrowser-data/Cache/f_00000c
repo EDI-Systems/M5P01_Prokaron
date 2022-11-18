@@ -1,0 +1,1316 @@
+<link rel="import" href="../../components/polymer/polymer.html">
+<link rel="import" href="../../elements/ti-rov-styles/ti-rov-viewStyles.html">
+<link rel="import" href="../../elements/ti-rov-behaviors/ti-rov-behaviors.html">
+<link rel="import" href="../../components/paper-styles/paper-styles.html">
+<link rel="stylesheet" href="../../components/paper-styles/demo.css">
+<link rel="import" href="../../components/iron-icons/iron-icons.html">
+<link rel="import" href="../../components/iron-icons/av-icons.html">
+<link rel="import" href="../../components/iron-icons/hardware-icons.html">
+<link rel="import" href="../../components/iron-icons/device-icons.html">
+<link rel="import" href="../../components/paper-drawer-panel/paper-drawer-panel.html">
+<link rel="import" href="../../components/paper-header-panel/paper-header-panel.html">
+<link rel="import" href="../../components/paper-toolbar/paper-toolbar.html">
+<link rel="import" href="../../components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../components/paper-button/paper-button.html">
+<link rel="import" href="../../components/paper-item/paper-item.html">
+<link rel="import" href="../../components/iron-collapse/iron-collapse.html">
+<link rel="import" href="../../components/paper-menu/paper-menu.html">
+<link rel="import" href="../../components/paper-material/paper-material.html">
+<link rel="import" href="../../components/paper-card/paper-card.html">
+<link rel="import" href="../../components/paper-input/paper-input.html">
+<link rel="import" href="../../components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../components/paper-progress/paper-progress.html">
+<link rel="import" href="../../components/paper-toast/paper-toast.html">
+<link rel="import" href="../../components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../elements/ti-rov-view/ti-rov-view.html">
+
+<!-- This overrides default paper-header-panel style
+      paper-header-panel::shadow .paper-header-panel {
+        overflow-x: auto !important;
+      }
+
+      Example of using a style mixin: --paper-menu-selected-item
+      #modulesMenu {
+        font-family: arial;
+        font-size: 14px;
+        margin-left: 15px;
+        margin-bottom: 10px;
+        --paper-menu-selected-item : {
+          font-style: italic;
+        };
+
+-->
+
+<dom-module id="ti-rov-panel">
+  <template>
+    <!-- include global rov styles -->
+    <style include="ti-rov-styles"></style>
+    <style is="custom-style">
+    paper-drawer-panel {
+      font-family: var(--rovFontFamily);
+      --paper-drawer-panel-main-container: {
+          background-color: var(--rovMainBackground);
+      };
+      }
+      paper-header-panel::shadow .paper-header-panel {
+        overflow-x: auto !important;
+      }
+      paper-item {
+        cursor: pointer;
+        font-family: var(--rovFontFamily);
+        font-size: var(--rovContentFontSize);
+      }
+      #modulesMenu, #favoritesMenu {
+        font-family: var(--rovFontFamily);
+        font-size: var(--rovContentFontSize);
+        margin-left: 5px;
+        padding-left: 0px;
+        margin-bottom: 10px;
+      }
+      #filterToolbar {
+        display:block;
+        height: 48px;
+        min-width: 184px;
+        background-color: var(--rovFilterToolbarBackground);
+        box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.24);
+        margin-bottom: 5px;
+      }
+      #rovTitleToolbar{
+        color: var(--rovTitleToolbarColor);
+        background-color: var(--rovTitleToolbarBackground);
+        height: 48px;
+      }
+      #filterModulesInput {
+        margin-top: 12px;
+        margin-left: 10px;
+        background-color: rgb(255, 255, 255);
+        width: 130px;
+      }
+      #filterButtonLeft{
+        margin-top: 12px;
+        width: 36px;
+        height: 36px;
+        color: var(--rovTitleToolbarColor);
+        padding-left: 0px;
+        background-color: transparent;
+      }
+      #modulesMaterial {
+        position: relative;
+        overflow-y: auto;
+        width: 100%;
+        height: calc(100% - 48px);
+        background-color: var(--rovMainBackground);
+        min-width: 184px;
+        box-shadow: 0px -1px 10px 2px rgba(0, 0, 0, 0.14) !important;
+      }
+      #filterButtonRight{
+        margin-left: 0px;
+        margin-top: 12px;
+        padding-left: 4px;
+        color: var(--rovTitleToolbarColor);
+        background-color: transparent;
+        width: 36px;
+        height: 36px;
+      }
+      #modsLabel {
+        margin-top: 20px;
+        margin-left: -1px;
+        color: var(--rovTitleToolbarColor);
+      }
+      #favModsLabel {
+        display: inline-block;
+        margin-top: 18px;
+        margin-left: -1px;
+        color: var(--rovTitleToolbarColor);
+      }
+      #listDashboardsDialog, #listViewsDialog, #otherViewsDialog, #rovOptionsMenuDialog {
+        position: fixed;
+        top: 24px;
+        --paper-dialog-background-color: var(--rovTitleToolbarBackground);
+        --paper-dialog-color: var(--rovTitleToolbarColor);
+        @apply(--layout-vertical);
+        @apply(--layout-self-stretch);
+      }
+      #listViewsDialog, #otherViewsDialog {
+        margin-left: 0px;
+      }
+      #rovOptionsMenuDialog {
+        margin-right: 0px;
+        right:0px;
+        font-size: var(--rovContentFontSize);
+        font-family: var(--rovFontFamily);
+      }
+      .attachedMenu {
+        --paper-menu-background-color: var(--rovTitleToolbarBackground);
+        --paper-menu-color: var(--rovTitleToolbarColor);
+      }
+      #toggleDrawerBtn {
+        position: absolute;
+        top: 1px;
+        left: 2px;
+        padding: 2px 2px 2px 2px;
+        width: 26px;
+        height: 26px;
+        --paper-button-ink-color: transparent;
+        color: var(--rovTitleToolbarColor);
+        background-color: transparent;
+      }
+      #openDashboardButton, #saveDashboardButton, #deleteDashboardButton, #rovOptionsButton,
+      #openDashboardFileButton, .toolbarOverflowDialogButton {
+        padding-top: 0px;
+        margin-top: 0px;
+        width: 36px;
+        height: 36px;
+      }
+      #rovOptionsButton {
+        position: absolute;
+        top: 12px;
+        margin-left: 0px;
+        right: 12px;
+      }
+      #openDashboardButton {
+        color: var(--rovTitleToolbarDisabledColor);
+        margin-right: 0px;
+      }
+      #deleteDashboardButton {
+        margin-left: 0px;
+      }
+      #openDashboardFileButton {
+        margin-right: 0px;
+      }
+      #dashboardDiv {
+        position: absolute;
+        top: 0px;
+        right: 66px;
+        height: 48px;
+        display: inline-block;
+        margin-left:0px;
+      }
+      #saveDashboardInput, #exportDashboardsInput {
+        display: inline-block;
+        padding-left: 0px;
+        --paper-input-container-color: #118899;
+        --paper-input-container-focus-color: black;
+        --paper-input-container-input: {
+          font-size: var(--rovContentFontSize);
+          font-family: var(--rovFontFamily);
+          color: black;
+        };
+      }
+      #saveDashboardInput {
+        margin: 0px 0px 0px 0px;
+      }
+      #exportDashboardsInput {
+        /* margin: 0px 0px 10px 0px; */
+        margin: 0px 0px 10px 16px;
+        --paper-input-container: {
+          padding-top: 0px;
+          padding-bottom: 4px;
+        };
+      }
+      #showSavedDashboardsButton, #showExportedDashboardsButton {
+        box-sizing: content-box !important;
+        width: 24px;
+        height: 24px;
+        margin-top: 0px;
+        padding-right: 0px;
+        padding-left: 5px;
+      }
+      #listSavedDashboardsDialog, #introListDashboardsDialog {
+        position: fixed;
+        --paper-dialog-background-color: white;
+        font-size: var(--rovContentFontSize);
+        font-family: var(--rovFontFamily);
+        margin: 0px 0px 0px 0px;
+      }
+      .topitem {
+        display: flex;
+        padding-top: 0px;
+        margin-top: 1px;
+        margin-left: 5px;
+        padding-left: 12px;
+        cursor: pointer;
+      }
+      .subitem {
+        cursor:  default;
+        display: flex;
+        padding-top: 0px;
+        margin-top: 1px;
+        margin-left: 0px;
+      }
+      .subcontent {
+        display: flex;
+        margin-left: 28px;
+        cursor: pointer;
+      }
+      .subcontentmenu {
+        padding-top: 0px;
+        padding-bottom: 0px;
+      }
+      .subicon {
+        --iron-icon-width: 18px;
+        --iron-icon-height: var(--rovSubiconHeight);
+        cursor: pointer;
+      }
+      .topitem::-moz-selection, .subitem::-moz-selection, .subcontent::-moz-selection {
+        background: white;
+      }
+      .topitem::selection, .subitem::selection, .subcontent::selection {
+        background: white;
+      }
+      #stopRepeatRefreshButton, #repeatRefreshButton, #refreshAllButton, #closeAllButton, #saveAllButton, #viewToTopButton, #otherViewsButton {
+        width: 36px;
+        height: 36px;
+      }
+       #refreshAllButton, #otherViewsButton {
+        margin-right: -8px;
+      }
+      #stopRepeatRefreshButton, #overflowStopRepeatRefreshButton {
+        color: red;
+      }
+      .settingsRow {
+        font-family: var(--rovFontFamily);
+        font-size: var(--rovContentFontSize);
+        padding-top: 5px;
+        padding-bottom: 5px;
+        margin-left: 15px;
+      }
+      .settingsH {
+        font-family: var(--rovFontFamily);
+        font-size: var(--rovContentFontSize);
+        font-weight: bold !important;
+        margin-bottom: 1px !important;
+        margin-top: 1px !important;
+        margin-left: 15px;
+      }
+      #rovTitle {
+        position: absolute;
+        top: 19px;
+        left: 45px;
+        font-size: var(--rovTitleFontSize);
+        white-space:nowrap;
+        overflow: hidden;
+      }
+      .erroricon {
+        width: 20px;
+        height: 20px;
+        color: rgb(204, 0, 0);
+        --iron-icon-stroke-color: white;
+      }
+      #exportDashboardCheckbox {
+        margin-left: 16px;
+        margin-top: 10px;
+        padding-left: 0px;
+        --paper-checkbox-unchecked-color: #118899;
+        --paper-checkbox-unchecked-ink-color: transparent;
+        --paper-checkbox-checked-color: #118899;
+        --paper-checkbox-checked-ink-color: #118899;
+        --paper-checkbox-checkmark-color: white;
+        --paper-checkbox-label-color: #333333;
+        font-family: var(--rovFontFamily);
+        font-size: var(--rovContentFontSize);
+      }
+      #modContextDialog,#listDashboardsDialog > *:last-child {
+        margin-bottom: 2px;
+      }
+      #modContextDialog,#listDashboardsDialog > *:first-child {
+        margin-top: 2px;
+      }
+      #modContextMenu {
+        margin-top: 0px !important;
+        margin-bottom: 0px !important;
+        padding: 0px;
+        white-space:nowrap
+      }
+      #modContextItem {
+        display:flex;
+        padding-left: 20px;
+        padding-right: 20px;
+        margin-top: 2px;
+        margin-bottom: 2px;
+        font-size: var(--rovContentFontSize);
+        font-family: var(--rovFontFamily);
+      }
+      #modContextItem:hover {
+        background-color: white;
+        cursor:pointer;
+      }
+      #statusConsole {
+        z-index: 9000;
+        display: inline-block;
+        position: fixed;
+        box-shadow: 0px -1px 3px 1px rgba(0, 0, 0, 0.4);
+        bottom: 0;
+        right: 0;
+        background: whitesmoke;
+      }
+      #closeStatusButton {
+        width: 18px;
+        height: 18px;
+        position: absolute;
+        right: 10px;
+        top: 4px;
+        color: darkslategray;
+        padding: 0;
+        background-color: whitesmoke;
+      }
+      .statusItem {
+        display: flex;
+        padding-top: 0px;
+        margin-top: 1px;
+        margin-left: 5px;
+        margin-bottom: 5px;
+        padding-left: 2px;
+      }
+      .consoleStatusIcon {
+        --iron-icon-width: 18px;
+        --iron-icon-height: 18px;
+        min-width: 18px;
+        min-height: 18px;
+        padding-right: 5px;
+      }
+      .consoleErrorIcon {
+        --iron-icon-width: 18px;
+        --iron-icon-height: 18px;
+        --iron-icon-stroke-color: white;
+        min-width: 18px;
+        min-height: 18px;
+        padding-right: 5px;
+      }
+      .consoleWarningIcon {
+        --iron-icon-width: 18px;
+        --iron-icon-height: 18px;
+        --iron-icon-stroke-color: black;
+        min-width: 18px;
+        min-height: 18px;
+        padding-right: 5px;
+      }
+      #statusList {
+        padding: 0;
+      }
+      #connectDialog {
+        z-index: 9000;
+        display: inline-block;
+        margin: 0;
+        position: fixed;
+        left: 10px !important;
+        top: 52px !important;
+        width: 460px !important;
+        max-width: 460px !important;
+        min-height: 195px !important;
+        background-color: white;
+        outline-style: solid !important;
+        outline-width: 1px !important;
+        outline-color: gray !important;
+
+      }
+      #exesMruButton {
+        padding: 0;
+        width: 24px;
+        height: 24px;
+      }
+      #exeInput {
+        margin-top: 0px;
+        margin-left: 0px;
+        width: 400px;
+        display: inline-block;
+        font-size: var(--rovContentFontSize);
+        --paper-input-container-color: #118899;
+        --paper-input-container-focus-color: black;
+        --paper-input-container-input: {
+          font-size: var(--rovContentFontSize);
+          font-family: var(--rovFontFamily);
+          color: black;
+        };
+        --paper-input-container: {
+          padding-top: 0px;
+          padding-bottom: 4px;
+        };
+      }
+      #commLinkInput {
+        margin-top: 8px;
+        margin-left: 0px;
+        width: 200px;
+        display: inline-block;
+        font-size: var(--rovContentFontSize);
+        --paper-input-container-color: #118899;
+        --paper-input-container-focus-color: black;
+        --paper-input-container-input: {
+          font-size: var(--rovContentFontSize);
+          font-family: var(--rovFontFamily);
+          color: black;
+        };
+        --paper-input-container: {
+          padding-top: 4px;
+          padding-bottom: 4px;
+        };
+      }
+      #connectButton {
+        margin-left: 30px;
+        margin-top: 10px;
+        background: white;
+      }
+      #autoConnectCheckbox {
+        margin-left: 140px;
+      }
+      #connectMessageDiv, #autoConnectStatusDiv {
+        margin-top: 10px;
+        margin-bottom: 10px;
+        margin-right: 5px;
+        font-size: var(--rovContentFontSize);
+        font-family: var(--rovFontFamily);
+        word-wrap: break-word;
+      }
+      #connectMessageDiv {
+        margin-left: 38px;
+      }
+      #autoConnectStatusDiv {
+        margin-left: 30px;
+        padding: 0;
+      }
+      #currentDashboardDiv {
+        height:11px;
+        margin:1px 0px 0px 16px;
+        padding:0px;
+        font-size: 11px;
+        line-height: 11px;
+        cursor: default;
+      }
+      #connectProgress, #autoConnectProgress {
+        display: inline-block;
+        --paper-progress-active-color: #115566;
+        --paper-progress-height: 4px;
+        margin-left: 4px;
+        width: 378px;
+      }
+      #viewToTopMenu, #dashboardNamesMenu, #matchedModulesMenu, #selectModulesViewMenu, #otherViewsMenu {
+        margin-top: 0px;
+        margin-bottom: 10px !important;
+        padding-left: 8px;
+        padding-right: 12px;
+        font-family: var(--rovFontFamily);
+        font-size: var(--rovContentFontSize);
+      }
+      #listSavedDashboardsMenu, #introDashboardNamesMenu {
+        margin-top:0px;
+        margin-bottom:8px;
+        padding-left:0px;
+        padding-right:8px;
+        background-color: white;
+        font-size: var(--rovContentFontSize);
+      }
+      .modulesSelectIcon {
+        width: 24px;
+        height: 24px;
+        background-color: transparent;
+        color: var(--rovTitleToolbarColor);
+        cursor: pointer;
+      }
+      #selectModulesViewDialog {
+        position: fixed;
+        top: 43px;
+        margin-top: 5px;
+        margin-bottom: 0px;
+        margin-left: 0px;
+        margin-right: 0px;
+        --paper-dialog-background-color: var(--rovFilterToolbarBackground);
+        --paper-dialog-color: var(--rovTitleToolbarColor);
+        @apply(--layout-vertical);
+        @apply(--layout-self-stretch);
+      }
+      #selectModulesViewMenu {
+        font-family: var(--rovFontFamily);
+        background-color: var(--rovFilterToolbarBackground);
+      }
+      #discoveredAddOnsList {
+        position: absolute;
+        text-align: right;
+        right: 20px;
+      }
+      #loadAddOnButton {
+        margin-top: 0px;
+        margin-left: 4px;
+        margin-right: 0px;
+        padding: 0px;
+        text-align: left;
+      }
+      #removeAddOnButton, #rediscoverAddOnButton, #addDiscoveredAddOnButton {
+        position: absolute;
+        margin-top: 0px;
+        padding-top: 0px;
+      }
+      #removeAddOnButton {
+        text-align: left;
+        left: 16px;
+      }
+      #rediscoverAddOnButton {
+        text-align: right;
+        right: 9px;
+      }
+      #addDiscoveredAddOnButton {
+        text-align: left;
+        left: 290px;
+      }
+      #addOnInput {
+        --paper-input-container-color: #118899;
+        --paper-input-container-focus-color: black;
+        --paper-input-container-input: {
+          font-size: var(--rovContentFontSize);
+          font-family: var(--rovFontFamily);
+          color: black;
+        };
+        --paper-input-container: {
+          padding-top: 0px;
+          padding-bottom: 4px;
+        };
+        margin-left: 0px;
+        margin-right: 0px;
+        margin-top: 22px;
+        padding: 0px;
+        width: 360px;
+        display: inline-block;
+      }
+      #curAddOnsList, #discoveredAddOnsList {
+        display: inline-block;
+        font-size: var(--rovContentFontSize);
+        font-family: var(--rovFontFamily);
+        --paper-listbox-background-color: whitesmoke;
+        width: 210px;
+        height: 110px;
+        margin-top:0px;
+        margin-right: 0px;
+        margin-left:20px;
+        padding: 4px 0px 0px 0px;
+        overflow-y: auto;
+      }
+      #discoveredAddOnsList {
+        position: absolute;
+        right: 20px;
+      }
+      #dataOptionsDialog {
+        top: 52px;
+        width: 200px;
+        min-width: 200px;
+        height: 240px;
+        min-height: 240px;
+      }
+      #manageAddOnsDialog {
+        font-size: var(--rovContentFontSize);
+        font-family: var(--rovFontFamily);
+        line-height: var(--rovTitleLineHeight);
+        position: fixed;
+        width: 525px;
+        min-width: 525px;
+        min-height: 240px;
+        max-width: 525px;
+        max-height: 276px;
+        left: 10px !important;
+        top: 52px;
+        margin: 0;
+      }
+      #addOnMruButton, #exeMruButton, #commLinkMruButton {
+        box-sizing: content-box !important;
+        padding: 0;
+        width: 24px;
+        height: 24px;
+      }
+      #showAddOnInput, #hideAddOnInput {
+        box-sizing: content-box !important;
+        padding: 0px;
+      }
+      #showAddOnInput {
+        position: absolute;
+        width: 18px;
+        height: 18px;
+        left: 364px;
+      }
+      #hideAddOnInput {
+        margin-left: 25px;
+        width: 16px;
+        height: 16px;
+      }
+      #addOnMruDialog, #exeMruDialog, #commLinkMruDialog {
+        position: fixed;
+        margin: 0px 0px 0px 12px;
+        padding: 0;
+      }
+      #exeMruButton, #commLinkMruButton {
+        margin-left:10px;
+      }
+      #addOnMruMenu, #exeMruMenu, #commLinkMruMenu {
+        margin-top:0px;
+        margin-bottom:0px;
+        padding-bottom:4px;
+        padding-left:4px;
+        padding-right:8px;
+        background-color: white;
+      }
+      .addOnMruMenuItem, .exeMruMenuItem, .commLinkMruMenuItem {
+        --paper-item-min-height: 24px;
+        font-size: var(--rovContentFontSize);
+        font-family: var(--rovFontFamily);
+        margin-top:0px;
+        margin-bottom:0px;
+        padding-left:0px;
+        padding-right:8px;
+        background-color: white;
+      }
+      #manageStorageDialog {
+        position: fixed;
+        top: 52px;
+        height: 350px;
+        min-height: 350px;
+      }
+      #viewsStorageList {
+        --paper-listbox-background-color: whitesmoke;
+        padding-top: 0px;
+        height: 215px;
+        min-height: 215px;
+        max-height: 230px;
+        min-width: 290px;
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
+      #overwriteDashboardsDialog {
+        margin: 0;
+        top: 52px;
+        height: 270px;
+        min-height: 270px;
+      }
+      #exportDashboardsDialog {
+        margin: 0;
+        top: 52px;
+        height: 280px;
+        min-height: 280px;
+      }
+      #overwriteDashboardsList, #exportDashboardsList {
+        --paper-listbox-background-color: whitesmoke;
+        height: 140px;
+        min-height: 140px;
+        max-height: 140px;
+        max-width: 260px;
+        width: 260px;
+        margin: 0;
+        padding-top: 0px;
+        padding-bottom: 0px;
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
+      #rovOptionsMenu {
+        margin: 0px;
+        padding: 10px 0px 10px 0px;
+      }
+      #clearViewStorageButton, #clearViewStorageDone, #overwriteDashboardsButton,
+      #overwriteDashboardsDone, #exportDashboardsButton, #exportDashboardsDone {
+        padding-top: 0px;
+        padding-bottom: 0px;
+      }
+      #clearViewStorageDone {
+        padding-right: 0px;
+      }
+      .rovOptionsItem {
+        padding-left: 0px;
+        font-family: var(--rovFontFamily) !important;
+        font-size: var(--rovContentFontSize) !important;
+        --paper-item-min-height: 24px;
+      }
+      .rovOptionsMenuButtonIcon {
+        height: 20px;
+        width: 20px;
+      }
+      .rovOptionsMenuButton {
+        padding-top: 0px;
+        padding-bottom: 0px;
+        margin-top: 3px;
+        margin-bottom: 3px;
+        text-transform: none;
+      }
+      .rovPanelDropdownItem {
+        font-family: var(--rovFontFamily);
+        font-size: var(--rovContentFontSize);
+        --paper-item-min-height: 24px;
+        cursor: pointer;
+        padding-left: 8px;
+        padding-right: 8px;
+      }
+      #showConnectDialogCheckbox {
+        padding-top: 0px;
+        padding-bottom: 0px;
+        padding-left: 8px;
+        margin-top: 4px;
+        margin-bottom: 4px;
+        margin-left: 6px;
+        --paper-checkbox-unchecked-color: var(--rovTitleToolbarColor);
+        --paper-checkbox-unchecked-ink-color: transparent;
+        --paper-checkbox-checked-color: var(--rovTitleToolbarColor);
+        --paper-checkbox-checked-ink-color: transparent;
+        --paper-checkbox-checkmark-color: var(--rovTitleToolbarBackground);
+        --paper-checkbox-label-color: var(--rovTitleToolbarColor);
+        --paper-checkbox-size: 16px;
+        font-weight: normal;
+      }
+      #autoConnectProgressDialog {
+        position: fixed;
+        left: 10px !important;
+        top: 52px !important;
+        margin: 0;
+        width: 460px !important;
+        max-width: 460px !important;
+        font-family: var(--rovFontFamily);
+        font-size: var(--rovContentFontSize);
+        line-height: 16px;
+      }
+      .addOnListItem, .viewsStorageListItem, .selectModulesViewMenuItem, .dashboardsChecklistItem {
+        --paper-item-min-height: 22px;
+        height: 22px;
+        font-family: var(--rovFontFamily);
+        cursor: pointer;
+        padding-left: 8px;
+        padding-right: 8px;
+      }
+      .addOnListItem, .viewsStorageListItem, .dashboardsChecklistItem {
+        font-size: var(--rovContentFontSize);
+      }
+      .selectModulesViewMenuItem {
+        font-size: var(--rovTitleFontSize);
+      }
+      #overwriteDashboardsLabel {
+        font-family: var(--rovFontFamily);
+        font-size:var(--rovContentFontSize);
+        font-weight:normal;
+        white-space:normal;
+       }
+       .rovOptionsMenuLabel {
+         cursor: pointer;
+       }
+       #addOnErrorToast {
+         position: absolute;
+         --paper-toast-background-color: #CC0000;
+         --paper-toast-color: white;
+         word-wrap: break-word;
+         max-height: 300px;
+       }
+       #addOnErrorClose {
+         width: 20px;
+         height: 20px;
+         background-color: transparent;
+         color: white;
+         position: absolute;
+         padding: 0;
+         right: 4px;
+         top: 2px;
+       }
+      #saveDashboardDialog {
+        top: 52px;
+      }
+      #confirmDialog {
+        top: 78px;
+      }
+      #saveDashboardComment {
+        font-family: var(--rovFontFamily);
+        font-size: var(--rovContentFontSize);
+        resize: none;
+        width: 88%;
+      }
+      .rovDialogInput:focus {
+        outline: none !important;
+        border-color: #118899;
+      }
+      #saveDashboardComment:focus {
+        outline: none !important;
+        border-color: #118899;
+        box-shadow: 0 0 1px #118899;
+      }
+      #dashboardOverflowDialog, #titleOverflowDialog {
+        position: fixed;
+        top: 28px;
+        --paper-dialog-background-color: var(--rovTitleToolbarBackground);
+        --paper-dialog-color: var(--rovTitleToolbarColor);
+        @apply(--layout-vertical);
+        @apply(--layout-self-stretch);
+        margin-top: 20px;
+        margin-right: 0px;
+        margin-left: 0px;
+        margin-bottom: 0px;
+        padding-top: 12px;
+      }
+      #dashboardOverflowDialog {
+        right: 36px;
+      }
+      #dashboardOverflowDialogButton, #titleOverflowDialogButton {
+        position: absolute;
+        top: 20px;
+        right: 40px;
+        margin-top: 0px;
+        margin-left: 0px;
+        padding-left: 4px;
+        padding-top: 0px;
+        padding-right: 4px;
+        width: 28px;
+        height: 28px;
+      }
+      #dashboardOverflowDialogButton {
+        right: 40px;
+      }
+      #titleOverflowDialogButton {
+        left: 14px;
+      }
+      .toolbarOverflowDialogButton {
+        padding-left: 8px;
+        padding-right: 8px;
+        padding-bottom: 8px;
+        margin-bottom: 0px;
+      }
+      #introDialog {
+        position: fixed;
+        left: 184px !important;
+        top: 48px !important;
+        min-width: 364px;
+      }
+      .introDashboardItem {
+        color: #118899;
+      }
+      .introDashboardItem:hover {
+        text-decoration: underline;
+      }
+      #noIntroCheckbox {
+        margin-left: 80px;
+      }
+      #introDashboardsButton {
+        margin-left: 40px;
+      }
+    </style>
+    <paper-dialog id="openingDashboardAlertDialog" role="alertdialog" on-iron-overlay-closed="openingDashboardAlertDialogClosed" alwaysOnTop>
+      <h3 class="rovDialogTitle">Open dashboard<iron-icon id="openingDashboardAlertDialogClose" class="rovDialogCloseIcon" icon="close" on-click="dialogCloseClicked"></iron-icon></h3>
+      <div class="rovDialogLabel">This will close all currently open views. Proceed?</div>
+      <div class="buttons">
+        <paper-button dialog-confirm autofocus>OK</paper-button>
+        <paper-button dialog-dismiss>Cancel</paper-button>
+      </div>
+    </paper-dialog>
+    <div id="connectDialog" hidden>
+      <h2 class="rovDialogTitle">Connect Target</h2>
+      <div>
+        <paper-icon-button id="exeMruButton" icon="arrow-drop-down" on-click="mruClicked" role="button"></paper-icon-button>
+        <paper-input autofocus label="Executable path" id="exeInput" type="text" placeholder=" " on-keypress="connectKeyPress" on-click="exeInputClicked"></paper-input>
+        <iron-icon id="exeInputInvalid" class="erroricon" title="Invalid exe" icon="error" hidden></iron-icon>
+      </div>
+      <div>
+        <paper-icon-button id="commLinkMruButton" icon="arrow-drop-down" on-click="mruClicked" role="button"></paper-icon-button>
+        <paper-input label="Target communication link" id="commLinkInput" type="text" placeholder=" "  on-keypress="connectKeyPress"></paper-input>
+        <iron-icon id="commLinkInputInvalid" class="erroricon" title="Invalid COM port" icon="error" hidden></iron-icon>
+      </div>
+      <paper-button tabindex="0" id="connectButton" class="rovDialogButton" on-click="connectClicked">Connect</paper-button>
+      <paper-checkbox class="rovCheckbox" id="autoConnectCheckbox">Do not show this again</paper-checkbox>
+      <div id="connectMessageDiv" hidden>
+        <iron-icon id="connectErrorIcon" class="erroricon" icon="error" hidden></iron-icon>
+        <label>{{connectMessage}}</label>
+        <paper-progress id="connectProgress"></paper-progress>
+      </div>
+      <paper-dialog id="commLinkMruDialog">
+        <paper-menu id="commLinkMruMenu" on-iron-select="mruSelected">
+          <template is="dom-repeat" items="{{commLinkMrus}}" as="mruItem">
+            <paper-item class="commLinkMruMenuItem" role="menuitem">{{mruItem}}</paper-item>
+          </template>
+        </paper-menu>
+      </paper-dialog>
+      <paper-dialog id="exeMruDialog">
+        <paper-menu id="exeMruMenu" on-iron-select="mruSelected">
+          <template is="dom-repeat" items="{{exeMrus}}" as="mruItem">
+            <paper-item class="exeMruMenuItem" role="menuitem">{{mruItem}}</paper-item>
+          </template>
+        </paper-menu>
+      </paper-dialog>
+    </div>
+    <paper-dialog id="autoConnectProgressDialog" no-cancel-on-outside-click alwaysOnTop>
+      <h2 class="rovDialogTitle">Connect Target</h2>
+      <div style="width:100%;text-align:center;margin:0px 0px 16px 0px;padding:0;">
+        <label class="rovDialogLabel">{{autoConnectMessage}}</label>
+      </div>
+      <div id="autoConnectStatusDiv">
+        <label>{{connectMessage}}</label>
+        <paper-progress id="autoConnectProgress"></paper-progress>
+      </div>
+    </paper-dialog>
+    <paper-dialog id="manageAddOnsDialog" on-click="dlgClicked" on-iron-overlay-closed="dialogClosed" on-iron-overlay-opened="dialogOpened" no-cancel-on-outside-click alwaysOnTop>
+      <h2 class="rovDialogTitle"><iron-icon style="height:20px;width:20px;margin-right:8px;" icon="hardware:devices-other"></iron-icon>ROV Add-on Views<iron-icon id="manageAddOnsDialogClose" class="rovDialogCloseIcon" icon="close" on-click="addOnDoneClicked"></iron-icon></h2>
+      <div style="margin-top:20px;padding:0px;margin-left:24px;margin-right:0px;">
+        <paper-checkbox id="selectAllCurrentAddOnsCheckbox" class="rovCheckbox" style="margin:0px 0px 2px 4px;" on-click="selectAllCurrentAddOnsClicked" title="Select all"></paper-checkbox>
+        <label class="rovDialogLabel" style="position:absolute;right:300px;">Imported add-ons</label>
+        <paper-checkbox id="selectAllDiscoveredAddOnsCheckbox" class="rovCheckbox" style="position:absolute;left:299px;margin:0px 0px 2px 4px;" on-click="selectAllDiscoveredAddOnsClicked" title="Select all"></paper-checkbox>
+        <label class="rovDialogLabel"
+               style="position:absolute;right:26px;">Available add-ons</label>
+      </div>
+      <paper-listbox id="curAddOnsList" role="listbox">
+        <template id="curAddOnsTemplate" is="dom-repeat" items="{{dlgOtherViews}}" as="view">
+          <paper-item class="addOnListItem">
+            <paper-checkbox class="rovCheckbox" on-click="curAddOnClicked" title$="{{view.path}}">{{view.name}}</paper-checkbox>
+          </paper-item>
+        </template>
+      </paper-listbox>
+      <paper-listbox id="discoveredAddOnsList" role="listbox">
+        <template id="discoveredAddOnsTemplate" is="dom-repeat" items="{{dlgDiscoveredAddOns}}" as="addOn">
+          <paper-item class="addOnListItem">
+            <paper-checkbox class="rovCheckbox" on-click="discoveredAddOnClicked" title$="{{addOn.path}}">{{addOn.name}}</paper-checkbox>
+          </paper-item>
+        </template>
+      </paper-listbox>
+      <div class="buttons" style="margin-top:4px;padding-top:0px;padding-bottom:0px;">
+        <paper-button class="rovDialogButton" id="removeAddOnButton" on-click="removeAddOnClicked" disabled>Remove</paper-button>
+        <paper-button class="rovDialogButton" id="addDiscoveredAddOnButton" on-click="addDiscoveredAddOnClicked" disabled>Import</paper-button>
+        <paper-icon-button class="rovDialogButton" id="showAddOnInput" icon="create" on-click="showAddOnInputClicked" title="Enter add-on location" role="button"></paper-icon-button>
+        <paper-button class="rovDialogButton" id="rediscoverAddOnButton" on-click="rediscoverAddOnsClicked">Rediscover</paper-button>
+      </div>
+      <paper-icon-button id="hideAddOnInput" class="rovDialogButton" icon="close" on-click="showAddOnInputClicked" title="Hide enter add-on location" role="button" hidden></paper-icon-button>
+      <paper-icon-button id="addOnMruButton" icon="arrow-drop-down" on-click="mruClicked" role="button" hidden></paper-icon-button>
+      <paper-input id="addOnInput" type="text" placeholder="Enter add-on location" no-label-float no-animations autofocus on-input="addOnOnInput" on-keypress="addOnKeyPress" hidden></paper-input>
+      <paper-button class="rovDialogButton" id="loadAddOnButton" on-click="loadAddOnClicked" disabled hidden>Import</paper-button>
+      <paper-button id="closeManageAddOnsDialogButton" class="rovDialogButton" style="position:absolute;bottom:8px;left:211px;margin-top:0px;padding-top:0px;" on-click="addOnDoneClicked">Close</paper-button>
+      <paper-toast id="addOnErrorToast" duration="0" style="margin-left:10px;margin-bottom:40px">
+        <paper-icon-button id="addOnErrorClose" icon="close" on-click="addOnErrorCloseClicked" role="button"></paper-icon-button><br>
+      </paper-toast>
+      <paper-dialog id="addOnMruDialog">
+        <paper-menu id="addOnMruMenu" on-iron-select="addOnMruSelected">
+          <template is="dom-repeat" items="{{addOnMrus}}" as="mruItem">
+            <paper-item class="addOnMruMenuItem" role="menuitem">{{mruItem}}</paper-item>
+          </template>
+        </paper-menu>
+      </paper-dialog>
+    </paper-dialog>
+    <paper-dialog id="introDialog" class="rovDialog" no-cancel-on-outside-click alwaysOnTop on-iron-overlay-opened="dialogOpened" on-iron-overlay-closed="introDialogClosed">
+      <h2 class="rovDialogTitle">Gettting Started<iron-icon id="introDialogClose" class="rovDialogCloseIcon" icon="close" on-click="dialogCloseClicked"></iron-icon></h2>
+      <div style="width:100%;text-align:center;margin:0px 0px 12px 0px;padding:0;">
+        <label class="rovDialogLabel">{{introMessage}}</label>
+      </div>
+      <div style="padding:0px;margin-top:0px;">
+        <iron-icon icon="hardware:keyboard-backspace"></iron-icon>
+        <label class="rovDialogLabel">{{introModulesMessage}}</label>
+        <label class="rovDialogLabel" id="introOr" style="margin-left:38px;">or</label>
+        <paper-button class="rovDialogButton" id="introDashboardsButton" on-click="introDashboardsClicked">Open a dashboard</paper-button>
+      </div>
+      <paper-button class="rovDialogButton" id="introClose" dialog-dismiss>Close</paper-button>
+      <paper-checkbox class="rovCheckbox" id="noIntroCheckbox" style="margin-bottom:14px;">Do not show this again</paper-checkbox>
+    </paper-dialog>
+    <paper-dialog id="introListDashboardsDialog" class="rovDialog">
+      <paper-menu id="introDashboardNamesMenu" on-iron-select="dashboardSelected">
+        <template is="dom-repeat" items="{{dashboardNames}}" as="dash">
+          <paper-item class="rovPanelDropdownItem introDashboardItem" role="menuitem" title$="{{dash.comment}}">{{dash.name}}</paper-item>
+        </template>
+      </paper-menu>
+    </paper-dialog>
+    <paper-dialog id="selectModulesViewDialog">
+      <paper-menu id="selectModulesViewMenu" on-iron-select="modulesViewItemSelected" class="attachedMenu">
+        <template is="dom-repeat" items="{{otherModsLabels}}" as="label">
+          <paper-item class="selectModulesViewMenuItem" role="menuitem" id="all">{{label}}</paper-item>
+        </template>
+      </paper-menu>
+    </paper-dialog>
+    <paper-drawer-panel id="rovDrawerPanel" style="min-width:184px" drawer-width="184px" responsive-width="0px">
+    <div drawer on-dragstart="drawerDragStart" on-dragover="drawerDragOver" on-dragenter="drawerDragEnter" on-drop="drawerDrop">
+        <span id="filterToolbar">
+          <template is="dom-if" if="{{allModulesVisible}}">
+            <template is="dom-if" if="{{showFilterButtonRight}}">
+              <span id="modsLabel"><iron-icon class="modulesSelectIcon" icon="arrow-drop-down" on-click="selectModulesViewDialogClicked" title="Select modules list"></iron-icon>{{curModsLabel}}</span>
+              <paper-icon-button id="filterButtonRight" icon="filter-list" on-click="filterRightClicked" title="Filter modules" role="button" tabindex="0"></paper-icon-button>
+            </template>
+            <template is="dom-if" if="{{showFilterButtonLeft}}">
+              <input id="filterModulesInput" type="search" placeholder="Filter Modules" on-input="filterModulesChanged" tabindex="1" autofocus></input>
+              <paper-icon-button id="filterButtonLeft" icon="close" on-click="filterLeftClicked" title="Close filter modules" role="button" tabindex="0"></paper-icon-button>
+            </template>
+          </template>
+          <template is="dom-if" if="{{!allModulesVisible}}">
+            <span id="favModsLabel"><iron-icon class="modulesSelectIcon" icon="arrow-drop-down" on-click="selectModulesViewDialogClicked" title="Select modules list"></iron-icon>{{curModsLabel}}</span>
+          </template>
+        </span>
+        <paper-material id="modulesMaterial" elevation="4">
+          <template is="dom-if" if="{{allModulesVisible}}">
+            <ul id="modulesMenu">
+              <template is="dom-repeat" items="{{tocItems}}" as="item">
+                <template is="dom-if" if="{{!item.hasDups}}">
+                  <li id$="{{item.id}}" title$="{{item.id}}" class="topitem" on-click="modClicked" on-contextmenu="modContextMenu">{{item.name}}</li>
+                </template>
+                <template is="dom-if" if="{{item.hasDups}}" restamp="true">
+                  <template is="dom-if" if="{{item.expanded}}">
+                    <li id$="{{item.id}}" class="subitem" on-click="subMenuClicked"><iron-icon class="subicon" icon="expand-less"></iron-icon>{{item.name}}</li>
+                    <template is="dom-repeat" items="{{item.dups}}" as="dupItem">
+                      <li id$="{{dupItem.id}}" title$="{{item.id}}" class="subcontent" on-click="modClicked" on-contextmenu="modContextMenu">{{dupItem.name}}</li>
+                    </template>
+                  </template>
+                  <template is="dom-if" if="{{!item.expanded}}">
+                    <li id$="{{item.id}}" class="subitem" on-click="subMenuClicked"><iron-icon class="subicon" icon="expand-more"></iron-icon>{{item.name}}</li>
+                  </template>
+                </template>
+              </template>
+            </ul>
+          </template>
+          <template is="dom-if" if="{{!allModulesVisible}}">
+            <ul id="favoritesMenu">
+              <template is="dom-repeat" items="{{favoriteTocItems}}" as="item">
+                <template is="dom-if" if="{{!item.hasDups}}">
+                  <li id$="{{item.id}}" title$="{{item.id}}" class="topitem" on-click="modClicked" on-contextmenu="modContextMenu">{{item.name}}</li>
+                </template>
+                <template is="dom-if" if="{{item.hasDups}}" restamp="true">
+                  <template is="dom-if" if="{{item.expanded}}">
+                    <li id$="{{item.id}}" class="subitem" on-click="subMenuClicked"><iron-icon class="subicon" icon="expand-less"></iron-icon>{{item.name}}</li>
+                    <template is="dom-repeat" items="{{item.dups}}" as="dupItem">
+                      <li id$="{{dupItem.id}}" title$="{{item.id}}" class="subcontent" on-click="modClicked" on-contextmenu="modContextMenu">{{dupItem.name}}</li>
+                    </template>
+                  </template>
+                  <template is="dom-if" if="{{!item.expanded}}">
+                    <li id$="{{item.id}}" class="subitem" on-click="subMenuClicked"><iron-icon class="subicon" icon="expand-more"></iron-icon>{{item.name}}</li>
+                  </template>
+                </template>
+              </template>
+            </ul>
+          </template>
+          <paper-dialog id="modContextDialog" style="position:fixed;margin:0px !important" alwaysOnTop>
+            <ul id="modContextMenu" >
+              <li id="modContextItem" on-click="modContextMenuItemClicked">{{favoriteMenuItem}}</li>
+            </ul>
+          </paper-dialog>
+        </paper-material>
+     </div>
+     <div main on-dragstart="panelDragStart" on-dragover="panelDragOver" on-dragenter="panelDragEnter" on-drop="panelDrop" on-dragend="panelDragEnd">
+       <paper-header-panel id="rovHeaderPanel" class="main" mode="standard">
+        <!-- Main Toolbar -->
+        <paper-toolbar id="rovTitleToolbar"  on-dragenter="toolbarDragEnter" on-dragover="toolbarDragOver">
+          <span title$="{{toggleTooltip}}" style="margin-left:0px;max-width:30px;"><paper-icon-button id="toggleDrawerBtn" on-click="toggleDrawerClicked" icon={{toggleIcon}} disabled></paper-icon-button></span>
+          <paper-icon-button id="titleOverflowDialogButton" icon="menu" on-click="overflowToolbarButtonClicked" role="button" title="Open the views toolbar" hidden disabled></paper-icon-button>
+          <label id="rovTitle">Runtime Object View</label>
+          <span title id="titleSpan" style="position:absolute;margin-left:0px;left:210px;top:4px;min-width:48px;">
+            <paper-icon-button id="otherViewsButton" icon="hardware:devices-other" on-click="otherViewsDialog" title="Open other view" role="button" hidden$="{{!enableOtherViews}}"></paper-icon-button>
+            <paper-icon-button id="refreshAllButton" icon="refresh" on-click="refreshAllClicked" title="Refresh all" role="button" disabled></paper-icon-button>
+            <paper-icon-button id="repeatRefreshButton" hidden$="{{inRepeatRefresh}}" icon="autorenew" on-click="repeatRefreshClicked" title="Repeat refresh" role="button" disabled></paper-icon-button>
+            <paper-icon-button id="stopRepeatRefreshButton"  hidden$="{{!inRepeatRefresh}}" icon="av:stop" on-click="stopRepeatRefreshClicked" title="Stop repeat refresh" role="button"></paper-icon-button>
+            <paper-icon-button id="saveAllButton" icon="file-download" on-click="saveAllViews" title="Save data displayed in all current views" role="button" disabled></paper-icon-button>
+            <paper-icon-button id="viewToTopButton" icon="flip-to-front" on-click="viewToTopDialog" title="Bring a view to the top" role="button" disabled></paper-icon-button>
+            <paper-icon-button id="closeAllButton" icon="close" on-click="closeAllClicked" title="Close all views" role="button" disabled></paper-icon-button>
+          </span>
+          <div id="dashboardDiv" on-dragenter="dashboardDragEnter" on-dragover="dashboardDragOver" title="">
+            <div id="currentDashboardDiv" title="">{{currentDashboard}}</div>
+            <paper-icon-button id="openDashboardButton" icon="dashboard" on-drop="openDashboardDrop" on-click="openDashboardClicked" role="button" title="" disabled></paper-icon-button>
+            <paper-icon-button id="openDashboardFileButton" icon="folder-open" on-click="openDashboardFileClicked" role="button" title="Import a dashboard" disabled></paper-icon-button>
+            <input type="file" id="openDashboardFileInput" accept=".rov.json" on-change="openDashboardFileSelected" hidden></input>
+            <paper-icon-button id="saveDashboardButton" icon="save" on-click="saveDashboardClicked" role="button" title="Save all current views as a dashboard" disabled></paper-icon-button>
+            <paper-icon-button id="deleteDashboardButton" icon="delete" on-click="deleteDashboardClicked" role="button" title="Delete a dashboard" disabled></paper-icon-button>
+          </div>
+          <paper-icon-button id="dashboardOverflowDialogButton" icon="more-vert" on-click="overflowToolbarButtonClicked" role="button" title="Open the dashboard toolbar" hidden disabled></paper-icon-button>
+          <paper-icon-button id="rovOptionsButton" icon="settings" on-click="rovOptionsClicked" role="button" title="ROV options" disabled></paper-icon-button>
+        </paper-toolbar>
+        <span>
+          <paper-dialog id="saveDashboardDialog" class="rovDialog" on-click="dlgClicked" on-keypress="saveDashboardKeyPress" on-iron-overlay-closed="dialogClosed" on-iron-overlay-opened="dialogOpened" no-cancel-on-outside-click alwaysOnTop>
+            <h3 class="rovDialogTitle">Save Dashboard<iron-icon id="saveDashboardDialogClose" class="rovDialogCloseIcon" icon="close" on-click="dialogCloseClicked"></iron-icon></h3>
+            <paper-icon-button id="showSavedDashboardsButton" icon="arrow-drop-down" on-click="showSavedDashboardsClicked" role="button"></paper-icon-button>
+            <paper-input id="saveDashboardInput" type="text" placeholder="Dashboard name" no-label-float no-animations autofocus></paper-input>
+            <div style="margin-top:10px;margin-left:14px;padding-left:0px;"><label class="rovDialogLabel">Comment</label></div>
+            <div style="margin-top:0px;margin-left:14px;padding-right:0px;margin-right:0px;padding-left:0px;">
+              <textarea id="saveDashboardComment" rows="4"></textarea>
+            </div>
+            <paper-checkbox id="exportDashboardCheckbox">Export file</paper-checkbox>
+            <div style="margin-right:32px;padding-top:0px;padding-bottom:4px;" class="buttons">
+              <paper-button class="rovDialogButton" autofocus on-click="saveDashboardOkClicked">OK</paper-button>
+              <paper-button class="rovDialogButton" dialog-dismiss>Cancel</paper-button>
+            </div>
+          </paper-dialog>
+          <paper-dialog id="listSavedDashboardsDialog">
+            <paper-menu id="listSavedDashboardsMenu" on-iron-select="dashboardSelected">
+              <template is="dom-repeat" items="{{dashboardNames}}" as="dash">
+                <paper-item class="rovPanelDropdownItem" role="menuitem">{{dash.name}}</paper-item>
+              </template>
+            </paper-menu>
+          </paper-dialog>
+          <paper-dialog id="listDashboardsDialog" style="max-width:500px;" on-iron-overlay-closed="listDashboardsDialogClosed">
+            <paper-menu id="dashboardNamesMenu" class="attachedMenu" on-iron-select="dashboardSelected">
+              <template is="dom-repeat" items="{{dashboardNames}}" as="dash">
+                <paper-item class="rovPanelDropdownItem" role="menuitem" title$="{{dash.comment}}">{{dash.name}}</paper-item>
+              </template>
+            </paper-menu>
+          </paper-dialog>
+          <paper-dialog id="confirmDialog" class="rovDialog" on-click="dlgClicked" no-cancel-on-outside-click alwaysOnTop>
+            <h3 class="rovDialogTitle">{{confirmTitle}}<iron-icon id="confirmDialogClose" class="rovDialogCloseIcon" icon="close" on-click="dialogCloseClicked"></iron-icon></h3>
+            <div class="rovDialogLabel">{{confirmLabel}}</div>
+            <div class="buttons">
+              <paper-button class="rovDialogButton" autofocus on-click="confirmOkClicked">OK</paper-button>
+              <paper-button class="rovDialogButton" dialog-dismiss>Cancel</paper-button>
+            </div>
+          </paper-dialog>
+          <paper-dialog id="listViewsDialog">
+            <paper-menu id="viewToTopMenu" on-iron-select="viewToTopMenuItemSelected" class="attachedMenu">
+              <template is="dom-repeat" items="{{viewToTopList}}" as="view">
+                <paper-item class="rovPanelDropdownItem" role="menuitem" id$="{{view.id}}" title$="{{view.fullName}}">{{view.name}}</paper-item>
+              </template>
+            </paper-menu>
+          </paper-dialog>
+          <paper-dialog id="otherViewsDialog" on-iron-overlay-closed="otherViewsDialogClosed">
+            <paper-menu id="otherViewsMenu" on-iron-select="otherViewSelected" class="attachedMenu">
+              <template is="dom-repeat" items="{{dlgOtherViews}}" as="view">
+                <paper-item class="rovPanelDropdownItem" role="menuitem" id$="{{view.element}}" title$="{{view.path}}">{{view.name}}</paper-item>
+              </template>
+            </paper-menu>
+          </paper-dialog>
+          <paper-dialog id="dataOptionsDialog" class="rovDialog" on-click="dlgClicked" on-keypress="dataOptionsKeyPress" on-iron-overlay-closed="dialogClosed" on-iron-overlay-opened="dialogOpened" no-cancel-on-outside-click alwaysOnTop>
+            <h3 class="rovDialogTitle">Data retrieval settings<iron-icon id="dataOptionsDialogClose" class="rovDialogCloseIcon" icon="close" on-click="dialogCloseClicked"></iron-icon></h3>
+            <section id="repeatRefreshSection" style="margin-top:0px;padding-top:0px;padding-bottom:0px;">
+              <h4 class="settingsH">Repeat Refresh</h4>
+              <div class="settingsRow">
+                <label>
+                  <span id="repeatRefreshLabel" style="margin-right:2px">Interval:</span>
+                  <input id="repeatRefreshInput" class="rovDialogInput" type="text" size="5">
+                  <span>ms</span>
+                  <iron-icon id="repeatRefreshInputInvalid" class="erroricon" title="Invalid interval" icon="error" hidden></iron-icon>
+                </label>
+              </div>
+            </section>
+            <section id="dataTimeoutSection" style="margin-top:5px;padding-top:0px;padding-bottom:0px;">
+              <h4 class="settingsH">Read Data Timeout</h4>
+              <div class="settingsRow">
+                <label>
+                  <span id="dataTimeoutLabel" style="margin-right:2px">Period:</span>
+                  <input id="dataTimeoutInput" class="rovDialogInput" type="text" size="5">
+                  <span>ms</span>
+                  <iron-icon id="dataTimeoutInputInvalid" class="erroricon" title="Invalid timeout period" icon="error" hidden></iron-icon>
+                </label>
+              </div>
+            </section>
+            <section id="connectTimeoutSection" style="margin-top:5px;padding-top:0px;padding-bottom:0px;">
+              <h4 class="settingsH">Connect Target Timeout</h4>
+              <div class="settingsRow">
+                <label>
+                  <span id="connectTimeoutLabel" style="margin-right:2px">Period:</span>
+                  <input id="connectTimeoutInput" class="rovDialogInput" type="text" size="5">
+                  <span>ms</span>
+                  <iron-icon id="connectTimeoutInputInvalid" class="erroricon" title="Invalid timeout period" icon="error" hidden></iron-icon>
+                </label>
+              </div>
+            </section>
+            <div class="buttons" style="padding-top:0px;padding-bottom:0px;">
+              <paper-button class="rovDialogButton" autofocus on-click="saveDataOptionsOkClicked">Save</paper-button>
+              <paper-button class="rovDialogButton" dialog-dismiss>Cancel</paper-button>
+            </div>
+          </paper-dialog>
+          <paper-dialog id="manageStorageDialog" class="rovDialog" on-click="dlgClicked" on-keypress="manageStorageKeyPress" on-iron-overlay-closed="dialogClosed" on-iron-overlay-opened="dialogOpened" no-cancel-on-outside-click alwaysOnTop>
+            <h3 class="rovDialogTitle">Delete a view's local storage<iron-icon id="manageStorageDialogClose" class="rovDialogCloseIcon" icon="close" on-click="dialogCloseClicked"></iron-icon></h3>
+            <div style="margin:0px 16px 0px 16px;padding:0px;">
+              <paper-checkbox id="selectAllViewsStorageCheckbox" class="rovCheckbox" style="margin:0px 0px 4px 8px;" on-click="selectAllViewStorageClicked">Select all</paper-checkbox>
+              <paper-listbox id="viewsStorageList" role="listbox">
+                <template is="dom-repeat" items="{{viewsStorageItems}}" as="view">
+                  <paper-item class="viewsStorageListItem"><paper-checkbox class="rovCheckbox" on-change="clearAViewChecked">{{view}}</paper-checkbox></paper-item>
+                </template>
+              </paper-listbox>
+              <div style="margin-top:5px;padding-right:0px" class="buttons">
+                <paper-button class="rovDialogButton" id="clearViewStorageButton" on-click="clearViewStorageClicked" disabled>Delete selected</paper-button>
+                <paper-button class="rovDialogButton" id="clearViewStorageDone" dialog-dismiss>Close</paper-button>
+              </div>
+              <div style="margin:0;padding:0;" class="buttons">
+                <paper-button class="rovDialogButton" id="clearAllStorageButton" on-click="clearAllStorageClicked" style="position:absolute;margin:5px 0px 0px 0px;right:11px;padding:0;">Clear All ROV Storage</paper-button>
+              </div>
+            </div>
+          </paper-dialog>
+          <paper-dialog id="rovOptionsMenuDialog">
+            <paper-menu id="rovOptionsMenu" class="attachedMenu" on-iron-select="rovOptionsItemSelected">
+              <paper-item class="rovOptionsItem" id="addOnViewsClicked">
+                <paper-button class="rovOptionsMenuButton">
+                  <iron-icon class="rovOptionsMenuButtonIcon" icon="hardware:devices-other"></iron-icon>
+                  <label class="rovOptionsMenuLabel">Add-on views</label>
+                </paper-button>
+              </paper-item>
+              <paper-item class="rovOptionsItem" id="dataOptionsClicked">
+                <paper-button class="rovOptionsMenuButton">
+                  <iron-icon class="rovOptionsMenuButtonIcon" icon="swap-vert"></iron-icon>
+                  <label class="rovOptionsMenuLabel">Data retrieval settings</label>
+                </paper-button>
+              </paper-item>
+              <paper-item class="rovOptionsItem" id="storageOptionsDialog">
+                <paper-button class="rovOptionsMenuButton">
+                  <iron-icon class="rovOptionsMenuButtonIcon" icon="device:storage"></iron-icon>
+                  <label class="rovOptionsMenuLabel">Local storage options</label>
+                </paper-button>
+              </paper-item>
+              <paper-item class="rovOptionsItem" id="exportDashboardsClicked" hidden>
+                <paper-button class="rovOptionsMenuButton">
+                  <iron-icon class="rovOptionsMenuButtonIcon" icon="archive"></iron-icon>
+                  <label class="rovOptionsMenuLabel">Export dashboards to file</label>
+                </paper-button>
+              </paper-item>
+              <paper-item class="rovOptionsItem" id="showConnectDialogItem">
+                <paper-checkbox id="showConnectDialogCheckbox" on-change="showConnectDialogChecked">Show connect dialog</paper-checkbox>
+              </paper-item>
+            </paper-menu>
+          </paper-dialog>
+          <paper-dialog id="overwriteDashboardsDialog" class="rovDialog" on-click="dlgClicked" on-keypress="overwriteDashboardsKeyPress" on-iron-overlay-closed="dialogClosed" on-iron-overlay-opened="dialogOpened" no-cancel-on-outside-click alwaysOnTop>
+            <h3 class="rovDialogTitle">Save Dashboards<iron-icon id="overwriteDashboardsDialogClose" class="rovDialogCloseIcon" icon="close" on-click="dialogCloseClicked"></iron-icon></h3>
+            <div style="margin-top:10px;padding:0px;margin-left:16px;margin-right:16px;width:260px;height:50px;">
+              <label id="overwriteDashboardsLabel">The following dashboards already exist in ROV local memory:</label>
+            </div>
+            <div style="margin-top:0px;padding:0px;margin-left:16px;margin-right:16px;">
+              <paper-listbox id="overwriteDashboardsList" role="listbox">
+                <template is="dom-repeat" items="{{overwriteDashboardsItems}}" as="dashboard">
+                  <paper-item class="dashboardsChecklistItem">
+                    <paper-checkbox class="rovCheckbox" on-click="overwriteADashboardChecked" checked>{{dashboard}}</paper-checkbox>
+                  </paper-item>
+                </template>
+              </paper-listbox>
+              <div style="margin-top:5px;padding-left:0px;padding-right:0px" class="buttons">
+                <paper-button class="rovDialogButton" id="overwriteDashboardsButton" on-click="overwriteDashboardsClicked">Overwrite selected</paper-button>
+                <paper-button class="rovDialogButton" id="overwriteDashboardsDone" dialog-dismiss>Close</paper-button>
+              </div>
+            </div>
+          </paper-dialog>
+          <paper-dialog id="exportDashboardsDialog" class="rovDialog" on-click="dlgClicked" on-keypress="exportDashboardsKeyPress" on-iron-overlay-closed="dialogClosed" on-iron-overlay-opened="dialogOpened" no-cancel-on-outside-click alwaysOnTop>
+            <h3 class="rovDialogTitle">Export Dashboards to File<iron-icon id="exportDashboardsDialogClose" class="rovDialogCloseIcon" icon="close" on-click="dialogCloseClicked"></iron-icon></h3>
+            <div style="margin-top:0px;padding:0px;margin-left:8px;margin-right:16px;width:260px;height:40px;">
+              <paper-input id="exportDashboardsInput" type="text" placeholder="Enter filename" no-label-float no-animations autofocus on-input="exportDashboardsOnInput"></paper-input><br>
+            </div>
+            <div style="margin-top:0px;padding:0px;margin-left:16px;margin-right:16px;">
+              <paper-checkbox id="selectAllExportDashboardsCheckbox" class="rovCheckbox" style="margin:0px 0px 4px 8px;" on-click="selectAllExportDashboardsClicked" checked>Select all dashboards</paper-checkbox>
+              <paper-listbox id="exportDashboardsList" role="listbox">
+                <template is="dom-repeat" items="{{dashboardNames}}" as="dash">
+                  <paper-item class="dashboardsChecklistItem">
+                    <paper-checkbox class="rovCheckbox" on-click="exportADashboardChecked" checked title$="{{dash.comment}}">{{dash.name}}</paper-checkbox>
+                  </paper-item>
+                </template>
+              </paper-listbox>
+              <div style="margin-top:5px;padding-left:0px;padding-right:0px" class="buttons">
+                <paper-button class="rovDialogButton" id="exportDashboardsButton" on-click="exportDashboardsButtonClicked">Export selected</paper-button>
+                <paper-button class="rovDialogButton" id="exportDashboardsDone" dialog-dismiss>Cancel</paper-button>
+              </div>
+            </div>
+          </paper-dialog>
+
+          <paper-dialog id="titleOverflowDialog">
+            <paper-icon-button id="overflowRefreshAllButton" class="toolbarOverflowDialogButton" icon="refresh" on-click="refreshAllClicked" title="Refresh all" role="button" disabled></paper-icon-button>
+            <paper-icon-button id="overflowRepeatRefreshButton" class="toolbarOverflowDialogButton" hidden$="{{inRepeatRefresh}}" icon="autorenew" on-click="repeatRefreshClicked" title="Repeat refresh" role="button" disabled></paper-icon-button>
+            <paper-icon-button id="overflowStopRepeatRefreshButton" class="toolbarOverflowDialogButton"  hidden$="{{!inRepeatRefresh}}" icon="av:stop" on-click="stopRepeatRefreshClicked" title="Stop repeat refresh" role="button"></paper-icon-button>
+            <paper-icon-button id="overflowCloseAllButton" class="toolbarOverflowDialogButton" icon="close" on-click="closeAllClicked" title="Close all views" role="button" disabled></paper-icon-button>
+          </paper-dialog>
+
+          <paper-dialog id="dashboardOverflowDialog" on-dragenter="dashboardDragEnter" on-dragover="dashboardDragOver">
+            <paper-icon-button id="overflowOpenDashboardButton" class="toolbarOverflowDialogButton" icon="dashboard" on-click="openDashboardClicked" on-drop="openDashboardDrop" role="button" title="" disabled></paper-icon-button>
+            <paper-icon-button id="overflowOpenDashboardFileButton" class="toolbarOverflowDialogButton" icon="folder-open" on-click="openDashboardFileClicked" role="button" title="Import a dashboard" disabled></paper-icon-button>
+            <input type="file" id="overflowOpenDashboardFileInput" accept=".rov.json" on-change="openDashboardFileSelected" hidden></input>
+            <paper-icon-button id="overflowSaveDashboardButton" class="toolbarOverflowDialogButton" icon="save" on-click="saveDashboardClicked" role="button" title="Save all current views as a dashboard" disabled></paper-icon-button>
+            <paper-icon-button id="overflowDeleteDashboardButton" class="toolbarOverflowDialogButton" icon="delete" on-click="deleteDashboardClicked" role="button" title="Delete a dashboard" disabled></paper-icon-button>
+          </paper-dialog>
+
+        </span>
+
+        <!-- Main Content -->
+        <div id="contentDiv" class="content">
+          <div id="statusConsole" hidden>
+            <paper-icon-button id="closeStatusButton" title="Close" on-click="hideStatus" icon="close" role="button" tabindex="0"></paper-icon-button>
+            <ul id="statusList">
+              <template is="dom-repeat" items="{{statusItems}}" as="item">
+                <li class="statusItem" style$="{{item.style}}"><iron-icon icon$="{{item.icon}}" hidden$="{{item.iconHidden}}" style$="{{item.iconStyle}}" class$="{{item.iconClass}}"></iron-icon>{{item.message}}</li>
+              </template>
+            </ul>
+          </div>
+        </div>
+      </paper-header-panel>
+     </div>
+    </paper-drawer-panel>
+    <ti-rov-data id="rovData"></ti-rov-data>
+  </template>
+  <script src="ti-rov-panel.js"></script>
+</dom-module>
+

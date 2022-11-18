@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<list key="installedFeatures">
+		<item value="com.sifive.freedomstudio.feature:4.7.2.201801221517"/>
+		<item value="ilg.gnumcueclipse.debug.gdbjtag.jlink.feature:4.3.1.201801092051"/>
+		<item value="ilg.gnumcueclipse.debug.gdbjtag.openocd.feature:4.3.1.201801092051"/>
+		<item value="ilg.gnumcueclipse.debug.gdbjtag.qemu.feature:3.3.1.201801092051"/>
+		<item value="ilg.gnumcueclipse.managedbuild.cross.riscv.feature:2.7.1.201801092051"/>
+		<item value="ilg.gnumcueclipse.templates.sifive.feature:1.2.1.201801092051"/>
+		<item value="org.eclipse.cdt.build.crossgcc:9.4.0.201712051550"/>
+		<item value="org.eclipse.cdt.gdb:9.4.0.201712051550"/>
+		<item value="org.eclipse.cdt.launch.remote:9.4.0.201712051550"/>
+		<item value="org.eclipse.cdt.mylyn:5.19.0.v20170411-2108"/>
+		<item value="org.eclipse.cdt:9.4.0.201712051550"/>
+		<item value="org.eclipse.egit:4.9.2.201712150930-r"/>
+		<item value="org.eclipse.emf.common:2.13.0.v20170609-0707"/>
+		<item value="org.eclipse.emf.ecore:2.13.0.v20170609-0707"/>
+		<item value="org.eclipse.epp.mpc:1.6.3.v20171122-2010"/>
+		<item value="org.eclipse.help:2.2.102.v20171130-0510"/>
+		<item value="org.eclipse.jgit:4.9.2.201712150930-r"/>
+		<item value="org.eclipse.mylyn.commons.identity:1.15.0.v20170411-1844"/>
+		<item value="org.eclipse.mylyn.commons.notifications:1.15.0.v20170411-1844"/>
+		<item value="org.eclipse.mylyn.commons.repositories:1.15.0.v20170411-1844"/>
+		<item value="org.eclipse.mylyn.commons:3.23.0.v20170503-0014"/>
+		<item value="org.eclipse.mylyn.context_feature:3.23.0.v20170414-0629"/>
+		<item value="org.eclipse.mylyn.discovery:3.23.0.v20170411-1844"/>
+		<item value="org.eclipse.mylyn.monitor:3.23.0.v20170411-1844"/>
+		<item value="org.eclipse.mylyn_feature:3.23.1.v20170623-0008"/>
+		<item value="org.eclipse.oomph.p2:1.8.0.v20170410-0909"/>
+		<item value="org.eclipse.oomph.setup.core:1.8.0.v20170531-0903"/>
+		<item value="org.eclipse.oomph.setup:1.8.0.v20170531-0903"/>
+		<item value="org.eclipse.platform:4.7.2.v20171130-0510"/>
+		<item value="org.eclipse.rcp:4.7.2.v20171130-0510"/>
+		<item value="org.eclipse.rse.core:3.7.3.201704251225"/>
+		<item value="org.eclipse.rse.dstore:3.7.0.201704251225"/>
+		<item value="org.eclipse.rse.ftp:3.7.1.201704251225"/>
+		<item value="org.eclipse.rse.local:3.7.0.201704251225"/>
+		<item value="org.eclipse.rse.ssh:3.7.0.201704251225"/>
+		<item value="org.eclipse.rse.telnet:3.7.0.201704251225"/>
+		<item value="org.eclipse.rse:3.7.3.201704251225"/>
+		<item value="org.eclipse.tm.terminal.control.feature:4.3.0.201706140544"/>
+		<item value="org.eclipse.tm.terminal.feature:4.3.0.201706140544"/>
+		<item value="org.eclipse.tm.terminal.view.feature:4.3.0.201706140544"/>
+		<item value="org.eclipse.userstorage:1.1.0.v20170526-1605"/>
+	</list>
+	<section name="CleanDialogSettings">
+		<item value="569" key="DIALOG_WIDTH"/>
+		<item value="false" key="TOGGLE_SELECTED"/>
+		<item value="413" key="DIALOG_HEIGHT"/>
+		<item value="711" key="DIALOG_X_ORIGIN"/>
+		<item value="291" key="DIALOG_Y_ORIGIN"/>
+	</section>
+	<section name="NewWizardAction">
+		<item value="org.eclipse.cdt.ui.wizards.NewCWizard2" key="NewWizardSelectionPage.STORE_SELECTED_ID"/>
+		<list key="NewWizardSelectionPage.STORE_EXPANDED_CATEGORIES_ID">
+			<item value="org.eclipse.ui.Basic"/>
+			<item value="org.eclipse.cdt.ui.newCWizards"/>
+		</list>
+	</section>
+</section>

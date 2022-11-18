@@ -1,0 +1,1 @@
+"./Benchmark/rmp_test.obj" "./Kernel/rmp_kernel.obj" "./Lib/cs.obj" "./Lib/eusci_a_uart.obj" "./Lib/framctl_a.obj" "./Lib/gpio.obj" "./Lib/timer_a.obj" "./Platform/rmp_platform_msp430.obj" "./Platform/rmp_platform_msp430x_asm.obj" "../lnk_msp430fr5994.cmd" -llibmath.a -llibmpu_init.a -llibc.a 
