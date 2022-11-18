@@ -1,0 +1,16 @@
+--cpu Cortex-M0+
+".\debug\output\rmp_kernel.o"
+".\debug\output\rmp_platform_cmx.o"
+".\debug\output\rmp_platform_cm0_asm.o"
+".\debug\output\sysctrl.o"
+".\debug\output\interrupts_hc32l13x.o"
+".\debug\output\gpio.o"
+".\debug\output\timer3.o"
+".\debug\output\uart.o"
+".\debug\output\startup_hc32l13x.o"
+".\debug\output\system_hc32l13x.o"
+".\debug\output\rmp_test.o"
+--library_type=microlib --strict --scatter ".\Debug\Output\RMP.sct"
+--summary_stderr --info summarysizes --map --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list ".\Debug\Listings\RMP.map" -o .\Debug\Output\RMP.axf

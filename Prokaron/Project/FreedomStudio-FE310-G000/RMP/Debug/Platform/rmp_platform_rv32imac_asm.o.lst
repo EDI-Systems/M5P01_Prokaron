@@ -1,0 +1,549 @@
+   1              	# 1 "/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platf
+   1              	/******************************************************************************
+   1              	...
+   0              	
+   0              	
+   2              	Filename    : platform_rv32imac_asm.s
+   3              	Author      : pry
+   4              	Date        : 10/04/2012
+   5              	Description : The assembly part of the RMP RTOS. This is for RV32IMAC (FE310).
+   6              	******************************************************************************/
+   7              	
+   8              	/* The RISC-V RV32IMAC Structure **********************************************
+   9              	R0:Hardwired register containing "0".
+  10              	R1-R31:General purpose registers that can only be reached by 32-bit instructions.
+  11              	PC:Program counter.
+  12              	Detailed usage convention for X0-X31:
+  13              	No.    Name       Explanation
+  14              	X0     $zero      hard-wired zero
+  15              	X1     $ra        return address (caller-save)
+  16              	X2     $sp        stack pointer (callee-save)
+  17              	X3     $gp        global pointer
+  18              	X4     $tp          thread pointer
+  19              	X5     $t0        temporary (caller-save)
+  20              	X6     $t1        temporary (caller-save)
+  21              	X7     $t2        temporary (caller-save)
+  22              	X8     $s0/fp        saved register/frame pointer (callee-save)
+  23              	X9     $s1        saved register (callee-save)
+  24              	X10    $a0        argument/return value (caller-save)
+  25              	X11    $a1        argument/return value (caller-save)
+  26              	X12    $a2        argument (caller-save)
+  27              	X13    $a3        argument (caller-save)
+  28              	X14    $a4        argument (caller-save)
+  29              	X15    $a5        argument (caller-save)
+  30              	X16    $a6        argument (caller-save)
+  31              	X17    $a7        argument (caller-save)
+  32              	X18    $s2        saved register (callee-save)
+  33              	X19    $s3        saved register (callee-save)
+  34              	X20    $s4        saved register (callee-save)
+  35              	X21    $s5        saved register (callee-save)
+  36              	X22    $s6        saved register (callee-save)
+  37              	X23    $s7        saved register (callee-save)
+  38              	X24    $s8        saved register (callee-save)
+  39              	X25    $s9        saved register (callee-save)
+  40              	X26    $s10       saved register (callee-save)
+  41              	X27    $s11       saved register (callee-save)
+  42              	X28    $t3        temporary (caller-save)
+  43              	X29    $t4        temporary (caller-save)
+  44              	X30    $t5        temporary (caller-save)
+  45              	X31    $t6        temporary (caller-save)
+  46              	PC     $pc        program counter
+  47              	
+  48              	On chips that have a FPU, the layout of the FPU registers are:
+  49              	F0     $ft0       temporary (caller-save)
+  50              	F1     $ft1       temporary (caller-save)
+  51              	F2     $ft2       temporary (caller-save)
+  52              	F3     $ft3       temporary (caller-save)
+  53              	F4     $ft4       temporary (caller-save)
+  54              	F5     $ft5       temporary (caller-save)
+  55              	F6     $ft6       temporary (caller-save)
+  56              	F7     $ft7       temporary (caller-save)
+  57              	F8     $fs0       saved register (callee-save)
+  58              	F9     $fs1       saved register (callee-save)
+  59              	F10    $fa0       argument/return value (caller-save)
+  60              	F11    $fa1       argument/return value (caller-save)
+  61              	F12    $fa2       argument (caller-save)
+  62              	F13    $fa3       argument (caller-save)
+  63              	F14    $fa4       argument (caller-save)
+  64              	F15    $fa5       argument (caller-save)
+  65              	F16    $fa6       argument (caller-save)
+  66              	F17    $fa7       argument (caller-save)
+  67              	F18    $fs2       saved register (callee-save)
+  68              	F19    $fs3       saved register (callee-save)
+  69              	F20    $fs4       saved register (callee-save)
+  70              	F21    $fs5       saved register (callee-save)
+  71              	F22    $fs6       saved register (callee-save)
+  72              	F23    $fs7       saved register (callee-save)
+  73              	F24    $fs8       saved register (callee-save)
+  74              	F25    $fs9       saved register (callee-save)
+  75              	F26    $fs10      saved register (callee-save)
+  76              	F27    $fs11      saved register (callee-save)
+  77              	F28    $ft8       temporary (caller-save)
+  78              	F29    $ft9       temporary (caller-save)
+  79              	F30    $ft10      temporary (caller-save)
+  80              	F31    $ft11      temporary (caller-save)
+  81              	******************************************************************************/
+  82              	
+  83              	/* Begin Header **************************************************************/
+  84              	    .section            .reset_entry,"ax", @progbits
+  85 0000 0100     	    .align              2
+  86              	/* End Header ****************************************************************/
+  87              	
+  88              	/* Begin Exports *************************************************************/
+  89              	    /* Disable all interrupts */
+  90              	    .global             RMP_Disable_Int
+  91              	    /* Enable all interrupts */
+  92              	    .global             RMP_Enable_Int
+  93              	    /* Get the MSB */
+  94              	    .global             RMP_MSB_Get
+  95              	    /* Start the first thread */
+  96              	    .global             _RMP_Start
+  97              	    /* Get MCAUSE value */
+  98              	    .global             _RMP_Get_MCAUSE
+  99              	    /* Set MTVEC value */
+ 100              	    .global             _RMP_Set_MTVEC
+ 101              	    /* Get MCYCLE value */
+ 102              	    .global             _RMP_Get_MCYCLE
+ 103              	    /* Fencing memory */
+ 104              	    .global             _RMP_Mem_FENCE
+ 105              	    /* Generic interrupt handler */
+ 106              	    .global             Interrupt_Handler
+ 107              	/* End Exports ***************************************************************/
+ 108              	
+ 109              	/* Begin Imports *************************************************************/
+ 110              	    /* The real task switch handling function */
+ 111              	    .extern             _RMP_Get_High_Rdy
+ 112              	    /* The real systick handler function */
+ 113              	    .extern             _RMP_Tick_Handler
+ 114              	    /* The current thread */
+ 115              	    .extern             RMP_Cur_Thd
+ 116              	    /* The stack address of current thread */
+ 117              	    .extern             RMP_Cur_SP
+ 118              	    /* Save and load extra contexts, such as FPU, peripherals and MPU */
+ 119              	    .extern             RMP_Save_Ctx
+ 120              	    .extern             RMP_Load_Ctx
+ 121              	    /* Interrupt handlers */
+ 122              	    .extern             PendSV_Handler
+ 123              	    .extern             SysTick_Handler
+ 124              	    .extern             _RMP_Int_Handler
+ 125              	    /* Clear timer & software interrupt flags */
+ 126              	    .extern             _RMP_Clear_Soft_Flag
+ 127              	    .extern             _RMP_Clear_Timer_Flag
+ 128              	/* End Imports ***************************************************************/
+ 129              	
+ 130              	/* Startup & Init ************************************************************/
+ 131              	    .global             _Reset_Entry
+ 132              	_Reset_Entry:
+ 133              	    .option             push
+ 134              	    /* Ensure the instruction is not optimized, since gp is not yet set. GP
+ 135              	     * will be supplied by the linker to provide the position of global variables */
+ 136              	    .option             norelax
+ 137              	    /* Load global pointer */
+ 138 0002 97010000 	    LA                  gp,__global_pointer$
+ 138      93810100 
+ 139              	    .option             pop
+ 140              	    /* Load stack pointer */
+ 141 000a 17010000 	    LA                  sp,__stack
+ 141      13010100 
+ 142              	    /* Go into C to continue our initialization of .data and .bss */
+ 143 0012 6FF0FFFE 	    J                   _start
+ 144              	/* End Startup & Init ********************************************************/
+ 145              	
+ 146              	/* Begin Function:RMP_Disable_Int *********************************************
+ 147              	Description    : The function for disabling all interrupts. Does not allow nesting.
+ 148              	Input          : None.
+ 149              	Output         : None.
+ 150              	Register Usage : None.
+ 151              	******************************************************************************/
+ 152              	RMP_Disable_Int:
+ 153              	    /* Disable all interrupts */
+ 154 0016 73750430 	    CSRRCI              a0,mstatus,8
+ 155 001a 73504030 	    CSRWI               mie,0
+ 156 001e 8280     	    RET
+ 157              	/* End Function:RMP_Disable_Int **********************************************/
+ 158              	
+ 159              	/* Begin Function:RMP_Enable_Int **********************************************
+ 160              	Description    : The function for enabling all interrupts. Does not allow nesting.
+ 161              	Input          : None.
+ 162              	Output         : None.
+ 163              	Register Usage : None.
+ 164              	******************************************************************************/
+ 165              	RMP_Enable_Int:
+ 166              	    /* Enable all interrupts */
+ 167 0020 73650430 	    CSRRSI              a0,mstatus,8
+ 168 0024 37150000 	    LI                  a0,0x888
+ 168      13058588 
+ 169 002c 73104530 	    CSRW                mie,a0
+ 170 0030 8280     	    RET
+ 171              	/* End Function:RMP_Enable_Int ***********************************************/
+ 172              	
+ 173              	/* Begin Function:RMP_MSB_Get *************************************************
+ 174              	Description    : Get the MSB of the word. RV32IMAC does not support CLZ, so we will
+ 175              	                 have to do it the hard way.
+ 176              	Input          : ptr_t Val - The value.
+ 177              	Output         : None.
+ 178              	Return         : ptr_t - The MSB position.
+ 179              	Register Usage : None.
+ 180              	******************************************************************************/
+ 181              	.macro CHECK_BITS BITS LABEL
+ 182              	    SRL                 a2,a1,\BITS
+ 183              	    BEQ                 a2,x0,\LABEL
+ 184              	    ADDI                a0,a0,\BITS
+ 185              	    ADD                 a1,a2,x0
+ 186              	\LABEL:
+ 187              	.endm
+ 188              	
+ 189              	    /* Always 21 instructions no matter what */
+ 190              	RMP_MSB_Get:
+ 191 0032 63090504 	    BEQ                 a0,x0,ZERO
+ 192 0036 B3050500 	    ADD                 a1,a0,x0
+ 193 003a 0145     	    LI                  a0,0
+ 194 003c 13D60501 	    CHECK_BITS          BITS=16 LABEL=HEX
+ 194      63050600 
+ 194      4105B305 
+ 194      0600
+ 195 004a 13D68500 	    CHECK_BITS          BITS=8  LABEL=OCT
+ 195      63050600 
+ 195      2105B305 
+ 195      0600
+ 196 0058 13D64500 	    CHECK_BITS          BITS=4  LABEL=QUAD
+ 196      63050600 
+ 196      1105B305 
+ 196      0600
+ 197 0066 13D62500 	    CHECK_BITS          BITS=2  LABEL=BIN
+ 197      63050600 
+ 197      0905B305 
+ 197      0600
+ 198 0074 13D61500 	    CHECK_BITS          BITS=1  LABEL=ONE
+ 198      63050600 
+ 198      0505B305 
+ 198      0600
+ 199 0082 8280     	    RET
+ 200              	ZERO:
+ 201 0084 7D15     	    ADDI                a0,a0,-1
+ 202 0086 8280     	    RET
+ 203              	/* End Function:RMP_MSB_Get **************************************************/
+ 204              	
+ 205              	/* Begin Function:_RMP_Start **************************************************
+ 206              	Description : Jump to the user function and will never return from it.
+ 207              	Input       : $a0 - The address to branch to.
+ 208              	              $a1 - The stack to use.
+ 209              	Output      : None.
+ 210              	Return      : None.
+ 211              	******************************************************************************/
+ 212              	_RMP_Start:
+ 213 0088 3301B000 	    ADD                 sp,x0,a1
+ 214 008c 0285     	    JR                  a0
+ 215 008e 8280     	    RET
+ 216              	/* End Function:_RMP_Start ***************************************************/
+ 217              	
+ 218              	/* Begin Function:_RMP_Get_MCAUSE *********************************************
+ 219              	Description : Get the mcause register content.
+ 220              	Input       : None.
+ 221              	Output      : None.
+ 222              	Return      : $a0 - MCAUSE value.
+ 223              	******************************************************************************/
+ 224              	_RMP_Get_MCAUSE:
+ 225 0090 73252034 	    CSRR                a0,mcause
+ 226 0094 8280     	    RET
+ 227              	/* End Function:_RMP_Get_MCAUSE **********************************************/
+ 228              	
+ 229              	/* Begin Function:_RMP_Set_MTVEC **********************************************
+ 230              	Description : Set the mtvec register content.
+ 231              	Input       : $a0 - MTVEC value.
+ 232              	Output      : None.
+ 233              	Return      : None.
+ 234              	******************************************************************************/
+ 235              	_RMP_Set_MTVEC:
+ 236 0096 73105530 	    CSRW                mtvec,a0
+ 237 009a 8280     	    RET
+ 238              	/* End Function:_RMP_Set_MTVEC ***********************************************/
+ 239              	
+ 240              	/* Begin Function:_RMP_Mem_FENCE **********************************************
+ 241              	Description : Fence the memory accesses to make sure that they are strongly ordered.
+ 242              	Input       : None.
+ 243              	Output      : None.
+ 244              	Return      : None.
+ 245              	******************************************************************************/
+ 246              	_RMP_Mem_FENCE:
+ 247 009c 0F00F00F 	    FENCE
+ 248 00a0 8280     	    RET
+ 249              	/* End Function:_RMP_Mem_FENCE ***********************************************/
+ 250              	
+ 251              	/* Begin Function:_RMP_Get_MCYCLE *********************************************
+ 252              	Description : Set the mtvec register content.
+ 253              	Input       : None.
+ 254              	Output      : None.
+ 255              	Return      : $a0 - MCYCLE value.
+ 256              	******************************************************************************/
+ 257              	_RMP_Get_MCYCLE:
+ 258 00a2 732500B0 	    CSRR                a0,mcycle
+ 259 00a6 8280     	    RET
+ 260              	/* End Function:_RMP_Get_MCYCLE **********************************************/
+ 261              	
+ 262              	/* Begin Function:Interrupt_Handler *******************************************
+ 263              	Description : The interrupt handling routine. This is the entry of all interrupt
+ 264              	              handlers; we will analyze mcause register to jump to the corresponding
+ 265              	              vector. This must be aligned to at least a word boundary.
+ 266              	Input       : None.
+ 267              	Output      : None.
+ 268              	******************************************************************************/
+ 269 00a8 0100     	    .align              2
+ 270              	Interrupt_Handler:
+ 271              	    /* RISC-V does not support interrupt nesting, as the current specification says.
+ 272              	     * Its interrupt controller does not accept new ones before the old one gets
+ 273              	     * done; and to make things worse, unlike MIPS, it doesn't have IPL field,
+ 274              	     * thus the interrupt nesting must be implemented with different machine modes
+ 275              	     * (harts). This is a restriction that likely can't be overcome with software.
+ 276              	     * From a programming perspective, this is not too bad; it simplifies the
+ 277              	     * mental model. */
+ 278 00aa 1971     	    ADDI                sp,sp,-32*4
+ 279              	    /* Save three registers so that we can reenable interrupt as quickly as possible */
+ 280 00ac FEDE     	    SW                  x31,31*4(sp)
+ 281 00ae FADC     	    SW                  x30,30*4(sp)
+ 282 00b0 F6DA     	    SW                  x29,29*4(sp)
+ 283 00b2 F2D8     	    SW                  x28,28*4(sp)
+ 284 00b4 EED6     	    SW                  x27,27*4(sp)
+ 285 00b6 EAD4     	    SW                  x26,26*4(sp)
+ 286 00b8 E6D2     	    SW                  x25,25*4(sp)
+ 287 00ba E2D0     	    SW                  x24,24*4(sp)
+ 288 00bc DECE     	    SW                  x23,23*4(sp)
+ 289 00be DACC     	    SW                  x22,22*4(sp)
+ 290 00c0 D6CA     	    SW                  x21,21*4(sp)
+ 291 00c2 D2C8     	    SW                  x20,20*4(sp)
+ 292 00c4 CEC6     	    SW                  x19,19*4(sp)
+ 293 00c6 CAC4     	    SW                  x18,18*4(sp)
+ 294 00c8 C6C2     	    SW                  x17,17*4(sp)
+ 295 00ca C2C0     	    SW                  x16,16*4(sp)
+ 296 00cc 3EDE     	    SW                  x15,15*4(sp)
+ 297 00ce 3ADC     	    SW                  x14,14*4(sp)
+ 298 00d0 36DA     	    SW                  x13,13*4(sp)
+ 299 00d2 32D8     	    SW                  x12,12*4(sp)
+ 300 00d4 2ED6     	    SW                  x11,11*4(sp)
+ 301 00d6 2AD4     	    SW                  x10,10*4(sp)
+ 302 00d8 26D2     	    SW                  x9,9*4(sp)
+ 303 00da 22D0     	    SW                  x8,8*4(sp)
+ 304 00dc 1ECE     	    SW                  x7,7*4(sp)
+ 305 00de 1ACC     	    SW                  x6,6*4(sp)
+ 306 00e0 16CA     	    SW                  x5,5*4(sp)
+ 307 00e2 12C8     	    SW                  x4,4*4(sp)
+ 308 00e4 0EC6     	    SW                  x3,3*4(sp)
+ 309              	    /* Save MSTATUS here in case future implementations include FPU */
+ 310 00e6 73250030 	    CSRR                a0,mstatus
+ 311 00ea 2AC4     	    SW                  a0,2*4(sp)
+ 312              	    /* x2 not saved */
+ 313 00ec 06C2     	    SW                  x1,1*4(sp)
+ 314              	    /* Save PC before the exception */
+ 315 00ee 73251034 	    CSRR                a0,mepc
+ 316 00f2 2AC0     	    SW                  a0,0*4(sp)
+ 317              	    /* x0 is always zero thus not saved */
+ 318              	
+ 319              	    /* Save the SP to control block */
+ 320 00f4 17050000 	    LA                  a0,RMP_Cur_SP
+ 320      13050500 
+ 321 00fc 23202500 	    SW                  sp,(a0)
+ 322              	    /* Now load our own gp for system use - we know that this is in linker script */
+ 323 0100 97010000 	    LA                  gp,__global_pointer$
+ 323      93810100 
+ 324              	    /* And load our SP on the kernel stack */
+ 325 0108 17010000 	    LA                  sp,__stack
+ 325      13010100 
+ 326 0110 97000000 	    CALL                _RMP_Int_Handler
+ 326      E7800000 
+ 327              	    /* Call the actual handler function to handle this */
+ 328              	    /* Load the SP from control block */
+ 329 0118 17050000 	    LA                  a0,RMP_Cur_SP
+ 329      13050500 
+ 330 0120 03210500 	    LW                  sp,(a0)
+ 331              	
+ 332              	    /* Load PC */
+ 333 0124 0245     	    LW                  a0,0*4(sp)
+ 334 0126 73101534 	    CSRW                mepc,a0
+ 335              	    /* X0 is always zero thus not loaded */
+ 336 012a 9240     	    LW                  x1,1*4(sp)
+ 337              	    /* Load MSTATUS - we force M mode after interrupt return */
+ 338 012c 2245     	    LW                  a0,2*4(sp)
+ 339 012e B7250000 	    LI                  a1,0x1800
+ 339      93850580 
+ 340 0136 4D8D     	    OR                  a0,a0,a1
+ 341 0138 73100530 	    CSRW                mstatus,a0
+ 342              	    /* X2 is SP thus not loaded again */
+ 343 013c B241     	    LW                  x3,3*4(sp)
+ 344 013e 4242     	    LW                  x4,4*4(sp)
+ 345 0140 D242     	    LW                  x5,5*4(sp)
+ 346 0142 6243     	    LW                  x6,6*4(sp)
+ 347 0144 F243     	    LW                  x7,7*4(sp)
+ 348 0146 0254     	    LW                  x8,8*4(sp)
+ 349 0148 9254     	    LW                  x9,9*4(sp)
+ 350 014a 2255     	    LW                  x10,10*4(sp)
+ 351 014c B255     	    LW                  x11,11*4(sp)
+ 352 014e 4256     	    LW                  x12,12*4(sp)
+ 353 0150 D256     	    LW                  x13,13*4(sp)
+ 354 0152 6257     	    LW                  x14,14*4(sp)
+ 355 0154 F257     	    LW                  x15,15*4(sp)
+ 356 0156 0648     	    LW                  x16,16*4(sp)
+ 357 0158 9648     	    LW                  x17,17*4(sp)
+ 358 015a 2649     	    LW                  x18,18*4(sp)
+ 359 015c B649     	    LW                  x19,19*4(sp)
+ 360 015e 464A     	    LW                  x20,20*4(sp)
+ 361 0160 D64A     	    LW                  x21,21*4(sp)
+ 362 0162 664B     	    LW                  x22,22*4(sp)
+ 363 0164 F64B     	    LW                  x23,23*4(sp)
+ 364 0166 065C     	    LW                  x24,24*4(sp)
+ 365 0168 965C     	    LW                  x25,25*4(sp)
+ 366 016a 265D     	    LW                  x26,26*4(sp)
+ 367 016c B65D     	    LW                  x27,27*4(sp)
+ 368 016e 465E     	    LW                  x28,28*4(sp)
+ 369 0170 D65E     	    LW                  x29,29*4(sp)
+ 370 0172 665F     	    LW                  x30,30*4(sp)
+ 371 0174 F65F     	    LW                  x31,31*4(sp)
+ 372 0176 0961     	    ADDI                sp,sp,32*4
+ 373 0178 73002030 	    MRET
+DEFINED SYMBOLS
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:152    .reset_entry:0000000000000016 RMP_Disable_Int
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:165    .reset_entry:0000000000000020 RMP_Enable_Int
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:190    .reset_entry:0000000000000032 RMP_MSB_Get
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:212    .reset_entry:0000000000000088 _RMP_Start
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:224    .reset_entry:0000000000000090 _RMP_Get_MCAUSE
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:235    .reset_entry:0000000000000096 _RMP_Set_MTVEC
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:257    .reset_entry:00000000000000a2 _RMP_Get_MCYCLE
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:246    .reset_entry:000000000000009c _RMP_Mem_FENCE
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:270    .reset_entry:00000000000000aa Interrupt_Handler
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:132    .reset_entry:0000000000000002 _Reset_Entry
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:138    .reset_entry:0000000000000002 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:141    .reset_entry:000000000000000a .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:143    .reset_entry:0000000000000012 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:154    .reset_entry:0000000000000016 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:155    .reset_entry:000000000000001a .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:156    .reset_entry:000000000000001e .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:167    .reset_entry:0000000000000020 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:168    .reset_entry:0000000000000024 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:169    .reset_entry:000000000000002c .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:170    .reset_entry:0000000000000030 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:200    .reset_entry:0000000000000084 ZERO
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:191    .reset_entry:0000000000000032 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:192    .reset_entry:0000000000000036 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:193    .reset_entry:000000000000003a .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:194    .reset_entry:000000000000003c .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:194    .reset_entry:000000000000004a HEX
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:195    .reset_entry:000000000000004a .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:195    .reset_entry:0000000000000058 OCT
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:196    .reset_entry:0000000000000058 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:196    .reset_entry:0000000000000066 QUAD
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:197    .reset_entry:0000000000000066 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:197    .reset_entry:0000000000000074 BIN
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:198    .reset_entry:0000000000000074 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:198    .reset_entry:0000000000000082 ONE
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:199    .reset_entry:0000000000000082 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:201    .reset_entry:0000000000000084 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:202    .reset_entry:0000000000000086 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:213    .reset_entry:0000000000000088 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:214    .reset_entry:000000000000008c .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:215    .reset_entry:000000000000008e .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:225    .reset_entry:0000000000000090 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:226    .reset_entry:0000000000000094 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:236    .reset_entry:0000000000000096 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:237    .reset_entry:000000000000009a .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:247    .reset_entry:000000000000009c .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:248    .reset_entry:00000000000000a0 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:258    .reset_entry:00000000000000a2 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:259    .reset_entry:00000000000000a6 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:278    .reset_entry:00000000000000aa .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:280    .reset_entry:00000000000000ac .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:281    .reset_entry:00000000000000ae .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:282    .reset_entry:00000000000000b0 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:283    .reset_entry:00000000000000b2 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:284    .reset_entry:00000000000000b4 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:285    .reset_entry:00000000000000b6 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:286    .reset_entry:00000000000000b8 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:287    .reset_entry:00000000000000ba .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:288    .reset_entry:00000000000000bc .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:289    .reset_entry:00000000000000be .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:290    .reset_entry:00000000000000c0 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:291    .reset_entry:00000000000000c2 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:292    .reset_entry:00000000000000c4 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:293    .reset_entry:00000000000000c6 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:294    .reset_entry:00000000000000c8 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:295    .reset_entry:00000000000000ca .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:296    .reset_entry:00000000000000cc .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:297    .reset_entry:00000000000000ce .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:298    .reset_entry:00000000000000d0 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:299    .reset_entry:00000000000000d2 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:300    .reset_entry:00000000000000d4 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:301    .reset_entry:00000000000000d6 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:302    .reset_entry:00000000000000d8 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:303    .reset_entry:00000000000000da .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:304    .reset_entry:00000000000000dc .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:305    .reset_entry:00000000000000de .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:306    .reset_entry:00000000000000e0 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:307    .reset_entry:00000000000000e2 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:308    .reset_entry:00000000000000e4 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:310    .reset_entry:00000000000000e6 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:311    .reset_entry:00000000000000ea .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:313    .reset_entry:00000000000000ec .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:315    .reset_entry:00000000000000ee .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:316    .reset_entry:00000000000000f2 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:320    .reset_entry:00000000000000f4 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:321    .reset_entry:00000000000000fc .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:323    .reset_entry:0000000000000100 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:325    .reset_entry:0000000000000108 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:326    .reset_entry:0000000000000110 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:329    .reset_entry:0000000000000118 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:330    .reset_entry:0000000000000120 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:333    .reset_entry:0000000000000124 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:334    .reset_entry:0000000000000126 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:336    .reset_entry:000000000000012a .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:338    .reset_entry:000000000000012c .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:339    .reset_entry:000000000000012e .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:340    .reset_entry:0000000000000136 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:341    .reset_entry:0000000000000138 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:343    .reset_entry:000000000000013c .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:344    .reset_entry:000000000000013e .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:345    .reset_entry:0000000000000140 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:346    .reset_entry:0000000000000142 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:347    .reset_entry:0000000000000144 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:348    .reset_entry:0000000000000146 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:349    .reset_entry:0000000000000148 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:350    .reset_entry:000000000000014a .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:351    .reset_entry:000000000000014c .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:352    .reset_entry:000000000000014e .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:353    .reset_entry:0000000000000150 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:354    .reset_entry:0000000000000152 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:355    .reset_entry:0000000000000154 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:356    .reset_entry:0000000000000156 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:357    .reset_entry:0000000000000158 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:358    .reset_entry:000000000000015a .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:359    .reset_entry:000000000000015c .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:360    .reset_entry:000000000000015e .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:361    .reset_entry:0000000000000160 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:362    .reset_entry:0000000000000162 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:363    .reset_entry:0000000000000164 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:364    .reset_entry:0000000000000166 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:365    .reset_entry:0000000000000168 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:366    .reset_entry:000000000000016a .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:367    .reset_entry:000000000000016c .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:368    .reset_entry:000000000000016e .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:369    .reset_entry:0000000000000170 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:370    .reset_entry:0000000000000172 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:371    .reset_entry:0000000000000174 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:372    .reset_entry:0000000000000176 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:373    .reset_entry:0000000000000178 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:373    .reset_entry:000000000000017c .L0 
+                     .reset_entry:0000000000000000 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:373    .reset_entry:000000000000017c .L0 
+                       .debug_str:0000000000000000 .L0 
+                       .debug_str:0000000000000071 .L0 
+                       .debug_str:00000000000000d5 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:138    .reset_entry:0000000000000002 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:141    .reset_entry:000000000000000a .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:320    .reset_entry:00000000000000f4 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:323    .reset_entry:0000000000000100 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:325    .reset_entry:0000000000000108 .L0 
+/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/RV32IMAC/rmp_platform_rv32imac_asm.S:329    .reset_entry:0000000000000118 .L0 
+
+UNDEFINED SYMBOLS
+__global_pointer$
+__stack
+_start
+RMP_Cur_SP
+_RMP_Int_Handler

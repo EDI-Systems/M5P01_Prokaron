@@ -1,0 +1,135 @@
+12:10:38 **** Incremental Build of configuration Debug for project RMP ****
+make all 
+make --no-print-directory pre-build
+../copy.sh
+ 
+make --no-print-directory main-build
+make[1]: Warning: File '/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/Project/ECLIPSE-GCC-STM32F767IGT6-FPU/../../MProkaron/Include/../../Project/ECLIPSE-GCC-STM32F767IGT6-FPU/RMP/Source/rmp_platform_STM32F767IG_FPU.h' has modification time 6891 s in the future
+Building file: /media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/Project/RVMDK-STM32F767IGT6-FPU/Source/fulltest.c
+Invoking: Cross GCC Compiler
+arm-none-eabi-gcc -DSTM32F767xx -DUSE_HAL_DRIVER -I"/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/Project/ECLIPSE-GCC-STM32F767IGT6-FPU/../../MProkaron/Include" -I"/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/Project/ECLIPSE-GCC-STM32F767IGT6-FPU/../../../M0P0_Library/STM32Cube_FW_F7_V1.11.0/Drivers/STM32F7xx_HAL_Driver/Inc" -I"/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/Project/ECLIPSE-GCC-STM32F767IGT6-FPU/../../../M0P0_Library/STM32Cube_FW_F7_V1.11.0/Drivers/STM32F7xx_HAL_Driver/Inc/Conf" -I"/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/Project/ECLIPSE-GCC-STM32F767IGT6-FPU/../../../M0P0_Library/STM32Cube_FW_F7_V1.11.0/Drivers/CMSIS/Device/ST/STM32F7xx/Include" -I"/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/Project/ECLIPSE-GCC-STM32F767IGT6-FPU/../../../M0P0_Library/STM32Cube_FW_F7_V1.11.0/Drivers/CMSIS/Include" -O3 -g3 -Wall -mcpu=cortex-m7 -mthumb -mfpu=fpv5-d16 -mfloat-abi=hard -mno-unaligned-access -c -fmessage-length=0 -ffreestanding  -fomit-frame-pointer -ffunction-sections -fdata-sections -fno-strict-aliasing -MMD -MP -MF"Source/fulltest.d" -MT"Source/fulltest.o" -o "Source/fulltest.o" "/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/Project/RVMDK-STM32F767IGT6-FPU/Source/fulltest.c"
+Finished building: /media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/Project/RVMDK-STM32F767IGT6-FPU/Source/fulltest.c
+ 
+Building file: /media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/CortexM/rmp_platform_cmx.c
+Invoking: Cross GCC Compiler
+arm-none-eabi-gcc -DSTM32F767xx -DUSE_HAL_DRIVER -I"/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/Project/ECLIPSE-GCC-STM32F767IGT6-FPU/../../MProkaron/Include" -I"/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/Project/ECLIPSE-GCC-STM32F767IGT6-FPU/../../../M0P0_Library/STM32Cube_FW_F7_V1.11.0/Drivers/STM32F7xx_HAL_Driver/Inc" -I"/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/Project/ECLIPSE-GCC-STM32F767IGT6-FPU/../../../M0P0_Library/STM32Cube_FW_F7_V1.11.0/Drivers/STM32F7xx_HAL_Driver/Inc/Conf" -I"/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/Project/ECLIPSE-GCC-STM32F767IGT6-FPU/../../../M0P0_Library/STM32Cube_FW_F7_V1.11.0/Drivers/CMSIS/Device/ST/STM32F7xx/Include" -I"/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/Project/ECLIPSE-GCC-STM32F767IGT6-FPU/../../../M0P0_Library/STM32Cube_FW_F7_V1.11.0/Drivers/CMSIS/Include" -O3 -g3 -Wall -mcpu=cortex-m7 -mthumb -mfpu=fpv5-d16 -mfloat-abi=hard -mno-unaligned-access -c -fmessage-length=0 -ffreestanding  -fomit-frame-pointer -ffunction-sections -fdata-sections -fno-strict-aliasing -MMD -MP -MF"Platform/rmp_platform_cmx.d" -MT"Platform/rmp_platform_cmx.o" -o "Platform/rmp_platform_cmx.o" "/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/CortexM/rmp_platform_cmx.c"
+Finished building: /media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/CortexM/rmp_platform_cmx.c
+ 
+Building file: /media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c
+Invoking: Cross GCC Compiler
+arm-none-eabi-gcc -DSTM32F767xx -DUSE_HAL_DRIVER -I"/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/Project/ECLIPSE-GCC-STM32F767IGT6-FPU/../../MProkaron/Include" -I"/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/Project/ECLIPSE-GCC-STM32F767IGT6-FPU/../../../M0P0_Library/STM32Cube_FW_F7_V1.11.0/Drivers/STM32F7xx_HAL_Driver/Inc" -I"/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/Project/ECLIPSE-GCC-STM32F767IGT6-FPU/../../../M0P0_Library/STM32Cube_FW_F7_V1.11.0/Drivers/STM32F7xx_HAL_Driver/Inc/Conf" -I"/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/Project/ECLIPSE-GCC-STM32F767IGT6-FPU/../../../M0P0_Library/STM32Cube_FW_F7_V1.11.0/Drivers/CMSIS/Device/ST/STM32F7xx/Include" -I"/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/Project/ECLIPSE-GCC-STM32F767IGT6-FPU/../../../M0P0_Library/STM32Cube_FW_F7_V1.11.0/Drivers/CMSIS/Include" -O3 -g3 -Wall -mcpu=cortex-m7 -mthumb -mfpu=fpv5-d16 -mfloat-abi=hard -mno-unaligned-access -c -fmessage-length=0 -ffreestanding  -fomit-frame-pointer -ffunction-sections -fdata-sections -fno-strict-aliasing -MMD -MP -MF"Kernel/rmp_kernel.d" -MT"Kernel/rmp_kernel.o" -o "Kernel/rmp_kernel.o" "/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c"
+Finished building: /media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c
+ 
+Building target: RMP
+Invoking: Cross GCC Linker
+arm-none-eabi-gcc -mcpu=cortex-m7 -mthumb -mfpu=fpv5-d16 -mfloat-abi=hard -mno-unaligned-access -Xlinker -m -Xlinker armelf -Xlinker -T -Xlinker  /media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/Project/ECLIPSE-GCC-STM32F767IGT6-FPU/RMP/rmp_platform_STM32F767IG.ld -Xlinker --gc-sections -Xlinker -Map=RMP.map -o "RMP"  ./Source/fulltest.o  ./Platform/rmp_platform_cmx.o ./Platform/rmp_platform_cmx_asm_gcc.o  ./Lib/startup_stm32f767xx.o ./Lib/stm32f7xx_hal.o ./Lib/stm32f7xx_hal_cortex.o ./Lib/stm32f7xx_hal_dma.o ./Lib/stm32f7xx_hal_dma_ex.o ./Lib/stm32f7xx_hal_gpio.o ./Lib/stm32f7xx_hal_pwr_ex.o ./Lib/stm32f7xx_hal_rcc.o ./Lib/stm32f7xx_hal_tim.o ./Lib/stm32f7xx_hal_tim_ex.o ./Lib/stm32f7xx_hal_uart.o ./Lib/system_stm32f7xx.o  ./Kernel/rmp_kernel.o   -lm
+Finished building target: RMP
+ 
+make --no-print-directory post-build
+../image.sh
+2019-05-06T12:10:39 INFO common.c: Loading device parameters....
+2019-05-06T12:10:39 INFO common.c: Device connected is: F76xxx device, id 0x10006451
+2019-05-06T12:10:39 INFO common.c: SRAM size: 0x80000 bytes (512 KiB), Flash: 0x100000 bytes (1024 KiB) in pages of 2048 bytes
+2019-05-06T12:10:39 INFO common.c: Attempting to write 17464 (0x4438) bytes to stm32 address: 134217728 (0x8000000)
+st-flash 1.4.0-50-g7fafee2
+EraseFlash - Sector:0x0 Size:0x8000 2019-05-06T12:10:39 INFO common.c: Finished erasing 1 pages of 32768 (0x8000) bytes
+
+2019-05-06T12:10:39 INFO common.c: Starting Flash write for F2/F4/L4
+2019-05-06T12:10:39 INFO flash_loader.c: Successfully loaded flash loader in sram
+2019-05-06T12:10:40 INFO common.c: Starting verification of write complete
+2019-05-06T12:10:40 INFO common.c: Flash written and verified! jolly good!
+Flash page at addr: 0x08000000 erased
+enabling 32-bit flash writes
+size: 17464
+ 
+make[1]: warning:  Clock skew detected.  Your build may be incomplete.
+12:12:07 **** Incremental Build of configuration Debug for project RMP ****
+make all 
+make --no-print-directory pre-build
+../copy.sh
+ 
+make --no-print-directory main-build
+make[1]: Warning: File '/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/Project/ECLIPSE-GCC-STM32F767IGT6-FPU/../../MProkaron/Include/../../Project/ECLIPSE-GCC-STM32F767IGT6-FPU/RMP/Source/rmp_platform_STM32F767IG_FPU.h' has modification time 6802 s in the future
+Building file: /media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/Project/RVMDK-STM32F767IGT6-FPU/Source/fulltest.c
+Invoking: Cross GCC Compiler
+arm-none-eabi-gcc -DSTM32F767xx -DUSE_HAL_DRIVER -I"/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/Project/ECLIPSE-GCC-STM32F767IGT6-FPU/../../MProkaron/Include" -I"/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/Project/ECLIPSE-GCC-STM32F767IGT6-FPU/../../../M0P0_Library/STM32Cube_FW_F7_V1.11.0/Drivers/STM32F7xx_HAL_Driver/Inc" -I"/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/Project/ECLIPSE-GCC-STM32F767IGT6-FPU/../../../M0P0_Library/STM32Cube_FW_F7_V1.11.0/Drivers/STM32F7xx_HAL_Driver/Inc/Conf" -I"/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/Project/ECLIPSE-GCC-STM32F767IGT6-FPU/../../../M0P0_Library/STM32Cube_FW_F7_V1.11.0/Drivers/CMSIS/Device/ST/STM32F7xx/Include" -I"/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/Project/ECLIPSE-GCC-STM32F767IGT6-FPU/../../../M0P0_Library/STM32Cube_FW_F7_V1.11.0/Drivers/CMSIS/Include" -O3 -g3 -Wall -mcpu=cortex-m7 -mthumb -mfpu=fpv5-d16 -mfloat-abi=hard -mno-unaligned-access -c -fmessage-length=0 -ffreestanding  -fomit-frame-pointer -ffunction-sections -fdata-sections -fno-strict-aliasing -MMD -MP -MF"Source/fulltest.d" -MT"Source/fulltest.o" -o "Source/fulltest.o" "/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/Project/RVMDK-STM32F767IGT6-FPU/Source/fulltest.c"
+Finished building: /media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/Project/RVMDK-STM32F767IGT6-FPU/Source/fulltest.c
+ 
+Building file: /media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/CortexM/rmp_platform_cmx.c
+Invoking: Cross GCC Compiler
+arm-none-eabi-gcc -DSTM32F767xx -DUSE_HAL_DRIVER -I"/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/Project/ECLIPSE-GCC-STM32F767IGT6-FPU/../../MProkaron/Include" -I"/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/Project/ECLIPSE-GCC-STM32F767IGT6-FPU/../../../M0P0_Library/STM32Cube_FW_F7_V1.11.0/Drivers/STM32F7xx_HAL_Driver/Inc" -I"/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/Project/ECLIPSE-GCC-STM32F767IGT6-FPU/../../../M0P0_Library/STM32Cube_FW_F7_V1.11.0/Drivers/STM32F7xx_HAL_Driver/Inc/Conf" -I"/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/Project/ECLIPSE-GCC-STM32F767IGT6-FPU/../../../M0P0_Library/STM32Cube_FW_F7_V1.11.0/Drivers/CMSIS/Device/ST/STM32F7xx/Include" -I"/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/Project/ECLIPSE-GCC-STM32F767IGT6-FPU/../../../M0P0_Library/STM32Cube_FW_F7_V1.11.0/Drivers/CMSIS/Include" -O3 -g3 -Wall -mcpu=cortex-m7 -mthumb -mfpu=fpv5-d16 -mfloat-abi=hard -mno-unaligned-access -c -fmessage-length=0 -ffreestanding  -fomit-frame-pointer -ffunction-sections -fdata-sections -fno-strict-aliasing -MMD -MP -MF"Platform/rmp_platform_cmx.d" -MT"Platform/rmp_platform_cmx.o" -o "Platform/rmp_platform_cmx.o" "/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/CortexM/rmp_platform_cmx.c"
+Finished building: /media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/CortexM/rmp_platform_cmx.c
+ 
+Building file: /media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c
+Invoking: Cross GCC Compiler
+arm-none-eabi-gcc -DSTM32F767xx -DUSE_HAL_DRIVER -I"/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/Project/ECLIPSE-GCC-STM32F767IGT6-FPU/../../MProkaron/Include" -I"/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/Project/ECLIPSE-GCC-STM32F767IGT6-FPU/../../../M0P0_Library/STM32Cube_FW_F7_V1.11.0/Drivers/STM32F7xx_HAL_Driver/Inc" -I"/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/Project/ECLIPSE-GCC-STM32F767IGT6-FPU/../../../M0P0_Library/STM32Cube_FW_F7_V1.11.0/Drivers/STM32F7xx_HAL_Driver/Inc/Conf" -I"/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/Project/ECLIPSE-GCC-STM32F767IGT6-FPU/../../../M0P0_Library/STM32Cube_FW_F7_V1.11.0/Drivers/CMSIS/Device/ST/STM32F7xx/Include" -I"/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/Project/ECLIPSE-GCC-STM32F767IGT6-FPU/../../../M0P0_Library/STM32Cube_FW_F7_V1.11.0/Drivers/CMSIS/Include" -O3 -g3 -Wall -mcpu=cortex-m7 -mthumb -mfpu=fpv5-d16 -mfloat-abi=hard -mno-unaligned-access -c -fmessage-length=0 -ffreestanding  -fomit-frame-pointer -ffunction-sections -fdata-sections -fno-strict-aliasing -MMD -MP -MF"Kernel/rmp_kernel.d" -MT"Kernel/rmp_kernel.o" -o "Kernel/rmp_kernel.o" "/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c"
+Finished building: /media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c
+ 
+Building target: RMP
+Invoking: Cross GCC Linker
+arm-none-eabi-gcc -mcpu=cortex-m7 -mthumb -mfpu=fpv5-d16 -mfloat-abi=hard -mno-unaligned-access -Xlinker -m -Xlinker armelf -Xlinker -T -Xlinker  /media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/Project/ECLIPSE-GCC-STM32F767IGT6-FPU/RMP/rmp_platform_STM32F767IG.ld -Xlinker --gc-sections -Xlinker -Map=RMP.map -o "RMP"  ./Source/fulltest.o  ./Platform/rmp_platform_cmx.o ./Platform/rmp_platform_cmx_asm_gcc.o  ./Lib/startup_stm32f767xx.o ./Lib/stm32f7xx_hal.o ./Lib/stm32f7xx_hal_cortex.o ./Lib/stm32f7xx_hal_dma.o ./Lib/stm32f7xx_hal_dma_ex.o ./Lib/stm32f7xx_hal_gpio.o ./Lib/stm32f7xx_hal_pwr_ex.o ./Lib/stm32f7xx_hal_rcc.o ./Lib/stm32f7xx_hal_tim.o ./Lib/stm32f7xx_hal_tim_ex.o ./Lib/stm32f7xx_hal_uart.o ./Lib/system_stm32f7xx.o  ./Kernel/rmp_kernel.o   -lm
+Finished building target: RMP
+ 
+make --no-print-directory post-build
+../image.sh
+2019-05-06T12:12:08 INFO common.c: Loading device parameters....
+2019-05-06T12:12:08 INFO common.c: Device connected is: F76xxx device, id 0x10006451
+2019-05-06T12:12:08 INFO common.c: SRAM size: 0x80000 bytes (512 KiB), Flash: 0x100000 bytes (1024 KiB) in pages of 2048 bytes
+2019-05-06T12:12:08 INFO common.c: Attempting to write 17464 (0x4438) bytes to stm32 address: 134217728 (0x8000000)
+st-flash 1.4.0-50-g7fafee2
+EraseFlash - Sector:0x0 Size:0x8000 2019-05-06T12:12:09 INFO common.c: Finished erasing 1 pages of 32768 (0x8000) bytes
+
+2019-05-06T12:12:09 INFO common.c: Starting Flash write for F2/F4/L4
+2019-05-06T12:12:09 INFO flash_loader.c: Successfully loaded flash loader in sram
+2019-05-06T12:12:09 INFO common.c: Starting verification of write complete
+2019-05-06T12:12:09 INFO common.c: Flash written and verified! jolly good!
+Flash page at addr: 0x08000000 erased
+enabling 32-bit flash writes
+size: 17464
+ 
+make[1]: warning:  Clock skew detected.  Your build may be incomplete.
+12:26:24 **** Incremental Build of configuration Debug for project RMP ****
+make all 
+make --no-print-directory pre-build
+../copy.sh
+ 
+make --no-print-directory main-build
+make[1]: Warning: File '/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/Project/ECLIPSE-GCC-STM32F767IGT6-FPU/../../MProkaron/Include/../../Project/ECLIPSE-GCC-STM32F767IGT6-FPU/RMP/Source/rmp_platform_STM32F767IG_FPU.h' has modification time 5944 s in the future
+Building file: /media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/Project/RVMDK-STM32F767IGT6-FPU/Source/fulltest.c
+Invoking: Cross GCC Compiler
+arm-none-eabi-gcc -DSTM32F767xx -DUSE_HAL_DRIVER -I"/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/Project/ECLIPSE-GCC-STM32F767IGT6-FPU/../../MProkaron/Include" -I"/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/Project/ECLIPSE-GCC-STM32F767IGT6-FPU/../../../M0P0_Library/STM32Cube_FW_F7_V1.11.0/Drivers/STM32F7xx_HAL_Driver/Inc" -I"/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/Project/ECLIPSE-GCC-STM32F767IGT6-FPU/../../../M0P0_Library/STM32Cube_FW_F7_V1.11.0/Drivers/STM32F7xx_HAL_Driver/Inc/Conf" -I"/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/Project/ECLIPSE-GCC-STM32F767IGT6-FPU/../../../M0P0_Library/STM32Cube_FW_F7_V1.11.0/Drivers/CMSIS/Device/ST/STM32F7xx/Include" -I"/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/Project/ECLIPSE-GCC-STM32F767IGT6-FPU/../../../M0P0_Library/STM32Cube_FW_F7_V1.11.0/Drivers/CMSIS/Include" -O3 -g3 -Wall -mcpu=cortex-m7 -mthumb -mfpu=fpv5-d16 -mfloat-abi=hard -mno-unaligned-access -c -fmessage-length=0 -ffreestanding  -fomit-frame-pointer -ffunction-sections -fdata-sections -fno-strict-aliasing -MMD -MP -MF"Source/fulltest.d" -MT"Source/fulltest.o" -o "Source/fulltest.o" "/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/Project/RVMDK-STM32F767IGT6-FPU/Source/fulltest.c"
+Finished building: /media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/Project/RVMDK-STM32F767IGT6-FPU/Source/fulltest.c
+ 
+Building file: /media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/CortexM/rmp_platform_cmx.c
+Invoking: Cross GCC Compiler
+arm-none-eabi-gcc -DSTM32F767xx -DUSE_HAL_DRIVER -I"/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/Project/ECLIPSE-GCC-STM32F767IGT6-FPU/../../MProkaron/Include" -I"/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/Project/ECLIPSE-GCC-STM32F767IGT6-FPU/../../../M0P0_Library/STM32Cube_FW_F7_V1.11.0/Drivers/STM32F7xx_HAL_Driver/Inc" -I"/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/Project/ECLIPSE-GCC-STM32F767IGT6-FPU/../../../M0P0_Library/STM32Cube_FW_F7_V1.11.0/Drivers/STM32F7xx_HAL_Driver/Inc/Conf" -I"/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/Project/ECLIPSE-GCC-STM32F767IGT6-FPU/../../../M0P0_Library/STM32Cube_FW_F7_V1.11.0/Drivers/CMSIS/Device/ST/STM32F7xx/Include" -I"/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/Project/ECLIPSE-GCC-STM32F767IGT6-FPU/../../../M0P0_Library/STM32Cube_FW_F7_V1.11.0/Drivers/CMSIS/Include" -O3 -g3 -Wall -mcpu=cortex-m7 -mthumb -mfpu=fpv5-d16 -mfloat-abi=hard -mno-unaligned-access -c -fmessage-length=0 -ffreestanding  -fomit-frame-pointer -ffunction-sections -fdata-sections -fno-strict-aliasing -MMD -MP -MF"Platform/rmp_platform_cmx.d" -MT"Platform/rmp_platform_cmx.o" -o "Platform/rmp_platform_cmx.o" "/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/CortexM/rmp_platform_cmx.c"
+Finished building: /media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/CortexM/rmp_platform_cmx.c
+ 
+Building file: /media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c
+Invoking: Cross GCC Compiler
+arm-none-eabi-gcc -DSTM32F767xx -DUSE_HAL_DRIVER -I"/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/Project/ECLIPSE-GCC-STM32F767IGT6-FPU/../../MProkaron/Include" -I"/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/Project/ECLIPSE-GCC-STM32F767IGT6-FPU/../../../M0P0_Library/STM32Cube_FW_F7_V1.11.0/Drivers/STM32F7xx_HAL_Driver/Inc" -I"/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/Project/ECLIPSE-GCC-STM32F767IGT6-FPU/../../../M0P0_Library/STM32Cube_FW_F7_V1.11.0/Drivers/STM32F7xx_HAL_Driver/Inc/Conf" -I"/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/Project/ECLIPSE-GCC-STM32F767IGT6-FPU/../../../M0P0_Library/STM32Cube_FW_F7_V1.11.0/Drivers/CMSIS/Device/ST/STM32F7xx/Include" -I"/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/Project/ECLIPSE-GCC-STM32F767IGT6-FPU/../../../M0P0_Library/STM32Cube_FW_F7_V1.11.0/Drivers/CMSIS/Include" -O3 -g3 -Wall -mcpu=cortex-m7 -mthumb -mfpu=fpv5-d16 -mfloat-abi=hard -mno-unaligned-access -c -fmessage-length=0 -ffreestanding  -fomit-frame-pointer -ffunction-sections -fdata-sections -fno-strict-aliasing -MMD -MP -MF"Kernel/rmp_kernel.d" -MT"Kernel/rmp_kernel.o" -o "Kernel/rmp_kernel.o" "/media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c"
+Finished building: /media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c
+ 
+Building target: RMP
+Invoking: Cross GCC Linker
+arm-none-eabi-gcc -mcpu=cortex-m7 -mthumb -mfpu=fpv5-d16 -mfloat-abi=hard -mno-unaligned-access -Xlinker -m -Xlinker armelf -Xlinker -T -Xlinker  /media/pry/Code/Code_Library/MCU/Mutatus/M5P1_MuProkaron/Project/ECLIPSE-GCC-STM32F767IGT6-FPU/RMP/rmp_platform_STM32F767IG.ld -Xlinker --gc-sections -Xlinker -Map=RMP.map -o "RMP"  ./Source/fulltest.o  ./Platform/rmp_platform_cmx.o ./Platform/rmp_platform_cmx_asm_gcc.o  ./Lib/startup_stm32f767xx.o ./Lib/stm32f7xx_hal.o ./Lib/stm32f7xx_hal_cortex.o ./Lib/stm32f7xx_hal_dma.o ./Lib/stm32f7xx_hal_dma_ex.o ./Lib/stm32f7xx_hal_gpio.o ./Lib/stm32f7xx_hal_pwr_ex.o ./Lib/stm32f7xx_hal_rcc.o ./Lib/stm32f7xx_hal_tim.o ./Lib/stm32f7xx_hal_tim_ex.o ./Lib/stm32f7xx_hal_uart.o ./Lib/system_stm32f7xx.o  ./Kernel/rmp_kernel.o   -lm
+Finished building target: RMP
+ 
+make --no-print-directory post-build
+../image.sh
+2019-05-06T12:26:26 INFO common.c: Loading device parameters....
+2019-05-06T12:26:26 INFO common.c: Device connected is: F76xxx device, id 0x10006451
+2019-05-06T12:26:26 INFO common.c: SRAM size: 0x80000 bytes (512 KiB), Flash: 0x100000 bytes (1024 KiB) in pages of 2048 bytes
+2019-05-06T12:26:26 INFO common.c: Attempting to write 17464 (0x4438) bytes to stm32 address: 134217728 (0x8000000)
+st-flash 1.4.0-50-g7fafee2
+EraseFlash - Sector:0x0 Size:0x8000 2019-05-06T12:26:26 INFO common.c: Finished erasing 1 pages of 32768 (0x8000) bytes
+
+2019-05-06T12:26:26 INFO common.c: Starting Flash write for F2/F4/L4
+2019-05-06T12:26:26 INFO flash_loader.c: Successfully loaded flash loader in sram
+2019-05-06T12:26:26 INFO common.c: Starting verification of write complete
+2019-05-06T12:26:27 INFO common.c: Flash written and verified! jolly good!
+Flash page at addr: 0x08000000 erased
+enabling 32-bit flash writes
+size: 17464
+ 
+make[1]: warning:  Clock skew detected.  Your build may be incomplete.

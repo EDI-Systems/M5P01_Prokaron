@@ -1,0 +1,103 @@
+L 1 "..\..\..\M0P0_Library\STM32Cube_FW_L0_V1.10.0\Drivers\STM32L0xx_HAL_Driver\Src\stm32l0xx_hal_uart.c"
+N/**
+N  ******************************************************************************
+N  * @file    stm32l0xx_hal_uart.c
+N  * @author  MCD Application Team
+N  * @brief   UART HAL module driver.
+N  *          This file provides firmware functions to manage the following
+N  *          functionalities of the Universal Asynchronous Receiver Transmitter Peripheral (UART).
+N  *           + Initialization and de-initialization functions
+N  *           + IO operation functions
+N  *           + Peripheral Control functions
+N  *
+N  *
+N  @verbatim
+N ===============================================================================
+N                        ##### How to use this driver #####
+N ===============================================================================
+N  [..]
+N    The UART HAL driver can be used as follows:
+N
+N    (#) Declare a UART_HandleTypeDef handle structure (eg. UART_HandleTypeDef huart).
+N    (#) Initialize the UART low level resources by implementing the HAL_UART_MspInit() API:
+N        (++) Enable the USARTx interface clock.
+N        (++) UART pins configuration:
+N            (+++) Enable the clock for the UART GPIOs.
+N            (+++) Configure these UART pins as alternate function pull-up.
+N        (++) NVIC configuration if you need to use interrupt process (HAL_UART_Transmit_IT()
+N             and HAL_UART_Receive_IT() APIs):
+N            (+++) Configure the USARTx interrupt priority.
+N            (+++) Enable the NVIC USART IRQ handle.
+N        (++) UART interrupts handling:
+N              -@@-  The specific UART interrupts (Transmission complete interrupt,
+N                RXNE interrupt and Error Interrupts) are managed using the macros
+N                __HAL_UART_ENABLE_IT() and __HAL_UART_DISABLE_IT() inside the transmit and receive processes.
+N        (++) DMA Configuration if you need to use DMA process (HAL_UART_Transmit_DMA()
+N             and HAL_UART_Receive_DMA() APIs):
+N            (+++) Declare a DMA handle structure for the Tx/Rx channel.
+N            (+++) Enable the DMAx interface clock.
+N            (+++) Configure the declared DMA handle structure with the required Tx/Rx parameters.
+N            (+++) Configure the DMA Tx/Rx channel.
+N            (+++) Associate the initialized DMA handle to the UART DMA Tx/Rx handle.
+N            (+++) Configure the priority and enable the NVIC for the transfer complete interrupt on the DMA Tx/Rx channel.
+N
+N    (#) Program the Baud Rate, Word Length, Stop Bit, Parity, Hardware
+N        flow control and Mode (Receiver/Transmitter) in the huart handle Init structure.
+N
+N    (#) If required, program UART advanced features (TX/RX pins swap, auto Baud rate detection,...)
+N        in the huart handle AdvancedInit structure.
+N
+N    (#) For the UART asynchronous mode, initialize the UART registers by calling
+N        the HAL_UART_Init() API.
+N
+N    (#) For the UART Half duplex mode, initialize the UART registers by calling
+N        the HAL_HalfDuplex_Init() API.
+N
+N    (#) For the UART LIN (Local Interconnection Network) mode, initialize the UART registers
+N        by calling the HAL_LIN_Init() API.
+N
+N    (#) For the UART Multiprocessor mode, initialize the UART registers
+N        by calling the HAL_MultiProcessor_Init() API.
+N
+N    (#) For the UART RS485 Driver Enabled mode, initialize the UART registers
+N        by calling the HAL_RS485Ex_Init() API.
+N
+N    [..]
+N    (@) These API's (HAL_UART_Init(), HAL_HalfDuplex_Init(), HAL_LIN_Init(), HAL_MultiProcessor_Init(),
+N        also configure the low level Hardware GPIO, CLOCK, CORTEX...etc) by
+N        calling the customized HAL_UART_MspInit() API.
+N
+N  @endverbatim
+N  ******************************************************************************
+N  * @attention
+N  *
+N  * <h2><center>&copy; COPYRIGHT(c) 2016 STMicroelectronics</center></h2>
+N  *
+N  * Redistribution and use in source and binary forms, with or without modification,
+N  * are permitted provided that the following conditions are met:
+N  *   1. Redistributions of source code must retain the above copyright notice,
+N  *      this list of conditions and the following disclaimer.
+N  *   2. Redistributions in binary form must reproduce the above copyright notice,
+N  *      this list of conditions and the following disclaimer in the documentation
+N  *      and/or other materials provided with the distribution.
+N  *   3. Neither the name of STMicroelectronics nor the names of its contributors
+N  *      may be used to endorse or promote products derived from this software
+N  *      without specific prior written permission.
+N  *
+N  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+N  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+N  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+N  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+N  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+N  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+N  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+N  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+N  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+N  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+N  *
+N  ******************************************************************************
+N  */
+N
+N/* Includes ------------------------------------------------------------------*/
+C "..\..\..\M0P0_Library\STM32Cube_FW_L0_V1.10.0\Drivers\STM32L0xx_HAL_Driver\Src\stm32l0xx_hal_uart.c" 101 27 cannot open source input file "stm32l0xx_hal.h": No such file or directory
+N#include "stm32l0xx_hal.h"

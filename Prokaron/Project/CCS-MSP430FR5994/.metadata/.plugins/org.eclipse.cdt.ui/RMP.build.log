@@ -1,0 +1,447 @@
+
+**** Build of configuration Debug for project RMP ****
+
+"D:\\Program_Files_x86\\TI\\ccs740\\ccsv7\\utils\\bin\\gmake" -k -j 8 all -O 
+ 
+F:\Code_Library\MCU\Mutatus\M5P1_MuProkaron\Project\CCS-MSP430FR5994\RMP/copy.bat
+
+F:\Code_Library\MCU\Mutatus\M5P1_MuProkaron\Project\CCS-MSP430FR5994\RMP\Debug>cd .. 
+
+F:\Code_Library\MCU\Mutatus\M5P1_MuProkaron\Project\CCS-MSP430FR5994\RMP>copy rmp_platform_msp430_conf.h ..\..\..\MProkaron\Include\Platform\MSP430\rmp_platform_msp430_conf.h 
+已复制         1 个文件。
+
+F:\Code_Library\MCU\Mutatus\M5P1_MuProkaron\Project\CCS-MSP430FR5994\RMP>copy rmp_platform.h ..\..\..\MProkaron\Include\Platform\rmp_platform.h 
+已复制         1 个文件。
+
+F:\Code_Library\MCU\Mutatus\M5P1_MuProkaron\Project\CCS-MSP430FR5994\RMP>copy rmp_test.h ..\..\..\MProkaron\Benchmark\rmp_test.h 
+已复制         1 个文件。
+ 
+'Building file: "F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Benchmark/rmp_test.c"'
+'Invoking: MSP430 Compiler'
+"D:/Program_Files_x86/TI/ccs740/ccsv7/tools/compiler/ti-cgt-msp430_16.9.6.LTS/bin/cl430" -vmspx --code_model=large --data_model=large --near_data=globals -O4 --opt_for_speed=5 --use_hw_mpy=F5 --include_path="D:/Program_Files_x86/TI/ccs740/ccsv7/ccs_base/msp430/include" --include_path="F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/Project/CCS-MSP430FR5994/RMP" --include_path="F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Include" --include_path="F:/Code_Library/MCU/Mutatus/M0P0_Library/MSP430FR5xx_6xx" --include_path="D:/Program_Files_x86/TI/ccs740/ccsv7/tools/compiler/ti-cgt-msp430_16.9.6.LTS/include" --advice:power="all" --advice:hw_config="all" --define=__MSP430FR5994__ --define=_MPU_ENABLE -g --printf_support=minimal --diag_warning=225 --diag_wrap=off --display_error_number --silicon_errata=CPU21 --silicon_errata=CPU22 --silicon_errata=CPU40 --preproc_with_compile --preproc_dependency="Benchmark/rmp_test.d_raw" --obj_directory="Benchmark"  "F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Benchmark/rmp_test.c"
+"F:\Code_Library\MCU\Mutatus\M5P1_MuProkaron\MProkaron\Benchmark\Platform/rmp_test_MSP430FR5994.h", line 48: remark #1546-D: (ULP 15.1) Detected consecutive bitfield assigns. Recommend using bit mask instead
+"F:\Code_Library\MCU\Mutatus\M5P1_MuProkaron\MProkaron\Benchmark\Platform/rmp_test_MSP430FR5994.h", line 49: remark #1546-D: (ULP 15.1) Detected consecutive bitfield assigns. Recommend using bit mask instead
+"F:\Code_Library\MCU\Mutatus\M5P1_MuProkaron\MProkaron\Benchmark\Platform/rmp_test_MSP430FR5994.h", line 50: remark #1546-D: (ULP 15.1) Detected consecutive bitfield assigns. Recommend using bit mask instead
+"F:\Code_Library\MCU\Mutatus\M5P1_MuProkaron\MProkaron\Benchmark\Platform/rmp_test_MSP430FR5994.h", line 51: remark #1546-D: (ULP 15.1) Detected consecutive bitfield assigns. Recommend using bit mask instead
+"F:\Code_Library\MCU\Mutatus\M5P1_MuProkaron\MProkaron\Benchmark\Platform/rmp_test_MSP430FR5994.h", line 52: remark #1546-D: (ULP 15.1) Detected consecutive bitfield assigns. Recommend using bit mask instead
+"F:\Code_Library\MCU\Mutatus\M5P1_MuProkaron\MProkaron\Benchmark\Platform/rmp_test_MSP430FR5994.h", line 53: remark #1546-D: (ULP 15.1) Detected consecutive bitfield assigns. Recommend using bit mask instead
+"F:\Code_Library\MCU\Mutatus\M5P1_MuProkaron\MProkaron\Benchmark\Platform/rmp_test_MSP430FR5994.h", line 77: remark #1538-D: (ULP 10.1) ISR TIM1_IRQHandler calls function Int_Handler. Recommend moving function call away from ISR, or inlining the function, or using pragmas
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Benchmark/rmp_test.c", line 55: remark #1544-D: (ULP 13.1) Detected loop counting up. Recommend loops count down as detecting zeros is easier
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Benchmark/rmp_test.c", line 66: remark #1544-D: (ULP 13.1) Detected loop counting up. Recommend loops count down as detecting zeros is easier
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Benchmark/rmp_test.c", line 77: remark #1544-D: (ULP 13.1) Detected loop counting up. Recommend loops count down as detecting zeros is easier
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Benchmark/rmp_test.c", line 92: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Benchmark/rmp_test.c", line 105: remark #1544-D: (ULP 13.1) Detected loop counting up. Recommend loops count down as detecting zeros is easier
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Benchmark/rmp_test.c", line 117: remark #1544-D: (ULP 13.1) Detected loop counting up. Recommend loops count down as detecting zeros is easier
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Benchmark/rmp_test.c", line 129: remark #1544-D: (ULP 13.1) Detected loop counting up. Recommend loops count down as detecting zeros is easier
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Benchmark/rmp_test.c", line 142: remark #1544-D: (ULP 13.1) Detected loop counting up. Recommend loops count down as detecting zeros is easier
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Benchmark/rmp_test.c", line 154: remark #1544-D: (ULP 13.1) Detected loop counting up. Recommend loops count down as detecting zeros is easier
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Benchmark/rmp_test.c", line 209: remark #1544-D: (ULP 13.1) Detected loop counting up. Recommend loops count down as detecting zeros is easier
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Benchmark/rmp_test.c", line 212: remark #1544-D: (ULP 13.1) Detected loop counting up. Recommend loops count down as detecting zeros is easier
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Benchmark/rmp_test.c", line 214: remark #2553-D: (ULP 14.1) Array index (involving "Count") of type "rmp_cnt_t". Recommend using "unsigned int"
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Benchmark/rmp_test.c", line 215: remark #2553-D: (ULP 14.1) Array index (involving "Count") of type "rmp_cnt_t". Recommend using "unsigned int"
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Benchmark/rmp_test.c", line 216: remark #2553-D: (ULP 14.1) Array index (involving "Count") of type "rmp_cnt_t". Recommend using "unsigned int"
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Benchmark/rmp_test.c", line 221: remark #1530-D: (ULP 5.1) Detected modulo operation(s). Recommend moving them to RAM during run time or not using as these are processing/power intensive
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Benchmark/rmp_test.c", line 222: remark #1530-D: (ULP 5.1) Detected modulo operation(s). Recommend moving them to RAM during run time or not using as these are processing/power intensive
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Benchmark/rmp_test.c", line 223: remark #1530-D: (ULP 5.1) Detected modulo operation(s). Recommend moving them to RAM during run time or not using as these are processing/power intensive
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Benchmark/rmp_test.c", line 256: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Benchmark/rmp_test.c", line 262: remark #1530-D: (ULP 5.1) Detected divide operation(s). Recommend moving them to RAM during run time or not using as these are processing/power intensive
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Benchmark/rmp_test.c", line 739: remark #1530-D: (ULP 5.1) Detected divide operation(s). Recommend moving them to RAM during run time or not using as these are processing/power intensive
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Benchmark/rmp_test.c", line 749: remark #1530-D: (ULP 5.1) Detected divide operation(s). Recommend moving them to RAM during run time or not using as these are processing/power intensive
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Benchmark/rmp_test.c", line 757: remark #1530-D: (ULP 5.1) Detected divide operation(s). Recommend moving them to RAM during run time or not using as these are processing/power intensive
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Benchmark/rmp_test.c", line 777: remark #1530-D: (ULP 5.1) Detected divide operation(s). Recommend moving them to RAM during run time or not using as these are processing/power intensive
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Benchmark/rmp_test.c", line 781: remark #1530-D: (ULP 5.1) Detected divide operation(s). Recommend moving them to RAM during run time or not using as these are processing/power intensive
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Benchmark/rmp_test.c", line 790: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Benchmark/rmp_test.c", line 813: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Benchmark/rmp_test.c", line 825: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+'Finished building: "F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Benchmark/rmp_test.c"'
+ 
+'Building file: "F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c"'
+'Invoking: MSP430 Compiler'
+"D:/Program_Files_x86/TI/ccs740/ccsv7/tools/compiler/ti-cgt-msp430_16.9.6.LTS/bin/cl430" -vmspx --code_model=large --data_model=large --near_data=globals -O4 --opt_for_speed=5 --use_hw_mpy=F5 --include_path="D:/Program_Files_x86/TI/ccs740/ccsv7/ccs_base/msp430/include" --include_path="F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/Project/CCS-MSP430FR5994/RMP" --include_path="F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Include" --include_path="F:/Code_Library/MCU/Mutatus/M0P0_Library/MSP430FR5xx_6xx" --include_path="D:/Program_Files_x86/TI/ccs740/ccsv7/tools/compiler/ti-cgt-msp430_16.9.6.LTS/include" --advice:power="all" --advice:hw_config="all" --define=__MSP430FR5994__ --define=_MPU_ENABLE -g --printf_support=minimal --diag_warning=225 --diag_wrap=off --display_error_number --silicon_errata=CPU21 --silicon_errata=CPU22 --silicon_errata=CPU40 --preproc_with_compile --preproc_dependency="Kernel/rmp_kernel.d_raw" --obj_directory="Kernel"  "F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c"
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 74: remark #1544-D: (ULP 13.1) Detected loop counting up. Recommend loops count down as detecting zeros is easier
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 74: remark #1543-D: (ULP 12.2) Detected for loop with repetitive data transfer. Recommend using DMA
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 75: remark #2553-D: (ULP 14.1) Array index (involving "Count") of type "rmp_cnt_t". Recommend using "unsigned int"
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 107: remark #1530-D: (ULP 5.1) Detected divide operation(s). Recommend moving them to RAM during run time or not using as these are processing/power intensive
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 111: remark #1530-D: (ULP 5.1) Detected divide operation(s). Recommend moving them to RAM during run time or not using as these are processing/power intensive
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 120: remark #1530-D: (ULP 5.1) Detected divide operation(s). Recommend moving them to RAM during run time or not using as these are processing/power intensive
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 121: remark #1530-D: (ULP 5.1) Detected modulo operation(s). Recommend moving them to RAM during run time or not using as these are processing/power intensive
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 122: remark #1530-D: (ULP 5.1) Detected divide operation(s). Recommend moving them to RAM during run time or not using as these are processing/power intensive
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 133: remark #1530-D: (ULP 5.1) Detected divide operation(s). Recommend moving them to RAM during run time or not using as these are processing/power intensive
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 137: remark #1530-D: (ULP 5.1) Detected divide operation(s). Recommend moving them to RAM during run time or not using as these are processing/power intensive
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 145: remark #1530-D: (ULP 5.1) Detected divide operation(s). Recommend moving them to RAM during run time or not using as these are processing/power intensive
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 146: remark #1530-D: (ULP 5.1) Detected modulo operation(s). Recommend moving them to RAM during run time or not using as these are processing/power intensive
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 147: remark #1530-D: (ULP 5.1) Detected divide operation(s). Recommend moving them to RAM during run time or not using as these are processing/power intensive
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 216: remark #2553-D: (ULP 14.1) Array index (involving "Count") of type "rmp_cnt_t". Recommend using "unsigned int"
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 219: remark #2553-D: (ULP 14.1) Array index (involving "Count") of type "rmp_cnt_t". Recommend using "unsigned int"
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 343: remark #1544-D: (ULP 13.1) Detected loop counting up. Recommend loops count down as detecting zeros is easier
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 380: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 388: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 394: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 400: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 405: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 419: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 426: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 450: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 454: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 460: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 463: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 471: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 476: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 478: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 507: remark #2553-D: (ULP 14.1) Array index (involving "Count") of type "rmp_cnt_t". Recommend using "unsigned int"
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 509: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 513: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 515: remark #2553-D: (ULP 14.1) Array index (involving "Count") of type "rmp_cnt_t". Recommend using "unsigned int"
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 518: remark #2553-D: (ULP 14.1) Array index (involving "Count") of type "rmp_cnt_t". Recommend using "unsigned int"
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 520: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 527: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 531: remark #2553-D: (ULP 14.1) Array index (involving "Count") of type "rmp_cnt_t". Recommend using "unsigned int"
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 559: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 564: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 571: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 577: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 583: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 586: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 590: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 595: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 624: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 631: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 635: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 638: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 659: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 668: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 672: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 675: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 692: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 696: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 700: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 708: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 712: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 715: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 739: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 743: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 772: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 776: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 780: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 784: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 789: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 793: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 799: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 804: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 839: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 843: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 849: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 854: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 863: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 867: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 880: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 889: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 893: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 896: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 901: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 904: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 908: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 911: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 916: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 924: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 928: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 934: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 936: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 957: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 961: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 966: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 970: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 976: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 981: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 986: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 991: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 994: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1002: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1005: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1009: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1013: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1017: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1021: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1025: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1029: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1033: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1052: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1056: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1062: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1067: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1072: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1077: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1083: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1087: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1095: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1099: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1119: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1123: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1129: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1134: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1139: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1147: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1151: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1157: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1181: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1185: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1191: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1196: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1201: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1206: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1213: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1218: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1223: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1231: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1237: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1245: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1251: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1256: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1260: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1267: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1296: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1300: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1304: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1308: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1313: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1318: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1324: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1329: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1333: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1343: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1348: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1351: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1374: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1378: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1386: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1394: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1398: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1408: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1423: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1428: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1436: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1440: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1445: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1452: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1458: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1489: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1493: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1520: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1524: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1531: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1536: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1562: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1566: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1572: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1577: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1582: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1587: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1613: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1617: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1623: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1628: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1638: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1642: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1669: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1673: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1679: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1684: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1689: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1696: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1700: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1705: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1713: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1719: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1743: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1747: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1753: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1758: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1764: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1769: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1775: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1779: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1805: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1809: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1815: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1820: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1825: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1830: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1841: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1845: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1876: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1880: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1884: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1888: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1893: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1897: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1907: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1911: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1920: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 1925: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 2021: remark #1544-D: (ULP 13.1) Detected loop counting up. Recommend loops count down as detecting zeros is easier
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 2023: remark #1544-D: (ULP 13.1) Detected loop counting up. Recommend loops count down as detecting zeros is easier
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 2029: remark #1546-D: (ULP 15.1) Detected consecutive bitfield assigns. Recommend using bit mask instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 2030: remark #1546-D: (ULP 15.1) Detected consecutive bitfield assigns. Recommend using bit mask instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 2031: remark #1546-D: (ULP 15.1) Detected consecutive bitfield assigns. Recommend using bit mask instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 2032: remark #1546-D: (ULP 15.1) Detected consecutive bitfield assigns. Recommend using bit mask instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 2172: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 2176: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 2181: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 2185: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 2194: remark #1544-D: (ULP 13.1) Detected loop counting up. Recommend loops count down as detecting zeros is easier
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 2205: remark #1544-D: (ULP 13.1) Detected loop counting up. Recommend loops count down as detecting zeros is easier
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 2206: remark #2553-D: (ULP 14.1) Array index (involving "FLI_Cnt") of type "rmp_cnt_t". Recommend using "unsigned int"
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 2278: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 2283: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 2325: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 2330: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 2360: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 2366: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 2371: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 2374: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 2380: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 2384: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 2388: remark #2553-D: (ULP 14.1) Array index (involving "Level") of type "rmp_cnt_t". Recommend using "unsigned int"
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 2392: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 2401: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 2403: remark #1544-D: (ULP 13.1) Detected loop counting up. Recommend loops count down as detecting zeros is easier
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 2406: remark #2553-D: (ULP 14.1) Array index (involving "Level") of type "rmp_cnt_t". Recommend using "unsigned int"
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 2408: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 2410: remark #2553-D: (ULP 14.1) Array index (involving "Level") of type "rmp_cnt_t". Recommend using "unsigned int"
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 2416: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 2445: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 2449: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 2459: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 2463: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 2468: remark #1545-D: (ULP 14.1) Array index of type "int". Recommend using "unsigned int"
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 2476: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 2487: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 2517: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 2521: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 2527: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 2531: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 2537: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 2541: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 2551: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 2555: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 2562: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 2565: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 2571: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 2577: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 2588: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 2591: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 2597: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c", line 2602: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Include/Kernel/rmp_kernel.h", line 300: remark #1534-D: (ULP 7.1) Detected use of global variable "RMP_Timer_Pend" within one function "main". Recommend placing variable in the function locally
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Include/Kernel/rmp_kernel.h", line 304: remark #1534-D: (ULP 7.1) Detected use of global variable "RMP_Init_Thd" within one function "main". Recommend placing variable in the function locally
+'Finished building: "F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Kernel/rmp_kernel.c"'
+ 
+'Building file: "F:/Code_Library/MCU/Mutatus/M0P0_Library/MSP430FR5xx_6xx/cs.c"'
+'Invoking: MSP430 Compiler'
+"D:/Program_Files_x86/TI/ccs740/ccsv7/tools/compiler/ti-cgt-msp430_16.9.6.LTS/bin/cl430" -vmspx --code_model=large --data_model=large --near_data=globals -O4 --opt_for_speed=5 --use_hw_mpy=F5 --include_path="D:/Program_Files_x86/TI/ccs740/ccsv7/ccs_base/msp430/include" --include_path="F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/Project/CCS-MSP430FR5994/RMP" --include_path="F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Include" --include_path="F:/Code_Library/MCU/Mutatus/M0P0_Library/MSP430FR5xx_6xx" --include_path="D:/Program_Files_x86/TI/ccs740/ccsv7/tools/compiler/ti-cgt-msp430_16.9.6.LTS/include" --advice:power="all" --advice:hw_config="all" --define=__MSP430FR5994__ --define=_MPU_ENABLE -g --printf_support=minimal --diag_warning=225 --diag_wrap=off --display_error_number --silicon_errata=CPU21 --silicon_errata=CPU22 --silicon_errata=CPU40 --preproc_with_compile --preproc_dependency="Lib/cs.d_raw" --obj_directory="Lib"  "F:/Code_Library/MCU/Mutatus/M0P0_Library/MSP430FR5xx_6xx/cs.c"
+"F:/Code_Library/MCU/Mutatus/M0P0_Library/MSP430FR5xx_6xx/cs.c", line 120: remark #1530-D: (ULP 5.1) Detected divide operation(s). Recommend moving them to RAM during run time or not using as these are processing/power intensive
+"F:/Code_Library/MCU/Mutatus/M0P0_Library/MSP430FR5xx_6xx/cs.c", line 123: remark #1530-D: (ULP 5.1) Detected divide operation(s). Recommend moving them to RAM during run time or not using as these are processing/power intensive
+"F:/Code_Library/MCU/Mutatus/M0P0_Library/MSP430FR5xx_6xx/cs.c", line 126: remark #1530-D: (ULP 5.1) Detected divide operation(s). Recommend moving them to RAM during run time or not using as these are processing/power intensive
+"F:/Code_Library/MCU/Mutatus/M0P0_Library/MSP430FR5xx_6xx/cs.c", line 129: remark #1530-D: (ULP 5.1) Detected divide operation(s). Recommend moving them to RAM during run time or not using as these are processing/power intensive
+"F:/Code_Library/MCU/Mutatus/M0P0_Library/MSP430FR5xx_6xx/cs.c", line 132: remark #1530-D: (ULP 5.1) Detected divide operation(s). Recommend moving them to RAM during run time or not using as these are processing/power intensive
+"F:/Code_Library/MCU/Mutatus/M0P0_Library/MSP430FR5xx_6xx/cs.c", line 135: remark #1530-D: (ULP 5.1) Detected divide operation(s). Recommend moving them to RAM during run time or not using as these are processing/power intensive
+"F:/Code_Library/MCU/Mutatus/M0P0_Library/MSP430FR5xx_6xx/cs.c", line 139: remark #1530-D: (ULP 5.1) Detected divide operation(s). Recommend moving them to RAM during run time or not using as these are processing/power intensive
+"F:/Code_Library/MCU/Mutatus/M0P0_Library/MSP430FR5xx_6xx/cs.c", line 151: remark #1530-D: (ULP 5.1) Detected divide operation(s). Recommend moving them to RAM during run time or not using as these are processing/power intensive
+"F:/Code_Library/MCU/Mutatus/M0P0_Library/MSP430FR5xx_6xx/cs.c", line 154: remark #1530-D: (ULP 5.1) Detected divide operation(s). Recommend moving them to RAM during run time or not using as these are processing/power intensive
+"F:/Code_Library/MCU/Mutatus/M0P0_Library/MSP430FR5xx_6xx/cs.c", line 157: remark #1530-D: (ULP 5.1) Detected divide operation(s). Recommend moving them to RAM during run time or not using as these are processing/power intensive
+"F:/Code_Library/MCU/Mutatus/M0P0_Library/MSP430FR5xx_6xx/cs.c", line 160: remark #1530-D: (ULP 5.1) Detected divide operation(s). Recommend moving them to RAM during run time or not using as these are processing/power intensive
+"F:/Code_Library/MCU/Mutatus/M0P0_Library/MSP430FR5xx_6xx/cs.c", line 163: remark #1530-D: (ULP 5.1) Detected divide operation(s). Recommend moving them to RAM during run time or not using as these are processing/power intensive
+"F:/Code_Library/MCU/Mutatus/M0P0_Library/MSP430FR5xx_6xx/cs.c", line 166: remark #1530-D: (ULP 5.1) Detected divide operation(s). Recommend moving them to RAM during run time or not using as these are processing/power intensive
+"F:/Code_Library/MCU/Mutatus/M0P0_Library/MSP430FR5xx_6xx/cs.c", line 170: remark #1530-D: (ULP 5.1) Detected divide operation(s). Recommend moving them to RAM during run time or not using as these are processing/power intensive
+"F:/Code_Library/MCU/Mutatus/M0P0_Library/MSP430FR5xx_6xx/cs.c", line 189: remark #1544-D: (ULP 13.1) Detected loop counting up. Recommend loops count down as detecting zeros is easier
+"F:/Code_Library/MCU/Mutatus/M0P0_Library/MSP430FR5xx_6xx/cs.c", line 202: remark #1530-D: (ULP 5.1) Detected divide operation(s). Recommend moving them to RAM during run time or not using as these are processing/power intensive
+"F:/Code_Library/MCU/Mutatus/M0P0_Library/MSP430FR5xx_6xx/cs.c", line 222: remark #1530-D: (ULP 5.1) Detected divide operation(s). Recommend moving them to RAM during run time or not using as these are processing/power intensive
+"F:/Code_Library/MCU/Mutatus/M0P0_Library/MSP430FR5xx_6xx/cs.c", line 227: remark #1530-D: (ULP 5.1) Detected divide operation(s). Recommend moving them to RAM during run time or not using as these are processing/power intensive
+"F:/Code_Library/MCU/Mutatus/M0P0_Library/MSP430FR5xx_6xx/cs.c", line 239: remark #1530-D: (ULP 5.1) Detected divide operation(s). Recommend moving them to RAM during run time or not using as these are processing/power intensive
+"F:/Code_Library/MCU/Mutatus/M0P0_Library/MSP430FR5xx_6xx/cs.c", line 245: remark #1530-D: (ULP 5.1) Detected divide operation(s). Recommend moving them to RAM during run time or not using as these are processing/power intensive
+'Finished building: "F:/Code_Library/MCU/Mutatus/M0P0_Library/MSP430FR5xx_6xx/cs.c"'
+ 
+'Building file: "F:/Code_Library/MCU/Mutatus/M0P0_Library/MSP430FR5xx_6xx/eusci_a_uart.c"'
+'Invoking: MSP430 Compiler'
+"D:/Program_Files_x86/TI/ccs740/ccsv7/tools/compiler/ti-cgt-msp430_16.9.6.LTS/bin/cl430" -vmspx --code_model=large --data_model=large --near_data=globals -O4 --opt_for_speed=5 --use_hw_mpy=F5 --include_path="D:/Program_Files_x86/TI/ccs740/ccsv7/ccs_base/msp430/include" --include_path="F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/Project/CCS-MSP430FR5994/RMP" --include_path="F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Include" --include_path="F:/Code_Library/MCU/Mutatus/M0P0_Library/MSP430FR5xx_6xx" --include_path="D:/Program_Files_x86/TI/ccs740/ccsv7/tools/compiler/ti-cgt-msp430_16.9.6.LTS/include" --advice:power="all" --advice:hw_config="all" --define=__MSP430FR5994__ --define=_MPU_ENABLE -g --printf_support=minimal --diag_warning=225 --diag_wrap=off --display_error_number --silicon_errata=CPU21 --silicon_errata=CPU22 --silicon_errata=CPU40 --preproc_with_compile --preproc_dependency="Lib/eusci_a_uart.d_raw" --obj_directory="Lib"  "F:/Code_Library/MCU/Mutatus/M0P0_Library/MSP430FR5xx_6xx/eusci_a_uart.c"
+"F:/Code_Library/MCU/Mutatus/M0P0_Library/MSP430FR5xx_6xx/eusci_a_uart.c", line 55: remark #1535-D: (ULP 8.1) variable "retVal" is used as a constant. Recommend declaring variable as either 'static const' or 'const'
+"F:/Code_Library/MCU/Mutatus/M0P0_Library/MSP430FR5xx_6xx/eusci_a_uart.c", line 121: remark #1528-D: (ULP 3.1) Detected flag polling using UCTXIFG. Recommend using an interrupt combined with enter LPMx and ISR
+"F:/Code_Library/MCU/Mutatus/M0P0_Library/MSP430FR5xx_6xx/eusci_a_uart.c", line 136: remark #1528-D: (ULP 3.1) Detected flag polling using UCRXIFG. Recommend using an interrupt combined with enter LPMx and ISR
+"F:/Code_Library/MCU/Mutatus/M0P0_Library/MSP430FR5xx_6xx/eusci_a_uart.c", line 251: remark #1528-D: (ULP 3.1) Detected flag polling using UCTXIFG. Recommend using an interrupt combined with enter LPMx and ISR
+'Finished building: "F:/Code_Library/MCU/Mutatus/M0P0_Library/MSP430FR5xx_6xx/eusci_a_uart.c"'
+ 
+'Building file: "F:/Code_Library/MCU/Mutatus/M0P0_Library/MSP430FR5xx_6xx/framctl_a.c"'
+'Invoking: MSP430 Compiler'
+"D:/Program_Files_x86/TI/ccs740/ccsv7/tools/compiler/ti-cgt-msp430_16.9.6.LTS/bin/cl430" -vmspx --code_model=large --data_model=large --near_data=globals -O4 --opt_for_speed=5 --use_hw_mpy=F5 --include_path="D:/Program_Files_x86/TI/ccs740/ccsv7/ccs_base/msp430/include" --include_path="F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/Project/CCS-MSP430FR5994/RMP" --include_path="F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Include" --include_path="F:/Code_Library/MCU/Mutatus/M0P0_Library/MSP430FR5xx_6xx" --include_path="D:/Program_Files_x86/TI/ccs740/ccsv7/tools/compiler/ti-cgt-msp430_16.9.6.LTS/include" --advice:power="all" --advice:hw_config="all" --define=__MSP430FR5994__ --define=_MPU_ENABLE -g --printf_support=minimal --diag_warning=225 --diag_wrap=off --display_error_number --silicon_errata=CPU21 --silicon_errata=CPU22 --silicon_errata=CPU40 --preproc_with_compile --preproc_dependency="Lib/framctl_a.d_raw" --obj_directory="Lib"  "F:/Code_Library/MCU/Mutatus/M0P0_Library/MSP430FR5xx_6xx/framctl_a.c"
+'Finished building: "F:/Code_Library/MCU/Mutatus/M0P0_Library/MSP430FR5xx_6xx/framctl_a.c"'
+ 
+'Building file: "F:/Code_Library/MCU/Mutatus/M0P0_Library/MSP430FR5xx_6xx/gpio.c"'
+'Invoking: MSP430 Compiler'
+"D:/Program_Files_x86/TI/ccs740/ccsv7/tools/compiler/ti-cgt-msp430_16.9.6.LTS/bin/cl430" -vmspx --code_model=large --data_model=large --near_data=globals -O4 --opt_for_speed=5 --use_hw_mpy=F5 --include_path="D:/Program_Files_x86/TI/ccs740/ccsv7/ccs_base/msp430/include" --include_path="F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/Project/CCS-MSP430FR5994/RMP" --include_path="F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Include" --include_path="F:/Code_Library/MCU/Mutatus/M0P0_Library/MSP430FR5xx_6xx" --include_path="D:/Program_Files_x86/TI/ccs740/ccsv7/tools/compiler/ti-cgt-msp430_16.9.6.LTS/include" --advice:power="all" --advice:hw_config="all" --define=__MSP430FR5994__ --define=_MPU_ENABLE -g --printf_support=minimal --diag_warning=225 --diag_wrap=off --display_error_number --silicon_errata=CPU21 --silicon_errata=CPU22 --silicon_errata=CPU40 --preproc_with_compile --preproc_dependency="Lib/gpio.d_raw" --obj_directory="Lib"  "F:/Code_Library/MCU/Mutatus/M0P0_Library/MSP430FR5xx_6xx/gpio.c"
+'Finished building: "F:/Code_Library/MCU/Mutatus/M0P0_Library/MSP430FR5xx_6xx/gpio.c"'
+ 
+'Building file: "F:/Code_Library/MCU/Mutatus/M0P0_Library/MSP430FR5xx_6xx/timer_a.c"'
+'Invoking: MSP430 Compiler'
+"D:/Program_Files_x86/TI/ccs740/ccsv7/tools/compiler/ti-cgt-msp430_16.9.6.LTS/bin/cl430" -vmspx --code_model=large --data_model=large --near_data=globals -O4 --opt_for_speed=5 --use_hw_mpy=F5 --include_path="D:/Program_Files_x86/TI/ccs740/ccsv7/ccs_base/msp430/include" --include_path="F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/Project/CCS-MSP430FR5994/RMP" --include_path="F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Include" --include_path="F:/Code_Library/MCU/Mutatus/M0P0_Library/MSP430FR5xx_6xx" --include_path="D:/Program_Files_x86/TI/ccs740/ccsv7/tools/compiler/ti-cgt-msp430_16.9.6.LTS/include" --advice:power="all" --advice:hw_config="all" --define=__MSP430FR5994__ --define=_MPU_ENABLE -g --printf_support=minimal --diag_warning=225 --diag_wrap=off --display_error_number --silicon_errata=CPU21 --silicon_errata=CPU22 --silicon_errata=CPU40 --preproc_with_compile --preproc_dependency="Lib/timer_a.d_raw" --obj_directory="Lib"  "F:/Code_Library/MCU/Mutatus/M0P0_Library/MSP430FR5xx_6xx/timer_a.c"
+'Finished building: "F:/Code_Library/MCU/Mutatus/M0P0_Library/MSP430FR5xx_6xx/timer_a.c"'
+ 
+'Building file: "F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/MSP430/rmp_platform_msp430x_asm.s"'
+'Invoking: MSP430 Compiler'
+"D:/Program_Files_x86/TI/ccs740/ccsv7/tools/compiler/ti-cgt-msp430_16.9.6.LTS/bin/cl430" -vmspx --code_model=large --data_model=large --near_data=globals -O4 --opt_for_speed=5 --use_hw_mpy=F5 --include_path="D:/Program_Files_x86/TI/ccs740/ccsv7/ccs_base/msp430/include" --include_path="F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/Project/CCS-MSP430FR5994/RMP" --include_path="F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Include" --include_path="F:/Code_Library/MCU/Mutatus/M0P0_Library/MSP430FR5xx_6xx" --include_path="D:/Program_Files_x86/TI/ccs740/ccsv7/tools/compiler/ti-cgt-msp430_16.9.6.LTS/include" --advice:power="all" --advice:hw_config="all" --define=__MSP430FR5994__ --define=_MPU_ENABLE -g --printf_support=minimal --diag_warning=225 --diag_wrap=off --display_error_number --silicon_errata=CPU21 --silicon_errata=CPU22 --silicon_errata=CPU40 --preproc_with_compile --preproc_dependency="Platform/rmp_platform_msp430x_asm.d_raw" --obj_directory="Platform"  "F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/MSP430/rmp_platform_msp430x_asm.s"
+'Finished building: "F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/MSP430/rmp_platform_msp430x_asm.s"'
+ 
+'Building file: "F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/MSP430/rmp_platform_msp430.c"'
+'Invoking: MSP430 Compiler'
+"D:/Program_Files_x86/TI/ccs740/ccsv7/tools/compiler/ti-cgt-msp430_16.9.6.LTS/bin/cl430" -vmspx --code_model=large --data_model=large --near_data=globals -O4 --opt_for_speed=5 --use_hw_mpy=F5 --include_path="D:/Program_Files_x86/TI/ccs740/ccsv7/ccs_base/msp430/include" --include_path="F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/Project/CCS-MSP430FR5994/RMP" --include_path="F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Include" --include_path="F:/Code_Library/MCU/Mutatus/M0P0_Library/MSP430FR5xx_6xx" --include_path="D:/Program_Files_x86/TI/ccs740/ccsv7/tools/compiler/ti-cgt-msp430_16.9.6.LTS/include" --advice:power="all" --advice:hw_config="all" --define=__MSP430FR5994__ --define=_MPU_ENABLE -g --printf_support=minimal --diag_warning=225 --diag_wrap=off --display_error_number --silicon_errata=CPU21 --silicon_errata=CPU22 --silicon_errata=CPU40 --preproc_with_compile --preproc_dependency="Platform/rmp_platform_msp430.d_raw" --obj_directory="Platform"  "F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/MSP430/rmp_platform_msp430.c"
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/MSP430/rmp_platform_msp430.c", line 174: remark #1546-D: (ULP 15.1) Detected consecutive bitfield assigns. Recommend using bit mask instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/MSP430/rmp_platform_msp430.c", line 174: remark #1546-D: (ULP 15.1) Detected consecutive bitfield assigns. Recommend using bit mask instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/MSP430/rmp_platform_msp430.c", line 174: remark #1546-D: (ULP 15.1) Detected consecutive bitfield assigns. Recommend using bit mask instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/MSP430/rmp_platform_msp430.c", line 174: remark #1546-D: (ULP 15.1) Detected consecutive bitfield assigns. Recommend using bit mask instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/MSP430/rmp_platform_msp430.c", line 174: remark #1546-D: (ULP 15.1) Detected consecutive bitfield assigns. Recommend using bit mask instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/MSP430/rmp_platform_msp430.c", line 174: remark #1546-D: (ULP 15.1) Detected consecutive bitfield assigns. Recommend using bit mask instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/MSP430/rmp_platform_msp430.c", line 174: remark #1546-D: (ULP 15.1) Detected consecutive bitfield assigns. Recommend using bit mask instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/MSP430/rmp_platform_msp430.c", line 174: remark #1546-D: (ULP 15.1) Detected consecutive bitfield assigns. Recommend using bit mask instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/MSP430/rmp_platform_msp430.c", line 174: remark #1546-D: (ULP 15.1) Detected consecutive bitfield assigns. Recommend using bit mask instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/MSP430/rmp_platform_msp430.c", line 174: remark #1546-D: (ULP 15.1) Detected consecutive bitfield assigns. Recommend using bit mask instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/MSP430/rmp_platform_msp430.c", line 174: remark #1546-D: (ULP 15.1) Detected consecutive bitfield assigns. Recommend using bit mask instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/MSP430/rmp_platform_msp430.c", line 174: remark #1546-D: (ULP 15.1) Detected consecutive bitfield assigns. Recommend using bit mask instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/MSP430/rmp_platform_msp430.c", line 174: remark #1546-D: (ULP 15.1) Detected consecutive bitfield assigns. Recommend using bit mask instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/MSP430/rmp_platform_msp430.c", line 174: remark #1546-D: (ULP 15.1) Detected consecutive bitfield assigns. Recommend using bit mask instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/MSP430/rmp_platform_msp430.c", line 174: remark #1546-D: (ULP 15.1) Detected consecutive bitfield assigns. Recommend using bit mask instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/MSP430/rmp_platform_msp430.c", line 174: remark #1546-D: (ULP 15.1) Detected consecutive bitfield assigns. Recommend using bit mask instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/MSP430/rmp_platform_msp430.c", line 174: remark #1546-D: (ULP 15.1) Detected consecutive bitfield assigns. Recommend using bit mask instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/MSP430/rmp_platform_msp430.c", line 174: remark #1546-D: (ULP 15.1) Detected consecutive bitfield assigns. Recommend using bit mask instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/MSP430/rmp_platform_msp430.c", line 174: remark #1546-D: (ULP 15.1) Detected consecutive bitfield assigns. Recommend using bit mask instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/MSP430/rmp_platform_msp430.c", line 174: remark #1546-D: (ULP 15.1) Detected consecutive bitfield assigns. Recommend using bit mask instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/MSP430/rmp_platform_msp430.c", line 174: remark #1546-D: (ULP 15.1) Detected consecutive bitfield assigns. Recommend using bit mask instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/MSP430/rmp_platform_msp430.c", line 174: remark #1546-D: (ULP 15.1) Detected consecutive bitfield assigns. Recommend using bit mask instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/MSP430/rmp_platform_msp430.c", line 174: remark #1546-D: (ULP 15.1) Detected consecutive bitfield assigns. Recommend using bit mask instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/MSP430/rmp_platform_msp430.c", line 174: remark #1546-D: (ULP 15.1) Detected consecutive bitfield assigns. Recommend using bit mask instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/MSP430/rmp_platform_msp430.c", line 174: remark #1546-D: (ULP 15.1) Detected consecutive bitfield assigns. Recommend using bit mask instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/MSP430/rmp_platform_msp430.c", line 174: remark #1546-D: (ULP 15.1) Detected consecutive bitfield assigns. Recommend using bit mask instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/MSP430/rmp_platform_msp430.c", line 174: remark #1546-D: (ULP 15.1) Detected consecutive bitfield assigns. Recommend using bit mask instead
+"F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/MSP430/rmp_platform_msp430.c", line 174: remark #1546-D: (ULP 15.1) Detected consecutive bitfield assigns. Recommend using bit mask instead
+'Finished building: "F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/MSP430/rmp_platform_msp430.c"'
+ 
+'Building target: "RMP.out"'
+'Invoking: MSP430 Linker'
+"D:/Program_Files_x86/TI/ccs740/ccsv7/tools/compiler/ti-cgt-msp430_16.9.6.LTS/bin/cl430" -vmspx --code_model=large --data_model=large --near_data=globals -O4 --opt_for_speed=5 --use_hw_mpy=F5 --advice:power="all" --advice:hw_config="all" --define=__MSP430FR5994__ --define=_MPU_ENABLE -g --printf_support=minimal --diag_warning=225 --diag_wrap=off --display_error_number --silicon_errata=CPU21 --silicon_errata=CPU22 --silicon_errata=CPU40 -z -m"RMP.map" --heap_size=160 --stack_size=160 --cinit_hold_wdt=on -i"D:/Program_Files_x86/TI/ccs740/ccsv7/ccs_base/msp430/include" -i"D:/Program_Files_x86/TI/ccs740/ccsv7/ccs_base/msp430/lib/5xx_6xx_FRxx" -i"D:/Program_Files_x86/TI/ccs740/ccsv7/ccs_base/msp430/lib/FR59xx" -i"D:/Program_Files_x86/TI/ccs740/ccsv7/tools/compiler/ti-cgt-msp430_16.9.6.LTS/lib" -i"D:/Program_Files_x86/TI/ccs740/ccsv7/tools/compiler/ti-cgt-msp430_16.9.6.LTS/include" --priority --reread_libs --define=_MPU_ENABLE --diag_wrap=off --display_error_number --warn_sections --xml_link_info="RMP_linkInfo.xml" --use_hw_mpy=F5 --rom_model -o "RMP.out" "./Benchmark/rmp_test.obj" "./Kernel/rmp_kernel.obj" "./Lib/cs.obj" "./Lib/eusci_a_uart.obj" "./Lib/framctl_a.obj" "./Lib/gpio.obj" "./Lib/timer_a.obj" "./Platform/rmp_platform_msp430.obj" "./Platform/rmp_platform_msp430x_asm.obj" "../lnk_msp430fr5994.cmd"  -llibmath.a -llibmpu_init.a -llibc.a 
+<Linking>
+remark #10371-D: (ULP 1.1) Detected no uses of low power mode state changing instructions
+remark #10372-D: (ULP 4.1) Detected uninitialized Port 1 in this project. Recommend initializing all unused ports to eliminate wasted current consumption on unused pins.
+remark #10372-D: (ULP 4.1) Detected uninitialized Port 2 in this project. Recommend initializing all unused ports to eliminate wasted current consumption on unused pins.
+remark #10372-D: (ULP 4.1) Detected uninitialized Port 3 in this project. Recommend initializing all unused ports to eliminate wasted current consumption on unused pins.
+remark #10372-D: (ULP 4.1) Detected uninitialized Port 4 in this project. Recommend initializing all unused ports to eliminate wasted current consumption on unused pins.
+remark #10372-D: (ULP 4.1) Detected uninitialized Port 5 in this project. Recommend initializing all unused ports to eliminate wasted current consumption on unused pins.
+remark #10372-D: (ULP 4.1) Detected uninitialized Port 6 in this project. Recommend initializing all unused ports to eliminate wasted current consumption on unused pins.
+remark #10372-D: (ULP 4.1) Detected uninitialized Port 7 in this project. Recommend initializing all unused ports to eliminate wasted current consumption on unused pins.
+remark #10372-D: (ULP 4.1) Detected uninitialized Port 8 in this project. Recommend initializing all unused ports to eliminate wasted current consumption on unused pins.
+remark #10372-D: (ULP 4.1) Detected uninitialized Port A in this project. Recommend initializing all unused ports to eliminate wasted current consumption on unused pins.
+remark #10372-D: (ULP 4.1) Detected uninitialized Port B in this project. Recommend initializing all unused ports to eliminate wasted current consumption on unused pins.
+remark #10372-D: (ULP 4.1) Detected uninitialized Port C in this project. Recommend initializing all unused ports to eliminate wasted current consumption on unused pins.
+remark #10372-D: (ULP 4.1) Detected uninitialized Port D in this project. Recommend initializing all unused ports to eliminate wasted current consumption on unused pins.
+remark #10436-D: (ULP 6.3) Detected use of a device with a Low Energy Accelerator (LEA) but application does not appear to use LEA. Recommend offloading vector math and signal processing to LEA for improved performance.
+'Finished building target: "RMP.out"'
+ 
+
+**** Build Finished ****

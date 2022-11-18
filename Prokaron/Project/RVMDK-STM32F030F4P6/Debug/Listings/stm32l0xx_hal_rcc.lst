@@ -1,0 +1,82 @@
+L 1 "..\..\..\M0P0_Library\STM32Cube_FW_L0_V1.10.0\Drivers\STM32L0xx_HAL_Driver\Src\stm32l0xx_hal_rcc.c"
+N/**
+N  ******************************************************************************
+N  * @file    stm32l0xx_hal_rcc.c
+N  * @author  MCD Application Team
+N  * @brief   RCC HAL module driver.
+N  *          This file provides firmware functions to manage the following 
+N  *          functionalities of the Reset and Clock Control (RCC) peripheral:
+N  *           + Initialization and de-initialization functions
+N  *           + Peripheral Control functions
+N  *       
+N  @verbatim                
+N  ==============================================================================
+N                      ##### RCC specific features #####
+N  ==============================================================================
+N    [..]  
+N      After reset the device is running from multispeed internal oscillator clock 
+N      (MSI 2.097MHz) with Flash 0 wait state and Flash prefetch buffer is disabled, 
+N      and all peripherals are off except internal SRAM, Flash and JTAG.
+N      (+) There is no prescaler on High speed (AHB) and Low speed (APB) buses;
+N          all peripherals mapped on these buses are running at MSI speed.
+N      (+) The clock for all peripherals is switched off, except the SRAM and FLASH.
+N      (+) All GPIOs are in input floating state, except the JTAG pins which
+N          are assigned to be used for debug purpose.
+N    [..] Once the device started from reset, the user application has to:
+N      (+) Configure the clock source to be used to drive the System clock
+N          (if the application needs higher frequency/performance)
+N      (+) Configure the System clock frequency and Flash settings  
+N      (+) Configure the AHB and APB buses prescalers
+N      (+) Enable the clock for the peripheral(s) to be used
+N      (+) Configure the clock source(s) for peripherals whose clocks are not
+N          derived from the System clock (I2S, RTC, ADC, USB OTG FS/SDIO/RNG) 
+N          (*) SDIO only for STM32L0xxxD devices
+N
+N                      ##### RCC Limitations #####
+N  ==============================================================================
+N    [..]  
+N      A delay between an RCC peripheral clock enable and the effective peripheral 
+N      enabling should be taken into account in order to manage the peripheral read/write 
+N      from/to registers.
+N      (+) This delay depends on the peripheral mapping.
+N        (++) AHB & APB peripherals, 1 dummy read is necessary
+N
+N    [..]  
+N      Workarounds:
+N      (#) For AHB & APB peripherals, a dummy read to the peripheral register has been
+N          inserted in each __HAL_RCC_PPP_CLK_ENABLE() macro.
+N
+N  @endverbatim
+N  ******************************************************************************
+N  * @attention
+N  *
+N  * <h2><center>&copy; COPYRIGHT(c) 2016 STMicroelectronics</center></h2>
+N  *
+N  * Redistribution and use in source and binary forms, with or without modification,
+N  * are permitted provided that the following conditions are met:
+N  *   1. Redistributions of source code must retain the above copyright notice,
+N  *      this list of conditions and the following disclaimer.
+N  *   2. Redistributions in binary form must reproduce the above copyright notice,
+N  *      this list of conditions and the following disclaimer in the documentation
+N  *      and/or other materials provided with the distribution.
+N  *   3. Neither the name of STMicroelectronics nor the names of its contributors
+N  *      may be used to endorse or promote products derived from this software
+N  *      without specific prior written permission.
+N  *
+N  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+N  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+N  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+N  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+N  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+N  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+N  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+N  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+N  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+N  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+N  *
+N  ******************************************************************************  
+N*/
+N
+N/* Includes ------------------------------------------------------------------*/
+C "..\..\..\M0P0_Library\STM32Cube_FW_L0_V1.10.0\Drivers\STM32L0xx_HAL_Driver\Src\stm32l0xx_hal_rcc.c" 80 27 cannot open source input file "stm32l0xx_hal.h": No such file or directory
+N#include "stm32l0xx_hal.h"

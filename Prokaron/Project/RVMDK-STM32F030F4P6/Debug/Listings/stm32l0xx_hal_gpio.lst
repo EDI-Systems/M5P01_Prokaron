@@ -1,0 +1,129 @@
+L 1 "..\..\..\M0P0_Library\STM32Cube_FW_L0_V1.10.0\Drivers\STM32L0xx_HAL_Driver\Src\stm32l0xx_hal_gpio.c"
+N/**
+N  ******************************************************************************
+N  * @file    stm32l0xx_hal_gpio.c
+N  * @author  MCD Application Team
+N  * @brief   GPIO HAL module driver.  
+N  *          This file provides firmware functions to manage the following 
+N  *          functionalities of the General Purpose Input/Output (GPIO) peripheral:
+N  *           + Initialization and de-initialization functions
+N  *           + IO operation functions
+N  *         
+N  @verbatim
+N  ==============================================================================
+N                    ##### GPIO Peripheral features #####
+N  ==============================================================================
+N  [..] 
+N    (+) Each port bit of the general-purpose I/O (GPIO) ports can be individually 
+N  configured by software in several modes:
+N        (++) Input mode 
+N        (++) Analog mode
+N        (++) Output mode
+N        (++) Alternate function mode
+N        (++) External interrupt/event lines
+N 
+N    (+) During and just after reset, the alternate functions and external interrupt  
+N  lines are not active and the I/O ports are configured in input floating mode.
+N  
+N    (+) All GPIO pins have weak internal pull-up and pull-down resistors, which can be 
+N  activated or not.
+N
+N    (+) In Output or Alternate mode, each IO can be configured on open-drain or push-pull
+N  type and the IO speed can be selected depending on the VDD value.
+N  
+N    (+) The microcontroller IO pins are connected to onboard peripherals/modules through a 
+N        multiplexer that allows only one peripheral alternate function (AF) connected 
+N  to an IO pin at a time. In this way, there can be no conflict between peripherals 
+N  sharing the same IO pin. 
+N
+N    (+) All ports have external interrupt/event capability. To use external interrupt 
+N  lines, the port must be configured in input mode. All available GPIO pins are 
+N  connected to the 16 external interrupt/event lines from EXTI0 to EXTI15.
+N  
+N    (+) The external interrupt/event controller consists of up to 28 edge detectors
+N  (16 lines are connected to GPIO) for generating event/interrupt requests (each 
+N  input line can be independently configured to select the type (interrupt or event) 
+N  and the corresponding trigger event (rising or falling or both). Each line can 
+N  also be masked independently. 
+N  
+N                     ##### How to use this driver #####
+N  ==============================================================================  
+N  [..]             
+N    (#) Enable the GPIO IOPORT clock using the following function: __HAL_RCC_GPIOx_CLK_ENABLE(). 
+N
+N    (#) Configure the GPIO pin(s) using HAL_GPIO_Init().
+N        (++) Configure the IO mode using "Mode" member from GPIO_InitTypeDef structure
+N        (++) Activate Pull-up, Pull-down resistor using "Pull" member from GPIO_InitTypeDef 
+N             structure.
+N        (++) In case of Output or alternate function mode selection: the speed is 
+N             configured through "Speed" member from GPIO_InitTypeDef structure.
+N        (++) In alternate mode is selection, the alternate function connected to the IO
+N             is configured through "Alternate" member from GPIO_InitTypeDef structure.
+N        (++) Analog mode is required when a pin is to be used as ADC channel 
+N             or DAC output.
+N        (++) In case of external interrupt/event selection the "Mode" member from 
+N             GPIO_InitTypeDef structure select the type (interrupt or event) and 
+N             the corresponding trigger event (rising or falling or both).
+N   
+N    (#) In case of external interrupt/event mode selection, configure NVIC IRQ priority 
+N        mapped to the EXTI line using HAL_NVIC_SetPriority() and enable it using
+N        HAL_NVIC_EnableIRQ().
+N         
+N   (#) HAL_GPIO_DeInit allows to set register values to their reset value. This function
+N       is also to be used when unconfiguring pin which was used as an external interrupt
+N       or in event mode. That is the only way to reset the corresponding bit in
+N       EXTI & SYSCFG registers.
+N
+N    (#) To get the level of a pin configured in input mode use HAL_GPIO_ReadPin().
+N            
+N    (#) To set/reset the level of a pin configured in output mode use 
+N        HAL_GPIO_WritePin()/HAL_GPIO_TogglePin().
+N
+N    (#) To lock pin configuration until next reset use HAL_GPIO_LockPin().
+N
+N    (#) During and just after reset, the alternate functions are not 
+N        active and the GPIO pins are configured in input floating mode (except JTAG
+N        pins).
+N  
+N    (#) The LSE oscillator pins OSC32_IN and OSC32_OUT can be used as general purpose 
+N        (PC14 and PC15, respectively) when the LSE oscillator is off. The LSE has 
+N        priority over the GPIO function.
+N  
+N    (#) The HSE oscillator pins OSC_IN/OSC_OUT can be used as 
+N        general purpose PH0 and PH1, respectively, when the HSE oscillator is off. 
+N        The HSE has priority over the GPIO function.
+N  
+N  @endverbatim
+N  ******************************************************************************
+N  * @attention
+N  *
+N  * <h2><center>&copy; COPYRIGHT(c) 2016 STMicroelectronics</center></h2>
+N  *
+N  * Redistribution and use in source and binary forms, with or without modification,
+N  * are permitted provided that the following conditions are met:
+N  *   1. Redistributions of source code must retain the above copyright notice,
+N  *      this list of conditions and the following disclaimer.
+N  *   2. Redistributions in binary form must reproduce the above copyright notice,
+N  *      this list of conditions and the following disclaimer in the documentation
+N  *      and/or other materials provided with the distribution.
+N  *   3. Neither the name of STMicroelectronics nor the names of its contributors
+N  *      may be used to endorse or promote products derived from this software
+N  *      without specific prior written permission.
+N  *
+N  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+N  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+N  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+N  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+N  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+N  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+N  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+N  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+N  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+N  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+N  *
+N  ******************************************************************************  
+N  */ 
+N
+N/* Includes ------------------------------------------------------------------*/
+C "..\..\..\M0P0_Library\STM32Cube_FW_L0_V1.10.0\Drivers\STM32L0xx_HAL_Driver\Src\stm32l0xx_hal_gpio.c" 127 27 cannot open source input file "stm32l0xx_hal.h": No such file or directory
+N#include "stm32l0xx_hal.h"

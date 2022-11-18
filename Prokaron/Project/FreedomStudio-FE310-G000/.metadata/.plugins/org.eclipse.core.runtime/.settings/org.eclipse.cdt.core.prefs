@@ -1,0 +1,20 @@
+eclipse.preferences.version=1
+indexer/indexAllFiles=true
+indexer/indexAllHeaderVersions=false
+indexer/indexAllVersionsSpecificHeaders=
+indexer/indexOnOpen=false
+indexer/indexUnusedHeadersWithDefaultLang=true
+indexer/indexerId=org.eclipse.cdt.core.fastIndexer
+indexer/skipFilesLargerThanMB=8
+indexer/skipImplicitReferences=false
+indexer/skipIncludedFilesLargerThanMB=16
+indexer/skipMacroReferences=false
+indexer/skipReferences=false
+indexer/skipTypeReferences=false
+indexer/updatePolicy=0
+indexer/useHeuristicIncludeResolution=true
+macros/workspace=<?xml version\="1.0" encoding\="UTF-8" standalone\="no"?>\n<macros/>\n
+org.eclipse.cdt.core.showSourceFilesInBinaries=true
+org.eclipse.cdt.core.showSourceNotFoundEditor=all_time
+org.eclipse.cdt.core.taskPriorities=normal,normal,normal
+org.eclipse.cdt.core.taskTags=TODO,FIXME,XXX

@@ -1,0 +1,31 @@
+
+**** Build of configuration Debug for project RMP ****
+
+"D:\\Program_Files_x86\\TI\\ccs740\\ccsv7\\utils\\bin\\gmake" -k -j 8 all -O 
+ 
+F:\Code_Library\MCU\Mutatus\M5P1_MuProkaron\Project\CCS-TMS570LS0432PZQQ1\RMP/copy.bat
+
+F:\Code_Library\MCU\Mutatus\M5P1_MuProkaron\Project\CCS-TMS570LS0432PZQQ1\RMP\Debug>cd .. 
+
+F:\Code_Library\MCU\Mutatus\M5P1_MuProkaron\Project\CCS-TMS570LS0432PZQQ1\RMP>copy rmp_platform_crx_conf.h ..\..\..\MProkaron\Include\Platform\CortexR\rmp_platform_crx_conf.h 
+已复制         1 个文件。
+
+F:\Code_Library\MCU\Mutatus\M5P1_MuProkaron\Project\CCS-TMS570LS0432PZQQ1\RMP>copy rmp_platform.h ..\..\..\MProkaron\Include\Platform\rmp_platform.h 
+已复制         1 个文件。
+
+F:\Code_Library\MCU\Mutatus\M5P1_MuProkaron\Project\CCS-TMS570LS0432PZQQ1\RMP>copy rmp_test.h ..\..\..\MProkaron\Benchmark\rmp_test.h 
+已复制         1 个文件。
+ 
+'Building file: "F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/CortexR/rmp_platform_crx_asm.asm"'
+'Invoking: ARM Compiler'
+"D:/Program_Files_x86/TI/ccs740/ccsv7/tools/compiler/ti-cgt-arm_16.9.6.LTS/bin/armcl" -mv7R4 --code_state=32 -O4 --opt_for_speed=5 --include_path="F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/Project/CCS-TMS570LS0432PZQQ1/RMP" --include_path="F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Include" --include_path="F:/Code_Library/MCU/Mutatus/M0P0_Library/TMS570LS04x/include" --include_path="D:/Program_Files_x86/TI/ccs740/ccsv7/tools/compiler/ti-cgt-arm_16.9.6.LTS/include" -g --diag_warning=225 --diag_wrap=off --display_error_number --enum_type=packed --abi=eabi --preproc_with_compile --preproc_dependency="Platform/rmp_platform_crx_asm.d_raw" --obj_directory="Platform"  "F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/CortexR/rmp_platform_crx_asm.asm"
+'Finished building: "F:/Code_Library/MCU/Mutatus/M5P1_MuProkaron/MProkaron/Platform/CortexR/rmp_platform_crx_asm.asm"'
+ 
+'Building target: "RMP.out"'
+'Invoking: ARM Linker'
+"D:/Program_Files_x86/TI/ccs740/ccsv7/tools/compiler/ti-cgt-arm_16.9.6.LTS/bin/armcl" -mv7R4 --code_state=32 -O4 --opt_for_speed=5 -g --diag_warning=225 --diag_wrap=off --display_error_number --enum_type=packed --abi=eabi -z -m"RMP.map" --heap_size=0x800 --stack_size=0x800 -i"D:/Program_Files_x86/TI/ccs740/ccsv7/tools/compiler/ti-cgt-arm_16.9.6.LTS/lib" -i"D:/Program_Files_x86/TI/ccs740/ccsv7/tools/compiler/ti-cgt-arm_16.9.6.LTS/include" --reread_libs --diag_wrap=off --display_error_number --warn_sections --xml_link_info="RMP_linkInfo.xml" --rom_model --be32 -o "RMP.out" "./Benchmark/rmp_test.obj" "./Kernel/rmp_kernel.obj" "./Lib/esm.obj" "./Lib/gio.obj" "./Lib/notification.obj" "./Lib/pinmux.obj" "./Lib/rti.obj" "./Lib/sci.obj" "./Lib/sys_core.obj" "./Lib/sys_intvecs.obj" "./Lib/sys_mpu.obj" "./Lib/sys_phantom.obj" "./Lib/sys_pmu.obj" "./Lib/sys_selftest.obj" "./Lib/sys_startup.obj" "./Lib/sys_vim.obj" "./Lib/system.obj" "./Platform/rmp_platform_crx.obj" "./Platform/rmp_platform_crx_asm.obj" "../TMS570LS04xxFlashLnk.cmd"  -llibc.a 
+<Linking>
+'Finished building target: "RMP.out"'
+ 
+
+**** Build Finished ****
