@@ -1,7 +1,0 @@
-LaunchTargetManager/org.eclipse.launchbar.core.launchTargetType.local,Local/arch=x86_64
-LaunchTargetManager/org.eclipse.launchbar.core.launchTargetType.local,Local/name=Local
-LaunchTargetManager/org.eclipse.launchbar.core.launchTargetType.local,Local/os=linux
-configDescList=org.eclipse.launchbar.core.descriptorType.default\:RMP Debug
-eclipse.preferences.version=1
-org.eclipse.launchbar.core.descriptorType.default\:RMP\ Debug/activeLaunchMode=debug
-org.eclipse.launchbar.core.descriptorType.default\:RMP\ Debug/activeLaunchTarget=org.eclipse.launchbar.core.launchTargetType.local\:Local

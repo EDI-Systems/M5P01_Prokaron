@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">
-<refactoring comment="Rename resource &apos;RMP/Lib&apos; to &apos;Platform&apos;" description="Rename resource &apos;Lib&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="Lib" name="Platform" stamp="1519852098070" updateReferences="true"/>
-</session>
