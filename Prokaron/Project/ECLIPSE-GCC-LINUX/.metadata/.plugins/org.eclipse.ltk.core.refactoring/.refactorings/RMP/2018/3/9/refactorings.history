@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">
-<refactoring comment="Rename resource &apos;RMP/Platform/platform_x86_posix.c&apos; to &apos;platform_x86_linux.c&apos;" description="Rename resource &apos;platform_x86_posix.c&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="Platform/platform_x86_posix.c" name="platform_x86_linux.c" stamp="1519910920354" updateReferences="true"/>
-</session>

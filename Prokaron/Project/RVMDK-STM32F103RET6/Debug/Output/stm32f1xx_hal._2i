@@ -1,6 +1,0 @@
--c --cpu Cortex-M3 -D__MICROLIB -g -W -O3 -Otime --apcs=interwork --split_sections --enum_is_int --signed_chars --asm --interleave --asm_dir ".\\Debug\\Listings\\" -I ..\..\MProkaron\Include -I ..\..\..\M0P0_Library\STM32Cube_FW_F1_V1.6.0\Drivers\STM32F1xx_HAL_Driver\Inc -I ..\..\..\M0P0_Library\STM32Cube_FW_F1_V1.6.0\Drivers\CMSIS\Include -I ..\..\..\M0P0_Library\STM32Cube_FW_F1_V1.6.0\Drivers\CMSIS\Device\ST\STM32F1xx\Include -I ..\..\..\M0P0_Library\STM32Cube_FW_F1_V1.6.0\Drivers\STM32F1xx_HAL_Driver\Inc\Conf
--I F:\Code_Library\MCU\Mutatus\M5P1_MuProkaron\Project\RVMDK-STM32F103RET6\RTE
--I D:\Program_Files_x86\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.1\CMSIS\Include
--I D:\Program_Files_x86\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\Include
--D__UVISION_VERSION="520" -D_RTE_ -DSTM32F10X_HD -DUSE_HAL_DRIVER -DSTM32F103xE
--o .\debug\output\stm32f1xx_hal.o --list_dir ".\\Debug\\Listings\\" --list --omf_browse .\debug\output\stm32f1xx_hal.crf --depend .\debug\output\stm32f1xx_hal.d --feedback ".\Debug\Output\RMP.fed" "..\..\..\M0P0_Library\STM32Cube_FW_F1_V1.6.0\Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal.c"
