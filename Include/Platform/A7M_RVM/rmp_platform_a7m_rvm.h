@@ -74,7 +74,7 @@ typedef rmp_s32_t rmp_ret_t;
 #define RMP_INIT_STACK           RMP_INIT_STACK_TAIL(17+5)
 
 /* The virtual machine configs are here */
-#include "rvm_guest_a7m.h"
+#include "A7M/rvm_guest_a7m.h"
 
 /* The CPU and application specific macros are here */
 #include "rmp_platform_a7m_rvm_conf.h"
@@ -121,6 +121,7 @@ typedef rmp_s32_t rmp_ret_t;
 #ifndef __HDR_PUBLIC_MEMBERS__
 /*****************************************************************************/
 static rvm_ptr_t RMP_Console_Ptr;
+extern const rvm_ptr_t RVM_Proc_Header[];
 /*****************************************************************************/
 /* End Private Global Variables **********************************************/
 
@@ -154,11 +155,14 @@ __EXTERN__ void RMP_Mask_Int(void);
 __EXTERN__ void RMP_Unmask_Int(void);
 
 EXTERN rvm_ptr_t RMP_MSB_Get(rvm_ptr_t Val);
-EXTERN void _RMP_Start(rvm_ptr_t Entry, rvm_ptr_t Stack);
+EXTERN void _RMP_Start(rvm_ptr_t Entry,
+                       rvm_ptr_t Stack);
 __EXTERN__ void _RMP_Yield(void);
 
 /* Initialization */
-__EXTERN__ void _RMP_Stack_Init(rvm_ptr_t Entry, rvm_ptr_t Stack, rvm_ptr_t Arg);
+__EXTERN__ void _RMP_Stack_Init(rvm_ptr_t Entry,
+                                rvm_ptr_t Stack,
+                                rvm_ptr_t Arg);
 __EXTERN__ void _RMP_Low_Level_Init(void);
 __EXTERN__ void RMP_Putchar(char Char);
 __EXTERN__ void _RMP_Plat_Hook(void);

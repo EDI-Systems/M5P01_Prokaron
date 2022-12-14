@@ -25,7 +25,6 @@ Description : The platform specific file for Cortex-M on RVM hypervisor.
 #undef __HDR_PUBLIC_MEMBERS__
 
 /* The virtual machine configs are here */
-#include "rvm_guest_a7m.h"
 #include "rvm_guest.h"
 /* End Includes **************************************************************/
 
@@ -48,16 +47,18 @@ Other       : When the system stack safe redundancy is set to zero, the stack
               (1) to 0 because the process does not return to anything; set the 
               R12,R3-R0 to 0; set R11-R4 to 0.
 ******************************************************************************/
-void _RMP_Stack_Init(rmp_ptr_t Entry, rmp_ptr_t Stack, rmp_ptr_t Arg)
+void _RMP_Stack_Init(rmp_ptr_t Entry,
+                     rmp_ptr_t Stack,
+                     rmp_ptr_t Arg)
 {
     /* This is the LR value indicating that we never used the FPU */
-    ((rmp_ptr_t*)Stack)[0+8+5]=0xFFFFFFFD;       
+    ((rmp_ptr_t*)Stack)[0+8+5]=0xFFFFFFFDU;       
     /* Pass the parameter */                            
     ((rmp_ptr_t*)Stack)[0+9+5]=Arg;
     /* Set the process entry */
     ((rmp_ptr_t*)Stack)[6+9+5]=Entry;
     /* For xPSR. Fill the T bit,or an INVSTATE will happen */                          
-    ((rmp_ptr_t*)Stack)[7+9+5]=0x01000200;
+    ((rmp_ptr_t*)Stack)[7+9+5]=0x01000200U;
 }
 /* End Function:_RMP_Stack_Init **********************************************/
 
@@ -69,8 +70,8 @@ Return      : None.
 ******************************************************************************/
 void _RMP_Low_Level_Init(void)
 {
-    RVM_Virt_Reg_Timer(RMP_SysTick_Handler);
-    RVM_Virt_Reg_Ctxsw(RMP_PendSV_Handler);
+    RVM_Virt_Reg_Timer((void*)RMP_SysTick_Handler);
+    RVM_Virt_Reg_Ctxsw((void*)RMP_PendSV_Handler);
 }
 /* End Function:_RMP_Low_Level_Init ******************************************/
 
@@ -82,6 +83,11 @@ Return      : None.
 ******************************************************************************/
 void _RMP_Plat_Hook(void)
 {
+    /* Check header validity - guarantees that the header is not optimized out.
+     * ALL VMs are guaranteed to have three entries: Vector, User and Stub */
+    RVM_ASSERT(RVM_Proc_Header[0]==RVM_MAGIC_VIRTUAL);
+    RVM_ASSERT(RVM_Proc_Header[1]==3U);
+    /* Enable interrupt, we've finished all initialization */
     RVM_Hyp_Ena_Int();
 }
 /* End Function:_RMP_Plat_Hook ***********************************************/

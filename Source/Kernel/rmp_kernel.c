@@ -41,11 +41,11 @@ Return      : None.
 #ifdef RMP_COVERAGE
 void RMP_Print_Coverage(void)
 {
-    rmp_cnt_t Count;
+    rmp_ptr_t Count;
     
-    for(Count=1;Count<RMP_COVERAGE_LINES;Count++)
+    for(Count=1U;Count<RMP_COVERAGE_LINES;Count++)
     {
-        if(RMP_Coverage[Count]!=0)
+        if(RMP_Coverage[Count]!=0U)
         {
             RMP_PRINTK_I(Count);
             RMP_PRINTK_S(":");
@@ -64,14 +64,13 @@ Input       : volatile void* Addr - The address to clear.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void RMP_Clear(volatile void* Addr, rmp_ptr_t Size)
+void RMP_Clear(volatile void* Addr,
+               rmp_ptr_t Size)
 {
-    rmp_u8_t* Ptr;
-    rmp_cnt_t Count;
+    rmp_ptr_t Count;
    
-    Ptr=(rmp_u8_t*)Addr;
-    for(Count=0;Count<(rmp_cnt_t)Size;Count++)
-        Ptr[Count]=0;
+    for(Count=0U;Count<Size;Count++)
+        ((volatile rmp_u8_t*)Addr)[Count]=0U;
 }
 /* End Function:RMP_Clear ****************************************************/
 
@@ -84,10 +83,10 @@ Return      : rmp_cnt_t - The length of the string printed.
 ******************************************************************************/
 rmp_cnt_t RMP_Print_Int(rmp_cnt_t Int)
 {
-    rmp_ptr_t Iter;
+    rmp_cnt_t Iter;
     rmp_cnt_t Count;
     rmp_cnt_t Num;
-    rmp_ptr_t Div;
+    rmp_cnt_t Div;
     
     /* how many digits are there? */
     if(Int==0)
@@ -100,7 +99,7 @@ rmp_cnt_t RMP_Print_Int(rmp_cnt_t Int)
         /* How many digits are there? */
         Count=0;
         Div=1;
-        Iter=(rmp_ptr_t)(-Int);
+        Iter=-Int;
         while(Iter!=0)
         {
             Iter/=10;
@@ -116,7 +115,7 @@ rmp_cnt_t RMP_Print_Int(rmp_cnt_t Int)
         while(Count>0)
         {
             Count--;
-            RMP_Putchar(Iter/Div+'0');
+            RMP_Putchar((rmp_s8_t)(Iter/Div)+'0');
             Iter=Iter%Div;
             Div/=10;
         }
@@ -141,7 +140,7 @@ rmp_cnt_t RMP_Print_Int(rmp_cnt_t Int)
         while(Count>0)
         {
             Count--;
-            RMP_Putchar(Iter/Div+'0');
+            RMP_Putchar((rmp_s8_t)(Iter/Div)+'0');
             Iter=Iter%Div;
             Div/=10;
         }
@@ -161,11 +160,11 @@ Return      : rmp_cnt_t - The length of the string printed.
 rmp_cnt_t RMP_Print_Uint(rmp_ptr_t Uint)
 {
     rmp_ptr_t Iter;
-    rmp_cnt_t Count;
-    rmp_cnt_t Num;
+    rmp_ptr_t Count;
+    rmp_ptr_t Num;
     
     /* how many digits are there? */
-    if(Uint==0)
+    if(Uint==0U)
     {
         RMP_Putchar('0');
         return 1;
@@ -173,52 +172,50 @@ rmp_cnt_t RMP_Print_Uint(rmp_ptr_t Uint)
     else
     {
         /* Filter out all the zeroes */
-        Count=0;
+        Count=0U;
         Iter=Uint;
-        while((Iter>>((sizeof(rmp_ptr_t)*8)-4))==0)
+        while((Iter>>((sizeof(rmp_ptr_t)*8U)-4U))==0U)
         {
             Iter<<=4;
             Count++;
         }
         /* Count is the number of pts to print */
-        Count=sizeof(rmp_ptr_t)*2-Count;
+        Count=sizeof(rmp_ptr_t)*2U-Count;
         Num=Count;
-        while(Count>0)
+        while(Count>0U)
         {
             Count--;
-            Iter=(Uint>>(Count*4))&0x0F;
-            if(Iter<10)
-                RMP_Putchar('0'+Iter);
+            Iter=(Uint>>(Count*4U))&0x0FU;
+            if(Iter<10U)
+                RMP_Putchar((rmp_s8_t)Iter+'0');
             else
-                RMP_Putchar('A'+Iter-10);
+                RMP_Putchar((rmp_s8_t)Iter+'A'-10);
         }
     }
     
-    return Num;
+    return (rmp_cnt_t)Num;
 }
 /* End Function:RMP_Print_Uint ***********************************************/
 
 /* Begin Function:RMP_Print_String ********************************************
-Description : Print a string the kernel console.
-              This is only used for kernel-level debugging.
-Input       : rmp_s8_t* String - The string to print
+Description : Print a string on the debugging console.
+              This is only used for user-level debugging.
+Input       : rmp_s8_t* String - The string to print.
 Output      : None.
 Return      : rmp_cnt_t - The length of the string printed, the '\0' is not included.
 ******************************************************************************/
 rmp_cnt_t RMP_Print_String(rmp_s8_t* String)
 {
-    rmp_cnt_t Count;
+    rmp_ptr_t Count;
     
-    Count=0;
-    while(Count<RMP_KERNEL_DEBUG_MAX_STR)
+    for(Count=0U;Count<RMP_KERNEL_DEBUG_MAX_STR;Count++)
     {
         if(String[Count]=='\0')
             break;
-        
-        RMP_Putchar(String[Count++]);
+        RMP_Putchar(String[Count]);
     }
     
-    return Count;
+    return (rmp_cnt_t)Count;
 }
 /* End Function:RMP_Print_String *********************************************/
 
@@ -230,8 +227,8 @@ Return      : None.
 ******************************************************************************/
 void RMP_List_Crt(volatile struct RMP_List* Head)
 {
-    Head->Prev=(struct RMP_List*)Head;
-    Head->Next=(struct RMP_List*)Head;
+    Head->Prev=Head;
+    Head->Next=Head;
 }
 /* End Function:RMP_List_Crt *************************************************/
 
@@ -242,10 +239,11 @@ Input       : volatile struct RMP_List* Prev - The prevoius node of the target n
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void RMP_List_Del(volatile struct RMP_List* Prev,volatile struct RMP_List* Next)
+void RMP_List_Del(volatile struct RMP_List* Prev,
+                  volatile struct RMP_List* Next)
 {
-    Next->Prev=(struct RMP_List*)Prev;
-    Prev->Next=(struct RMP_List*)Next;
+    Next->Prev=Prev;
+    Prev->Next=Next;
 }
 /* End Function:RMP_List_Del *************************************************/
 
@@ -261,10 +259,10 @@ void RMP_List_Ins(volatile struct RMP_List* New,
                   volatile struct RMP_List* Prev,
                   volatile struct RMP_List* Next)
 {
-    Next->Prev=(struct RMP_List*)New;
-    New->Next=(struct RMP_List*)Next;
-    New->Prev=(struct RMP_List*)Prev;
-    Prev->Next=(struct RMP_List*)New;
+    Next->Prev=New;
+    New->Next=Next;
+    New->Prev=Prev;
+    Prev->Next=New;
 }
 /* End Function:RMP_List_Ins *************************************************/
 
@@ -277,7 +275,8 @@ Return         : rmp_ptr_t - The CRC16 value calculated.
 ******************************************************************************/
 #ifdef __RMP_U8_T__
 #ifdef __RMP_U16_T__
-rmp_ptr_t RMP_CRC16(const rmp_u8_t* Data, rmp_ptr_t Length)
+rmp_ptr_t RMP_CRC16(const rmp_u8_t* Data,
+                    rmp_ptr_t Length)
 {
     rmp_ptr_t Data_Cnt;
     rmp_u8_t Index;
@@ -287,59 +286,79 @@ rmp_ptr_t RMP_CRC16(const rmp_u8_t* Data, rmp_ptr_t Length)
     /* CRC16 constants with X^16+X^15+X^2+1 */
     static const rmp_u8_t CRC16_High[256]=
     {
-        0x00, 0xC1, 0x81, 0x40, 0x01, 0xC0, 0x80, 0x41, 0x01, 0xC0, 0x80, 0x41,
-        0x00, 0xC1, 0x81, 0x40, 0x01, 0xC0, 0x80, 0x41, 0x00, 0xC1, 0x81, 0x40,
-        0x00, 0xC1, 0x81, 0x40, 0x01, 0xC0, 0x80, 0x41, 0x01, 0xC0, 0x80, 0x41,
-        0x00, 0xC1, 0x81, 0x40, 0x00, 0xC1, 0x81, 0x40, 0x01, 0xC0, 0x80, 0x41,
-        0x00, 0xC1, 0x81, 0x40, 0x01, 0xC0, 0x80, 0x41, 0x01, 0xC0, 0x80, 0x41,
-        0x00, 0xC1, 0x81, 0x40, 0x01, 0xC0, 0x80, 0x41, 0x00, 0xC1, 0x81, 0x40,
-        0x00, 0xC1, 0x81, 0x40, 0x01, 0xC0, 0x80, 0x41, 0x00, 0xC1, 0x81, 0x40,
-        0x01, 0xC0, 0x80, 0x41, 0x01, 0xC0, 0x80, 0x41, 0x00, 0xC1, 0x81, 0x40,
-        0x00, 0xC1, 0x81, 0x40, 0x01, 0xC0, 0x80, 0x41, 0x01, 0xC0, 0x80, 0x41,
-        0x00, 0xC1, 0x81, 0x40, 0x01, 0xC0, 0x80, 0x41, 0x00, 0xC1, 0x81, 0x40,
-        0x00, 0xC1, 0x81, 0x40, 0x01, 0xC0, 0x80, 0x41, 0x01, 0xC0, 0x80, 0x41,
-        0x00, 0xC1, 0x81, 0x40, 0x00, 0xC1, 0x81, 0x40, 0x01, 0xC0, 0x80, 0x41,
-        0x00, 0xC1, 0x81, 0x40, 0x01, 0xC0, 0x80, 0x41, 0x01, 0xC0, 0x80, 0x41,
-        0x00, 0xC1, 0x81, 0x40, 0x00, 0xC1, 0x81, 0x40, 0x01, 0xC0, 0x80, 0x41,
-        0x01, 0xC0, 0x80, 0x41, 0x00, 0xC1, 0x81, 0x40, 0x01, 0xC0, 0x80, 0x41,
-        0x00, 0xC1, 0x81, 0x40, 0x00, 0xC1, 0x81, 0x40, 0x01, 0xC0, 0x80, 0x41,
-        0x00, 0xC1, 0x81, 0x40, 0x01, 0xC0, 0x80, 0x41, 0x01, 0xC0, 0x80, 0x41,
-        0x00, 0xC1, 0x81, 0x40, 0x01, 0xC0, 0x80, 0x41, 0x00, 0xC1, 0x81, 0x40,
-        0x00, 0xC1, 0x81, 0x40, 0x01, 0xC0, 0x80, 0x41, 0x01, 0xC0, 0x80, 0x41,
-        0x00, 0xC1, 0x81, 0x40, 0x00, 0xC1, 0x81, 0x40, 0x01, 0xC0, 0x80, 0x41,
-        0x00, 0xC1, 0x81, 0x40, 0x01, 0xC0, 0x80, 0x41, 0x01, 0xC0, 0x80, 0x41,
-        0x00, 0xC1, 0x81, 0x40
+        0x00U, 0xC1U, 0x81U, 0x40U, 0x01U, 0xC0U, 0x80U, 0x41U,
+        0x01U, 0xC0U, 0x80U, 0x41U, 0x00U, 0xC1U, 0x81U, 0x40U,
+        0x01U, 0xC0U, 0x80U, 0x41U, 0x00U, 0xC1U, 0x81U, 0x40U,
+        0x00U, 0xC1U, 0x81U, 0x40U, 0x01U, 0xC0U, 0x80U, 0x41U,
+        0x01U, 0xC0U, 0x80U, 0x41U, 0x00U, 0xC1U, 0x81U, 0x40U,
+        0x00U, 0xC1U, 0x81U, 0x40U, 0x01U, 0xC0U, 0x80U, 0x41U,
+        0x00U, 0xC1U, 0x81U, 0x40U, 0x01U, 0xC0U, 0x80U, 0x41U,
+        0x01U, 0xC0U, 0x80U, 0x41U, 0x00U, 0xC1U, 0x81U, 0x40U,
+        0x01U, 0xC0U, 0x80U, 0x41U, 0x00U, 0xC1U, 0x81U, 0x40U,
+        0x00U, 0xC1U, 0x81U, 0x40U, 0x01U, 0xC0U, 0x80U, 0x41U,
+        0x00U, 0xC1U, 0x81U, 0x40U, 0x01U, 0xC0U, 0x80U, 0x41U,
+        0x01U, 0xC0U, 0x80U, 0x41U, 0x00U, 0xC1U, 0x81U, 0x40U,
+        0x00U, 0xC1U, 0x81U, 0x40U, 0x01U, 0xC0U, 0x80U, 0x41U,
+        0x01U, 0xC0U, 0x80U, 0x41U, 0x00U, 0xC1U, 0x81U, 0x40U,
+        0x01U, 0xC0U, 0x80U, 0x41U, 0x00U, 0xC1U, 0x81U, 0x40U,
+        0x00U, 0xC1U, 0x81U, 0x40U, 0x01U, 0xC0U, 0x80U, 0x41U,
+        0x01U, 0xC0U, 0x80U, 0x41U, 0x00U, 0xC1U, 0x81U, 0x40U,
+        0x00U, 0xC1U, 0x81U, 0x40U, 0x01U, 0xC0U, 0x80U, 0x41U,
+        0x00U, 0xC1U, 0x81U, 0x40U, 0x01U, 0xC0U, 0x80U, 0x41U,
+        0x01U, 0xC0U, 0x80U, 0x41U, 0x00U, 0xC1U, 0x81U, 0x40U,
+        0x00U, 0xC1U, 0x81U, 0x40U, 0x01U, 0xC0U, 0x80U, 0x41U,
+        0x01U, 0xC0U, 0x80U, 0x41U, 0x00U, 0xC1U, 0x81U, 0x40U,
+        0x01U, 0xC0U, 0x80U, 0x41U, 0x00U, 0xC1U, 0x81U, 0x40U,
+        0x00U, 0xC1U, 0x81U, 0x40U, 0x01U, 0xC0U, 0x80U, 0x41U,
+        0x00U, 0xC1U, 0x81U, 0x40U, 0x01U, 0xC0U, 0x80U, 0x41U,
+        0x01U, 0xC0U, 0x80U, 0x41U, 0x00U, 0xC1U, 0x81U, 0x40U,
+        0x01U, 0xC0U, 0x80U, 0x41U, 0x00U, 0xC1U, 0x81U, 0x40U,
+        0x00U, 0xC1U, 0x81U, 0x40U, 0x01U, 0xC0U, 0x80U, 0x41U,
+        0x01U, 0xC0U, 0x80U, 0x41U, 0x00U, 0xC1U, 0x81U, 0x40U,
+        0x00U, 0xC1U, 0x81U, 0x40U, 0x01U, 0xC0U, 0x80U, 0x41U,
+        0x00U, 0xC1U, 0x81U, 0x40U, 0x01U, 0xC0U, 0x80U, 0x41U,
+        0x01U, 0xC0U, 0x80U, 0x41U, 0x00U, 0xC1U, 0x81U, 0x40U
     };
 
     const rmp_u8_t CRC16_Low[256]=
     {
-        0x00, 0xC0, 0xC1, 0x01, 0xC3, 0x03, 0x02, 0xC2, 0xC6, 0x06, 0x07, 0xC7,
-        0x05, 0xC5, 0xC4, 0x04, 0xCC, 0x0C, 0x0D, 0xCD, 0x0F, 0xCF, 0xCE, 0x0E,
-        0x0A, 0xCA, 0xCB, 0x0B, 0xC9, 0x09, 0x08, 0xC8, 0xD8, 0x18, 0x19, 0xD9,
-        0x1B, 0xDB, 0xDA, 0x1A, 0x1E, 0xDE, 0xDF, 0x1F, 0xDD, 0x1D, 0x1C, 0xDC,
-        0x14, 0xD4, 0xD5, 0x15, 0xD7, 0x17, 0x16, 0xD6, 0xD2, 0x12, 0x13, 0xD3,
-        0x11, 0xD1, 0xD0, 0x10, 0xF0, 0x30, 0x31, 0xF1, 0x33, 0xF3, 0xF2, 0x32,
-        0x36, 0xF6, 0xF7, 0x37, 0xF5, 0x35, 0x34, 0xF4, 0x3C, 0xFC, 0xFD, 0x3D,
-        0xFF, 0x3F, 0x3E, 0xFE, 0xFA, 0x3A, 0x3B, 0xFB, 0x39, 0xF9, 0xF8, 0x38,
-        0x28, 0xE8, 0xE9, 0x29, 0xEB, 0x2B, 0x2A, 0xEA, 0xEE, 0x2E, 0x2F, 0xEF,
-        0x2D, 0xED, 0xEC, 0x2C, 0xE4, 0x24, 0x25, 0xE5, 0x27, 0xE7, 0xE6, 0x26,
-        0x22, 0xE2, 0xE3, 0x23, 0xE1, 0x21, 0x20, 0xE0, 0xA0, 0x60, 0x61, 0xA1,
-        0x63, 0xA3, 0xA2, 0x62, 0x66, 0xA6, 0xA7, 0x67, 0xA5, 0x65, 0x64, 0xA4,
-        0x6C, 0xAC, 0xAD, 0x6D, 0xAF, 0x6F, 0x6E, 0xAE, 0xAA, 0x6A, 0x6B, 0xAB,
-        0x69, 0xA9, 0xA8, 0x68, 0x78, 0xB8, 0xB9, 0x79, 0xBB, 0x7B, 0x7A, 0xBA,
-        0xBE, 0x7E, 0x7F, 0xBF, 0x7D, 0xBD, 0xBC, 0x7C, 0xB4, 0x74, 0x75, 0xB5,
-        0x77, 0xB7, 0xB6, 0x76, 0x72, 0xB2, 0xB3, 0x73, 0xB1, 0x71, 0x70, 0xB0,
-        0x50, 0x90, 0x91, 0x51, 0x93, 0x53, 0x52, 0x92, 0x96, 0x56, 0x57, 0x97,
-        0x55, 0x95, 0x94, 0x54, 0x9C, 0x5C, 0x5D, 0x9D, 0x5F, 0x9F, 0x9E, 0x5E,
-        0x5A, 0x9A, 0x9B, 0x5B, 0x99, 0x59, 0x58, 0x98, 0x88, 0x48, 0x49, 0x89,
-        0x4B, 0x8B, 0x8A, 0x4A, 0x4E, 0x8E, 0x8F, 0x4F, 0x8D, 0x4D, 0x4C, 0x8C,
-        0x44, 0x84, 0x85, 0x45, 0x87, 0x47, 0x46, 0x86, 0x82, 0x42, 0x43, 0x83,
-        0x41, 0x81, 0x80, 0x40
+        0x00U, 0xC0U, 0xC1U, 0x01U, 0xC3U, 0x03U, 0x02U, 0xC2U,
+        0xC6U, 0x06U, 0x07U, 0xC7U, 0x05U, 0xC5U, 0xC4U, 0x04U,
+        0xCCU, 0x0CU, 0x0DU, 0xCDU, 0x0FU, 0xCFU, 0xCEU, 0x0EU,
+        0x0AU, 0xCAU, 0xCBU, 0x0BU, 0xC9U, 0x09U, 0x08U, 0xC8U,
+        0xD8U, 0x18U, 0x19U, 0xD9U, 0x1BU, 0xDBU, 0xDAU, 0x1AU,
+        0x1EU, 0xDEU, 0xDFU, 0x1FU, 0xDDU, 0x1DU, 0x1CU, 0xDCU,
+        0x14U, 0xD4U, 0xD5U, 0x15U, 0xD7U, 0x17U, 0x16U, 0xD6U,
+        0xD2U, 0x12U, 0x13U, 0xD3U, 0x11U, 0xD1U, 0xD0U, 0x10U,
+        0xF0U, 0x30U, 0x31U, 0xF1U, 0x33U, 0xF3U, 0xF2U, 0x32U,
+        0x36U, 0xF6U, 0xF7U, 0x37U, 0xF5U, 0x35U, 0x34U, 0xF4U,
+        0x3CU, 0xFCU, 0xFDU, 0x3DU, 0xFFU, 0x3FU, 0x3EU, 0xFEU,
+        0xFAU, 0x3AU, 0x3BU, 0xFBU, 0x39U, 0xF9U, 0xF8U, 0x38U,
+        0x28U, 0xE8U, 0xE9U, 0x29U, 0xEBU, 0x2BU, 0x2AU, 0xEAU,
+        0xEEU, 0x2EU, 0x2FU, 0xEFU, 0x2DU, 0xEDU, 0xECU, 0x2CU,
+        0xE4U, 0x24U, 0x25U, 0xE5U, 0x27U, 0xE7U, 0xE6U, 0x26U,
+        0x22U, 0xE2U, 0xE3U, 0x23U, 0xE1U, 0x21U, 0x20U, 0xE0U,
+        0xA0U, 0x60U, 0x61U, 0xA1U, 0x63U, 0xA3U, 0xA2U, 0x62U,
+        0x66U, 0xA6U, 0xA7U, 0x67U, 0xA5U, 0x65U, 0x64U, 0xA4U,
+        0x6CU, 0xACU, 0xADU, 0x6DU, 0xAFU, 0x6FU, 0x6EU, 0xAEU,
+        0xAAU, 0x6AU, 0x6BU, 0xABU, 0x69U, 0xA9U, 0xA8U, 0x68U,
+        0x78U, 0xB8U, 0xB9U, 0x79U, 0xBBU, 0x7BU, 0x7AU, 0xBAU,
+        0xBEU, 0x7EU, 0x7FU, 0xBFU, 0x7DU, 0xBDU, 0xBCU, 0x7CU,
+        0xB4U, 0x74U, 0x75U, 0xB5U, 0x77U, 0xB7U, 0xB6U, 0x76U,
+        0x72U, 0xB2U, 0xB3U, 0x73U, 0xB1U, 0x71U, 0x70U, 0xB0U,
+        0x50U, 0x90U, 0x91U, 0x51U, 0x93U, 0x53U, 0x52U, 0x92U,
+        0x96U, 0x56U, 0x57U, 0x97U, 0x55U, 0x95U, 0x94U, 0x54U,
+        0x9CU, 0x5CU, 0x5DU, 0x9DU, 0x5FU, 0x9FU, 0x9EU, 0x5EU,
+        0x5AU, 0x9AU, 0x9BU, 0x5BU, 0x99U, 0x59U, 0x58U, 0x98U,
+        0x88U, 0x48U, 0x49U, 0x89U, 0x4BU, 0x8BU, 0x8AU, 0x4AU,
+        0x4EU, 0x8EU, 0x8FU, 0x4FU, 0x8DU, 0x4DU, 0x4CU, 0x8CU,
+        0x44U, 0x84U, 0x85U, 0x45U, 0x87U, 0x47U, 0x46U, 0x86U,
+        0x82U, 0x42U, 0x43U, 0x83U, 0x41U, 0x81U, 0x80U, 0x40U
     };
 
-    Temp_High=0xFF;
-    Temp_Low=0xFF;
-    for(Data_Cnt=0;Data_Cnt<Length;Data_Cnt++)
+    Temp_High=0xFFU;
+    Temp_Low=0xFFU;
+    for(Data_Cnt=0U;Data_Cnt<Length;Data_Cnt++)
     {
         Index=Temp_Low^Data[Data_Cnt];
         Temp_Low=(rmp_u8_t)(Temp_High^CRC16_High[Index]);
@@ -361,7 +380,7 @@ Return      : None.
 void RMP_Lock_Sched(void)
 {
     RMP_MASK_INT();
-    RMP_Sched_Locked=1;
+    RMP_Sched_Locked=1U;
     RMP_Sched_Lock_Cnt++;
 }
 /* End Function:RMP_Lock_Sched ***********************************************/
@@ -374,19 +393,19 @@ Return      : None.
 ******************************************************************************/
 void RMP_Unlock_Sched(void)
 {
-    if(RMP_Sched_Lock_Cnt==1)
+    if(RMP_Sched_Lock_Cnt==1U)
     {
         RMP_COVERAGE_MARKER();
         /* Clear the count before enabling */
-        RMP_Sched_Lock_Cnt=0;
-        RMP_Sched_Locked=0;
+        RMP_Sched_Lock_Cnt=0U;
+        RMP_Sched_Locked=0U;
         /* Now see if the scheduler scheduling action is pended in the lock-unlock 
          * period. If yes, perform a schedule now */
-        if(RMP_Sched_Pend!=0)
+        if(RMP_Sched_Pend!=0U)
         {
             RMP_COVERAGE_MARKER();
             /* Reset the count and trigger the context switch */
-            RMP_Sched_Pend=0;
+            RMP_Sched_Pend=0U;
             _RMP_Yield();
         }
         else
@@ -394,14 +413,14 @@ void RMP_Unlock_Sched(void)
         
         RMP_UNMASK_INT();
     }
-    else if(RMP_Sched_Lock_Cnt>1)
+    else if(RMP_Sched_Lock_Cnt>1U)
     {
         RMP_COVERAGE_MARKER();
         RMP_Sched_Lock_Cnt--;
     }
     /* Trying to unlock a scheduler that is not locked - should never happen */
     else
-        while(1);
+        while(1U);
 }
 /* End Function:RMP_Unlock_Sched *********************************************/
 
@@ -413,7 +432,7 @@ Return      : None.
 ******************************************************************************/
 void RMP_Yield(void)
 {
-    if(RMP_Sched_Locked==0)
+    if(RMP_Sched_Locked==0U)
     {
         RMP_COVERAGE_MARKER();
         /* Now see if the scheduler scheduling action is pended in the lock-unlock 
@@ -423,7 +442,7 @@ void RMP_Yield(void)
     else
     {
         RMP_COVERAGE_MARKER();
-        RMP_Sched_Pend=1;
+        RMP_Sched_Pend=1U;
     }
 }
 /* End Function:RMP_Yield ****************************************************/
@@ -436,7 +455,7 @@ Return      : None.
 ******************************************************************************/
 void _RMP_Timer_Proc(void)
 {
-    struct RMP_Thd* Thread;
+    volatile struct RMP_Thd* Thread;
     
     /* Process the timer events, if there are any of them */
     while((&RMP_Delay)!=RMP_Delay.Next)
@@ -453,14 +472,21 @@ void _RMP_Timer_Proc(void)
             RMP_COVERAGE_MARKER();
         
         /* This thread should be processed */
-        RMP_List_Del(Thread->Dly_Head.Prev,Thread->Dly_Head.Next);
+        RMP_List_Del(Thread->Dly_Head.Prev, Thread->Dly_Head.Next);
         switch(RMP_THD_STATE(Thread->State))
         {
-            case RMP_THD_SNDDLY:RMP_COVERAGE_MARKER();
+            case RMP_THD_SNDDLY:
+            {
+                RMP_COVERAGE_MARKER();
+                RMP_List_Del(Thread->Run_Head.Prev, Thread->Run_Head.Next);
+                Thread->Retval=RMP_ERR_OPER;
+                break;
+            }
+            
             case RMP_THD_SEMDLY:
             {
                 RMP_COVERAGE_MARKER();
-                RMP_List_Del(Thread->Run_Head.Prev,Thread->Run_Head.Next);
+                RMP_List_Del(Thread->Run_Head.Prev, Thread->Run_Head.Next);
                 Thread->Retval=RMP_ERR_OPER;
                 break;
             }
@@ -477,7 +503,7 @@ void _RMP_Timer_Proc(void)
             default:while(1);
         }
 
-        RMP_THD_STATE_SET(Thread->State,RMP_THD_RUNNING);
+        RMP_THD_STATE_SET(Thread->State, RMP_THD_RUNNING);
         /* Set to ready if not suspended */
         _RMP_Set_Rdy(Thread);
     }
@@ -499,11 +525,11 @@ void _RMP_Get_High_Rdy(void)
     RMP_Cur_Thd->Stack=RMP_Cur_SP;
     
     /* No need to detect scheduler locks - if this interrupt can be entered, the scheduler is not locked */
-    RMP_Sched_Pend=0;
+    RMP_Sched_Pend=0U;
     /* See which one is ready, and pick it */
     for(Count=RMP_BITMAP_SIZE-1;Count>=0;Count--)
     {
-        if(RMP_Bitmap[Count]==0)
+        if(RMP_Bitmap[Count]==0U)
         {
             RMP_COVERAGE_MARKER();
             continue;
@@ -511,10 +537,10 @@ void _RMP_Get_High_Rdy(void)
         else
             RMP_COVERAGE_MARKER();
         
-        Count=RMP_MSB_Get(RMP_Bitmap[Count])+(Count<<RMP_WORD_ORDER);
+        Count=(rmp_cnt_t)RMP_MSB_Get(RMP_Bitmap[Count])+(Count<<RMP_WORD_ORDER);
         
         /* See if the current thread and the next thread are the same. If yes, place the current at the end of the queue */
-        if(RMP_Cur_Thd==(struct RMP_Thd*)(RMP_Run[Count].Next))
+        if(RMP_Cur_Thd==(volatile struct RMP_Thd*)(RMP_Run[Count].Next))
         {
             RMP_COVERAGE_MARKER();
             RMP_List_Del(RMP_Cur_Thd->Run_Head.Prev, RMP_Cur_Thd->Run_Head.Next);
@@ -527,7 +553,7 @@ void _RMP_Get_High_Rdy(void)
         
         /* Replenish timeslices */
         RMP_Cur_Thd->Slices_Left=RMP_Cur_Thd->Slices;
-        RMP_Cur_Thd=(struct RMP_Thd*)(RMP_Run[Count].Next);
+        RMP_Cur_Thd=(volatile struct RMP_Thd*)(RMP_Run[Count].Next);
         break;
     }
     
@@ -548,7 +574,8 @@ Return      : None.
 ******************************************************************************/
 void _RMP_Tick_Handler(rmp_ptr_t Ticks)
 {
-    struct RMP_Thd* Thread;
+    volatile struct RMP_Thd* Thread;
+    
     /* Increase the timestamp as always */
     RMP_Tick+=Ticks;
     
@@ -556,7 +583,7 @@ void _RMP_Tick_Handler(rmp_ptr_t Ticks)
     if(Ticks>RMP_Cur_Thd->Slices_Left)
     {
         RMP_COVERAGE_MARKER();
-        RMP_Sched_Pend=1;
+        RMP_Sched_Pend=1U;
     }
     else
     {
@@ -584,10 +611,10 @@ void _RMP_Tick_Handler(rmp_ptr_t Ticks)
     else
         RMP_COVERAGE_MARKER();
     
-    if(RMP_Sched_Pend!=0)
+    if(RMP_Sched_Pend!=0U)
     {
         RMP_COVERAGE_MARKER();
-        RMP_Sched_Pend=0;
+        RMP_Sched_Pend=0U;
         _RMP_Yield();
     }
     else
@@ -612,13 +639,13 @@ Return      : rmp_ptr_t Ticks - How many ticks until the next timeout.
 rmp_ptr_t _RMP_Get_Near_Ticks(void)
 {
     rmp_ptr_t Value;
-    struct RMP_Thd* Thread;
+    volatile struct RMP_Thd* Thread;
     
     /* What is the current thread's timeout value? */
     Value=RMP_Cur_Thd->Slices_Left;
     
     /* What is the nearest timer timeout value? */
-    if((&RMP_Delay)!=RMP_Delay.Next)
+    if(RMP_Delay.Next!=&RMP_Delay)
     {
         RMP_COVERAGE_MARKER();
         Thread=RMP_DLY2THD(RMP_Delay.Next);
@@ -653,7 +680,7 @@ Return      : None.
 void _RMP_Set_Rdy(volatile struct RMP_Thd* Thread)
 {        
     /* Is it suspended? If yes, we can't directly set it running */
-    if((Thread->State&RMP_THD_SUSPENDED)==0)
+    if((Thread->State&RMP_THD_SUSPENDED)==0U)
     {
         RMP_COVERAGE_MARKER();
         /* Insert this into the corresponding runqueue */
@@ -686,26 +713,26 @@ Return      : None.
 void _RMP_Clr_Rdy(volatile struct RMP_Thd* Thread)
 {
     /* Is it suspended? If yes, no need to delete again */
-    if((Thread->State&RMP_THD_SUSPENDED)==0)
+    if((Thread->State&RMP_THD_SUSPENDED)==0U)
     {
         RMP_COVERAGE_MARKER();
         /* See if it is the last thread on the priority level */
         if(Thread->Run_Head.Prev==Thread->Run_Head.Next)
         {
             RMP_COVERAGE_MARKER();
-            RMP_Bitmap[Thread->Prio>>RMP_WORD_ORDER]&=~(((rmp_ptr_t)1)<<(Thread->Prio&RMP_WORD_MASK));
+            RMP_Bitmap[Thread->Prio>>RMP_WORD_ORDER]&=~RMP_POW2(Thread->Prio&RMP_WORD_MASK);
         }
         else
             RMP_COVERAGE_MARKER();
         
         /* Delete this from the corresponding runqueue */
-        RMP_List_Del(Thread->Run_Head.Prev,Thread->Run_Head.Next);
+        RMP_List_Del(Thread->Run_Head.Prev, Thread->Run_Head.Next);
         
         /* If it is the current thread, request a context switch */
         if(Thread==RMP_Cur_Thd)
         {
             RMP_COVERAGE_MARKER();
-            RMP_Sched_Pend=1;
+            RMP_Sched_Pend=1U;
         }
         else
             RMP_COVERAGE_MARKER();
@@ -723,14 +750,15 @@ Input       : volatile struct RMP_Thd* Thread - The thread to put into the delay
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void _RMP_Dly_Ins(volatile struct RMP_Thd* Thread, rmp_ptr_t Slices)
+void _RMP_Dly_Ins(volatile struct RMP_Thd* Thread,
+                  rmp_ptr_t Slices)
 {
-    struct RMP_List* Trav_Ptr;
-    struct RMP_Thd* Trav_Thd;
+    volatile struct RMP_List* Trav_Ptr;
+    volatile struct RMP_Thd* Trav_Thd;
     
     /* Find a place to insert this timer */
-    Trav_Ptr=(struct RMP_List*)RMP_Delay.Next;
-    while(Trav_Ptr!=&(RMP_Delay))
+    Trav_Ptr=RMP_Delay.Next;
+    while(Trav_Ptr!=&RMP_Delay)
     {
         Trav_Thd=RMP_DLY2THD(Trav_Ptr);
         if((Trav_Thd->Timeout-RMP_Tick)>Slices)
@@ -741,20 +769,20 @@ void _RMP_Dly_Ins(volatile struct RMP_Thd* Thread, rmp_ptr_t Slices)
         else
             RMP_COVERAGE_MARKER();
         
-        Trav_Ptr=(struct RMP_List*)(Trav_Ptr->Next);
+        Trav_Ptr=Trav_Ptr->Next;
     }
 
     /* Insert this into the list */
     Thread->Timeout=RMP_Tick+Slices;
-    RMP_List_Ins(&(Thread->Dly_Head),Trav_Ptr->Prev,Trav_Ptr);
+    RMP_List_Ins(&(Thread->Dly_Head), Trav_Ptr->Prev,Trav_Ptr);
 }
 /* End Function:_RMP_Dly_Ins *************************************************/
 
 /* Begin Function:RMP_Thd_Crt *************************************************
 Description : Create a real-time thread.
-Input       : volatile struct RMP_Thd* Thread - The thread structure provided. The user 
-                                                should make this allocation according to
-                                                his or her needs.
+Input       : volatile struct RMP_Thd* Thread - The thread structure provided. 
+                                                The user should make this allocation
+                                                as needed.
               void* Entry - The entry of the thread.
               void* Stack - The stack of this thread.
               void* Arg - The argument to pass to the thread.
@@ -763,7 +791,12 @@ Input       : volatile struct RMP_Thd* Thread - The thread structure provided. T
 Output      : None.
 Return      : rmp_ret_t - If successful, 0. on error, return an error code.
 ******************************************************************************/
-rmp_ret_t RMP_Thd_Crt(volatile struct RMP_Thd* Thread, void* Entry, void* Stack, void* Arg, rmp_ptr_t Prio, rmp_ptr_t Slices)
+rmp_ret_t RMP_Thd_Crt(volatile struct RMP_Thd* Thread,
+                      void* Entry,
+                      void* Stack,
+                      void* Arg,
+                      rmp_ptr_t Prio,
+                      rmp_ptr_t Slices)
 {
     /* Check if the priority and timeslice range is correct */
     if(Prio>=RMP_MAX_PREEMPT_PRIO)
@@ -774,7 +807,7 @@ rmp_ret_t RMP_Thd_Crt(volatile struct RMP_Thd* Thread, void* Entry, void* Stack,
     else
         RMP_COVERAGE_MARKER();
     
-    if((Slices==0)||(Slices>=RMP_MAX_SLICES))
+    if((Slices==0U)||(Slices>=RMP_MAX_SLICES))
     {
         RMP_COVERAGE_MARKER();
         return RMP_ERR_SLICE;
@@ -783,7 +816,7 @@ rmp_ret_t RMP_Thd_Crt(volatile struct RMP_Thd* Thread, void* Entry, void* Stack,
         RMP_COVERAGE_MARKER();
     
     /* Check if this thread structure could possibly be in use */
-    if(Thread==0)
+    if(Thread==RMP_NULL)
     {
         RMP_COVERAGE_MARKER();
         return RMP_ERR_THD;
@@ -824,16 +857,16 @@ rmp_ret_t RMP_Thd_Crt(volatile struct RMP_Thd* Thread, void* Entry, void* Stack,
 
 /* Begin Function:RMP_Thd_Del *************************************************
 Description : Delete a real-time thread.
-Input       : volatile struct RMP_Thd* Thread - The thread structure of the thread.
+Input       : volatile struct RMP_Thd* Thread - The pointer to the thread.
 Output      : None.
 Return      : rmp_ret_t - If successful, 0; or an error code.
 ******************************************************************************/
 rmp_ret_t RMP_Thd_Del(volatile struct RMP_Thd* Thread)
 {
-    struct RMP_Thd* Release;
+    volatile struct RMP_Thd* Release;
     
     /* Check if this thread structure could possibly be in use */
-    if(Thread==0)
+    if(Thread==RMP_NULL)
     {
         RMP_COVERAGE_MARKER();
         return RMP_ERR_THD;
@@ -855,17 +888,17 @@ rmp_ret_t RMP_Thd_Del(volatile struct RMP_Thd* Thread)
     /* See if anyone waiting to send to this thread. If there is, release all these threads */
     while(&(Thread->Snd_List)!=Thread->Snd_List.Next)
     {
-        Release=(struct RMP_Thd*)(Thread->Snd_List.Next);
-        RMP_List_Del(Release->Run_Head.Prev,Release->Run_Head.Next);
+        Release=(volatile struct RMP_Thd*)(Thread->Snd_List.Next);
+        RMP_List_Del(Release->Run_Head.Prev, Release->Run_Head.Next);
         if(RMP_THD_STATE(Release->State)==RMP_THD_SNDDLY)
         {
             RMP_COVERAGE_MARKER();
-            RMP_List_Del(Release->Dly_Head.Prev,Release->Dly_Head.Next);
+            RMP_List_Del(Release->Dly_Head.Prev, Release->Dly_Head.Next);
         }
         else
             RMP_COVERAGE_MARKER();
         
-        RMP_THD_STATE_SET(Release->State,RMP_THD_RUNNING);
+        RMP_THD_STATE_SET(Release->State, RMP_THD_RUNNING);
         /* Set ready if not suspended */
         _RMP_Set_Rdy(Release);
         Release->Retval=RMP_ERR_OPER;
@@ -893,7 +926,7 @@ rmp_ret_t RMP_Thd_Del(volatile struct RMP_Thd* Thread)
         case RMP_THD_SEMBLK:
         {
             RMP_COVERAGE_MARKER();
-            RMP_List_Del(Thread->Run_Head.Prev,Thread->Run_Head.Next);
+            RMP_List_Del(Thread->Run_Head.Prev, Thread->Run_Head.Next);
             break;
         }
         
@@ -901,14 +934,14 @@ rmp_ret_t RMP_Thd_Del(volatile struct RMP_Thd* Thread)
         case RMP_THD_SEMDLY:
         {
             RMP_COVERAGE_MARKER();
-            RMP_List_Del(Thread->Run_Head.Prev,Thread->Run_Head.Next);
+            RMP_List_Del(Thread->Run_Head.Prev, Thread->Run_Head.Next);
             /* Fall-through case */
         }
         case RMP_THD_RCVDLY:RMP_COVERAGE_MARKER();
         case RMP_THD_DELAYED:
         {
             RMP_COVERAGE_MARKER();
-            RMP_List_Del(Thread->Dly_Head.Prev,Thread->Dly_Head.Next);
+            RMP_List_Del(Thread->Dly_Head.Prev, Thread->Dly_Head.Next);
             break;
         }
         /* Should not get here */
@@ -921,7 +954,7 @@ rmp_ret_t RMP_Thd_Del(volatile struct RMP_Thd* Thread)
     if(Thread==RMP_Cur_Thd)
     {
         RMP_COVERAGE_MARKER();
-        RMP_Sched_Pend=1;
+        RMP_Sched_Pend=1U;
     }
     else
         RMP_COVERAGE_MARKER();
@@ -930,7 +963,7 @@ rmp_ret_t RMP_Thd_Del(volatile struct RMP_Thd* Thread)
     
     /* If we are deleting ourself, just stop the execution here */
     if(Thread==RMP_Cur_Thd)
-        while(1);
+        while(1U);
     else
         RMP_COVERAGE_MARKER();
 
@@ -942,16 +975,18 @@ rmp_ret_t RMP_Thd_Del(volatile struct RMP_Thd* Thread)
 Description : Change the priority or timeslice of a real-time thread. If one of
               the changes is not desired, just leave it to RMP_MAX_PREEMPT_PRIO
               or RMP_MAX_SLICES.
-Input       : volatile struct RMP_Thd* Thread - The thread structure of the thread.
+Input       : volatile struct RMP_Thd* Thread - The pointer to the thread.
               rmp_ptr_t Prio - The priority of the thread.
               rmp_ptr_t Slices - The new timeslice value for this thread.
 Output      : None.
 Return      : rmp_ret_t - If successful, 0; else error code.
 ******************************************************************************/
-rmp_ret_t RMP_Thd_Set(volatile struct RMP_Thd* Thread, rmp_ptr_t Prio, rmp_ptr_t Slices)
+rmp_ret_t RMP_Thd_Set(volatile struct RMP_Thd* Thread,
+                      rmp_ptr_t Prio,
+                      rmp_ptr_t Slices)
 {
     /* Check if the priority and timeslice range is correct */
-    if(Slices==0)
+    if(Slices==0U)
     {
         RMP_COVERAGE_MARKER();
         return RMP_ERR_SLICE;
@@ -960,7 +995,7 @@ rmp_ret_t RMP_Thd_Set(volatile struct RMP_Thd* Thread, rmp_ptr_t Prio, rmp_ptr_t
         RMP_COVERAGE_MARKER();
     
     /* Check if this thread structure could possibly be in use */
-    if(Thread==0)
+    if(Thread==RMP_NULL)
     {
         RMP_COVERAGE_MARKER();
         return RMP_ERR_THD;
@@ -1039,14 +1074,14 @@ rmp_ret_t RMP_Thd_Set(volatile struct RMP_Thd* Thread, rmp_ptr_t Prio, rmp_ptr_t
 
 /* Begin Function:RMP_Thd_Suspend *********************************************
 Description : Suspend the execution of a real-time thread.
-Input       : volatile struct RMP_Thd* Thread - The thread structure of the thread.
+Input       : volatile struct RMP_Thd* Thread - The pointer to the thread.
 Output      : None.
 Return      : rmp_ret_t - If successful, 0; else error code.
 ******************************************************************************/
 rmp_ret_t RMP_Thd_Suspend(volatile struct RMP_Thd* Thread)
 {
     /* Check if this thread structure could possibly be in use */
-    if(Thread==0)
+    if(Thread==RMP_NULL)
     {
         RMP_COVERAGE_MARKER();
         return RMP_ERR_THD;
@@ -1092,7 +1127,7 @@ rmp_ret_t RMP_Thd_Suspend(volatile struct RMP_Thd* Thread)
     if(Thread==RMP_Cur_Thd)
     {
         RMP_COVERAGE_MARKER();
-        RMP_Sched_Pend=1;
+        RMP_Sched_Pend=1U;
     }
     else
         RMP_COVERAGE_MARKER();
@@ -1104,7 +1139,7 @@ rmp_ret_t RMP_Thd_Suspend(volatile struct RMP_Thd* Thread)
 
 /* Begin Function:RMP_Thd_Resume **********************************************
 Description : Resume the execution of a real-time thread.
-Input       : volatile struct RMP_Thd* Thread - The thread structure of the thread.
+Input       : volatile struct RMP_Thd* Thread - The pointer to the thread.
 Output      : None.
 Return      : rmp_ret_t - If successful, 0; else error code.
 ******************************************************************************/
@@ -1113,7 +1148,7 @@ rmp_ret_t RMP_Thd_Resume(volatile struct RMP_Thd* Thread)
     rmp_ret_t Retval;
     
     /* Check if this thread structure could possibly be in use */
-    if(Thread==0)
+    if(Thread==RMP_NULL)
     {
         RMP_COVERAGE_MARKER();
         return RMP_ERR_THD;
@@ -1133,7 +1168,7 @@ rmp_ret_t RMP_Thd_Resume(volatile struct RMP_Thd* Thread)
         RMP_COVERAGE_MARKER();
     
     /* Check if the thread is suspended, if not, then throw an error */
-    if((Thread->State&RMP_THD_SUSPENDED)!=0)
+    if((Thread->State&RMP_THD_SUSPENDED)!=0U)
     {
         RMP_COVERAGE_MARKER();
         
@@ -1170,12 +1205,14 @@ Input       : volatile struct RMP_Thd* Thread - The thread structure of the thre
               rmp_ptr_t Data - The data to send to that thread.
               rmp_ptr_t Slices - The timeslice to wait, if the mailbox is already full.
 Output      : None.
-Return      : rmp_ret_t - If successful,0; or an error code.
+Return      : rmp_ret_t - If successful, 0; or an error code.
 ******************************************************************************/
-rmp_ret_t RMP_Thd_Snd(volatile struct RMP_Thd* Thread, rmp_ptr_t Data, rmp_ptr_t Slices)
+rmp_ret_t RMP_Thd_Snd(volatile struct RMP_Thd* Thread,
+                      rmp_ptr_t Data,
+                      rmp_ptr_t Slices)
 {
     /* Check if this thread structure could possibly be in use */
-    if(Thread==0)
+    if(Thread==RMP_NULL)
     {
         RMP_COVERAGE_MARKER();
         return RMP_ERR_THD;
@@ -1207,12 +1244,12 @@ rmp_ret_t RMP_Thd_Snd(volatile struct RMP_Thd* Thread, rmp_ptr_t Data, rmp_ptr_t
     RMP_Cur_Thd->Retval=0;
 
     /* See if there is already a value in the mailbox, if yes, we block */
-    if((Thread->State&RMP_THD_MBOXFUL)!=0)
+    if((Thread->State&RMP_THD_MBOXFUL)!=0U)
     {
         RMP_COVERAGE_MARKER();
         
         /* Mailbox full, we block, and put ourself into the queue */
-        if(Slices==0)
+        if(Slices==0U)
         {
             RMP_COVERAGE_MARKER();
             RMP_Unlock_Sched();
@@ -1223,18 +1260,18 @@ rmp_ret_t RMP_Thd_Snd(volatile struct RMP_Thd* Thread, rmp_ptr_t Data, rmp_ptr_t
 
         /* We must be running */
         _RMP_Clr_Rdy(RMP_Cur_Thd);
-        RMP_List_Ins(&(RMP_Cur_Thd->Run_Head),Thread->Snd_List.Prev,&(Thread->Snd_List));
+        RMP_List_Ins(&(RMP_Cur_Thd->Run_Head), Thread->Snd_List.Prev, &(Thread->Snd_List));
 
         if(Slices<RMP_MAX_SLICES)
         {
             RMP_COVERAGE_MARKER();
             _RMP_Dly_Ins(RMP_Cur_Thd, Slices);
-            RMP_THD_STATE_SET(RMP_Cur_Thd->State,RMP_THD_SNDDLY);
+            RMP_THD_STATE_SET(RMP_Cur_Thd->State, RMP_THD_SNDDLY);
         }
         else
         {
             RMP_COVERAGE_MARKER();
-            RMP_THD_STATE_SET(RMP_Cur_Thd->State,RMP_THD_SNDBLK);
+            RMP_THD_STATE_SET(RMP_Cur_Thd->State, RMP_THD_SNDBLK);
         }
 
         RMP_Cur_Thd->Data=Data;
@@ -1253,12 +1290,12 @@ rmp_ret_t RMP_Thd_Snd(volatile struct RMP_Thd* Thread, rmp_ptr_t Data, rmp_ptr_t
             if(RMP_THD_STATE(Thread->State)==RMP_THD_RCVDLY)
             {
                 RMP_COVERAGE_MARKER();
-                RMP_List_Del(Thread->Dly_Head.Prev,Thread->Dly_Head.Next);
+                RMP_List_Del(Thread->Dly_Head.Prev, Thread->Dly_Head.Next);
             }
             else
                 RMP_COVERAGE_MARKER();
             
-            RMP_THD_STATE_SET(Thread->State,RMP_THD_RUNNING);
+            RMP_THD_STATE_SET(Thread->State, RMP_THD_RUNNING);
             /* Set to running if not suspended */
             _RMP_Set_Rdy(Thread);
         }
@@ -1285,12 +1322,13 @@ Description : Send to a real-time thread's mailbox. If the mailbox is full, then
 Input       : volatile struct RMP_Thd* Thread - The thread structure of the thread to send to.
               rmp_ptr_t Data - The data to send to that thread.
 Output      : None.
-Return      : rmp_ret_t - If successful,0; or an error code.
+Return      : rmp_ret_t - If successful, 0; or an error code.
 ******************************************************************************/
-rmp_ret_t RMP_Thd_Snd_ISR(volatile struct RMP_Thd* Thread, rmp_ptr_t Data)
+rmp_ret_t RMP_Thd_Snd_ISR(volatile struct RMP_Thd* Thread,
+                          rmp_ptr_t Data)
 {
     /* Check if this thread structure could possibly be in use */
-    if(Thread==0)
+    if(Thread==RMP_NULL)
     {
         RMP_COVERAGE_MARKER();
         return RMP_ERR_THD;
@@ -1307,7 +1345,7 @@ rmp_ret_t RMP_Thd_Snd_ISR(volatile struct RMP_Thd* Thread, rmp_ptr_t Data)
         RMP_COVERAGE_MARKER();
 
     /* See if there is already a value in the mailbox, if yes, we abort */
-    if((Thread->State&RMP_THD_MBOXFUL)!=0)
+    if((Thread->State&RMP_THD_MBOXFUL)!=0U)
     {
         RMP_COVERAGE_MARKER();
         return RMP_ERR_OPER;
@@ -1326,21 +1364,21 @@ rmp_ret_t RMP_Thd_Snd_ISR(volatile struct RMP_Thd* Thread, rmp_ptr_t Data)
             if(RMP_THD_STATE(Thread->State)==RMP_THD_RCVDLY)
             {
                 RMP_COVERAGE_MARKER();
-                RMP_List_Del(Thread->Dly_Head.Prev,Thread->Dly_Head.Next);
+                RMP_List_Del(Thread->Dly_Head.Prev, Thread->Dly_Head.Next);
             }
             else
                 RMP_COVERAGE_MARKER();
             
-            RMP_THD_STATE_SET(Thread->State,RMP_THD_RUNNING);
+            RMP_THD_STATE_SET(Thread->State, RMP_THD_RUNNING);
 
             /* Set to running if not suspended */
             _RMP_Set_Rdy(Thread);
 
             /* If schedule pending, trigger it now because we are in ISR */
-            if(RMP_Sched_Pend!=0)
+            if(RMP_Sched_Pend!=0U)
             {
                 RMP_COVERAGE_MARKER();
-                RMP_Sched_Pend=0;
+                RMP_Sched_Pend=0U;
                 _RMP_Yield();
             }
             else
@@ -1362,13 +1400,14 @@ rmp_ret_t RMP_Thd_Snd_ISR(volatile struct RMP_Thd* Thread, rmp_ptr_t Data)
 Description : Receive a message from our own mailbox, and this is blocking.
 Input       : rmp_ptr_t Slices - The timeslices to wait, if the mailbox is empty.
 Output      : rmp_ptr_t* Data - The pointer to put the data to.
-Return      : rmp_ret_t - If successful,0; or an error code.
+Return      : rmp_ret_t - If successful, 0; or an error code.
 ******************************************************************************/
-rmp_ret_t RMP_Thd_Rcv(rmp_ptr_t* Data, rmp_ptr_t Slices)
+rmp_ret_t RMP_Thd_Rcv(rmp_ptr_t* Data,
+                      rmp_ptr_t Slices)
 {
-    struct RMP_Thd* Sender;
+    volatile struct RMP_Thd* Sender;
     
-    if(Data==0)
+    if(Data==RMP_NULL)
     {
         RMP_COVERAGE_MARKER();
         return RMP_ERR_OPER;
@@ -1379,13 +1418,13 @@ rmp_ret_t RMP_Thd_Rcv(rmp_ptr_t* Data, rmp_ptr_t Slices)
     RMP_Lock_Sched();
     
     /* Is there any other guy waiting on us? If there is, unblock it and set it running */
-    Sender=0;
+    Sender=RMP_NULL;
     if(&(RMP_Cur_Thd->Snd_List)!=RMP_Cur_Thd->Snd_List.Next)
     {
         RMP_COVERAGE_MARKER();
         /* Read the data */
-        Sender=(struct RMP_Thd*)(RMP_Cur_Thd->Snd_List.Next);
-        RMP_List_Del(Sender->Run_Head.Prev,Sender->Run_Head.Next);
+        Sender=(volatile struct RMP_Thd*)(RMP_Cur_Thd->Snd_List.Next);
+        RMP_List_Del(Sender->Run_Head.Prev, Sender->Run_Head.Next);
         *Data=Sender->Data;
         /* Now we unblock it - what state is it in? */
         if((RMP_THD_STATE(Sender->State)==RMP_THD_SNDDLY))
@@ -1396,20 +1435,20 @@ rmp_ret_t RMP_Thd_Rcv(rmp_ptr_t* Data, rmp_ptr_t Slices)
         else
             RMP_COVERAGE_MARKER();
         
-        RMP_THD_STATE_SET(Sender->State,RMP_THD_RUNNING);
+        RMP_THD_STATE_SET(Sender->State, RMP_THD_RUNNING);
         /* Set to running if not suspended */
         _RMP_Set_Rdy(Sender);
     }
 
     /* Check if there is a value in our mailbox. If yes, we return with that value */
-    if((RMP_Cur_Thd->State&RMP_THD_MBOXFUL)!=0)
+    if((RMP_Cur_Thd->State&RMP_THD_MBOXFUL)!=0U)
     {
         RMP_COVERAGE_MARKER();
         /* Get the value from mailbox */
         *Data=RMP_Cur_Thd->Mailbox;
         /* See if we unblocked a sender. If yes, we place the new value into 
          * our mailbox and it is still full */
-        if(Sender!=0)
+        if(Sender!=RMP_NULL)
             RMP_Cur_Thd->Mailbox=Sender->Data;
         else
             RMP_Cur_Thd->State&=~RMP_THD_MBOXFUL;
@@ -1422,7 +1461,7 @@ rmp_ret_t RMP_Thd_Rcv(rmp_ptr_t* Data, rmp_ptr_t Slices)
         RMP_COVERAGE_MARKER();
         
         /* Box empty. Do we have somebody waiting? */
-        if(Sender!=0)
+        if(Sender!=RMP_NULL)
         {
             RMP_COVERAGE_MARKER();
             RMP_Cur_Thd->Mailbox=Sender->Data;
@@ -1434,7 +1473,7 @@ rmp_ret_t RMP_Thd_Rcv(rmp_ptr_t* Data, rmp_ptr_t Slices)
         {
             RMP_COVERAGE_MARKER();
             
-            if(Slices==0)
+            if(Slices==0U)
             {
                 RMP_COVERAGE_MARKER();
                 RMP_Unlock_Sched();
@@ -1450,12 +1489,12 @@ rmp_ret_t RMP_Thd_Rcv(rmp_ptr_t* Data, rmp_ptr_t Slices)
             {
                 RMP_COVERAGE_MARKER();
                 _RMP_Dly_Ins(RMP_Cur_Thd, Slices);
-                RMP_THD_STATE_SET(RMP_Cur_Thd->State,RMP_THD_RCVDLY);
+                RMP_THD_STATE_SET(RMP_Cur_Thd->State, RMP_THD_RCVDLY);
             }
             else
             {
                 RMP_COVERAGE_MARKER();
-                RMP_THD_STATE_SET(RMP_Cur_Thd->State,RMP_THD_RCVBLK);
+                RMP_THD_STATE_SET(RMP_Cur_Thd->State, RMP_THD_RCVBLK);
             }
             RMP_Unlock_Sched();
             
@@ -1483,7 +1522,7 @@ Return      : rmp_ret_t - If successful, 0; or an error code.
 ******************************************************************************/
 rmp_ret_t RMP_Thd_Delay(rmp_ptr_t Slices)
 {
-    if((Slices==0)||(Slices>=RMP_MAX_SLICES))
+    if((Slices==0U)||(Slices>=RMP_MAX_SLICES))
     {
         RMP_COVERAGE_MARKER();
         return RMP_ERR_SLICE;
@@ -1495,7 +1534,7 @@ rmp_ret_t RMP_Thd_Delay(rmp_ptr_t Slices)
 
     /* We must be running and not suspended so we will be out of running queue */
     _RMP_Clr_Rdy(RMP_Cur_Thd);
-    RMP_THD_STATE_SET(RMP_Cur_Thd->State,RMP_THD_DELAYED);
+    RMP_THD_STATE_SET(RMP_Cur_Thd->State, RMP_THD_DELAYED);
     _RMP_Dly_Ins(RMP_Cur_Thd, Slices);
 
     RMP_Cur_Thd->Retval=0;
@@ -1507,14 +1546,14 @@ rmp_ret_t RMP_Thd_Delay(rmp_ptr_t Slices)
 
 /* Begin Function:RMP_Thd_Cancel **********************************************
 Description : Cancel the real-time thread from a previous delay.
-Input       : volatile struct RMP_Thd* Thread - The thread structure of the thread.
+Input       : volatile struct RMP_Thd* Thread - The pointer to the thread.
 Output      : None.
 Return      : rmp_ret_t - If successful, 0; or an error code.
 ******************************************************************************/
 rmp_ret_t RMP_Thd_Cancel(volatile struct RMP_Thd* Thread)
 {
     /* Check if this thread structure could possibly be in use */
-    if(Thread==0)
+    if(Thread==RMP_NULL)
     {
         RMP_COVERAGE_MARKER();
         return RMP_ERR_THD;
@@ -1535,8 +1574,8 @@ rmp_ret_t RMP_Thd_Cancel(volatile struct RMP_Thd* Thread)
         RMP_COVERAGE_MARKER();
 
     /* Delete it from the delay list */
-    RMP_List_Del(Thread->Dly_Head.Prev,Thread->Dly_Head.Next);
-    RMP_THD_STATE_SET(Thread->State,RMP_THD_RUNNING);
+    RMP_List_Del(Thread->Dly_Head.Prev, Thread->Dly_Head.Next);
+    RMP_THD_STATE_SET(Thread->State, RMP_THD_RUNNING);
     /* Set to running if not suspended */
     _RMP_Set_Rdy(Thread);
     
@@ -1548,15 +1587,16 @@ rmp_ret_t RMP_Thd_Cancel(volatile struct RMP_Thd* Thread)
 
 /* Begin Function:RMP_Sem_Crt *************************************************
 Description : Create a semaphore in the system.
-Input       : volatile struct RMP_Sem* Semaphore - The pointer to the semaphore structure.
+Input       : volatile struct RMP_Sem* Semaphore - The pointer to the semaphore.
               rmp_ptr_t Number - The initial number of this semaphore.
 Output      : None.
 Return      : rmp_ret_t - If successful, 0; or an error code.
 ******************************************************************************/
-rmp_ret_t RMP_Sem_Crt(volatile struct RMP_Sem* Semaphore, rmp_ptr_t Number)
+rmp_ret_t RMP_Sem_Crt(volatile struct RMP_Sem* Semaphore,
+                      rmp_ptr_t Number)
 {
     /* Check if this semaphore structure could possibly be in use */
-    if(Semaphore==0)
+    if(Semaphore==RMP_NULL)
     {
         RMP_COVERAGE_MARKER();
         return RMP_ERR_SEM;
@@ -1598,16 +1638,16 @@ rmp_ret_t RMP_Sem_Crt(volatile struct RMP_Sem* Semaphore, rmp_ptr_t Number)
 
 /* Begin Function:RMP_Sem_Del *************************************************
 Description : Delete a semaphore in the system.
-Input       : volatile struct RMP_Sem* Semaphore - The pointer to the semaphore structure.
+Input       : volatile struct RMP_Sem* Semaphore - The pointer to the semaphore.
 Output      : None.
 Return      : rmp_ret_t - If successful, 0; or an error code.
 ******************************************************************************/
 rmp_ret_t RMP_Sem_Del(volatile struct RMP_Sem* Semaphore)
 {
-    struct RMP_Thd* Thread;
+    volatile struct RMP_Thd* Thread;
     
     /* Check if this semaphore structure could possibly be in use */
-    if(Semaphore==0)
+    if(Semaphore==RMP_NULL)
     {
         RMP_COVERAGE_MARKER();
         return RMP_ERR_SEM;
@@ -1629,18 +1669,19 @@ rmp_ret_t RMP_Sem_Del(volatile struct RMP_Sem* Semaphore)
     /* Get rid of all guys waiting on it */
     while(&(Semaphore->Wait_List)!=Semaphore->Wait_List.Next)
     {
-        Thread=(struct RMP_Thd*)(Semaphore->Wait_List.Next);
-        RMP_List_Del(Thread->Run_Head.Prev,Thread->Run_Head.Next);
+        Thread=(volatile struct RMP_Thd*)(Semaphore->Wait_List.Next);
+        RMP_List_Del(Thread->Run_Head.Prev, Thread->Run_Head.Next);
         
         if(RMP_THD_STATE(Thread->State)==RMP_THD_SEMDLY)
         {
             RMP_COVERAGE_MARKER();
-            RMP_List_Del(Thread->Dly_Head.Prev,Thread->Dly_Head.Next);
+            RMP_List_Del(Thread->Dly_Head.Prev, Thread->Dly_Head.Next);
         }
         else
             RMP_COVERAGE_MARKER();
 
         RMP_THD_STATE_SET(Thread->State,RMP_THD_RUNNING);
+        
         /* Set to running if not suspended */
         _RMP_Set_Rdy(Thread);
         Thread->Retval=RMP_ERR_OPER;
@@ -1655,15 +1696,16 @@ rmp_ret_t RMP_Sem_Del(volatile struct RMP_Sem* Semaphore)
 
 /* Begin Function:RMP_Sem_Pend ************************************************
 Description : Pend on the semaphore, trying to get one.
-Input       : volatile struct RMP_Sem* Semaphore - The pointer to the semaphore structure.
+Input       : volatile struct RMP_Sem* Semaphore - The pointer to the semaphore.
               rmp_ptr_t Slices - The number of slices to wait.
 Output      : None.
 Return      : rmp_ret_t - If successful, the current semaphore number; or an error code.
 ******************************************************************************/
-rmp_ret_t RMP_Sem_Pend(volatile struct RMP_Sem* Semaphore, rmp_ptr_t Slices)
+rmp_ret_t RMP_Sem_Pend(volatile struct RMP_Sem* Semaphore,
+                       rmp_ptr_t Slices)
 {
     /* Check if this semaphore structure could possibly be in use */
-    if(Semaphore==0)
+    if(Semaphore==RMP_NULL)
     {
         RMP_COVERAGE_MARKER();
         return RMP_ERR_SEM;
@@ -1683,18 +1725,18 @@ rmp_ret_t RMP_Sem_Pend(volatile struct RMP_Sem* Semaphore, rmp_ptr_t Slices)
         RMP_COVERAGE_MARKER();
     
     /* Check if we can get one immediately */
-    if(Semaphore->Cur_Num!=0)
+    if(Semaphore->Cur_Num!=0U)
     {
         RMP_COVERAGE_MARKER();
         Semaphore->Cur_Num--;
         RMP_Unlock_Sched();
-        return Semaphore->Cur_Num;
+        return (rmp_ret_t)Semaphore->Cur_Num;
     }
     else
     {
         RMP_COVERAGE_MARKER();
         /* Cannot get one, we need to block */
-        if(Slices==0)
+        if(Slices==0U)
         {
             RMP_COVERAGE_MARKER();
             RMP_Unlock_Sched();
@@ -1705,18 +1747,18 @@ rmp_ret_t RMP_Sem_Pend(volatile struct RMP_Sem* Semaphore, rmp_ptr_t Slices)
 
         /* We must be running - place into waitlist now */
         _RMP_Clr_Rdy(RMP_Cur_Thd);
-        RMP_List_Ins(&(RMP_Cur_Thd->Run_Head),Semaphore->Wait_List.Prev,&(Semaphore->Wait_List));
+        RMP_List_Ins(&(RMP_Cur_Thd->Run_Head), Semaphore->Wait_List.Prev, &(Semaphore->Wait_List));
         
         if(Slices<RMP_MAX_SLICES)
         {
             RMP_COVERAGE_MARKER();
             _RMP_Dly_Ins(RMP_Cur_Thd, Slices);
-            RMP_THD_STATE_SET(RMP_Cur_Thd->State,RMP_THD_SEMDLY);
+            RMP_THD_STATE_SET(RMP_Cur_Thd->State, RMP_THD_SEMDLY);
         }
         else
         {
             RMP_COVERAGE_MARKER();
-            RMP_THD_STATE_SET(RMP_Cur_Thd->State,RMP_THD_SEMBLK);
+            RMP_THD_STATE_SET(RMP_Cur_Thd->State, RMP_THD_SEMBLK);
         }
         
         RMP_Cur_Thd->Retval=0;
@@ -1730,14 +1772,14 @@ rmp_ret_t RMP_Sem_Pend(volatile struct RMP_Sem* Semaphore, rmp_ptr_t Slices)
 
 /* Begin Function:RMP_Sem_Abort ***********************************************
 Description : Abort the waiting of one thread on a semaphore.
-Input       : volatile struct RMP_Thd* Thread - The thread structure of the thread.
+Input       : volatile struct RMP_Thd* Thread - The pointer to the thread.
 Output      : None.
 Return      : rmp_ret_t - If successful, 0; or an error code.
 ******************************************************************************/
 rmp_ret_t RMP_Sem_Abort(volatile struct RMP_Thd* Thread)
 {
     /* Check if this thread structure could possibly be in use */
-    if(Thread==0)
+    if(Thread==RMP_NULL)
     {
         RMP_COVERAGE_MARKER();
         return RMP_ERR_THD;
@@ -1768,11 +1810,11 @@ rmp_ret_t RMP_Sem_Abort(volatile struct RMP_Thd* Thread)
         RMP_COVERAGE_MARKER();
 
     /* Waiting for a semaphore. We abort it and return */
-    RMP_List_Del(Thread->Run_Head.Prev,Thread->Run_Head.Next);
+    RMP_List_Del(Thread->Run_Head.Prev, Thread->Run_Head.Next);
     if(RMP_THD_STATE(Thread->State)==RMP_THD_SEMDLY)
     {
         RMP_COVERAGE_MARKER();
-        RMP_List_Del(Thread->Dly_Head.Prev,Thread->Dly_Head.Next);
+        RMP_List_Del(Thread->Dly_Head.Prev, Thread->Dly_Head.Next);
     }
     else
         RMP_COVERAGE_MARKER();
@@ -1789,17 +1831,18 @@ rmp_ret_t RMP_Sem_Abort(volatile struct RMP_Thd* Thread)
 
 /* Begin Function:RMP_Sem_Post ************************************************
 Description : Post a number of semaphores to the list.
-Input       : volatile struct RMP_Sem* Semaphore - The pointer to the semaphore structure.
+Input       : volatile struct RMP_Sem* Semaphore - The pointer to the semaphore.
               rmp_ptr_t Number - The number to post.
 Output      : None.
 Return      : rmp_ret_t - If successful, 0; or an error code.
 ******************************************************************************/
-rmp_ret_t RMP_Sem_Post(volatile struct RMP_Sem* Semaphore, rmp_ptr_t Number)
+rmp_ret_t RMP_Sem_Post(volatile struct RMP_Sem* Semaphore,
+                       rmp_ptr_t Number)
 {
-    struct RMP_Thd* Thread;
+    volatile struct RMP_Thd* Thread;
     
     /* Check if this semaphore structure could possibly be in use */
-    if((Semaphore==0)||(Number==0))
+    if((Semaphore==RMP_NULL)||(Number==0U))
     {
         RMP_COVERAGE_MARKER();
         return RMP_ERR_SEM;
@@ -1829,21 +1872,22 @@ rmp_ret_t RMP_Sem_Post(volatile struct RMP_Sem* Semaphore, rmp_ptr_t Number)
         RMP_COVERAGE_MARKER();
     
     Semaphore->Cur_Num+=Number;
+    
     /* Is there any thread waiting on it? If there are, clean them up*/
-    while((&(Semaphore->Wait_List)!=Semaphore->Wait_List.Next)&&(Semaphore->Cur_Num!=0))
+    while((&(Semaphore->Wait_List)!=Semaphore->Wait_List.Next)&&(Semaphore->Cur_Num!=0U))
     {
-        Thread=(struct RMP_Thd*)(Semaphore->Wait_List.Next);
-        RMP_List_Del(Thread->Run_Head.Prev,Thread->Run_Head.Next);
+        Thread=(volatile struct RMP_Thd*)(Semaphore->Wait_List.Next);
+        RMP_List_Del(Thread->Run_Head.Prev, Thread->Run_Head.Next);
         
         if(RMP_THD_STATE(Thread->State)==RMP_THD_SEMDLY)
         {
             RMP_COVERAGE_MARKER();
-            RMP_List_Del(Thread->Dly_Head.Prev,Thread->Dly_Head.Next);
+            RMP_List_Del(Thread->Dly_Head.Prev, Thread->Dly_Head.Next);
         }
         else
             RMP_COVERAGE_MARKER();
         
-        RMP_THD_STATE_SET(Thread->State,RMP_THD_RUNNING);
+        RMP_THD_STATE_SET(Thread->State, RMP_THD_RUNNING);
         /* Set to running if not suspended */
         _RMP_Set_Rdy(Thread);
 
@@ -1859,18 +1903,20 @@ rmp_ret_t RMP_Sem_Post(volatile struct RMP_Sem* Semaphore, rmp_ptr_t Number)
 
 /* Begin Function:RMP_Sem_Post_ISR ********************************************
 Description : Post a number of semaphores to the list.
-              We do not check whether the scheduler is locked; if we are calling this
-              function, we're pretty sure that it's not.
-Input       : volatile struct RMP_Sem* Semaphore - The pointer to the semaphore structure.
+              We do not check whether the scheduler is locked; if we are calling
+              this function, we're pretty sure that it's not.
+Input       : volatile struct RMP_Sem* Semaphore - The pointer to the semaphore.
               rmp_ptr_t Number - The number to post.
 Output      : None.
 Return      : rmp_ret_t - If successful, 0; or an error code.
 ******************************************************************************/
-rmp_ret_t RMP_Sem_Post_ISR(volatile struct RMP_Sem* Semaphore, rmp_ptr_t Number)
+rmp_ret_t RMP_Sem_Post_ISR(volatile struct RMP_Sem* Semaphore,
+                           rmp_ptr_t Number)
 {
-    struct RMP_Thd* Thread;
+    volatile struct RMP_Thd* Thread;
+    
     /* Check if this semaphore structure could possibly be in use */
-    if((Semaphore==0)||(Number==0))
+    if((Semaphore==RMP_NULL)||(Number==0U))
     {
         RMP_COVERAGE_MARKER();
         return RMP_ERR_SEM;
@@ -1897,27 +1943,27 @@ rmp_ret_t RMP_Sem_Post_ISR(volatile struct RMP_Sem* Semaphore, rmp_ptr_t Number)
     
     Semaphore->Cur_Num+=Number;
     /* Is there any thread waiting on it? If there are, clean them up*/
-    while((&(Semaphore->Wait_List)!=Semaphore->Wait_List.Next)&&(Semaphore->Cur_Num!=0))
+    while((&(Semaphore->Wait_List)!=Semaphore->Wait_List.Next)&&(Semaphore->Cur_Num!=0U))
     {
-        Thread=(struct RMP_Thd*)(Semaphore->Wait_List.Next);
-        RMP_List_Del(Thread->Run_Head.Prev,Thread->Run_Head.Next);
+        Thread=(volatile struct RMP_Thd*)(Semaphore->Wait_List.Next);
+        RMP_List_Del(Thread->Run_Head.Prev, Thread->Run_Head.Next);
         if(RMP_THD_STATE(Thread->State)==RMP_THD_SEMDLY)
         {
             RMP_COVERAGE_MARKER();
-            RMP_List_Del(Thread->Dly_Head.Prev,Thread->Dly_Head.Next);
+            RMP_List_Del(Thread->Dly_Head.Prev, Thread->Dly_Head.Next);
         }
         else
             RMP_COVERAGE_MARKER();
         
-        RMP_THD_STATE_SET(Thread->State,RMP_THD_RUNNING);
+        RMP_THD_STATE_SET(Thread->State, RMP_THD_RUNNING);
         /* Set to running if not suspended */
         _RMP_Set_Rdy(Thread);
         
         /* If schedule pending, trigger it now because we are in ISR */
-        if(RMP_Sched_Pend!=0)
+        if(RMP_Sched_Pend!=0U)
         {
             RMP_COVERAGE_MARKER();
-            RMP_Sched_Pend=0;
+            RMP_Sched_Pend=0U;
             _RMP_Yield();   
         }
         else
@@ -1979,7 +2025,7 @@ void RMP_Init(void)
     
     RMP_Unlock_Sched();
     
-    while(1)
+    while(1U)
         RMP_Init_Idle();
 }
 /* End Function:RMP_Init *****************************************************/
@@ -1997,8 +2043,8 @@ int main(void)
     
 #ifdef RMP_COVERAGE
     /* Initialize coverage markers if coverage enabled */
-    for(Count=0;Count<RMP_COVERAGE_LINES;Count++)
-        RMP_Coverage[Count]=0;
+    for(Count=0U;Count<RMP_COVERAGE_LINES;Count++)
+        RMP_Coverage[Count]=0U;
 #endif
     
     /* Initialize the kernel data structures first */
@@ -2008,25 +2054,25 @@ int main(void)
     RMP_Start_Hook();
 #endif
     
-    RMP_Tick=0;
+    RMP_Tick=0U;
     /* Now initialize the kernel data structures */
-    RMP_Sched_Lock_Cnt=0;
-    RMP_Sched_Locked=0;
-    RMP_Sched_Pend=0;
-    RMP_Timer_Pend=0;
+    RMP_Sched_Lock_Cnt=0U;
+    RMP_Sched_Locked=0U;
+    RMP_Sched_Pend=0U;
+    RMP_Timer_Pend=0U;
     
     /* Linked lists */
     RMP_List_Crt(&RMP_Delay);
-    for(Count=0;Count<RMP_MAX_PREEMPT_PRIO;Count++)
+    for(Count=0U;Count<RMP_MAX_PREEMPT_PRIO;Count++)
         RMP_List_Crt(&RMP_Run[Count]);
-    for(Count=0;Count<RMP_BITMAP_SIZE;Count++)
-        RMP_Bitmap[Count]=0;
+    for(Count=0U;Count<RMP_BITMAP_SIZE;Count++)
+        RMP_Bitmap[Count]=0U;
         
     /* Now boot into the first thread */
     RMP_Clear(&RMP_Init_Thd,sizeof(struct RMP_Thd));
-    RMP_Init_Thd.Prio=0;
-    RMP_Init_Thd.Slices=10;
-    RMP_Init_Thd.Slices_Left=10;
+    RMP_Init_Thd.Prio=0U;
+    RMP_Init_Thd.Slices=10U;
+    RMP_Init_Thd.Slices_Left=10U;
     RMP_Init_Thd.State=RMP_THD_RUNNING;
     RMP_Init_Thd.Stack=RMP_INIT_STACK;
     
@@ -2036,10 +2082,10 @@ int main(void)
     /* Insert this into the corresponding runqueue */
     RMP_List_Ins(&(RMP_Init_Thd.Run_Head),RMP_Run[0].Prev,&(RMP_Run[0]));
     /* Set this runlevel as active - in fact it is always active */
-    RMP_Bitmap[0]|=1;
+    RMP_Bitmap[0]|=1U;
     
     /* Set current thread and stack */
-    RMP_Cur_Thd=(struct RMP_Thd*)(&RMP_Init_Thd);
+    RMP_Cur_Thd=(volatile struct RMP_Thd*)&RMP_Init_Thd;
     RMP_Cur_SP=RMP_Init_Thd.Stack;
     
     /* Now jump to the user function and will never return. Initialization of stack is not needed */
@@ -2055,32 +2101,48 @@ Input       : rmp_ptr_t Val - The input value.
 Output      : None.
 Return      : rmp_ptr_t - The result.
 ******************************************************************************/
-static const rmp_u8_t RMP_RBIT_Table[256]=
-{
-    0x00, 0x80, 0x40, 0xC0, 0x20, 0xA0, 0x60, 0xE0, 0x10, 0x90, 0x50, 0xD0, 0x30, 0xB0, 0x70, 0xF0,
-    0x08, 0x88, 0x48, 0xC8, 0x28, 0xA8, 0x68, 0xE8, 0x18, 0x98, 0x58, 0xD8, 0x38, 0xB8, 0x78, 0xF8,
-    0x04, 0x84, 0x44, 0xC4, 0x24, 0xA4, 0x64, 0xE4, 0x14, 0x94, 0x54, 0xD4, 0x34, 0xB4, 0x74, 0xF4,
-    0x0C, 0x8C, 0x4C, 0xCC, 0x2C, 0xAC, 0x6C, 0xEC, 0x1C, 0x9C, 0x5C, 0xDC, 0x3C, 0xBC, 0x7C, 0xFC,
-    0x02, 0x82, 0x42, 0xC2, 0x22, 0xA2, 0x62, 0xE2, 0x12, 0x92, 0x52, 0xD2, 0x32, 0xB2, 0x72, 0xF2,
-    0x0A, 0x8A, 0x4A, 0xCA, 0x2A, 0xAA, 0x6A, 0xEA, 0x1A, 0x9A, 0x5A, 0xDA, 0x3A, 0xBA, 0x7A, 0xFA,
-    0x06, 0x86, 0x46, 0xC6, 0x26, 0xA6, 0x66, 0xE6, 0x16, 0x96, 0x56, 0xD6, 0x36, 0xB6, 0x76, 0xF6,
-    0x0E, 0x8E, 0x4E, 0xCE, 0x2E, 0xAE, 0x6E, 0xEE, 0x1E, 0x9E, 0x5E, 0xDE, 0x3E, 0xBE, 0x7E, 0xFE,
-    0x01, 0x81, 0x41, 0xC1, 0x21, 0xA1, 0x61, 0xE1, 0x11, 0x91, 0x51, 0xD1, 0x31, 0xB1, 0x71, 0xF1,
-    0x09, 0x89, 0x49, 0xC9, 0x29, 0xA9, 0x69, 0xE9, 0x19, 0x99, 0x59, 0xD9, 0x39, 0xB9, 0x79, 0xF9,
-    0x05, 0x85, 0x45, 0xC5, 0x25, 0xA5, 0x65, 0xE5, 0x15, 0x95, 0x55, 0xD5, 0x35, 0xB5, 0x75, 0xF5,
-    0x0D, 0x8D, 0x4D, 0xCD, 0x2D, 0xAD, 0x6D, 0xED, 0x1D, 0x9D, 0x5D, 0xDD, 0x3D, 0xBD, 0x7D, 0xFD,
-    0x03, 0x83, 0x43, 0xC3, 0x23, 0xA3, 0x63, 0xE3, 0x13, 0x93, 0x53, 0xD3, 0x33, 0xB3, 0x73, 0xF3,
-    0x0B, 0x8B, 0x4B, 0xCB, 0x2B, 0xAB, 0x6B, 0xEB, 0x1B, 0x9B, 0x5B, 0xDB, 0x3B, 0xBB, 0x7B, 0xFB,
-    0x07, 0x87, 0x47, 0xC7, 0x27, 0xA7, 0x67, 0xE7, 0x17, 0x97, 0x57, 0xD7, 0x37, 0xB7, 0x77, 0xF7,
-    0x0F, 0x8F, 0x4F, 0xCF, 0x2F, 0xAF, 0x6F, 0xEF, 0x1F, 0x9F, 0x5F, 0xDF, 0x3F, 0xBF, 0x7F, 0xFF
-};
-
 rmp_ptr_t RMP_RBIT_Get(rmp_ptr_t Val)
 {
     rmp_ptr_t Ret;
     rmp_ptr_t Src;
     rmp_u8_t* To;
     rmp_u8_t* From;
+    
+    static const rmp_u8_t RMP_RBIT_Table[256]=
+    {
+        0x00U, 0x80U, 0x40U, 0xC0U, 0x20U, 0xA0U, 0x60U, 0xE0U,
+        0x10U, 0x90U, 0x50U, 0xD0U, 0x30U, 0xB0U, 0x70U, 0xF0U,
+        0x08U, 0x88U, 0x48U, 0xC8U, 0x28U, 0xA8U, 0x68U, 0xE8U,
+        0x18U, 0x98U, 0x58U, 0xD8U, 0x38U, 0xB8U, 0x78U, 0xF8U,
+        0x04U, 0x84U, 0x44U, 0xC4U, 0x24U, 0xA4U, 0x64U, 0xE4U,
+        0x14U, 0x94U, 0x54U, 0xD4U, 0x34U, 0xB4U, 0x74U, 0xF4U,
+        0x0CU, 0x8CU, 0x4CU, 0xCCU, 0x2CU, 0xACU, 0x6CU, 0xECU,
+        0x1CU, 0x9CU, 0x5CU, 0xDCU, 0x3CU, 0xBCU, 0x7CU, 0xFCU,
+        0x02U, 0x82U, 0x42U, 0xC2U, 0x22U, 0xA2U, 0x62U, 0xE2U,
+        0x12U, 0x92U, 0x52U, 0xD2U, 0x32U, 0xB2U, 0x72U, 0xF2U,
+        0x0AU, 0x8AU, 0x4AU, 0xCAU, 0x2AU, 0xAAU, 0x6AU, 0xEAU,
+        0x1AU, 0x9AU, 0x5AU, 0xDAU, 0x3AU, 0xBAU, 0x7AU, 0xFAU,
+        0x06U, 0x86U, 0x46U, 0xC6U, 0x26U, 0xA6U, 0x66U, 0xE6U,
+        0x16U, 0x96U, 0x56U, 0xD6U, 0x36U, 0xB6U, 0x76U, 0xF6U,
+        0x0EU, 0x8EU, 0x4EU, 0xCEU, 0x2EU, 0xAEU, 0x6EU, 0xEEU,
+        0x1EU, 0x9EU, 0x5EU, 0xDEU, 0x3EU, 0xBEU, 0x7EU, 0xFEU,
+        0x01U, 0x81U, 0x41U, 0xC1U, 0x21U, 0xA1U, 0x61U, 0xE1U,
+        0x11U, 0x91U, 0x51U, 0xD1U, 0x31U, 0xB1U, 0x71U, 0xF1U,
+        0x09U, 0x89U, 0x49U, 0xC9U, 0x29U, 0xA9U, 0x69U, 0xE9U,
+        0x19U, 0x99U, 0x59U, 0xD9U, 0x39U, 0xB9U, 0x79U, 0xF9U,
+        0x05U, 0x85U, 0x45U, 0xC5U, 0x25U, 0xA5U, 0x65U, 0xE5U,
+        0x15U, 0x95U, 0x55U, 0xD5U, 0x35U, 0xB5U, 0x75U, 0xF5U,
+        0x0DU, 0x8DU, 0x4DU, 0xCDU, 0x2DU, 0xADU, 0x6DU, 0xEDU,
+        0x1DU, 0x9DU, 0x5DU, 0xDDU, 0x3DU, 0xBDU, 0x7DU, 0xFDU,
+        0x03U, 0x83U, 0x43U, 0xC3U, 0x23U, 0xA3U, 0x63U, 0xE3U,
+        0x13U, 0x93U, 0x53U, 0xD3U, 0x33U, 0xB3U, 0x73U, 0xF3U,
+        0x0BU, 0x8BU, 0x4BU, 0xCBU, 0x2BU, 0xABU, 0x6BU, 0xEBU,
+        0x1BU, 0x9BU, 0x5BU, 0xDBU, 0x3BU, 0xBBU, 0x7BU, 0xFBU,
+        0x07U, 0x87U, 0x47U, 0xC7U, 0x27U, 0xA7U, 0x67U, 0xE7U,
+        0x17U, 0x97U, 0x57U, 0xD7U, 0x37U, 0xB7U, 0x77U, 0xF7U,
+        0x0FU, 0x8FU, 0x4FU, 0xCFU, 0x2FU, 0xAFU, 0x6FU, 0xEFU,
+        0x1FU, 0x9FU, 0x5FU, 0xDFU, 0x3FU, 0xBFU, 0x7FU, 0xFFU
+    };
     
     Src=Val;
     To=(rmp_u8_t*)(&Ret);
@@ -2118,7 +2180,7 @@ Return      : rmp_ptr_t - The LSB found.
 ******************************************************************************/
 rmp_ptr_t RMP_LSB_Get(rmp_ptr_t Val)
 {
-    return RMP_WORD_SIZE-1-RMP_MSB_Get(RMP_RBIT_Get(Val));
+    return RMP_WORD_SIZE-1U-RMP_MSB_Get(RMP_RBIT_Get(Val));
 }
 /* End Function:RMP_LSB_Get **************************************************/
 
@@ -2158,16 +2220,17 @@ Input       : volatile void* Pool - The start address of the memory pool, word-a
 Output      : None.
 Return      : rmp_ret_t - If successful, 0; else an error code.
 ******************************************************************************/
-rmp_ret_t RMP_Mem_Init(volatile void* Pool, rmp_ptr_t Size)
+rmp_ret_t RMP_Mem_Init(volatile void* Pool,
+                       rmp_ptr_t Size)
 {
-    rmp_cnt_t FLI_Cnt;
+    rmp_ptr_t FLI_Cnt;
     rmp_ptr_t Offset;
     rmp_ptr_t Bitmap_Size;
     volatile struct RMP_Mem* Mem;
     
     /* See if the memory pool is large enough to enable dynamic allocation - at
      * least 1024 machine words or pool initialization will be refused */
-    if((Pool==0)||(Size<(1024*sizeof(rmp_ptr_t)))||((((rmp_ptr_t)Pool)+Size)<Size))
+    if((Pool==RMP_NULL)||(Size<(1024U*sizeof(rmp_ptr_t)))||((((rmp_ptr_t)Pool)+Size)<Size))
     {
         RMP_COVERAGE_MARKER();
         return RMP_ERR_MEM;
@@ -2176,7 +2239,7 @@ rmp_ret_t RMP_Mem_Init(volatile void* Pool, rmp_ptr_t Size)
         RMP_COVERAGE_MARKER();
     
     /* See if the address and size is word-aligned */
-    if(((((rmp_ptr_t)Pool)&RMP_ALIGN_MASK)!=0)||((Size&RMP_ALIGN_MASK)!=0))
+    if(((((rmp_ptr_t)Pool)&RMP_ALIGN_MASK)!=0U)||((Size&RMP_ALIGN_MASK)!=0U))
     {
         RMP_COVERAGE_MARKER();
         return RMP_ERR_MEM;
@@ -2187,39 +2250,39 @@ rmp_ret_t RMP_Mem_Init(volatile void* Pool, rmp_ptr_t Size)
     Mem=(volatile struct RMP_Mem*)Pool;
     Mem->Size=Size;
     /* Calculate the FLI value needed for this - we always align to 64 byte */
-    Mem->FLI_Num=RMP_MSB_Get(Size-sizeof(struct RMP_Mem))-6+1;
+    Mem->FLI_Num=RMP_MSB_Get(Size-sizeof(struct RMP_Mem))-6U+1U;
     
     /* Decide the location of the bitmap */
     Offset=sizeof(struct RMP_Mem);
     Bitmap_Size=RMP_ROUND_UP(Mem->FLI_Num,RMP_ALIGN_ORDER);
     /* Initialize the bitmap */
-    for(FLI_Cnt=0;FLI_Cnt<(rmp_cnt_t)(Bitmap_Size>>RMP_ALIGN_ORDER);FLI_Cnt++)
-        Mem->Bitmap[FLI_Cnt]=0;
+    for(FLI_Cnt=0U;FLI_Cnt<(Bitmap_Size>>RMP_ALIGN_ORDER);FLI_Cnt++)
+        Mem->Bitmap[FLI_Cnt]=0U;
     
     /* Decide the location of the allocation table - "-sizeof(rmp_ptr_t)" is
      * because we defined the length=1 in our struct already */
     Offset+=Bitmap_Size-sizeof(rmp_ptr_t);
     Mem->Table=(struct RMP_List*)(((rmp_ptr_t)Mem)+Offset);
     /* Initialize the allocation table */
-    for(FLI_Cnt=0;FLI_Cnt<(rmp_cnt_t)(Mem->FLI_Num);FLI_Cnt++)
+    for(FLI_Cnt=0U;FLI_Cnt<Mem->FLI_Num;FLI_Cnt++)
     {
-        RMP_List_Crt(&(Mem->Table[RMP_MEM_POS(FLI_Cnt,0)]));
-        RMP_List_Crt(&(Mem->Table[RMP_MEM_POS(FLI_Cnt,1)]));
-        RMP_List_Crt(&(Mem->Table[RMP_MEM_POS(FLI_Cnt,2)]));
-        RMP_List_Crt(&(Mem->Table[RMP_MEM_POS(FLI_Cnt,3)]));
-        RMP_List_Crt(&(Mem->Table[RMP_MEM_POS(FLI_Cnt,4)]));
-        RMP_List_Crt(&(Mem->Table[RMP_MEM_POS(FLI_Cnt,5)]));
-        RMP_List_Crt(&(Mem->Table[RMP_MEM_POS(FLI_Cnt,6)]));
-        RMP_List_Crt(&(Mem->Table[RMP_MEM_POS(FLI_Cnt,7)]));
+        RMP_List_Crt(&(Mem->Table[RMP_MEM_POS(FLI_Cnt, 0U)]));
+        RMP_List_Crt(&(Mem->Table[RMP_MEM_POS(FLI_Cnt, 1U)]));
+        RMP_List_Crt(&(Mem->Table[RMP_MEM_POS(FLI_Cnt, 2U)]));
+        RMP_List_Crt(&(Mem->Table[RMP_MEM_POS(FLI_Cnt, 3U)]));
+        RMP_List_Crt(&(Mem->Table[RMP_MEM_POS(FLI_Cnt, 4U)]));
+        RMP_List_Crt(&(Mem->Table[RMP_MEM_POS(FLI_Cnt, 5U)]));
+        RMP_List_Crt(&(Mem->Table[RMP_MEM_POS(FLI_Cnt, 6U)]));
+        RMP_List_Crt(&(Mem->Table[RMP_MEM_POS(FLI_Cnt, 7U)]));
     }
     
     /* Calculate the offset of the actual allocatable memory - each FLI have
      * 8 SLIs, and each SLI has a corresponding table header */
-    Offset+=sizeof(struct RMP_List)*8*Mem->FLI_Num;
+    Offset+=sizeof(struct RMP_List)*8U*Mem->FLI_Num;
     Mem->Start=((rmp_ptr_t)Mem)+Offset;
     
     /* Initialize the first big block */
-    _RMP_Mem_Block((struct RMP_Mem_Head*)(Mem->Start),Size-Offset);
+    _RMP_Mem_Block((struct RMP_Mem_Head*)(Mem->Start), Size-Offset);
     /* Insert the memory into the corresponding level */
     _RMP_Mem_Ins(Pool,(struct RMP_Mem_Head*)(Mem->Start));
     
@@ -2236,16 +2299,17 @@ Input       : volatile struct RMP_Mem_Head* Addr - The start address of the
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void _RMP_Mem_Block(volatile struct RMP_Mem_Head* Addr, rmp_ptr_t Size)
+void _RMP_Mem_Block(volatile struct RMP_Mem_Head* Addr,
+                    rmp_ptr_t Size)
 {
     volatile struct RMP_Mem_Head* Mem_Head;
     
     /* Get the big memory block's size and position */
-    Mem_Head=(struct RMP_Mem_Head*)Addr;
+    Mem_Head=Addr;
     
     /* Initialize the big memory block */
     Mem_Head->State=RMP_MEM_FREE;
-    Mem_Head->Tail=(struct RMP_Mem_Tail*)(((rmp_ptr_t)Mem_Head)+Size-sizeof(struct RMP_Mem_Tail));
+    Mem_Head->Tail=(volatile struct RMP_Mem_Tail*)(((rmp_ptr_t)Mem_Head)+Size-sizeof(struct RMP_Mem_Tail));
     Mem_Head->Tail->Head=Mem_Head;
 }
 /* End Function:_RMP_Mem_Block ***********************************************/
@@ -2258,7 +2322,8 @@ Input       : volatile void* Pool - The memory pool.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void _RMP_Mem_Ins(volatile void* Pool, volatile struct RMP_Mem_Head* Mem_Head)
+void _RMP_Mem_Ins(volatile void* Pool,
+                  volatile struct RMP_Mem_Head* Mem_Head)
 {
     rmp_ptr_t FLI_Level;
     rmp_ptr_t SLI_Level;
@@ -2272,9 +2337,9 @@ void _RMP_Mem_Ins(volatile void* Pool, volatile struct RMP_Mem_Head* Mem_Head)
     Size=(rmp_ptr_t)(Mem_Head->Tail)-((rmp_ptr_t)Mem_Head)-sizeof(struct RMP_Mem_Head);
 
     /* Guarantee the Mem_Size is bigger than 64 or a failure will surely occur here */
-    FLI_Level=RMP_MSB_Get(Size)-6;
+    FLI_Level=RMP_MSB_Get(Size)-6U;
     /* Decide the SLI level directly from the FLI level */
-    SLI_Level=(Size>>(FLI_Level+3))&0x07;
+    SLI_Level=(Size>>(FLI_Level+3U))&0x07U;
     /* Calculate the bit position */
     Level=RMP_MEM_POS(FLI_Level,SLI_Level);
     /* Get the slot */
@@ -2303,7 +2368,8 @@ Input       : volatile void* Pool - The memory pool.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void _RMP_Mem_Del(volatile void* Pool, volatile struct RMP_Mem_Head* Mem_Head)
+void _RMP_Mem_Del(volatile void* Pool,
+                  volatile struct RMP_Mem_Head* Mem_Head)
 {
     rmp_ptr_t FLI_Level;
     rmp_ptr_t SLI_Level;
@@ -2317,9 +2383,9 @@ void _RMP_Mem_Del(volatile void* Pool, volatile struct RMP_Mem_Head* Mem_Head)
     Size=(rmp_ptr_t)(Mem_Head->Tail)-((rmp_ptr_t)Mem_Head)-sizeof(struct RMP_Mem_Head);
     
     /* Guarantee the Mem_Size is bigger than 64 or a failure will surely occur here */
-    FLI_Level=RMP_MSB_Get(Size)-6;
+    FLI_Level=RMP_MSB_Get(Size)-6U;
     /* Decide the SLI level directly from the FLI level */
-    SLI_Level=(Size>>(FLI_Level+3))&0x07;
+    SLI_Level=(Size>>(FLI_Level+3U))&0x07U;
     /* Calculate the bit position */
     Level=RMP_MEM_POS(FLI_Level,SLI_Level);
     /* Get the slot */
@@ -2346,38 +2412,41 @@ Description : The TLSF memory searcher.
 Input       : rmp_ptr_t Size - The memory size, must be bigger than 64. This must be
                                guaranteed before calling this function or an error
                                will unavoidably occur.
-Output      : rmp_cnt_t* FLI_Level - The FLI level found.
-              rmp_cnt_t* SLI_Level - The SLI level found.
+Output      : rmp_ptr_t* FLI_Level - The FLI level found.
+              rmp_ptr_t* SLI_Level - The SLI level found.
 Return      : rmp_ret_t - If successful, 0; else -1 for failure.
 ******************************************************************************/
-rmp_ret_t _RMP_Mem_Search(volatile void* Pool, rmp_ptr_t Size, rmp_cnt_t* FLI_Level, rmp_cnt_t* SLI_Level)
+rmp_ret_t _RMP_Mem_Search(volatile void* Pool,
+                          rmp_ptr_t Size,
+                          rmp_ptr_t* FLI_Level,
+                          rmp_ptr_t* SLI_Level)
 {
     rmp_ptr_t FLI_Level_Temp;
     rmp_ptr_t SLI_Level_Temp;
-    rmp_cnt_t Level;
-    rmp_cnt_t Word;
-    rmp_cnt_t Limit;
+    rmp_ptr_t Level;
+    rmp_ptr_t Word;
+    rmp_ptr_t Limit;
     rmp_ptr_t LSB;
     volatile struct RMP_Mem* Mem;
 
     /* Make sure that it is bigger than 64. 64=2^6 */
-    FLI_Level_Temp=RMP_MSB_Get(Size)-6;
+    FLI_Level_Temp=RMP_MSB_Get(Size)-6U;
     
     /* Decide the SLI level directly from the FLI level. We plus the number by one here
      * so that we can avoid the list search. However, when the allocated memory is just
      * one of the levels, then we don't need to jump to the next level and can fit directly */
-    SLI_Level_Temp=(Size>>(FLI_Level_Temp+3))&0x07;
-    if(Size!=(RMP_POW2(FLI_Level_Temp+3)*(SLI_Level_Temp+8)))
+    SLI_Level_Temp=(Size>>(FLI_Level_Temp+3U))&0x07U;
+    if(Size!=(RMP_POW2(FLI_Level_Temp+3U)*(SLI_Level_Temp+8U)))
     {
         RMP_COVERAGE_MARKER();
         SLI_Level_Temp++;
         
         /* If the SLI level is the largest of the SLI level, then jump to the next FLI level */
-        if(SLI_Level_Temp==8)
+        if(SLI_Level_Temp==8U)
         {
             RMP_COVERAGE_MARKER();
-            FLI_Level_Temp+=1;
-            SLI_Level_Temp=0;
+            FLI_Level_Temp+=1U;
+            SLI_Level_Temp=0U;
         }
         else
             RMP_COVERAGE_MARKER();
@@ -2404,7 +2473,7 @@ rmp_ret_t _RMP_Mem_Search(volatile void* Pool, rmp_ptr_t Size, rmp_cnt_t* FLI_Le
         RMP_COVERAGE_MARKER();
         Level=(Level&(~RMP_WORD_MASK))+LSB+(Level&RMP_WORD_MASK);
         *FLI_Level=Level>>3;
-        *SLI_Level=Level&0x07;
+        *SLI_Level=Level&0x07U;
         return 0;
     }
     /* No one exactly fits */
@@ -2413,16 +2482,16 @@ rmp_ret_t _RMP_Mem_Search(volatile void* Pool, rmp_ptr_t Size, rmp_cnt_t* FLI_Le
         RMP_COVERAGE_MARKER();
         Limit=RMP_ROUND_UP(Mem->FLI_Num,RMP_ALIGN_ORDER)>>RMP_ALIGN_ORDER;
         /* From the next word, query one by one */
-        for(Word=(Level>>RMP_WORD_ORDER)+1;Word<Limit;Word++)
+        for(Word=(Level>>RMP_WORD_ORDER)+1U;Word<Limit;Word++)
         {
             /* If the level has blocks of one FLI level */
-            if(Mem->Bitmap[Word]!=0)
+            if(Mem->Bitmap[Word]!=0U)
             {
                 RMP_COVERAGE_MARKER();
                 /* Find the actual level */ 
                 LSB=RMP_LSB_Get(Mem->Bitmap[Word]);
                 *FLI_Level=((Word<<RMP_WORD_ORDER)+LSB)>>3;
-                *SLI_Level=LSB&0x07;
+                *SLI_Level=LSB&0x07U;
                 return 0;
             }
             else
@@ -2442,10 +2511,11 @@ Input       : volatile void* Pool - The pool to allocate from.
 Output      : None.
 Return      : void* - The pointer to the memory. If no memory available, 0 is returned.
 ******************************************************************************/
-void* RMP_Malloc(volatile void* Pool, rmp_ptr_t Size)
+void* RMP_Malloc(volatile void* Pool,
+                 rmp_ptr_t Size)
 {    
-    rmp_cnt_t FLI_Level;
-    rmp_cnt_t SLI_Level;
+    rmp_ptr_t FLI_Level;
+    rmp_ptr_t SLI_Level;
     volatile struct RMP_Mem* Mem;
     rmp_ptr_t Old_Size;
     volatile struct RMP_Mem_Head* Mem_Head;
@@ -2453,24 +2523,24 @@ void* RMP_Malloc(volatile void* Pool, rmp_ptr_t Size)
     volatile struct RMP_Mem_Head* New_Mem;
     rmp_ptr_t New_Size;
     
-    if((Pool==0)||(Size==0))
+    if((Pool==RMP_NULL)||(Size==0U))
     {
         RMP_COVERAGE_MARKER();
-        return (void*)(0);
+        return RMP_NULL;
     }
     else
         RMP_COVERAGE_MARKER();
     
     /* Round up the size:a multiple of 8 and bigger than 64B */
-    Rounded_Size=RMP_ROUND_UP(Size,3);
+    Rounded_Size=RMP_ROUND_UP(Size, 3U);
     /* See if it is smaller than the smallest block */
-    Rounded_Size=(Rounded_Size>64)?Rounded_Size:64;
+    Rounded_Size=(Rounded_Size>64U)?Rounded_Size:64U;
 
     /* See if such block exists, if not, abort */
-    if(_RMP_Mem_Search(Pool,Rounded_Size,&FLI_Level,&SLI_Level)!=0)
+    if(_RMP_Mem_Search(Pool, Rounded_Size, &FLI_Level, &SLI_Level)!=0)
     {
         RMP_COVERAGE_MARKER();
-        return (void*)(0);
+        return RMP_NULL;
     }
     else
         RMP_COVERAGE_MARKER();
@@ -2478,13 +2548,13 @@ void* RMP_Malloc(volatile void* Pool, rmp_ptr_t Size)
     Mem=(volatile struct RMP_Mem*)Pool;
     
     /* There is such block. Get it and delete it from the TLSF list. */
-    Mem_Head=(struct RMP_Mem_Head*)(Mem->Table[RMP_MEM_POS(FLI_Level,SLI_Level)].Next);
+    Mem_Head=(volatile struct RMP_Mem_Head*)(Mem->Table[RMP_MEM_POS(FLI_Level, SLI_Level)].Next);
     _RMP_Mem_Del(Pool, Mem_Head);
 
     /* Allocate and calculate if the space left could be big enough to be a new 
      * block. If so, we will put the block back into the TLSF table */
     New_Size=((rmp_ptr_t)(Mem_Head->Tail))-((rmp_ptr_t)Mem_Head)-sizeof(struct RMP_Mem_Head)-Rounded_Size;
-    if(New_Size>=(sizeof(struct RMP_Mem_Head)+64+sizeof(struct RMP_Mem_Tail)))
+    if(New_Size>=(sizeof(struct RMP_Mem_Head)+64U+sizeof(struct RMP_Mem_Tail)))
     {
         RMP_COVERAGE_MARKER();
         Old_Size=sizeof(struct RMP_Mem_Head)+Rounded_Size+sizeof(struct RMP_Mem_Tail);
@@ -2515,7 +2585,8 @@ Input       : volatile void* Pool - The pool to free to.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void RMP_Free(volatile void* Pool, void* Mem_Ptr)
+void RMP_Free(volatile void* Pool,
+              void* Mem_Ptr)
 {
     volatile struct RMP_Mem* Mem;
     volatile struct RMP_Mem_Head* Mem_Head;
@@ -2524,7 +2595,7 @@ void RMP_Free(volatile void* Pool, void* Mem_Ptr)
     rmp_cnt_t Merge_Left;
 
     /* Check if pointer is null */
-    if((Pool==0)||(Mem_Ptr==0))
+    if((Pool==RMP_NULL)||(Mem_Ptr==RMP_NULL))
     {
         RMP_COVERAGE_MARKER();
         return;
@@ -2542,7 +2613,7 @@ void RMP_Free(volatile void* Pool, void* Mem_Ptr)
     else
         RMP_COVERAGE_MARKER();
 
-    Mem_Head=(struct RMP_Mem_Head*)(((rmp_ptr_t)Mem_Ptr)-sizeof(struct RMP_Mem_Head));
+    Mem_Head=(volatile struct RMP_Mem_Head*)(((rmp_ptr_t)Mem_Ptr)-sizeof(struct RMP_Mem_Head));
     /* See if the block can really be freed */
     if(Mem_Head->State==RMP_MEM_FREE)
     {
@@ -2556,7 +2627,7 @@ void RMP_Free(volatile void* Pool, void* Mem_Ptr)
     Mem_Head->State=RMP_MEM_FREE;
     
     /* Now check if we can merge it with the higher blocks */
-    Right_Head=(struct RMP_Mem_Head*)(((rmp_ptr_t)(Mem_Head->Tail))+sizeof(struct RMP_Mem_Tail));
+    Right_Head=(volatile struct RMP_Mem_Head*)(((rmp_ptr_t)(Mem_Head->Tail))+sizeof(struct RMP_Mem_Tail));
     if(((rmp_ptr_t)Right_Head)!=(((rmp_ptr_t)Mem)+Mem->Size))
     {
         RMP_COVERAGE_MARKER();
@@ -2576,11 +2647,11 @@ void RMP_Free(volatile void* Pool, void* Mem_Ptr)
         RMP_COVERAGE_MARKER();
 
     /* Now check if we can merge it with the lower blocks */
-    Merge_Left=0;
+    Merge_Left=0U;
+    Left_Head=((volatile struct RMP_Mem_Tail*)(((rmp_ptr_t)Mem_Head)-sizeof(struct RMP_Mem_Tail)))->Head;
     if((rmp_ptr_t)Mem_Head!=Mem->Start)
     {
         RMP_COVERAGE_MARKER();
-        Left_Head=((struct RMP_Mem_Tail*)(((rmp_ptr_t)Mem_Head)-sizeof(struct RMP_Mem_Tail)))->Head;
 
         /* If this one is unoccupied */
         if(Left_Head->State==RMP_MEM_FREE)
@@ -2593,7 +2664,7 @@ void RMP_Free(volatile void* Pool, void* Mem_Ptr)
 
             /* We have completed the merge here and the original block has destroyed.
              * Thus there's no need to insert it into the list again */
-            Merge_Left=1;
+            Merge_Left=1U;
         }
         else
             RMP_COVERAGE_MARKER();
@@ -2603,7 +2674,7 @@ void RMP_Free(volatile void* Pool, void* Mem_Ptr)
 
     /* If we did not merge it with the left-side blocks, insert the original pointer's block 
      * into the TLSF table(Merging with the right-side one won't disturb this) */
-    if(Merge_Left==0)
+    if(Merge_Left==0U)
     {
         RMP_COVERAGE_MARKER();
         _RMP_Mem_Ins(Pool, Mem_Head);
@@ -2627,7 +2698,9 @@ Output      : None.
 Return      : void* - The pointer to the memory. If no memory available or an
                       error occurred, 0 is returned.
 ******************************************************************************/
-void* RMP_Realloc(volatile void* Pool, void* Mem_Ptr, rmp_ptr_t Size)
+void* RMP_Realloc(volatile void* Pool,
+                  void* Mem_Ptr,
+                  rmp_ptr_t Size)
 {
     /* The size of the original memory block */
     rmp_ptr_t Mem_Size;
@@ -2650,16 +2723,16 @@ void* RMP_Realloc(volatile void* Pool, void* Mem_Ptr, rmp_ptr_t Size)
     rmp_ptr_t Res_Size;
     
     /* Check if no pool present */
-    if(Pool==0)
+    if(Pool==RMP_NULL)
     {
         RMP_COVERAGE_MARKER();
-        return 0;
+        return RMP_NULL;
     }
     else
         RMP_COVERAGE_MARKER();
     
     /* Are we passing in a NULL pointer? */
-    if(Mem_Ptr==0)
+    if(Mem_Ptr==RMP_NULL)
     {
         RMP_COVERAGE_MARKER();
         return RMP_Malloc(Pool,Size);
@@ -2667,12 +2740,13 @@ void* RMP_Realloc(volatile void* Pool, void* Mem_Ptr, rmp_ptr_t Size)
     else
         RMP_COVERAGE_MARKER();
     
-    /* Is the size passed in zero? If yes, we free directly */
-    if(Size==0)
+    /* Is the size passed in zero? If yes, we free directly - this is a little different
+     * than standard realloc where you get a "0"-sized realloc-able memory trunk. */
+    if(Size==0U)
     {
         RMP_COVERAGE_MARKER();
-        RMP_Free(Pool,Mem_Ptr);
-        return 0;
+        RMP_Free(Pool, Mem_Ptr);
+        return RMP_NULL;
     }
     else
         RMP_COVERAGE_MARKER();
@@ -2682,34 +2756,34 @@ void* RMP_Realloc(volatile void* Pool, void* Mem_Ptr, rmp_ptr_t Size)
     if((((rmp_ptr_t)Mem_Ptr)<=((rmp_ptr_t)Mem))||(((rmp_ptr_t)Mem_Ptr)>=(((rmp_ptr_t)Mem)+Mem->Size)))
     {
         RMP_COVERAGE_MARKER();
-        return 0;
+        return RMP_NULL;
     }
     else
         RMP_COVERAGE_MARKER();
 
     /* Yes, get the location of the header of the memory */
-    Mem_Head=(struct RMP_Mem_Head*)(((rmp_ptr_t)Mem_Ptr)-sizeof(struct RMP_Mem_Head));
+    Mem_Head=(volatile struct RMP_Mem_Head*)(((rmp_ptr_t)Mem_Ptr)-sizeof(struct RMP_Mem_Head));
     /* See if the block can really be realloced */
     if(Mem_Head->State==RMP_MEM_FREE)
     {
         RMP_COVERAGE_MARKER();
-        return 0;
+        return RMP_NULL;
     }
     else
         RMP_COVERAGE_MARKER();
     
     /* Round up the size:a multiple of 8 and bigger than 64B */
-    Rounded_Size=RMP_ROUND_UP(Size,3);
+    Rounded_Size=RMP_ROUND_UP(Size, 3U);
     /* See if it is smaller than the smallest block */
-    Rounded_Size=(Rounded_Size>64)?Rounded_Size:64;
+    Rounded_Size=(Rounded_Size>64U)?Rounded_Size:64U;
     
     Mem_Size=((rmp_ptr_t)Mem_Head->Tail)-((rmp_ptr_t)Mem_Ptr);
     /* Does the right-side head exist at all? */
-    Right_Head=(struct RMP_Mem_Head*)(((rmp_ptr_t)(Mem_Head->Tail))+sizeof(struct RMP_Mem_Tail));
+    Right_Head=(volatile struct RMP_Mem_Head*)(((rmp_ptr_t)(Mem_Head->Tail))+sizeof(struct RMP_Mem_Tail));
     if(((rmp_ptr_t)Right_Head)==(((rmp_ptr_t)Mem)+Mem->Size))
     {
         RMP_COVERAGE_MARKER();
-        Right_Head=0;
+        Right_Head=RMP_NULL;
     }
     else
         RMP_COVERAGE_MARKER();
@@ -2720,7 +2794,7 @@ void* RMP_Realloc(volatile void* Pool, void* Mem_Ptr, rmp_ptr_t Size)
         /* Expanding */
         RMP_COVERAGE_MARKER();
         /* Does the right side exist at all? */
-        if(Right_Head!=0)
+        if(Right_Head!=RMP_NULL)
         {
             RMP_COVERAGE_MARKER();
             /* Is it allocated? */
@@ -2737,7 +2811,7 @@ void* RMP_Realloc(volatile void* Pool, void* Mem_Ptr, rmp_ptr_t Size)
                      * block. If so, we will put the block back into the TLSF table */
                     Res_Size=((rmp_ptr_t)(Right_Head->Tail))-((rmp_ptr_t)Mem_Ptr)-Rounded_Size;
                     /* Is the residue big enough to be a block? */
-                    if(Res_Size>=(sizeof(struct RMP_Mem_Head)+64+sizeof(struct RMP_Mem_Tail)))
+                    if(Res_Size>=(sizeof(struct RMP_Mem_Head)+64U+sizeof(struct RMP_Mem_Tail)))
                     {
                         RMP_COVERAGE_MARKER();
                         Old_Size=sizeof(struct RMP_Mem_Head)+Rounded_Size+sizeof(struct RMP_Mem_Tail);
@@ -2776,16 +2850,16 @@ void* RMP_Realloc(volatile void* Pool, void* Mem_Ptr, rmp_ptr_t Size)
         
         New_Mem=RMP_Malloc(Pool,Rounded_Size);
         /* See if we can allocate this much, if we can't at all, exit */
-        if(New_Mem==0)
+        if(New_Mem==RMP_NULL)
         {
             RMP_COVERAGE_MARKER();
-            return 0;
+            return RMP_NULL;
         }
         else
             RMP_COVERAGE_MARKER();
         
         /* Copy old memory to new memory - we know that this is always aligned, so this is fine */
-        for(Count=0;Count<(Mem_Size>>RMP_ALIGN_ORDER);Count++)
+        for(Count=0U;Count<(Mem_Size>>RMP_ALIGN_ORDER);Count++)
             ((rmp_ptr_t*)New_Mem)[Count]=((rmp_ptr_t*)Mem_Ptr)[Count];
         
         /* Free old memory then return */
@@ -2806,7 +2880,7 @@ void* RMP_Realloc(volatile void* Pool, void* Mem_Ptr, rmp_ptr_t Size)
         RMP_COVERAGE_MARKER();
     
     /* Does the right side exist at all? */
-    if(Right_Head!=0)
+    if(Right_Head!=RMP_NULL)
     {
         RMP_COVERAGE_MARKER();
         /* Is it allocated? */
@@ -2840,7 +2914,7 @@ void* RMP_Realloc(volatile void* Pool, void* Mem_Ptr, rmp_ptr_t Size)
     
     /* The right-side head either does not exist or is allocated. Calculate the resulting residue size */
     Res_Size=Mem_Size-Rounded_Size;
-    if(Res_Size<(sizeof(struct RMP_Mem_Head)+64+sizeof(struct RMP_Mem_Tail)))
+    if(Res_Size<(sizeof(struct RMP_Mem_Head)+64U+sizeof(struct RMP_Mem_Tail)))
     {
         RMP_COVERAGE_MARKER();
         /* The residue block wouldn't even count as a small one. Do nothing and quit */
@@ -2877,7 +2951,11 @@ Output      : None.
 Return      : None.
 ******************************************************************************/
 #ifdef RMP_POINT
-void RMP_Line(rmp_cnt_t Start_X, rmp_cnt_t Start_Y, rmp_cnt_t End_X, rmp_cnt_t End_Y, rmp_ptr_t Color)
+void RMP_Line(rmp_cnt_t Start_X,
+              rmp_cnt_t Start_Y,
+              rmp_cnt_t End_X,
+              rmp_cnt_t End_Y,
+              rmp_ptr_t Color)
 {
     rmp_cnt_t Trav_X;
     rmp_cnt_t Trav_Y;
@@ -2983,7 +3061,12 @@ Input       : rmp_cnt_t Start_X - The start point X coordinate.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void RMP_Dot_Line(rmp_cnt_t Start_X, rmp_cnt_t Start_Y, rmp_cnt_t End_X,rmp_cnt_t End_Y, rmp_ptr_t Dot, rmp_ptr_t Space)
+void RMP_Dot_Line(rmp_cnt_t Start_X,
+                  rmp_cnt_t Start_Y,
+                  rmp_cnt_t End_X,
+                  rmp_cnt_t End_Y,
+                  rmp_ptr_t Dot,
+                  rmp_ptr_t Space)
 {
     rmp_cnt_t Trav_X;
     rmp_cnt_t Trav_Y;
@@ -3069,22 +3152,27 @@ Input       : rmp_cnt_t Coord_X - The X position of The top-left corner.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void RMP_Rectangle(rmp_cnt_t Coord_X, rmp_cnt_t Coord_Y, rmp_cnt_t Length, rmp_cnt_t Width, rmp_ptr_t Border, rmp_ptr_t Fill)
+void RMP_Rectangle(rmp_cnt_t Coord_X,
+                   rmp_cnt_t Coord_Y,
+                   rmp_cnt_t Length,
+                   rmp_cnt_t Width,
+                   rmp_ptr_t Border,
+                   rmp_ptr_t Fill)
 {
     rmp_cnt_t Line_Cnt;
     
     if(Fill!=RMP_TRANS)
     {
         for(Line_Cnt=0;Line_Cnt<Width;Line_Cnt++)
-            RMP_Line(Coord_X,Coord_Y+Line_Cnt,Coord_X+Length-1,Coord_Y+Line_Cnt,Fill);
+            RMP_Line(Coord_X, Coord_Y+Line_Cnt, Coord_X+Length-1, Coord_Y+Line_Cnt, Fill);
     }
 
     if(Border!=RMP_TRANS)
     {
-        RMP_Line(Coord_X,Coord_Y,Coord_X+Length-1,Coord_Y,Border);
-        RMP_Line(Coord_X+Length-1,Coord_Y,Coord_X+Length-1,Coord_Y+Width-1,Border);
-        RMP_Line(Coord_X+Length-1,Coord_Y+Width-1,Coord_X,Coord_Y+Width-1,Border);
-        RMP_Line(Coord_X,Coord_Y+Width-1,Coord_X,Coord_Y,Border);
+        RMP_Line(Coord_X, Coord_Y, Coord_X+Length-1, Coord_Y, Border);
+        RMP_Line(Coord_X+Length-1, Coord_Y, Coord_X+Length-1, Coord_Y+Width-1, Border);
+        RMP_Line(Coord_X+Length-1, Coord_Y+Width-1, Coord_X, Coord_Y+Width-1, Border);
+        RMP_Line(Coord_X, Coord_Y+Width-1, Coord_X, Coord_Y, Border);
     }
 }
 /* End Function:RMP_Rectangle ************************************************/
@@ -3100,8 +3188,12 @@ Input       : rmp_cnt_t Coord_X - The X position of The top-left corner.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void RMP_Round_Rect(rmp_cnt_t Coord_X, rmp_cnt_t Coord_Y,
-                    rmp_cnt_t Length, rmp_cnt_t Width, rmp_cnt_t Round, rmp_ptr_t Color)
+void RMP_Round_Rect(rmp_cnt_t Coord_X,
+                    rmp_cnt_t Coord_Y,
+                    rmp_cnt_t Length,
+                    rmp_cnt_t Width,
+                    rmp_cnt_t Round,
+                    rmp_ptr_t Color)
 {
     rmp_cnt_t Cir_X_0;
     rmp_cnt_t Cir_X_1;
@@ -3114,19 +3206,19 @@ void RMP_Round_Rect(rmp_cnt_t Coord_X, rmp_cnt_t Coord_Y,
     Cir_Y_1=Coord_Y+Width-Round-1;
     
     /* Draw the innermost one rectangle */
-    RMP_Rectangle(Coord_X+Round+1,Coord_Y+Round+1,Length-Round-Round-2,Width-Round-Round-2,Color,Color);
+    RMP_Rectangle(Coord_X+Round+1, Coord_Y+Round+1, Length-Round-Round-2, Width-Round-Round-2, Color, Color);
 
     /* Draw 4 small side rectangles */
-    RMP_Rectangle(Coord_X,Cir_Y_0,Round+1,Width-Round-Round-2,Color,Color);
-    RMP_Rectangle(Cir_X_1,Cir_Y_0,Round+1,Width-Round-Round-2,Color,Color);
-    RMP_Rectangle(Cir_X_0,Cir_Y_1,Length-Round-Round-2,Round+1,Color,Color);
-    RMP_Rectangle(Cir_X_0,Coord_Y,Length-Round-Round-2,Round+1,Color,Color);
+    RMP_Rectangle(Coord_X, Cir_Y_0, Round+1, Width-Round-Round-2, Color, Color);
+    RMP_Rectangle(Cir_X_1, Cir_Y_0, Round+1, Width-Round-Round-2, Color, Color);
+    RMP_Rectangle(Cir_X_0, Cir_Y_1, Length-Round-Round-2, Round+1, Color, Color);
+    RMP_Rectangle(Cir_X_0, Coord_Y, Length-Round-Round-2, Round+1, Color, Color);
     
     /* Draw 4 circles */
-    RMP_Circle(Cir_X_0,Cir_Y_0,Round,Color,Color);
-    RMP_Circle(Cir_X_1,Cir_Y_0,Round,Color,Color);
-    RMP_Circle(Cir_X_0,Cir_Y_1,Round,Color,Color);
-    RMP_Circle(Cir_X_1,Cir_Y_1,Round,Color,Color);
+    RMP_Circle(Cir_X_0, Cir_Y_0, Round, Color, Color);
+    RMP_Circle(Cir_X_1, Cir_Y_0, Round, Color, Color);
+    RMP_Circle(Cir_X_0, Cir_Y_1, Round, Color, Color);
+    RMP_Circle(Cir_X_1, Cir_Y_1, Round, Color, Color);
 }
 /* End Function:RMP_Round_Rect ***********************************************/
 
@@ -3145,7 +3237,11 @@ Input       : rmp_cnt_t Center_X - The circle center's X coordinate.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void RMP_Circle(rmp_cnt_t Center_X, rmp_cnt_t Center_Y, rmp_cnt_t Radius, rmp_ptr_t Border, rmp_ptr_t Fill)
+void RMP_Circle(rmp_cnt_t Center_X,
+                rmp_cnt_t Center_Y,
+                rmp_cnt_t Radius,
+                rmp_ptr_t Border,
+                rmp_ptr_t Fill)
 {
     rmp_cnt_t Cur_X;
     rmp_cnt_t Cur_Y;
@@ -3164,7 +3260,7 @@ void RMP_Circle(rmp_cnt_t Center_X, rmp_cnt_t Center_Y, rmp_cnt_t Radius, rmp_pt
          * Square 2 is 1.414. Here we let the condition to be 1.5. */
         Quick=(Radius<<1)/3;
         /* First, fill the square hole using the fast direct-fill method */
-        RMP_Rectangle(Center_X-Quick,Center_Y-Quick, (Quick<<1)+1,(Quick<<1)+1, Fill, Fill);  
+        RMP_Rectangle(Center_X-Quick, Center_Y-Quick, (Quick<<1)+1, (Quick<<1)+1, Fill, Fill);  
 
         while(Cur_X<=Cur_Y) 
         {  
@@ -3175,14 +3271,14 @@ void RMP_Circle(rmp_cnt_t Center_X, rmp_cnt_t Center_Y, rmp_cnt_t Radius, rmp_pt
                     if(Fill_Y<Quick)
                         continue;
                     
-                    RMP_POINT(Center_X+Cur_X,Center_Y+Fill_Y,Fill);  
-                    RMP_POINT(Center_X-Cur_X,Center_Y+Fill_Y,Fill);  
-                    RMP_POINT(Center_X+Cur_X,Center_Y-Fill_Y,Fill); 
-                    RMP_POINT(Center_X-Cur_X,Center_Y-Fill_Y,Fill);  
-                    RMP_POINT(Center_X+Fill_Y,Center_Y+Cur_X,Fill); 
-                    RMP_POINT(Center_X-Fill_Y,Center_Y+Cur_X,Fill);  
-                    RMP_POINT(Center_X+Fill_Y,Center_Y-Cur_X,Fill);  
-                    RMP_POINT(Center_X-Fill_Y,Center_Y-Cur_X,Fill);
+                    RMP_POINT(Center_X+Cur_X, Center_Y+Fill_Y, Fill);  
+                    RMP_POINT(Center_X-Cur_X, Center_Y+Fill_Y, Fill);  
+                    RMP_POINT(Center_X+Cur_X, Center_Y-Fill_Y, Fill); 
+                    RMP_POINT(Center_X-Cur_X, Center_Y-Fill_Y, Fill);  
+                    RMP_POINT(Center_X+Fill_Y, Center_Y+Cur_X, Fill); 
+                    RMP_POINT(Center_X-Fill_Y, Center_Y+Cur_X, Fill);  
+                    RMP_POINT(Center_X+Fill_Y, Center_Y-Cur_X, Fill);  
+                    RMP_POINT(Center_X-Fill_Y, Center_Y-Cur_X, Fill);
                 }
             }
             /* Here the "Cur_X" is already out of range. We do not check the conditions anymore */
@@ -3190,24 +3286,24 @@ void RMP_Circle(rmp_cnt_t Center_X, rmp_cnt_t Center_Y, rmp_cnt_t Radius, rmp_pt
             {
                 for(Fill_Y=Cur_X;Fill_Y<=Cur_Y;Fill_Y++)  
                 {                   
-                    RMP_POINT(Center_X+Cur_X,Center_Y+Fill_Y,Fill);  
-                    RMP_POINT(Center_X-Cur_X,Center_Y+Fill_Y,Fill);  
-                    RMP_POINT(Center_X+Cur_X,Center_Y-Fill_Y,Fill); 
-                    RMP_POINT(Center_X-Cur_X,Center_Y-Fill_Y,Fill);  
-                    RMP_POINT(Center_X+Fill_Y,Center_Y+Cur_X,Fill); 
-                    RMP_POINT(Center_X-Fill_Y,Center_Y+Cur_X,Fill);  
-                    RMP_POINT(Center_X+Fill_Y,Center_Y-Cur_X,Fill);  
-                    RMP_POINT(Center_X-Fill_Y,Center_Y-Cur_X,Fill);
+                    RMP_POINT(Center_X+Cur_X, Center_Y+Fill_Y, Fill);  
+                    RMP_POINT(Center_X-Cur_X, Center_Y+Fill_Y, Fill);  
+                    RMP_POINT(Center_X+Cur_X, Center_Y-Fill_Y, Fill); 
+                    RMP_POINT(Center_X-Cur_X, Center_Y-Fill_Y, Fill);  
+                    RMP_POINT(Center_X+Fill_Y, Center_Y+Cur_X, Fill); 
+                    RMP_POINT(Center_X-Fill_Y, Center_Y+Cur_X, Fill);  
+                    RMP_POINT(Center_X+Fill_Y, Center_Y-Cur_X, Fill);  
+                    RMP_POINT(Center_X-Fill_Y, Center_Y-Cur_X, Fill);
                 }
             }
-            RMP_POINT(Center_X+Cur_X,Center_Y+Cur_Y,Border);  
-            RMP_POINT(Center_X-Cur_X,Center_Y+Cur_Y,Border);  
-            RMP_POINT(Center_X+Cur_X,Center_Y-Cur_Y,Border); 
-            RMP_POINT(Center_X-Cur_X,Center_Y-Cur_Y,Border);  
-            RMP_POINT(Center_X+Cur_Y,Center_Y+Cur_X,Border); 
-            RMP_POINT(Center_X-Cur_Y,Center_Y+Cur_X,Border);  
-            RMP_POINT(Center_X+Cur_Y,Center_Y-Cur_X,Border);  
-            RMP_POINT(Center_X-Cur_Y,Center_Y-Cur_X,Border);
+            RMP_POINT(Center_X+Cur_X, Center_Y+Cur_Y, Border);  
+            RMP_POINT(Center_X-Cur_X, Center_Y+Cur_Y, Border);  
+            RMP_POINT(Center_X+Cur_X, Center_Y-Cur_Y, Border); 
+            RMP_POINT(Center_X-Cur_X, Center_Y-Cur_Y, Border);  
+            RMP_POINT(Center_X+Cur_Y, Center_Y+Cur_X, Border); 
+            RMP_POINT(Center_X-Cur_Y, Center_Y+Cur_X, Border);  
+            RMP_POINT(Center_X+Cur_Y, Center_Y-Cur_X, Border);  
+            RMP_POINT(Center_X-Cur_Y, Center_Y-Cur_X, Border);
 
             if(Error<0) 
                 Error=Error+(Cur_X<<2)+6;
@@ -3224,14 +3320,14 @@ void RMP_Circle(rmp_cnt_t Center_X, rmp_cnt_t Center_Y, rmp_cnt_t Radius, rmp_pt
         /* Border only */ 
         while(Cur_X<=Cur_Y) 
         {
-            RMP_POINT(Center_X+Cur_X,Center_Y+Cur_Y,Border);  
-            RMP_POINT(Center_X-Cur_X,Center_Y+Cur_Y,Border);  
-            RMP_POINT(Center_X+Cur_X,Center_Y-Cur_Y,Border); 
-            RMP_POINT(Center_X-Cur_X,Center_Y-Cur_Y,Border);  
-            RMP_POINT(Center_X+Cur_Y,Center_Y+Cur_X,Border); 
-            RMP_POINT(Center_X-Cur_Y,Center_Y+Cur_X,Border);  
-            RMP_POINT(Center_X+Cur_Y,Center_Y-Cur_X,Border);  
-            RMP_POINT(Center_X-Cur_Y,Center_Y-Cur_X,Border);
+            RMP_POINT(Center_X+Cur_X, Center_Y+Cur_Y, Border);  
+            RMP_POINT(Center_X-Cur_X, Center_Y+Cur_Y, Border);  
+            RMP_POINT(Center_X+Cur_X, Center_Y-Cur_Y, Border); 
+            RMP_POINT(Center_X-Cur_X, Center_Y-Cur_Y, Border);  
+            RMP_POINT(Center_X+Cur_Y, Center_Y+Cur_X, Border); 
+            RMP_POINT(Center_X-Cur_Y, Center_Y+Cur_X, Border);  
+            RMP_POINT(Center_X+Cur_Y, Center_Y-Cur_X, Border);  
+            RMP_POINT(Center_X-Cur_Y, Center_Y-Cur_X, Border);
 
             if(Error<0)
                 Error=Error+(Cur_X<<2)+6;
@@ -3257,8 +3353,13 @@ Input       : rmp_cnt_t Coord_X - The X coordinate.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void RMP_Matrix(rmp_cnt_t Coord_X, rmp_cnt_t Coord_Y, const rmp_u8_t* Matrix,
-                rmp_cnt_t Bit_Order, rmp_cnt_t Length, rmp_cnt_t Width, rmp_ptr_t Color)
+void RMP_Matrix(rmp_cnt_t Coord_X,
+                rmp_cnt_t Coord_Y,
+                const rmp_u8_t* Matrix,
+                rmp_cnt_t Bit_Order,
+                rmp_cnt_t Length,
+                rmp_cnt_t Width,
+                rmp_ptr_t Color)
 {
     rmp_cnt_t Len_Cnt;
     rmp_cnt_t Wid_Cnt;
@@ -3301,7 +3402,6 @@ void RMP_Matrix(rmp_cnt_t Coord_X, rmp_cnt_t Coord_Y, const rmp_u8_t* Matrix,
 Description : Display a monochrome bit map in the given color, with simple 
               anti-aliasing (FXAA algorithm).
               When using this, three color mixing macros must be provided.
-           
 Input       : rmp_cnt_t Coord_X - The X coordinate.
               rmp_cnt_t Coord_Y - The Y coordinate.
               const rmp_u8_t* Matrix - The data matrix.
@@ -3315,8 +3415,14 @@ Return      : None.
 #ifdef RMP_COLOR_25P
 #ifdef RMP_COLOR_50P
 #ifdef RMP_COLOR_75P
-void RMP_Matrix_AA(rmp_cnt_t Coord_X, rmp_cnt_t Coord_Y, const rmp_u8_t* Matrix,
-                   rmp_cnt_t Bit_Order, rmp_cnt_t Length, rmp_cnt_t Width, rmp_ptr_t Color, rmp_ptr_t Back)
+void RMP_Matrix_AA(rmp_cnt_t Coord_X,
+                   rmp_cnt_t Coord_Y,
+                   const rmp_u8_t* Matrix,
+                   rmp_cnt_t Bit_Order,
+                   rmp_cnt_t Length,
+                   rmp_cnt_t Width,
+                   rmp_ptr_t Color,
+                   rmp_ptr_t Back)
 {
     rmp_cnt_t Len_Cnt;
     rmp_cnt_t Wid_Cnt;
@@ -3343,8 +3449,8 @@ void RMP_Matrix_AA(rmp_cnt_t Coord_X, rmp_cnt_t Coord_Y, const rmp_u8_t* Matrix,
         {
             for(Len_Cnt=Coord_X;Len_Cnt<Length+Coord_X;Len_Cnt++)
             {
-                if(RMP_MAT_BPOS(Matrix,Mat_Pos)!=0)
-                    RMP_Point(Len_Cnt,Wid_Cnt,Color);
+                if(RMP_MAT_BPOS(Matrix, Mat_Pos)!=0)
+                    RMP_Point(Len_Cnt, Wid_Cnt, Color);
                 else
                 {
                     /* Anti-aliasing */
@@ -3352,25 +3458,25 @@ void RMP_Matrix_AA(rmp_cnt_t Coord_X, rmp_cnt_t Coord_Y, const rmp_u8_t* Matrix,
                     
                     if(Mat_Pos-1>=0)
                     {
-                        if((Len_Cnt!=Coord_X)&&(RMP_MAT_BPOS(Matrix,Mat_Pos-1)!=0))
+                        if((Len_Cnt!=Coord_X)&&(RMP_MAT_BPOS(Matrix, Mat_Pos-1)!=0))
                             Anti_Alias++;
-                        if((Mat_Pos-Length>=0)&&(RMP_MAT_BPOS(Matrix,Mat_Pos-Length)!=0))
+                        if((Mat_Pos-Length>=0)&&(RMP_MAT_BPOS(Matrix, Mat_Pos-Length)!=0))
                             Anti_Alias++;
                     }
                     
                     if(Mat_Pos+1<Total)
                     {
-                        if((Len_Cnt!=Coord_X+Length-1)&&(RMP_MAT_BPOS(Matrix,Mat_Pos+1)!=0))
+                        if((Len_Cnt!=Coord_X+Length-1)&&(RMP_MAT_BPOS(Matrix, Mat_Pos+1)!=0))
                             Anti_Alias++;
-                        if((Mat_Pos+Length<Total)&&(RMP_MAT_BPOS(Matrix,Mat_Pos+Length)!=0))
+                        if((Mat_Pos+Length<Total)&&(RMP_MAT_BPOS(Matrix, Mat_Pos+Length)!=0))
                             Anti_Alias++;
                     }
                     
                     switch(Anti_Alias)
                     {
-                        case 1:RMP_Point(Len_Cnt,Wid_Cnt,Color_25);break;
-                        case 2:RMP_Point(Len_Cnt,Wid_Cnt,Color_50);break;
-                        case 3:RMP_Point(Len_Cnt,Wid_Cnt,Color_75);break;
+                        case 1:RMP_Point(Len_Cnt, Wid_Cnt, Color_25);break;
+                        case 2:RMP_Point(Len_Cnt, Wid_Cnt, Color_50);break;
+                        case 3:RMP_Point(Len_Cnt, Wid_Cnt, Color_75);break;
                         default:break;
                     }
                 }
@@ -3387,7 +3493,7 @@ void RMP_Matrix_AA(rmp_cnt_t Coord_X, rmp_cnt_t Coord_Y, const rmp_u8_t* Matrix,
             for(Len_Cnt=Coord_X;Len_Cnt<Length+Coord_X;Len_Cnt++)
             {
                 if(RMP_MAT_SPOS(Matrix,Mat_Pos)!=0)
-                    RMP_Point(Len_Cnt,Wid_Cnt,Color);
+                    RMP_Point(Len_Cnt, Wid_Cnt, Color);
                 else
                 {
                     /* Anti-aliasing */
@@ -3395,25 +3501,25 @@ void RMP_Matrix_AA(rmp_cnt_t Coord_X, rmp_cnt_t Coord_Y, const rmp_u8_t* Matrix,
                     
                     if(Mat_Pos-1>=0)
                     {
-                        if((Len_Cnt!=Coord_X)&&(RMP_MAT_SPOS(Matrix,Mat_Pos-1)!=0))
+                        if((Len_Cnt!=Coord_X)&&(RMP_MAT_SPOS(Matrix, Mat_Pos-1)!=0))
                             Anti_Alias++;
-                        if((Mat_Pos-Length>=0)&&(RMP_MAT_SPOS(Matrix,Mat_Pos-Length)!=0))
+                        if((Mat_Pos-Length>=0)&&(RMP_MAT_SPOS(Matrix, Mat_Pos-Length)!=0))
                             Anti_Alias++;
                     }
                     
                     if(Mat_Pos+1<Total)
                     {
-                        if((Len_Cnt!=Coord_X+Length-1)&&(RMP_MAT_SPOS(Matrix,Mat_Pos+1)!=0))
+                        if((Len_Cnt!=Coord_X+Length-1)&&(RMP_MAT_SPOS(Matrix, Mat_Pos+1)!=0))
                             Anti_Alias++;
-                        if((Mat_Pos+Length<Total)&&(RMP_MAT_SPOS(Matrix,Mat_Pos+Length)!=0))
+                        if((Mat_Pos+Length<Total)&&(RMP_MAT_SPOS(Matrix, Mat_Pos+Length)!=0))
                             Anti_Alias++;
                     }
                     
                     switch(Anti_Alias)
                     {
-                        case 1:RMP_Point(Len_Cnt,Wid_Cnt,Color_25);break;
-                        case 2:RMP_Point(Len_Cnt,Wid_Cnt,Color_50);break;
-                        case 3:RMP_Point(Len_Cnt,Wid_Cnt,Color_75);break;
+                        case 1:RMP_Point(Len_Cnt, Wid_Cnt, Color_25);break;
+                        case 2:RMP_Point(Len_Cnt, Wid_Cnt, Color_50);break;
+                        case 3:RMP_Point(Len_Cnt, Wid_Cnt, Color_75);break;
                         default:break;
                     }
                 }
@@ -3457,7 +3563,9 @@ Return      : None.
 #ifdef RMP_CTL_DARK
 #ifdef RMP_CTL_DDARK
 #ifdef RMP_CTL_BLACK
-void RMP_Cursor(rmp_cnt_t Coord_X, rmp_cnt_t Coord_Y, rmp_ptr_t Style)
+void RMP_Cursor(rmp_cnt_t Coord_X,
+                rmp_cnt_t Coord_Y,
+                rmp_ptr_t Style)
 {
     rmp_cnt_t Count;
     rmp_cnt_t Size_B;
@@ -3468,116 +3576,162 @@ void RMP_Cursor(rmp_cnt_t Coord_X, rmp_cnt_t Coord_Y, rmp_ptr_t Style)
     /* Normal Mouse - all matrix encoded in (Y,X) */
     static const rmp_u8_t Arrow_B[]=
     {
-        0x00,0x10,0x11,0x20,0x22,0x30,0x33,0x40,0x44,0x50,0x55,0x60,0x66,0x70,0x77,0x80,
-        0x88,0x90,0x95,0x96,0x97,0x98,0x99,0xA0,0xA2,0xA3,0xA5,0xB0,0xB1,0xB3,0xB6,0xC0,
-        0xC1,0xC4,0xC6,0xD0,0xD4,0xD7,0xE5,0xE7,0xF5,0xF6
+        0x00U, 0x10U, 0x11U, 0x20U, 0x22U, 0x30U, 0x33U, 0x40U,
+        0x44U, 0x50U, 0x55U, 0x60U, 0x66U, 0x70U, 0x77U, 0x80U,
+        0x88U, 0x90U, 0x95U, 0x96U, 0x97U, 0x98U, 0x99U, 0xA0U,
+        0xA2U, 0xA3U, 0xA5U, 0xB0U, 0xB1U, 0xB3U, 0xB6U, 0xC0U,
+        0xC1U, 0xC4U, 0xC6U, 0xD0U, 0xD4U, 0xD7U, 0xE5U, 0xE7U,
+        0xF5U, 0xF6U
     };
     static const rmp_u8_t Arrow_W[]=
     {
-        0x21,0x31,0x32,0x41,0x42,0x43,0x51,0x52,0x53,0x54,0x61,0x62,0x63,0x64,0x65,0x71,
-        0x72,0x73,0x74,0x75,0x76,0x81,0x82,0x83,0x84,0x85,0x86,0x87,0x91,0x92,0x93,0x94,
-        0xA1,0xA4,0xB4,0xB5,0xC5,0xD5,0xD6,0xE6
+        0x21U, 0x31U, 0x32U, 0x41U, 0x42U, 0x43U, 0x51U, 0x52U,
+        0x53U, 0x54U, 0x61U, 0x62U, 0x63U, 0x64U, 0x65U, 0x71U,
+        0x72U, 0x73U, 0x74U, 0x75U, 0x76U, 0x81U, 0x82U, 0x83U,
+        0x84U, 0x85U, 0x86U, 0x87U, 0x91U, 0x92U, 0x93U, 0x94U,
+        0xA1U, 0xA4U, 0xB4U, 0xB5U, 0xC5U, 0xD5U, 0xD6U, 0xE6U
     };
     /* Busy mark - no white part */
     static const rmp_u8_t Busy_B[]=
     {
-        0x0A,0x0B,0x0C,0x0D,0x0E,0x1A,0x1B,0x1D,0x1E,0x2A,0x2C,0x2E,0x3B,0x3D,0x4C,0x5B,
-        0x5D,0x6A,0x6E,0x7A,0x7C,0x7E,0x8A,0x8B,0x8C,0x8D,0x8E
+        0x0AU, 0x0BU, 0x0CU, 0x0DU, 0x0EU, 0x1AU, 0x1BU, 0x1DU,
+        0x1EU, 0x2AU, 0x2CU, 0x2EU, 0x3BU, 0x3DU, 0x4CU, 0x5BU,
+        0x5DU, 0x6AU, 0x6EU, 0x7AU, 0x7CU, 0x7EU, 0x8AU, 0x8BU,
+        0x8CU, 0x8DU, 0x8EU
     };
     static const rmp_u8_t Busy_W[]=
     {
-        0x1C,0x2B,0x2D,0x3C,0x5C,0x6B,0x6C,0x6D,0x7B,0x7D
+        0x1CU, 0x2BU, 0x2DU, 0x3CU, 0x5CU, 0x6BU, 0x6CU, 0x6DU,
+        0x7BU, 0x7DU
     };
     /* Question mark - no white part */
     static const rmp_u8_t Question[]=
     {
-        0x0B,0x0C,0x0D,0x1A,0x1B,0x1C,0x1D,0x1E,0x29,0x2A,0x2B,0x2D,0x2E,0x2F,0x39,0x3A,
-        0x3E,0x3F,0x4A,0x4D,0x4E,0x4F,0x5C,0x5D,0x5E,0x6C,0x6D,0x8D,0x8E,0x9D,0x9E
+        0x0BU, 0x0CU, 0x0DU, 0x1AU, 0x1BU, 0x1CU, 0x1DU, 0x1EU,
+        0x29U, 0x2AU, 0x2BU, 0x2DU, 0x2EU, 0x2FU, 0x39U, 0x3AU,
+        0x3EU, 0x3FU, 0x4AU, 0x4DU, 0x4EU, 0x4FU, 0x5CU, 0x5DU,
+        0x5EU, 0x6CU, 0x6DU, 0x8DU, 0x8EU, 0x9DU, 0x9EU
     };
     /* Hand-shaped cursor */
     static const rmp_u8_t Hand_B[]=
     {
-        0x05,0x06,0x14,0x17,0x24,0x27,0x34,0x37,0x39,0x44,0x47,0x48,0x4A,0x4C,0x51,0x52,
-        0x54,0x57,0x5A,0x5B,0x5D,0x5E,0x60,0x63,0x64,0x67,0x6A,0x6D,0x6F,0x70,0x74,0x77,
-        0x7A,0x7D,0x7F,0x80,0x8F,0x90,0x9F,0xA0,0xAF,0xB0,0xBF,0xC1,0xCE,0xD1,0xD2,0xD3,
-        0xD4,0xD5,0xD6,0xD7,0xD8,0xD9,0xDA,0xDB,0xDC,0xDD,0xDE,0xE1,0xEE,0xF2,0xF3,0xF4,
-        0xF5,0xF6,0xF7,0xF8,0xF9,0xFA,0xFB,0xFC,0xFD
+        0x05U, 0x06U, 0x14U, 0x17U, 0x24U, 0x27U, 0x34U, 0x37U,
+        0x39U, 0x44U, 0x47U, 0x48U, 0x4AU, 0x4CU, 0x51U, 0x52U,
+        0x54U, 0x57U, 0x5AU, 0x5BU, 0x5DU, 0x5EU, 0x60U, 0x63U,
+        0x64U, 0x67U, 0x6AU, 0x6DU, 0x6FU, 0x70U, 0x74U, 0x77U,
+        0x7AU, 0x7DU, 0x7FU, 0x80U, 0x8FU, 0x90U, 0x9FU, 0xA0U,
+        0xAFU, 0xB0U, 0xBFU, 0xC1U, 0xCEU, 0xD1U, 0xD2U, 0xD3U,
+        0xD4U, 0xD5U, 0xD6U, 0xD7U, 0xD8U, 0xD9U, 0xDAU, 0xDBU,
+        0xDCU, 0xDDU, 0xDEU, 0xE1U, 0xEEU, 0xF2U, 0xF3U, 0xF4U,
+        0xF5U, 0xF6U, 0xF7U, 0xF8U, 0xF9U, 0xFAU, 0xFBU, 0xFCU,
+        0xFDU
     };
     static const rmp_u8_t Hand_W[]=
     {
-        0x15,0x16,0x25,0x26,0x35,0x36,0x45,0x46,0x49,0x55,0x56,0x58,0x59,0x5C,0x61,0x62,
-        0x65,0x66,0x68,0x69,0x6B,0x6C,0x6E,0x71,0x72,0x73,0x75,0x76,0x78,0x79,0x7B,0x7C,
-        0x7E,0x81,0x82,0x83,0x84,0x85,0x86,0x87,0x88,0x89,0x8A,0x8B,0x8C,0x8D,0x8E,0x91,
-        0x92,0x93,0x94,0x95,0x96,0x97,0x98,0x99,0x9A,0x9B,0x9C,0x9D,0x9E,0xA1,0xA2,0xA3,
-        0xA4,0xA5,0xA6,0xA7,0xA8,0xA9,0xAA,0xAB,0xAC,0xAD,0xAE,0xB1,0xB2,0xB3,0xB4,0xB5,
-        0xB6,0xB7,0xB8,0xB9,0xBA,0xBB,0xBC,0xBD,0xBE,0xC2,0xC3,0xC4,0xC5,0xC6,0xC7,0xC8,
-        0xC9,0xCA,0xCB,0xCC,0xCD,0xE2,0xE3,0xE4,0xE5,0xE6,0xE7,0xE8,0xE9,0xEA,0xEB,0xEC,
-        0xED
+        0x15U, 0x16U, 0x25U, 0x26U, 0x35U, 0x36U, 0x45U, 0x46U,
+        0x49U, 0x55U, 0x56U, 0x58U, 0x59U, 0x5CU, 0x61U, 0x62U,
+        0x65U, 0x66U, 0x68U, 0x69U, 0x6BU, 0x6CU, 0x6EU, 0x71U,
+        0x72U, 0x73U, 0x75U, 0x76U, 0x78U, 0x79U, 0x7BU, 0x7CU,
+        0x7EU, 0x81U, 0x82U, 0x83U, 0x84U, 0x85U, 0x86U, 0x87U,
+        0x88U, 0x89U, 0x8AU, 0x8BU, 0x8CU, 0x8DU, 0x8EU, 0x91U,
+        0x92U, 0x93U, 0x94U, 0x95U, 0x96U, 0x97U, 0x98U, 0x99U,
+        0x9AU, 0x9BU, 0x9CU, 0x9DU, 0x9EU, 0xA1U, 0xA2U, 0xA3U,
+        0xA4U, 0xA5U, 0xA6U, 0xA7U, 0xA8U, 0xA9U, 0xAAU, 0xABU,
+        0xACU, 0xADU, 0xAEU, 0xB1U, 0xB2U, 0xB3U, 0xB4U, 0xB5U,
+        0xB6U, 0xB7U, 0xB8U, 0xB9U, 0xBAU, 0xBBU, 0xBCU, 0xBDU,
+        0xBEU, 0xC2U, 0xC3U, 0xC4U, 0xC5U, 0xC6U, 0xC7U, 0xC8U,
+        0xC9U, 0xCAU, 0xCBU, 0xCCU, 0xCDU, 0xE2U, 0xE3U, 0xE4U,
+        0xE5U, 0xE6U, 0xE7U, 0xE8U, 0xE9U, 0xEAU, 0xEBU, 0xECU,
+        0xEDU
     };
     /* The cursor for text editing - no white part */
     static const rmp_u8_t Text[]=
     {
-        0x00,0x01,0x02,0x04,0x05,0x06,0x13,0x23,0x33,0x43,0x53,0x63,0x73,0x83,0x93,0xA3,
-        0xB3,0xC3,0xD3,0xE3,0xF0,0xF1,0xF2,0xF4,0xF5,0xF6
+        0x00U, 0x01U, 0x02U, 0x04U, 0x05U, 0x06U, 0x13U, 0x23U,
+        0x33U, 0x43U, 0x53U, 0x63U, 0x73U, 0x83U, 0x93U, 0xA3U,
+        0xB3U, 0xC3U, 0xD3U, 0xE3U, 0xF0U, 0xF1U, 0xF2U, 0xF4U,
+        0xF5U, 0xF6U
     };
     /* The stop cursor */
     static const rmp_u8_t Stop_B[]=
     {
-        0x05,0x06,0x07,0x08,0x13,0x14,0x15,0x16,0x17,0x18,0x19,0x1A,0x22,0x23,0x24,0x29,
-        0x2A,0x2B,0x31,0x32,0x33,0x34,0x3A,0x3B,0x3C,0x41,0x42,0x43,0x44,0x45,0x4B,0x4C,
-        0x50,0x51,0x54,0x55,0x56,0x5C,0x5D,0x60,0x61,0x65,0x66,0x67,0x6C,0x6D,0x70,0x71,
-        0x76,0x77,0x78,0x7C,0x7D,0x80,0x81,0x87,0x88,0x89,0x8C,0x8D,0x91,0x92,0x98,0x99,
-        0x9A,0x9B,0x9C,0xA1,0xA2,0xA3,0xA9,0xAA,0xAB,0xAC,0xB2,0xB3,0xB4,0xB9,0xBA,0xBB,
-        0xC3,0xC4,0xC5,0xC6,0xC7,0xC8,0xC9,0xCA,0xD5,0xD6,0xD7,0xD8
+        0x05U, 0x06U, 0x07U, 0x08U, 0x13U, 0x14U, 0x15U, 0x16U,
+        0x17U, 0x18U, 0x19U, 0x1AU, 0x22U, 0x23U, 0x24U, 0x29U,
+        0x2AU, 0x2BU, 0x31U, 0x32U, 0x33U, 0x34U, 0x3AU, 0x3BU,
+        0x3CU, 0x41U, 0x42U, 0x43U, 0x44U, 0x45U, 0x4BU, 0x4CU,
+        0x50U, 0x51U, 0x54U, 0x55U, 0x56U, 0x5CU, 0x5DU, 0x60U,
+        0x61U, 0x65U, 0x66U, 0x67U, 0x6CU, 0x6DU, 0x70U, 0x71U,
+        0x76U, 0x77U, 0x78U, 0x7CU, 0x7DU, 0x80U, 0x81U, 0x87U,
+        0x88U, 0x89U, 0x8CU, 0x8DU, 0x91U, 0x92U, 0x98U, 0x99U,
+        0x9AU, 0x9BU, 0x9CU, 0xA1U, 0xA2U, 0xA3U, 0xA9U, 0xAAU,
+        0xABU, 0xACU, 0xB2U, 0xB3U, 0xB4U, 0xB9U, 0xBAU, 0xBBU,
+        0xC3U, 0xC4U, 0xC5U, 0xC6U, 0xC7U, 0xC8U, 0xC9U, 0xCAU,
+        0xD5U, 0xD6U, 0xD7U, 0xD8U
     };
     static const rmp_u8_t Stop_W[]=
     {
-        0x25,0x26,0x27,0x28,0x35,0x36,0x37,0x38,0x39,0x46,0x47,0x48,0x49,0x4A,0x52,0x53,
-        0x57,0x58,0x59,0x5A,0x5B,0x62,0x63,0x64,0x68,0x69,0x6A,0x6B,0x72,0x73,0x74,0x75,
-        0x79,0x7A,0x7B,0x82,0x83,0x84,0x85,0x86,0x8A,0x8B,0x93,0x94,0x95,0x96,0x97,0xA4,
-        0xA5,0xA6,0xA7,0xA8,0xB5,0xB6,0xB7,0xB8
+        0x25U, 0x26U, 0x27U, 0x28U, 0x35U, 0x36U, 0x37U, 0x38U,
+        0x39U, 0x46U, 0x47U, 0x48U, 0x49U, 0x4AU, 0x52U, 0x53U,
+        0x57U, 0x58U, 0x59U, 0x5AU, 0x5BU, 0x62U, 0x63U, 0x64U,
+        0x68U, 0x69U, 0x6AU, 0x6BU, 0x72U, 0x73U, 0x74U, 0x75U,
+        0x79U, 0x7AU, 0x7BU, 0x82U, 0x83U, 0x84U, 0x85U, 0x86U,
+        0x8AU, 0x8BU, 0x93U, 0x94U, 0x95U, 0x96U, 0x97U, 0xA4U,
+        0xA5U, 0xA6U, 0xA7U, 0xA8U, 0xB5U, 0xB6U, 0xB7U, 0xB8U
     };
        /* Cross arrow - no white part  */
     static const rmp_u8_t Adj_ALL[]=
     {
-        0x07,0x16,0x17,0x18,0x25,0x26,0x27,0x28,0x29,0x37,0x47,0x52,0x57,0x5C,0x61,0x62,
-        0x67,0x6C,0x6D,0x70,0x71,0x72,0x73,0x74,0x75,0x76,0x77,0x78,0x79,0x7A,0x7B,0x7C,
-        0x7D,0x7E,0x81,0x82,0x87,0x8C,0x8D,0x92,0x97,0x9C,0xA7,0xB7,0xC5,0xC6,0xC7,0xC8,
-        0xC9,0xD6,0xD7,0xD8,0xE7
+        0x07U, 0x16U, 0x17U, 0x18U, 0x25U, 0x26U, 0x27U, 0x28U,
+        0x29U, 0x37U, 0x47U, 0x52U, 0x57U, 0x5CU, 0x61U, 0x62U,
+        0x67U, 0x6CU, 0x6DU, 0x70U, 0x71U, 0x72U, 0x73U, 0x74U,
+        0x75U, 0x76U, 0x77U, 0x78U, 0x79U, 0x7AU, 0x7BU, 0x7CU,
+        0x7DU, 0x7EU, 0x81U, 0x82U, 0x87U, 0x8CU, 0x8DU, 0x92U,
+        0x97U, 0x9CU, 0xA7U, 0xB7U, 0xC5U, 0xC6U, 0xC7U, 0xC8U,
+        0xC9U, 0xD6U, 0xD7U, 0xD8U, 0xE7U
     };    
     /* Left to right arrow - no white part */
     static const rmp_u8_t Adj_LR[]=
     {
-        0x52,0x5D,0x61,0x62,0x6D,0x6E,0x70,0x71,0x72,0x73,0x74,0x75,0x76,0x77,0x78,0x79,
-        0x7A,0x7B,0x7C,0x7D,0x7E,0x7F,0x81,0x82,0x8D,0x8E,0x92,0x9D
+        0x52U, 0x5DU, 0x61U, 0x62U, 0x6DU, 0x6EU, 0x70U, 0x71U,
+        0x72U, 0x73U, 0x74U, 0x75U, 0x76U, 0x77U, 0x78U, 0x79U,
+        0x7AU, 0x7BU, 0x7CU, 0x7DU, 0x7EU, 0x7FU, 0x81U, 0x82U,
+        0x8DU, 0x8EU, 0x92U, 0x9DU
     };
     /* Up to down arrow - no white part */
     static const rmp_u8_t Adj_UD[]=
     {
-        0x07,0x16,0x17,0x18,0x25,0x26,0x27,0x28,0x29,0x37,0x47,0x57,0x67,0x77,0x87,0x97,
-        0xA7,0xB7,0xC7,0xD5,0xD6,0xD7,0xD8,0xD9,0xE6,0xE7,0xE8,0xF7
+        0x07U, 0x16U, 0x17U, 0x18U, 0x25U, 0x26U, 0x27U, 0x28U,
+        0x29U, 0x37U, 0x47U, 0x57U, 0x67U, 0x77U, 0x87U, 0x97U,
+        0xA7U, 0xB7U, 0xC7U, 0xD5U, 0xD6U, 0xD7U, 0xD8U, 0xD9U,
+        0xE6U, 0xE7U, 0xE8U, 0xF7U
 
     };
     /* Bottom-right to top-left arrow - no white part */
     static const rmp_u8_t Adj_BRUL[]=
     {
-        0x00,0x01,0x02,0x03,0x04,0x10,0x11,0x12,0x13,0x20,0x21,0x22,0x30,0x31,0x33,0x40,
-        0x44,0x55,0x66,0x77,0x88,0x99,0xAA,0xBB,0xBF,0xCC,0xCE,0xCF,0xDD,0xDE,0xDF,0xEC,
-        0xED,0xEE,0xEF,0xFB,0xFC,0xFD,0xFE,0xFF
+        0x00U, 0x01U, 0x02U, 0x03U, 0x04U, 0x10U, 0x11U, 0x12U,
+        0x13U, 0x20U, 0x21U, 0x22U, 0x30U, 0x31U, 0x33U, 0x40U,
+        0x44U, 0x55U, 0x66U, 0x77U, 0x88U, 0x99U, 0xAAU, 0xBBU,
+        0xBFU, 0xCCU, 0xCEU, 0xCFU, 0xDDU, 0xDEU, 0xDFU, 0xECU,
+        0xEDU, 0xEEU, 0xEFU, 0xFBU, 0xFCU, 0xFDU, 0xFEU, 0xFFU
     };
     /* Bottom-left to top-right arrow - no white part */
     static const rmp_u8_t Adj_BLUR[]=
     {
-        0x0B,0x0C,0x0D,0x0E,0x0F,0x1C,0x1D,0x1E,0x1F,0x2D,0x2E,0x2F,0x3C,0x3E,0x3F,0x4B,
-        0x4F,0x5A,0x69,0x78,0x87,0x96,0xA5,0xB0,0xB4,0xC0,0xC1,0xC3,0xD0,0xD1,0xD2,0xE0,
-        0xE1,0xE2,0xE3,0xF0,0xF1,0xF2,0xF3,0xF4
+        0x0BU, 0x0CU, 0x0DU, 0x0EU, 0x0FU, 0x1CU, 0x1DU, 0x1EU,
+        0x1FU, 0x2DU, 0x2EU, 0x2FU, 0x3CU, 0x3EU, 0x3FU, 0x4BU,
+        0x4FU, 0x5AU, 0x69U, 0x78U, 0x87U, 0x96U, 0xA5U, 0xB0U,
+        0xB4U, 0xC0U, 0xC1U, 0xC3U, 0xD0U, 0xD1U, 0xD2U, 0xE0U,
+        0xE1U, 0xE2U, 0xE3U, 0xF0U, 0xF1U, 0xF2U, 0xF3U, 0xF4U
     };
     /* The crosshair cursor - no white part */
     static const rmp_u8_t Cross[]=
     {
-        0x07,0x17,0x27,0x37,0x46,0x47,0x48,0x55,0x57,0x59,0x64,0x6A,0x70,0x71,0x72,0x73,
-        0x74,0x75,0x77,0x79,0x7A,0x7B,0x7C,0x7D,0x7E,0x84,0x8A,0x95,0x97,0x99,0xA6,0xA7,
-        0xA8,0xB7,0xC7,0xD7,0xE7
+        0x07U, 0x17U, 0x27U, 0x37U, 0x46U, 0x47U, 0x48U, 0x55U,
+        0x57U, 0x59U, 0x64U, 0x6AU, 0x70U, 0x71U, 0x72U, 0x73U,
+        0x74U, 0x75U, 0x77U, 0x79U, 0x7AU, 0x7BU, 0x7CU, 0x7DU,
+        0x7EU, 0x84U, 0x8AU, 0x95U, 0x97U, 0x99U, 0xA6U, 0xA7U,
+        0xA8U, 0xB7U, 0xC7U, 0xD7U, 0xE7U
     };
     
     /* Draw them */
@@ -3634,20 +3788,22 @@ Input       : rmp_cnt_t Coord_X - The X coordinate.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void RMP_Checkbox_Set(rmp_cnt_t Coord_X, rmp_cnt_t Coord_Y, rmp_cnt_t Length)
+void RMP_Checkbox_Set(rmp_cnt_t Coord_X,
+                      rmp_cnt_t Coord_Y,
+                      rmp_cnt_t Length)
 {
     rmp_cnt_t Count;
     
     /* Draw a tick inside */
     for(Count=0;Count<=2*Length/13;Count++)
     {
-        RMP_Line(Coord_X+4*Length/13+Count,Coord_Y+6*Length/13+Count,
-                 Coord_X+4*Length/13+Count,Coord_Y+8*Length/13+Count,RMP_CTL_BLACK);
+        RMP_Line(Coord_X+4*Length/13+Count, Coord_Y+6*Length/13+Count,
+                 Coord_X+4*Length/13+Count, Coord_Y+8*Length/13+Count, RMP_CTL_BLACK);
     }
     for(Count=0;Count<=4*Length/13;Count++)
     {
-        RMP_Line(Coord_X+6*Length/13+Count,Coord_Y+8*Length/13-Count,
-                 Coord_X+6*Length/13+Count,Coord_Y+10*Length/13-Count,RMP_CTL_BLACK);
+        RMP_Line(Coord_X+6*Length/13+Count, Coord_Y+8*Length/13-Count,
+                 Coord_X+6*Length/13+Count, Coord_Y+10*Length/13-Count, RMP_CTL_BLACK);
     }
 }
 /* End Function:RMP_Checkbox_Set *********************************************/
@@ -3660,20 +3816,22 @@ Input       : rmp_cnt_t Coord_X - The X coordinate.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void RMP_Checkbox_Clr(rmp_cnt_t Coord_X, rmp_cnt_t Coord_Y, rmp_cnt_t Length)
+void RMP_Checkbox_Clr(rmp_cnt_t Coord_X,
+                      rmp_cnt_t Coord_Y,
+                      rmp_cnt_t Length)
 {
     rmp_cnt_t Count;
     
     /* Erase the tick inside */
     for(Count=0;Count<=2*Length/13;Count++)
     {
-        RMP_Line(Coord_X+4*Length/13+Count,Coord_Y+6*Length/13+Count,
-                 Coord_X+4*Length/13+Count,Coord_Y+8*Length/13+Count,RMP_CTL_WHITE);
+        RMP_Line(Coord_X+4*Length/13+Count, Coord_Y+6*Length/13+Count,
+                 Coord_X+4*Length/13+Count, Coord_Y+8*Length/13+Count, RMP_CTL_WHITE);
     }
     for(Count=0;Count<=4*Length/13;Count++)
     {
-        RMP_Line(Coord_X+6*Length/13+Count,Coord_Y+8*Length/13-Count,
-                 Coord_X+6*Length/13+Count,Coord_Y+10*Length/13-Count,RMP_CTL_WHITE);
+        RMP_Line(Coord_X+6*Length/13+Count, Coord_Y+8*Length/13-Count,
+                 Coord_X+6*Length/13+Count, Coord_Y+10*Length/13-Count, RMP_CTL_WHITE);
     }
 }
 /* End Function:RMP_Checkbox_Clr *********************************************/
@@ -3687,21 +3845,24 @@ Input       : rmp_cnt_t Coord_X - The X coordinate.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void RMP_Checkbox(rmp_cnt_t Coord_X, rmp_cnt_t Coord_Y, rmp_cnt_t Length, rmp_ptr_t Status)    
+void RMP_Checkbox(rmp_cnt_t Coord_X,
+                  rmp_cnt_t Coord_Y,
+                  rmp_cnt_t Length,
+                  rmp_ptr_t Status)    
 {   
     /* Clear the area */
-    RMP_Rectangle(Coord_X,Coord_Y,Length,Length,RMP_CTL_WHITE,RMP_CTL_WHITE);
+    RMP_Rectangle(Coord_X, Coord_Y, Length, Length, RMP_CTL_WHITE, RMP_CTL_WHITE);
                                                                      
     /* Draw checkbox outline */
-    RMP_Line(Coord_X,Coord_Y,Coord_X+Length-1,Coord_Y,RMP_CTL_DARK);                 
-    RMP_Line(Coord_X+Length-1,Coord_Y,Coord_X+Length-1,Coord_Y+Length-1,RMP_CTL_WHITE);
-    RMP_Line(Coord_X+Length-1,Coord_Y+Length-1,Coord_X,Coord_Y+Length-1,RMP_CTL_WHITE);
-    RMP_Line(Coord_X,Coord_Y+Length-1,Coord_X,Coord_Y,RMP_CTL_DARK);
+    RMP_Line(Coord_X, Coord_Y, Coord_X+Length-1, Coord_Y, RMP_CTL_DARK);                 
+    RMP_Line(Coord_X+Length-1, Coord_Y, Coord_X+Length-1, Coord_Y+Length-1, RMP_CTL_WHITE);
+    RMP_Line(Coord_X+Length-1, Coord_Y+Length-1, Coord_X, Coord_Y+Length-1, RMP_CTL_WHITE);
+    RMP_Line(Coord_X, Coord_Y+Length-1, Coord_X, Coord_Y, RMP_CTL_DARK);
 
-    RMP_Line(Coord_X+1,Coord_Y+1,Coord_X+Length-2,Coord_Y+1,RMP_CTL_BLACK);
-    RMP_Line(Coord_X+Length-2,Coord_Y+1,Coord_X+Length-2,Coord_Y+Length-2,RMP_CTL_DARK);
-    RMP_Line(Coord_X+Length-2,Coord_Y+Length-2,Coord_X,Coord_Y+Length-2,RMP_CTL_DARK);
-    RMP_Line(Coord_X+1,Coord_Y+Length-2,Coord_X+1,Coord_Y+1,RMP_CTL_BLACK);
+    RMP_Line(Coord_X+1, Coord_Y+1, Coord_X+Length-2, Coord_Y+1, RMP_CTL_BLACK);
+    RMP_Line(Coord_X+Length-2, Coord_Y+1, Coord_X+Length-2, Coord_Y+Length-2, RMP_CTL_DARK);
+    RMP_Line(Coord_X+Length-2, Coord_Y+Length-2, Coord_X, Coord_Y+Length-2, RMP_CTL_DARK);
+    RMP_Line(Coord_X+1, Coord_Y+Length-2, Coord_X+1, Coord_Y+1, RMP_CTL_BLACK);
     
     if(Status!=0)
         RMP_Checkbox_Set(Coord_X, Coord_Y, Length);
@@ -3717,18 +3878,21 @@ Input       : rmp_cnt_t Coord_X - The X coordinate of its top-left corner.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void RMP_Cmdbtn_Down(rmp_cnt_t Coord_X, rmp_cnt_t Coord_Y, rmp_cnt_t Length, rmp_cnt_t Width)
+void RMP_Cmdbtn_Down(rmp_cnt_t Coord_X,
+                     rmp_cnt_t Coord_Y,
+                     rmp_cnt_t Length,
+                     rmp_cnt_t Width)
 {
-    RMP_Line(Coord_X,Coord_Y,Coord_X+Length-1,Coord_Y,RMP_CTL_BLACK);
-    RMP_Line(Coord_X+Length-1,Coord_Y,Coord_X+Length-1,Coord_Y+Width-1,RMP_CTL_WHITE);
-    RMP_Line(Coord_X+Length-1,Coord_Y+Width-1,Coord_X,Coord_Y+Width-1,RMP_CTL_WHITE);
-    RMP_Line(Coord_X,Coord_Y+Width-1,Coord_X,Coord_Y,RMP_CTL_BLACK);
+    RMP_Line(Coord_X, Coord_Y, Coord_X+Length-1, Coord_Y, RMP_CTL_BLACK);
+    RMP_Line(Coord_X+Length-1, Coord_Y, Coord_X+Length-1, Coord_Y+Width-1, RMP_CTL_WHITE);
+    RMP_Line(Coord_X+Length-1, Coord_Y+Width-1, Coord_X, Coord_Y+Width-1, RMP_CTL_WHITE);
+    RMP_Line(Coord_X, Coord_Y+Width-1, Coord_X, Coord_Y, RMP_CTL_BLACK);
     /* Clear the old shadow */
-    RMP_Line(Coord_X+Length-2,Coord_Y+Width-2,Coord_X+1,Coord_Y+Width-2,RMP_CTL_GREY);    
-    RMP_Line(Coord_X+Length-2,Coord_Y+1,Coord_X+Length-2,Coord_Y+Width-2,RMP_CTL_GREY);    
+    RMP_Line(Coord_X+Length-2, Coord_Y+Width-2, Coord_X+1, Coord_Y+Width-2, RMP_CTL_GREY);    
+    RMP_Line(Coord_X+Length-2, Coord_Y+1, Coord_X+Length-2, Coord_Y+Width-2, RMP_CTL_GREY);    
     /* The shadow */                            
-    RMP_Line(Coord_X+1,Coord_Y+Width-2,Coord_X+1,Coord_Y+1,RMP_CTL_DARK);    
-    RMP_Line(Coord_X+1,Coord_Y+1,Coord_X+Length-2,Coord_Y+1,RMP_CTL_DARK);    
+    RMP_Line(Coord_X+1, Coord_Y+Width-2, Coord_X+1, Coord_Y+1, RMP_CTL_DARK);    
+    RMP_Line(Coord_X+1, Coord_Y+1, Coord_X+Length-2, Coord_Y+1, RMP_CTL_DARK);    
 }
 /* End Function:RMP_Cmdbtn_Down **********************************************/
 
@@ -3741,18 +3905,21 @@ Input       : rmp_cnt_t Coord_X - The X coordinate of its top-left corner.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void RMP_Cmdbtn_Up(rmp_cnt_t Coord_X, rmp_cnt_t Coord_Y, rmp_cnt_t Length, rmp_cnt_t Width)
+void RMP_Cmdbtn_Up(rmp_cnt_t Coord_X,
+                   rmp_cnt_t Coord_Y,
+                   rmp_cnt_t Length,
+                   rmp_cnt_t Width)
 {
-    RMP_Line(Coord_X,Coord_Y,Coord_X+Length-1,Coord_Y,RMP_CTL_WHITE);
-    RMP_Line(Coord_X+Length-1,Coord_Y,Coord_X+Length-1,Coord_Y+Width-1,RMP_CTL_BLACK);
-    RMP_Line(Coord_X+Length-1,Coord_Y+Width-1,Coord_X,Coord_Y+Width-1,RMP_CTL_BLACK);
-    RMP_Line(Coord_X,Coord_Y+Width-1,Coord_X,Coord_Y,RMP_CTL_WHITE);
+    RMP_Line(Coord_X, Coord_Y, Coord_X+Length-1, Coord_Y, RMP_CTL_WHITE);
+    RMP_Line(Coord_X+Length-1, Coord_Y, Coord_X+Length-1, Coord_Y+Width-1, RMP_CTL_BLACK);
+    RMP_Line(Coord_X+Length-1, Coord_Y+Width-1, Coord_X, Coord_Y+Width-1, RMP_CTL_BLACK);
+    RMP_Line(Coord_X, Coord_Y+Width-1, Coord_X, Coord_Y, RMP_CTL_WHITE);
     /* Clear the old shadow */
-    RMP_Line(Coord_X+1,Coord_Y+Width-2,Coord_X+1,Coord_Y+1,RMP_CTL_GREY);    
-    RMP_Line(Coord_X+1,Coord_Y+1,Coord_X+Length-2,Coord_Y+1,RMP_CTL_GREY);    
+    RMP_Line(Coord_X+1, Coord_Y+Width-2, Coord_X+1, Coord_Y+1, RMP_CTL_GREY);    
+    RMP_Line(Coord_X+1, Coord_Y+1, Coord_X+Length-2, Coord_Y+1, RMP_CTL_GREY);    
     /* The shadow */
-    RMP_Line(Coord_X+Length-2,Coord_Y+Width-2,Coord_X+1,Coord_Y+Width-2,RMP_CTL_DARK);    
-    RMP_Line(Coord_X+Length-2,Coord_Y+1,Coord_X+Length-2,Coord_Y+Width-2,RMP_CTL_DARK);    
+    RMP_Line(Coord_X+Length-2, Coord_Y+Width-2, Coord_X+1, Coord_Y+Width-2, RMP_CTL_DARK);    
+    RMP_Line(Coord_X+Length-2, Coord_Y+1, Coord_X+Length-2, Coord_Y+Width-2, RMP_CTL_DARK);    
 }
 /* End Function:RMP_Cmdbtn_Up ************************************************/
 
@@ -3766,9 +3933,13 @@ Input       : rmp_cnt_t Coord_X - The X coordinate of its top-left corner.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void RMP_Cmdbtn(rmp_cnt_t Coord_X, rmp_cnt_t Coord_Y, rmp_cnt_t Length, rmp_cnt_t Width, rmp_ptr_t Status)
+void RMP_Cmdbtn(rmp_cnt_t Coord_X,
+                rmp_cnt_t Coord_Y,
+                rmp_cnt_t Length,
+                rmp_cnt_t Width,
+                rmp_ptr_t Status)
 {
-    RMP_Rectangle(Coord_X,Coord_Y,Length,Width,RMP_CTL_GREY,RMP_CTL_GREY);
+    RMP_Rectangle(Coord_X, Coord_Y, Length, Width, RMP_CTL_GREY, RMP_CTL_GREY);
 
     if(Status!=0)
         RMP_Cmdbtn_Down(Coord_X, Coord_Y, Length, Width);
@@ -3788,10 +3959,14 @@ Input       : rmp_cnt_t Coord_X - The X coordinate of its top-left corner.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void RMP_Lineedit_Clr(rmp_cnt_t Coord_X, rmp_cnt_t Coord_Y, rmp_cnt_t Length,
-                      rmp_cnt_t Width, rmp_cnt_t Clr_X, rmp_cnt_t Clr_Len)
+void RMP_Lineedit_Clr(rmp_cnt_t Coord_X,
+                      rmp_cnt_t Coord_Y,
+                      rmp_cnt_t Length,
+                      rmp_cnt_t Width,
+                      rmp_cnt_t Clr_X,
+                      rmp_cnt_t Clr_Len)
 {
-    RMP_Rectangle(Clr_X,Coord_Y+1,Clr_Len,Width-2,RMP_CTL_WHITE,RMP_CTL_WHITE);
+    RMP_Rectangle(Clr_X, Coord_Y+1, Clr_Len, Width-2, RMP_CTL_WHITE, RMP_CTL_WHITE);
 }
 /* End Function:RMP_Lineedit_Clr *********************************************/
 
@@ -3804,18 +3979,21 @@ Input       : rmp_cnt_t Coord_X - The X coordinate of its top-left corner.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void RMP_Lineedit(rmp_cnt_t Coord_X, rmp_cnt_t Coord_Y, rmp_cnt_t Length, rmp_cnt_t Width)
+void RMP_Lineedit(rmp_cnt_t Coord_X,
+                  rmp_cnt_t Coord_Y,
+                  rmp_cnt_t Length,
+                  rmp_cnt_t Width)
 {
-    RMP_Rectangle(Coord_X,Coord_Y,Length,Width,RMP_CTL_WHITE,RMP_CTL_WHITE);
+    RMP_Rectangle(Coord_X, Coord_Y, Length, Width, RMP_CTL_WHITE, RMP_CTL_WHITE);
     
     /* Now draw the border */
-    RMP_Line(Coord_X,Coord_Y,Coord_X+Length-1,Coord_Y,RMP_CTL_DARK);
-    RMP_Line(Coord_X+Length-1,Coord_Y,Coord_X+Length-1,Coord_Y+Width-1,RMP_CTL_WHITE);
-    RMP_Line(Coord_X+Length-1,Coord_Y+Width-1,Coord_X,Coord_Y+Width-1,RMP_CTL_WHITE);
-    RMP_Line(Coord_X,Coord_Y+Width-1,Coord_X,Coord_Y,RMP_CTL_DARK);
+    RMP_Line(Coord_X, Coord_Y, Coord_X+Length-1, Coord_Y, RMP_CTL_DARK);
+    RMP_Line(Coord_X+Length-1, Coord_Y, Coord_X+Length-1, Coord_Y+Width-1, RMP_CTL_WHITE);
+    RMP_Line(Coord_X+Length-1, Coord_Y+Width-1, Coord_X, Coord_Y+Width-1, RMP_CTL_WHITE);
+    RMP_Line(Coord_X, Coord_Y+Width-1, Coord_X, Coord_Y, RMP_CTL_DARK);
     /* The shadow */
-    RMP_Line(Coord_X+1,Coord_Y+Width-2,Coord_X+1,Coord_Y+1,RMP_CTL_BLACK);    
-    RMP_Line(Coord_X+1,Coord_Y+1,Coord_X+Length-2,Coord_Y+1,RMP_CTL_BLACK);
+    RMP_Line(Coord_X+1, Coord_Y+Width-2, Coord_X+1, Coord_Y+1, RMP_CTL_BLACK);    
+    RMP_Line(Coord_X+1, Coord_Y+1, Coord_X+Length-2, Coord_Y+1, RMP_CTL_BLACK);
 }
 /* End Function:RMP_Lineedit *************************************************/
 
@@ -3827,7 +4005,9 @@ Input       : rmp_cnt_t Coord_X - The X coordinate.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void RMP_Radiobtn_Circle(rmp_cnt_t Coord_X,rmp_cnt_t Coord_Y,rmp_cnt_t Length)
+void RMP_Radiobtn_Circle(rmp_cnt_t Coord_X,
+                         rmp_cnt_t Coord_Y,
+                         rmp_cnt_t Length)
 {   
     rmp_cnt_t Radius;
     rmp_cnt_t Center_X;
@@ -3849,16 +4029,16 @@ void RMP_Radiobtn_Circle(rmp_cnt_t Coord_X,rmp_cnt_t Coord_Y,rmp_cnt_t Length)
     while(Cur_X<=Cur_Y) 
     {  
         /* This is the upper-left part */
-        RMP_POINT(Center_X+Cur_X,Center_Y-Cur_Y,RMP_CTL_DDARK);
-        RMP_POINT(Center_X-Cur_X,Center_Y-Cur_Y,RMP_CTL_DDARK);
-        RMP_POINT(Center_X-Cur_Y,Center_Y-Cur_X,RMP_CTL_DDARK);
-        RMP_POINT(Center_X-Cur_Y,Center_Y+Cur_X,RMP_CTL_DDARK);
+        RMP_POINT(Center_X+Cur_X, Center_Y-Cur_Y, RMP_CTL_DDARK);
+        RMP_POINT(Center_X-Cur_X, Center_Y-Cur_Y, RMP_CTL_DDARK);
+        RMP_POINT(Center_X-Cur_Y, Center_Y-Cur_X, RMP_CTL_DDARK);
+        RMP_POINT(Center_X-Cur_Y, Center_Y+Cur_X, RMP_CTL_DDARK);
         
         /* This is the lower-right part */
-        RMP_POINT(Center_X+Cur_X,Center_Y+Cur_Y,RMP_CTL_LGREY);
-        RMP_POINT(Center_X-Cur_X,Center_Y+Cur_Y,RMP_CTL_LGREY);  
-        RMP_POINT(Center_X+Cur_Y,Center_Y+Cur_X,RMP_CTL_LGREY); 
-        RMP_POINT(Center_X+Cur_Y,Center_Y-Cur_X,RMP_CTL_LGREY);  
+        RMP_POINT(Center_X+Cur_X, Center_Y+Cur_Y, RMP_CTL_LGREY);
+        RMP_POINT(Center_X-Cur_X, Center_Y+Cur_Y, RMP_CTL_LGREY);  
+        RMP_POINT(Center_X+Cur_Y, Center_Y+Cur_X, RMP_CTL_LGREY); 
+        RMP_POINT(Center_X+Cur_Y, Center_Y-Cur_X, RMP_CTL_LGREY);  
         
         if(Error<0) 
         {
@@ -3880,16 +4060,16 @@ void RMP_Radiobtn_Circle(rmp_cnt_t Coord_X,rmp_cnt_t Coord_Y,rmp_cnt_t Length)
     while(Cur_X<=Cur_Y) 
     {  
         /* This is the upper-left part */
-        RMP_POINT(Center_X+Cur_X,Center_Y-Cur_Y,RMP_CTL_DGREY);
-        RMP_POINT(Center_X-Cur_X,Center_Y-Cur_Y,RMP_CTL_DGREY);
-        RMP_POINT(Center_X-Cur_Y,Center_Y-Cur_X,RMP_CTL_DGREY);
-        RMP_POINT(Center_X-Cur_Y,Center_Y+Cur_X,RMP_CTL_DGREY);
+        RMP_POINT(Center_X+Cur_X, Center_Y-Cur_Y, RMP_CTL_DGREY);
+        RMP_POINT(Center_X-Cur_X, Center_Y-Cur_Y, RMP_CTL_DGREY);
+        RMP_POINT(Center_X-Cur_Y, Center_Y-Cur_X, RMP_CTL_DGREY);
+        RMP_POINT(Center_X-Cur_Y, Center_Y+Cur_X, RMP_CTL_DGREY);
         
         /* This is the lower-right part */
-        RMP_POINT(Center_X+Cur_X,Center_Y+Cur_Y,RMP_CTL_WHITE);
-        RMP_POINT(Center_X-Cur_X,Center_Y+Cur_Y,RMP_CTL_WHITE);  
-        RMP_POINT(Center_X+Cur_Y,Center_Y+Cur_X,RMP_CTL_WHITE); 
-        RMP_POINT(Center_X+Cur_Y,Center_Y-Cur_X,RMP_CTL_WHITE);  
+        RMP_POINT(Center_X+Cur_X, Center_Y+Cur_Y, RMP_CTL_WHITE);
+        RMP_POINT(Center_X-Cur_X, Center_Y+Cur_Y, RMP_CTL_WHITE);  
+        RMP_POINT(Center_X+Cur_Y, Center_Y+Cur_X, RMP_CTL_WHITE); 
+        RMP_POINT(Center_X+Cur_Y, Center_Y-Cur_X, RMP_CTL_WHITE);  
         
         if(Error<0) 
         {  
@@ -3913,9 +4093,11 @@ Input       : rmp_cnt_t Coord_X - The X coordinate.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void RMP_Radiobtn_Set(rmp_cnt_t Coord_X, rmp_cnt_t Coord_Y, rmp_cnt_t Length)
+void RMP_Radiobtn_Set(rmp_cnt_t Coord_X,
+                      rmp_cnt_t Coord_Y,
+                      rmp_cnt_t Length)
 {
-    RMP_Circle(Coord_X+Length/2,Coord_Y+Length/2,Length/6,RMP_CTL_BLACK,RMP_CTL_BLACK);
+    RMP_Circle(Coord_X+Length/2, Coord_Y+Length/2, Length/6, RMP_CTL_BLACK, RMP_CTL_BLACK);
 }
 /* End Function:RMP_Radiobtn_Set *********************************************/
 
@@ -3927,9 +4109,11 @@ Input       : rmp_cnt_t Coord_X - The X coordinate.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void RMP_Radiobtn_Clr(rmp_cnt_t Coord_X, rmp_cnt_t Coord_Y, rmp_cnt_t Length)
+void RMP_Radiobtn_Clr(rmp_cnt_t Coord_X,
+                      rmp_cnt_t Coord_Y,
+                      rmp_cnt_t Length)
 {
-    RMP_Circle(Coord_X+Length/2,Coord_Y+Length/2,Length/6,RMP_CTL_GREY,RMP_CTL_GREY);
+    RMP_Circle(Coord_X+Length/2, Coord_Y+Length/2, Length/6, RMP_CTL_GREY, RMP_CTL_GREY);
 }
 /* End Function:RMP_Radiobtn_Clr *********************************************/
 
@@ -3942,13 +4126,16 @@ Input       : rmp_cnt_t Coord_X - The X coordinate.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void RMP_Radiobtn(rmp_cnt_t Coord_X, rmp_cnt_t Coord_Y, rmp_cnt_t Length, rmp_ptr_t Status)
+void RMP_Radiobtn(rmp_cnt_t Coord_X,
+                  rmp_cnt_t Coord_Y,
+                  rmp_cnt_t Length,
+                  rmp_ptr_t Status)
 {   
     /* Fill the area with rect */
-    RMP_Rectangle(Coord_X,Coord_Y,Length,Length,RMP_CTL_GREY,RMP_CTL_GREY);
+    RMP_Rectangle(Coord_X, Coord_Y, Length, Length, RMP_CTL_GREY, RMP_CTL_GREY);
     
     /* Draw the circle first */
-    RMP_Radiobtn_Circle(Coord_X,Coord_Y,Length);
+    RMP_Radiobtn_Circle(Coord_X, Coord_Y, Length);
     
     /* See if the radio button is selected */
     if(Status==RMP_RBTN_SEL)
@@ -3970,12 +4157,19 @@ Input       : rmp_cnt_t Coord_X - The X coordinate of its top-left corner.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void RMP_Progbar_Set(rmp_cnt_t Coord_X, rmp_cnt_t Coord_Y, rmp_cnt_t Length, rmp_cnt_t Width,
-                     rmp_cnt_t Style, rmp_cnt_t Old_Prog, rmp_cnt_t New_Prog, rmp_ptr_t Fore, rmp_ptr_t Back)
+void RMP_Progbar_Set(rmp_cnt_t Coord_X,
+                     rmp_cnt_t Coord_Y,
+                     rmp_cnt_t Length,
+                     rmp_cnt_t Width,
+                     rmp_cnt_t Style,
+                     rmp_cnt_t Old_Prog,
+                     rmp_cnt_t New_Prog,
+                     rmp_ptr_t Fore,
+                     rmp_ptr_t Back)
 {
     /* The critical values for drawing the bar */
-    rmp_ptr_t Old_Pivot;
-    rmp_ptr_t New_Pivot;
+    rmp_cnt_t Old_Pivot;
+    rmp_cnt_t New_Pivot;
     
     /* If things does not change, return to save time */
     if(Old_Prog==New_Prog)
@@ -3989,10 +4183,10 @@ void RMP_Progbar_Set(rmp_cnt_t Coord_X, rmp_cnt_t Coord_Y, rmp_cnt_t Length, rmp
             New_Pivot=(Length-2)*New_Prog/100;
             /* Progress decreased */
             if(Old_Pivot>New_Pivot)
-                RMP_Rectangle(Coord_X+1+New_Pivot,Coord_Y+1,Old_Pivot-New_Pivot,Width-2,Back,Back);
+                RMP_Rectangle(Coord_X+1+New_Pivot, Coord_Y+1, Old_Pivot-New_Pivot, Width-2, Back, Back);
             /* Progress increased */
             else
-                RMP_Rectangle(Coord_X+1+Old_Pivot,Coord_Y+1,New_Pivot-Old_Pivot,Width-2,Fore,Fore);
+                RMP_Rectangle(Coord_X+1+Old_Pivot, Coord_Y+1, New_Pivot-Old_Pivot, Width-2, Fore, Fore);
             break;
         }
         case RMP_PBAR_D2U:
@@ -4001,10 +4195,10 @@ void RMP_Progbar_Set(rmp_cnt_t Coord_X, rmp_cnt_t Coord_Y, rmp_cnt_t Length, rmp
             New_Pivot=(Width-2)*New_Prog/100;
             /* Progress decreased */
             if(Old_Pivot>New_Pivot)
-                RMP_Rectangle(Coord_X+1,Coord_Y-1+Width-Old_Pivot,Length-2,Old_Pivot-New_Pivot,Back,Back);
+                RMP_Rectangle(Coord_X+1, Coord_Y-1+Width-Old_Pivot, Length-2, Old_Pivot-New_Pivot, Back, Back);
             /* Progress increased */
             else
-                RMP_Rectangle(Coord_X+1,Coord_Y-1+Width-New_Pivot,Length-2,New_Pivot-Old_Pivot,Fore,Fore);
+                RMP_Rectangle(Coord_X+1, Coord_Y-1+Width-New_Pivot, Length-2, New_Pivot-Old_Pivot, Fore, Fore);
             break;
         }
         case RMP_PBAR_R2L:
@@ -4013,10 +4207,10 @@ void RMP_Progbar_Set(rmp_cnt_t Coord_X, rmp_cnt_t Coord_Y, rmp_cnt_t Length, rmp
             New_Pivot=(Length-2)*New_Prog/100;
             /* Progress decreased */
             if(Old_Pivot>New_Pivot)
-                RMP_Rectangle(Coord_X-1+Length-Old_Pivot,Coord_Y+1,Old_Pivot-New_Pivot,Width-2,Back,Back);
+                RMP_Rectangle(Coord_X-1+Length-Old_Pivot, Coord_Y+1, Old_Pivot-New_Pivot, Width-2, Back, Back);
             /* Progress increased */
             else
-                RMP_Rectangle(Coord_X-1+Length-New_Pivot,Coord_Y+1,New_Pivot-Old_Pivot,Width-2,Fore,Fore);
+                RMP_Rectangle(Coord_X-1+Length-New_Pivot, Coord_Y+1, New_Pivot-Old_Pivot, Width-2, Fore, Fore);
             break;
         }
         case RMP_PBAR_U2D:
@@ -4025,10 +4219,10 @@ void RMP_Progbar_Set(rmp_cnt_t Coord_X, rmp_cnt_t Coord_Y, rmp_cnt_t Length, rmp
             New_Pivot=(Width-2)*New_Prog/100;
             /* Progress decreased */
             if(Old_Pivot>New_Pivot)
-                RMP_Rectangle(Coord_X+1,Coord_Y+1+New_Pivot,Length-2,Old_Pivot-New_Pivot,Back,Back);
+                RMP_Rectangle(Coord_X+1, Coord_Y+1+New_Pivot, Length-2, Old_Pivot-New_Pivot, Back, Back);
             /* Progress increased */
             else
-                RMP_Rectangle(Coord_X+1,Coord_Y+1+Old_Pivot,Length-2,New_Pivot-Old_Pivot,Fore,Fore);
+                RMP_Rectangle(Coord_X+1, Coord_Y+1+Old_Pivot, Length-2, New_Pivot-Old_Pivot, Fore, Fore);
             break;
         }
         default: break;
@@ -4049,11 +4243,17 @@ Input       : rmp_cnt_t Coord_X - The X coordinate of its top-left corner.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void RMP_Progbar_Prog(rmp_cnt_t Coord_X, rmp_cnt_t Coord_Y, rmp_cnt_t Length, rmp_cnt_t Width,
-                      rmp_cnt_t Style, rmp_cnt_t Prog, rmp_ptr_t Fore, rmp_ptr_t Back)
+void RMP_Progbar_Prog(rmp_cnt_t Coord_X,
+                      rmp_cnt_t Coord_Y,
+                      rmp_cnt_t Length,
+                      rmp_cnt_t Width,
+                      rmp_cnt_t Style,
+                      rmp_cnt_t Prog,
+                      rmp_ptr_t Fore,
+                      rmp_ptr_t Back)
 {
     /* The critical value for drawing the bar */
-    rmp_ptr_t Pivot;
+    rmp_cnt_t Pivot;
     
     switch(Style)
     {
@@ -4061,36 +4261,36 @@ void RMP_Progbar_Prog(rmp_cnt_t Coord_X, rmp_cnt_t Coord_Y, rmp_cnt_t Length, rm
         {
             Pivot=Length*Prog/100;
             if(Prog!=0)
-                RMP_Rectangle(Coord_X,Coord_Y,Pivot,Width,Fore,Fore);
+                RMP_Rectangle(Coord_X, Coord_Y, Pivot, Width, Fore, Fore);
             if(Prog!=100)
-                RMP_Rectangle(Coord_X+Pivot,Coord_Y,Length-Pivot,Width,Back,Back);
+                RMP_Rectangle(Coord_X+Pivot, Coord_Y, Length-Pivot, Width, Back, Back);
             break;
         }
         case RMP_PBAR_D2U:
         {
             Pivot=Width*Prog/100;
             if(Prog!=0)
-                RMP_Rectangle(Coord_X,Coord_Y+Width-Pivot,Length,Pivot,Fore,Fore);
+                RMP_Rectangle(Coord_X, Coord_Y+Width-Pivot, Length, Pivot, Fore, Fore);
             if(Prog!=100)
-                RMP_Rectangle(Coord_X,Coord_Y,Length,Width-Pivot,Back,Back);
+                RMP_Rectangle(Coord_X, Coord_Y, Length, Width-Pivot, Back, Back);
             break;
         }
         case RMP_PBAR_R2L:
         {
             Pivot=Length*Prog/100;
             if(Prog!=0)
-                RMP_Rectangle(Coord_X+Length-Pivot,Coord_Y,Pivot,Width,Fore,Fore);
+                RMP_Rectangle(Coord_X+Length-Pivot, Coord_Y, Pivot, Width, Fore, Fore);
             if(Prog!=100)
-                RMP_Rectangle(Coord_X,Coord_Y,Length-Pivot,Width,Back,Back);
+                RMP_Rectangle(Coord_X, Coord_Y, Length-Pivot, Width, Back, Back);
             break;
         }
         case RMP_PBAR_U2D:
         {
             Pivot=Width*Prog/100;
             if(Prog!=0)
-                RMP_Rectangle(Coord_X,Coord_Y,Length,Pivot,Fore,Fore);
+                RMP_Rectangle(Coord_X, Coord_Y, Length, Pivot, Fore, Fore);
             if(Prog!=100)
-                RMP_Rectangle(Coord_X,Coord_Y+Pivot,Length,Width-Pivot,Back,Back);
+                RMP_Rectangle(Coord_X, Coord_Y+Pivot, Length, Width-Pivot, Back, Back);
             break;
         }
         default: break;
@@ -4111,16 +4311,22 @@ Input       : rmp_cnt_t Coord_X - The X coordinate of its top-left corner.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void RMP_Progbar(rmp_cnt_t Coord_X, rmp_cnt_t Coord_Y, rmp_cnt_t Length, rmp_cnt_t Width,
-                 rmp_cnt_t Style, rmp_cnt_t Prog, rmp_ptr_t Fore, rmp_ptr_t Back)
+void RMP_Progbar(rmp_cnt_t Coord_X,
+                 rmp_cnt_t Coord_Y,
+                 rmp_cnt_t Length,
+                 rmp_cnt_t Width,
+                 rmp_cnt_t Style,
+                 rmp_cnt_t Prog,
+                 rmp_ptr_t Fore,
+                 rmp_ptr_t Back)
 {
     /* Draw the progress bar according to the style of the progress bar */
-    RMP_Progbar_Prog(Coord_X,Coord_Y,Length,Width,Style,Prog,Fore,Back);
+    RMP_Progbar_Prog(Coord_X, Coord_Y, Length, Width, Style, Prog, Fore, Back);
     /* Now draw the border */
-    RMP_Line(Coord_X,Coord_Y,Coord_X+Length-1,Coord_Y,RMP_CTL_BLACK);
-    RMP_Line(Coord_X+Length-1,Coord_Y,Coord_X+Length-1,Coord_Y+Width-1,RMP_CTL_BLACK);
-    RMP_Line(Coord_X+Length-1,Coord_Y+Width-1,Coord_X,Coord_Y+Width-1,RMP_CTL_BLACK);
-    RMP_Line(Coord_X,Coord_Y+Width-1,Coord_X,Coord_Y,RMP_CTL_BLACK);
+    RMP_Line(Coord_X, Coord_Y, Coord_X+Length-1, Coord_Y, RMP_CTL_BLACK);
+    RMP_Line(Coord_X+Length-1, Coord_Y, Coord_X+Length-1, Coord_Y+Width-1, RMP_CTL_BLACK);
+    RMP_Line(Coord_X+Length-1, Coord_Y+Width-1, Coord_X, Coord_Y+Width-1, RMP_CTL_BLACK);
+    RMP_Line(Coord_X, Coord_Y+Width-1, Coord_X, Coord_Y, RMP_CTL_BLACK);
 }
 #endif
 #endif
