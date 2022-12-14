@@ -455,6 +455,7 @@ Return      : None.
 ******************************************************************************/
 void _RMP_Timer_Proc(void)
 {
+    rmp_ptr_t State;
     volatile struct RMP_Thd* Thread;
     
     /* Process the timer events, if there are any of them */
@@ -473,34 +474,26 @@ void _RMP_Timer_Proc(void)
         
         /* This thread should be processed */
         RMP_List_Del(Thread->Dly_Head.Prev, Thread->Dly_Head.Next);
-        switch(RMP_THD_STATE(Thread->State))
+        State=RMP_THD_STATE(Thread->State);
+        if((State==RMP_THD_SNDDLY)||(State==RMP_THD_SEMDLY))
         {
-            case RMP_THD_SNDDLY:
-            {
-                RMP_COVERAGE_MARKER();
-                RMP_List_Del(Thread->Run_Head.Prev, Thread->Run_Head.Next);
-                Thread->Retval=RMP_ERR_OPER;
-                break;
-            }
-            
-            case RMP_THD_SEMDLY:
-            {
-                RMP_COVERAGE_MARKER();
-                RMP_List_Del(Thread->Run_Head.Prev, Thread->Run_Head.Next);
-                Thread->Retval=RMP_ERR_OPER;
-                break;
-            }
-            
-            case RMP_THD_RCVDLY:
-            {
-                RMP_COVERAGE_MARKER();
-                Thread->Retval=RMP_ERR_OPER;
-                break;
-            }
-            
-            case RMP_THD_DELAYED:RMP_COVERAGE_MARKER();break;
-            /* Should not get here */
-            default:while(1);
+            RMP_COVERAGE_MARKER();
+            RMP_List_Del(Thread->Run_Head.Prev, Thread->Run_Head.Next);
+            Thread->Retval=RMP_ERR_OPER;
+        }
+        else if(State==RMP_THD_RCVDLY)
+        {
+            RMP_COVERAGE_MARKER();
+            Thread->Retval=RMP_ERR_OPER;
+        }
+        else if(State==RMP_THD_DELAYED)
+        {
+            RMP_COVERAGE_MARKER();
+        }
+        else
+        {
+            RMP_COVERAGE_MARKER();
+            RMP_ASSERT(0U);
         }
 
         RMP_THD_STATE_SET(Thread->State, RMP_THD_RUNNING);
@@ -539,7 +532,8 @@ void _RMP_Get_High_Rdy(void)
         
         Count=(rmp_cnt_t)RMP_MSB_Get(RMP_Bitmap[Count])+(Count<<RMP_WORD_ORDER);
         
-        /* See if the current thread and the next thread are the same. If yes, place the current at the end of the queue */
+        /* See if the current thread and the next thread are the same. 
+         * If yes, place the current at the end of the queue. */
         if(RMP_Cur_Thd==(volatile struct RMP_Thd*)(RMP_Run[Count].Next))
         {
             RMP_COVERAGE_MARKER();
@@ -863,6 +857,7 @@ Return      : rmp_ret_t - If successful, 0; or an error code.
 ******************************************************************************/
 rmp_ret_t RMP_Thd_Del(volatile struct RMP_Thd* Thread)
 {
+    rmp_ptr_t State;
     volatile struct RMP_Thd* Release;
     
     /* Check if this thread structure could possibly be in use */
@@ -905,48 +900,41 @@ rmp_ret_t RMP_Thd_Del(volatile struct RMP_Thd* Thread)
     }
     
     /* See what is its state */
-    switch(RMP_THD_STATE(Thread->State))
+    State=RMP_THD_STATE(Thread->State);
+    /* Clear ready if not suspended */
+    if(State==RMP_THD_RUNNING)
     {
-        case RMP_THD_RUNNING:
-        {
-            RMP_COVERAGE_MARKER();
-            /* Clear ready if not suspended */
-            _RMP_Clr_Rdy(Thread);
-            break;
-        }
-        
-        /* Do nothing if it is blocked on receive */
-        case RMP_THD_RCVBLK:
-        {
-            RMP_COVERAGE_MARKER();
-            break;
-        }
-        
-        case RMP_THD_SNDBLK:RMP_COVERAGE_MARKER();
-        case RMP_THD_SEMBLK:
-        {
-            RMP_COVERAGE_MARKER();
-            RMP_List_Del(Thread->Run_Head.Prev, Thread->Run_Head.Next);
-            break;
-        }
-        
-        case RMP_THD_SNDDLY:RMP_COVERAGE_MARKER();
-        case RMP_THD_SEMDLY:
-        {
-            RMP_COVERAGE_MARKER();
-            RMP_List_Del(Thread->Run_Head.Prev, Thread->Run_Head.Next);
-            /* Fall-through case */
-        }
-        case RMP_THD_RCVDLY:RMP_COVERAGE_MARKER();
-        case RMP_THD_DELAYED:
-        {
-            RMP_COVERAGE_MARKER();
-            RMP_List_Del(Thread->Dly_Head.Prev, Thread->Dly_Head.Next);
-            break;
-        }
-        /* Should not get here */
-        default:while(1);
+        RMP_COVERAGE_MARKER();
+        _RMP_Clr_Rdy(Thread);
     }
+    /* Do nothing if it is just blocked on receive */
+    else if(State==RMP_THD_RCVBLK)
+    {
+        RMP_COVERAGE_MARKER();
+    }
+    /* Unblock it if it was blocked on other stuff */
+    else if((State==RMP_THD_SNDBLK)||(State==RMP_THD_SEMBLK))
+    {
+        RMP_COVERAGE_MARKER();
+        RMP_List_Del(Thread->Run_Head.Prev, Thread->Run_Head.Next);
+    }
+    else if((State==RMP_THD_RCVDLY)||(State==RMP_THD_DELAYED))
+    {
+        RMP_COVERAGE_MARKER();
+        RMP_List_Del(Thread->Dly_Head.Prev, Thread->Dly_Head.Next);
+    }
+    else if((State==RMP_THD_SNDDLY)||(State==RMP_THD_SEMDLY))
+    {
+        RMP_COVERAGE_MARKER();
+        RMP_List_Del(Thread->Run_Head.Prev, Thread->Run_Head.Next);
+        RMP_List_Del(Thread->Dly_Head.Prev, Thread->Dly_Head.Next);
+    }
+    else
+    {
+        RMP_COVERAGE_MARKER();
+        RMP_ASSERT(0U);
+    }
+
     /* Set return value to failure anyway */
     Thread->Retval=RMP_ERR_OPER;
     Thread->State=RMP_THD_FREE;
