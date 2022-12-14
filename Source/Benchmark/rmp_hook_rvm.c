@@ -1,13 +1,14 @@
 /******************************************************************************
-Filename    : rmp_blank.c
+Filename    : rmp_hook_rvm.c
 Author      : pry 
 Date        : 08/09/2019
 Licence     : The Unlicense; see LICENSE for details.
-Description : The blank project template file for RMP.
+Description : The blank project hook file for RMP under RVM hypervisor.
 ******************************************************************************/
 
 /* Includes ******************************************************************/
 #include "rmp.h"
+#include "rvm_guest.h"
 /* End Includes **************************************************************/
 
 /* Begin Function:RMP_Init ****************************************************
@@ -23,7 +24,7 @@ void RMP_Init_Hook(void)
 
 void RMP_Init_Idle(void)
 {
-    return;
+    RVM_Hyp_Wait_Vect();
 }
 /* End Function:RMP_Init *****************************************************/
 
