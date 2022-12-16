@@ -121,7 +121,7 @@ typedef rmp_s32_t rmp_ret_t;
 #ifndef __HDR_PUBLIC_MEMBERS__
 /*****************************************************************************/
 static rvm_ptr_t RMP_Console_Ptr;
-extern const rvm_ptr_t RVM_Proc_Header[];
+extern const rvm_ptr_t RVM_Proc_Desc[];
 /*****************************************************************************/
 /* End Private Global Variables **********************************************/
 
