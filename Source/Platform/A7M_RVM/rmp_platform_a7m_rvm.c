@@ -85,8 +85,8 @@ void _RMP_Plat_Hook(void)
 {
     /* Check header validity - guarantees that the header is not optimized out.
      * ALL VMs are guaranteed to have three entries: Vector, User and Stub */
-    RVM_ASSERT(RVM_Proc_Header[0]==RVM_MAGIC_VIRTUAL);
-    RVM_ASSERT(RVM_Proc_Header[1]==3U);
+    RVM_ASSERT(RVM_Proc_Desc[0]==RVM_MAGIC_VIRTUAL);
+    RVM_ASSERT(RVM_Proc_Desc[1]==3U);
     /* Enable interrupt, we've finished all initialization */
     RVM_Hyp_Ena_Int();
 }

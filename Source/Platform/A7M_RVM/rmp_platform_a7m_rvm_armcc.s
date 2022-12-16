@@ -20,7 +20,7 @@
             
 ;/* Begin Header *************************************************************/
     ;2^3=8 byte alignment.        
-    AREA                INIT,CODE,READONLY,ALIGN=3
+    AREA                INIT, CODE, READONLY, ALIGN=3
                 
     THUMB
     REQUIRE8
