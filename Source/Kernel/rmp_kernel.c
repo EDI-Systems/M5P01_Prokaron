@@ -503,14 +503,14 @@ void _RMP_Timer_Proc(void)
 }
 /* Begin Function:_RMP_Timer_Proc ********************************************/
 
-/* Begin Function:_RMP_High_Rdy_Get *******************************************
+/* Begin Function:_RMP_Rdy_High ***********************************************
 Description : Get the highest priority ready thread. The return value will be
               written into the global variables.
 Input       : None.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void _RMP_High_Rdy_Get(void)
+void _RMP_Rdy_High(void)
 {
     rmp_cnt_t Count;
     
@@ -558,7 +558,7 @@ void _RMP_High_Rdy_Get(void)
     RMP_Sched_Hook();
 #endif
 }
-/* End Function:_RMP_High_Rdy_Get ********************************************/
+/* End Function:_RMP_Rdy_High ************************************************/
 
 /* Begin Function:_RMP_Tick_Handler *******************************************
 Description : The system tick timer interrupt routine.
@@ -620,7 +620,7 @@ void _RMP_Tick_Handler(rmp_ptr_t Ticks)
 }
 /* End Function:_RMP_Tick_Handler ********************************************/
 
-/* Begin Function:_RMP_Near_Tick_Get ******************************************
+/* Begin Function:_RMP_Tick_Near ******************************************
 Description : Get the nearest timer interrupt arrival time. This is used to set
               the timer after the body of tick handler have been executed. This
               can be called in the ticker hook and scheduler hook to set the next
@@ -630,7 +630,7 @@ Input       : None.
 Output      : None.
 Return      : rmp_ptr_t Ticks - How many ticks until the next timeout.
 ******************************************************************************/
-rmp_ptr_t _RMP_Near_Tick_Get(void)
+rmp_ptr_t _RMP_Tick_Near(void)
 {
     rmp_ptr_t Value;
     volatile struct RMP_Thd* Thread;
@@ -659,7 +659,7 @@ rmp_ptr_t _RMP_Near_Tick_Get(void)
     
     return Value;
 }
-/* End Function:_RMP_Near_Tick_Get *******************************************/
+/* End Function:_RMP_Tick_Near *******************************************/
 
 /* Begin Function:_RMP_Rdy_Set ************************************************
 Description : Set the thread as ready to schedule. That means, put the thread into

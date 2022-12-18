@@ -189,7 +189,7 @@ void PendSV_Handler(void)
     /* Clear the software interrupt, if still pending */
     CLINT_REG(CLINT_MSIP)=0;
     RMP_Ctx_Save();
-    _RMP_High_Rdy_Get();
+    _RMP_Rdy_High();
     RMP_Ctx_Load();
 }
 /* End Function:PendSV_Handler ***********************************************/

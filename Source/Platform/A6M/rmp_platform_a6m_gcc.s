@@ -36,7 +36,7 @@ The above 3 registers are saved into the stack in combination(xPSR).
 /* End Exports ***************************************************************/
 
 /* Begin Imports *************************************************************/
-    .extern             _RMP_High_Rdy_Get 
+    .extern             _RMP_Rdy_High 
     .extern             _RMP_Tick_Handler     
     .extern             RMP_Thd_Cur
     .extern             RMP_SP_Cur        
@@ -193,7 +193,7 @@ PendSV_Handler:
     LDR                 R1,=RMP_SP_Cur      /* Save The SP to control block */
     STR                 R0,[R1]
                 
-    BL                  _RMP_High_Rdy_Get   /* Get the highest ready task */
+    BL                  _RMP_Rdy_High   /* Get the highest ready task */
                 
     LDR                 R1,=RMP_SP_Cur      /* Load the SP */
     LDR                 R0,[R1]

@@ -1948,14 +1948,14 @@ Feb 28, 2018 1:35:24 PM
 373:                 }
 374:                 /* Begin Function:_RMP_Timer_Proc ********************************************/
 375:                 
-376:                 /* Begin Function:_RMP_High_Rdy_Get *******************************************
+376:                 /* Begin Function:_RMP_Rdy_High *******************************************
 377:                 Description : Get the highest priority ready thread. The return value will be written
 378:                               into the global variables.
 379:                 Input       : None.
 380:                 Output      : None.
 381:                 Return      : None.
 382:                 ******************************************************************************/
-383:                 void _RMP_High_Rdy_Get(void)
+383:                 void _RMP_Rdy_High(void)
 384:                 {
 9D000DA8  27BDFFE8   ADDIU SP, SP, -24
 9D000DAC  AFBF0014   SW RA, 20(SP)
@@ -2058,7 +2058,7 @@ Feb 28, 2018 1:35:24 PM
 9D000DF0  8FBF0014   LW RA, 20(SP)
 9D000DF4  03E00008   JR RA
 9D000DF8  27BD0018   ADDIU SP, SP, 24
-427:                 /* End Function:_RMP_High_Rdy_Get ********************************************/
+427:                 /* End Function:_RMP_Rdy_High ********************************************/
 428:                 
 429:                 /* Begin Function:_RMP_Tick_Handler *******************************************
 430:                 Description : The system tick timer interrupt routine.
@@ -2150,13 +2150,13 @@ Feb 28, 2018 1:35:24 PM
 9D000F50  8FBF0014   LW RA, 20(SP)
 471:                 /* End Function:_RMP_Tick_Handler ********************************************/
 472:                 
-473:                 /* Begin Function:_RMP_Near_Tick_Get *****************************************
+473:                 /* Begin Function:_RMP_Tick_Near *****************************************
 474:                 Description : Get the nearest timer interrupt arrival time.
 475:                 Input       : None.
 476:                 Output      : None.
 477:                 Return      : ptr_t Ticks - How many ticks until the next timeout.
 478:                 ******************************************************************************/
-479:                 ptr_t _RMP_Near_Tick_Get(void)
+479:                 ptr_t _RMP_Tick_Near(void)
 480:                 {
 481:                     ptr_t Value;
 482:                     struct RMP_Thd* Thread;
@@ -2198,7 +2198,7 @@ Feb 28, 2018 1:35:24 PM
 503:                 }
 9D000FA8  03E00008   JR RA
 9D000FAC  0062100A   MOVZ V0, V1, V0
-504:                 /* End Function:_RMP_Near_Tick_Get ******************************************/
+504:                 /* End Function:_RMP_Tick_Near ******************************************/
 505:                 
 506:                 /* Begin Function:_RMP_Rdy_Set ************************************************
 507:                 Description : Set the thread as ready to schedule. That means, put the thread into
@@ -5906,7 +5906,7 @@ Feb 28, 2018 1:35:24 PM
                                                   74:    
                                                   75:    /* Begin Imports *************************************************************/
                                                   76:                    /* The real task switch handling function */
-                                                  77:                    .extern         _RMP_High_Rdy_Get 
+                                                  77:                    .extern         _RMP_Rdy_High 
                                                   78:                    /* The real systick handler function */
                                                   79:                    .extern          _RMP_Tick_Handler
                                                   80:                    /* The PID of the current thread */
@@ -6313,7 +6313,7 @@ Feb 28, 2018 1:35:24 PM
 9D0004F0  0F400DB3   JAL 0x9D0036CC               481:                   jal              RMP_Ctx_Save
 9D0004F4  00000000   NOP                          482:                   nop
                                                   483:                   /* Get the highest priority ready task */
-9D0004F8  0F40036A   JAL 0x9D000DA8               484:                   jal              _RMP_High_Rdy_Get
+9D0004F8  0F40036A   JAL 0x9D000DA8               484:                   jal              _RMP_Rdy_High
 9D0004FC  00000000   NOP                          485:                   nop
                                                   486:                   /* Restore extra registers */
 9D000500  0F400DB5   JAL 0x9D0036D4               487:                   jal              RMP_Ctx_Load
