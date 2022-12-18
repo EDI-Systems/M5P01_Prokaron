@@ -313,8 +313,8 @@ static volatile struct RMP_Thd RMP_Init_Thd;
 
 /* Private C Function Prototypes *********************************************/ 
 /*****************************************************************************/
-static void _RMP_Rdy_Set(volatile struct RMP_Thd* Thread);
-static void _RMP_Rdy_Clr(volatile struct RMP_Thd* Thread);
+static void _RMP_Run_Ins(volatile struct RMP_Thd* Thread);
+static void _RMP_Run_Del(volatile struct RMP_Thd* Thread);
 static void _RMP_Dly_Ins(volatile struct RMP_Thd* Thread,
                          rmp_ptr_t Slice);
 static void _RMP_Timer_Proc(void);
@@ -379,7 +379,7 @@ __EXTERN__ volatile rmp_ptr_t RMP_SP_Cur;
 /*****************************************************************************/
 /* This is the entry of user applications */
 EXTERN void RMP_Init(void);
-__EXTERN__ void _RMP_Rdy_High(void);
+__EXTERN__ void _RMP_Run_High(void);
 __EXTERN__ void _RMP_Tick_Handler(rmp_ptr_t Ticks);
 __EXTERN__ rmp_ptr_t _RMP_Tick_Near(void);
 __EXTERN__ void RMP_Clear(volatile void* Addr,

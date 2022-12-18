@@ -229,7 +229,7 @@ void PendSV_Handler(void)
 
 	RMP_Ctx_Save();
 	RMP_SP_Cur=(rmp_ptr_t)SP;
-	_RMP_Rdy_High();
+	_RMP_Run_High();
 	SP=(rmp_ptr_t*)RMP_SP_Cur;
 	RMP_Ctx_Load();
 
