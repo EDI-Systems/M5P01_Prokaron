@@ -58,7 +58,7 @@ STATUS      16          Status register.
 
 /* Begin Imports *************************************************************/
     /* The real task switch handling function */
-    .extern             __RMP_High_Rdy_Get 
+    .extern             __RMP_Rdy_High 
     /* The real systick handler function */
     .extern             __RMP_Tick_Handler
     /* The PID of the current thread */
@@ -281,7 +281,7 @@ __INT0Interrupt:
     /* Save extra registers */
     CALL                _RMP_Ctx_Save
     /* Get the highest priority ready task */
-    CALL                __RMP_High_Rdy_Get
+    CALL                __RMP_Rdy_High
     /* Restore extra registers */
     CALL                _RMP_Ctx_Load
     /* Clear software interrupt flag */

@@ -618,23 +618,23 @@ void Test_Coverage_2(void)
     RMP_Thd_Crt(&Thd_1, Test_Set_1, THD1_STACK, (void*)3, 3, 5);
     RMP_Sched_Lock();
     RMP_Thd_Snd_ISR(&Thd_1, 1);                                /* Send success with blocked thread */
-    _RMP_Near_Tick_Get();
+    _RMP_Tick_Near();
     RMP_Sched_Unlock();
     RMP_Thd_Del(&Thd_1);
     
     RMP_Thd_Crt(&Thd_1, Test_Set_1, THD1_STACK, (void*)4, 3, 5);
     RMP_Sched_Lock();
     RMP_Thd_Snd_ISR(&Thd_1, 1);                                /* Send success with delaying thread */
-    _RMP_Near_Tick_Get();
+    _RMP_Tick_Near();
     RMP_Thd_Snd_ISR(&Thd_1, 1);                                /* Send failure due to full mailbox */
-    _RMP_Near_Tick_Get();
+    _RMP_Tick_Near();
     RMP_Sched_Unlock();
     RMP_Thd_Del(&Thd_1);
      
     RMP_Thd_Crt(&Thd_1, Test_Set_1, THD1_STACK, (void*)2, 3, 5);
     RMP_Sched_Lock();
     RMP_Thd_Snd_ISR(&Thd_1, 1);                                /* Send success with thread not blocked */
-    _RMP_Near_Tick_Get();
+    _RMP_Tick_Near();
     RMP_Sched_Unlock();
     RMP_Thd_Del(&Thd_1);
     
@@ -642,7 +642,7 @@ void Test_Coverage_2(void)
     RMP_Thd_Delay(100);
     RMP_Sched_Lock();
     RMP_Thd_Snd_ISR(&Thd_1, 1);                                /* Send success with thread not preempting current thread */
-    _RMP_Near_Tick_Get();
+    _RMP_Tick_Near();
     RMP_Sched_Unlock();
     RMP_Thd_Del(&Thd_1);
     
@@ -747,7 +747,7 @@ void Test_Coverage_2(void)
         Temp=Data;
         /* Iterate on this function */
         RMP_Sched_Lock();
-        _RMP_Near_Tick_Get();
+        _RMP_Tick_Near();
         RMP_Sched_Unlock();
     }
     RMP_Realloc(Pool,(void*)Temp,256);                          /* Test realloc cannot expand */
@@ -760,7 +760,7 @@ void Test_Coverage_2(void)
     while((RMP_Tick-Data)<1000)
     {
         RMP_Sched_Lock();
-        _RMP_Near_Tick_Get();
+        _RMP_Tick_Near();
         RMP_Sched_Unlock();
     }
     RMP_Thd_Del(&Thd_1);

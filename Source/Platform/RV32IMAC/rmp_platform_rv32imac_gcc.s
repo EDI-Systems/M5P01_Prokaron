@@ -108,7 +108,7 @@ F31    $ft11      temporary (caller-save)
 
 /* Begin Imports *************************************************************/
     /* The real task switch handling function */
-    .extern             _RMP_High_Rdy_Get
+    .extern             _RMP_Rdy_High
     /* The real systick handler function */
     .extern             _RMP_Tick_Handler
     /* The current thread */

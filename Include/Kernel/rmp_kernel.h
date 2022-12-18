@@ -92,8 +92,8 @@ Description : The header file for the kernel.
 #define RMP_DLY2THD(X)              ((volatile struct RMP_Thd*)(((rmp_ptr_t)(X))-sizeof(struct RMP_List)))
 
 /* Printk macros */
-#define RMP_PRINTK_I(INT)           RMP_Int_Print((INT))
-#define RMP_PRINTK_U(UINT)          RMP_Hex_Print((UINT))
+#define RMP_PRINTK_I(INT)           RMP_Int_Print(INT)
+#define RMP_PRINTK_U(UINT)          RMP_Hex_Print(UINT)
 #define RMP_PRINTK_S(STR)           RMP_Str_Print((rmp_s8_t*)(STR))
 
 /* Built-in graphics */
@@ -379,9 +379,9 @@ __EXTERN__ volatile rmp_ptr_t RMP_SP_Cur;
 /*****************************************************************************/
 /* This is the entry of user applications */
 EXTERN void RMP_Init(void);
-__EXTERN__ void _RMP_High_Rdy_Get(void);
+__EXTERN__ void _RMP_Rdy_High(void);
 __EXTERN__ void _RMP_Tick_Handler(rmp_ptr_t Ticks);
-__EXTERN__ rmp_ptr_t _RMP_Near_Tick_Get(void);
+__EXTERN__ rmp_ptr_t _RMP_Tick_Near(void);
 __EXTERN__ void RMP_Clear(volatile void* Addr,
                           rmp_ptr_t Size);
 

@@ -230,8 +230,8 @@ void RMP_PendSV_Handler(void)
     RMP_SP_Cur=(rmp_ptr_t)SP;
                 
     /* Get the highest ready task
-     * BL        _RMP_High_Rdy_Get */
-    _RMP_High_Rdy_Get();
+     * BL        _RMP_Rdy_High */
+    _RMP_Rdy_High();
     
     /* Load the SP
      * LDR       R1,=RMP_SP_Cur

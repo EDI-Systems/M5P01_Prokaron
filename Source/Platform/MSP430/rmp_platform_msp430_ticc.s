@@ -37,7 +37,7 @@
 
 ;/* Begin Imports ************************************************************/
     ;The real task switch handling function
-    .global             _RMP_High_Rdy_Get 
+    .global             _RMP_Rdy_High 
     ;The real systick handler function
     .global             _RMP_Tick_Handler
     ;The PID of the current thread                     
@@ -146,7 +146,7 @@ PendSV_Handler:         .asmfunc
     mov                 SP,&RMP_SP_Cur
                 
     ;Get the highest ready task.
-    call                #_RMP_High_Rdy_Get
+    call                #_RMP_Rdy_High
                 
     ;Load the SP.
     mov                 &RMP_SP_Cur,SP
