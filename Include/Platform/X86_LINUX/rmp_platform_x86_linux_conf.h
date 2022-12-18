@@ -23,23 +23,26 @@ Description: The configuration file for POSIX platform.
 #include <sys/reg.h>
 #include <sys/syscall.h>
 #include <linux/ptrace.h>
+
+/* Debugging */
+#define RMP_ASSERT_CORRECT          (0U)
 /* The maximum number of preemption priority levels in the system.
  * This parameter must be divisible by the word length - 32 is usually sufficient */
-#define RMP_PREEMPT_PRIO_NUM         32
+#define RMP_PREEMPT_PRIO_NUM        (32U)
 /* The maximum number of slices allowed */
-#define RMP_SLICE_MAX               100000
+#define RMP_SLICE_MAX               (100000U)
 /* The maximum number of semaphore counts allowed */
-#define RMP_SEM_CNT_MAX              1000
+#define RMP_SEM_CNT_MAX             (1000U)
 /* Are we using custom hooks? */
-#define RMP_HOOK_EXTRA                0U
+#define RMP_HOOK_EXTRA              (0U)
 /* The stack size of the init thread */
-#define RMP_INIT_STACK_SIZE          65535
+#define RMP_INIT_STACK_SIZE         (65535U)
 /* The mask/unmask interrupt operations - on linux this is not supported */
 #define RMP_INT_MASK()
 #define RMP_INT_UNMASK()
 
 /* What is the tick interval? */
-#define RMP_POSIX_TIME_VAL           100
+#define RMP_POSIX_TIME_VAL          (100U)
 
 /* This is for debugging output */
 #define RMP_POSIX_PUTCHAR(CHAR) \

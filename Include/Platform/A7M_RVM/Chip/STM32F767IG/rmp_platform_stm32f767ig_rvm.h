@@ -7,6 +7,8 @@ Description: The configuration file for STM32F767IG.
 ******************************************************************************/
 
 /* Defines *******************************************************************/
+/* Debugging */
+#define RMP_ASSERT_CORRECT          (0U)
 /* The maximum number of preemption priority levels in the system.
  * This parameter must be divisible by the word length - 32 is usually sufficient */
 #define RMP_PREEMPT_PRIO_NUM        (32U)
@@ -17,7 +19,7 @@ Description: The configuration file for STM32F767IG.
 /* Are we using custom hooks? */
 #define RMP_HOOK_EXTRA              (0U)
 /* The stzck size of the init thread */
-#define RMP_INIT_STACK_SIZE         (256U)
+#define RMP_INIT_STACK_SIZE         (1024U)
 
 /* The mask/unmask interrupt operations */
 #define RMP_INT_MASK()              RMP_Int_Mask()

@@ -1,5 +1,5 @@
 /******************************************************************************
-Filename   : rmp_platform_STM32L053C8.h
+Filename   : rmp_platform_stm32l053c8.h
 Author     : pry
 Date       : 24/06/2017
 Licence    : The Unlicense; see LICENSE for details.
@@ -11,25 +11,28 @@ Description: The configuration file for STM32L053C8.
 #include "stm32l0xx_hal.h"
 #include "stm32l0xx_hal_conf.h"
 #include "core_cm0plus.h"
+
+/* Debugging */
+#define RMP_ASSERT_CORRECT          (0U)
 /* The maximum number of preemption priority levels in the system.
  * This parameter must be divisible by the word length - 32 is usually sufficient */
-#define RMP_PREEMPT_PRIO_NUM         32
+#define RMP_PREEMPT_PRIO_NUM        (32U)
 /* The maximum number of slices allowed */
-#define RMP_SLICE_MAX               100000
+#define RMP_SLICE_MAX               (100000U)
 /* The maximum number of semaphore counts allowed */
-#define RMP_SEM_CNT_MAX              1000
+#define RMP_SEM_CNT_MAX             (1000U)
 /* Are we using custom hooks? */
-#define RMP_HOOK_EXTRA                0U
+#define RMP_HOOK_EXTRA              (0U)
 /* The stzck size of the init thread */
-#define RMP_INIT_STACK_SIZE          256
+#define RMP_INIT_STACK_SIZE         (256U)
 /* The mask/unmask interrupt operations */
-#define RMP_INT_MASK()               RMP_Int_Disable()
-#define RMP_INT_UNMASK()             RMP_Int_Enable()
+#define RMP_INT_MASK()              RMP_Int_Disable()
+#define RMP_INT_UNMASK()            RMP_Int_Enable()
 
 /* What is the NVIC priority grouping? */
-#define RMP_CMX_NVIC_GROUPING        RMP_CMX_NVIC_GROUPING_P2S6
+#define RMP_CMX_NVIC_GROUPING       RMP_CMX_NVIC_GROUPING_P2S6
 /* What is the Systick value? */
-#define RMP_CMX_SYSTICK_VAL          3600
+#define RMP_CMX_SYSTICK_VAL         (3600U)
 
 /* Other low-level initialization stuff - clock and serial
  * STM32L0xx APB1<32MHz, APB2<32MHz. 

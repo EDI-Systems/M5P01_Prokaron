@@ -92,9 +92,9 @@ Description : The header file for the kernel.
 #define RMP_DLY2THD(X)              ((volatile struct RMP_Thd*)(((rmp_ptr_t)(X))-sizeof(struct RMP_List)))
 
 /* Printk macros */
-#define RMP_PRINTK_I(INT)           RMP_Int_Print(INT)
-#define RMP_PRINTK_U(UINT)          RMP_Hex_Print(UINT)
-#define RMP_PRINTK_S(STR)           RMP_Str_Print((rmp_s8_t*)(STR))
+#define RMP_LOG_I(INT)              RMP_Int_Print(INT)
+#define RMP_LOG_H(UINT)             RMP_Hex_Print(UINT)
+#define RMP_LOG_S(STR)              RMP_Str_Print((rmp_s8_t*)(STR))
 
 /* Built-in graphics */
 #ifdef RMP_POINT
@@ -125,25 +125,33 @@ Description : The header file for the kernel.
 #define RMP_CUR_CROSS               (11U)
 #endif
     
-/* Assert macro */
+/* Assert macro - used only in internal development */
+#if(RMP_ASSERT_CORRECT==0U)
 #define RMP_ASSERT(X) \
 do \
 { \
     if((X)==0) \
     { \
-        RMP_PRINTK_S("\r\n***\r\nKernel panic - not syncing:\r\n"); \
-        RMP_PRINTK_S(__FILE__); \
-        RMP_PRINTK_S(" , Line "); \
-        RMP_PRINTK_I(__LINE__); \
-        RMP_PRINTK_S("\r\n"); \
-        RMP_PRINTK_S(__DATE__); \
-        RMP_PRINTK_S(" , "); \
-        RMP_PRINTK_S(__TIME__); \
-        RMP_PRINTK_S("\r\n"); \
+        RMP_LOG_S("\r\n***\r\nKernel panic - not syncing:\r\n"); \
+        RMP_LOG_S(__FILE__); \
+        RMP_LOG_S(" , Line "); \
+        RMP_LOG_I(__LINE__); \
+        RMP_LOG_S("\r\n"); \
+        RMP_LOG_S(__DATE__); \
+        RMP_LOG_S(" , "); \
+        RMP_LOG_S(__TIME__); \
+        RMP_LOG_S("\r\n"); \
         while(1); \
     } \
 } \
 while(0)
+#else
+#define RMP_ASSERT(X) \
+do \
+{ \
+} \
+while(0)
+#endif
     
 /* Coverage switch - not to be enabled in most cases; user should not touch this */
 /* #define RMP_COVERAGE */

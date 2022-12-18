@@ -1,9 +1,9 @@
 /******************************************************************************
-Filename    : rmp_platform_FE310-G000.h
+Filename    : rmp_platform_fe310g000.h
 Author      : pry
 Date        : 24/06/2017
 Licence     : The Unlicense; see LICENSE for details.
-Description : The configuration file for FE310-G000.
+Description : The configuration file for FE310-G000 RISC-V chip.
 ******************************************************************************/
 
 /* Defines *******************************************************************/
@@ -13,28 +13,30 @@ Description : The configuration file for FE310-G000.
 #include "plic/plic_driver.h"
 #include "fe300prci/fe300prci_driver.h"
 
+/* Debugging */
+#define RMP_ASSERT_CORRECT          (0U)
 /* The maximum number of preemption priority levels in the system.
  * This parameter must be divisible by the word length - 32 is usually sufficient */
-#define RMP_PREEMPT_PRIO_NUM         32
+#define RMP_PREEMPT_PRIO_NUM        (32U)
 /* The maximum number of slices allowed */
-#define RMP_SLICE_MAX               100000
+#define RMP_SLICE_MAX               (100000U)
 /* The maximum number of semaphore counts allowed */
-#define RMP_SEM_CNT_MAX              1000
+#define RMP_SEM_CNT_MAX             (1000U)
 /* Are we using custom hooks? */
-#define RMP_HOOK_EXTRA                0U
+#define RMP_HOOK_EXTRA              (0U)
 /* The stzck size of the init thread */
-#define RMP_INIT_STACK_SIZE          256
+#define RMP_INIT_STACK_SIZE         (256U)
 /* The mask/unmask interrupt operations */
-#define RMP_INT_MASK()               RMP_Int_Disable()
-#define RMP_INT_UNMASK()             RMP_Int_Enable()
+#define RMP_INT_MASK()              RMP_Int_Disable()
+#define RMP_INT_UNMASK()            RMP_Int_Enable()
 
-#define RMP_RV32IMAC_INT_NUMBER      PLIC_NUM_INTERRUPTS
+#define RMP_RV32IMAC_INT_NUMBER     PLIC_NUM_INTERRUPTS
 /* The mtime RTC runs on a 32768kHz crystal. This means 1ms tick time */
-#define RMP_RISCV_TICK_COUNT         33
+#define RMP_RISCV_TICK_COUNT        (33U)
 
 /* Some register names */
-#define MTIME                        (*((volatile uint64_t *)(CLINT_CTRL_ADDR + CLINT_MTIME)))
-#define MTIMECMP                     (*((volatile uint64_t *)(CLINT_CTRL_ADDR + CLINT_MTIMECMP)))
+#define MTIME                       (*((volatile uint64_t *)(CLINT_CTRL_ADDR + CLINT_MTIME)))
+#define MTIMECMP                    (*((volatile uint64_t *)(CLINT_CTRL_ADDR + CLINT_MTIMECMP)))
 
 /* Other low-level initialization stuff - clock and serial. 
  * This is the default initialization sequence. If you wish to supply
@@ -81,7 +83,7 @@ while(0)
 #define RMP_RV32IMAC_PUTCHAR(CHAR) \
 do \
 { \
-    while(UART0_REG(UART_REG_TXFIFO)&0x80000000); \
+    while(UART0_REG(UART_REG_TXFIFO)&0x80000000U); \
     UART0_REG(UART_REG_TXFIFO)=(rmp_ptr_t)(CHAR); \
 } \
 while(0)

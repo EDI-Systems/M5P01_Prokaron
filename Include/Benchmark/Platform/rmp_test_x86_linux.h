@@ -87,7 +87,7 @@ void Int_Init(void)
     Tick.it_interval.tv_sec=0;
     Tick.it_interval.tv_usec=TEST_INT_INTERVAL;
     RMP_ASSERT(setitimer(ITIMER_REAL, &Tick, NULL)>=0);
-    RMP_PRINTK_S("Timer init done - testing interrupts.\r\n");
+    RMP_LOG_S("Timer init done - testing interrupts.\r\n");
 }
 
 /* End Function:Int_Init *****************************************************/

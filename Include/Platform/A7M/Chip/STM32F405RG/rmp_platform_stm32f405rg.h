@@ -1,5 +1,5 @@
 /******************************************************************************
-Filename   : rmp_platform_STM32F405RG.h
+Filename   : rmp_platform_stm32f405rg.h
 Author     : pry
 Date       : 24/06/2017
 Licence    : The Unlicense; see LICENSE for details.
@@ -11,6 +11,9 @@ Description: The configuration file for STM32F405RG.
 #include "stm32f4xx.h"
 #include "core_cm4.h"
 #include "stm32f4xx_hal.h"
+
+/* Debugging */
+#define RMP_ASSERT_CORRECT          (0U)
 /* The maximum number of preemption priority levels in the system.
  * This parameter must be divisible by the word length - 32 is usually sufficient */
 #define RMP_PREEMPT_PRIO_NUM        (32U)
@@ -21,7 +24,7 @@ Description: The configuration file for STM32F405RG.
 /* Are we using custom hooks? */
 #define RMP_HOOK_EXTRA              (0U)
 /* The stzck size of the init thread */
-#define RMP_INIT_STACK_SIZE         (256)
+#define RMP_INIT_STACK_SIZE         (256U)
 /* The mask/unmask interrupt operations - can be adjusted to fit your own levels */
 #define RMP_INT_MASK()              RMP_Int_Mask(0xFFU)
 #define RMP_INT_UNMASK()            RMP_Int_Mask(0x00U)
@@ -119,7 +122,7 @@ while(0)
 do \
 { \
     USART1->DR=CHAR; \
-    while((USART1->SR&0x40)==0); \
+    while((USART1->SR&0x40U)==0U); \
 } \
 while(0)
 /* End Defines ***************************************************************/

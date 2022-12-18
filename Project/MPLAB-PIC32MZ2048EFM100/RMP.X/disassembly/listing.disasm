@@ -5238,7 +5238,7 @@ Feb 28, 2018 1:35:24 PM
 155:                     Test_Yield_2();
 9D003DA8  0F400EBE   JAL Test_Yield_2
 9D003DAC  00000000   NOP
-156:                     RMP_PRINTK_S("Yield: ");
+156:                     RMP_LOG_S("Yield: ");
 9D003DB0  3C049D00   LUI A0, -25344
 9D003DB4  0F400309   JAL RMP_Str_Print
 9D003DB8  24844B50   ADDIU A0, A0, 19280
@@ -5251,11 +5251,11 @@ Feb 28, 2018 1:35:24 PM
 9D003DCC  00001010   MFHI V0
 9D003DD4  00021342   SRL V0, V0, 13
 9D003DD8  AF828054   SW V0, -32684(GP)
-159:                     RMP_PRINTK_I(Yield_Time);
+159:                     RMP_LOG_I(Yield_Time);
 9D003DDC  8F848054   LW A0, -32684(GP)
 9D003DE0  0F40026D   JAL RMP_Int_Print
 9D003DE4  00000000   NOP
-160:                     RMP_PRINTK_S(" cycles.\r\n");
+160:                     RMP_LOG_S(" cycles.\r\n");
 9D003DD0  3C109D00   LUI S0, -25344
 9D003DE8  0F400309   JAL RMP_Str_Print
 9D003DEC  26044B58   ADDIU A0, S0, 19288
@@ -5274,7 +5274,7 @@ Feb 28, 2018 1:35:24 PM
 166:                     Test_Mail_2();
 9D003E0C  0F400ED9   JAL Test_Mail_2
 9D003E10  00000000   NOP
-167:                     RMP_PRINTK_S("Mailbox: ");
+167:                     RMP_LOG_S("Mailbox: ");
 9D003E14  3C049D00   LUI A0, -25344
 9D003E18  0F400309   JAL RMP_Str_Print
 9D003E1C  24844B64   ADDIU A0, A0, 19300
@@ -5284,11 +5284,11 @@ Feb 28, 2018 1:35:24 PM
 9D003E28  00001010   MFHI V0
 9D003E2C  00021342   SRL V0, V0, 13
 9D003E30  AF828050   SW V0, -32688(GP)
-169:                     RMP_PRINTK_I(Mailbox_Time);
+169:                     RMP_LOG_I(Mailbox_Time);
 9D003E34  8F848050   LW A0, -32688(GP)
 9D003E38  0F40026D   JAL RMP_Int_Print
 9D003E3C  00000000   NOP
-170:                     RMP_PRINTK_S(" cycles.\r\n");
+170:                     RMP_LOG_S(" cycles.\r\n");
 9D003E40  0F400309   JAL RMP_Str_Print
 9D003E44  26044B58   ADDIU A0, S0, 19288
 171:                     
@@ -5298,7 +5298,7 @@ Feb 28, 2018 1:35:24 PM
 174:                     Test_Sem_2();
 9D003E4C  0F400EFA   JAL Test_Sem_2
 9D003E50  00000000   NOP
-175:                     RMP_PRINTK_S("Semaphore: ");
+175:                     RMP_LOG_S("Semaphore: ");
 9D003E54  3C049D00   LUI A0, -25344
 9D003E58  0F400309   JAL RMP_Str_Print
 9D003E5C  24844B70   ADDIU A0, A0, 19312
@@ -5308,11 +5308,11 @@ Feb 28, 2018 1:35:24 PM
 9D003E68  00001010   MFHI V0
 9D003E6C  00021342   SRL V0, V0, 13
 9D003E70  AF82804C   SW V0, -32692(GP)
-177:                     RMP_PRINTK_I(Semaphore_Time);
+177:                     RMP_LOG_I(Semaphore_Time);
 9D003E74  8F84804C   LW A0, -32692(GP)
 9D003E78  0F40026D   JAL RMP_Int_Print
 9D003E7C  00000000   NOP
-178:                     RMP_PRINTK_S(" cycles.\r\n");
+178:                     RMP_LOG_S(" cycles.\r\n");
 9D003E80  0F400309   JAL RMP_Str_Print
 9D003E84  26044B58   ADDIU A0, S0, 19288
 179:                     
@@ -5334,7 +5334,7 @@ Feb 28, 2018 1:35:24 PM
 9D003ED4  0F400F40   JAL Test_Sem_ISR
 9D003ED8  00000000   NOP
 189:                     
-190:                     RMP_PRINTK_S("Mailbox-ISR: ");
+190:                     RMP_LOG_S("Mailbox-ISR: ");
 9D003EDC  3C049D00   LUI A0, -25344
 9D003EE0  0F400309   JAL RMP_Str_Print
 9D003EE4  24844B7C   ADDIU A0, A0, 19324
@@ -5344,14 +5344,14 @@ Feb 28, 2018 1:35:24 PM
 9D003EF0  00001010   MFHI V0
 9D003EF4  00021342   SRL V0, V0, 13
 9D003EF8  AF828048   SW V0, -32696(GP)
-192:                     RMP_PRINTK_I(Mailbox_ISR_Time);
+192:                     RMP_LOG_I(Mailbox_ISR_Time);
 9D003EFC  8F848048   LW A0, -32696(GP)
 9D003F00  0F40026D   JAL RMP_Int_Print
 9D003F04  00000000   NOP
-193:                     RMP_PRINTK_S(" cycles.\r\n");
+193:                     RMP_LOG_S(" cycles.\r\n");
 9D003F08  0F400309   JAL RMP_Str_Print
 9D003F0C  26044B58   ADDIU A0, S0, 19288
-194:                     RMP_PRINTK_S("Semaphore-ISR: ");
+194:                     RMP_LOG_S("Semaphore-ISR: ");
 9D003F10  3C049D00   LUI A0, -25344
 9D003F14  0F400309   JAL RMP_Str_Print
 9D003F18  24844B8C   ADDIU A0, A0, 19340
@@ -5361,11 +5361,11 @@ Feb 28, 2018 1:35:24 PM
 9D003F24  00001010   MFHI V0
 9D003F28  00021342   SRL V0, V0, 13
 9D003F2C  AF828044   SW V0, -32700(GP)
-196:                     RMP_PRINTK_I(Semaphore_ISR_Time);
+196:                     RMP_LOG_I(Semaphore_ISR_Time);
 9D003F30  8F848044   LW A0, -32700(GP)
 9D003F34  0F40026D   JAL RMP_Int_Print
 9D003F38  00000000   NOP
-197:                     RMP_PRINTK_S(" cycles.\r\n");
+197:                     RMP_LOG_S(" cycles.\r\n");
 9D003F3C  0F400309   JAL RMP_Str_Print
 9D003F40  26044B58   ADDIU A0, S0, 19288
 9D003F44  0B400FD1   J .LVL50
@@ -5432,18 +5432,18 @@ Feb 28, 2018 1:35:24 PM
 9D003FB4  0441FFF0   BGEZ V0, 0x9D003F78
 9D003FB8  8FBF0014   LW RA, 20(SP)
 218:                         {
-219:                             RMP_PRINTK_S("ISR Mailbox send failure: ");
+219:                             RMP_LOG_S("ISR Mailbox send failure: ");
 9D003948  0F400309   JAL RMP_Str_Print
 9D00394C  24844AFC   ADDIU A0, A0, 19196
 9D003FBC  3C049D00   LUI A0, -25344
 9D003FC0  0F400309   JAL RMP_Str_Print
 9D003FC4  24844AFC   ADDIU A0, A0, 19196
-220:                             RMP_PRINTK_I(Count);
+220:                             RMP_LOG_I(Count);
 9D003950  0F40026D   JAL RMP_Int_Print
 9D003954  8F848034   LW A0, -32716(GP)
 9D003FC8  0F40026D   JAL RMP_Int_Print
 9D003FCC  8F848034   LW A0, -32716(GP)
-221:                             RMP_PRINTK_S(" sends.\r\n");
+221:                             RMP_LOG_S(" sends.\r\n");
 9D003958  3C049D00   LUI A0, -25344
 9D00395C  0F400309   JAL RMP_Str_Print
 9D003960  24844B18   ADDIU A0, A0, 19224
@@ -5497,19 +5497,19 @@ Feb 28, 2018 1:35:24 PM
 9D004018  0441FFD7   BGEZ V0, 0x9D003F78
 9D00401C  8FBF0014   LW RA, 20(SP)
 230:                         {
-231:                             RMP_PRINTK_S("ISR semaphore post failure: ");
+231:                             RMP_LOG_S("ISR semaphore post failure: ");
 9D003920  3C049D00   LUI A0, -25344
 9D003924  0F400309   JAL RMP_Str_Print
 9D003928  24844B24   ADDIU A0, A0, 19236
 9D004020  3C049D00   LUI A0, -25344
 9D004024  0F400309   JAL RMP_Str_Print
 9D004028  24844B24   ADDIU A0, A0, 19236
-232:                             RMP_PRINTK_I(Count);
+232:                             RMP_LOG_I(Count);
 9D00392C  0F40026D   JAL RMP_Int_Print
 9D003930  8F848034   LW A0, -32716(GP)
 9D00402C  0F40026D   JAL RMP_Int_Print
 9D004030  8F848034   LW A0, -32716(GP)
-233:                             RMP_PRINTK_S(" posts.\r\n");
+233:                             RMP_LOG_S(" posts.\r\n");
 9D003934  3C049D00   LUI A0, -25344
 9D003938  0F400309   JAL RMP_Str_Print
 9D00393C  24844B44   ADDIU A0, A0, 19268

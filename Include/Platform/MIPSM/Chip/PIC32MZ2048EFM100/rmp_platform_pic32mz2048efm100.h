@@ -1,5 +1,5 @@
 /******************************************************************************
-Filename   : rmp_platform_PIC32MZ2048EFM100.h
+Filename   : rmp_platform_pic32mz2048efm100.h
 Author     : pry
 Date       : 24/06/2017
 Licence    : The Unlicense; see LICENSE for details.
@@ -10,25 +10,28 @@ Description: The configuration file for PIC32MZ2048EFM100.
 /* The MPLAB libraries */
 #include <xc.h>
 #include <sys/attribs.h>
+
+/* Debugging */
+#define RMP_ASSERT_CORRECT          (0U)
 /* The maximum number of preemption priority levels in the system.
  * This parameter must be divisible by the word length - 32 is usually sufficient */
-#define RMP_PREEMPT_PRIO_NUM         32
+#define RMP_PREEMPT_PRIO_NUM        (32)
 /* The maximum number of slices allowed */
-#define RMP_SLICE_MAX               100000
+#define RMP_SLICE_MAX               (100000U)
 /* The maximum number of semaphore counts allowed */
-#define RMP_SEM_CNT_MAX              1000
+#define RMP_SEM_CNT_MAX             (1000U)
 /* Are we using custom hooks? */
-#define RMP_HOOK_EXTRA                0U
+#define RMP_HOOK_EXTRA              (0U)
 /* The stack size of the init thread */
-#define RMP_INIT_STACK_SIZE          2048
+#define RMP_INIT_STACK_SIZE         (2048U)
 /* The mask/unmask interrupt operations */
-#define RMP_INT_MASK()               RMP_Int_Disable()
-#define RMP_INT_UNMASK()             RMP_Int_Enable()
+#define RMP_INT_MASK()              RMP_Int_Disable()
+#define RMP_INT_UNMASK()            RMP_Int_Enable()
 
 /* What is the tick timer value? */
-#define RMP_MIPSM_TICK_VAL           20000
+#define RMP_MIPSM_TICK_VAL          (20000U)
 /* Do we initialize the rest of the registers when initializing the thread? */
-#define RMP_MIPSM_INIT_EXTRA         1U
+#define RMP_MIPSM_INIT_EXTRA        (1U)
 
 /* Other low-level initialization stuff - clock and serial. 
  * This is the default initialization sequence. If you wish to supply
