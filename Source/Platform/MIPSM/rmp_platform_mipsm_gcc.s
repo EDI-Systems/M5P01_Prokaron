@@ -74,7 +74,7 @@ R31    $ra        return address (used by function call)
 
 /* Begin Imports *************************************************************/
     /* The real task switch handling function */
-    .extern             _RMP_Rdy_High 
+    .extern             _RMP_Run_High 
     /* The real systick handler function */
     .extern             _RMP_Tick_Handler
     /* The PID of the current thread */
@@ -429,7 +429,7 @@ PendSV_Handler:
     JAL                 RMP_Ctx_Save
     NOP
     /* Get the highest priority ready task */
-    JAL                 _RMP_Rdy_High
+    JAL                 _RMP_Run_High
     NOP
     /* Restore extra registers */
     JAL                 RMP_Ctx_Load

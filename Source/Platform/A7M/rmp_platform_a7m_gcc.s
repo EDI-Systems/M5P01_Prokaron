@@ -38,7 +38,7 @@ The ARM Cortex-M4/7 also include a FPU.
 /* End Exports ***************************************************************/
 
 /* Begin Imports *************************************************************/
-    .extern             _RMP_Rdy_High 
+    .extern             _RMP_Run_High 
     .extern             _RMP_Tick_Handler     
     .extern             RMP_Thd_Cur
     .extern             RMP_SP_Cur        
@@ -175,7 +175,7 @@ PendSV_Handler:
     LDR                 R1,=RMP_SP_Cur          
     STR                 R0,[R1]
     
-    BL                  _RMP_Rdy_High        
+    BL                  _RMP_Run_High        
     
     LDR                 R1,=RMP_SP_Cur           
     LDR                 R0,[R1]
