@@ -136,7 +136,7 @@ Return      : None.
 void _RMP_Low_Level_Init(void)
 {
     RMP_RV32IMAC_LOW_LEVEL_INIT();
-    RMP_Enable_Int();
+    RMP_Int_Enable();
 }
 /* End Function:_RMP_Low_Level_Init ******************************************/
 
@@ -148,7 +148,7 @@ Return      : None.
 ******************************************************************************/
 void _RMP_Plat_Hook(void)
 {
-    RMP_Enable_Int();
+    RMP_Int_Enable();
 }
 /* End Function:_RMP_Plat_Hook ***********************************************/
 
@@ -188,9 +188,9 @@ void PendSV_Handler(void)
 {
     /* Clear the software interrupt, if still pending */
     CLINT_REG(CLINT_MSIP)=0;
-    RMP_Save_Ctx();
-    _RMP_Get_High_Rdy();
-    RMP_Load_Ctx();
+    RMP_Ctx_Save();
+    _RMP_High_Rdy_Get();
+    RMP_Ctx_Load();
 }
 /* End Function:PendSV_Handler ***********************************************/
 

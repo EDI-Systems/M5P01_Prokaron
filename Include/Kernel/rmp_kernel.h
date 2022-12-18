@@ -12,8 +12,6 @@ Description : The header file for the kernel.
 #define __RMP_KERNEL_H_DEFS__
 /*****************************************************************************/
 /* Constants */
-#define RMP_TRUE                    (1U)
-#define RMP_FALSE                   (0U)
 #define RMP_NULL                    ((void*)0U)
 
 /* States of threads */
@@ -82,7 +80,7 @@ Description : The header file for the kernel.
 #define RMP_WORD_MASK               (~(RMP_ALLBITS<<RMP_WORD_ORDER))
 #define RMP_ALIGN_ORDER             (RMP_WORD_ORDER-3U)
 #define RMP_ALIGN_MASK              (~(RMP_ALLBITS<<RMP_ALIGN_ORDER))
-#define RMP_BITMAP_SIZE             ((RMP_MAX_PREEMPT_PRIO-1U)/RMP_WORD_SIZE+1U)
+#define RMP_BITMAP_SIZE             ((RMP_PREEMPT_PRIO_NUM-1U)/RMP_WORD_SIZE+1U)
 
 /* Stack offset macros */
 /* Head offset, for ascending stacks */
@@ -94,9 +92,9 @@ Description : The header file for the kernel.
 #define RMP_DLY2THD(X)              ((volatile struct RMP_Thd*)(((rmp_ptr_t)(X))-sizeof(struct RMP_List)))
 
 /* Printk macros */
-#define RMP_PRINTK_I(INT)           RMP_Print_Int((INT))
-#define RMP_PRINTK_U(UINT)          RMP_Print_Uint((UINT))
-#define RMP_PRINTK_S(STR)           RMP_Print_String((rmp_s8_t*)(STR))
+#define RMP_PRINTK_I(INT)           RMP_Int_Print((INT))
+#define RMP_PRINTK_U(UINT)          RMP_Hex_Print((UINT))
+#define RMP_PRINTK_S(STR)           RMP_Str_Print((rmp_s8_t*)(STR))
 
 /* Built-in graphics */
 #ifdef RMP_POINT
@@ -204,9 +202,9 @@ struct RMP_Thd
     /* The state of this thread */
     rmp_ptr_t State;
     /* If it is running, how many timeslices it have */
-    rmp_ptr_t Slices;
+    rmp_ptr_t Slice;
     /* If it is running, how many ticks does it have remaining */
-    rmp_ptr_t Slices_Left;
+    rmp_ptr_t Slice_Left;
     /* What priority it is running at */
     rmp_ptr_t Prio;
     /* The timeout time */
@@ -296,7 +294,7 @@ static volatile rmp_ptr_t RMP_Coverage[RMP_COVERAGE_LINES];
 #endif
 /* The scheduler bitmap */
 static volatile rmp_ptr_t RMP_Bitmap[RMP_BITMAP_SIZE];
-static volatile struct RMP_List RMP_Run[RMP_MAX_PREEMPT_PRIO];
+static volatile struct RMP_List RMP_Run[RMP_PREEMPT_PRIO_NUM];
 static volatile struct RMP_List RMP_Delay;
 
 /* Scheduler lock */
@@ -315,10 +313,10 @@ static volatile struct RMP_Thd RMP_Init_Thd;
 
 /* Private C Function Prototypes *********************************************/ 
 /*****************************************************************************/
-static void _RMP_Set_Rdy(volatile struct RMP_Thd* Thread);
-static void _RMP_Clr_Rdy(volatile struct RMP_Thd* Thread);
+static void _RMP_Rdy_Set(volatile struct RMP_Thd* Thread);
+static void _RMP_Rdy_Clr(volatile struct RMP_Thd* Thread);
 static void _RMP_Dly_Ins(volatile struct RMP_Thd* Thread,
-                         rmp_ptr_t Slices);
+                         rmp_ptr_t Slice);
 static void _RMP_Timer_Proc(void);
 static void _RMP_Mem_Block(volatile struct RMP_Mem_Head* Addr,
                            rmp_ptr_t Size);
@@ -371,8 +369,8 @@ static void RMP_Progbar_Prog(rmp_cnt_t Coord_X,
 /* The current tick counter value - can be read by the application to determine their time */
 __EXTERN__ volatile rmp_ptr_t RMP_Tick;
 /* The current thread - the pointer itself is volatile but not its contents */
-__EXTERN__ volatile struct RMP_Thd* volatile RMP_Cur_Thd;
-__EXTERN__ volatile rmp_ptr_t RMP_Cur_SP;
+__EXTERN__ volatile struct RMP_Thd* volatile RMP_Thd_Cur;
+__EXTERN__ volatile rmp_ptr_t RMP_SP_Cur;
 /*****************************************************************************/
 
 /* End Public Global Variables ***********************************************/
@@ -381,9 +379,9 @@ __EXTERN__ volatile rmp_ptr_t RMP_Cur_SP;
 /*****************************************************************************/
 /* This is the entry of user applications */
 EXTERN void RMP_Init(void);
-__EXTERN__ void _RMP_Get_High_Rdy(void);
+__EXTERN__ void _RMP_High_Rdy_Get(void);
 __EXTERN__ void _RMP_Tick_Handler(rmp_ptr_t Ticks);
-__EXTERN__ rmp_ptr_t _RMP_Get_Near_Ticks(void);
+__EXTERN__ rmp_ptr_t _RMP_Near_Tick_Get(void);
 __EXTERN__ void RMP_Clear(volatile void* Addr,
                           rmp_ptr_t Size);
 
@@ -392,13 +390,13 @@ __EXTERN__ rmp_ptr_t RMP_RBIT_Get(rmp_ptr_t Val);
 __EXTERN__ rmp_ptr_t RMP_LSB_Get(rmp_ptr_t Val);
 
 /* Scheduler locking & unlocking */
-__EXTERN__ void RMP_Lock_Sched(void);
-__EXTERN__ void RMP_Unlock_Sched(void);
+__EXTERN__ void RMP_Sched_Lock(void);
+__EXTERN__ void RMP_Sched_Unlock(void);
 
 /* Debug printing functions */
-__EXTERN__ rmp_cnt_t RMP_Print_Int(rmp_cnt_t Int);
-__EXTERN__ rmp_cnt_t RMP_Print_Uint(rmp_ptr_t Uint);
-__EXTERN__ rmp_cnt_t RMP_Print_String(rmp_s8_t* String);
+__EXTERN__ rmp_cnt_t RMP_Int_Print(rmp_cnt_t Int);
+__EXTERN__ rmp_cnt_t RMP_Hex_Print(rmp_ptr_t Uint);
+__EXTERN__ rmp_cnt_t RMP_Str_Print(rmp_s8_t* String);
 
 /* List operation functions */
 __EXTERN__ void RMP_List_Crt(volatile struct RMP_List* Head);
@@ -415,30 +413,30 @@ __EXTERN__ rmp_ret_t RMP_Thd_Crt(volatile struct RMP_Thd* Thread,
                                  void* Stack,
                                  void* Arg, 
                                  rmp_ptr_t Prio,
-                                 rmp_ptr_t Slices);
+                                 rmp_ptr_t Slice);
 __EXTERN__ rmp_ret_t RMP_Thd_Del(volatile struct RMP_Thd* Thread);
 __EXTERN__ rmp_ret_t RMP_Thd_Set(volatile struct RMP_Thd* Thread,
                                  rmp_ptr_t Prio,
-                                 rmp_ptr_t Slices);
+                                 rmp_ptr_t Slice);
 __EXTERN__ rmp_ret_t RMP_Thd_Suspend(volatile struct RMP_Thd* Thread);
 __EXTERN__ rmp_ret_t RMP_Thd_Resume(volatile struct RMP_Thd* Thread);
 
-__EXTERN__ rmp_ret_t RMP_Thd_Delay(rmp_ptr_t Slices);
+__EXTERN__ rmp_ret_t RMP_Thd_Delay(rmp_ptr_t Slice);
 __EXTERN__ rmp_ret_t RMP_Thd_Cancel(volatile struct RMP_Thd* Thread);
 
 __EXTERN__ rmp_ret_t RMP_Thd_Snd(volatile struct RMP_Thd* Thread,
                                  rmp_ptr_t Data,
-                                 rmp_ptr_t Slices);
+                                 rmp_ptr_t Slice);
 __EXTERN__ rmp_ret_t RMP_Thd_Snd_ISR(volatile struct RMP_Thd* Thread,
                                      rmp_ptr_t Data);
 __EXTERN__ rmp_ret_t RMP_Thd_Rcv(rmp_ptr_t* Data,
-                                 rmp_ptr_t Slices);
+                                 rmp_ptr_t Slice);
 
 __EXTERN__ rmp_ret_t RMP_Sem_Crt(volatile struct RMP_Sem* Semaphore,
                                  rmp_ptr_t Number);
 __EXTERN__ rmp_ret_t RMP_Sem_Del(volatile struct RMP_Sem* Semaphore);
 __EXTERN__ rmp_ret_t RMP_Sem_Pend(volatile struct RMP_Sem* Semaphore,
-                                  rmp_ptr_t Slices);
+                                  rmp_ptr_t Slice);
 __EXTERN__ rmp_ret_t RMP_Sem_Abort(volatile struct RMP_Thd* Thread);
 __EXTERN__ rmp_ret_t RMP_Sem_Post(volatile struct RMP_Sem* Semaphore,
                                   rmp_ptr_t Number);
@@ -605,15 +603,15 @@ __EXTERN__ rmp_ptr_t RMP_CRC16(const rmp_u8_t* Data,
 #endif
 
 /* Hook functions */
-#if(RMP_USE_HOOKS==RMP_TRUE)
+#if(RMP_HOOK_EXTRA==1U)
     EXTERN void RMP_Start_Hook(void);
-    EXTERN void RMP_Save_Ctx(void);
-    EXTERN void RMP_Load_Ctx(void);
+    EXTERN void RMP_Ctx_Save(void);
+    EXTERN void RMP_Ctx_Load(void);
     EXTERN void RMP_Sched_Hook(void);
     EXTERN void RMP_Tick_Hook(rmp_ptr_t Ticks);
 #else
-    __EXTERN__ void RMP_Save_Ctx(void);
-    __EXTERN__ void RMP_Load_Ctx(void);
+    __EXTERN__ void RMP_Ctx_Save(void);
+    __EXTERN__ void RMP_Ctx_Load(void);
 #endif
 
 EXTERN void RMP_Init_Hook(void);

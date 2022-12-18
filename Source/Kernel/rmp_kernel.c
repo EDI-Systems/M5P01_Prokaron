@@ -74,14 +74,14 @@ void RMP_Clear(volatile void* Addr,
 }
 /* End Function:RMP_Clear ****************************************************/
 
-/* Begin Function:RMP_Print_Int ***********************************************
+/* Begin Function:RMP_Int_Print ***********************************************
 Description : Print a signed integer on the debugging console. This integer is
               printed as decimal with sign.
 Input       : rmp_cnt_t Int - The integer to print.
 Output      : None.
 Return      : rmp_cnt_t - The length of the string printed.
 ******************************************************************************/
-rmp_cnt_t RMP_Print_Int(rmp_cnt_t Int)
+rmp_cnt_t RMP_Int_Print(rmp_cnt_t Int)
 {
     rmp_cnt_t Iter;
     rmp_cnt_t Count;
@@ -148,16 +148,16 @@ rmp_cnt_t RMP_Print_Int(rmp_cnt_t Int)
     
     return Num;
 }
-/* End Function:RMP_Print_Int ************************************************/
+/* End Function:RMP_Int_Print ************************************************/
 
-/* Begin Function:RMP_Print_Uint **********************************************
+/* Begin Function:RMP_Hex_Print ***********************************************
 Description : Print a unsigned integer on the debugging console. This integer is
               printed as hexadecimal.
 Input       : rmp_ptr_t Uint - The unsigned integer to print.
 Output      : None.
 Return      : rmp_cnt_t - The length of the string printed.
 ******************************************************************************/
-rmp_cnt_t RMP_Print_Uint(rmp_ptr_t Uint)
+rmp_cnt_t RMP_Hex_Print(rmp_ptr_t Uint)
 {
     rmp_ptr_t Iter;
     rmp_ptr_t Count;
@@ -195,20 +195,20 @@ rmp_cnt_t RMP_Print_Uint(rmp_ptr_t Uint)
     
     return (rmp_cnt_t)Num;
 }
-/* End Function:RMP_Print_Uint ***********************************************/
+/* End Function:RMP_Hex_Print ************************************************/
 
-/* Begin Function:RMP_Print_String ********************************************
+/* Begin Function:RMP_Str_Print ***********************************************
 Description : Print a string on the debugging console.
               This is only used for user-level debugging.
 Input       : rmp_s8_t* String - The string to print.
 Output      : None.
 Return      : rmp_cnt_t - The length of the string printed, the '\0' is not included.
 ******************************************************************************/
-rmp_cnt_t RMP_Print_String(rmp_s8_t* String)
+rmp_cnt_t RMP_Str_Print(rmp_s8_t* String)
 {
     rmp_ptr_t Count;
     
-    for(Count=0U;Count<RMP_KERNEL_DEBUG_MAX_STR;Count++)
+    for(Count=0U;Count<RMP_DEBUG_PRINT_MAX;Count++)
     {
         if(String[Count]=='\0')
             break;
@@ -217,7 +217,7 @@ rmp_cnt_t RMP_Print_String(rmp_s8_t* String)
     
     return (rmp_cnt_t)Count;
 }
-/* End Function:RMP_Print_String *********************************************/
+/* End Function:RMP_Str_Print ************************************************/
 
 /* Begin Function:RMP_List_Crt ************************************************
 Description : Create a doubly linkled list.
@@ -371,27 +371,27 @@ rmp_ptr_t RMP_CRC16(const rmp_u8_t* Data,
 #endif
 /* End Function:RMP_CRC16 ****************************************************/
 
-/* Begin Function:RMP_Lock_Sched **********************************************
+/* Begin Function:RMP_Sched_Lock **********************************************
 Description : The function locks the scheduler. The locking can be stacked.
 Input       : None.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void RMP_Lock_Sched(void)
+void RMP_Sched_Lock(void)
 {
-    RMP_MASK_INT();
+    RMP_INT_MASK();
     RMP_Sched_Locked=1U;
     RMP_Sched_Lock_Cnt++;
 }
-/* End Function:RMP_Lock_Sched ***********************************************/
+/* End Function:RMP_Sched_Lock ***********************************************/
 
-/* Begin Function:RMP_Unlock_Sched ********************************************
+/* Begin Function:RMP_Sched_Unlock ********************************************
 Description : The function unlocks the scheduler. The unlocking can be stacked.
 Input       : None.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void RMP_Unlock_Sched(void)
+void RMP_Sched_Unlock(void)
 {
     if(RMP_Sched_Lock_Cnt==1U)
     {
@@ -411,7 +411,7 @@ void RMP_Unlock_Sched(void)
         else
             RMP_COVERAGE_MARKER();
         
-        RMP_UNMASK_INT();
+        RMP_INT_UNMASK();
     }
     else if(RMP_Sched_Lock_Cnt>1U)
     {
@@ -422,7 +422,7 @@ void RMP_Unlock_Sched(void)
     else
         while(1U);
 }
-/* End Function:RMP_Unlock_Sched *********************************************/
+/* End Function:RMP_Sched_Unlock *********************************************/
 
 /* Begin Function:RMP_Yield ***************************************************
 Description : Yield to another thread.
@@ -498,24 +498,24 @@ void _RMP_Timer_Proc(void)
 
         RMP_THD_STATE_SET(Thread->State, RMP_THD_RUNNING);
         /* Set to ready if not suspended */
-        _RMP_Set_Rdy(Thread);
+        _RMP_Rdy_Set(Thread);
     }
 }
 /* Begin Function:_RMP_Timer_Proc ********************************************/
 
-/* Begin Function:_RMP_Get_High_Rdy *******************************************
+/* Begin Function:_RMP_High_Rdy_Get *******************************************
 Description : Get the highest priority ready thread. The return value will be
               written into the global variables.
 Input       : None.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void _RMP_Get_High_Rdy(void)
+void _RMP_High_Rdy_Get(void)
 {
     rmp_cnt_t Count;
     
     /* Write the SP value to thread structure */
-    RMP_Cur_Thd->Stack=RMP_Cur_SP;
+    RMP_Thd_Cur->Stack=RMP_SP_Cur;
     
     /* No need to detect scheduler locks - if this interrupt can be entered, the scheduler is not locked */
     RMP_Sched_Pend=0U;
@@ -534,31 +534,31 @@ void _RMP_Get_High_Rdy(void)
         
         /* See if the current thread and the next thread are the same. 
          * If yes, place the current at the end of the queue. */
-        if(RMP_Cur_Thd==(volatile struct RMP_Thd*)(RMP_Run[Count].Next))
+        if(RMP_Thd_Cur==(volatile struct RMP_Thd*)(RMP_Run[Count].Next))
         {
             RMP_COVERAGE_MARKER();
-            RMP_List_Del(RMP_Cur_Thd->Run_Head.Prev, RMP_Cur_Thd->Run_Head.Next);
-            RMP_List_Ins(&(RMP_Cur_Thd->Run_Head),
-                         RMP_Run[RMP_Cur_Thd->Prio].Prev,
-                         &(RMP_Run[RMP_Cur_Thd->Prio]));
+            RMP_List_Del(RMP_Thd_Cur->Run_Head.Prev, RMP_Thd_Cur->Run_Head.Next);
+            RMP_List_Ins(&(RMP_Thd_Cur->Run_Head),
+                         RMP_Run[RMP_Thd_Cur->Prio].Prev,
+                         &(RMP_Run[RMP_Thd_Cur->Prio]));
         }
         else
             RMP_COVERAGE_MARKER();
         
         /* Replenish timeslices */
-        RMP_Cur_Thd->Slices_Left=RMP_Cur_Thd->Slices;
-        RMP_Cur_Thd=(volatile struct RMP_Thd*)(RMP_Run[Count].Next);
+        RMP_Thd_Cur->Slice_Left=RMP_Thd_Cur->Slice;
+        RMP_Thd_Cur=(volatile struct RMP_Thd*)(RMP_Run[Count].Next);
         break;
     }
     
     /* Load the SP value from thread structure */
-    RMP_Cur_SP=RMP_Cur_Thd->Stack;
+    RMP_SP_Cur=RMP_Thd_Cur->Stack;
     
-#if(RMP_USE_HOOKS==RMP_TRUE)
+#if(RMP_HOOK_EXTRA==1U)
     RMP_Sched_Hook();
 #endif
 }
-/* End Function:_RMP_Get_High_Rdy ********************************************/
+/* End Function:_RMP_High_Rdy_Get ********************************************/
 
 /* Begin Function:_RMP_Tick_Handler *******************************************
 Description : The system tick timer interrupt routine.
@@ -574,7 +574,7 @@ void _RMP_Tick_Handler(rmp_ptr_t Ticks)
     RMP_Tick+=Ticks;
     
     /* See if the current thread expired. If yes, trigger a scheduler event */
-    if(Ticks>RMP_Cur_Thd->Slices_Left)
+    if(Ticks>RMP_Thd_Cur->Slice_Left)
     {
         RMP_COVERAGE_MARKER();
         RMP_Sched_Pend=1U;
@@ -582,7 +582,7 @@ void _RMP_Tick_Handler(rmp_ptr_t Ticks)
     else
     {
         RMP_COVERAGE_MARKER();
-        RMP_Cur_Thd->Slices_Left-=Ticks;
+        RMP_Thd_Cur->Slice_Left-=Ticks;
     }
     
     /* Check if there are any timer events */
@@ -614,13 +614,13 @@ void _RMP_Tick_Handler(rmp_ptr_t Ticks)
     else
         RMP_COVERAGE_MARKER();
     
-#if(RMP_USE_HOOKS==RMP_TRUE)
+#if(RMP_HOOK_EXTRA==1U)
     RMP_Tick_Hook(Ticks);
 #endif
 }
 /* End Function:_RMP_Tick_Handler ********************************************/
 
-/* Begin Function:_RMP_Get_Near_Ticks *****************************************
+/* Begin Function:_RMP_Near_Tick_Get ******************************************
 Description : Get the nearest timer interrupt arrival time. This is used to set
               the timer after the body of tick handler have been executed. This
               can be called in the ticker hook and scheduler hook to set the next
@@ -630,13 +630,13 @@ Input       : None.
 Output      : None.
 Return      : rmp_ptr_t Ticks - How many ticks until the next timeout.
 ******************************************************************************/
-rmp_ptr_t _RMP_Get_Near_Ticks(void)
+rmp_ptr_t _RMP_Near_Tick_Get(void)
 {
     rmp_ptr_t Value;
     volatile struct RMP_Thd* Thread;
     
     /* What is the current thread's timeout value? */
-    Value=RMP_Cur_Thd->Slices_Left;
+    Value=RMP_Thd_Cur->Slice_Left;
     
     /* What is the nearest timer timeout value? */
     if(RMP_Delay.Next!=&RMP_Delay)
@@ -659,9 +659,9 @@ rmp_ptr_t _RMP_Get_Near_Ticks(void)
     
     return Value;
 }
-/* End Function:_RMP_Get_Near_Ticks ******************************************/
+/* End Function:_RMP_Near_Tick_Get *******************************************/
 
-/* Begin Function:_RMP_Set_Rdy ************************************************
+/* Begin Function:_RMP_Rdy_Set ************************************************
 Description : Set the thread as ready to schedule. That means, put the thread into
               the runqueue. When this is called, please make sure that the scheduler
               is locked.
@@ -671,7 +671,7 @@ Input       : volatile struct RMP_Thd* Thread - The thread to put into the runqu
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void _RMP_Set_Rdy(volatile struct RMP_Thd* Thread)
+void _RMP_Rdy_Set(volatile struct RMP_Thd* Thread)
 {        
     /* Is it suspended? If yes, we can't directly set it running */
     if((Thread->State&RMP_THD_SUSPENDED)==0U)
@@ -683,7 +683,7 @@ void _RMP_Set_Rdy(volatile struct RMP_Thd* Thread)
         RMP_Bitmap[Thread->Prio>>RMP_WORD_ORDER]|=((rmp_ptr_t)1)<<(Thread->Prio&RMP_WORD_MASK);
         
         /* Compare this with the current one to see if we need a context switch */
-        if(Thread->Prio>RMP_Cur_Thd->Prio)
+        if(Thread->Prio>RMP_Thd_Cur->Prio)
         {
             RMP_COVERAGE_MARKER();
             RMP_Sched_Pend=1;
@@ -694,9 +694,9 @@ void _RMP_Set_Rdy(volatile struct RMP_Thd* Thread)
     else
         RMP_COVERAGE_MARKER();
 }
-/* End Function:_RMP_Set_Rdy *************************************************/
+/* End Function:_RMP_Rdy_Set *************************************************/
 
-/* Begin Function:_RMP_Clr_Rdy ************************************************
+/* Begin Function:_RMP_Rdy_Clr ************************************************
 Description : Clear the thread from the runqueue. When this is called, please 
               make sure that the scheduler is locked. This function also checks whether
               the thread is suspended. If yes, it will not remove it from the queue.
@@ -704,7 +704,7 @@ Input       : volatile struct RMP_Thd* Thread - The thread to clear from the run
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void _RMP_Clr_Rdy(volatile struct RMP_Thd* Thread)
+void _RMP_Rdy_Clr(volatile struct RMP_Thd* Thread)
 {
     /* Is it suspended? If yes, no need to delete again */
     if((Thread->State&RMP_THD_SUSPENDED)==0U)
@@ -723,7 +723,7 @@ void _RMP_Clr_Rdy(volatile struct RMP_Thd* Thread)
         RMP_List_Del(Thread->Run_Head.Prev, Thread->Run_Head.Next);
         
         /* If it is the current thread, request a context switch */
-        if(Thread==RMP_Cur_Thd)
+        if(Thread==RMP_Thd_Cur)
         {
             RMP_COVERAGE_MARKER();
             RMP_Sched_Pend=1U;
@@ -734,7 +734,7 @@ void _RMP_Clr_Rdy(volatile struct RMP_Thd* Thread)
     else
         RMP_COVERAGE_MARKER();
 }
-/* End Function:_RMP_Clr_Rdy *************************************************/
+/* End Function:_RMP_Rdy_Clr *************************************************/
 
 /* Begin Function:_RMP_Dly_Ins ************************************************
 Description : Insert the thread into the delay queue, given some timeslices into the
@@ -745,7 +745,7 @@ Output      : None.
 Return      : None.
 ******************************************************************************/
 void _RMP_Dly_Ins(volatile struct RMP_Thd* Thread,
-                  rmp_ptr_t Slices)
+                  rmp_ptr_t Slice)
 {
     volatile struct RMP_List* Trav_Ptr;
     volatile struct RMP_Thd* Trav_Thd;
@@ -755,7 +755,7 @@ void _RMP_Dly_Ins(volatile struct RMP_Thd* Thread,
     while(Trav_Ptr!=&RMP_Delay)
     {
         Trav_Thd=RMP_DLY2THD(Trav_Ptr);
-        if((Trav_Thd->Timeout-RMP_Tick)>Slices)
+        if((Trav_Thd->Timeout-RMP_Tick)>Slice)
         {
             RMP_COVERAGE_MARKER();
             break;
@@ -767,7 +767,7 @@ void _RMP_Dly_Ins(volatile struct RMP_Thd* Thread,
     }
 
     /* Insert this into the list */
-    Thread->Timeout=RMP_Tick+Slices;
+    Thread->Timeout=RMP_Tick+Slice;
     RMP_List_Ins(&(Thread->Dly_Head), Trav_Ptr->Prev,Trav_Ptr);
 }
 /* End Function:_RMP_Dly_Ins *************************************************/
@@ -781,7 +781,7 @@ Input       : volatile struct RMP_Thd* Thread - The thread structure provided.
               void* Stack - The stack of this thread.
               void* Arg - The argument to pass to the thread.
               rmp_ptr_t Prio - The priority of the thread.
-              rmp_ptr_t Slices - The number of timeslices to assign to the thread.
+              rmp_ptr_t Slice - The number of timeslices to assign to the thread.
 Output      : None.
 Return      : rmp_ret_t - If successful, 0. on error, return an error code.
 ******************************************************************************/
@@ -790,10 +790,10 @@ rmp_ret_t RMP_Thd_Crt(volatile struct RMP_Thd* Thread,
                       void* Stack,
                       void* Arg,
                       rmp_ptr_t Prio,
-                      rmp_ptr_t Slices)
+                      rmp_ptr_t Slice)
 {
     /* Check if the priority and timeslice range is correct */
-    if(Prio>=RMP_MAX_PREEMPT_PRIO)
+    if(Prio>=RMP_PREEMPT_PRIO_NUM)
     {
         RMP_COVERAGE_MARKER();
         return RMP_ERR_PRIO;
@@ -801,7 +801,7 @@ rmp_ret_t RMP_Thd_Crt(volatile struct RMP_Thd* Thread,
     else
         RMP_COVERAGE_MARKER();
     
-    if((Slices==0U)||(Slices>=RMP_MAX_SLICES))
+    if((Slice==0U)||(Slice>=RMP_SLICE_MAX))
     {
         RMP_COVERAGE_MARKER();
         return RMP_ERR_SLICE;
@@ -818,12 +818,12 @@ rmp_ret_t RMP_Thd_Crt(volatile struct RMP_Thd* Thread,
     else
         RMP_COVERAGE_MARKER();
     
-    RMP_Lock_Sched();
+    RMP_Sched_Lock();
     
     if(RMP_THD_STATE(Thread->State)!=RMP_THD_FREE)
     {
         RMP_COVERAGE_MARKER();
-        RMP_Unlock_Sched();
+        RMP_Sched_Unlock();
         return RMP_ERR_THD;
     }
     else
@@ -831,8 +831,8 @@ rmp_ret_t RMP_Thd_Crt(volatile struct RMP_Thd* Thread,
     
     /* Create the thread and insert it into the list */
     Thread->Prio=Prio;
-    Thread->Slices=Slices;
-    Thread->Slices_Left=Slices;
+    Thread->Slice=Slice;
+    Thread->Slice_Left=Slice;
     Thread->Stack=(rmp_ptr_t)Stack;
     
     /* Initialize its stack and sending list */
@@ -841,9 +841,9 @@ rmp_ret_t RMP_Thd_Crt(volatile struct RMP_Thd* Thread,
     
     /* Notify the scheduler that we have created something new, also check locks */
     Thread->State=RMP_THD_RUNNING;
-    _RMP_Set_Rdy(Thread);
+    _RMP_Rdy_Set(Thread);
     
-    RMP_Unlock_Sched();
+    RMP_Sched_Unlock();
 
     return 0;
 }
@@ -869,12 +869,12 @@ rmp_ret_t RMP_Thd_Del(volatile struct RMP_Thd* Thread)
     else
         RMP_COVERAGE_MARKER();
     
-    RMP_Lock_Sched();
+    RMP_Sched_Lock();
     
     if(RMP_THD_STATE(Thread->State)==RMP_THD_FREE)
     {
         RMP_COVERAGE_MARKER();
-        RMP_Unlock_Sched();
+        RMP_Sched_Unlock();
         return RMP_ERR_THD;
     }
     else
@@ -895,7 +895,7 @@ rmp_ret_t RMP_Thd_Del(volatile struct RMP_Thd* Thread)
         
         RMP_THD_STATE_SET(Release->State, RMP_THD_RUNNING);
         /* Set ready if not suspended */
-        _RMP_Set_Rdy(Release);
+        _RMP_Rdy_Set(Release);
         Release->Retval=RMP_ERR_OPER;
     }
     
@@ -905,7 +905,7 @@ rmp_ret_t RMP_Thd_Del(volatile struct RMP_Thd* Thread)
     if(State==RMP_THD_RUNNING)
     {
         RMP_COVERAGE_MARKER();
-        _RMP_Clr_Rdy(Thread);
+        _RMP_Rdy_Clr(Thread);
     }
     /* Do nothing if it is just blocked on receive */
     else if(State==RMP_THD_RCVBLK)
@@ -939,7 +939,7 @@ rmp_ret_t RMP_Thd_Del(volatile struct RMP_Thd* Thread)
     Thread->Retval=RMP_ERR_OPER;
     Thread->State=RMP_THD_FREE;
     /* If we are deleting ourself, pend a yield */
-    if(Thread==RMP_Cur_Thd)
+    if(Thread==RMP_Thd_Cur)
     {
         RMP_COVERAGE_MARKER();
         RMP_Sched_Pend=1U;
@@ -947,10 +947,10 @@ rmp_ret_t RMP_Thd_Del(volatile struct RMP_Thd* Thread)
     else
         RMP_COVERAGE_MARKER();
     
-    RMP_Unlock_Sched();
+    RMP_Sched_Unlock();
     
     /* If we are deleting ourself, just stop the execution here */
-    if(Thread==RMP_Cur_Thd)
+    if(Thread==RMP_Thd_Cur)
         while(1U);
     else
         RMP_COVERAGE_MARKER();
@@ -961,20 +961,20 @@ rmp_ret_t RMP_Thd_Del(volatile struct RMP_Thd* Thread)
 
 /* Begin Function:RMP_Thd_Set *************************************************
 Description : Change the priority or timeslice of a real-time thread. If one of
-              the changes is not desired, just leave it to RMP_MAX_PREEMPT_PRIO
-              or RMP_MAX_SLICES.
+              the changes is not desired, just leave it to RMP_PREEMPT_PRIO_NUM
+              or RMP_SLICE_MAX.
 Input       : volatile struct RMP_Thd* Thread - The pointer to the thread.
               rmp_ptr_t Prio - The priority of the thread.
-              rmp_ptr_t Slices - The new timeslice value for this thread.
+              rmp_ptr_t Slice - The new timeslice value for this thread.
 Output      : None.
 Return      : rmp_ret_t - If successful, 0; else error code.
 ******************************************************************************/
 rmp_ret_t RMP_Thd_Set(volatile struct RMP_Thd* Thread,
                       rmp_ptr_t Prio,
-                      rmp_ptr_t Slices)
+                      rmp_ptr_t Slice)
 {
     /* Check if the priority and timeslice range is correct */
-    if(Slices==0U)
+    if(Slice==0U)
     {
         RMP_COVERAGE_MARKER();
         return RMP_ERR_SLICE;
@@ -991,12 +991,12 @@ rmp_ret_t RMP_Thd_Set(volatile struct RMP_Thd* Thread,
     else
         RMP_COVERAGE_MARKER();
     
-    RMP_Lock_Sched();
+    RMP_Sched_Lock();
     
     if(RMP_THD_STATE(Thread->State)==RMP_THD_FREE)
     {
         RMP_COVERAGE_MARKER();
-        RMP_Unlock_Sched();
+        RMP_Sched_Unlock();
         return RMP_ERR_THD;
     }
     else
@@ -1008,7 +1008,7 @@ rmp_ret_t RMP_Thd_Set(volatile struct RMP_Thd* Thread,
         RMP_COVERAGE_MARKER();
         
         /* See if we are gonna change one of it or both */
-        if(Prio<RMP_MAX_PREEMPT_PRIO)
+        if(Prio<RMP_PREEMPT_PRIO_NUM)
         {
             RMP_COVERAGE_MARKER();
             if(Thread->Prio!=Prio)
@@ -1016,9 +1016,9 @@ rmp_ret_t RMP_Thd_Set(volatile struct RMP_Thd* Thread,
                 RMP_COVERAGE_MARKER();
                 /* It doesn't matter whether this is suspended or not. 
                  * If suspended, the operations will not be conducted. */
-                _RMP_Clr_Rdy(Thread);
+                _RMP_Rdy_Clr(Thread);
                 Thread->Prio=Prio;
-                _RMP_Set_Rdy(Thread);
+                _RMP_Rdy_Set(Thread);
             }
             else
                 RMP_COVERAGE_MARKER();
@@ -1026,10 +1026,10 @@ rmp_ret_t RMP_Thd_Set(volatile struct RMP_Thd* Thread,
         else
             RMP_COVERAGE_MARKER();
         
-        if(Slices<RMP_MAX_SLICES)
+        if(Slice<RMP_SLICE_MAX)
         {
             RMP_COVERAGE_MARKER();
-            Thread->Slices=Slices;
+            Thread->Slice=Slice;
         }
         else
             RMP_COVERAGE_MARKER();
@@ -1038,7 +1038,7 @@ rmp_ret_t RMP_Thd_Set(volatile struct RMP_Thd* Thread,
     {
         RMP_COVERAGE_MARKER();
         
-        if(Prio<RMP_MAX_PREEMPT_PRIO)
+        if(Prio<RMP_PREEMPT_PRIO_NUM)
         {
             RMP_COVERAGE_MARKER();
             Thread->Prio=Prio;
@@ -1046,16 +1046,16 @@ rmp_ret_t RMP_Thd_Set(volatile struct RMP_Thd* Thread,
         else
             RMP_COVERAGE_MARKER();
         
-        if(Slices<RMP_MAX_SLICES)
+        if(Slice<RMP_SLICE_MAX)
         {
             RMP_COVERAGE_MARKER();
-            Thread->Slices=Slices;
+            Thread->Slice=Slice;
         }
         else
             RMP_COVERAGE_MARKER();
     }
     
-    RMP_Unlock_Sched();
+    RMP_Sched_Unlock();
     return 0;
 }
 /* End Function:RMP_Thd_Set **************************************************/
@@ -1077,12 +1077,12 @@ rmp_ret_t RMP_Thd_Suspend(volatile struct RMP_Thd* Thread)
     else
         RMP_COVERAGE_MARKER();
     
-    RMP_Lock_Sched();
+    RMP_Sched_Lock();
     
     if(RMP_THD_STATE(Thread->State)==RMP_THD_FREE)
     {
         RMP_COVERAGE_MARKER();
-        RMP_Unlock_Sched();
+        RMP_Sched_Unlock();
         return RMP_ERR_THD;
     }
     else
@@ -1092,7 +1092,7 @@ rmp_ret_t RMP_Thd_Suspend(volatile struct RMP_Thd* Thread)
     if((Thread->State&RMP_THD_SUSPENDED)!=0)
     {
         RMP_COVERAGE_MARKER();
-        RMP_Unlock_Sched();
+        RMP_Sched_Unlock();
         return RMP_ERR_STATE;
     }
     else
@@ -1103,7 +1103,7 @@ rmp_ret_t RMP_Thd_Suspend(volatile struct RMP_Thd* Thread)
     if(RMP_THD_STATE(Thread->State)==RMP_THD_RUNNING)
     {
         RMP_COVERAGE_MARKER();
-        _RMP_Clr_Rdy(Thread);
+        _RMP_Rdy_Clr(Thread);
     }
     else
         RMP_COVERAGE_MARKER();
@@ -1112,7 +1112,7 @@ rmp_ret_t RMP_Thd_Suspend(volatile struct RMP_Thd* Thread)
     Thread->State|=RMP_THD_SUSPENDED;
     
     /* If we are suspending ourself, pend a yield */
-    if(Thread==RMP_Cur_Thd)
+    if(Thread==RMP_Thd_Cur)
     {
         RMP_COVERAGE_MARKER();
         RMP_Sched_Pend=1U;
@@ -1120,7 +1120,7 @@ rmp_ret_t RMP_Thd_Suspend(volatile struct RMP_Thd* Thread)
     else
         RMP_COVERAGE_MARKER();
     
-    RMP_Unlock_Sched();
+    RMP_Sched_Unlock();
     return 0;
 }
 /* End Function:RMP_Thd_Suspend **********************************************/
@@ -1144,12 +1144,12 @@ rmp_ret_t RMP_Thd_Resume(volatile struct RMP_Thd* Thread)
     else
         RMP_COVERAGE_MARKER();
 
-    RMP_Lock_Sched();
+    RMP_Sched_Lock();
     
     if(RMP_THD_STATE(Thread->State)==RMP_THD_FREE)
     {
         RMP_COVERAGE_MARKER();
-        RMP_Unlock_Sched();
+        RMP_Sched_Unlock();
         return RMP_ERR_THD;
     }
     else
@@ -1167,7 +1167,7 @@ rmp_ret_t RMP_Thd_Resume(volatile struct RMP_Thd* Thread)
         if(RMP_THD_STATE(Thread->State)==RMP_THD_RUNNING)
         {
             RMP_COVERAGE_MARKER();
-            _RMP_Set_Rdy(Thread);
+            _RMP_Rdy_Set(Thread);
         }
         else
             RMP_COVERAGE_MARKER();
@@ -1180,7 +1180,7 @@ rmp_ret_t RMP_Thd_Resume(volatile struct RMP_Thd* Thread)
         Retval=RMP_ERR_STATE;
     }
     
-    RMP_Unlock_Sched();
+    RMP_Sched_Unlock();
 
     return Retval;
 }
@@ -1191,13 +1191,13 @@ Description : Send to a real-time thread's mailbox. If the mailbox is full, then
               this operation can potentially block.
 Input       : volatile struct RMP_Thd* Thread - The thread structure of the thread to send to.
               rmp_ptr_t Data - The data to send to that thread.
-              rmp_ptr_t Slices - The timeslice to wait, if the mailbox is already full.
+              rmp_ptr_t Slice - The timeslice to wait, if the mailbox is already full.
 Output      : None.
 Return      : rmp_ret_t - If successful, 0; or an error code.
 ******************************************************************************/
 rmp_ret_t RMP_Thd_Snd(volatile struct RMP_Thd* Thread,
                       rmp_ptr_t Data,
-                      rmp_ptr_t Slices)
+                      rmp_ptr_t Slice)
 {
     /* Check if this thread structure could possibly be in use */
     if(Thread==RMP_NULL)
@@ -1208,28 +1208,28 @@ rmp_ret_t RMP_Thd_Snd(volatile struct RMP_Thd* Thread,
     else
         RMP_COVERAGE_MARKER();
     
-    RMP_Lock_Sched();
+    RMP_Sched_Lock();
     
     if(RMP_THD_STATE(Thread->State)==RMP_THD_FREE)
     {
         RMP_COVERAGE_MARKER();
-        RMP_Unlock_Sched();
+        RMP_Sched_Unlock();
         return RMP_ERR_THD;
     }
     else
         RMP_COVERAGE_MARKER();
     
     /* Are we sending to ourself? This is not allowed */
-    if(RMP_Cur_Thd==Thread)
+    if(RMP_Thd_Cur==Thread)
     {
         RMP_COVERAGE_MARKER();
-        RMP_Unlock_Sched();
+        RMP_Sched_Unlock();
         return RMP_ERR_OPER;
     }
     else
         RMP_COVERAGE_MARKER();
     
-    RMP_Cur_Thd->Retval=0;
+    RMP_Thd_Cur->Retval=0;
 
     /* See if there is already a value in the mailbox, if yes, we block */
     if((Thread->State&RMP_THD_MBOXFUL)!=0U)
@@ -1237,32 +1237,32 @@ rmp_ret_t RMP_Thd_Snd(volatile struct RMP_Thd* Thread,
         RMP_COVERAGE_MARKER();
         
         /* Mailbox full, we block, and put ourself into the queue */
-        if(Slices==0U)
+        if(Slice==0U)
         {
             RMP_COVERAGE_MARKER();
-            RMP_Unlock_Sched();
+            RMP_Sched_Unlock();
             return RMP_ERR_OPER;
         }
         else
             RMP_COVERAGE_MARKER();
 
         /* We must be running */
-        _RMP_Clr_Rdy(RMP_Cur_Thd);
-        RMP_List_Ins(&(RMP_Cur_Thd->Run_Head), Thread->Snd_List.Prev, &(Thread->Snd_List));
+        _RMP_Rdy_Clr(RMP_Thd_Cur);
+        RMP_List_Ins(&(RMP_Thd_Cur->Run_Head), Thread->Snd_List.Prev, &(Thread->Snd_List));
 
-        if(Slices<RMP_MAX_SLICES)
+        if(Slice<RMP_SLICE_MAX)
         {
             RMP_COVERAGE_MARKER();
-            _RMP_Dly_Ins(RMP_Cur_Thd, Slices);
-            RMP_THD_STATE_SET(RMP_Cur_Thd->State, RMP_THD_SNDDLY);
+            _RMP_Dly_Ins(RMP_Thd_Cur, Slice);
+            RMP_THD_STATE_SET(RMP_Thd_Cur->State, RMP_THD_SNDDLY);
         }
         else
         {
             RMP_COVERAGE_MARKER();
-            RMP_THD_STATE_SET(RMP_Cur_Thd->State, RMP_THD_SNDBLK);
+            RMP_THD_STATE_SET(RMP_Thd_Cur->State, RMP_THD_SNDBLK);
         }
 
-        RMP_Cur_Thd->Data=Data;
+        RMP_Thd_Cur->Data=Data;
     }
     else
     {
@@ -1285,7 +1285,7 @@ rmp_ret_t RMP_Thd_Snd(volatile struct RMP_Thd* Thread,
             
             RMP_THD_STATE_SET(Thread->State, RMP_THD_RUNNING);
             /* Set to running if not suspended */
-            _RMP_Set_Rdy(Thread);
+            _RMP_Rdy_Set(Thread);
         }
         else
             RMP_COVERAGE_MARKER();
@@ -1295,9 +1295,9 @@ rmp_ret_t RMP_Thd_Snd(volatile struct RMP_Thd* Thread,
         Thread->State|=RMP_THD_MBOXFUL;
     }
     
-    RMP_Unlock_Sched();
+    RMP_Sched_Unlock();
 
-    return RMP_Cur_Thd->Retval;
+    return RMP_Thd_Cur->Retval;
 }
 /* End Function:RMP_Thd_Snd **************************************************/
 
@@ -1360,7 +1360,7 @@ rmp_ret_t RMP_Thd_Snd_ISR(volatile struct RMP_Thd* Thread,
             RMP_THD_STATE_SET(Thread->State, RMP_THD_RUNNING);
 
             /* Set to running if not suspended */
-            _RMP_Set_Rdy(Thread);
+            _RMP_Rdy_Set(Thread);
 
             /* If schedule pending, trigger it now because we are in ISR */
             if(RMP_Sched_Pend!=0U)
@@ -1386,12 +1386,12 @@ rmp_ret_t RMP_Thd_Snd_ISR(volatile struct RMP_Thd* Thread,
 
 /* Begin Function:RMP_Thd_Rcv *************************************************
 Description : Receive a message from our own mailbox, and this is blocking.
-Input       : rmp_ptr_t Slices - The timeslices to wait, if the mailbox is empty.
+Input       : rmp_ptr_t Slice - The timeslices to wait, if the mailbox is empty.
 Output      : rmp_ptr_t* Data - The pointer to put the data to.
 Return      : rmp_ret_t - If successful, 0; or an error code.
 ******************************************************************************/
 rmp_ret_t RMP_Thd_Rcv(rmp_ptr_t* Data,
-                      rmp_ptr_t Slices)
+                      rmp_ptr_t Slice)
 {
     volatile struct RMP_Thd* Sender;
     
@@ -1403,15 +1403,15 @@ rmp_ret_t RMP_Thd_Rcv(rmp_ptr_t* Data,
     else
         RMP_COVERAGE_MARKER();
     
-    RMP_Lock_Sched();
+    RMP_Sched_Lock();
     
     /* Is there any other guy waiting on us? If there is, unblock it and set it running */
     Sender=RMP_NULL;
-    if(&(RMP_Cur_Thd->Snd_List)!=RMP_Cur_Thd->Snd_List.Next)
+    if(&(RMP_Thd_Cur->Snd_List)!=RMP_Thd_Cur->Snd_List.Next)
     {
         RMP_COVERAGE_MARKER();
         /* Read the data */
-        Sender=(volatile struct RMP_Thd*)(RMP_Cur_Thd->Snd_List.Next);
+        Sender=(volatile struct RMP_Thd*)(RMP_Thd_Cur->Snd_List.Next);
         RMP_List_Del(Sender->Run_Head.Prev, Sender->Run_Head.Next);
         *Data=Sender->Data;
         /* Now we unblock it - what state is it in? */
@@ -1425,23 +1425,23 @@ rmp_ret_t RMP_Thd_Rcv(rmp_ptr_t* Data,
         
         RMP_THD_STATE_SET(Sender->State, RMP_THD_RUNNING);
         /* Set to running if not suspended */
-        _RMP_Set_Rdy(Sender);
+        _RMP_Rdy_Set(Sender);
     }
 
     /* Check if there is a value in our mailbox. If yes, we return with that value */
-    if((RMP_Cur_Thd->State&RMP_THD_MBOXFUL)!=0U)
+    if((RMP_Thd_Cur->State&RMP_THD_MBOXFUL)!=0U)
     {
         RMP_COVERAGE_MARKER();
         /* Get the value from mailbox */
-        *Data=RMP_Cur_Thd->Mailbox;
+        *Data=RMP_Thd_Cur->Mailbox;
         /* See if we unblocked a sender. If yes, we place the new value into 
          * our mailbox and it is still full */
         if(Sender!=RMP_NULL)
-            RMP_Cur_Thd->Mailbox=Sender->Data;
+            RMP_Thd_Cur->Mailbox=Sender->Data;
         else
-            RMP_Cur_Thd->State&=~RMP_THD_MBOXFUL;
+            RMP_Thd_Cur->State&=~RMP_THD_MBOXFUL;
         
-        RMP_Unlock_Sched();
+        RMP_Sched_Unlock();
         return 0;
     }
     else
@@ -1452,8 +1452,8 @@ rmp_ret_t RMP_Thd_Rcv(rmp_ptr_t* Data,
         if(Sender!=RMP_NULL)
         {
             RMP_COVERAGE_MARKER();
-            RMP_Cur_Thd->Mailbox=Sender->Data;
-            RMP_Unlock_Sched();
+            RMP_Thd_Cur->Mailbox=Sender->Data;
+            RMP_Sched_Unlock();
             return 0;
         }
         /* No sender waiting on us and box empty, we need to block */
@@ -1461,56 +1461,56 @@ rmp_ret_t RMP_Thd_Rcv(rmp_ptr_t* Data,
         {
             RMP_COVERAGE_MARKER();
             
-            if(Slices==0U)
+            if(Slice==0U)
             {
                 RMP_COVERAGE_MARKER();
-                RMP_Unlock_Sched();
+                RMP_Sched_Unlock();
                 return RMP_ERR_OPER;
             }
             else
                 RMP_COVERAGE_MARKER();
 
             /* We must be running and not suspended so we will surely be deleted from queue */
-            _RMP_Clr_Rdy(RMP_Cur_Thd);
+            _RMP_Rdy_Clr(RMP_Thd_Cur);
 
-            if(Slices<RMP_MAX_SLICES)
+            if(Slice<RMP_SLICE_MAX)
             {
                 RMP_COVERAGE_MARKER();
-                _RMP_Dly_Ins(RMP_Cur_Thd, Slices);
-                RMP_THD_STATE_SET(RMP_Cur_Thd->State, RMP_THD_RCVDLY);
+                _RMP_Dly_Ins(RMP_Thd_Cur, Slice);
+                RMP_THD_STATE_SET(RMP_Thd_Cur->State, RMP_THD_RCVDLY);
             }
             else
             {
                 RMP_COVERAGE_MARKER();
-                RMP_THD_STATE_SET(RMP_Cur_Thd->State, RMP_THD_RCVBLK);
+                RMP_THD_STATE_SET(RMP_Thd_Cur->State, RMP_THD_RCVBLK);
             }
-            RMP_Unlock_Sched();
+            RMP_Sched_Unlock();
             
             /* Dummy read - to separate the lock & unlock. If the compiler optimizes these two
              * functions(inline them) on some architectures sometimes we never block. */
-            *Data=RMP_Cur_Thd->Mailbox;
+            *Data=RMP_Thd_Cur->Mailbox;
             
             /* We've been unblocked. There must be something in our mbox, or we should have failed */
-            RMP_Lock_Sched();
-            *Data=RMP_Cur_Thd->Mailbox;
-            RMP_Cur_Thd->State&=~RMP_THD_MBOXFUL;
+            RMP_Sched_Lock();
+            *Data=RMP_Thd_Cur->Mailbox;
+            RMP_Thd_Cur->State&=~RMP_THD_MBOXFUL;
         }
     }
     
-    RMP_Unlock_Sched();
-    return RMP_Cur_Thd->Retval;
+    RMP_Sched_Unlock();
+    return RMP_Thd_Cur->Retval;
 }
 /* End Function:RMP_Thd_Rcv **************************************************/
 
 /* Begin Function:RMP_Thd_Delay ***********************************************
 Description : Delay the execution of a real-time thread.
-Input       : rmp_ptr_t Slices - The number of timeslices to delay.
+Input       : rmp_ptr_t Slice - The number of timeslices to delay.
 Output      : None.
 Return      : rmp_ret_t - If successful, 0; or an error code.
 ******************************************************************************/
-rmp_ret_t RMP_Thd_Delay(rmp_ptr_t Slices)
+rmp_ret_t RMP_Thd_Delay(rmp_ptr_t Slice)
 {
-    if((Slices==0U)||(Slices>=RMP_MAX_SLICES))
+    if((Slice==0U)||(Slice>=RMP_SLICE_MAX))
     {
         RMP_COVERAGE_MARKER();
         return RMP_ERR_SLICE;
@@ -1518,17 +1518,17 @@ rmp_ret_t RMP_Thd_Delay(rmp_ptr_t Slices)
     else
         RMP_COVERAGE_MARKER();
     
-    RMP_Lock_Sched();
+    RMP_Sched_Lock();
 
     /* We must be running and not suspended so we will be out of running queue */
-    _RMP_Clr_Rdy(RMP_Cur_Thd);
-    RMP_THD_STATE_SET(RMP_Cur_Thd->State, RMP_THD_DELAYED);
-    _RMP_Dly_Ins(RMP_Cur_Thd, Slices);
+    _RMP_Rdy_Clr(RMP_Thd_Cur);
+    RMP_THD_STATE_SET(RMP_Thd_Cur->State, RMP_THD_DELAYED);
+    _RMP_Dly_Ins(RMP_Thd_Cur, Slice);
 
-    RMP_Cur_Thd->Retval=0;
-    RMP_Unlock_Sched();
+    RMP_Thd_Cur->Retval=0;
+    RMP_Sched_Unlock();
     /* Need to return if successful or not */
-    return RMP_Cur_Thd->Retval;
+    return RMP_Thd_Cur->Retval;
 }
 /* End Function:RMP_Thd_Delay ************************************************/
 
@@ -1549,13 +1549,13 @@ rmp_ret_t RMP_Thd_Cancel(volatile struct RMP_Thd* Thread)
     else
         RMP_COVERAGE_MARKER();
     
-    RMP_Lock_Sched();
+    RMP_Sched_Lock();
     
     /* Is it delayed? */
     if(RMP_THD_STATE(Thread->State)!=RMP_THD_DELAYED)
     {
         RMP_COVERAGE_MARKER();
-        RMP_Unlock_Sched();
+        RMP_Sched_Unlock();
         return RMP_ERR_STATE;
     }
     else
@@ -1565,10 +1565,10 @@ rmp_ret_t RMP_Thd_Cancel(volatile struct RMP_Thd* Thread)
     RMP_List_Del(Thread->Dly_Head.Prev, Thread->Dly_Head.Next);
     RMP_THD_STATE_SET(Thread->State, RMP_THD_RUNNING);
     /* Set to running if not suspended */
-    _RMP_Set_Rdy(Thread);
+    _RMP_Rdy_Set(Thread);
     
     Thread->Retval=RMP_ERR_OPER;
-    RMP_Unlock_Sched();
+    RMP_Sched_Unlock();
     return 0;
 }
 /* End Function:RMP_Thd_Cancel ***********************************************/
@@ -1592,22 +1592,22 @@ rmp_ret_t RMP_Sem_Crt(volatile struct RMP_Sem* Semaphore,
     else
         RMP_COVERAGE_MARKER();
     
-    RMP_Lock_Sched();
+    RMP_Sched_Lock();
     
     if(Semaphore->State!=RMP_SEM_FREE)
     {
         RMP_COVERAGE_MARKER();
-        RMP_Unlock_Sched();
+        RMP_Sched_Unlock();
         return RMP_ERR_SEM;
     }
     else
         RMP_COVERAGE_MARKER();
     
     /* Is the number too great to initialize? */
-    if(Number>=RMP_SEM_MAX_NUM)
+    if(Number>=RMP_SEM_CNT_MAX)
     {
         RMP_COVERAGE_MARKER();
-        RMP_Unlock_Sched();
+        RMP_Sched_Unlock();
         return RMP_ERR_OPER;
     }
     else
@@ -1618,7 +1618,7 @@ rmp_ret_t RMP_Sem_Crt(volatile struct RMP_Sem* Semaphore,
     Semaphore->State=RMP_SEM_USED;
     RMP_List_Crt(&(Semaphore->Wait_List));
     
-    RMP_Unlock_Sched();
+    RMP_Sched_Unlock();
     
     return 0;
 }
@@ -1643,12 +1643,12 @@ rmp_ret_t RMP_Sem_Del(volatile struct RMP_Sem* Semaphore)
     else
         RMP_COVERAGE_MARKER();
     
-    RMP_Lock_Sched();
+    RMP_Sched_Lock();
     
     if(Semaphore->State!=RMP_SEM_USED)
     {
         RMP_COVERAGE_MARKER();
-        RMP_Unlock_Sched();
+        RMP_Sched_Unlock();
         return RMP_ERR_SEM;
     }
     else
@@ -1671,12 +1671,12 @@ rmp_ret_t RMP_Sem_Del(volatile struct RMP_Sem* Semaphore)
         RMP_THD_STATE_SET(Thread->State,RMP_THD_RUNNING);
         
         /* Set to running if not suspended */
-        _RMP_Set_Rdy(Thread);
+        _RMP_Rdy_Set(Thread);
         Thread->Retval=RMP_ERR_OPER;
     }
     Semaphore->State=RMP_SEM_FREE;
     
-    RMP_Unlock_Sched();
+    RMP_Sched_Unlock();
 
     return 0;
 }
@@ -1685,12 +1685,12 @@ rmp_ret_t RMP_Sem_Del(volatile struct RMP_Sem* Semaphore)
 /* Begin Function:RMP_Sem_Pend ************************************************
 Description : Pend on the semaphore, trying to get one.
 Input       : volatile struct RMP_Sem* Semaphore - The pointer to the semaphore.
-              rmp_ptr_t Slices - The number of slices to wait.
+              rmp_ptr_t Slice - The number of slices to wait.
 Output      : None.
 Return      : rmp_ret_t - If successful, the current semaphore number; or an error code.
 ******************************************************************************/
 rmp_ret_t RMP_Sem_Pend(volatile struct RMP_Sem* Semaphore,
-                       rmp_ptr_t Slices)
+                       rmp_ptr_t Slice)
 {
     /* Check if this semaphore structure could possibly be in use */
     if(Semaphore==RMP_NULL)
@@ -1701,12 +1701,12 @@ rmp_ret_t RMP_Sem_Pend(volatile struct RMP_Sem* Semaphore,
     else
         RMP_COVERAGE_MARKER();
     
-    RMP_Lock_Sched();
+    RMP_Sched_Lock();
     
     if(Semaphore->State!=RMP_SEM_USED)
     {
         RMP_COVERAGE_MARKER();
-        RMP_Unlock_Sched();
+        RMP_Sched_Unlock();
         return RMP_ERR_SEM;
     }
     else
@@ -1717,44 +1717,44 @@ rmp_ret_t RMP_Sem_Pend(volatile struct RMP_Sem* Semaphore,
     {
         RMP_COVERAGE_MARKER();
         Semaphore->Cur_Num--;
-        RMP_Unlock_Sched();
+        RMP_Sched_Unlock();
         return (rmp_ret_t)Semaphore->Cur_Num;
     }
     else
     {
         RMP_COVERAGE_MARKER();
         /* Cannot get one, we need to block */
-        if(Slices==0U)
+        if(Slice==0U)
         {
             RMP_COVERAGE_MARKER();
-            RMP_Unlock_Sched();
+            RMP_Sched_Unlock();
             return RMP_ERR_OPER;
         }
         else
             RMP_COVERAGE_MARKER();
 
         /* We must be running - place into waitlist now */
-        _RMP_Clr_Rdy(RMP_Cur_Thd);
-        RMP_List_Ins(&(RMP_Cur_Thd->Run_Head), Semaphore->Wait_List.Prev, &(Semaphore->Wait_List));
+        _RMP_Rdy_Clr(RMP_Thd_Cur);
+        RMP_List_Ins(&(RMP_Thd_Cur->Run_Head), Semaphore->Wait_List.Prev, &(Semaphore->Wait_List));
         
-        if(Slices<RMP_MAX_SLICES)
+        if(Slice<RMP_SLICE_MAX)
         {
             RMP_COVERAGE_MARKER();
-            _RMP_Dly_Ins(RMP_Cur_Thd, Slices);
-            RMP_THD_STATE_SET(RMP_Cur_Thd->State, RMP_THD_SEMDLY);
+            _RMP_Dly_Ins(RMP_Thd_Cur, Slice);
+            RMP_THD_STATE_SET(RMP_Thd_Cur->State, RMP_THD_SEMDLY);
         }
         else
         {
             RMP_COVERAGE_MARKER();
-            RMP_THD_STATE_SET(RMP_Cur_Thd->State, RMP_THD_SEMBLK);
+            RMP_THD_STATE_SET(RMP_Thd_Cur->State, RMP_THD_SEMBLK);
         }
         
-        RMP_Cur_Thd->Retval=0;
+        RMP_Thd_Cur->Retval=0;
     }
     
-    RMP_Unlock_Sched();
+    RMP_Sched_Unlock();
 
-    return RMP_Cur_Thd->Retval;
+    return RMP_Thd_Cur->Retval;
 }
 /* End Function:RMP_Sem_Pend *************************************************/
 
@@ -1775,12 +1775,12 @@ rmp_ret_t RMP_Sem_Abort(volatile struct RMP_Thd* Thread)
     else
         RMP_COVERAGE_MARKER();
 
-    RMP_Lock_Sched();
+    RMP_Sched_Lock();
     
     if(RMP_THD_STATE(Thread->State)==RMP_THD_FREE)
     {
         RMP_COVERAGE_MARKER();
-        RMP_Unlock_Sched();
+        RMP_Sched_Unlock();
         return RMP_ERR_THD;
     }
     else
@@ -1791,7 +1791,7 @@ rmp_ret_t RMP_Sem_Abort(volatile struct RMP_Thd* Thread)
        (RMP_THD_STATE(Thread->State)!=RMP_THD_SEMDLY))
     {
         RMP_COVERAGE_MARKER();
-        RMP_Unlock_Sched();
+        RMP_Sched_Unlock();
         return RMP_ERR_STATE;
     }
     else
@@ -1809,10 +1809,10 @@ rmp_ret_t RMP_Sem_Abort(volatile struct RMP_Thd* Thread)
     
     RMP_THD_STATE_SET(Thread->State,RMP_THD_RUNNING);
     /* Set to running if not suspended */
-    _RMP_Set_Rdy(Thread);
+    _RMP_Rdy_Set(Thread);
     
     Thread->Retval=RMP_ERR_OPER;
-    RMP_Unlock_Sched();
+    RMP_Sched_Unlock();
     return 0;
 }
 /* End Function:RMP_Sem_Abort ************************************************/
@@ -1838,22 +1838,22 @@ rmp_ret_t RMP_Sem_Post(volatile struct RMP_Sem* Semaphore,
     else
         RMP_COVERAGE_MARKER();
     
-    RMP_Lock_Sched();
+    RMP_Sched_Lock();
     
     if(Semaphore->State!=RMP_SEM_USED)
     {
         RMP_COVERAGE_MARKER();
-        RMP_Unlock_Sched();
+        RMP_Sched_Unlock();
         return RMP_ERR_SEM;
     }
     else
         RMP_COVERAGE_MARKER();
     
     /* Would the maximum value be exceeded if this is posted? */
-    if((Semaphore->Cur_Num+Number)>=RMP_SEM_MAX_NUM)
+    if((Semaphore->Cur_Num+Number)>=RMP_SEM_CNT_MAX)
     {
         RMP_COVERAGE_MARKER();
-        RMP_Unlock_Sched();
+        RMP_Sched_Unlock();
         return RMP_ERR_OPER;
     }
     else
@@ -1877,14 +1877,14 @@ rmp_ret_t RMP_Sem_Post(volatile struct RMP_Sem* Semaphore,
         
         RMP_THD_STATE_SET(Thread->State, RMP_THD_RUNNING);
         /* Set to running if not suspended */
-        _RMP_Set_Rdy(Thread);
+        _RMP_Rdy_Set(Thread);
 
         /* Finally, return success */
         Thread->Retval=0;
         Semaphore->Cur_Num--;
     }
 
-    RMP_Unlock_Sched();
+    RMP_Sched_Unlock();
     return 0;
 }
 /* End Function:RMP_Sem_Post *************************************************/
@@ -1921,7 +1921,7 @@ rmp_ret_t RMP_Sem_Post_ISR(volatile struct RMP_Sem* Semaphore,
         RMP_COVERAGE_MARKER();
 
     /* Would the maximum value be exceeded if this is posted? */
-    if((Semaphore->Cur_Num+Number)>=RMP_SEM_MAX_NUM)
+    if((Semaphore->Cur_Num+Number)>=RMP_SEM_CNT_MAX)
     {
         RMP_COVERAGE_MARKER();
         return RMP_ERR_OPER;
@@ -1945,7 +1945,7 @@ rmp_ret_t RMP_Sem_Post_ISR(volatile struct RMP_Sem* Semaphore,
         
         RMP_THD_STATE_SET(Thread->State, RMP_THD_RUNNING);
         /* Set to running if not suspended */
-        _RMP_Set_Rdy(Thread);
+        _RMP_Rdy_Set(Thread);
         
         /* If schedule pending, trigger it now because we are in ISR */
         if(RMP_Sched_Pend!=0U)
@@ -1966,33 +1966,33 @@ rmp_ret_t RMP_Sem_Post_ISR(volatile struct RMP_Sem* Semaphore,
 }
 /* End Function:RMP_Sem_Post_ISR *********************************************/
 
-/* Begin Function:RMP_Save_Ctx ************************************************
+/* Begin Function:RMP_Ctx_Save ************************************************
 Description : Save hook for extra context, such as FPU, peripherals and MPU.
 Input       : None.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-#if(RMP_USE_HOOKS==RMP_FALSE)
-void RMP_Save_Ctx(void)
+#if(RMP_HOOK_EXTRA==0U)
+void RMP_Ctx_Save(void)
 {
     return;
 }
 #endif
-/* End Function:RMP_Save_Ctx *************************************************/
+/* End Function:RMP_Ctx_Save *************************************************/
 
-/* Begin Function:RMP_Load_Ctx ************************************************
+/* Begin Function:RMP_Ctx_Load ************************************************
 Description : Load hook for extra context, such as FPU, peripherals and MPU.
 Input       : None.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-#if(RMP_USE_HOOKS==RMP_FALSE)
-void RMP_Load_Ctx(void)
+#if(RMP_HOOK_EXTRA==0U)
+void RMP_Ctx_Load(void)
 {
     return;
 }
 #endif
-/* End Function:RMP_Load_Ctx *************************************************/
+/* End Function:RMP_Ctx_Load *************************************************/
 
 /* Begin Function:RMP_Init ****************************************************
 Description : The entry of the user thread. This is the first user thread that
@@ -2004,14 +2004,14 @@ Return      : int - This function never returns.
 ******************************************************************************/
 void RMP_Init(void)
 {
-    RMP_Lock_Sched();
+    RMP_Sched_Lock();
     
     /* Platform will use this hook to do something */
     _RMP_Plat_Hook();
     /* Start the second thread here */
     RMP_Init_Hook();
     
-    RMP_Unlock_Sched();
+    RMP_Sched_Unlock();
     
     while(1U)
         RMP_Init_Idle();
@@ -2038,7 +2038,7 @@ int main(void)
     /* Initialize the kernel data structures first */
     _RMP_Low_Level_Init();
     
-#if(RMP_USE_HOOKS==RMP_TRUE)
+#if(RMP_HOOK_EXTRA==1U)
     RMP_Start_Hook();
 #endif
     
@@ -2051,7 +2051,7 @@ int main(void)
     
     /* Linked lists */
     RMP_List_Crt(&RMP_Delay);
-    for(Count=0U;Count<RMP_MAX_PREEMPT_PRIO;Count++)
+    for(Count=0U;Count<RMP_PREEMPT_PRIO_NUM;Count++)
         RMP_List_Crt(&RMP_Run[Count]);
     for(Count=0U;Count<RMP_BITMAP_SIZE;Count++)
         RMP_Bitmap[Count]=0U;
@@ -2059,8 +2059,8 @@ int main(void)
     /* Now boot into the first thread */
     RMP_Clear(&RMP_Init_Thd,sizeof(struct RMP_Thd));
     RMP_Init_Thd.Prio=0U;
-    RMP_Init_Thd.Slices=10U;
-    RMP_Init_Thd.Slices_Left=10U;
+    RMP_Init_Thd.Slice=10U;
+    RMP_Init_Thd.Slice_Left=10U;
     RMP_Init_Thd.State=RMP_THD_RUNNING;
     RMP_Init_Thd.Stack=RMP_INIT_STACK;
     
@@ -2073,8 +2073,8 @@ int main(void)
     RMP_Bitmap[0]|=1U;
     
     /* Set current thread and stack */
-    RMP_Cur_Thd=(volatile struct RMP_Thd*)&RMP_Init_Thd;
-    RMP_Cur_SP=RMP_Init_Thd.Stack;
+    RMP_Thd_Cur=(volatile struct RMP_Thd*)&RMP_Init_Thd;
+    RMP_SP_Cur=RMP_Init_Thd.Stack;
     
     /* Now jump to the user function and will never return. Initialization of stack is not needed */
     _RMP_Start((rmp_ptr_t)RMP_Init, (rmp_ptr_t)RMP_Init_Thd.Stack);

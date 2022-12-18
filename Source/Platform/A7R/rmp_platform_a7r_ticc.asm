@@ -45,11 +45,11 @@
 
 ;/* Begin Exports ************************************************************/
     ;Disable all interrupts
-    .global             RMP_Disable_Int
+    .global             RMP_Int_Disable
     ;Enable all interrupts
-    .global             RMP_Enable_Int
+    .global             RMP_Int_Enable
      ;Mask/unmask some interrupts
-    .global             RMP_Mask_Int
+    .global             RMP_Int_Mask
     ;Get the MSB
     .global             RMP_MSB_Get
     ;Start the first thread
@@ -66,19 +66,19 @@
 
 ;/* Begin Imports ************************************************************/
     ;The real task switch handling function
-    .global             _RMP_Get_High_Rdy
+    .global             _RMP_High_Rdy_Get
     ;The real systick handler function
     .global             _RMP_Tick_Handler
     ;The PID of the current thread
-    .global             RMP_Cur_Thd
+    .global             RMP_Thd_Cur
     ;The stack address of current thread
-    .global             RMP_Cur_SP
+    .global             RMP_SP_Cur
     ;Save and load extra contexts, such as FPU, peripherals and MPU
-    .global             RMP_Save_Ctx
-    .global             RMP_Load_Ctx
+    .global             RMP_Ctx_Save
+    .global             RMP_Ctx_Load
 ;/* End Imports **************************************************************/
 
-;/* Begin Function:RMP_Disable_Int ********************************************
+;/* Begin Function:RMP_Int_Disable ********************************************
 ;Description : The function for disabling all interrupts. Does not allow nesting.
 ;              We never mask FIQs on Cortex-R because they are not allowed to
 ;              perform any non-transparent operations anyway.
@@ -86,39 +86,39 @@
 ;Output      : None.
 ;Return      : None.
 ;*****************************************************************************/
-RMP_Disable_Int         .asmfunc
+RMP_Int_Disable         .asmfunc
     ;Disable all interrupts (I is primask,F is Faultmask.)
     CPSID               I
     BX                  LR
     .endasmfunc
-;/* End Function:RMP_Disable_Int *********************************************/
+;/* End Function:RMP_Int_Disable *********************************************/
 
-;/* Begin Function:RMP_Enable_Int *********************************************
+;/* Begin Function:RMP_Int_Enable *********************************************
 ;Description : The function for enabling all interrupts. Does not allow nesting.
 ;Input       : None.
 ;Output      : None.
 ;Return      : None.
 ;*****************************************************************************/
-RMP_Enable_Int          .asmfunc
+RMP_Int_Enable          .asmfunc
     ;Enable all interrupts.
     CPSIE               I
     BX                  LR
     .endasmfunc
-;/* End Function:RMP_Enable_Int **********************************************/
+;/* End Function:RMP_Int_Enable **********************************************/
 
-;/* Begin Function:RMP_Mask_Int ***********************************************
+;/* Begin Function:RMP_Int_Mask ***********************************************
 ;Description : The function for masking & unmasking interrupts. This is dummy on
 ;              Cortex-R.
 ;Input       : rmp_ptr_t R0 - The new BASEPRI to set.
 ;Output      : None.
 ;Return      : None.
 ;*****************************************************************************/
-RMP_Mask_Int            .asmfunc
+RMP_Int_Mask            .asmfunc
     ;Mask some interrupts.
     ;MSR                 BASEPRI,R0
     ;BX                  LR
     .endasmfunc
-;/* End Function:RMP_Mask_Int ************************************************/
+;/* End Function:RMP_Int_Mask ************************************************/
 
 ;/* Begin Function:RMP_MSB_Get ************************************************
 ;Description : Get the MSB of the word.
@@ -197,17 +197,17 @@ PendSV_Handler          .asmfunc
     MOV                 R1,#0x0F
     STR                 R1,[R0]
 
-    BL                  RMP_Save_Ctx        ;Save extra context
+    BL                  RMP_Ctx_Save        ;Save extra context
                 
-    LDR                 R1,RMP_Cur_SP_Addr  ;Save The SP to control block.
+    LDR                 R1,RMP_SP_Cur_Addr  ;Save The SP to control block.
     STR                 SP,[R1]
                 
-    BL                  _RMP_Get_High_Rdy   ;Get the highest ready task.
+    BL                  _RMP_High_Rdy_Get   ;Get the highest ready task.
                 
-    LDR                 R1,RMP_Cur_SP_Addr  ;Load the SP.
+    LDR                 R1,RMP_SP_Cur_Addr  ;Load the SP.
     LDR                 SP,[R1]
                 
-    BL                  RMP_Load_Ctx        ;Load extra context
+    BL                  RMP_Ctx_Load        ;Load extra context
 
     POP                 {R0-R12,LR}
     RFEIA               SP!
@@ -243,7 +243,7 @@ SysTick_Handler         .asmfunc
     .endasmfunc
 ;/* End Function:SysTick_Handler *********************************************/
 
-RMP_Cur_SP_Addr .word   RMP_Cur_SP
+RMP_SP_Cur_Addr .word   RMP_SP_Cur
 
 phantomInterrupt .asmfunc
     B                   phantomInterrupt

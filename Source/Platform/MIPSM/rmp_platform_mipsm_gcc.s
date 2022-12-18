@@ -55,9 +55,9 @@ R31    $ra        return address (used by function call)
 
 /* Begin Exports *************************************************************/
     /* Disable all interrupts */
-    .global             RMP_Disable_Int      
+    .global             RMP_Int_Disable      
     /* Enable all interrupts */        
-    .global             RMP_Enable_Int   
+    .global             RMP_Int_Enable   
     /* Get the MSB */
     .global             RMP_MSB_Get
     /* Start the first thread */
@@ -74,16 +74,16 @@ R31    $ra        return address (used by function call)
 
 /* Begin Imports *************************************************************/
     /* The real task switch handling function */
-    .extern             _RMP_Get_High_Rdy 
+    .extern             _RMP_High_Rdy_Get 
     /* The real systick handler function */
     .extern             _RMP_Tick_Handler
     /* The PID of the current thread */
-    .extern             RMP_Cur_Thd
+    .extern             RMP_Thd_Cur
     /* The stack address of current thread */
-    .extern             RMP_Cur_SP
+    .extern             RMP_SP_Cur
     /* Save and load extra contexts, such as FPU, peripherals and MPU */
-    .extern             RMP_Save_Ctx
-    .extern             RMP_Load_Ctx
+    .extern             RMP_Ctx_Save
+    .extern             RMP_Ctx_Load
     /* The place where we store the kernel gp/sp value */
     .extern             RMP_GP_Val
     .extern             RMP_SP_Val
@@ -124,8 +124,8 @@ R31    $ra        return address (used by function call)
     BNE                 $22,$0,1f 
     NOP
     /* Need to save the old sp first, then switch to system stack to continue execution */
-    LUI                 $23,%hi(RMP_Cur_SP)
-    ORI                 $23,$23,%lo(RMP_Cur_SP)
+    LUI                 $23,%hi(RMP_SP_Cur)
+    ORI                 $23,$23,%lo(RMP_SP_Cur)
     SW                  $sp,($23)
     /* We need to swap to system stack for execution */
     LUI                 $23,%hi(RMP_SP_Val)
@@ -205,8 +205,8 @@ R31    $ra        return address (used by function call)
     BNE                 $21,$0,1f 
     NOP
     /* Need to load back the old sp */
-    LUI                 $23,%hi(RMP_Cur_SP)
-    ORI                 $23,$23,%lo(RMP_Cur_SP)
+    LUI                 $23,%hi(RMP_SP_Cur)
+    ORI                 $23,$23,%lo(RMP_SP_Cur)
     LW                  $sp,($23)
     NOP
 1:  MOVE                $20,$sp
@@ -266,7 +266,7 @@ R31    $ra        return address (used by function call)
 .endm
 /* End Macros ****************************************************************/
 
-/* Begin Function:RMP_Disable_Int *********************************************
+/* Begin Function:RMP_Int_Disable *********************************************
 Description    : The function for disabling all interrupts. Does not allow nesting.
 Input          : None.
 Output         : None.    
@@ -276,16 +276,16 @@ Register Usage : None.
     .set                nomicromips
     .set                noreorder
     .set                noat
-    .ent                RMP_Disable_Int
-RMP_Disable_Int:
+    .ent                RMP_Int_Disable
+RMP_Int_Disable:
     /* Disable all interrupts */
     DI
     JR                  $ra
     NOP
-    .end                RMP_Disable_Int
-/* End Function:RMP_Disable_Int **********************************************/
+    .end                RMP_Int_Disable
+/* End Function:RMP_Int_Disable **********************************************/
 
-/* Begin Function:RMP_Enable_Int **********************************************
+/* Begin Function:RMP_Int_Enable **********************************************
 Description    : The function for enabling all interrupts. Does not allow nesting.
 Input          : None.
 Output         : None.    
@@ -295,14 +295,14 @@ Register Usage : None.
     .set                nomicromips
     .set                noreorder
     .set                noat
-    .ent                RMP_Enable_Int
-RMP_Enable_Int:
+    .ent                RMP_Int_Enable
+RMP_Int_Enable:
     /* Enable all interrupts */
     EI
     JR                  $ra
     NOP
-    .end                RMP_Enable_Int
-/* End Function:RMP_Enable_Int ***********************************************/
+    .end                RMP_Int_Enable
+/* End Function:RMP_Int_Enable ***********************************************/
 
 /* Begin Function:_RMP_Set_Timer **********************************************
 Description    : The function for setting the timer.
@@ -426,13 +426,13 @@ PendSV_Handler:
     MTC0                $22,CP0_CAUSE
     EHB
     /* Save extra registers */
-    JAL                 RMP_Save_Ctx
+    JAL                 RMP_Ctx_Save
     NOP
     /* Get the highest priority ready task */
-    JAL                 _RMP_Get_High_Rdy
+    JAL                 _RMP_High_Rdy_Get
     NOP
     /* Restore extra registers */
-    JAL                 RMP_Load_Ctx
+    JAL                 RMP_Ctx_Load
     NOP
     /* Clear the interrupt flag in the chip's interrupt controller */
     JAL                 _RMP_Clear_Soft_Flag

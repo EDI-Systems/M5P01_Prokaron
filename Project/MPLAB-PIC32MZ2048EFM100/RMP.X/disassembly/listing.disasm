@@ -92,7 +92,7 @@ Feb 28, 2018 1:35:24 PM
 71:                      
 72:                      Stack_Ptr=(ptr_t*)Stack;
 73:                      /* General purpose registers */
-74:                  #if(RMP_MIPSM_INIT_EXTRA==RMP_TRUE)
+74:                  #if(RMP_MIPSM_INIT_EXTRA==1U)
 75:                      Stack_Ptr[0]=0x01010101;                                    /* R1 */
 9D004548  3C020101   LUI V0, 257
 9D00454C  24420101   ADDIU V0, V0, 257
@@ -108,7 +108,7 @@ Feb 28, 2018 1:35:24 PM
 78:                  #endif
 79:                      Stack_Ptr[3]=Arg;                                           /* R4 */
 9D004578  ACA6000C   SW A2, 12(A1)
-80:                  #if(RMP_MIPSM_INIT_EXTRA==RMP_TRUE)
+80:                  #if(RMP_MIPSM_INIT_EXTRA==1U)
 81:                      Stack_Ptr[4]=0x05050505;                                    /* R5 */
 9D00457C  3C060505   LUI A2, 1285
 9D004580  24C60505   ADDIU A2, A2, 1285
@@ -198,7 +198,7 @@ Feb 28, 2018 1:35:24 PM
 104:                     Stack_Ptr[25]=RMP_GP_Val;                                   /* R28 */
 9D004554  8F838094   LW V1, -32620(GP)
 9D004670  ACA30064   SW V1, 100(A1)
-105:                 #if(RMP_MIPSM_INIT_EXTRA==RMP_TRUE)
+105:                 #if(RMP_MIPSM_INIT_EXTRA==1U)
 106:                     /* Multiply/divide */
 107:                     Stack_Ptr[26]=0x15151515;                                    /* LO */
 9D004674  ACA20068   SW V0, 104(A1)
@@ -213,7 +213,7 @@ Feb 28, 2018 1:35:24 PM
 9D004688  ACA20070   SW V0, 112(A1)
 112:                     Stack_Ptr[29]=Entry;                                        /* CP0_EPC */
 9D00468C  ACA40074   SW A0, 116(A1)
-113:                 #if(RMP_MIPSM_INIT_EXTRA==RMP_TRUE)
+113:                 #if(RMP_MIPSM_INIT_EXTRA==1U)
 114:                     /* Some general-purpose scratch regs */
 115:                     Stack_Ptr[30]=0x20202020;                                   /* R20 */
 9D004690  3C022020   LUI V0, 8224
@@ -302,8 +302,8 @@ Feb 28, 2018 1:35:24 PM
 9D00479C  34038000   ORI V1, ZERO, -32768
 9D0047A0  AC432008   SW V1, 8200(V0)
 132:                     
-133:                     RMP_Disable_Int();
-9D0047A4  0F4012E8   JAL RMP_Disable_Int
+133:                     RMP_Int_Disable();
+9D0047A4  0F4012E8   JAL RMP_Int_Disable
 9D0047A8  00000000   NOP
 134:                     RMP_Int_Nest=0;
 9D0047B0  AF808098   SW ZERO, -32616(GP)
@@ -325,8 +325,8 @@ Feb 28, 2018 1:35:24 PM
 146:                 ******************************************************************************/
 147:                 void _RMP_Plat_Hook(void)
 148:                 {
-149:                     RMP_Enable_Int();
-9D0047C0  0B4012EB   J RMP_Enable_Int
+149:                     RMP_Int_Enable();
+9D0047C0  0B4012EB   J RMP_Int_Enable
 9D0047C4  00000000   NOP
 150:                 }
 151:                 /* End Function:_RMP_Plat_Hook ***********************************************/
@@ -441,14 +441,14 @@ Feb 28, 2018 1:35:24 PM
 9D0009B0  27BD0020   ADDIU SP, SP, 32
 61:                  /* End Function:RMP_Clear ****************************************************/
 62:                  
-63:                  /* Begin Function:RMP_Print_Int ***********************************************
+63:                  /* Begin Function:RMP_Int_Print ***********************************************
 64:                  Description : Print a signed integer on the debugging console. This integer is
 65:                                printed as decimal with sign.
 66:                  Input       : cnt_t Int - The integer to print.
 67:                  Output      : None.
 68:                  Return      : cnt_t - The length of the string printed.
 69:                  ******************************************************************************/
-70:                  cnt_t RMP_Print_Int(cnt_t Int)
+70:                  cnt_t RMP_Int_Print(cnt_t Int)
 71:                  {
 9D0009B4  27BDFFD8   ADDIU SP, SP, -40
 9D0009B8  AFBF0024   SW RA, 36(SP)
@@ -617,16 +617,16 @@ Feb 28, 2018 1:35:24 PM
 9D000B30  8FB00010   LW S0, 16(SP)
 9D000B34  03E00008   JR RA
 9D000B38  27BD0028   ADDIU SP, SP, 40
-137:                 /* End Function:RMP_Print_Int ************************************************/
+137:                 /* End Function:RMP_Int_Print ************************************************/
 138:                 
-139:                 /* Begin Function:RMP_Print_Uint **********************************************
+139:                 /* Begin Function:RMP_Hex_Print **********************************************
 140:                 Description : Print a unsigned integer on the debugging console. This integer is
 141:                               printed as hexadecimal.
 142:                 Input       : ptr_t Uint - The unsigned integer to print.
 143:                 Output      : None.
 144:                 Return      : cnt_t - The length of the string printed.
 145:                 ******************************************************************************/
-146:                 cnt_t RMP_Print_Uint(ptr_t Uint)
+146:                 cnt_t RMP_Hex_Print(ptr_t Uint)
 147:                 {
 9D000B4C  27BDFFD8   ADDIU SP, SP, -40
 9D000B50  AFBF0024   SW RA, 36(SP)
@@ -718,16 +718,16 @@ Feb 28, 2018 1:35:24 PM
 9D000C10  8FB00014   LW S0, 20(SP)
 9D000C14  03E00008   JR RA
 9D000C18  27BD0028   ADDIU SP, SP, 40
-184:                 /* End Function:RMP_Print_Uint ***********************************************/
+184:                 /* End Function:RMP_Hex_Print ***********************************************/
 185:                 
-186:                 /* Begin Function:RMP_Print_String ********************************************
+186:                 /* Begin Function:RMP_Str_Print ********************************************
 187:                 Description : Print a string the kernel console.
 188:                               This is only used for kernel-level debugging.
 189:                 Input       : s8* String - The string to print
 190:                 Output      : None.
 191:                 Return      : cnt_t - The length of the string printed, the '\0' is not included.
 192:                 ******************************************************************************/
-193:                 cnt_t RMP_Print_String(s8* String)
+193:                 cnt_t RMP_Str_Print(s8* String)
 194:                 {
 9D000C24  27BDFFE0   ADDIU SP, SP, -32
 9D000C28  AFBF001C   SW RA, 28(SP)
@@ -739,7 +739,7 @@ Feb 28, 2018 1:35:24 PM
 196:                     
 197:                     Count=0;
 9D000C3C  00008021   ADDU S0, ZERO, ZERO
-198:                     while(Count<RMP_KERNEL_DEBUG_MAX_STR)
+198:                     while(Count<RMP_DEBUG_PRINT_MAX)
 9D000C40  0B400316   J 0x9D000C58
 9D000C44  241200FF   ADDIU S2, ZERO, 255
 9D000C50  12120006   BEQ S0, S2, 0x9D000C6C
@@ -766,7 +766,7 @@ Feb 28, 2018 1:35:24 PM
 9D000C78  8FB00010   LW S0, 16(SP)
 9D000C7C  03E00008   JR RA
 9D000C80  27BD0020   ADDIU SP, SP, 32
-208:                 /* End Function:RMP_Print_String *********************************************/
+208:                 /* End Function:RMP_Str_Print *********************************************/
 209:                 
 210:                 /* Begin Function:RMP_List_Crt ************************************************
 211:                 Description : Create a doubly linkled list.
@@ -981,13 +981,13 @@ Feb 28, 2018 1:35:24 PM
 253:                 }
 254:                 /* End Function:RMP_List_Ins *************************************************/
 255:                 
-256:                 /* Begin Function:RMP_Lock_Sched **********************************************
+256:                 /* Begin Function:RMP_Sched_Lock **********************************************
 257:                 Description : The function locks the scheduler. The locking can be stacked.
 258:                 Input       : None.
 259:                 Output      : None.
 260:                 Return      : None.
 261:                 ******************************************************************************/
-262:                 void RMP_Lock_Sched(void)
+262:                 void RMP_Sched_Lock(void)
 263:                 {
 264:                     RMP_Sched_Locked=1;
 9D000CBC  24020001   ADDIU V0, ZERO, 1
@@ -1072,15 +1072,15 @@ Feb 28, 2018 1:35:24 PM
 9D003244  24630001   ADDIU V1, V1, 1
 9D003248  AF838070   SW V1, -32656(GP)
 266:                 }
-267:                 /* End Function:RMP_Lock_Sched ***********************************************/
+267:                 /* End Function:RMP_Sched_Lock ***********************************************/
 268:                 
-269:                 /* Begin Function:RMP_Unlock_Sched ********************************************
+269:                 /* Begin Function:RMP_Sched_Unlock ********************************************
 270:                 Description : The function unlocks the scheduler. The unlocking can be stacked.
 271:                 Input       : None.
 272:                 Output      : None.
 273:                 Return      : None.
 274:                 ******************************************************************************/
-275:                 void RMP_Unlock_Sched(void)
+275:                 void RMP_Sched_Unlock(void)
 276:                 {
 277:                     if(RMP_Sched_Lock_Cnt==1)
 9D000CD8  8F838070   LW V1, -32656(GP)
@@ -1794,7 +1794,7 @@ Feb 28, 2018 1:35:24 PM
 294:                     else
 295:                         while(1);
 296:                 }
-297:                 /* End Function:RMP_Unlock_Sched *********************************************/
+297:                 /* End Function:RMP_Sched_Unlock *********************************************/
 298:                 
 299:                 /* Begin Function:RMP_Yield ***************************************************
 300:                 Description : Yield to another thread.
@@ -1934,7 +1934,7 @@ Feb 28, 2018 1:35:24 PM
 9D0008FC  00441025   OR V0, V0, A0
 9D000900  ACA20000   SW V0, 0(A1)
 368:                             /* See if we need to pend a scheduling event */
-369:                             if(Thread->Prio>RMP_Cur_Thd->Prio)
+369:                             if(Thread->Prio>RMP_Thd_Cur->Prio)
 9D000904  8F828084   LW V0, -32636(GP)
 9D000908  8C420024   LW V0, 36(V0)
 9D00090C  0043182B   SLTU V1, V0, V1
@@ -1948,21 +1948,21 @@ Feb 28, 2018 1:35:24 PM
 373:                 }
 374:                 /* Begin Function:_RMP_Timer_Proc ********************************************/
 375:                 
-376:                 /* Begin Function:_RMP_Get_High_Rdy *******************************************
+376:                 /* Begin Function:_RMP_High_Rdy_Get *******************************************
 377:                 Description : Get the highest priority ready thread. The return value will be written
 378:                               into the global variables.
 379:                 Input       : None.
 380:                 Output      : None.
 381:                 Return      : None.
 382:                 ******************************************************************************/
-383:                 void _RMP_Get_High_Rdy(void)
+383:                 void _RMP_High_Rdy_Get(void)
 384:                 {
 9D000DA8  27BDFFE8   ADDIU SP, SP, -24
 9D000DAC  AFBF0014   SW RA, 20(SP)
 385:                     cnt_t Count;
 386:                     
 387:                     /* Write the SP value to thread structure */
-388:                     RMP_Cur_Thd->Stack=RMP_Cur_SP;
+388:                     RMP_Thd_Cur->Stack=RMP_SP_Cur;
 9D000DB0  8F838084   LW V1, -32636(GP)
 9D000DB4  8F848088   LW A0, -32632(GP)
 389:                     
@@ -2005,7 +2005,7 @@ Feb 28, 2018 1:35:24 PM
 9D000E04  00000000   NOP
 408:                         
 409:                         /* See if the current thread and the next thread are the same. If yes, place the current at the end of the queue */
-410:                         if(RMP_Cur_Thd==(struct RMP_Thd*)(RMP_Run[Count].Next))
+410:                         if(RMP_Thd_Cur==(struct RMP_Thd*)(RMP_Run[Count].Next))
 9D000E08  3C038000   LUI V1, -32768
 9D000E0C  24631CD0   ADDIU V1, V1, 7376
 9D000E10  000210C0   SLL V0, V0, 3
@@ -2015,12 +2015,12 @@ Feb 28, 2018 1:35:24 PM
 9D000E20  10A4000E   BEQ A1, A0, 0x9D000E5C
 9D000E24  00000000   NOP
 411:                         {
-412:                             RMP_List_Del(RMP_Cur_Thd->Run_Head.Prev, RMP_Cur_Thd->Run_Head.Next);
+412:                             RMP_List_Del(RMP_Thd_Cur->Run_Head.Prev, RMP_Thd_Cur->Run_Head.Next);
 9D000E5C  8F848084   LW A0, -32636(GP)
 9D000E60  8F858084   LW A1, -32636(GP)
 9D000E64  8C840000   LW A0, 0(A0)
 9D000E68  8CA50004   LW A1, 4(A1)
-413:                             RMP_List_Ins(&(RMP_Cur_Thd->Run_Head),
+413:                             RMP_List_Ins(&(RMP_Thd_Cur->Run_Head),
 9D000E74  8F848084   LW A0, -32636(GP)
 9D000E80  000528C0   SLL A1, A1, 3
 9D000E84  00A32821   ADDU A1, A1, V1
@@ -2028,19 +2028,19 @@ Feb 28, 2018 1:35:24 PM
 9D000E90  8CC60024   LW A2, 36(A2)
 9D000E94  000630C0   SLL A2, A2, 3
 9D000E98  00663021   ADDU A2, V1, A2
-414:                                          RMP_Run[RMP_Cur_Thd->Prio].Prev,
+414:                                          RMP_Run[RMP_Thd_Cur->Prio].Prev,
 9D000E78  8F858084   LW A1, -32636(GP)
 9D000E7C  8CA50024   LW A1, 36(A1)
-415:                                          &(RMP_Run[RMP_Cur_Thd->Prio]));
+415:                                          &(RMP_Run[RMP_Thd_Cur->Prio]));
 9D000E8C  8F868084   LW A2, -32636(GP)
 416:                         }
 417:                         
 418:                         /* Replenish timeslices */
-419:                         RMP_Cur_Thd->Slices_Left=RMP_Cur_Thd->Slices;
+419:                         RMP_Thd_Cur->Slice_Left=RMP_Thd_Cur->Slice;
 9D000E28  8F848084   LW A0, -32636(GP)
 9D000E2C  8F858084   LW A1, -32636(GP)
 9D000E38  8CA2001C   LW V0, 28(A1)
-420:                         RMP_Cur_Thd=(struct RMP_Thd*)(RMP_Run[Count].Next);
+420:                         RMP_Thd_Cur=(struct RMP_Thd*)(RMP_Run[Count].Next);
 9D000E30  00621821   ADDU V1, V1, V0
 9D000E34  8C630004   LW V1, 4(V1)
 9D000E3C  AF838084   SW V1, -32636(GP)
@@ -2050,7 +2050,7 @@ Feb 28, 2018 1:35:24 PM
 422:                     }
 423:                     
 424:                     /* Load the SP value from thread structure */
-425:                     RMP_Cur_SP=RMP_Cur_Thd->Stack;
+425:                     RMP_SP_Cur=RMP_Thd_Cur->Stack;
 9D000DE4  8F828084   LW V0, -32636(GP)
 9D000DE8  8C420034   LW V0, 52(V0)
 9D000DEC  AF828088   SW V0, -32632(GP)
@@ -2058,7 +2058,7 @@ Feb 28, 2018 1:35:24 PM
 9D000DF0  8FBF0014   LW RA, 20(SP)
 9D000DF4  03E00008   JR RA
 9D000DF8  27BD0018   ADDIU SP, SP, 24
-427:                 /* End Function:_RMP_Get_High_Rdy ********************************************/
+427:                 /* End Function:_RMP_High_Rdy_Get ********************************************/
 428:                 
 429:                 /* Begin Function:_RMP_Tick_Handler *******************************************
 430:                 Description : The system tick timer interrupt routine.
@@ -2076,11 +2076,11 @@ Feb 28, 2018 1:35:24 PM
 9D000EBC  8F828074   LW V0, -32652(GP)
 9D000EC0  00821021   ADDU V0, A0, V0
 9D000EC4  AF828074   SW V0, -32652(GP)
-440:                 #if(RMP_USE_HOOKS==RMP_TRUE)
+440:                 #if(RMP_HOOK_EXTRA==1U)
 441:                     RMP_Tick_Hook(Ticks);
 442:                 #endif
 443:                     /* See if the current thread expired. If yes, trigger a scheduler event */
-444:                     if(Ticks>=RMP_Cur_Thd->Slices_Left)
+444:                     if(Ticks>=RMP_Thd_Cur->Slice_Left)
 9D000EC8  8F828084   LW V0, -32636(GP)
 9D000ECC  8C420020   LW V0, 32(V0)
 9D000ED0  0082102B   SLTU V0, A0, V0
@@ -2089,7 +2089,7 @@ Feb 28, 2018 1:35:24 PM
 445:                         RMP_Sched_Pend=1;
 9D000EDC  AF828068   SW V0, -32664(GP)
 446:                     else
-447:                         RMP_Cur_Thd->Slices_Left-=Ticks;
+447:                         RMP_Thd_Cur->Slice_Left-=Ticks;
 9D000F38  8F828084   LW V0, -32636(GP)
 9D000F3C  8C430020   LW V1, 32(V0)
 9D000F40  00642023   SUBU A0, V1, A0
@@ -2150,19 +2150,19 @@ Feb 28, 2018 1:35:24 PM
 9D000F50  8FBF0014   LW RA, 20(SP)
 471:                 /* End Function:_RMP_Tick_Handler ********************************************/
 472:                 
-473:                 /* Begin Function:_RMP_Get_Near_Ticks *****************************************
+473:                 /* Begin Function:_RMP_Near_Tick_Get *****************************************
 474:                 Description : Get the nearest timer interrupt arrival time.
 475:                 Input       : None.
 476:                 Output      : None.
 477:                 Return      : ptr_t Ticks - How many ticks until the next timeout.
 478:                 ******************************************************************************/
-479:                 ptr_t _RMP_Get_Near_Ticks(void)
+479:                 ptr_t _RMP_Near_Tick_Get(void)
 480:                 {
 481:                     ptr_t Value;
 482:                     struct RMP_Thd* Thread;
 483:                     
 484:                     /* What is the current thread's timeout value? */
-485:                     Value=RMP_Cur_Thd->Slices_Left;
+485:                     Value=RMP_Thd_Cur->Slice_Left;
 9D000F6C  8F828084   LW V0, -32636(GP)
 486:                     
 487:                     /* What is the nearest timer timeout value? */
@@ -2198,9 +2198,9 @@ Feb 28, 2018 1:35:24 PM
 503:                 }
 9D000FA8  03E00008   JR RA
 9D000FAC  0062100A   MOVZ V0, V1, V0
-504:                 /* End Function:_RMP_Get_Near_Ticks ******************************************/
+504:                 /* End Function:_RMP_Near_Tick_Get ******************************************/
 505:                 
-506:                 /* Begin Function:_RMP_Set_Rdy ************************************************
+506:                 /* Begin Function:_RMP_Rdy_Set ************************************************
 507:                 Description : Set the thread as ready to schedule. That means, put the thread into
 508:                               the runqueue. When this is called, please make sure that the scheduler
 509:                               is locked.
@@ -2208,7 +2208,7 @@ Feb 28, 2018 1:35:24 PM
 511:                 Output      : None.
 512:                 Return      : None.
 513:                 ******************************************************************************/
-514:                 void _RMP_Set_Rdy(struct RMP_Thd* Thread)
+514:                 void _RMP_Rdy_Set(struct RMP_Thd* Thread)
 515:                 {
 516:                     /* Insert this into the corresponding runqueue */
 517:                     RMP_List_Ins(&(Thread->Run_Head),RMP_Run[Thread->Prio].Prev,&(RMP_Run[Thread->Prio]));
@@ -2335,7 +2335,7 @@ Feb 28, 2018 1:35:24 PM
 9D003614  AC830000   SW V1, 0(A0)
 520:                     
 521:                     /* Compare this with the current one to see if we need a context switch */
-522:                     if(Thread->Prio>RMP_Cur_Thd->Prio)
+522:                     if(Thread->Prio>RMP_Thd_Cur->Prio)
 9D00108C  8F838084   LW V1, -32636(GP)
 9D001090  8C630024   LW V1, 36(V1)
 9D001094  0062102B   SLTU V0, V1, V0
@@ -2379,16 +2379,16 @@ Feb 28, 2018 1:35:24 PM
 9D0030C4  AF838068   SW V1, -32664(GP)
 9D003350  AF8B8068   SW T3, -32664(GP)
 524:                 }
-525:                 /* End Function:_RMP_Set_Rdy *************************************************/
+525:                 /* End Function:_RMP_Rdy_Set *************************************************/
 526:                 
-527:                 /* Begin Function:_RMP_Clr_Rdy ************************************************
+527:                 /* Begin Function:_RMP_Rdy_Clr ************************************************
 528:                 Description : Clear the thread from the runqueue. When this is called, please 
 529:                               make sure that the scheduler is locked.
 530:                 Input       : struct RMP_Thd* Thread - The thread to clear from the runqueue.
 531:                 Output      : None.
 532:                 Return      : None.
 533:                 ******************************************************************************/
-534:                 void _RMP_Clr_Rdy(struct RMP_Thd* Thread)
+534:                 void _RMP_Rdy_Clr(struct RMP_Thd* Thread)
 535:                 {
 536:                     /* See if it is the last thread on the priority level */
 537:                     if(Thread->Run_Head.Prev==Thread->Run_Head.Next)
@@ -2482,7 +2482,7 @@ Feb 28, 2018 1:35:24 PM
 541:                     RMP_List_Del(Thread->Run_Head.Prev,Thread->Run_Head.Next);
 542:                     
 543:                     /* If it is the current thread, request a context switch */
-544:                     if(Thread==RMP_Cur_Thd)
+544:                     if(Thread==RMP_Thd_Cur)
 9D0013C8  8F828084   LW V0, -32636(GP)
 9D0015BC  8F828084   LW V0, -32636(GP)
 9D0017C0  8F828084   LW V0, -32636(GP)
@@ -2520,7 +2520,7 @@ Feb 28, 2018 1:35:24 PM
 9D002DDC  0B400B18   J 0x9D002C60
 9D002DE0  00000000   NOP
 546:                 }
-547:                 /* End Function:_RMP_Clr_Rdy *************************************************/
+547:                 /* End Function:_RMP_Rdy_Clr *************************************************/
 548:                 
 549:                 /* Begin Function:_RMP_Dly_Ins ************************************************
 550:                 Description : Insert the thread into the delay queue, given some timeslices into the
@@ -2530,7 +2530,7 @@ Feb 28, 2018 1:35:24 PM
 554:                 Output      : None.
 555:                 Return      : None.
 556:                 ******************************************************************************/
-557:                 void _RMP_Dly_Ins(struct RMP_Thd* Thread, ptr_t Slices)
+557:                 void _RMP_Dly_Ins(struct RMP_Thd* Thread, ptr_t Slice)
 558:                 {
 559:                     struct RMP_List* Trav_Ptr;
 560:                     struct RMP_Thd* Trav_Thd;
@@ -2549,7 +2549,7 @@ Feb 28, 2018 1:35:24 PM
 9D002D74  27848078   ADDIU A0, GP, -32648
 564:                     {
 565:                         Trav_Thd=RMP_DLY2THD(Trav_Ptr);
-566:                         if((Trav_Thd->Timeout-RMP_Tick)>Slices)
+566:                         if((Trav_Thd->Timeout-RMP_Tick)>Slice)
 9D001D1C  8C440020   LW A0, 32(V0)
 9D002368  8C440020   LW A0, 32(V0)
 9D0024FC  8C460020   LW A2, 32(V0)
@@ -2563,7 +2563,7 @@ Feb 28, 2018 1:35:24 PM
 568:                     }
 569:                 
 570:                     /* Insert this into the list */
-571:                     Thread->Timeout=RMP_Tick+Slices;
+571:                     Thread->Timeout=RMP_Tick+Slice;
 9D001D34  8F888074   LW T0, -32652(GP)
 9D001D40  00C83021   ADDU A2, A2, T0
 9D002380  8F878074   LW A3, -32652(GP)
@@ -2591,11 +2591,11 @@ Feb 28, 2018 1:35:24 PM
 582:                               void* Stack - The stack of this thread.
 583:                               void* Arg - The argument to pass to the thread.
 584:                               ptr_t Prio - The priority of the thread.
-585:                               ptr_t Slices - The number of timeslices to assign to the thread.
+585:                               ptr_t Slice - The number of timeslices to assign to the thread.
 586:                 Output      : None.
 587:                 Return      : ret_t - If successful, 0. on error, return an error code.
 588:                 ******************************************************************************/
-589:                 ret_t RMP_Thd_Crt(struct RMP_Thd* Thread, void* Entry, void* Stack, void* Arg, ptr_t Prio, ptr_t Slices)
+589:                 ret_t RMP_Thd_Crt(struct RMP_Thd* Thread, void* Entry, void* Stack, void* Arg, ptr_t Prio, ptr_t Slice)
 590:                 {
 9D000FB0  27BDFFE0   ADDIU SP, SP, -32
 9D000FB4  AFBF001C   SW RA, 28(SP)
@@ -2603,7 +2603,7 @@ Feb 28, 2018 1:35:24 PM
 9D000FBC  AFB00014   SW S0, 20(SP)
 9D000FC0  8FA30030   LW V1, 48(SP)
 591:                     /* Check if the priority and timeslice range is correct */
-592:                     if(Prio>=RMP_MAX_PREEMPT_PRIO)
+592:                     if(Prio>=RMP_PREEMPT_PRIO_NUM)
 9D000FC4  2C680020   SLTIU T0, V1, 32
 9D000FC8  11000068   BEQ T0, ZERO, 0x9D00116C
 9D000FCC  8FA20034   LW V0, 52(SP)
@@ -2613,7 +2613,7 @@ Feb 28, 2018 1:35:24 PM
 9D000FDC  00E03021   ADDU A2, A3, ZERO
 593:                         return RMP_ERR_PRIO;
 9D00116C  2410FFFE   ADDIU S0, ZERO, -2
-594:                     if((Slices==0)||(Slices>=RMP_MAX_SLICES))
+594:                     if((Slice==0)||(Slice>=RMP_SLICE_MAX))
 9D000FE0  2448FFFF   ADDIU T0, V0, -1
 9D000FE4  3C070001   LUI A3, 1
 9D000FE8  34E7869F   ORI A3, A3, -31073
@@ -2629,14 +2629,14 @@ Feb 28, 2018 1:35:24 PM
 599:                         return RMP_ERR_THD;
 9D0011A4  2410FFFF   ADDIU S0, ZERO, -1
 600:                     
-601:                     RMP_Lock_Sched();
+601:                     RMP_Sched_Lock();
 602:                     
 603:                     if(RMP_THD_STATE(Thread->State)!=RMP_THD_FREE)
 9D001008  92070018   LBU A3, 24(S0)
 9D001014  14E00044   BNE A3, ZERO, .LBB168
 9D001018  00000000   NOP
 604:                     {
-605:                         RMP_Unlock_Sched();
+605:                         RMP_Sched_Unlock();
 606:                         return RMP_ERR_THD;
 9D001148  2410FFFF   ADDIU S0, ZERO, -1
 607:                     }
@@ -2644,9 +2644,9 @@ Feb 28, 2018 1:35:24 PM
 609:                     /* Create the thread and insert it into the list */
 610:                     Thread->Prio=Prio;
 9D00101C  AE030024   SW V1, 36(S0)
-611:                     Thread->Slices=Slices;
+611:                     Thread->Slice=Slice;
 9D001020  AE02001C   SW V0, 28(S0)
-612:                     Thread->Slices_Left=Slices;
+612:                     Thread->Slice_Left=Slice;
 9D001024  AE020020   SW V0, 32(S0)
 613:                     Thread->Stack=(ptr_t)Stack;
 614:                     
@@ -2660,9 +2660,9 @@ Feb 28, 2018 1:35:24 PM
 619:                     /* Notify the scheduler that we have created something new, also check locks */
 620:                     Thread->State=RMP_THD_RUNNING;
 9D00105C  AE110018   SW S1, 24(S0)
-621:                     _RMP_Set_Rdy(Thread);
+621:                     _RMP_Rdy_Set(Thread);
 622:                     
-623:                     RMP_Unlock_Sched();
+623:                     RMP_Sched_Unlock();
 624:                 
 625:                     return 0;
 9D0010C4  00008021   ADDU S0, ZERO, ZERO
@@ -2737,7 +2737,7 @@ Feb 28, 2018 1:35:24 PM
 642:                         return RMP_ERR_THD;
 9D0014B8  2402FFFF   ADDIU V0, ZERO, -1
 643:                     
-644:                     RMP_Lock_Sched();
+644:                     RMP_Sched_Lock();
 645:                     
 646:                     if(RMP_THD_STATE(Thread->State)==RMP_THD_FREE)
 9D001220  8C850018   LW A1, 24(A0)
@@ -2745,8 +2745,8 @@ Feb 28, 2018 1:35:24 PM
 9D001230  10600099   BEQ V1, ZERO, 0x9D001498
 9D001234  24870010   ADDIU A3, A0, 16
 647:                     {
-648:                         RMP_Unlock_Sched();
-9D001498  0F400336   JAL .LFB12, .LFE11, RMP_Unlock_Sched
+648:                         RMP_Sched_Unlock();
+9D001498  0F400336   JAL .LFB12, .LFE11, RMP_Sched_Unlock
 9D00149C  00000000   NOP
 649:                         return RMP_ERR_THD;
 9D0014A0  2402FFFF   ADDIU V0, ZERO, -1
@@ -2791,7 +2791,7 @@ Feb 28, 2018 1:35:24 PM
 9D00129C  30630100   ANDI V1, V1, 256
 9D0012A0  1460FFEF   BNE V1, ZERO, 0x9D001260
 9D0012A4  AC450018   SW A1, 24(V0)
-664:                            _RMP_Set_Rdy(Release);
+664:                            _RMP_Rdy_Set(Release);
 665:                         
 666:                         Release->Retval=RMP_ERR_OPER;
 9D001258  0B40049C   J 0x9D001270
@@ -2802,7 +2802,7 @@ Feb 28, 2018 1:35:24 PM
 668:                     
 669:                     /* See what is it state */
 670:                     Self_Del=0;
-671:                     if(RMP_Cur_Thd==Thread)
+671:                     if(RMP_Thd_Cur==Thread)
 9D00131C  8F908084   LW S0, -32636(GP)
 672:                         Self_Del=1;
 673:                     
@@ -2823,7 +2823,7 @@ Feb 28, 2018 1:35:24 PM
 9D001378  30420100   ANDI V0, V0, 256
 9D00137C  14400016   BNE V0, ZERO, .LBE224, .LBB228
 9D001380  00000000   NOP
-679:                                 _RMP_Clr_Rdy(Thread);
+679:                                 _RMP_Rdy_Clr(Thread);
 680:                             break;
 681:                         }
 682:                         
@@ -2865,7 +2865,7 @@ Feb 28, 2018 1:35:24 PM
 708:                     }
 709:                     Thread->State=RMP_THD_FREE;
 710:                     
-711:                     RMP_Unlock_Sched();
+711:                     RMP_Sched_Unlock();
 712:                     
 713:                     /* If we are deleting ourself, just stop the execution here */
 714:                     if(Self_Del!=0)
@@ -2902,20 +2902,20 @@ Feb 28, 2018 1:35:24 PM
 720:                 
 721:                 /* Begin Function:RMP_Thd_Set *************************************************
 722:                 Description : Change the priority or timeslice of a real-time thread. If one of
-723:                               the changes is not desired, just leave it to RMP_MAX_PREEMPT_PRIO
-724:                               or RMP_MAX_SLICES.
+723:                               the changes is not desired, just leave it to RMP_PREEMPT_PRIO_NUM
+724:                               or RMP_SLICE_MAX.
 725:                 Input       : struct RMP_Thd* Thread - The thread structure of the thread.
 726:                               ptr_t Prio - The priority of the thread.
-727:                               ptr_t Slices - The new timeslice value for this thread.
+727:                               ptr_t Slice - The new timeslice value for this thread.
 728:                 Output      : None.
 729:                 Return      : ret_t - If successful, 0; else error code.
 730:                 ******************************************************************************/
-731:                 ret_t RMP_Thd_Set(struct RMP_Thd* Thread, ptr_t Prio, ptr_t Slices)
+731:                 ret_t RMP_Thd_Set(struct RMP_Thd* Thread, ptr_t Prio, ptr_t Slice)
 732:                 {
 9D0014D0  27BDFFE8   ADDIU SP, SP, -24
 9D0014D4  AFBF0014   SW RA, 20(SP)
 733:                     /* Check if the priority and timeslice range is correct */
-734:                     if(Slices==0)
+734:                     if(Slice==0)
 9D0014D8  10C0007C   BEQ A2, ZERO, 0x9D0016CC
 9D0014DC  AFB00010   SW S0, 16(SP)
 735:                         return RMP_ERR_SLICE;
@@ -2928,14 +2928,14 @@ Feb 28, 2018 1:35:24 PM
 739:                         return RMP_ERR_THD;
 9D0016B4  2410FFFF   ADDIU S0, ZERO, -1
 740:                     
-741:                     RMP_Lock_Sched();
+741:                     RMP_Sched_Lock();
 742:                     
 743:                     if(RMP_THD_STATE(Thread->State)==RMP_THD_FREE)
 9D0014F0  90870018   LBU A3, 24(A0)
 9D0014FC  10E0005D   BEQ A3, ZERO, .LBB278
 9D001500  00000000   NOP
 744:                     {
-745:                         RMP_Unlock_Sched();
+745:                         RMP_Sched_Unlock();
 746:                         return RMP_ERR_THD;
 9D001694  2410FFFF   ADDIU S0, ZERO, -1
 747:                     }
@@ -2946,7 +2946,7 @@ Feb 28, 2018 1:35:24 PM
 9D001508  2CA20020   SLTIU V0, A1, 32
 751:                     {
 752:                         /* See if we are gonna change one of it or both */
-753:                         if(Prio<RMP_MAX_PREEMPT_PRIO)
+753:                         if(Prio<RMP_PREEMPT_PRIO_NUM)
 9D00156C  1040FFEA   BEQ V0, ZERO, 0x9D001518
 9D001570  3C020001   LUI V0, 1
 754:                         {
@@ -2955,24 +2955,24 @@ Feb 28, 2018 1:35:24 PM
 9D001578  1105FFE8   BEQ T0, A1, 0x9D00151C
 9D00157C  344286A0   ORI V0, V0, -31072
 756:                             {
-757:                                 _RMP_Clr_Rdy(Thread);
+757:                                 _RMP_Rdy_Clr(Thread);
 758:                                 Thread->Prio=Prio;
 9D0015EC  AC850024   SW A1, 36(A0)
-759:                                 _RMP_Set_Rdy(Thread);
+759:                                 _RMP_Rdy_Set(Thread);
 760:                             }
 761:                         }
 762:                         
-763:                         if(Slices<RMP_MAX_SLICES)
-764:                             Thread->Slices=Slices;
+763:                         if(Slice<RMP_SLICE_MAX)
+764:                             Thread->Slice=Slice;
 765:                     }
 766:                     else
 767:                     {
-768:                         if(Prio<RMP_MAX_PREEMPT_PRIO)
+768:                         if(Prio<RMP_PREEMPT_PRIO_NUM)
 9D00150C  54400001   BNEL V0, ZERO, 0x9D001514
 9D001510  AC850024   SW A1, 36(A0)
 769:                             Thread->Prio=Prio;
 770:                         
-771:                         if(Slices<RMP_MAX_SLICES)
+771:                         if(Slice<RMP_SLICE_MAX)
 9D001514  3C020001   LUI V0, 1
 9D001518  344286A0   ORI V0, V0, -31072
 9D00151C  00C2102B   SLTU V0, A2, V0
@@ -2982,10 +2982,10 @@ Feb 28, 2018 1:35:24 PM
 9D001634  3C020001   LUI V0, 1
 9D001638  0B40058E   J 0x9D001638
 9D00163C  00000000   NOP
-772:                             Thread->Slices=Slices;
+772:                             Thread->Slice=Slice;
 773:                     }
 774:                     
-775:                     RMP_Unlock_Sched();
+775:                     RMP_Sched_Unlock();
 776:                     
 777:                     return 0;
 9D00154C  00008021   ADDU S0, ZERO, ZERO
@@ -3041,7 +3041,7 @@ Feb 28, 2018 1:35:24 PM
 791:                         return RMP_ERR_THD;
 9D0018FC  2410FFFF   ADDIU S0, ZERO, -1
 792:                     
-793:                     RMP_Lock_Sched();
+793:                     RMP_Sched_Lock();
 794:                     
 795:                     if(RMP_THD_STATE(Thread->State)==RMP_THD_FREE)
 9D00173C  8C830018   LW V1, 24(A0)
@@ -3049,7 +3049,7 @@ Feb 28, 2018 1:35:24 PM
 9D00174C  10A0005B   BEQ A1, ZERO, .LBB332
 9D001750  30660100   ANDI A2, V1, 256
 796:                     {
-797:                         RMP_Unlock_Sched();
+797:                         RMP_Sched_Unlock();
 798:                         return RMP_ERR_THD;
 9D0018DC  2410FFFF   ADDIU S0, ZERO, -1
 799:                     }
@@ -3059,7 +3059,7 @@ Feb 28, 2018 1:35:24 PM
 9D001754  14C00031   BNE A2, ZERO, .LBB323
 9D001758  34630100   ORI V1, V1, 256
 803:                     {
-804:                         RMP_Unlock_Sched();
+804:                         RMP_Sched_Unlock();
 805:                         return RMP_ERR_STATE;
 9D00183C  2410FFFC   ADDIU S0, ZERO, -4
 806:                     }
@@ -3069,9 +3069,9 @@ Feb 28, 2018 1:35:24 PM
 810:                     if(RMP_THD_STATE(Thread->State)==RMP_THD_RUNNING)
 9D00175C  10A20012   BEQ A1, V0, .LBB317
 9D001760  AC830018   SW V1, 24(A0)
-811:                         _RMP_Clr_Rdy(Thread);
+811:                         _RMP_Rdy_Clr(Thread);
 812:                     
-813:                     RMP_Unlock_Sched();
+813:                     RMP_Sched_Unlock();
 814:                 
 815:                     return 0;
 9D001788  00008021   ADDU S0, ZERO, ZERO
@@ -3136,7 +3136,7 @@ Feb 28, 2018 1:35:24 PM
 831:                         return RMP_ERR_THD;
 9D001A18  2410FFFF   ADDIU S0, ZERO, -1
 832:                 
-833:                     RMP_Lock_Sched();
+833:                     RMP_Sched_Lock();
 834:                     
 835:                     if(RMP_THD_STATE(Thread->State)==RMP_THD_FREE)
 9D00196C  8C850018   LW A1, 24(A0)
@@ -3144,7 +3144,7 @@ Feb 28, 2018 1:35:24 PM
 9D00197C  10400046   BEQ V0, ZERO, .LBB372
 9D001980  30A60100   ANDI A2, A1, 256
 836:                     {
-837:                         RMP_Unlock_Sched();
+837:                         RMP_Sched_Unlock();
 838:                         return RMP_ERR_THD;
 9D001AB8  2410FFFF   ADDIU S0, ZERO, -1
 839:                     }
@@ -3160,7 +3160,7 @@ Feb 28, 2018 1:35:24 PM
 846:                         if(RMP_THD_STATE(Thread->State)==RMP_THD_RUNNING)
 9D001990  10430027   BEQ V0, V1, .LBB366
 9D001994  AC850018   SW A1, 24(A0)
-847:                             _RMP_Set_Rdy(Thread);
+847:                             _RMP_Rdy_Set(Thread);
 848:                         Retval=0;
 9D001998  00008021   ADDU S0, ZERO, ZERO
 9D001A90  0B400667   J .LBB360
@@ -3169,7 +3169,7 @@ Feb 28, 2018 1:35:24 PM
 850:                     else
 851:                         Retval=RMP_ERR_STATE;
 852:                     
-853:                     RMP_Unlock_Sched();
+853:                     RMP_Sched_Unlock();
 854:                 
 855:                     return Retval;
 856:                 }
@@ -3209,11 +3209,11 @@ Feb 28, 2018 1:35:24 PM
 861:                               this operation can potentially block.
 862:                 Input       : struct RMP_Thd* Thread - The thread structure of the thread to send to.
 863:                               ptr_t Data - The data to send to that thread.
-864:                               ptr_t Slices - The timeslice to wait, if the mailbox is already full.
+864:                               ptr_t Slice - The timeslice to wait, if the mailbox is already full.
 865:                 Output      : None.
 866:                 Return      : ret_t - If successful,0; or an error code.
 867:                 ******************************************************************************/
-868:                 ret_t RMP_Thd_Snd(struct RMP_Thd* Thread, ptr_t Data, ptr_t Slices)
+868:                 ret_t RMP_Thd_Snd(struct RMP_Thd* Thread, ptr_t Data, ptr_t Slice)
 869:                 {
 9D001B1C  27BDFFE8   ADDIU SP, SP, -24
 9D001B20  AFBF0014   SW RA, 20(SP)
@@ -3223,7 +3223,7 @@ Feb 28, 2018 1:35:24 PM
 9D001B18  00000000   NOP
 872:                         return RMP_ERR_THD;
 873:                     
-874:                     RMP_Lock_Sched();
+874:                     RMP_Sched_Lock();
 875:                     
 876:                     if(RMP_THD_STATE(Thread->State)==RMP_THD_FREE)
 9D001B30  8C820018   LW V0, 24(A0)
@@ -3231,23 +3231,23 @@ Feb 28, 2018 1:35:24 PM
 9D001B40  10E00095   BEQ A3, ZERO, .LBB445
 9D001B44  00000000   NOP
 877:                     {
-878:                         RMP_Unlock_Sched();
+878:                         RMP_Sched_Unlock();
 879:                         return RMP_ERR_THD;
 9D001DB8  2402FFFF   ADDIU V0, ZERO, -1
 9D001E00  2402FFFF   ADDIU V0, ZERO, -1
 880:                     }
 881:                     
 882:                     /* Are we sending to ourself? This is not allowed */
-883:                     if(RMP_Cur_Thd==Thread)
+883:                     if(RMP_Thd_Cur==Thread)
 9D001B48  8F888084   LW T0, -32636(GP)
 9D001B4C  110400CD   BEQ T0, A0, .LBB461
 9D001B50  00000000   NOP
 884:                     {
-885:                         RMP_Unlock_Sched();
+885:                         RMP_Sched_Unlock();
 886:                         return RMP_ERR_OPER;
 887:                     }
 888:                     
-889:                     RMP_Cur_Thd->Retval=0;
+889:                     RMP_Thd_Cur->Retval=0;
 9D001B54  8F898084   LW T1, -32636(GP)
 890:                 
 891:                     /* See if there are already a value in the mailbox, if there is, we block */
@@ -3257,34 +3257,34 @@ Feb 28, 2018 1:35:24 PM
 9D001B60  AD200038   SW ZERO, 56(T1)
 893:                     {
 894:                         /* Mailbox full, we block, and put ourself into the queue */
-895:                         if(Slices==0)
+895:                         if(Slice==0)
 9D001B64  10C000B9   BEQ A2, ZERO, .LBB454
 9D001B68  00000000   NOP
 896:                         {
-897:                             RMP_Unlock_Sched();
+897:                             RMP_Sched_Unlock();
 898:                             return RMP_ERR_OPER;
 9D001E6C  2402FFFB   ADDIU V0, ZERO, -5
 9D001ED0  2402FFFB   ADDIU V0, ZERO, -5
 899:                         }
 900:                 
 901:                         /* We must be running */
-902:                         _RMP_Clr_Rdy(RMP_Cur_Thd);
+902:                         _RMP_Rdy_Clr(RMP_Thd_Cur);
 9D001B6C  8F828084   LW V0, -32636(GP)
-903:                         RMP_List_Ins(&(RMP_Cur_Thd->Run_Head),Thread->Snd_List.Prev,&(Thread->Snd_List));
+903:                         RMP_List_Ins(&(RMP_Thd_Cur->Run_Head),Thread->Snd_List.Prev,&(Thread->Snd_List));
 9D001B94  8F828084   LW V0, -32636(GP)
 9D001B98  8C830010   LW V1, 16(A0)
 9D001B9C  24880010   ADDIU T0, A0, 16
 904:                 
-905:                         if(Slices<RMP_MAX_SLICES)
+905:                         if(Slice<RMP_SLICE_MAX)
 9D001BA0  3C070001   LUI A3, 1
 9D001BA4  34E786A0   ORI A3, A3, -31072
 9D001BA8  00C7382B   SLTU A3, A2, A3
 9D001BBC  14E00052   BNE A3, ZERO, 0x9D001D08
 9D001BC0  00000000   NOP
 906:                         {
-907:                             _RMP_Dly_Ins(RMP_Cur_Thd, Slices);
+907:                             _RMP_Dly_Ins(RMP_Thd_Cur, Slice);
 9D001D08  8F838084   LW V1, -32636(GP)
-908:                             RMP_THD_STATE_SET(RMP_Cur_Thd->State,RMP_THD_SNDDLY);
+908:                             RMP_THD_STATE_SET(RMP_Thd_Cur->State,RMP_THD_SNDDLY);
 9D001D58  8F828084   LW V0, -32636(GP)
 9D001D5C  8F838084   LW V1, -32636(GP)
 9D001D60  8C630018   LW V1, 24(V1)
@@ -3293,7 +3293,7 @@ Feb 28, 2018 1:35:24 PM
 9D001D6C  AC430018   SW V1, 24(V0)
 909:                         }
 910:                         else
-911:                             RMP_THD_STATE_SET(RMP_Cur_Thd->State,RMP_THD_SNDBLK);
+911:                             RMP_THD_STATE_SET(RMP_Thd_Cur->State,RMP_THD_SNDBLK);
 9D001BC4  8F828084   LW V0, -32636(GP)
 9D001BC8  8F838084   LW V1, -32636(GP)
 9D001BCC  8C630018   LW V1, 24(V1)
@@ -3301,7 +3301,7 @@ Feb 28, 2018 1:35:24 PM
 9D001BD4  34630002   ORI V1, V1, 2
 9D001BD8  AC430018   SW V1, 24(V0)
 912:                 
-913:                         RMP_Cur_Thd->Data=Data;
+913:                         RMP_Thd_Cur->Data=Data;
 9D001BDC  8F828084   LW V0, -32636(GP)
 9D001BE0  AC450030   SW A1, 48(V0)
 9D001D70  8F828084   LW V0, -32636(GP)
@@ -3340,7 +3340,7 @@ Feb 28, 2018 1:35:24 PM
 9D001C90  30420100   ANDI V0, V0, 256
 9D001C94  1440FFE8   BNE V0, ZERO, 0x9D001C38
 9D001C98  AC860018   SW A2, 24(A0)
-929:                                 _RMP_Set_Rdy(Thread);
+929:                                 _RMP_Rdy_Set(Thread);
 930:                         }
 931:                         
 932:                         /* Set the mailbox */
@@ -3353,9 +3353,9 @@ Feb 28, 2018 1:35:24 PM
 9D001D04  34C60200   ORI A2, A2, 512
 935:                     }
 936:                     
-937:                     RMP_Unlock_Sched();
+937:                     RMP_Sched_Unlock();
 938:                 
-939:                     return RMP_Cur_Thd->Retval;
+939:                     return RMP_Thd_Cur->Retval;
 9D001C14  8F828084   LW V0, -32636(GP)
 9D001C18  8C420038   LW V0, 56(V0)
 940:                 }
@@ -3452,8 +3452,8 @@ Feb 28, 2018 1:35:24 PM
 9D001F5C  1440FFF0   BNE V0, ZERO, 0x9D001F20
 9D001F60  00603021   ADDU A2, V1, ZERO
 981:                             {
-982:                                 _RMP_Set_Rdy(Thread);
-983:                                 if(Thread->Prio>RMP_Cur_Thd->Prio)
+982:                                 _RMP_Rdy_Set(Thread);
+983:                                 if(Thread->Prio>RMP_Thd_Cur->Prio)
 9D001FC8  8F878084   LW A3, -32636(GP)
 9D001FCC  00603021   ADDU A2, V1, ZERO
 9D001FD0  8CE30024   LW V1, 36(A3)
@@ -3489,11 +3489,11 @@ Feb 28, 2018 1:35:24 PM
 996:                 
 997:                 /* Begin Function:RMP_Thd_Rcv *************************************************
 998:                 Description : Receive a message from our own mailbox, and this is blocking.
-999:                 Input       : ptr_t Slices - The timeslices to wait, if the mailbox is empty.
+999:                 Input       : ptr_t Slice - The timeslices to wait, if the mailbox is empty.
 1000:                Output      : ptr_t* Data - The pointer to put the data to.
 1001:                Return      : ret_t - If successful,0; or an error code.
 1002:                ******************************************************************************/
-1003:                ret_t RMP_Thd_Rcv(ptr_t* Data, ptr_t Slices)
+1003:                ret_t RMP_Thd_Rcv(ptr_t* Data, ptr_t Slice)
 1004:                {
 9D002020  27BDFFE8   ADDIU SP, SP, -24
 9D002024  AFBF0014   SW RA, 20(SP)
@@ -3501,10 +3501,10 @@ Feb 28, 2018 1:35:24 PM
 9D002038  00808021   ADDU S0, A0, ZERO
 1005:                    struct RMP_Thd* Sender;
 1006:                    
-1007:                    RMP_Lock_Sched();
+1007:                    RMP_Sched_Lock();
 1008:                
 1009:                    /* Check if there is a value in our mailbox. If yes, we return with that value */
-1010:                    if((RMP_Cur_Thd->State&RMP_THD_MBOXFUL)!=0)
+1010:                    if((RMP_Thd_Cur->State&RMP_THD_MBOXFUL)!=0)
 9D002044  8F838084   LW V1, -32636(GP)
 9D002048  8C630018   LW V1, 24(V1)
 9D00204C  30630200   ANDI V1, V1, 512
@@ -3512,22 +3512,22 @@ Feb 28, 2018 1:35:24 PM
 9D002054  00000000   NOP
 1011:                    {
 1012:                        /* Get the value from mailbox */
-1013:                        *Data=RMP_Cur_Thd->Mailbox;
+1013:                        *Data=RMP_Thd_Cur->Mailbox;
 9D00210C  8F858084   LW A1, -32636(GP)
 9D002118  8CA5002C   LW A1, 44(A1)
 9D00211C  AE050000   SW A1, 0(S0)
-1014:                        RMP_Cur_Thd->State&=~RMP_THD_MBOXFUL;
+1014:                        RMP_Thd_Cur->State&=~RMP_THD_MBOXFUL;
 9D002110  8F838084   LW V1, -32636(GP)
 9D002120  8C650018   LW A1, 24(V1)
 9D002124  7C054A44   INS A1, ZERO, 9, 1
-1015:                        RMP_Unlock_Sched();
+1015:                        RMP_Sched_Unlock();
 1016:                        return 0;
 9D002144  00008021   ADDU S0, ZERO, ZERO
 1017:                    }
 1018:                    else
 1019:                    {
 1020:                        /* Is there any other guy waiting on us? If there is, unblock it and set it running */
-1021:                        if(&(RMP_Cur_Thd->Snd_List)!=RMP_Cur_Thd->Snd_List.Next)
+1021:                        if(&(RMP_Thd_Cur->Snd_List)!=RMP_Thd_Cur->Snd_List.Next)
 9D002058  8F838084   LW V1, -32636(GP)
 9D00205C  8F848084   LW A0, -32636(GP)
 9D002060  24630010   ADDIU V1, V1, 16
@@ -3536,7 +3536,7 @@ Feb 28, 2018 1:35:24 PM
 9D00206C  00000000   NOP
 1022:                        {
 1023:                            /* Read the data */
-1024:                            Sender=(struct RMP_Thd*)(RMP_Cur_Thd->Snd_List.Next);
+1024:                            Sender=(struct RMP_Thd*)(RMP_Thd_Cur->Snd_List.Next);
 9D002070  8F828084   LW V0, -32636(GP)
 9D002074  8C420014   LW V0, 20(V0)
 1025:                            RMP_List_Del(Sender->Run_Head.Prev,Sender->Run_Head.Next);
@@ -3567,28 +3567,28 @@ Feb 28, 2018 1:35:24 PM
 9D0020B0  30630100   ANDI V1, V1, 256
 9D0020B4  10600035   BEQ V1, ZERO, .LBB543
 9D0020B8  AC440018   SW A0, 24(V0)
-1035:                                _RMP_Set_Rdy(Sender);
+1035:                                _RMP_Rdy_Set(Sender);
 1036:                            
-1037:                            RMP_Unlock_Sched();
+1037:                            RMP_Sched_Unlock();
 1038:                        }
 1039:                        /* No sender waiting on us, we need to block */
 1040:                        else
 1041:                        {
 1042:                            /* No such value in our mailbox, we need to block */
-1043:                            if(Slices==0)
+1043:                            if(Slice==0)
 9D00220C  10A0007B   BEQ A1, ZERO, 0x9D0023FC
 9D002210  00000000   NOP
 1044:                            {
-1045:                                RMP_Unlock_Sched();
+1045:                                RMP_Sched_Unlock();
 1046:                                return RMP_ERR_OPER;
 9D00241C  2410FFFB   ADDIU S0, ZERO, -5
 1047:                            }
 1048:                
 1049:                            /* We must be running */
-1050:                            _RMP_Clr_Rdy(RMP_Cur_Thd);
+1050:                            _RMP_Rdy_Clr(RMP_Thd_Cur);
 9D002214  8F838084   LW V1, -32636(GP)
 1051:                
-1052:                            if(Slices<RMP_MAX_SLICES)
+1052:                            if(Slice<RMP_SLICE_MAX)
 9D00223C  3C020001   LUI V0, 1
 9D002240  344286A0   ORI V0, V0, -31072
 9D002244  00A2102B   SLTU V0, A1, V0
@@ -3597,9 +3597,9 @@ Feb 28, 2018 1:35:24 PM
 9D0023C4  0B400890   J 0x9D002240
 9D0023C8  3C020001   LUI V0, 1
 1053:                            {
-1054:                                _RMP_Dly_Ins(RMP_Cur_Thd, Slices);
+1054:                                _RMP_Dly_Ins(RMP_Thd_Cur, Slice);
 9D002354  8F838084   LW V1, -32636(GP)
-1055:                                RMP_THD_STATE_SET(RMP_Cur_Thd->State,RMP_THD_RCVDLY);
+1055:                                RMP_THD_STATE_SET(RMP_Thd_Cur->State,RMP_THD_RCVDLY);
 9D0023A4  8F828084   LW V0, -32636(GP)
 9D0023A8  8F838084   LW V1, -32636(GP)
 9D0023AC  8C630018   LW V1, 24(V1)
@@ -3609,7 +3609,7 @@ Feb 28, 2018 1:35:24 PM
 9D0023BC  AC430018   SW V1, 24(V0)
 1056:                            }
 1057:                            else
-1058:                                RMP_THD_STATE_SET(RMP_Cur_Thd->State,RMP_THD_RCVBLK);
+1058:                                RMP_THD_STATE_SET(RMP_Thd_Cur->State,RMP_THD_RCVBLK);
 9D002250  8F828084   LW V0, -32636(GP)
 9D002254  8F838084   LW V1, -32636(GP)
 9D002258  8C630018   LW V1, 24(V1)
@@ -3617,28 +3617,28 @@ Feb 28, 2018 1:35:24 PM
 9D002260  34630004   ORI V1, V1, 4
 9D002264  AC430018   SW V1, 24(V0)
 1059:                            
-1060:                            RMP_Unlock_Sched();
+1060:                            RMP_Sched_Unlock();
 1061:                            /* Dummy read - to separate the lock & unlock. If the compiler optimizes these two
 1062:                             * functions(inline them) on some architectures sometimes we never block. */
-1063:                            *Data=RMP_Cur_Thd->Mailbox;
+1063:                            *Data=RMP_Thd_Cur->Mailbox;
 9D002298  8F838084   LW V1, -32636(GP)
 9D0022A4  8C63002C   LW V1, 44(V1)
 9D0022B4  AE030000   SW V1, 0(S0)
 1064:                            /* We've been unblocked. There must be something in our mbox, or we should have failed */
-1065:                            RMP_Lock_Sched();
-1066:                            *Data=RMP_Cur_Thd->Mailbox;
+1065:                            RMP_Sched_Lock();
+1066:                            *Data=RMP_Thd_Cur->Mailbox;
 9D0022B0  8F848084   LW A0, -32636(GP)
 9D0022BC  8C85002C   LW A1, 44(A0)
 9D0022C4  AE050000   SW A1, 0(S0)
-1067:                            RMP_Cur_Thd->State&=~RMP_THD_MBOXFUL;
+1067:                            RMP_Thd_Cur->State&=~RMP_THD_MBOXFUL;
 9D0022B8  8F838084   LW V1, -32636(GP)
 9D0022C8  8C650018   LW A1, 24(V1)
 9D0022CC  7C054A44   INS A1, ZERO, 9, 1
-1068:                            RMP_Unlock_Sched();
+1068:                            RMP_Sched_Unlock();
 1069:                        }
 1070:                    }
 1071:                    
-1072:                    return RMP_Cur_Thd->Retval;
+1072:                    return RMP_Thd_Cur->Retval;
 9D0020E8  8F828084   LW V0, -32636(GP)
 9D0020EC  8C500038   LW S0, 56(V0)
 1073:                }
@@ -3679,15 +3679,15 @@ Feb 28, 2018 1:35:24 PM
 1075:                
 1076:                /* Begin Function:RMP_Thd_Delay ***********************************************
 1077:                Description : Delay the execution of a real-time thread.
-1078:                Input       : ptr_t Slices - The number of timeslices to delay.
+1078:                Input       : ptr_t Slice - The number of timeslices to delay.
 1079:                Output      : None.
 1080:                Return      : ret_t - If successful, 0; else error code.
 1081:                ******************************************************************************/
-1082:                ret_t RMP_Thd_Delay(ptr_t Slices)
+1082:                ret_t RMP_Thd_Delay(ptr_t Slice)
 1083:                {
 9D00248C  27BDFFE8   ADDIU SP, SP, -24
 9D002490  AFBF0014   SW RA, 20(SP)
-1084:                    if((Slices==0)||(Slices>=RMP_MAX_SLICES))
+1084:                    if((Slice==0)||(Slice>=RMP_SLICE_MAX))
 9D002474  2483FFFF   ADDIU V1, A0, -1
 9D002478  3C020001   LUI V0, 1
 9D00247C  3442869F   ORI V0, V0, -31073
@@ -3698,29 +3698,29 @@ Feb 28, 2018 1:35:24 PM
 9D002604  03E00008   JR RA
 9D002608  2402FFFD   ADDIU V0, ZERO, -3
 1086:                    
-1087:                    RMP_Lock_Sched();
+1087:                    RMP_Sched_Lock();
 1088:                
 1089:                    /* We must be running */
-1090:                    _RMP_Clr_Rdy(RMP_Cur_Thd);
+1090:                    _RMP_Rdy_Clr(RMP_Thd_Cur);
 9D0024A8  8F828084   LW V0, -32636(GP)
-1091:                    RMP_THD_STATE_SET(RMP_Cur_Thd->State,RMP_THD_DELAYED);
+1091:                    RMP_THD_STATE_SET(RMP_Thd_Cur->State,RMP_THD_DELAYED);
 9D0024D0  8F838084   LW V1, -32636(GP)
 9D0024D4  8F868084   LW A2, -32636(GP)
 9D0024E0  8CC60018   LW A2, 24(A2)
 9D0024E4  7C063804   INS A2, ZERO, 0, 8
 9D0024E8  34C60006   ORI A2, A2, 6
 9D0024EC  AC660018   SW A2, 24(V1)
-1092:                    _RMP_Dly_Ins(RMP_Cur_Thd, Slices);
+1092:                    _RMP_Dly_Ins(RMP_Thd_Cur, Slice);
 9D0024D8  8F858084   LW A1, -32636(GP)
 1093:                
-1094:                    RMP_Cur_Thd->Retval=0;
+1094:                    RMP_Thd_Cur->Retval=0;
 9D002538  8F828084   LW V0, -32636(GP)
 9D002540  AC400038   SW ZERO, 56(V0)
 1095:                    
-1096:                    RMP_Unlock_Sched();
+1096:                    RMP_Sched_Unlock();
 1097:                    
 1098:                    /* Need to return if successful or not */
-1099:                    return RMP_Cur_Thd->Retval;
+1099:                    return RMP_Thd_Cur->Retval;
 9D00256C  8F828084   LW V0, -32636(GP)
 9D002570  8C420038   LW V0, 56(V0)
 9D0025F0  8F828084   LW V0, -32636(GP)
@@ -3751,7 +3751,7 @@ Feb 28, 2018 1:35:24 PM
 1113:                        return RMP_ERR_THD;
 9D0027AC  2410FFFF   ADDIU S0, ZERO, -1
 1114:                    
-1115:                    RMP_Lock_Sched();
+1115:                    RMP_Sched_Lock();
 1116:                    
 1117:                    /* Is it delayed? */
 1118:                    if(RMP_THD_STATE(Thread->State)!=RMP_THD_DELAYED)
@@ -3761,7 +3761,7 @@ Feb 28, 2018 1:35:24 PM
 9D00263C  14C5004B   BNE A2, A1, .LBB670
 9D002640  2408FF00   ADDIU T0, ZERO, -256
 1119:                    {
-1120:                        RMP_Unlock_Sched();
+1120:                        RMP_Sched_Unlock();
 1121:                        return RMP_ERR_STATE;
 9D00278C  2410FFFC   ADDIU S0, ZERO, -4
 1122:                    }
@@ -3779,7 +3779,7 @@ Feb 28, 2018 1:35:24 PM
 9D002654  30630100   ANDI V1, V1, 256
 9D002660  10600014   BEQ V1, ZERO, .LBB662
 9D002664  AC870018   SW A3, 24(A0)
-1130:                        _RMP_Set_Rdy(Thread);
+1130:                        _RMP_Rdy_Set(Thread);
 1131:                    
 1132:                    Thread->Retval=RMP_ERR_OPER;
 9D00266C  2402FFFB   ADDIU V0, ZERO, -5
@@ -3787,7 +3787,7 @@ Feb 28, 2018 1:35:24 PM
 9D00271C  2402FFFB   ADDIU V0, ZERO, -5
 9D002720  AC820038   SW V0, 56(A0)
 1133:                    
-1134:                    RMP_Unlock_Sched();
+1134:                    RMP_Sched_Unlock();
 1135:                
 1136:                    return 0;
 9D002694  00008021   ADDU S0, ZERO, ZERO
@@ -3841,24 +3841,24 @@ Feb 28, 2018 1:35:24 PM
 1151:                        return RMP_ERR_SEM;
 9D0028B4  2410FFFA   ADDIU S0, ZERO, -6
 1152:                    
-1153:                    RMP_Lock_Sched();
+1153:                    RMP_Sched_Lock();
 1154:                    
 1155:                    if(Semaphore->State!=RMP_SEM_FREE)
 9D002810  8C830008   LW V1, 8(A0)
 9D00281C  1460003B   BNE V1, ZERO, .LBB717
 9D002820  2CA303E8   SLTIU V1, A1, 1000
 1156:                    {
-1157:                        RMP_Unlock_Sched();
+1157:                        RMP_Sched_Unlock();
 1158:                        return RMP_ERR_SEM;
 9D00292C  2410FFFA   ADDIU S0, ZERO, -6
 1159:                    }
 1160:                    
 1161:                    /* Is the number too great to initialize? */
-1162:                    if(Number>=RMP_SEM_MAX_NUM)
+1162:                    if(Number>=RMP_SEM_CNT_MAX)
 9D002824  10600029   BEQ V1, ZERO, .LBB710
 9D002828  00000000   NOP
 1163:                    {
-1164:                        RMP_Unlock_Sched();
+1164:                        RMP_Sched_Unlock();
 1165:                        return RMP_ERR_OPER;
 9D0028EC  2410FFFB   ADDIU S0, ZERO, -5
 1166:                    }
@@ -3869,7 +3869,7 @@ Feb 28, 2018 1:35:24 PM
 1170:                    Semaphore->State=RMP_SEM_USED;
 1171:                    RMP_List_Crt(&(Semaphore->Wait_List));
 1172:                    
-1173:                    RMP_Unlock_Sched();
+1173:                    RMP_Sched_Unlock();
 1174:                    
 1175:                    return 0;
 9D002858  00008021   ADDU S0, ZERO, ZERO
@@ -3936,14 +3936,14 @@ Feb 28, 2018 1:35:24 PM
 1191:                        return RMP_ERR_SEM;
 9D002B98  2410FFFA   ADDIU S0, ZERO, -6
 1192:                    
-1193:                    RMP_Lock_Sched();
+1193:                    RMP_Sched_Lock();
 1194:                    
 1195:                    if(Semaphore->State!=RMP_SEM_USED)
 9D0029D4  8C830008   LW V1, 8(A0)
 9D0029E0  1462005D   BNE V1, V0, .LBB768
 9D0029E4  00000000   NOP
 1196:                    {
-1197:                        RMP_Unlock_Sched();
+1197:                        RMP_Sched_Unlock();
 1198:                        return RMP_ERR_SEM;
 9D002B78  2410FFFA   ADDIU S0, ZERO, -6
 1199:                    }
@@ -3986,7 +3986,7 @@ Feb 28, 2018 1:35:24 PM
 9D002A44  30630100   ANDI V1, V1, 256
 9D002A68  1460FFEB   BNE V1, ZERO, 0x9D002A18
 9D002A6C  AC470018   SW A3, 24(V0)
-1213:                           _RMP_Set_Rdy(Thread);
+1213:                           _RMP_Rdy_Set(Thread);
 1214:                        
 1215:                        Thread->Retval=RMP_ERR_OPER;
 9D002A08  0B400A8A   J 0x9D002A28
@@ -3996,7 +3996,7 @@ Feb 28, 2018 1:35:24 PM
 1216:                    }
 1217:                    Semaphore->State=RMP_SEM_FREE;
 1218:                    
-1219:                    RMP_Unlock_Sched();
+1219:                    RMP_Sched_Unlock();
 1220:                
 1221:                    return 0;
 9D002AFC  00008021   ADDU S0, ZERO, ZERO
@@ -4035,11 +4035,11 @@ Feb 28, 2018 1:35:24 PM
 1225:                /* Begin Function:RMP_Sem_Pend ************************************************
 1226:                Description : Pend on the semaphore, trying to get one.
 1227:                Input       : struct RMP_Sem* Semaphore - The pointer to the semaphore structure.
-1228:                              ptr_t Slices - The number of slices to wait.
+1228:                              ptr_t Slice - The number of slices to wait.
 1229:                Output      : None.
 1230:                Return      : ret_t - If successful, the current semaphore number; else error code.
 1231:                ******************************************************************************/
-1232:                ret_t RMP_Sem_Pend(struct RMP_Sem* Semaphore, ptr_t Slices)
+1232:                ret_t RMP_Sem_Pend(struct RMP_Sem* Semaphore, ptr_t Slice)
 1233:                {
 9D002BEC  27BDFFE0   ADDIU SP, SP, -32
 9D002BF0  AFBF001C   SW RA, 28(SP)
@@ -4052,14 +4052,14 @@ Feb 28, 2018 1:35:24 PM
 1236:                        return RMP_ERR_SEM;
 9D002E50  2410FFFA   ADDIU S0, ZERO, -6
 1237:                    
-1238:                    RMP_Lock_Sched();
+1238:                    RMP_Sched_Lock();
 1239:                    
 1240:                    if(Semaphore->State!=RMP_SEM_USED)
 9D002C10  8C830008   LW V1, 8(A0)
 9D002C1C  14620093   BNE V1, V0, .LBB836
 9D002C20  00000000   NOP
 1241:                    {
-1242:                        RMP_Unlock_Sched();
+1242:                        RMP_Sched_Unlock();
 1243:                        return RMP_ERR_SEM;
 9D002E8C  2410FFFA   ADDIU S0, ZERO, -6
 1244:                    }
@@ -4072,38 +4072,38 @@ Feb 28, 2018 1:35:24 PM
 1248:                    {
 1249:                        Semaphore->Cur_Num--;
 9D002CFC  2610FFFF   ADDIU S0, S0, -1
-1250:                        RMP_Unlock_Sched();
+1250:                        RMP_Sched_Unlock();
 1251:                        return Semaphore->Cur_Num;
 1252:                    }
 1253:                    else
 1254:                    {
 1255:                        /* Cannot get one, we need to block */
-1256:                        if(Slices==0)
+1256:                        if(Slice==0)
 9D002C30  10A0009F   BEQ A1, ZERO, .LBB843
 9D002C34  00000000   NOP
 1257:                        {
-1258:                            RMP_Unlock_Sched();
+1258:                            RMP_Sched_Unlock();
 1259:                            return RMP_ERR_OPER;
 9D002ED0  2410FFFB   ADDIU S0, ZERO, -5
 1260:                        }
 1261:                
 1262:                        /* We must be running - place into waitlist now */
-1263:                        _RMP_Clr_Rdy(RMP_Cur_Thd);
+1263:                        _RMP_Rdy_Clr(RMP_Thd_Cur);
 9D002C38  8F828084   LW V0, -32636(GP)
-1264:                        RMP_List_Ins(&(RMP_Cur_Thd->Run_Head),Semaphore->Wait_List.Prev,&(Semaphore->Wait_List));
+1264:                        RMP_List_Ins(&(RMP_Thd_Cur->Run_Head),Semaphore->Wait_List.Prev,&(Semaphore->Wait_List));
 9D002C60  8F828084   LW V0, -32636(GP)
 9D002C64  8E230000   LW V1, 0(S1)
 1265:                        
-1266:                        if(Slices<RMP_MAX_SLICES)
+1266:                        if(Slice<RMP_SLICE_MAX)
 9D002C68  3C060001   LUI A2, 1
 9D002C6C  34C686A0   ORI A2, A2, -31072
 9D002C70  00A6302B   SLTU A2, A1, A2
 9D002C84  14C00039   BNE A2, ZERO, 0x9D002D6C
 9D002C88  00000000   NOP
 1267:                        {
-1268:                            _RMP_Dly_Ins(RMP_Cur_Thd, Slices);
+1268:                            _RMP_Dly_Ins(RMP_Thd_Cur, Slice);
 9D002D6C  8F838084   LW V1, -32636(GP)
-1269:                            RMP_THD_STATE_SET(RMP_Cur_Thd->State,RMP_THD_SEMDLY);
+1269:                            RMP_THD_STATE_SET(RMP_Thd_Cur->State,RMP_THD_SEMDLY);
 9D002DBC  8F828084   LW V0, -32636(GP)
 9D002DC0  8F838084   LW V1, -32636(GP)
 9D002DC4  8C630018   LW V1, 24(V1)
@@ -4113,7 +4113,7 @@ Feb 28, 2018 1:35:24 PM
 9D002DD4  AC430018   SW V1, 24(V0)
 1270:                        }
 1271:                        else
-1272:                            RMP_THD_STATE_SET(RMP_Cur_Thd->State,RMP_THD_SEMBLK);
+1272:                            RMP_THD_STATE_SET(RMP_Thd_Cur->State,RMP_THD_SEMBLK);
 9D002C8C  8F828084   LW V0, -32636(GP)
 9D002C90  8F838084   LW V1, -32636(GP)
 9D002C94  8C630018   LW V1, 24(V1)
@@ -4121,14 +4121,14 @@ Feb 28, 2018 1:35:24 PM
 9D002C9C  34630007   ORI V1, V1, 7
 9D002CA0  AC430018   SW V1, 24(V0)
 1273:                        
-1274:                        RMP_Cur_Thd->Retval=0;
+1274:                        RMP_Thd_Cur->Retval=0;
 9D002CA4  8F828084   LW V0, -32636(GP)
 9D002CAC  AC400038   SW ZERO, 56(V0)
 1275:                    }
 1276:                    
-1277:                    RMP_Unlock_Sched();
+1277:                    RMP_Sched_Unlock();
 1278:                
-1279:                    return RMP_Cur_Thd->Retval;
+1279:                    return RMP_Thd_Cur->Retval;
 9D002CD8  8F828084   LW V0, -32636(GP)
 9D002CDC  8C500038   LW S0, 56(V0)
 1280:                }
@@ -4207,7 +4207,7 @@ Feb 28, 2018 1:35:24 PM
 1293:                        return RMP_ERR_THD;
 9D00311C  2410FFFF   ADDIU S0, ZERO, -1
 1294:                
-1295:                    RMP_Lock_Sched();
+1295:                    RMP_Sched_Lock();
 1296:                    
 1297:                    if(RMP_THD_STATE(Thread->State)==RMP_THD_FREE)
 9D002F98  8C820018   LW V0, 24(A0)
@@ -4215,7 +4215,7 @@ Feb 28, 2018 1:35:24 PM
 9D002FA8  10600072   BEQ V1, ZERO, .LBB909
 9D002FAC  2466FFF9   ADDIU A2, V1, -7
 1298:                    {
-1299:                        RMP_Unlock_Sched();
+1299:                        RMP_Sched_Unlock();
 1300:                        return RMP_ERR_THD;
 9D003194  2410FFFF   ADDIU S0, ZERO, -1
 1301:                    }
@@ -4227,7 +4227,7 @@ Feb 28, 2018 1:35:24 PM
 9D002FB8  00000000   NOP
 1305:                       (RMP_THD_STATE(Thread->State)!=RMP_THD_SEMDLY))
 1306:                    {
-1307:                        RMP_Unlock_Sched();
+1307:                        RMP_Sched_Unlock();
 1308:                        return RMP_ERR_STATE;
 9D003154  2410FFFC   ADDIU S0, ZERO, -4
 1309:                    }
@@ -4259,7 +4259,7 @@ Feb 28, 2018 1:35:24 PM
 9D003054  30420100   ANDI V0, V0, 256
 9D003058  1440FFE4   BNE V0, ZERO, .LBB882
 9D00305C  AC830018   SW V1, 24(A0)
-1320:                        _RMP_Set_Rdy(Thread);
+1320:                        _RMP_Rdy_Set(Thread);
 1321:                    
 1322:                    Thread->Retval=RMP_ERR_OPER;
 9D002FF0  2402FFFB   ADDIU V0, ZERO, -5
@@ -4267,7 +4267,7 @@ Feb 28, 2018 1:35:24 PM
 9D0030CC  2402FFFB   ADDIU V0, ZERO, -5
 9D0030D0  AC820038   SW V0, 56(A0)
 1323:                    
-1324:                    RMP_Unlock_Sched();
+1324:                    RMP_Sched_Unlock();
 1325:                
 1326:                    return 0;
 9D003018  00008021   ADDU S0, ZERO, ZERO
@@ -4339,27 +4339,27 @@ Feb 28, 2018 1:35:24 PM
 1345:                        return RMP_ERR_SEM;
 9D0033F8  2410FFFA   ADDIU S0, ZERO, -6
 1346:                    
-1347:                    RMP_Lock_Sched();
+1347:                    RMP_Sched_Lock();
 1348:                    
 1349:                    if(Semaphore->State!=RMP_SEM_USED)
 9D003240  8C860008   LW A2, 8(A0)
 9D00324C  14C20080   BNE A2, V0, .LBB971
 9D003250  00000000   NOP
 1350:                    {
-1351:                        RMP_Unlock_Sched();
+1351:                        RMP_Sched_Unlock();
 1352:                        return RMP_ERR_SEM;
 9D003470  2410FFFA   ADDIU S0, ZERO, -6
 1353:                    }
 1354:                    
 1355:                    /* Would the maximum value be exceeded if this is posted? */
-1356:                    if((Semaphore->Cur_Num+Number)>=RMP_SEM_MAX_NUM)
+1356:                    if((Semaphore->Cur_Num+Number)>=RMP_SEM_CNT_MAX)
 9D003254  8C83000C   LW V1, 12(A0)
 9D003258  00A31821   ADDU V1, A1, V1
 9D00325C  2C6203E8   SLTIU V0, V1, 1000
 9D003260  1040006B   BEQ V0, ZERO, .LBB964
 9D003264  00000000   NOP
 1357:                    {
-1358:                        RMP_Unlock_Sched();
+1358:                        RMP_Sched_Unlock();
 1359:                        return RMP_ERR_OPER;
 9D003430  2410FFFB   ADDIU S0, ZERO, -5
 1360:                    }
@@ -4407,7 +4407,7 @@ Feb 28, 2018 1:35:24 PM
 9D0032D0  30A50100   ANDI A1, A1, 256
 9D0032F4  14A0FFE9   BNE A1, ZERO, 0x9D00329C
 9D0032F8  AC480018   SW T0, 24(V0)
-1374:                            _RMP_Set_Rdy(Thread);
+1374:                            _RMP_Rdy_Set(Thread);
 1375:                
 1376:                        /* Finally, return success */
 1377:                        Thread->Retval=0;
@@ -4416,7 +4416,7 @@ Feb 28, 2018 1:35:24 PM
 1378:                        Semaphore->Cur_Num--;
 1379:                    }
 1380:                
-1381:                    RMP_Unlock_Sched();
+1381:                    RMP_Sched_Unlock();
 1382:                
 1383:                    return 0;
 9D00338C  00008021   ADDU S0, ZERO, ZERO
@@ -4504,7 +4504,7 @@ Feb 28, 2018 1:35:24 PM
 1405:                        return RMP_ERR_OPER;
 1406:                
 1407:                    /* Would the maximum value be exceeded if this is posted? */
-1408:                    if((Semaphore->Cur_Num+Number)>=RMP_SEM_MAX_NUM)
+1408:                    if((Semaphore->Cur_Num+Number)>=RMP_SEM_CNT_MAX)
 9D003544  8C82000C   LW V0, 12(A0)
 9D003548  00A22821   ADDU A1, A1, V0
 9D00354C  2CA203E8   SLTIU V0, A1, 1000
@@ -4552,8 +4552,8 @@ Feb 28, 2018 1:35:24 PM
 9D0035D0  1440FFEB   BNE V0, ZERO, 0x9D003580
 9D0035D4  AE050018   SW A1, 24(S0)
 1424:                        {
-1425:                            _RMP_Set_Rdy(Thread);
-1426:                            if(Thread->Prio>RMP_Cur_Thd->Prio)
+1425:                            _RMP_Rdy_Set(Thread);
+1426:                            if(Thread->Prio>RMP_Thd_Cur->Prio)
 9D00362C  8F838084   LW V1, -32636(GP)
 9D003630  8C630024   LW V1, 36(V1)
 9D003634  0062102B   SLTU V0, V1, V0
@@ -4605,7 +4605,7 @@ Feb 28, 2018 1:35:24 PM
 1443:                Output      : None.
 1444:                Return      : None.
 1445:                ******************************************************************************/
-1446:                #if(RMP_USE_HOOKS==RMP_FALSE)
+1446:                #if(RMP_HOOK_EXTRA==0U)
 1447:                void RMP_Start_Hook(void)
 1448:                {
 9D0036C4  03E00008   JR RA
@@ -4615,37 +4615,37 @@ Feb 28, 2018 1:35:24 PM
 1451:                #endif
 1452:                /* End Function:RMP_Start_Hook ***********************************************/
 1453:                
-1454:                /* Begin Function:RMP_Save_Ctx ************************************************
+1454:                /* Begin Function:RMP_Ctx_Save ************************************************
 1455:                Description : Save hook for extra context, such as FPU, peripherals and MPU.
 1456:                Input       : None.
 1457:                Output      : None.
 1458:                Return      : None.
 1459:                ******************************************************************************/
-1460:                #if(RMP_USE_HOOKS==RMP_FALSE)
-1461:                void RMP_Save_Ctx(void)
+1460:                #if(RMP_HOOK_EXTRA==0U)
+1461:                void RMP_Ctx_Save(void)
 1462:                {
 9D0036CC  03E00008   JR RA
 9D0036D0  00000000   NOP
 1463:                    return;
 1464:                }
 1465:                #endif
-1466:                /* End Function:RMP_Save_Ctx *************************************************/
+1466:                /* End Function:RMP_Ctx_Save *************************************************/
 1467:                
-1468:                /* Begin Function:RMP_Load_Ctx ************************************************
+1468:                /* Begin Function:RMP_Ctx_Load ************************************************
 1469:                Description : Load hook for extra context, such as FPU, peripherals and MPU.
 1470:                Input       : None.
 1471:                Output      : None.
 1472:                Return      : None.
 1473:                ******************************************************************************/
-1474:                #if(RMP_USE_HOOKS==RMP_FALSE)
-1475:                void RMP_Load_Ctx(void)
+1474:                #if(RMP_HOOK_EXTRA==0U)
+1475:                void RMP_Ctx_Load(void)
 1476:                {
 9D0036D4  03E00008   JR RA
 9D0036D8  00000000   NOP
 1477:                    return;
 1478:                }
 1479:                #endif
-1480:                /* End Function:RMP_Load_Ctx *************************************************/
+1480:                /* End Function:RMP_Ctx_Load *************************************************/
 1481:                
 1482:                /* Begin Function:RMP_Tick_Hook ***********************************************
 1483:                Description : Save hook for extra context, such as FPU, peripherals and MPU.
@@ -4655,7 +4655,7 @@ Feb 28, 2018 1:35:24 PM
 1487:                Output      : None.
 1488:                Return      : None.
 1489:                ******************************************************************************/
-1490:                #if(RMP_USE_HOOKS==RMP_FALSE)
+1490:                #if(RMP_HOOK_EXTRA==0U)
 1491:                void RMP_Tick_Hook(ptr_t Ticks)
 1492:                {
 9D0036DC  03E00008   JR RA
@@ -4678,7 +4678,7 @@ Feb 28, 2018 1:35:24 PM
 1508:                {
 9D000D3C  27BDFFE8   ADDIU SP, SP, -24
 9D000D40  AFBF0014   SW RA, 20(SP)
-1509:                    RMP_Lock_Sched();
+1509:                    RMP_Sched_Lock();
 1510:                    
 1511:                    /* Platform will use this hook to do something */
 1512:                    _RMP_Plat_Hook();
@@ -4689,8 +4689,8 @@ Feb 28, 2018 1:35:24 PM
 9D000D60  0F401012   JAL RMP_Init_Hook
 9D000D64  00000000   NOP
 1515:                    
-1516:                    RMP_Unlock_Sched();
-9D000D68  0F400336   JAL .LFB12, .LFE11, RMP_Unlock_Sched
+1516:                    RMP_Sched_Unlock();
+9D000D68  0F400336   JAL .LFB12, .LFE11, RMP_Sched_Unlock
 9D000D6C  00000000   NOP
 1517:                    
 1518:                    while(1)
@@ -4728,7 +4728,7 @@ Feb 28, 2018 1:35:24 PM
 9D003700  3C128000   LUI S2, -32768
 9D003704  26511CD0   ADDIU S1, S2, 7376
 1537:                    
-1538:                #if(RMP_USE_HOOKS==RMP_TRUE)
+1538:                #if(RMP_HOOK_EXTRA==1U)
 1539:                    RMP_Start_Hook();
 1540:                #endif
 1541:                    
@@ -4748,7 +4748,7 @@ Feb 28, 2018 1:35:24 PM
 1548:                    
 1549:                    /* Linked lists */
 1550:                    RMP_List_Crt(&RMP_Delay);
-1551:                    for(Count=0;Count<RMP_MAX_PREEMPT_PRIO;Count++)
+1551:                    for(Count=0;Count<RMP_PREEMPT_PRIO_NUM;Count++)
 9D00373C  1443FFFC   BNE V0, V1, .LBB1004
 9D003740  3C138000   LUI S3, -32768
 9D003744  26701494   ADDIU S0, S3, 5268
@@ -4766,10 +4766,10 @@ Feb 28, 2018 1:35:24 PM
 1557:                    RMP_Clear(&RMP_Init_Thd,sizeof(struct RMP_Thd));
 1558:                    RMP_Init_Thd.Prio=0;
 9D00376C  AE000024   SW ZERO, 36(S0)
-1559:                    RMP_Init_Thd.Slices=10;
+1559:                    RMP_Init_Thd.Slice=10;
 9D003768  2403000A   ADDIU V1, ZERO, 10
 9D003770  AE03001C   SW V1, 28(S0)
-1560:                    RMP_Init_Thd.Slices_Left=10;
+1560:                    RMP_Init_Thd.Slice_Left=10;
 9D003774  AE030020   SW V1, 32(S0)
 1561:                    RMP_Init_Thd.State=RMP_THD_RUNNING;
 9D003778  24030001   ADDIU V1, ZERO, 1
@@ -4792,9 +4792,9 @@ Feb 28, 2018 1:35:24 PM
 9D0037B8  AF828080   SW V0, -32640(GP)
 1571:                    
 1572:                    /* Set current thread and stack */
-1573:                    RMP_Cur_Thd=&RMP_Init_Thd;
+1573:                    RMP_Thd_Cur=&RMP_Init_Thd;
 9D0037BC  AF908084   SW S0, -32636(GP)
-1574:                    RMP_Cur_SP=RMP_Init_Thd.Stack;
+1574:                    RMP_SP_Cur=RMP_Init_Thd.Stack;
 9D0037C0  8E020034   LW V0, 52(S0)
 9D0037C4  AF828088   SW V0, -32632(GP)
 1575:                    
@@ -4908,7 +4908,7 @@ Feb 28, 2018 1:35:24 PM
 9D003A0C  00431021   ADDU V0, V0, V1
 9D003A10  3042FFFF   ANDI V0, V0, -1
 9D003A18  A7828062   SH V0, -32670(GP)
-57:                          RMP_Thd_Snd(&Thd_2, 1, RMP_MAX_SLICES);
+57:                          RMP_Thd_Snd(&Thd_2, 1, RMP_SLICE_MAX);
 9D0039EC  3C118000   LUI S1, -32768
 9D0039F0  26311448   ADDIU S1, S1, 5192
 9D0039F4  3C100001   LUI S0, 1
@@ -4972,7 +4972,7 @@ Feb 28, 2018 1:35:24 PM
 9D003AC0  0F400E60   JAL Test_Yield_1
 9D003AC4  00000000   NOP
 75:                      /* Change priority of thread 2 */
-76:                      RMP_Thd_Set(&Thd_2,2,RMP_MAX_SLICES);
+76:                      RMP_Thd_Set(&Thd_2,2,RMP_SLICE_MAX);
 9D003AC8  3C048000   LUI A0, -32768
 9D003ACC  24841448   ADDIU A0, A0, 5192
 9D003AD0  24050002   ADDIU A1, ZERO, 2
@@ -5051,7 +5051,7 @@ Feb 28, 2018 1:35:24 PM
 9D003BC8  5600FFF0   BNEL S0, ZERO, 0x9D003B8C
 9D003BCC  27A40010   ADDIU A0, SP, 16
 106:                     {
-107:                         RMP_Thd_Rcv(&Data, RMP_MAX_SLICES);
+107:                         RMP_Thd_Rcv(&Data, RMP_SLICE_MAX);
 9D003B80  3C110001   LUI S1, 1
 9D003B84  363186A0   ORI S1, S1, -31072
 9D003B88  27A40010   ADDIU A0, SP, 16
@@ -5097,7 +5097,7 @@ Feb 28, 2018 1:35:24 PM
 9D003C58  5600FFF0   BNEL S0, ZERO, 0x9D003C1C
 9D003C5C  02402021   ADDU A0, S2, ZERO
 118:                     {
-119:                         RMP_Sem_Pend(&Sem_1, RMP_MAX_SLICES);
+119:                         RMP_Sem_Pend(&Sem_1, RMP_SLICE_MAX);
 9D003C08  3C128000   LUI S2, -32768
 9D003C0C  26521484   ADDIU S2, S2, 5252
 9D003C10  3C110001   LUI S1, 1
@@ -5148,7 +5148,7 @@ Feb 28, 2018 1:35:24 PM
 9D003CE4  1460FFED   BNE V1, ZERO, 0x9D003C9C
 9D003CE8  AF82803C   SW V0, -32708(GP)
 131:                     {
-132:                         RMP_Thd_Rcv(&Data, RMP_MAX_SLICES);
+132:                         RMP_Thd_Rcv(&Data, RMP_SLICE_MAX);
 9D003C94  3C100001   LUI S0, 1
 9D003C98  361086A0   ORI S0, S0, -31072
 9D003C9C  27A40010   ADDIU A0, SP, 16
@@ -5194,7 +5194,7 @@ Feb 28, 2018 1:35:24 PM
 9D003D74  1460FFED   BNE V1, ZERO, 0x9D003D2C
 9D003D78  AF828038   SW V0, -32712(GP)
 143:                     {
-144:                         RMP_Sem_Pend(&Sem_1, RMP_MAX_SLICES);
+144:                         RMP_Sem_Pend(&Sem_1, RMP_SLICE_MAX);
 9D003D1C  3C118000   LUI S1, -32768
 9D003D20  26311484   ADDIU S1, S1, 5252
 9D003D24  3C100001   LUI S0, 1
@@ -5240,7 +5240,7 @@ Feb 28, 2018 1:35:24 PM
 9D003DAC  00000000   NOP
 156:                     RMP_PRINTK_S("Yield: ");
 9D003DB0  3C049D00   LUI A0, -25344
-9D003DB4  0F400309   JAL RMP_Print_String
+9D003DB4  0F400309   JAL RMP_Str_Print
 9D003DB8  24844B50   ADDIU A0, A0, 19280
 157:                     
 158:                     Yield_Time=Total/10000;
@@ -5253,14 +5253,14 @@ Feb 28, 2018 1:35:24 PM
 9D003DD8  AF828054   SW V0, -32684(GP)
 159:                     RMP_PRINTK_I(Yield_Time);
 9D003DDC  8F848054   LW A0, -32684(GP)
-9D003DE0  0F40026D   JAL RMP_Print_Int
+9D003DE0  0F40026D   JAL RMP_Int_Print
 9D003DE4  00000000   NOP
 160:                     RMP_PRINTK_S(" cycles.\r\n");
 9D003DD0  3C109D00   LUI S0, -25344
-9D003DE8  0F400309   JAL RMP_Print_String
+9D003DE8  0F400309   JAL RMP_Str_Print
 9D003DEC  26044B58   ADDIU A0, S0, 19288
 161:                     /* Change priority of thread 2, just in case */
-162:                     RMP_Thd_Set(&Thd_2,2,RMP_MAX_SLICES);
+162:                     RMP_Thd_Set(&Thd_2,2,RMP_SLICE_MAX);
 9D003DF0  24050002   ADDIU A1, ZERO, 2
 9D003DF4  3C060001   LUI A2, 1
 9D003DF8  34C686A0   ORI A2, A2, -31072
@@ -5276,7 +5276,7 @@ Feb 28, 2018 1:35:24 PM
 9D003E10  00000000   NOP
 167:                     RMP_PRINTK_S("Mailbox: ");
 9D003E14  3C049D00   LUI A0, -25344
-9D003E18  0F400309   JAL RMP_Print_String
+9D003E18  0F400309   JAL RMP_Str_Print
 9D003E1C  24844B64   ADDIU A0, A0, 19300
 168:                     Mailbox_Time=Total/10000;
 9D003E20  8F82805C   LW V0, -32676(GP)
@@ -5286,10 +5286,10 @@ Feb 28, 2018 1:35:24 PM
 9D003E30  AF828050   SW V0, -32688(GP)
 169:                     RMP_PRINTK_I(Mailbox_Time);
 9D003E34  8F848050   LW A0, -32688(GP)
-9D003E38  0F40026D   JAL RMP_Print_Int
+9D003E38  0F40026D   JAL RMP_Int_Print
 9D003E3C  00000000   NOP
 170:                     RMP_PRINTK_S(" cycles.\r\n");
-9D003E40  0F400309   JAL RMP_Print_String
+9D003E40  0F400309   JAL RMP_Str_Print
 9D003E44  26044B58   ADDIU A0, S0, 19288
 171:                     
 172:                     /* Semaphore tests */
@@ -5300,7 +5300,7 @@ Feb 28, 2018 1:35:24 PM
 9D003E50  00000000   NOP
 175:                     RMP_PRINTK_S("Semaphore: ");
 9D003E54  3C049D00   LUI A0, -25344
-9D003E58  0F400309   JAL RMP_Print_String
+9D003E58  0F400309   JAL RMP_Str_Print
 9D003E5C  24844B70   ADDIU A0, A0, 19312
 176:                     Semaphore_Time=Total/10000;
 9D003E60  8F82805C   LW V0, -32676(GP)
@@ -5310,10 +5310,10 @@ Feb 28, 2018 1:35:24 PM
 9D003E70  AF82804C   SW V0, -32692(GP)
 177:                     RMP_PRINTK_I(Semaphore_Time);
 9D003E74  8F84804C   LW A0, -32692(GP)
-9D003E78  0F40026D   JAL RMP_Print_Int
+9D003E78  0F40026D   JAL RMP_Int_Print
 9D003E7C  00000000   NOP
 178:                     RMP_PRINTK_S(" cycles.\r\n");
-9D003E80  0F400309   JAL RMP_Print_String
+9D003E80  0F400309   JAL RMP_Str_Print
 9D003E84  26044B58   ADDIU A0, S0, 19288
 179:                     
 180:                     /* Mailbox from interrupt tests */
@@ -5336,7 +5336,7 @@ Feb 28, 2018 1:35:24 PM
 189:                     
 190:                     RMP_PRINTK_S("Mailbox-ISR: ");
 9D003EDC  3C049D00   LUI A0, -25344
-9D003EE0  0F400309   JAL RMP_Print_String
+9D003EE0  0F400309   JAL RMP_Str_Print
 9D003EE4  24844B7C   ADDIU A0, A0, 19324
 191:                     Mailbox_ISR_Time=Temp/10000;
 9D003EE8  8F828058   LW V0, -32680(GP)
@@ -5346,14 +5346,14 @@ Feb 28, 2018 1:35:24 PM
 9D003EF8  AF828048   SW V0, -32696(GP)
 192:                     RMP_PRINTK_I(Mailbox_ISR_Time);
 9D003EFC  8F848048   LW A0, -32696(GP)
-9D003F00  0F40026D   JAL RMP_Print_Int
+9D003F00  0F40026D   JAL RMP_Int_Print
 9D003F04  00000000   NOP
 193:                     RMP_PRINTK_S(" cycles.\r\n");
-9D003F08  0F400309   JAL RMP_Print_String
+9D003F08  0F400309   JAL RMP_Str_Print
 9D003F0C  26044B58   ADDIU A0, S0, 19288
 194:                     RMP_PRINTK_S("Semaphore-ISR: ");
 9D003F10  3C049D00   LUI A0, -25344
-9D003F14  0F400309   JAL RMP_Print_String
+9D003F14  0F400309   JAL RMP_Str_Print
 9D003F18  24844B8C   ADDIU A0, A0, 19340
 195:                     Semaphore_ISR_Time=Total/10000;
 9D003F1C  8F82805C   LW V0, -32676(GP)
@@ -5363,10 +5363,10 @@ Feb 28, 2018 1:35:24 PM
 9D003F2C  AF828044   SW V0, -32700(GP)
 196:                     RMP_PRINTK_I(Semaphore_ISR_Time);
 9D003F30  8F848044   LW A0, -32700(GP)
-9D003F34  0F40026D   JAL RMP_Print_Int
+9D003F34  0F40026D   JAL RMP_Int_Print
 9D003F38  00000000   NOP
 197:                     RMP_PRINTK_S(" cycles.\r\n");
-9D003F3C  0F400309   JAL RMP_Print_String
+9D003F3C  0F400309   JAL RMP_Str_Print
 9D003F40  26044B58   ADDIU A0, S0, 19288
 9D003F44  0B400FD1   J .LVL50
 9D003F48  00000000   NOP
@@ -5433,24 +5433,24 @@ Feb 28, 2018 1:35:24 PM
 9D003FB8  8FBF0014   LW RA, 20(SP)
 218:                         {
 219:                             RMP_PRINTK_S("ISR Mailbox send failure: ");
-9D003948  0F400309   JAL RMP_Print_String
+9D003948  0F400309   JAL RMP_Str_Print
 9D00394C  24844AFC   ADDIU A0, A0, 19196
 9D003FBC  3C049D00   LUI A0, -25344
-9D003FC0  0F400309   JAL RMP_Print_String
+9D003FC0  0F400309   JAL RMP_Str_Print
 9D003FC4  24844AFC   ADDIU A0, A0, 19196
 220:                             RMP_PRINTK_I(Count);
-9D003950  0F40026D   JAL RMP_Print_Int
+9D003950  0F40026D   JAL RMP_Int_Print
 9D003954  8F848034   LW A0, -32716(GP)
-9D003FC8  0F40026D   JAL RMP_Print_Int
+9D003FC8  0F40026D   JAL RMP_Int_Print
 9D003FCC  8F848034   LW A0, -32716(GP)
 221:                             RMP_PRINTK_S(" sends.\r\n");
 9D003958  3C049D00   LUI A0, -25344
-9D00395C  0F400309   JAL RMP_Print_String
+9D00395C  0F400309   JAL RMP_Str_Print
 9D003960  24844B18   ADDIU A0, A0, 19224
 9D003964  0B400E59   J .LVL7
 9D003968  00000000   NOP
 9D003FD0  3C049D00   LUI A0, -25344
-9D003FD4  0F400309   JAL RMP_Print_String
+9D003FD4  0F400309   JAL RMP_Str_Print
 9D003FD8  24844B18   ADDIU A0, A0, 19224
 9D003FDC  0B400FF7   J .LVL54
 9D003FE0  00000000   NOP
@@ -5499,24 +5499,24 @@ Feb 28, 2018 1:35:24 PM
 230:                         {
 231:                             RMP_PRINTK_S("ISR semaphore post failure: ");
 9D003920  3C049D00   LUI A0, -25344
-9D003924  0F400309   JAL RMP_Print_String
+9D003924  0F400309   JAL RMP_Str_Print
 9D003928  24844B24   ADDIU A0, A0, 19236
 9D004020  3C049D00   LUI A0, -25344
-9D004024  0F400309   JAL RMP_Print_String
+9D004024  0F400309   JAL RMP_Str_Print
 9D004028  24844B24   ADDIU A0, A0, 19236
 232:                             RMP_PRINTK_I(Count);
-9D00392C  0F40026D   JAL RMP_Print_Int
+9D00392C  0F40026D   JAL RMP_Int_Print
 9D003930  8F848034   LW A0, -32716(GP)
-9D00402C  0F40026D   JAL RMP_Print_Int
+9D00402C  0F40026D   JAL RMP_Int_Print
 9D004030  8F848034   LW A0, -32716(GP)
 233:                             RMP_PRINTK_S(" posts.\r\n");
 9D003934  3C049D00   LUI A0, -25344
-9D003938  0F400309   JAL RMP_Print_String
+9D003938  0F400309   JAL RMP_Str_Print
 9D00393C  24844B44   ADDIU A0, A0, 19268
 9D003940  0B400E50   J .LVL4
 9D003944  00000000   NOP
 9D004034  3C049D00   LUI A0, -25344
-9D004038  0F400309   JAL RMP_Print_String
+9D004038  0F400309   JAL RMP_Str_Print
 9D00403C  24844B44   ADDIU A0, A0, 19268
 9D004040  0B401010   J .LVL58
 9D004044  00000000   NOP
@@ -5887,9 +5887,9 @@ Feb 28, 2018 1:35:24 PM
                                                   55:    
                                                   56:    /* Begin Exports *************************************************************/
                                                   57:                    /* Disable all interrupts */
-                                                  58:                    .global          RMP_Disable_Int      
+                                                  58:                    .global          RMP_Int_Disable      
                                                   59:                    /* Enable all interrupts */        
-                                                  60:                    .global          RMP_Enable_Int   
+                                                  60:                    .global          RMP_Int_Enable   
                                                   61:                    /* Get the MSB */
                                                   62:                    .global          RMP_MSB_Get
                                                   63:                    /* Start the first thread */
@@ -5906,16 +5906,16 @@ Feb 28, 2018 1:35:24 PM
                                                   74:    
                                                   75:    /* Begin Imports *************************************************************/
                                                   76:                    /* The real task switch handling function */
-                                                  77:                    .extern         _RMP_Get_High_Rdy 
+                                                  77:                    .extern         _RMP_High_Rdy_Get 
                                                   78:                    /* The real systick handler function */
                                                   79:                    .extern          _RMP_Tick_Handler
                                                   80:                    /* The PID of the current thread */
-                                                  81:                    .extern          RMP_Cur_Thd
+                                                  81:                    .extern          RMP_Thd_Cur
                                                   82:                    /* The stack address of current thread */
-                                                  83:                    .extern          RMP_Cur_SP
+                                                  83:                    .extern          RMP_SP_Cur
                                                   84:                    /* Save and load extra contexts, such as FPU, peripherals and MPU */
-                                                  85:                    .extern          RMP_Save_Ctx
-                                                  86:                    .extern          RMP_Load_Ctx
+                                                  85:                    .extern          RMP_Ctx_Save
+                                                  86:                    .extern          RMP_Ctx_Load
                                                   87:                    /* The place where we store the kernel gp/sp value */
                                                   88:                    .extern          RMP_GP_Val
                                                   89:                    .extern          RMP_SP_Val
@@ -6083,7 +6083,7 @@ Feb 28, 2018 1:35:24 PM
                                                   251:   .endm
                                                   252:   /* End Macros ****************************************************************/
                                                   253:   
-                                                  254:   /* Begin Function:RMP_Disable_Int *********************************************
+                                                  254:   /* Begin Function:RMP_Int_Disable *********************************************
                                                   255:   Description    : The function for disabling all interrupts. Does not allow nesting.
                                                   256:   Input          : None.
                                                   257:   Output         : None.    
@@ -6093,16 +6093,16 @@ Feb 28, 2018 1:35:24 PM
                                                   261:                   .set             nomicromips
                                                   262:                   .set             noreorder
                                                   263:                   .set             noat
-                                                  264:                   .ent             RMP_Disable_Int
-                                                  265:   RMP_Disable_Int:
+                                                  264:                   .ent             RMP_Int_Disable
+                                                  265:   RMP_Int_Disable:
                                                   266:                   /* Disable all interrupts */
 9D004BA0  41606000   DI ZERO                      267:                   di
 9D004BA4  03E00008   JR RA                        268:                   jr               $ra
 9D004BA8  00000000   NOP                          269:                   nop
-                                                  270:                   .end             RMP_Disable_Int
-                                                  271:   /* End Function:RMP_Disable_Int **********************************************/
+                                                  270:                   .end             RMP_Int_Disable
+                                                  271:   /* End Function:RMP_Int_Disable **********************************************/
                                                   272:   
-                                                  273:   /* Begin Function:RMP_Enable_Int **********************************************
+                                                  273:   /* Begin Function:RMP_Int_Enable **********************************************
                                                   274:   Description    : The function for enabling all interrupts. Does not allow nesting.
                                                   275:   Input          : None.
                                                   276:   Output         : None.    
@@ -6112,14 +6112,14 @@ Feb 28, 2018 1:35:24 PM
                                                   280:                   .set             nomicromips
                                                   281:                   .set             noreorder
                                                   282:                   .set             noat
-                                                  283:                   .ent             RMP_Enable_Int
-                                                  284:   RMP_Enable_Int:
+                                                  283:                   .ent             RMP_Int_Enable
+                                                  284:   RMP_Int_Enable:
                                                   285:                   /* Enable all interrupts */
 9D004BAC  41606020   EI ZERO                      286:                   ei
 9D004BB0  03E00008   JR RA                        287:                   jr               $ra
 9D004BB4  00000000   NOP                          288:                   nop
-                                                  289:                   .end             RMP_Enable_Int
-                                                  290:   /* End Function:RMP_Enable_Int ***********************************************/
+                                                  289:                   .end             RMP_Int_Enable
+                                                  290:   /* End Function:RMP_Int_Enable ***********************************************/
                                                   291:   
                                                   292:   /* Begin Function:_RMP_Set_Timer **********************************************
                                                   293:   Description    : The function for setting the timer.
@@ -6302,25 +6302,25 @@ Feb 28, 2018 1:35:24 PM
 9D0004D4  AE810000   SW AT, 0(S4)                 470:                   sw               $1,0($20)
                                                   471:                   
                                                   472:                   /* Save the SP to control block */
-9D0004D8  3C048000   LUI A0, -32768               473:                   lui              $a0,%hi(RMP_Cur_SP)
-9D0004DC  348403F8   ORI A0, A0, 1016             474:                   ori              $a0,$a0,%lo(RMP_Cur_SP)
+9D0004D8  3C048000   LUI A0, -32768               473:                   lui              $a0,%hi(RMP_SP_Cur)
+9D0004DC  348403F8   ORI A0, A0, 1016             474:                   ori              $a0,$a0,%lo(RMP_SP_Cur)
 9D0004E0  AC940000   SW S4, 0(A0)                 475:                   sw               $20,($a0)
                                                   476:                   /* Now load our own gp for system use */
 9D0004E4  3C1C8000   LUI GP, -32768               477:                   lui              $gp,%hi(RMP_GP_Val)
 9D0004E8  379C0404   ORI GP, GP, 1028             478:                   ori              $gp,$gp,%lo(RMP_GP_Val)
 9D0004EC  8F9C0000   LW GP, 0(GP)                 479:                   lw               $gp,($gp)
                                                   480:                   /* Save extra registers */
-9D0004F0  0F400DB3   JAL 0x9D0036CC               481:                   jal              RMP_Save_Ctx
+9D0004F0  0F400DB3   JAL 0x9D0036CC               481:                   jal              RMP_Ctx_Save
 9D0004F4  00000000   NOP                          482:                   nop
                                                   483:                   /* Get the highest priority ready task */
-9D0004F8  0F40036A   JAL 0x9D000DA8               484:                   jal              _RMP_Get_High_Rdy
+9D0004F8  0F40036A   JAL 0x9D000DA8               484:                   jal              _RMP_High_Rdy_Get
 9D0004FC  00000000   NOP                          485:                   nop
                                                   486:                   /* Restore extra registers */
-9D000500  0F400DB5   JAL 0x9D0036D4               487:                   jal              RMP_Load_Ctx
+9D000500  0F400DB5   JAL 0x9D0036D4               487:                   jal              RMP_Ctx_Load
 9D000504  00000000   NOP                          488:                   nop
                                                   489:                   /* Load the SP from control block */
-9D000508  3C048000   LUI A0, -32768               490:                   lui              $a0,%hi(RMP_Cur_SP)
-9D00050C  348403F8   ORI A0, A0, 1016             491:                   ori              $a0,$a0, %lo(RMP_Cur_SP)
+9D000508  3C048000   LUI A0, -32768               490:                   lui              $a0,%hi(RMP_SP_Cur)
+9D00050C  348403F8   ORI A0, A0, 1016             491:                   ori              $a0,$a0, %lo(RMP_SP_Cur)
 9D000510  8C940000   LW S4, 0(A0)                 492:                   lw               $20,($a0)
 9D000514  00000000   NOP                          493:                   nop
                                                   494:                   /* Clear the interrupt flag */

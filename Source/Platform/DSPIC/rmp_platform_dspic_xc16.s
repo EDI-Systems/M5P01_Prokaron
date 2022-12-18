@@ -43,9 +43,9 @@ STATUS      16          Status register.
 /* Begin Exports *************************************************************/
     /* The DSPIC toolchain mangles all symbols with an extra '_' */
     /* Disable all interrupts */
-    .global             _RMP_Disable_Int      
+    .global             _RMP_Int_Disable      
     /* Enable all interrupts */        
-    .global             _RMP_Enable_Int   
+    .global             _RMP_Int_Enable   
     /* Get the MSB */
     .global             _RMP_MSB_Get
     /* Start the first thread */
@@ -58,16 +58,16 @@ STATUS      16          Status register.
 
 /* Begin Imports *************************************************************/
     /* The real task switch handling function */
-    .extern             __RMP_Get_High_Rdy 
+    .extern             __RMP_High_Rdy_Get 
     /* The real systick handler function */
     .extern             __RMP_Tick_Handler
     /* The PID of the current thread */
-    .extern             _RMP_Cur_Thd
+    .extern             _RMP_Thd_Cur
     /* The stack address of current thread */
-    .extern             _RMP_Cur_SP
+    .extern             _RMP_SP_Cur
     /* Save and load extra contexts, such as FPU, peripherals and MPU */
-    .extern             _RMP_Save_Ctx
-    .extern             _RMP_Load_Ctx
+    .extern             _RMP_Ctx_Save
+    .extern             _RMP_Ctx_Load
     /* The place where we store the kernel sp value */
     .extern             _RMP_SP_Val
     /* Kernel constant pool global pointers */
@@ -129,7 +129,7 @@ STATUS      16          Status register.
     MOV                 W1,_RMP_Int_Nest
     CPBNE               W1,W2,1f
     /* We have confirmed that we need to switch to kernel stack */
-    MOV                 W15,_RMP_Cur_SP
+    MOV                 W15,_RMP_SP_Cur
     MOV                 _RMP_SP_Val,W15
     /* Enable interrupt */
 1:  DISI                #0
@@ -150,7 +150,7 @@ STATUS      16          Status register.
     MOV                 #1,W2
     CPBNE               W1,W2,1f
     /* We need to switch back to our user stack */
-    MOV                 _RMP_Cur_SP,W15
+    MOV                 _RMP_SP_Cur,W15
 1:  SUB                 W1,W2,W1
     MOV                 W1,_RMP_Int_Nest
     /* Pop everything from stack */
@@ -194,7 +194,7 @@ STATUS      16          Status register.
 .endm
 /* End Macros ****************************************************************/
 
-/* Begin Function:RMP_Disable_Int *********************************************
+/* Begin Function:RMP_Int_Disable *********************************************
 Description    : The function for disabling all interrupts. Does not allow nesting.
                  This macro only disables interrupt for a short time; this is a 
                  limitation of DSPIC33 architecture. Considering the common usage
@@ -204,24 +204,24 @@ Input          : None.
 Output         : None.    
 Register Usage : None.                                  
 ******************************************************************************/
-_RMP_Disable_Int:
+_RMP_Int_Disable:
     /* Reliably disable all interrupts */
     DISI                #16383
     RETURN
-/* End Function:RMP_Disable_Int **********************************************/
+/* End Function:RMP_Int_Disable **********************************************/
 
-/* Begin Function:RMP_Enable_Int **********************************************
+/* Begin Function:RMP_Int_Enable **********************************************
 Description    : The function for enabling all interrupts. Does not allow nesting.
                  Can't directly operate on DISICNT; see errata. Have to use DISI #0.
 Input          : None.
 Output         : None.    
 Register Usage : None.                                  
 ******************************************************************************/
-_RMP_Enable_Int:
+_RMP_Int_Enable:
     /* Enable all interrupts */
     DISI                #0
     RETURN
-/* End Function:RMP_Enable_Int ***********************************************/
+/* End Function:RMP_Int_Enable ***********************************************/
 
 /* Begin Function:RMP_MSB_Get *************************************************
 Description    : Get the MSB of the word.
@@ -279,11 +279,11 @@ __INT0Interrupt:
     SAVE_CONTEXT
 
     /* Save extra registers */
-    CALL                _RMP_Save_Ctx
+    CALL                _RMP_Ctx_Save
     /* Get the highest priority ready task */
-    CALL                __RMP_Get_High_Rdy
+    CALL                __RMP_High_Rdy_Get
     /* Restore extra registers */
-    CALL                _RMP_Load_Ctx
+    CALL                _RMP_Ctx_Load
     /* Clear software interrupt flag */
     CALL                __RMP_Clear_Soft_Flag
 

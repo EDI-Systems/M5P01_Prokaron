@@ -164,7 +164,7 @@ Return      : None.
 ******************************************************************************/
 void _RMP_Plat_Hook(void)
 {
-    RMP_Enable_Int();
+    RMP_Int_Enable();
 }
 /* End Function:_RMP_Plat_Hook ***********************************************/
 

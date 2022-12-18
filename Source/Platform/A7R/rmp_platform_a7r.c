@@ -82,7 +82,7 @@ void _RMP_Low_Level_Init(void)
 {   
     RMP_CRX_LOW_LEVEL_INIT();
     
-    RMP_Disable_Int();
+    RMP_Int_Disable();
 }
 /* End Function:_RMP_Low_Level_Init ******************************************/
 
@@ -94,7 +94,7 @@ Return      : None.
 ******************************************************************************/
 void _RMP_Plat_Hook(void)
 {
-    RMP_Enable_Int();
+    RMP_Int_Enable();
 }
 /* End Function:_RMP_Plat_Hook ***********************************************/
 

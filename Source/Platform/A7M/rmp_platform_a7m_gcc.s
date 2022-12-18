@@ -27,9 +27,9 @@ The ARM Cortex-M4/7 also include a FPU.
 /* End Header ****************************************************************/
 
 /* Begin Exports *************************************************************/
-    .global             RMP_Disable_Int       
-    .global             RMP_Enable_Int
-    .global             RMP_Mask_Int     
+    .global             RMP_Int_Disable       
+    .global             RMP_Int_Enable
+    .global             RMP_Int_Mask     
     .global             RMP_MSB_Get
     .global             _RMP_Start
     .global             _RMP_Yield        
@@ -38,58 +38,58 @@ The ARM Cortex-M4/7 also include a FPU.
 /* End Exports ***************************************************************/
 
 /* Begin Imports *************************************************************/
-    .extern             _RMP_Get_High_Rdy 
+    .extern             _RMP_High_Rdy_Get 
     .extern             _RMP_Tick_Handler     
-    .extern             RMP_Cur_Thd
-    .extern             RMP_Cur_SP        
-    .extern             RMP_Save_Ctx
-    .extern             RMP_Load_Ctx
+    .extern             RMP_Thd_Cur
+    .extern             RMP_SP_Cur        
+    .extern             RMP_Ctx_Save
+    .extern             RMP_Ctx_Load
 /* End Imports ***************************************************************/
 
-/* Begin Function:RMP_Disable_Int *********************************************
+/* Begin Function:RMP_Int_Disable *********************************************
 Description : The function for disabling all interrupts. Does not allow nesting.
 Input       : None.
 Output      : None.
 Return      : None.
 ******************************************************************************/
     .thumb_func
-RMP_Disable_Int:
+RMP_Int_Disable:
     .fnstart
     .cantunwind
     CPSID               I                                                       
     BX                  LR       
     .fnend				
-/* End Function:RMP_Disable_Int **********************************************/
+/* End Function:RMP_Int_Disable **********************************************/
 
-/* Begin Function:RMP_Enable_Int **********************************************
+/* Begin Function:RMP_Int_Enable **********************************************
 Description : The function for enabling all interrupts. Does not allow nesting.
 Input       : None.
 Output      : None.
 Return      : None.
 ******************************************************************************/
 .thumb_func
-RMP_Enable_Int:
+RMP_Int_Enable:
     .fnstart
     .cantunwind
     CPSIE               I               
     BX                  LR
     .fnend				
-/* End Function:RMP_Enable_Int ***********************************************/
+/* End Function:RMP_Int_Enable ***********************************************/
 
-/* Begin Function:RMP_Mask_Int ************************************************
+/* Begin Function:RMP_Int_Mask ************************************************
 Description : The function for masking & unmasking interrupts. Does not allow nesting.
 Input       : rmp_ptr_t R0 - The new BASEPRI to set.
 Output      : None.
 Return      : None.
 ******************************************************************************/
     .thumb_func
-RMP_Mask_Int:
+RMP_Int_Mask:
     .fnstart
     .cantunwind
     MSR                 BASEPRI,R0                                                        
     BX                  LR
     .fnend
-/* End Function:RMP_Mask_Int *************************************************/
+/* End Function:RMP_Int_Mask *************************************************/
 
 /* Begin Function:RMP_MSB_Get *************************************************
 Description : Get the MSB of the word.
@@ -170,17 +170,17 @@ PendSV_Handler:
     .hword              0x8A10              /* Save FPU registers not saved by lazy stacking. */
     STMDB               R0!,{R4-R11,LR}
     
-    BL                  RMP_Save_Ctx               
+    BL                  RMP_Ctx_Save               
     
-    LDR                 R1,=RMP_Cur_SP          
+    LDR                 R1,=RMP_SP_Cur          
     STR                 R0,[R1]
     
-    BL                  _RMP_Get_High_Rdy        
+    BL                  _RMP_High_Rdy_Get        
     
-    LDR                 R1,=RMP_Cur_SP           
+    LDR                 R1,=RMP_SP_Cur           
     LDR                 R0,[R1]
     
-    BL                  RMP_Load_Ctx             
+    BL                  RMP_Ctx_Load             
     
     LDMIA               R0!,{R4-R11,LR}
     TST                 LR,#0x10            /* Are we using the FPU or not at all? */

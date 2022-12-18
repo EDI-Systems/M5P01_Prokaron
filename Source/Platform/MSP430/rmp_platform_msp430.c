@@ -58,7 +58,7 @@ const rmp_u8_t RMP_MSB_Tbl[128]=
 
 rmp_ptr_t RMP_MSB_Get(rmp_ptr_t Val)
 {
-#if(RMP_MSP430_X==RMP_TRUE)
+#if(RMP_MSP430_X==1U)
     /* Scan one by one */
     if((Val&0xFF000000UL)!=0)
         return RMP_MSB_Tbl[Val>>25]+24;
@@ -135,7 +135,7 @@ void _RMP_Stack_Init(rmp_ptr_t Entry, rmp_ptr_t Stack, rmp_ptr_t Arg)
     rmp_ptr_t* Stack_Ptr=(rmp_ptr_t*)Stack;
 
     /* General purpose registers */
-#if(RMP_MSP430_INIT_EXTRA==RMP_TRUE)
+#if(RMP_MSP430_INIT_EXTRA==1U)
     Stack_Ptr[0]=0x0404;                                    /* R4 */
     Stack_Ptr[1]=0x0505;                                    /* R5 */
     Stack_Ptr[2]=0x0606;                                    /* R6 */
@@ -146,13 +146,13 @@ void _RMP_Stack_Init(rmp_ptr_t Entry, rmp_ptr_t Stack, rmp_ptr_t Arg)
     Stack_Ptr[7]=0x1111;                                    /* R11 */
 #endif
     Stack_Ptr[8]=Arg;                                       /* R12 */
-#if(RMP_MSP430_INIT_EXTRA==RMP_TRUE)
+#if(RMP_MSP430_INIT_EXTRA==1U)
     Stack_Ptr[9]=0x1313;                                    /* R13 */
     Stack_Ptr[10]=0x1414;                                   /* R14 */
     Stack_Ptr[11]=0x1515;                                   /* R15 */
 #endif
 
-#if(RMP_MSP430_X==RMP_TRUE)
+#if(RMP_MSP430_X==1U)
     ((rmp_u16_t*)Stack_Ptr)[24]=0;
     ((rmp_u16_t*)Stack_Ptr)[25]=((Entry>>4)&0xF000)|RMP_MSP430_SR_GIE;
     ((rmp_u16_t*)Stack_Ptr)[26]=Entry&0xFFFF;
@@ -173,7 +173,7 @@ void _RMP_Low_Level_Init(void)
 {
     RMP_MSP430_LOW_LEVEL_INIT();
 
-    RMP_Disable_Int();
+    RMP_Int_Disable();
 }
 /* End Function:_RMP_Low_Level_Init ******************************************/
 
@@ -185,7 +185,7 @@ Return      : None.
 ******************************************************************************/
 void _RMP_Plat_Hook(void)
 {
-    RMP_Enable_Int();
+    RMP_Int_Enable();
 }
 /* End Function:_RMP_Plat_Hook ***********************************************/
 

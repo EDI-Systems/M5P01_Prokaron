@@ -15,18 +15,18 @@ Description : The configuration file for FE310-G000.
 
 /* The maximum number of preemption priority levels in the system.
  * This parameter must be divisible by the word length - 32 is usually sufficient */
-#define RMP_MAX_PREEMPT_PRIO         32
+#define RMP_PREEMPT_PRIO_NUM         32
 /* The maximum number of slices allowed */
-#define RMP_MAX_SLICES               100000
+#define RMP_SLICE_MAX               100000
 /* The maximum number of semaphore counts allowed */
-#define RMP_SEM_MAX_NUM              1000
+#define RMP_SEM_CNT_MAX              1000
 /* Are we using custom hooks? */
-#define RMP_USE_HOOKS                RMP_FALSE
+#define RMP_HOOK_EXTRA                0U
 /* The stzck size of the init thread */
 #define RMP_INIT_STACK_SIZE          256
 /* The mask/unmask interrupt operations */
-#define RMP_MASK_INT()               RMP_Disable_Int()
-#define RMP_UNMASK_INT()             RMP_Enable_Int()
+#define RMP_INT_MASK()               RMP_Int_Disable()
+#define RMP_INT_UNMASK()             RMP_Int_Enable()
 
 #define RMP_RV32IMAC_INT_NUMBER      PLIC_NUM_INTERRUPTS
 /* The mtime RTC runs on a 32768kHz crystal. This means 1ms tick time */
@@ -47,7 +47,7 @@ do \
 { \
     /* Initialize PLIC */ \
     PLIC_init(&RMP_Global_PLIC,PLIC_CTRL_ADDR,PLIC_NUM_INTERRUPTS,PLIC_NUM_PRIORITIES); \
-    RMP_Disable_Int(); \
+    RMP_Int_Disable(); \
     /* Initialize PLL to run the CPU at 256MHz (which is safer than 320MHz) */ \
     PRCI_use_pll(1, /* Use HFXTAL as the reference */ \
                  0, /* Bypass = 0, really use the PLL */ \

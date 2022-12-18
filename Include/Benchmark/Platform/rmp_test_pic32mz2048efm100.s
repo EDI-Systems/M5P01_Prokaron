@@ -50,8 +50,8 @@ Description : The extra testing file for this chip.
     BNE                 $22,$0,1f 
     NOP
     /* Need to save the old sp first, then switch to system stack to continue execution */
-    LUI                 $23,%hi(RMP_Cur_SP)
-    ORI                 $23,$23,%lo(RMP_Cur_SP)
+    LUI                 $23,%hi(RMP_SP_Cur)
+    ORI                 $23,$23,%lo(RMP_SP_Cur)
     SW                  $sp,($23)
     /* We need to swap to system stack for execution */
     LUI                 $23,%hi(RMP_SP_Val)
@@ -131,8 +131,8 @@ Description : The extra testing file for this chip.
     BNE                 $21,$0,1f 
     NOP
     /* Need to load back the old sp */
-    LUI                 $23,%hi(RMP_Cur_SP)
-    ORI                 $23,$23,%lo(RMP_Cur_SP)
+    LUI                 $23,%hi(RMP_SP_Cur)
+    ORI                 $23,$23,%lo(RMP_SP_Cur)
     LW                  $sp,($23)
     NOP
 1:  MOVE                $20,$sp

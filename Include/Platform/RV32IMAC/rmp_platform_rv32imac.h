@@ -69,7 +69,7 @@ typedef rmp_s32_t rmp_ret_t;
 /* The order of bits in one CPU machine word */
 #define RMP_WORD_ORDER           5
 /* The maximum length of char printing - no need to change this in most cases */
-#define RMP_KERNEL_DEBUG_MAX_STR 255
+#define RMP_DEBUG_PRINT_MAX 255
 /* The offset of the stack when initializing */
 #define RMP_INIT_STACK           RMP_INIT_STACK_TAIL(17)
 
@@ -148,9 +148,9 @@ __EXTERN__ rmp_ptr_t RMP_Periph_Vect_Table[RMP_RV32IMAC_INT_NUMBER];
 /* Public C Function Prototypes **********************************************/
 /*****************************************************************************/
 /* Interrupts */
-EXTERN void RMP_Disable_Int(void);
-EXTERN void RMP_Enable_Int(void);
-EXTERN void RMP_Mask_Int(rmp_ptr_t Level);
+EXTERN void RMP_Int_Disable(void);
+EXTERN void RMP_Int_Enable(void);
+EXTERN void RMP_Int_Mask(rmp_ptr_t Level);
 
 EXTERN rmp_ptr_t RMP_MSB_Get(rmp_ptr_t Val);
 EXTERN void _RMP_Start(rmp_ptr_t Entry, rmp_ptr_t Stack);

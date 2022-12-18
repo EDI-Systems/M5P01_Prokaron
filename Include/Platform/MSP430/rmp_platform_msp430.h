@@ -47,7 +47,7 @@ typedef unsigned char rmp_u8_t;
 #ifndef __RMP_PTR_T__
 #define __RMP_PTR_T__
 /* The typedef for the pointers - This is the raw style. Pointers must be unsigned */
-#if(RMP_MSP430_X==RMP_TRUE)
+#if(RMP_MSP430_X==1U)
 typedef rmp_u32_t rmp_ptr_t;
 #else
 typedef rmp_u16_t rmp_ptr_t;
@@ -62,7 +62,7 @@ typedef rmp_s16_t rmp_cnt_t;
 
 #ifndef __RMP_RET_T__
 #define __RMP_RET_T__
-#if(RMP_MSP430_X==RMP_TRUE)
+#if(RMP_MSP430_X==1U)
 /* The type for return value */
 typedef rmp_s32_t rmp_ret_t;
 #else
@@ -75,7 +75,7 @@ typedef rmp_s16_t rmp_ret_t;
 /* Compiler "extern" keyword setting */
 #define EXTERN                   extern
 /* The maximum length of char printing - no need to change this in most cases */
-#define RMP_KERNEL_DEBUG_MAX_STR 128
+#define RMP_DEBUG_PRINT_MAX 128
 /* The offset of the stack when initializing */
 #define RMP_INIT_STACK           RMP_INIT_STACK_TAIL(12)
 
@@ -83,7 +83,7 @@ typedef rmp_s16_t rmp_ret_t;
 #include "rmp_platform_msp430_conf.h"
 
 /* The order of bits in one CPU machine word */
-#if(RMP_MSP430_X==RMP_TRUE)
+#if(RMP_MSP430_X==1U)
 #define RMP_WORD_ORDER           5
 #else
 #define RMP_WORD_ORDER           4
@@ -167,8 +167,8 @@ typedef rmp_s16_t rmp_ret_t;
 /* Public C Function Prototypes **********************************************/
 /*****************************************************************************/
 /* Interrupts */
-EXTERN void RMP_Disable_Int(void);
-EXTERN void RMP_Enable_Int(void);
+EXTERN void RMP_Int_Disable(void);
+EXTERN void RMP_Int_Enable(void);
 
 __EXTERN__ rmp_ptr_t RMP_MSB_Get(rmp_ptr_t Val);
 EXTERN void _RMP_Start(rmp_ptr_t Entry, rmp_ptr_t Stack);

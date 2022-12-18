@@ -12,18 +12,18 @@ Description: The configuration file for PIC32MZ2048EFM100.
 #include <stddef.h>
 /* The maximum number of preemption priority levels in the system.
  * This parameter must be divisible by the word length - 16 is usually sufficient */
-#define RMP_MAX_PREEMPT_PRIO         16
+#define RMP_PREEMPT_PRIO_NUM         16
 /* The maximum number of slices allowed */
-#define RMP_MAX_SLICES               10000
+#define RMP_SLICE_MAX               10000
 /* The maximum number of semaphore counts allowed */
-#define RMP_SEM_MAX_NUM              1000
+#define RMP_SEM_CNT_MAX              1000
 /* Are we using custom hooks? */
-#define RMP_USE_HOOKS                RMP_FALSE
+#define RMP_HOOK_EXTRA                0U
 /* The stack size of the init thread */
 #define RMP_INIT_STACK_SIZE          1024
 /* The mask/unmask interrupt operations */
-#define RMP_MASK_INT()               RMP_Disable_Int()
-#define RMP_UNMASK_INT()             RMP_Enable_Int()
+#define RMP_INT_MASK()               RMP_Int_Disable()
+#define RMP_INT_UNMASK()             RMP_Int_Enable()
 
 /* Timer constants */
 #define RMP_DSPIC_TIMER_ON           0x8000
@@ -45,7 +45,7 @@ Description: The configuration file for PIC32MZ2048EFM100.
 #define RMP_DSPIC_LOW_LEVEL_INIT() \
 do \
 { \
-    RMP_Disable_Int(); \
+    RMP_Int_Disable(); \
     /* Enable external interrupt 0 which is used for PendSV */ \
     IPC0bits.INT0IP=1; \
     IFS0bits.INT0IF=0; \
