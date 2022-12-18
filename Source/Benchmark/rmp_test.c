@@ -250,18 +250,18 @@ void Test_Mem_Pool(void)
         Mem[0]=RMP_Malloc(Pool, (TEST_MEM_POOL>>7)*127);
         if(Mem[0]==0)
         {
-            RMP_PRINTK_S("Memory test failure: ");
-            RMP_PRINTK_I(Test_Count);
-            RMP_PRINTK_S(" runs.\r\n");
+            RMP_LOG_S("Memory test failure: ");
+            RMP_LOG_I(Test_Count);
+            RMP_LOG_S(" runs.\r\n");
             while(1);
         }
         RMP_Free(Pool, Mem[0]); 
     }
     
-    RMP_PRINTK_S("Memory: ");
+    RMP_LOG_S("Memory: ");
     Memory_Time=Total/160000;
-    RMP_PRINTK_I(Memory_Time);
-    RMP_PRINTK_S(" cycles.\r\n");
+    RMP_LOG_I(Memory_Time);
+    RMP_LOG_S(" cycles.\r\n");
 }
 #endif
 
@@ -772,29 +772,29 @@ void Func_2(void)
     /* Yield tests */
     Total=0;
     Test_Yield_2();
-    RMP_PRINTK_S("Yield: ");
+    RMP_LOG_S("Yield: ");
 
     Yield_Time=Total/10000;
-    RMP_PRINTK_I(Yield_Time);
-    RMP_PRINTK_S(" cycles.\r\n");
+    RMP_LOG_I(Yield_Time);
+    RMP_LOG_S(" cycles.\r\n");
     /* Change priority of thread 2, just in case */
     RMP_Thd_Set(&Thd_2,2,RMP_SLICE_MAX);
     
     /* Mailbox tests */
     Total=0;
     Test_Mail_2();
-    RMP_PRINTK_S("Mailbox: ");
+    RMP_LOG_S("Mailbox: ");
     Mailbox_Time=Total/10000;
-    RMP_PRINTK_I(Mailbox_Time);
-    RMP_PRINTK_S(" cycles.\r\n");
+    RMP_LOG_I(Mailbox_Time);
+    RMP_LOG_S(" cycles.\r\n");
     
     /* Semaphore tests */
     Total=0;
     Test_Sem_2();
-    RMP_PRINTK_S("Semaphore: ");
+    RMP_LOG_S("Semaphore: ");
     Semaphore_Time=Total/10000;
-    RMP_PRINTK_I(Semaphore_Time);
-    RMP_PRINTK_S(" cycles.\r\n");
+    RMP_LOG_I(Semaphore_Time);
+    RMP_LOG_S(" cycles.\r\n");
     
     /* Memory pool tests */
 #ifdef TEST_MEM_POOL
@@ -811,14 +811,14 @@ void Func_2(void)
     Total=0;
     Test_Sem_ISR();
     
-    RMP_PRINTK_S("Mailbox-ISR: ");
+    RMP_LOG_S("Mailbox-ISR: ");
     Mailbox_ISR_Time=Temp/10000;
-    RMP_PRINTK_I(Mailbox_ISR_Time);
-    RMP_PRINTK_S(" cycles.\r\n");
-    RMP_PRINTK_S("Semaphore-ISR: ");
+    RMP_LOG_I(Mailbox_ISR_Time);
+    RMP_LOG_S(" cycles.\r\n");
+    RMP_LOG_S("Semaphore-ISR: ");
     Semaphore_ISR_Time=Total/10000;
-    RMP_PRINTK_I(Semaphore_ISR_Time);
-    RMP_PRINTK_S(" cycles.\r\n");
+    RMP_LOG_I(Semaphore_ISR_Time);
+    RMP_LOG_S(" cycles.\r\n");
 
 #ifdef RMP_COVERAGE
     Test_Coverage_2();
@@ -845,9 +845,9 @@ void Int_Handler(void)
         Start=COUNTER_READ();
         if(RMP_Thd_Snd_ISR(&Thd_2, 1)<0)
         {
-            RMP_PRINTK_S("ISR Mailbox send failure: ");
-            RMP_PRINTK_I(Count);
-            RMP_PRINTK_S(" sends.\r\n");
+            RMP_LOG_S("ISR Mailbox send failure: ");
+            RMP_LOG_I(Count);
+            RMP_LOG_S(" sends.\r\n");
             while(1);
         }
     }
@@ -857,9 +857,9 @@ void Int_Handler(void)
         Start=COUNTER_READ();
         if(RMP_Sem_Post_ISR(&Sem_1, 1)<0)
         {
-            RMP_PRINTK_S("ISR semaphore post failure: ");
-            RMP_PRINTK_I(Count);
-            RMP_PRINTK_S(" posts.\r\n");
+            RMP_LOG_S("ISR semaphore post failure: ");
+            RMP_LOG_I(Count);
+            RMP_LOG_S(" posts.\r\n");
             while(1);
         }
     }

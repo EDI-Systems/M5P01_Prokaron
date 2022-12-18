@@ -52,7 +52,7 @@ static duk_ret_t native_print(duk_context *ctx) {
 	duk_insert(ctx, 0);
 	duk_join(ctx, duk_get_top(ctx) - 1);
 	sprintf(Buf,"%s\n", duk_to_string(ctx, -1));
-    RMP_PRINTK_S(Buf);
+    RMP_LOG_S(Buf);
 	return 0;
 }
 
@@ -98,13 +98,13 @@ void Func_1(void)
 
 	for (i = 1; i < argc; i++) {
 		sprintf(Buf,"=== eval: '%s' ===\n", argv[i]);
-        RMP_PRINTK_S(Buf);
+        RMP_LOG_S(Buf);
 		duk_push_string(ctx, argv[i]);
 		duk_safe_call(ctx, eval_raw, NULL, 1 /*nargs*/, 1 /*nrets*/);
 		duk_safe_call(ctx, tostring_raw, NULL, 1 /*nargs*/, 1 /*nrets*/);
 		res = duk_get_string(ctx, -1);
 		sprintf(Buf,"%s\n", res ? res : "null");
-        RMP_PRINTK_S(Buf);
+        RMP_LOG_S(Buf);
 		duk_pop(ctx);
 	}
 

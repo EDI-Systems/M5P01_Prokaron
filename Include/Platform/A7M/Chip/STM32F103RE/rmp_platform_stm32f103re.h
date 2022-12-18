@@ -1,5 +1,5 @@
 /******************************************************************************
-Filename   : rmp_platform_STM32F103RE.h
+Filename   : rmp_platform_stm32f103re.h
 Author     : pry
 Date       : 24/06/2017
 Licence    : The Unlicense; see LICENSE for details.
@@ -11,32 +11,35 @@ Description: The configuration file for STM32F103RE.
 #include "stm32f1xx_hal.h"
 #include "stm32f1xx_hal_conf.h"
 #include "core_cm3.h"
+
+/* Debugging */
+#define RMP_ASSERT_CORRECT          (0U)
 /* The maximum number of preemption priority levels in the system.
  * This parameter must be divisible by the word length - 32 is usually sufficient */
-#define RMP_PREEMPT_PRIO_NUM         32
+#define RMP_PREEMPT_PRIO_NUM        (32U)
 /* The maximum number of slices allowed */
-#define RMP_SLICE_MAX               100000
+#define RMP_SLICE_MAX               (100000U)
 /* The maximum number of semaphore counts allowed */
-#define RMP_SEM_CNT_MAX              1000
+#define RMP_SEM_CNT_MAX             (1000U)
 /* Are we using custom hooks? */
-#define RMP_HOOK_EXTRA                0U
+#define RMP_HOOK_EXTRA              (0U)
 /* The stzck size of the init thread */
-#define RMP_INIT_STACK_SIZE          256
+#define RMP_INIT_STACK_SIZE         (256U)
 /* The mask/unmask interrupt operations - can be adjusted to fit your own levels */
-#define RMP_INT_MASK()               RMP_Int_Mask(0xFF)
-#define RMP_INT_UNMASK()             RMP_Int_Mask(0x00)
+#define RMP_INT_MASK()              RMP_Int_Mask(0xFFU)
+#define RMP_INT_UNMASK()            RMP_Int_Mask(0x00U)
 
 /* What is the NVIC priority grouping? */
-#define RMP_CMX_NVIC_GROUPING        RMP_CMX_NVIC_GROUPING_P2S6
+#define RMP_A7M_NVIC_GROUPING       RMP_A7M_NVIC_GROUPING_P2S6
 /* What is the Systick value? */
-#define RMP_CMX_SYSTICK_VAL          7200
+#define RMP_A7M_SYSTICK_VAL         (7200U)
 
 /* Other low-level initialization stuff - clock and serial
  * STM32F10x APB1<36MHz, APB2<72MHz. 
  * This is the default initialization sequence. If you wish to supply
  * your own, just redirect this macro to a custom function, or do your
  * initialization stuff in the initialization hook (RMP_Start_Hook). */
-#define RMP_CMX_LOW_LEVEL_INIT() \
+#define RMP_A7M_LOW_LEVEL_INIT() \
 do \
 { \
     RCC_OscInitTypeDef Osc_Init; \
@@ -82,25 +85,25 @@ do \
     USART1_Handle.Init.HwFlowCtl=UART_HWCONTROL_NONE; \
     USART1_Handle.Init.Mode=UART_MODE_TX; \
     HAL_UART_Init(&USART1_Handle); \
-    RMP_CMX_PUTCHAR('\r'); \
-    RMP_CMX_PUTCHAR('\n'); \
+    RMP_A7M_PUTCHAR('\r'); \
+    RMP_A7M_PUTCHAR('\n'); \
     /* Enable all fault handlers */ \
-    SCB->SHCSR|=RMP_CMX_SHCSR_USGFAULTENA|RMP_CMX_SHCSR_BUSFAULTENA|RMP_CMX_SHCSR_MEMFAULTENA; \
+    SCB->SHCSR|=RMP_A7M_SHCSR_USGFAULTENA|RMP_A7M_SHCSR_BUSFAULTENA|RMP_A7M_SHCSR_MEMFAULTENA; \
     \
     /* Set the priority of timer, svc and faults to the lowest */ \
-    NVIC_SetPriorityGrouping(RMP_CMX_NVIC_GROUPING); \
+    NVIC_SetPriorityGrouping(RMP_A7M_NVIC_GROUPING); \
     NVIC_SetPriority(SVCall_IRQn, 0xFF); \
     NVIC_SetPriority(PendSV_IRQn, 0xFF); \
     NVIC_SetPriority(SysTick_IRQn, 0xFF); \
     NVIC_SetPriority(BusFault_IRQn, 0xFF); \
     NVIC_SetPriority(UsageFault_IRQn, 0xFF); \
     NVIC_SetPriority(DebugMonitor_IRQn, 0xFF); \
-    SysTick_Config(RMP_CMX_SYSTICK_VAL); \
+    SysTick_Config(RMP_A7M_SYSTICK_VAL); \
 } \
 while(0)
 
 /* This is for debugging output */
-#define RMP_CMX_PUTCHAR(CHAR) \
+#define RMP_A7M_PUTCHAR(CHAR) \
 do \
 { \
     USART1->DR=CHAR; \

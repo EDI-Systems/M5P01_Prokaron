@@ -61,13 +61,13 @@ This software is an official work of EDI, and thus belongs to the **public domai
 ```C
     void Func_1(void* Param)
     {
-        RMP_PRINTK_S("Parameter passed is ");
-        RMP_PRINTK_U((ptr_t)Param);
-        RMP_PRINTK_S("\r\n");
+        RMP_LOG_S("Parameter passed is ");
+        RMP_LOG_H((ptr_t)Param);
+        RMP_LOG_S("\r\n");
         while(1)
         {
             RMP_Thd_Delay(30000);
-            RMP_PRINTK_S("Delayed 30000 cycles\r\n\r\n");
+            RMP_LOG_S("Delayed 30000 cycles\r\n\r\n");
         };
     }
 
@@ -96,9 +96,9 @@ This software is an official work of EDI, and thus belongs to the **public domai
         while(1)
         {
             RMP_Thd_Rcv(&Data, RMP_SLICE_MAX);
-            RMP_PRINTK_S("Received ");
-            RMP_PRINTK_I(Data);
-            RMP_PRINTK_S("\n");
+            RMP_LOG_S("Received ");
+            RMP_LOG_I(Data);
+            RMP_LOG_S("\n");
         };
     }
 
@@ -127,7 +127,7 @@ This software is an official work of EDI, and thus belongs to the **public domai
         while(1)
         {
             RMP_Sem_Pend(&Sem_1, RMP_SLICE_MAX);
-            RMP_PRINTK_S("Semaphore successfully acquired!\r\n\r\n");
+            RMP_LOG_S("Semaphore successfully acquired!\r\n\r\n");
         };
     }
 

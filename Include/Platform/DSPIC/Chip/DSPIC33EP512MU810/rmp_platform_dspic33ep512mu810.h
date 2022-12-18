@@ -1,42 +1,45 @@
 /******************************************************************************
-Filename   : platform_PIC32MZ2048EFM100.h
+Filename   : platform_dspic33ep512mu810.h
 Author     : pry
 Date       : 24/06/2017
 Licence    : The Unlicense; see LICENSE for details.
-Description: The configuration file for PIC32MZ2048EFM100.
+Description: The configuration file for DSPIC33EP512MU810.
 ******************************************************************************/
 
 /* Defines *******************************************************************/
 /* The MPLAB libraries */
 #include <xc.h>
 #include <stddef.h>
+
+/* Debugging */
+#define RMP_ASSERT_CORRECT          (0U)
 /* The maximum number of preemption priority levels in the system.
  * This parameter must be divisible by the word length - 16 is usually sufficient */
-#define RMP_PREEMPT_PRIO_NUM         16
+#define RMP_PREEMPT_PRIO_NUM        (16U)
 /* The maximum number of slices allowed */
-#define RMP_SLICE_MAX               10000
+#define RMP_SLICE_MAX               (10000U)
 /* The maximum number of semaphore counts allowed */
-#define RMP_SEM_CNT_MAX              1000
+#define RMP_SEM_CNT_MAX             (1000U)
 /* Are we using custom hooks? */
-#define RMP_HOOK_EXTRA                0U
+#define RMP_HOOK_EXTRA              (0U)
 /* The stack size of the init thread */
-#define RMP_INIT_STACK_SIZE          1024
+#define RMP_INIT_STACK_SIZE         (1024U)
 /* The mask/unmask interrupt operations */
-#define RMP_INT_MASK()               RMP_Int_Disable()
-#define RMP_INT_UNMASK()             RMP_Int_Enable()
+#define RMP_INT_MASK()              RMP_Int_Disable()
+#define RMP_INT_UNMASK()            RMP_Int_Enable()
 
 /* Timer constants */
-#define RMP_DSPIC_TIMER_ON           0x8000
-#define RMP_DSPIC_TIMER_PRESC1       0x0000
-#define RMP_DSPIC_TIMER_PRESC8       0x0010
-#define RMP_DSPIC_TIMER_PRESC64      0x0020
-#define RMP_DSPIC_TIMER_PRESC256     0x0030
+#define RMP_DSPIC_TIMER_ON          (0x8000U)
+#define RMP_DSPIC_TIMER_PRESC1      (0x0000U)
+#define RMP_DSPIC_TIMER_PRESC8      (0x0010U)
+#define RMP_DSPIC_TIMER_PRESC64     (0x0020U)
+#define RMP_DSPIC_TIMER_PRESC256    (0x0030U)
 
 /* What is the tick timer tick value? */
-#define RMP_DSPIC_TICK_VAL           60000
+#define RMP_DSPIC_TICK_VAL          (60000U)
 /* What is the prescaler value? - prescaled by 8. Input is Fcpu/2, thus this is
  * dividing it by 16 with regards to CPU clock rate */
-#define RMP_DSPIC_TICK_PRESC         RMP_DSPIC_TIMER_PRESC8
+#define RMP_DSPIC_TICK_PRESC        RMP_DSPIC_TIMER_PRESC8
 
 /* Other low-level initialization stuff - clock and serial. 
  * This is the default initialization sequence. If you wish to supply

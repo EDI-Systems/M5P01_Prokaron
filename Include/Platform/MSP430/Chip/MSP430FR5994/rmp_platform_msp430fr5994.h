@@ -1,9 +1,9 @@
 /******************************************************************************
-Filename   : platform_MSP430FR5994.h
+Filename   : rmp_platform_msp430fr5994.h
 Author     : pry
 Date       : 24/06/2017
 Licence    : The Unlicense; see LICENSE for details.
-Description: The configuration file for MSP43FR5994.
+Description: The configuration file for MSP430FR5994.
 ******************************************************************************/
 
 /* Defines *******************************************************************/
@@ -11,25 +11,27 @@ Description: The configuration file for MSP43FR5994.
 #include <msp430.h>
 #include "driverlib.h"
 
+/* Debugging */
+#define RMP_ASSERT_CORRECT          (0U)
 /* The maximum number of preemption priority levels in the system.
  * This parameter must be divisible by the word length - 16 is usually sufficient */
-#define RMP_PREEMPT_PRIO_NUM         16
+#define RMP_PREEMPT_PRIO_NUM        (16U)
 /* The maximum number of slices allowed */
-#define RMP_SLICE_MAX               10000
+#define RMP_SLICE_MAX               (10000U)
 /* The maximum number of semaphore counts allowed */
-#define RMP_SEM_CNT_MAX              1000
+#define RMP_SEM_CNT_MAX             (1000U)
 /* Are we using custom hooks? */
-#define RMP_HOOK_EXTRA                0U
+#define RMP_HOOK_EXTRA              (0U)
 /* The stzck size of the init thread */
-#define RMP_INIT_STACK_SIZE          128
+#define RMP_INIT_STACK_SIZE         (128U)
 /* The mask/unmask interrupt operations */
-#define RMP_INT_MASK()               RMP_Int_Disable()
-#define RMP_INT_UNMASK()             RMP_Int_Enable()
+#define RMP_INT_MASK()              RMP_Int_Disable()
+#define RMP_INT_UNMASK()            RMP_Int_Enable()
 
 /* We are using MSP430X or not */
-#define RMP_MSP430_X                 1U
+#define RMP_MSP430_X                (1U)
 /* The tick timer value */
-#define RMP_MSP430_TICK_VAL          10000
+#define RMP_MSP430_TICK_VAL         (10000U)
 
 /* Other low-level initialization stuff - clock and serial. 
  * This is the default initialization sequence. If you wish to supply
