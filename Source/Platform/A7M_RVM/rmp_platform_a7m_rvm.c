@@ -70,8 +70,8 @@ Return      : None.
 ******************************************************************************/
 void _RMP_Low_Level_Init(void)
 {
-    RVM_Virt_Reg_Timer((void*)RMP_SysTick_Handler);
-    RVM_Virt_Reg_Ctxsw((void*)RMP_PendSV_Handler);
+    RVM_Virt_Timer_Reg(RMP_SysTick_Handler);
+    RVM_Virt_Ctxsw_Reg(RMP_PendSV_Handler);
 }
 /* End Function:_RMP_Low_Level_Init ******************************************/
 
@@ -88,7 +88,7 @@ void _RMP_Plat_Hook(void)
     RVM_ASSERT(RVM_Proc_Desc[0]==RVM_MAGIC_VIRTUAL);
     RVM_ASSERT(RVM_Proc_Desc[1]==3U);
     /* Enable interrupt, we've finished all initialization */
-    RVM_Hyp_Ena_Int();
+    RVM_Hyp_Int_Ena();
 }
 /* End Function:_RMP_Plat_Hook ***********************************************/
 
@@ -104,53 +104,53 @@ void RMP_Putchar(char Char)
 }
 /* End Function:RMP_Putchar **************************************************/
 
-/* Begin Function:RMP_Enable_Int **********************************************
+/* Begin Function:RMP_Int_Enable **********************************************
 Description : Enable interrupts.
 Input       : None.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void RMP_Enable_Int(void)
+void RMP_Int_Enable(void)
 {
-    RVM_Hyp_Ena_Int();
+    RVM_Hyp_Int_Ena();
 }
-/* End Function:RMP_Enable_Int ***********************************************/
+/* End Function:RMP_Int_Enable ***********************************************/
 
-/* Begin Function:RMP_Disable_Int *********************************************
+/* Begin Function:RMP_Int_Disable *********************************************
 Description : Disable interrupts.
 Input       : None.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void RMP_Disable_Int(void)
+void RMP_Int_Disable(void)
 {
-    RVM_Hyp_Dis_Int();
+    RVM_Hyp_Int_Dis();
 }
-/* End Function:RMP_Disable_Int **********************************************/
+/* End Function:RMP_Int_Disable **********************************************/
 
-/* Begin Function:RMP_Mask_Int ************************************************
+/* Begin Function:RMP_Int_Mask ************************************************
 Description : Mask interrupts that may do sends.
 Input       : None.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void RMP_Mask_Int(void)
+void RMP_Int_Mask(void)
 {
-    RVM_Virt_Mask_Int();
+    RVM_Virt_Int_Mask();
 }
-/* End Function:RMP_Mask_Int *************************************************/
+/* End Function:RMP_Int_Mask *************************************************/
 
-/* Begin Function:RMP_Unmask_Int **********************************************
+/* Begin Function:RMP_Int_Unmask **********************************************
 Description : Unmask interrupts that may do sends.
 Input       : None.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void RMP_Unmask_Int(void)
+void RMP_Int_Unmask(void)
 {
-    RVM_Virt_Unmask_Int();
+    RVM_Virt_Int_Unmask();
 }
-/* End Function:RMP_Unmask_Int ***********************************************/
+/* End Function:RMP_Int_Unmask ***********************************************/
 
 /* Begin Function:_RMP_Yield **************************************************
 Description : Trigger a yield to a different thread.
@@ -175,119 +175,119 @@ void RMP_PendSV_Handler(void)
     rmp_ptr_t* SP;
     /* Spill all the registers onto the user stack
      * MRS       R0,PSP */
-    SP=(rmp_ptr_t*)(RVM_REGS->Reg.SP);
+    SP=(rmp_ptr_t*)(RVM_REG->Reg.SP);
 
     /* Are we using the FPUs at all? If yes, push FPU registers onto stack */
     /* TST                 LR,#0x10            ;Are we using the FPU or not at all?
      * DCI                 0xBF08              ;IT EQ ;If yes, (DCI for compatibility with no FPU support)
      * DCI                 0xED20              ;VSTMDBEQ R0!,{S16-S31}
      * DCI                 0x8A10              ;Save FPU registers not saved by lazy stacking. */
-    if((RVM_REGS->Reg.LR&0x10)==0)
+    if((RVM_REG->Reg.LR&0x10U)==0U)
     {
-        *(--SP)=RVM_REGS->Cop_Reg.S31;
-        *(--SP)=RVM_REGS->Cop_Reg.S30;
-        *(--SP)=RVM_REGS->Cop_Reg.S29;
-        *(--SP)=RVM_REGS->Cop_Reg.S28;
-        *(--SP)=RVM_REGS->Cop_Reg.S27;
-        *(--SP)=RVM_REGS->Cop_Reg.S26;
-        *(--SP)=RVM_REGS->Cop_Reg.S25;
-        *(--SP)=RVM_REGS->Cop_Reg.S24;
-        *(--SP)=RVM_REGS->Cop_Reg.S23;
-        *(--SP)=RVM_REGS->Cop_Reg.S22;
-        *(--SP)=RVM_REGS->Cop_Reg.S21;
-        *(--SP)=RVM_REGS->Cop_Reg.S20;
-        *(--SP)=RVM_REGS->Cop_Reg.S19;
-        *(--SP)=RVM_REGS->Cop_Reg.S18;
-        *(--SP)=RVM_REGS->Cop_Reg.S17;
-        *(--SP)=RVM_REGS->Cop_Reg.S16;
+        *(--SP)=RVM_REG->Cop_Reg.S31;
+        *(--SP)=RVM_REG->Cop_Reg.S30;
+        *(--SP)=RVM_REG->Cop_Reg.S29;
+        *(--SP)=RVM_REG->Cop_Reg.S28;
+        *(--SP)=RVM_REG->Cop_Reg.S27;
+        *(--SP)=RVM_REG->Cop_Reg.S26;
+        *(--SP)=RVM_REG->Cop_Reg.S25;
+        *(--SP)=RVM_REG->Cop_Reg.S24;
+        *(--SP)=RVM_REG->Cop_Reg.S23;
+        *(--SP)=RVM_REG->Cop_Reg.S22;
+        *(--SP)=RVM_REG->Cop_Reg.S21;
+        *(--SP)=RVM_REG->Cop_Reg.S20;
+        *(--SP)=RVM_REG->Cop_Reg.S19;
+        *(--SP)=RVM_REG->Cop_Reg.S18;
+        *(--SP)=RVM_REG->Cop_Reg.S17;
+        *(--SP)=RVM_REG->Cop_Reg.S16;
     }
 
     /* STMDB     R0!,{R4-R11,LR} */
-    *(--SP)=RVM_REGS->Reg.LR;
-    *(--SP)=RVM_REGS->Reg.R11;
-    *(--SP)=RVM_REGS->Reg.R10;
-    *(--SP)=RVM_REGS->Reg.R9;
-    *(--SP)=RVM_REGS->Reg.R8;
-    *(--SP)=RVM_REGS->Reg.R7;
-    *(--SP)=RVM_REGS->Reg.R6;
-    *(--SP)=RVM_REGS->Reg.R5;
-    *(--SP)=RVM_REGS->Reg.R4;
+    *(--SP)=RVM_REG->Reg.LR;
+    *(--SP)=RVM_REG->Reg.R11;
+    *(--SP)=RVM_REG->Reg.R10;
+    *(--SP)=RVM_REG->Reg.R9;
+    *(--SP)=RVM_REG->Reg.R8;
+    *(--SP)=RVM_REG->Reg.R7;
+    *(--SP)=RVM_REG->Reg.R6;
+    *(--SP)=RVM_REG->Reg.R5;
+    *(--SP)=RVM_REG->Reg.R4;
 
     /* Spill all the user-accessible hypercall structure to stack */
-    *(--SP)=RVM_PARAM->User.Number;
-    *(--SP)=RVM_PARAM->User.Param[0];
-    *(--SP)=RVM_PARAM->User.Param[1];
-    *(--SP)=RVM_PARAM->User.Param[2];
-    *(--SP)=RVM_PARAM->User.Param[3];
+    *(--SP)=RVM_STATE->User.Number;
+    *(--SP)=RVM_STATE->User.Param[0];
+    *(--SP)=RVM_STATE->User.Param[1];
+    *(--SP)=RVM_STATE->User.Param[2];
+    *(--SP)=RVM_STATE->User.Param[3];
 
     /* Save extra context
-     * BL       RMP_Save_Ctx */
-    RMP_Save_Ctx();
+     * BL       RMP_Ctx_Save */
+    RMP_Ctx_Save();
     
     /* Save the SP to control block
-     * LDR       R1,=RMP_Cur_SP
+     * LDR       R1,=RMP_SP_Cur
      * STR       R0,[R1] */
-    RMP_Cur_SP=(rmp_ptr_t)SP;
+    RMP_SP_Cur=(rmp_ptr_t)SP;
                 
     /* Get the highest ready task
-     * BL        _RMP_Get_High_Rdy */
-    _RMP_Get_High_Rdy();
+     * BL        _RMP_High_Rdy_Get */
+    _RMP_High_Rdy_Get();
     
     /* Load the SP
-     * LDR       R1,=RMP_Cur_SP
+     * LDR       R1,=RMP_SP_Cur
      * LDR       R0,[R1] */
-    SP=(rmp_ptr_t*)RMP_Cur_SP;
+    SP=(rmp_ptr_t*)RMP_SP_Cur;
     
     /* Load extra context
-     * BL        RMP_Load_Ctx */
-    RMP_Load_Ctx();
+     * BL        RMP_Ctx_Load */
+    RMP_Ctx_Load();
 
     /* Load the user-accessible hypercall structure to stack */
-    RVM_PARAM->User.Param[3]=*(SP++);
-    RVM_PARAM->User.Param[2]=*(SP++);
-    RVM_PARAM->User.Param[1]=*(SP++);
-    RVM_PARAM->User.Param[0]=*(SP++);
-    RVM_PARAM->User.Number=*(SP++);
+    RVM_STATE->User.Param[3]=*(SP++);
+    RVM_STATE->User.Param[2]=*(SP++);
+    RVM_STATE->User.Param[1]=*(SP++);
+    RVM_STATE->User.Param[0]=*(SP++);
+    RVM_STATE->User.Number=*(SP++);
      
     /* Load registers from user stack
      * LDMIA     R0!,{R4-R11,LR}
      * MSR       PSP,R0 */
-    RVM_REGS->Reg.R4=*(SP++);
-    RVM_REGS->Reg.R5=*(SP++);
-    RVM_REGS->Reg.R6=*(SP++);
-    RVM_REGS->Reg.R7=*(SP++);
-    RVM_REGS->Reg.R8=*(SP++);
-    RVM_REGS->Reg.R9=*(SP++);
-    RVM_REGS->Reg.R10=*(SP++);
-    RVM_REGS->Reg.R11=*(SP++);
-    RVM_REGS->Reg.LR=*(SP++);
+    RVM_REG->Reg.R4=*(SP++);
+    RVM_REG->Reg.R5=*(SP++);
+    RVM_REG->Reg.R6=*(SP++);
+    RVM_REG->Reg.R7=*(SP++);
+    RVM_REG->Reg.R8=*(SP++);
+    RVM_REG->Reg.R9=*(SP++);
+    RVM_REG->Reg.R10=*(SP++);
+    RVM_REG->Reg.R11=*(SP++);
+    RVM_REG->Reg.LR=*(SP++);
                 
     /* If we use FPU, restore FPU context */
     /* TST                 LR,#0x10            ;Are we using the FPU or not at all?
      * DCI                 0xBF08              ;IT EQ ;If yes, (DCI for compatibility with no FPU support)
      * DCI                 0xECB0              ;VLDMIAEQ R0!,{S16-S31}
      * DCI                 0x8A10              ;Load FPU registers not loaded by lazy stacking. */
-    if((RVM_REGS->Reg.LR&0x10)==0)
+    if((RVM_REG->Reg.LR&0x10)==0)
     {
-        RVM_REGS->Cop_Reg.S16=*(SP++);
-        RVM_REGS->Cop_Reg.S17=*(SP++);
-        RVM_REGS->Cop_Reg.S18=*(SP++);
-        RVM_REGS->Cop_Reg.S19=*(SP++);
-        RVM_REGS->Cop_Reg.S20=*(SP++);
-        RVM_REGS->Cop_Reg.S21=*(SP++);
-        RVM_REGS->Cop_Reg.S22=*(SP++);
-        RVM_REGS->Cop_Reg.S23=*(SP++);
-        RVM_REGS->Cop_Reg.S24=*(SP++);
-        RVM_REGS->Cop_Reg.S25=*(SP++);
-        RVM_REGS->Cop_Reg.S26=*(SP++);
-        RVM_REGS->Cop_Reg.S27=*(SP++);
-        RVM_REGS->Cop_Reg.S28=*(SP++);
-        RVM_REGS->Cop_Reg.S29=*(SP++);
-        RVM_REGS->Cop_Reg.S30=*(SP++);
-        RVM_REGS->Cop_Reg.S31=*(SP++);
+        RVM_REG->Cop_Reg.S16=*(SP++);
+        RVM_REG->Cop_Reg.S17=*(SP++);
+        RVM_REG->Cop_Reg.S18=*(SP++);
+        RVM_REG->Cop_Reg.S19=*(SP++);
+        RVM_REG->Cop_Reg.S20=*(SP++);
+        RVM_REG->Cop_Reg.S21=*(SP++);
+        RVM_REG->Cop_Reg.S22=*(SP++);
+        RVM_REG->Cop_Reg.S23=*(SP++);
+        RVM_REG->Cop_Reg.S24=*(SP++);
+        RVM_REG->Cop_Reg.S25=*(SP++);
+        RVM_REG->Cop_Reg.S26=*(SP++);
+        RVM_REG->Cop_Reg.S27=*(SP++);
+        RVM_REG->Cop_Reg.S28=*(SP++);
+        RVM_REG->Cop_Reg.S29=*(SP++);
+        RVM_REG->Cop_Reg.S30=*(SP++);
+        RVM_REG->Cop_Reg.S31=*(SP++);
     }
 
-    RVM_REGS->Reg.SP=(rmp_ptr_t)SP;
+    RVM_REG->Reg.SP=(rmp_ptr_t)SP;
 
     /* Return from interrupt */
     /* BX        LR */
@@ -307,7 +307,7 @@ void RMP_SysTick_Handler(void)
     /* Note the system that we have entered an interrupt. We are not using tickless here */
     /* MOV       R0,#0x01 */
     /* BL        _RMP_Tick_Handler */
-    _RMP_Tick_Handler(1);
+    _RMP_Tick_Handler(1U);
     /* POP       {PC} */
 }
 /* End Function:RMP_SysTick_Handler ******************************************/

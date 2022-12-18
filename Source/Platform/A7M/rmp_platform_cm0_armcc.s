@@ -28,11 +28,11 @@
 
 ;/* Begin Exports ************************************************************/
     ;Disable all interrupts
-    EXPORT              RMP_Disable_Int      
+    EXPORT              RMP_Int_Disable      
     ;Enable all interrupts            
-    EXPORT              RMP_Enable_Int
+    EXPORT              RMP_Int_Enable
     ;Mask/unmask interrupt dummy
-    EXPORT              RMP_Mask_Int
+    EXPORT              RMP_Int_Mask
     ;Get the MSB                              
     EXPORT              RMP_MSB_Get
     ;Start the first thread
@@ -47,51 +47,51 @@
 
 ;/* Begin Imports ************************************************************/
     ;The real task switch handling function
-    IMPORT              _RMP_Get_High_Rdy 
+    IMPORT              _RMP_High_Rdy_Get 
     ;The real systick handler function
     IMPORT              _RMP_Tick_Handler
     ;The PID of the current thread                     
-    IMPORT              RMP_Cur_Thd
+    IMPORT              RMP_Thd_Cur
     ;The stack address of current thread
-    IMPORT              RMP_Cur_SP        
+    IMPORT              RMP_SP_Cur        
     ;Save and load extra contexts, such as FPU, peripherals and MPU
-    IMPORT              RMP_Save_Ctx
-    IMPORT              RMP_Load_Ctx
+    IMPORT              RMP_Ctx_Save
+    IMPORT              RMP_Ctx_Load
 ;/* End Imports **************************************************************/
 
-;/* Begin Function:RMP_Disable_Int ********************************************
+;/* Begin Function:RMP_Int_Disable ********************************************
 ;Description : The function for disabling all interrupts. Does not allow nesting.
 ;Input       : None.
 ;Output      : None.
 ;Return      : None.
 ;*****************************************************************************/    
-RMP_Disable_Int
+RMP_Int_Disable
     ;Disable all interrupts (I is primask,F is Faultmask.)
     CPSID               I                                                       
     BX                  LR                                                 
-;/* End Function:RMP_Disable_Int *********************************************/
+;/* End Function:RMP_Int_Disable *********************************************/
 
-;/* Begin Function:RMP_Enable_Int *********************************************
+;/* Begin Function:RMP_Int_Enable *********************************************
 ;Description : The function for enabling all interrupts. Does not allow nesting.
 ;Input       : None.
 ;Output      : None.
 ;Return      : None.
 ;*****************************************************************************/
-RMP_Enable_Int
+RMP_Int_Enable
     ;Enable all interrupts.
     CPSIE               I                                                          
     BX                  LR
-;/* End Function:RMP_Enable_Int **********************************************/
+;/* End Function:RMP_Int_Enable **********************************************/
 
-;/* Begin Function:RMP_Mask_Int ***********************************************
+;/* Begin Function:RMP_Int_Mask ***********************************************
 ;Description : Cortex-M0 does not allow masking and this is provided as dummy.
 ;Input       : rmp_ptr_t R0 - The new BASEPRI to set.
 ;Output      : None.
 ;Return      : None.
 ;*****************************************************************************/
-RMP_Mask_Int                                                   
+RMP_Int_Mask                                                   
     BX                  LR
-;/* End Function:RMP_Mask_Int ************************************************/
+;/* End Function:RMP_Int_Mask ************************************************/
 
 ;/* Begin Function:RMP_MSB_Get ************************************************
 ;Description : Get the MSB of the word.
@@ -183,17 +183,17 @@ PendSV_Handler
     MOV                 R3,R8
     STMIA               R1!,{R3-R7}                
                 
-    BL                  RMP_Save_Ctx        ;Save extra context
+    BL                  RMP_Ctx_Save        ;Save extra context
                 
-    LDR                 R1,=RMP_Cur_SP      ;Save The SP to control block.
+    LDR                 R1,=RMP_SP_Cur      ;Save The SP to control block.
     STR                 R0,[R1]
                 
-    BL                  _RMP_Get_High_Rdy   ;Get the highest ready task.
+    BL                  _RMP_High_Rdy_Get   ;Get the highest ready task.
                 
-    LDR                 R1,=RMP_Cur_SP      ;Load the SP.
+    LDR                 R1,=RMP_SP_Cur      ;Load the SP.
     LDR                 R0,[R1]
                 
-    BL                  RMP_Load_Ctx        ;Load extra context
+    BL                  RMP_Ctx_Load        ;Load extra context
                 
     MOV                 R1,R0                      
     ADDS                R0,#16

@@ -85,7 +85,7 @@ This software is an official work of EDI, and thus belongs to the **public domai
         while(1)
         {
             RMP_Thd_Delay(30000);
-            RMP_Thd_Snd(&Thd_2, Time, RMP_MAX_SLICES);
+            RMP_Thd_Snd(&Thd_2, Time, RMP_SLICE_MAX);
             Time++;
         };
     }
@@ -95,7 +95,7 @@ This software is an official work of EDI, and thus belongs to the **public domai
         ptr_t Data;
         while(1)
         {
-            RMP_Thd_Rcv(&Data, RMP_MAX_SLICES);
+            RMP_Thd_Rcv(&Data, RMP_SLICE_MAX);
             RMP_PRINTK_S("Received ");
             RMP_PRINTK_I(Data);
             RMP_PRINTK_S("\n");
@@ -126,7 +126,7 @@ This software is an official work of EDI, and thus belongs to the **public domai
         ptr_t Data;
         while(1)
         {
-            RMP_Sem_Pend(&Sem_1, RMP_MAX_SLICES);
+            RMP_Sem_Pend(&Sem_1, RMP_SLICE_MAX);
             RMP_PRINTK_S("Semaphore successfully acquired!\r\n\r\n");
         };
     }

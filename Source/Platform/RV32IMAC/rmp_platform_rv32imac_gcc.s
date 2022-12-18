@@ -87,9 +87,9 @@ F31    $ft11      temporary (caller-save)
 
 /* Begin Exports *************************************************************/
     /* Disable all interrupts */
-    .global             RMP_Disable_Int
+    .global             RMP_Int_Disable
     /* Enable all interrupts */
-    .global             RMP_Enable_Int
+    .global             RMP_Int_Enable
     /* Get the MSB */
     .global             RMP_MSB_Get
     /* Start the first thread */
@@ -108,16 +108,16 @@ F31    $ft11      temporary (caller-save)
 
 /* Begin Imports *************************************************************/
     /* The real task switch handling function */
-    .extern             _RMP_Get_High_Rdy
+    .extern             _RMP_High_Rdy_Get
     /* The real systick handler function */
     .extern             _RMP_Tick_Handler
     /* The current thread */
-    .extern             RMP_Cur_Thd
+    .extern             RMP_Thd_Cur
     /* The stack address of current thread */
-    .extern             RMP_Cur_SP
+    .extern             RMP_SP_Cur
     /* Save and load extra contexts, such as FPU, peripherals and MPU */
-    .extern             RMP_Save_Ctx
-    .extern             RMP_Load_Ctx
+    .extern             RMP_Ctx_Save
+    .extern             RMP_Ctx_Load
     /* Interrupt handlers */
     .extern             PendSV_Handler
     .extern             SysTick_Handler
@@ -143,32 +143,32 @@ _Reset_Entry:
     J                   _start
 /* End Startup & Init ********************************************************/
 
-/* Begin Function:RMP_Disable_Int *********************************************
+/* Begin Function:RMP_Int_Disable *********************************************
 Description    : The function for disabling all interrupts. Does not allow nesting.
 Input          : None.
 Output         : None.
 Register Usage : None.
 ******************************************************************************/
-RMP_Disable_Int:
+RMP_Int_Disable:
     /* Disable all interrupts */
     CSRRCI              a0,mstatus,8
     CSRWI               mie,0
     RET
-/* End Function:RMP_Disable_Int **********************************************/
+/* End Function:RMP_Int_Disable **********************************************/
 
-/* Begin Function:RMP_Enable_Int **********************************************
+/* Begin Function:RMP_Int_Enable **********************************************
 Description    : The function for enabling all interrupts. Does not allow nesting.
 Input          : None.
 Output         : None.
 Register Usage : None.
 ******************************************************************************/
-RMP_Enable_Int:
+RMP_Int_Enable:
     /* Enable all interrupts */
     CSRRSI              a0,mstatus,8
     LI                  a0,0x888
     CSRW                mie,a0
     RET
-/* End Function:RMP_Enable_Int ***********************************************/
+/* End Function:RMP_Int_Enable ***********************************************/
 
 /* Begin Function:RMP_MSB_Get *************************************************
 Description    : Get the MSB of the word. RV32IMAC does not support CLZ, so we will
@@ -317,7 +317,7 @@ Interrupt_Handler:
     /* x0 is always zero thus not saved */
 
     /* Save the SP to control block */
-    LA                  a0,RMP_Cur_SP
+    LA                  a0,RMP_SP_Cur
     SW                  sp,(a0)
     /* Now load our own gp for system use - we know that this is in linker script */
     LA                  gp,__global_pointer$
@@ -326,7 +326,7 @@ Interrupt_Handler:
     CALL                _RMP_Int_Handler
     /* Call the actual handler function to handle this */
     /* Load the SP from control block */
-    LA                  a0,RMP_Cur_SP
+    LA                  a0,RMP_SP_Cur
     LW                  sp,(a0)
 
     /* Load PC */

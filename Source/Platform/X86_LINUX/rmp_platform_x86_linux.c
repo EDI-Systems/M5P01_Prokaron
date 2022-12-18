@@ -25,29 +25,29 @@ Description : The platform specific file for x86 Linux port.
 #undef __HDR_PUBLIC_MEMBERS__
 /* End Includes **************************************************************/
 
-/* Begin Function:RMP_Disable_Int *********************************************
+/* Begin Function:RMP_Int_Disable *********************************************
 Description    : The function for disabling all interrupts. Does not allow nesting.
 Input          : None.
 Output         : None.
 Register Usage : None.
 ******************************************************************************/
-void RMP_Disable_Int(void)
+void RMP_Int_Disable(void)
 {
 	RMP_Int_Disabled=1;
 }
-/* End Function:RMP_Disable_Int **********************************************/
+/* End Function:RMP_Int_Disable **********************************************/
 
-/* Begin Function:RMP_Enable_Int **********************************************
+/* Begin Function:RMP_Int_Enable **********************************************
 Description    : The function for enabling all interrupts. Does not allow nesting.
 Input          : None.
 Output         : None.
 Register Usage : None.
 ******************************************************************************/
-void RMP_Enable_Int(void)
+void RMP_Int_Enable(void)
 {
 	RMP_Int_Disabled=0;
 }
-/* End Function:RMP_Enable_Int ***********************************************/
+/* End Function:RMP_Int_Enable ***********************************************/
 
 /* Begin Function:RMP_MSB_Get *************************************************
 Description : Get the MSB of the word.
@@ -227,11 +227,11 @@ void PendSV_Handler(void)
 	*(--SP)=Regs.ecx;
 	*(--SP)=Regs.ebx;
 
-	RMP_Save_Ctx();
-	RMP_Cur_SP=(rmp_ptr_t)SP;
-	_RMP_Get_High_Rdy();
-	SP=(rmp_ptr_t*)RMP_Cur_SP;
-	RMP_Load_Ctx();
+	RMP_Ctx_Save();
+	RMP_SP_Cur=(rmp_ptr_t)SP;
+	_RMP_High_Rdy_Get();
+	SP=(rmp_ptr_t*)RMP_SP_Cur;
+	RMP_Ctx_Load();
 
 	/* Reload register contents from stack */
 	Regs.ebx=*(SP++);
@@ -323,7 +323,7 @@ void _RMP_Low_Level_Init(void)
     RMP_PendSV_Flag=0;
     RMP_Int_Disabled=1;
 
-    RMP_Disable_Int();
+    RMP_Int_Disable();
 }
 /* End Function:_RMP_Low_Level_Init ******************************************/
 
@@ -338,7 +338,7 @@ void _RMP_Plat_Hook(void)
 	/* Let the parent trace me */
 	RMP_ASSERT(ptrace(PTRACE_TRACEME)>=0);
 
-    RMP_Enable_Int();
+    RMP_Int_Enable();
 }
 /* End Function:_RMP_Plat_Hook ***********************************************/
 

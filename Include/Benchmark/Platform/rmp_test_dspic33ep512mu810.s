@@ -72,7 +72,7 @@ Description : The extra testing file for this chip.
     MOV                 W1,_RMP_Int_Nest
     CPBNE               W1,W2,1f
     /* We have confirmed that we need to switch to kernel stack */
-    MOV                 W15,_RMP_Cur_SP
+    MOV                 W15,_RMP_SP_Cur
     MOV                 _RMP_SP_Val,W15
     /* Enable interrupt */
 1:  DISI                #0
@@ -93,7 +93,7 @@ Description : The extra testing file for this chip.
     MOV                 #1,W2
     CPBNE               W1,W2,1f
     /* We need to switch back to our user stack */
-    MOV                 _RMP_Cur_SP,W15
+    MOV                 _RMP_SP_Cur,W15
 1:  SUB                 W1,W2,W1
     MOV                 W1,_RMP_Int_Nest
     /* Pop everything from stack */

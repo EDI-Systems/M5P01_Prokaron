@@ -24,9 +24,9 @@
 
 ;/* Begin Exports ************************************************************/
     ;Disable all interrupts
-    .def                RMP_Disable_Int      
+    .def                RMP_Int_Disable      
     ;Enable all interrupts            
-    .def                RMP_Enable_Int
+    .def                RMP_Int_Enable
     ;Start the first thread
     .def                _RMP_Start
     ;The system pending service routine              
@@ -37,16 +37,16 @@
 
 ;/* Begin Imports ************************************************************/
     ;The real task switch handling function
-    .global             _RMP_Get_High_Rdy 
+    .global             _RMP_High_Rdy_Get 
     ;The real systick handler function
     .global             _RMP_Tick_Handler
     ;The PID of the current thread                     
-    .global             RMP_Cur_Thd
+    .global             RMP_Thd_Cur
     ;The stack address of current thread
-    .global             RMP_Cur_SP        
+    .global             RMP_SP_Cur        
     ;Save and load extra contexts, such as FPU, peripherals and MPU
-    .global             RMP_Save_Ctx
-    .global             RMP_Load_Ctx
+    .global             RMP_Ctx_Save
+    .global             RMP_Ctx_Load
     ;Clear flags
     .global             _RMP_Clear_Soft_Flag
     .global             _RMP_Clear_Timer_Flag
@@ -66,7 +66,7 @@ LOAD_CONTEXT            .macro
     .endm
 ;/* End Macros ***************************************************************/
 
-;/* Begin Function:RMP_Disable_Int ********************************************
+;/* Begin Function:RMP_Int_Disable ********************************************
 ;Description : The function for disabling all interrupts. Does not allow nesting.
 ;Input       : None.
 ;Output      : None.
@@ -74,16 +74,16 @@ LOAD_CONTEXT            .macro
 ;*****************************************************************************/
     .text
     .align              2
-RMP_Disable_Int:        .asmfunc
+RMP_Int_Disable:        .asmfunc
     ;Disable all interrupts
     nop
     dint
     nop
     ret
     .endasmfunc
-;/* End Function:RMP_Disable_Int *********************************************/
+;/* End Function:RMP_Int_Disable *********************************************/
 
-;/* Begin Function:RMP_Enable_Int *********************************************
+;/* Begin Function:RMP_Int_Enable *********************************************
 ;Description : The function for enabling all interrupts. Does not allow nesting.
 ;Input       : None.
 ;Output      : None.
@@ -91,14 +91,14 @@ RMP_Disable_Int:        .asmfunc
 ;*****************************************************************************/
     .text
     .align              2
-RMP_Enable_Int:.asmfunc
+RMP_Int_Enable:.asmfunc
     ;Enable all interrupts
     nop
     eint
     nop
     ret
     .endasmfunc               
-;/* End Function:RMP_Enable_Int **********************************************/
+;/* End Function:RMP_Int_Enable **********************************************/
 
 ;/* Begin Function:_RMP_Start *************************************************
 ;Description : Jump to the user function and will never return from it.
@@ -140,19 +140,19 @@ PendSV_Handler:         .asmfunc
     call                #_RMP_Clear_Soft_Flag
                 
     ;Save extra context
-    call                #RMP_Save_Ctx
+    call                #RMP_Ctx_Save
                 
     ;Save The SP to control block.
-    mov                 SP,&RMP_Cur_SP
+    mov                 SP,&RMP_SP_Cur
                 
     ;Get the highest ready task.
-    call                #_RMP_Get_High_Rdy
+    call                #_RMP_High_Rdy_Get
                 
     ;Load the SP.
-    mov                 &RMP_Cur_SP,SP
+    mov                 &RMP_SP_Cur,SP
                 
     ;Load extra context
-    call                #RMP_Load_Ctx
+    call                #RMP_Ctx_Load
 
     LOAD_CONTEXT
     .endasmfunc       

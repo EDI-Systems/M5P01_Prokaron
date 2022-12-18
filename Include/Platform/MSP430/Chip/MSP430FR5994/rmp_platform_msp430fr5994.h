@@ -13,21 +13,21 @@ Description: The configuration file for MSP43FR5994.
 
 /* The maximum number of preemption priority levels in the system.
  * This parameter must be divisible by the word length - 16 is usually sufficient */
-#define RMP_MAX_PREEMPT_PRIO         16
+#define RMP_PREEMPT_PRIO_NUM         16
 /* The maximum number of slices allowed */
-#define RMP_MAX_SLICES               10000
+#define RMP_SLICE_MAX               10000
 /* The maximum number of semaphore counts allowed */
-#define RMP_SEM_MAX_NUM              1000
+#define RMP_SEM_CNT_MAX              1000
 /* Are we using custom hooks? */
-#define RMP_USE_HOOKS                RMP_FALSE
+#define RMP_HOOK_EXTRA                0U
 /* The stzck size of the init thread */
 #define RMP_INIT_STACK_SIZE          128
 /* The mask/unmask interrupt operations */
-#define RMP_MASK_INT()               RMP_Disable_Int()
-#define RMP_UNMASK_INT()             RMP_Enable_Int()
+#define RMP_INT_MASK()               RMP_Int_Disable()
+#define RMP_INT_UNMASK()             RMP_Int_Enable()
 
 /* We are using MSP430X or not */
-#define RMP_MSP430_X                 RMP_TRUE
+#define RMP_MSP430_X                 1U
 /* The tick timer value */
 #define RMP_MSP430_TICK_VAL          10000
 

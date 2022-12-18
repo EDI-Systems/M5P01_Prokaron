@@ -71,13 +71,13 @@ void _RMP_Stack_Init(rmp_ptr_t Entry, rmp_ptr_t Stack, rmp_ptr_t Arg)
     
     Stack_Ptr=(rmp_ptr_t*)Stack;
     /* General purpose registers */
-#if(RMP_MIPSM_INIT_EXTRA==RMP_TRUE)
+#if(RMP_MIPSM_INIT_EXTRA==1U)
     Stack_Ptr[0]=0x01010101;                                    /* R1 */
     Stack_Ptr[1]=0x02020202;                                    /* R2 */
     Stack_Ptr[2]=0x03030303;                                    /* R3 */
 #endif
     Stack_Ptr[3]=Arg;                                           /* R4 */
-#if(RMP_MIPSM_INIT_EXTRA==RMP_TRUE)
+#if(RMP_MIPSM_INIT_EXTRA==1U)
     Stack_Ptr[4]=0x05050505;                                    /* R5 */
     Stack_Ptr[5]=0x06060606;                                    /* R6 */
     Stack_Ptr[6]=0x07070707;                                    /* R7 */
@@ -102,7 +102,7 @@ void _RMP_Stack_Init(rmp_ptr_t Entry, rmp_ptr_t Stack, rmp_ptr_t Arg)
     Stack_Ptr[24]=0x27272727;                                   /* R27 */
 #endif
     Stack_Ptr[25]=RMP_GP_Val;                                   /* R28 */
-#if(RMP_MIPSM_INIT_EXTRA==RMP_TRUE)
+#if(RMP_MIPSM_INIT_EXTRA==1U)
     /* Multiply/divide */
     Stack_Ptr[26]=0x15151515;                                    /* LO */
     Stack_Ptr[27]=0x51515151;                                    /* HI */
@@ -110,7 +110,7 @@ void _RMP_Stack_Init(rmp_ptr_t Entry, rmp_ptr_t Stack, rmp_ptr_t Arg)
     /* Status registers - The EXL prevents premature interrupt enabling */
     Stack_Ptr[28]=RMP_MIPSM_STATUS_IE|RMP_MIPSM_STATUS_EXL;     /* CP0_STATUS */
     Stack_Ptr[29]=Entry;                                        /* CP0_EPC */
-#if(RMP_MIPSM_INIT_EXTRA==RMP_TRUE)
+#if(RMP_MIPSM_INIT_EXTRA==1U)
     /* Some general-purpose scratch regs */
     Stack_Ptr[30]=0x20202020;                                   /* R20 */
     Stack_Ptr[31]=0x21212121;                                   /* R21 */
@@ -130,7 +130,7 @@ void _RMP_Low_Level_Init(void)
 {
     RMP_MIPSM_LOW_LEVEL_INIT();
     
-    RMP_Disable_Int();
+    RMP_Int_Disable();
     RMP_Int_Nest=0;
     
     /* Set the timer timeout value */
@@ -146,7 +146,7 @@ Return      : None.
 ******************************************************************************/
 void _RMP_Plat_Hook(void)
 {
-    RMP_Enable_Int();
+    RMP_Int_Enable();
 }
 /* End Function:_RMP_Plat_Hook ***********************************************/
 

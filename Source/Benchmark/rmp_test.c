@@ -67,7 +67,7 @@ void Test_Mail_1(void)
     {
         /* Read counter here */
         Start=COUNTER_READ();
-        RMP_Thd_Snd(&Thd_2, 1, RMP_MAX_SLICES);
+        RMP_Thd_Snd(&Thd_2, 1, RMP_SLICE_MAX);
     }
 }
 
@@ -86,7 +86,7 @@ void Func_1(void)
 {
     Test_Yield_1();
     /* Change priority of thread 2 */
-    RMP_Thd_Set(&Thd_2,2,RMP_MAX_SLICES);
+    RMP_Thd_Set(&Thd_2,2,RMP_SLICE_MAX);
     Test_Mail_1();
     Test_Sem_1();
     while(1);
@@ -116,7 +116,7 @@ void Test_Mail_2(void)
     rmp_cnt_t Count;
     for(Count=0;Count<10000;Count++)
     {
-        RMP_Thd_Rcv(&Data, RMP_MAX_SLICES);
+        RMP_Thd_Rcv(&Data, RMP_SLICE_MAX);
         /* Read counter here */
         End=COUNTER_READ();
         Total+=(rmp_tim_t)(End-Start);
@@ -128,7 +128,7 @@ void Test_Sem_2(void)
     rmp_cnt_t Count;
     for(Count=0;Count<10000;Count++)
     {
-        RMP_Sem_Pend(&Sem_1, RMP_MAX_SLICES);
+        RMP_Sem_Pend(&Sem_1, RMP_SLICE_MAX);
         /* Read counter here */
         End=COUNTER_READ();
         Total+=(rmp_tim_t)(End-Start);
@@ -141,7 +141,7 @@ void Test_Mail_ISR(void)
     static rmp_cnt_t Count;
     for(Count=0;Count<10000;Count++)
     {
-        RMP_Thd_Rcv(&Data, RMP_MAX_SLICES);
+        RMP_Thd_Rcv(&Data, RMP_SLICE_MAX);
         /* Read counter here */
         End=COUNTER_READ();
         Total+=(rmp_tim_t)(End-Start);
@@ -153,7 +153,7 @@ void Test_Sem_ISR(void)
     static rmp_cnt_t Count;
     for(Count=0;Count<10000;Count++)
     {
-        RMP_Sem_Pend(&Sem_1, RMP_MAX_SLICES);
+        RMP_Sem_Pend(&Sem_1, RMP_SLICE_MAX);
         /* Read counter here */
         End=COUNTER_READ();
         Total+=(rmp_tim_t)(End-Start);
@@ -275,24 +275,24 @@ void Test_Set_1(rmp_ptr_t Param)
         case 0:
         {
             /* Scenario 1 start */
-            RMP_Thd_Rcv(&Data, RMP_MAX_SLICES);
+            RMP_Thd_Rcv(&Data, RMP_SLICE_MAX);
             
             /* Scenario 2 start */
-            RMP_Thd_Rcv(&Data, RMP_MAX_SLICES);
+            RMP_Thd_Rcv(&Data, RMP_SLICE_MAX);
             RMP_Thd_Delay(200);
             
             /* Scenario 3 start */
-            RMP_Thd_Rcv(&Data, RMP_MAX_SLICES);
+            RMP_Thd_Rcv(&Data, RMP_SLICE_MAX);
             RMP_Thd_Delay(200);
             
             /* Scenario 4 start */
-            RMP_Thd_Rcv(&Data, RMP_MAX_SLICES);
+            RMP_Thd_Rcv(&Data, RMP_SLICE_MAX);
             
             /* Scenario 5 start */
-            RMP_Thd_Rcv(&Data, RMP_MAX_SLICES);
+            RMP_Thd_Rcv(&Data, RMP_SLICE_MAX);
             
             /* Final fuzzing start */
-            RMP_Thd_Rcv(&Data, RMP_MAX_SLICES);
+            RMP_Thd_Rcv(&Data, RMP_SLICE_MAX);
             RMP_Thd_Delay(10000);
             while(1);
         }
@@ -310,7 +310,7 @@ void Test_Set_1(rmp_ptr_t Param)
         case 3:
         {
             /* Test deletion while in receive */
-            RMP_Thd_Rcv(&Data, RMP_MAX_SLICES);
+            RMP_Thd_Rcv(&Data, RMP_SLICE_MAX);
             RMP_Thd_Suspend(&Thd_1);
             while(1);
         }
@@ -324,9 +324,9 @@ void Test_Set_1(rmp_ptr_t Param)
         case 5:
         {
             /* Test deletion while in send */
-            RMP_Thd_Snd(&Thd_2, 1, RMP_MAX_SLICES); /* Must be successful */
+            RMP_Thd_Snd(&Thd_2, 1, RMP_SLICE_MAX); /* Must be successful */
             RMP_Thd_Snd(&Thd_2, 1, 0);              /* Will return immediately */
-            RMP_Thd_Snd(&Thd_2, 1, RMP_MAX_SLICES); /* Will block */
+            RMP_Thd_Snd(&Thd_2, 1, RMP_SLICE_MAX); /* Will block */
             while(1);
         }
         case 6:
@@ -340,7 +340,7 @@ void Test_Set_1(rmp_ptr_t Param)
         case 7:
         {
             /* Test deletion while in sem pend */
-            RMP_Sem_Pend(&Sem_1, RMP_MAX_SLICES);
+            RMP_Sem_Pend(&Sem_1, RMP_SLICE_MAX);
             while(1);
         }
         case 8:
@@ -352,8 +352,8 @@ void Test_Set_1(rmp_ptr_t Param)
         case 9:
         {
             /* Test deletion while someone is blocked on it - This will be created with Test_Thd */
-            RMP_Thd_Snd(&Thd_1, 1, RMP_MAX_SLICES); /* Must be successful */
-            RMP_Thd_Snd(&Thd_1, 1, RMP_MAX_SLICES); /* Will block */
+            RMP_Thd_Snd(&Thd_1, 1, RMP_SLICE_MAX); /* Must be successful */
+            RMP_Thd_Snd(&Thd_1, 1, RMP_SLICE_MAX); /* Will block */
             /* Self delete, because if thread 1 gets deleted this will be released so thread 2 gets preempted */
             RMP_Thd_Del(&Thd_Test);
             while(1);
@@ -361,7 +361,7 @@ void Test_Set_1(rmp_ptr_t Param)
         case 10:
         {
             /* Test deletion while someone is delaying on it - This will be created with Test_Thd */
-            RMP_Thd_Snd(&Thd_1, 1, RMP_MAX_SLICES); /* Must be successful */
+            RMP_Thd_Snd(&Thd_1, 1, RMP_SLICE_MAX); /* Must be successful */
             RMP_Thd_Snd(&Thd_1, 1, 10000); /* Will block */
             /* Self delete, because if thread 1 gets deleted this will be released so thread 2 gets preempted */
             RMP_Thd_Del(&Thd_Test);
@@ -388,7 +388,7 @@ void Test_Set_2(rmp_ptr_t Param)
         }
         case 2:
         {
-            RMP_Sem_Pend(&Sem_1, RMP_MAX_SLICES);   /* Delete sem in pend & pend abort */
+            RMP_Sem_Pend(&Sem_1, RMP_SLICE_MAX);   /* Delete sem in pend & pend abort */
             RMP_Thd_Del(&Thd_1);
             while(1);
         }
@@ -413,9 +413,9 @@ void Test_Coverage_2(void)
     rmp_ptr_t Stub;
     
     /* Scenario 0: Miscellaneous tests */
-    RMP_Lock_Sched();
+    RMP_Sched_Lock();
     RMP_Yield();
-    RMP_Unlock_Sched();
+    RMP_Sched_Unlock();
     
     /* Restart thread 1 for testing */
     RMP_Thd_Del(&Thd_1);
@@ -424,13 +424,13 @@ void Test_Coverage_2(void)
     /* Scenario 1: Delay ourself for a while. 
      *             The thread 1 will be active for some time, 
      *             before thread 2 wakes up */
-    RMP_Thd_Snd(&Thd_1, 1, RMP_MAX_SLICES);
+    RMP_Thd_Snd(&Thd_1, 1, RMP_SLICE_MAX);
     RMP_Thd_Delay(100);
     
     /* Scenario 2: Simultaneous delays.
      *             The thread 1 and thread 2 will delay for 200/100 cycles.
      *             Thread1's delay will be cleared while thread2 is running */
-    RMP_Thd_Snd(&Thd_1, 1, RMP_MAX_SLICES);
+    RMP_Thd_Snd(&Thd_1, 1, RMP_SLICE_MAX);
     RMP_Thd_Delay(100);
     /* Thread 2 will busy loop for 200 cycles */
     Data=RMP_Tick;
@@ -440,7 +440,7 @@ void Test_Coverage_2(void)
      *             The thread 1 and thread 2 will delay for 200/400 cycles,
      *             with thread 2's delay inserted before thread 1 in the chain,
      *             and thread 1 wakes up while it is suspended. */
-    RMP_Thd_Snd(&Thd_1, 1, RMP_MAX_SLICES);
+    RMP_Thd_Snd(&Thd_1, 1, RMP_SLICE_MAX);
     RMP_Thd_Delay(50);
     RMP_Thd_Suspend(&Thd_1);
     RMP_Thd_Delay(50);
@@ -450,26 +450,26 @@ void Test_Coverage_2(void)
     /* Scenario 4: Timeout on own mailbox receive.
      *             The thread 1 will be active for some time,
      *             before thread 2 timeouts */
-    RMP_Thd_Snd(&Thd_1, 1, RMP_MAX_SLICES);
+    RMP_Thd_Snd(&Thd_1, 1, RMP_SLICE_MAX);
     RMP_Thd_Rcv(&Data, 100);
     
     /* Scenario 5: Timeout on thread 1 mailbox send. The thread 1 will
      *             be suspended by us first, then we send to it.
      *             The thread 1 will be active for some time,
      *             before thread 2 timeouts */
-    RMP_Thd_Snd(&Thd_1, 1, RMP_MAX_SLICES);
+    RMP_Thd_Snd(&Thd_1, 1, RMP_SLICE_MAX);
     RMP_Thd_Suspend(&Thd_1);
     RMP_Thd_Snd(&Thd_1, 1, 100);
     RMP_Thd_Resume(&Thd_1);
     
     /* Scenario 6: stuff kernel API intentionally with trash to see if they can handle them correctly */
-    RMP_Thd_Snd(&Thd_1, 1, RMP_MAX_SLICES);
+    RMP_Thd_Snd(&Thd_1, 1, RMP_SLICE_MAX);
     RMP_Thd_Delay(100);
     /* Thread creation */
     RMP_Thd_Crt(0, 0, 0, 0, 1, 10);                             /* NULL pointer */
-    RMP_Thd_Crt(&Thd_Test, 0, 0, 0, RMP_MAX_PREEMPT_PRIO, 10);  /* Wrong priority */
+    RMP_Thd_Crt(&Thd_Test, 0, 0, 0, RMP_PREEMPT_PRIO_NUM, 10);  /* Wrong priority */
     RMP_Thd_Crt(&Thd_Test, 0, 0, 0, 1, 0);                      /* Wrong slices - too small */
-    RMP_Thd_Crt(&Thd_Test, 0, 0, 0, 1, RMP_MAX_SLICES);         /* Wrong slices - too large */
+    RMP_Thd_Crt(&Thd_Test, 0, 0, 0, 1, RMP_SLICE_MAX);         /* Wrong slices - too large */
     RMP_Thd_Crt(&Thd_Test, 0, 0, 0, 1, 10);                     /* - */
     RMP_Thd_Crt(&Thd_Test, 0, 0, 0, 1, 10);                     /* Create again */
     RMP_Thd_Del(&Thd_Test);                                     /* - */
@@ -492,7 +492,7 @@ void Test_Coverage_2(void)
     RMP_Thd_Resume(&Thd_1);                                     /* Double resume */
     /* Delay */
     RMP_Thd_Delay(0);                                           /* Wrong slices - too small */
-    RMP_Thd_Delay(RMP_MAX_SLICES);                              /* Wrong slices - too large */
+    RMP_Thd_Delay(RMP_SLICE_MAX);                              /* Wrong slices - too large */
     /* Cancel delay */
     RMP_Thd_Cancel(0);                                          /* NULL pointer */
     RMP_Thd_Cancel(&Thd_1);                                     /* - */
@@ -508,7 +508,7 @@ void Test_Coverage_2(void)
     RMP_Sem_Crt(0, 0);                                          /* NULL pointer */
     RMP_Sem_Crt(&Sem_1, 0);                                     /* Double initialization */
     RMP_Sem_Del(&Sem_1);                                        /* - */
-    RMP_Sem_Crt(&Sem_1, RMP_SEM_MAX_NUM);                       /* Number too large */
+    RMP_Sem_Crt(&Sem_1, RMP_SEM_CNT_MAX);                       /* Number too large */
     /* Semaphore deletion */
     RMP_Sem_Del(0);                                             /* NULL pointer */
     RMP_Sem_Del(&Sem_1);                                        /* Double delete */
@@ -524,9 +524,9 @@ void Test_Coverage_2(void)
     RMP_Sem_Post(&Sem_1, 10);                                   /* Post to uninitialized semaphore */
     RMP_Sem_Crt(&Sem_1, 0);                                     /* - */
     RMP_Sem_Post(&Sem_1, 0);                                    /* Post nothing */
-    RMP_Sem_Post(&Sem_1, RMP_SEM_MAX_NUM);                      /* Post number too large */
-    RMP_Sem_Post(&Sem_1, RMP_SEM_MAX_NUM/3*2);                  /* - */
-    RMP_Sem_Post(&Sem_1, RMP_SEM_MAX_NUM/3*2);                  /* Total number too large */
+    RMP_Sem_Post(&Sem_1, RMP_SEM_CNT_MAX);                      /* Post number too large */
+    RMP_Sem_Post(&Sem_1, RMP_SEM_CNT_MAX/3*2);                  /* - */
+    RMP_Sem_Post(&Sem_1, RMP_SEM_CNT_MAX/3*2);                  /* Total number too large */
     RMP_Sem_Del(&Sem_1);                                        /* - */
     RMP_Sem_Crt(&Sem_1, 0);                                     /* - */
 
@@ -544,14 +544,14 @@ void Test_Coverage_2(void)
     RMP_Thd_Crt(&Thd_1, Test_Set_1, THD1_STACK, (void*)4, 3, 5); 
     RMP_Thd_Del(&Thd_1);                                        /* Deletion while in receive delay */
     RMP_Thd_Crt(&Thd_1, Test_Set_1, THD1_STACK, (void*)4, 3, 5);
-    RMP_Thd_Snd(&Thd_1, 1, RMP_MAX_SLICES);                     /* Receive delay cancelled by send here */
+    RMP_Thd_Snd(&Thd_1, 1, RMP_SLICE_MAX);                     /* Receive delay cancelled by send here */
     RMP_Thd_Del(&Thd_1);                                        /* Deletion while in suspension */
     RMP_Thd_Crt(&Thd_1, Test_Set_1, THD1_STACK, (void*)5, 3, 5); 
     RMP_Thd_Del(&Thd_1);                                        /* Deletion while in send block */
     RMP_Thd_Crt(&Thd_1, Test_Set_1, THD1_STACK, (void*)6, 3, 5); 
     RMP_Thd_Del(&Thd_1);                                        /* Deletion while in send delay */
     RMP_Thd_Crt(&Thd_1, Test_Set_1, THD1_STACK, (void*)6, 3, 5);
-    RMP_Thd_Rcv(&Data, RMP_MAX_SLICES);                         /* - */
+    RMP_Thd_Rcv(&Data, RMP_SLICE_MAX);                         /* - */
     RMP_Thd_Del(&Thd_1);                                        /* Sender wakeup in delay & deletion while suspended */
     RMP_Thd_Crt(&Thd_1, Test_Set_1, THD1_STACK, (void*)7, 3, 5); 
     RMP_Thd_Del(&Thd_1);                                        /* Deletion while in pend block */
@@ -566,14 +566,14 @@ void Test_Coverage_2(void)
     
     /* The following test requires a new thread 1 */
     RMP_Thd_Crt(&Thd_1, Test_Set_2, THD1_STACK, (void*)0, 2, 5);  
-    RMP_Thd_Set(&Thd_1, 1, RMP_MAX_SLICES);                     /* Set priority but not slices */
-    RMP_Thd_Set(&Thd_1, RMP_MAX_PREEMPT_PRIO, 10);              /* Set slices but not priority */
+    RMP_Thd_Set(&Thd_1, 1, RMP_SLICE_MAX);                     /* Set priority but not slices */
+    RMP_Thd_Set(&Thd_1, RMP_PREEMPT_PRIO_NUM, 10);              /* Set slices but not priority */
     RMP_Thd_Set(&Thd_1, 1, 7);                                  /* Set them both - to the same prio */
     RMP_Thd_Set(&Thd_1, 3, 7);                                  /* Set them both - different prio with preemption */
-    RMP_Thd_Set(&Thd_1, RMP_MAX_PREEMPT_PRIO, RMP_MAX_SLICES);  /* Set none of them */
+    RMP_Thd_Set(&Thd_1, RMP_PREEMPT_PRIO_NUM, RMP_SLICE_MAX);  /* Set none of them */
     /* Do the same while it is delaying */ 
-    RMP_Thd_Set(&Thd_1, 1, RMP_MAX_SLICES);                     /* Set priority but not slices */
-    RMP_Thd_Set(&Thd_1, RMP_MAX_PREEMPT_PRIO, 10);              /* Set slices but not priority */
+    RMP_Thd_Set(&Thd_1, 1, RMP_SLICE_MAX);                     /* Set priority but not slices */
+    RMP_Thd_Set(&Thd_1, RMP_PREEMPT_PRIO_NUM, 10);              /* Set slices but not priority */
     RMP_Thd_Set(&Thd_1, 1, 7);                                  /* Set them both - to the same prio */
     RMP_Thd_Set(&Thd_1, 3, 7);                                  /* Set them both - different prio with preemption */
     RMP_Thd_Del(&Thd_1);
@@ -610,76 +610,76 @@ void Test_Coverage_2(void)
     RMP_Thd_Del(&Thd_1);
         
     /* Lock the scheduler and test ISR sends */
-    RMP_Lock_Sched();
+    RMP_Sched_Lock();
     RMP_Thd_Snd_ISR(0, 1);                                      /* NULL pointer */
     RMP_Thd_Snd_ISR(&Thd_Test, 1);                              /* Send to deleted thread */
-    RMP_Unlock_Sched();
+    RMP_Sched_Unlock();
     
     RMP_Thd_Crt(&Thd_1, Test_Set_1, THD1_STACK, (void*)3, 3, 5);
-    RMP_Lock_Sched();
+    RMP_Sched_Lock();
     RMP_Thd_Snd_ISR(&Thd_1, 1);                                /* Send success with blocked thread */
-    _RMP_Get_Near_Ticks();
-    RMP_Unlock_Sched();
+    _RMP_Near_Tick_Get();
+    RMP_Sched_Unlock();
     RMP_Thd_Del(&Thd_1);
     
     RMP_Thd_Crt(&Thd_1, Test_Set_1, THD1_STACK, (void*)4, 3, 5);
-    RMP_Lock_Sched();
+    RMP_Sched_Lock();
     RMP_Thd_Snd_ISR(&Thd_1, 1);                                /* Send success with delaying thread */
-    _RMP_Get_Near_Ticks();
+    _RMP_Near_Tick_Get();
     RMP_Thd_Snd_ISR(&Thd_1, 1);                                /* Send failure due to full mailbox */
-    _RMP_Get_Near_Ticks();
-    RMP_Unlock_Sched();
+    _RMP_Near_Tick_Get();
+    RMP_Sched_Unlock();
     RMP_Thd_Del(&Thd_1);
      
     RMP_Thd_Crt(&Thd_1, Test_Set_1, THD1_STACK, (void*)2, 3, 5);
-    RMP_Lock_Sched();
+    RMP_Sched_Lock();
     RMP_Thd_Snd_ISR(&Thd_1, 1);                                /* Send success with thread not blocked */
-    _RMP_Get_Near_Ticks();
-    RMP_Unlock_Sched();
+    _RMP_Near_Tick_Get();
+    RMP_Sched_Unlock();
     RMP_Thd_Del(&Thd_1);
     
     RMP_Thd_Crt(&Thd_1, Test_Set_1, THD1_STACK, (void*)3, 1, 5);
     RMP_Thd_Delay(100);
-    RMP_Lock_Sched();
+    RMP_Sched_Lock();
     RMP_Thd_Snd_ISR(&Thd_1, 1);                                /* Send success with thread not preempting current thread */
-    _RMP_Get_Near_Ticks();
-    RMP_Unlock_Sched();
+    _RMP_Near_Tick_Get();
+    RMP_Sched_Unlock();
     RMP_Thd_Del(&Thd_1);
     
     /* Semaphore pend tests */
-    RMP_Sem_Post_ISR(&Sem_1, RMP_SEM_MAX_NUM);                  /* Posted number too large */
+    RMP_Sem_Post_ISR(&Sem_1, RMP_SEM_CNT_MAX);                  /* Posted number too large */
     RMP_Sem_Del(&Sem_1);
-    RMP_Lock_Sched();
+    RMP_Sched_Lock();
     RMP_Sem_Post_ISR(0, 1);                                     /* NULL pointer */
     RMP_Sem_Post_ISR(&Sem_1, 2);                                /* Post to deleted semaphore */
-    RMP_Unlock_Sched();
+    RMP_Sched_Unlock();
     
     RMP_Sem_Crt(&Sem_1, 0);
     RMP_Thd_Crt(&Thd_1, Test_Set_2, THD1_STACK, (void*)2, 3, 5);
-    RMP_Lock_Sched();
+    RMP_Sched_Lock();
     RMP_Sem_Post_ISR(&Sem_1, 1);                                /* Post success with blocked thread */
-    RMP_Unlock_Sched();
+    RMP_Sched_Unlock();
     RMP_Thd_Del(&Thd_1);
     
     RMP_Thd_Crt(&Thd_1, Test_Set_2, THD1_STACK, (void*)3, 3, 5);
-    RMP_Lock_Sched();
+    RMP_Sched_Lock();
     RMP_Sem_Post_ISR(&Sem_1, 1);                                /* Post success with delaying thread */
-    RMP_Unlock_Sched();
+    RMP_Sched_Unlock();
     RMP_Thd_Del(&Thd_1);
     
     RMP_Thd_Crt(&Thd_1, Test_Set_1, THD1_STACK, (void*)2, 3, 5);
-    RMP_Lock_Sched();
+    RMP_Sched_Lock();
     RMP_Sem_Post_ISR(&Sem_1, 1);                                /* Send success with thread not pending */
-    RMP_Unlock_Sched();
+    RMP_Sched_Unlock();
     RMP_Thd_Del(&Thd_1);
     RMP_Sem_Del(&Sem_1);
     
     RMP_Sem_Crt(&Sem_1, 0);
     RMP_Thd_Crt(&Thd_1, Test_Set_2, THD1_STACK, (void*)2, 1, 5);
     RMP_Thd_Delay(100);
-    RMP_Lock_Sched();
+    RMP_Sched_Lock();
     RMP_Sem_Post_ISR(&Sem_1, 1);                                /* Post success with thread not preempting current thread */
-    RMP_Unlock_Sched();
+    RMP_Sched_Unlock();
     RMP_Thd_Del(&Thd_1);
     
     /* Memory pool fuzzing */
@@ -746,9 +746,9 @@ void Test_Coverage_2(void)
         /* Last good allocation stored here */
         Temp=Data;
         /* Iterate on this function */
-        RMP_Lock_Sched();
-        _RMP_Get_Near_Ticks();
-        RMP_Unlock_Sched();
+        RMP_Sched_Lock();
+        _RMP_Near_Tick_Get();
+        RMP_Sched_Unlock();
     }
     RMP_Realloc(Pool,(void*)Temp,256);                          /* Test realloc cannot expand */
     RMP_Free(Pool,(void*)Temp);                                 /* Test cannot merge with right side */
@@ -759,9 +759,9 @@ void Test_Coverage_2(void)
     Data=RMP_Tick;
     while((RMP_Tick-Data)<1000)
     {
-        RMP_Lock_Sched();
-        _RMP_Get_Near_Ticks();
-        RMP_Unlock_Sched();
+        RMP_Sched_Lock();
+        _RMP_Near_Tick_Get();
+        RMP_Sched_Unlock();
     }
     RMP_Thd_Del(&Thd_1);
 }
@@ -778,7 +778,7 @@ void Func_2(void)
     RMP_PRINTK_I(Yield_Time);
     RMP_PRINTK_S(" cycles.\r\n");
     /* Change priority of thread 2, just in case */
-    RMP_Thd_Set(&Thd_2,2,RMP_MAX_SLICES);
+    RMP_Thd_Set(&Thd_2,2,RMP_SLICE_MAX);
     
     /* Mailbox tests */
     Total=0;
