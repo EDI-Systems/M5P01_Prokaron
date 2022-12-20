@@ -184,22 +184,22 @@ void RMP_PendSV_Handler(void)
      * DCI                 0x8A10              ;Save FPU registers not saved by lazy stacking. */
     if((RVM_REG->Reg.LR&0x10U)==0U)
     {
-        *(--SP)=RVM_REG->Cop_Reg.S31;
-        *(--SP)=RVM_REG->Cop_Reg.S30;
-        *(--SP)=RVM_REG->Cop_Reg.S29;
-        *(--SP)=RVM_REG->Cop_Reg.S28;
-        *(--SP)=RVM_REG->Cop_Reg.S27;
-        *(--SP)=RVM_REG->Cop_Reg.S26;
-        *(--SP)=RVM_REG->Cop_Reg.S25;
-        *(--SP)=RVM_REG->Cop_Reg.S24;
-        *(--SP)=RVM_REG->Cop_Reg.S23;
-        *(--SP)=RVM_REG->Cop_Reg.S22;
-        *(--SP)=RVM_REG->Cop_Reg.S21;
-        *(--SP)=RVM_REG->Cop_Reg.S20;
-        *(--SP)=RVM_REG->Cop_Reg.S19;
-        *(--SP)=RVM_REG->Cop_Reg.S18;
-        *(--SP)=RVM_REG->Cop_Reg.S17;
-        *(--SP)=RVM_REG->Cop_Reg.S16;
+        *(--SP)=RVM_REG->Cop.S31;
+        *(--SP)=RVM_REG->Cop.S30;
+        *(--SP)=RVM_REG->Cop.S29;
+        *(--SP)=RVM_REG->Cop.S28;
+        *(--SP)=RVM_REG->Cop.S27;
+        *(--SP)=RVM_REG->Cop.S26;
+        *(--SP)=RVM_REG->Cop.S25;
+        *(--SP)=RVM_REG->Cop.S24;
+        *(--SP)=RVM_REG->Cop.S23;
+        *(--SP)=RVM_REG->Cop.S22;
+        *(--SP)=RVM_REG->Cop.S21;
+        *(--SP)=RVM_REG->Cop.S20;
+        *(--SP)=RVM_REG->Cop.S19;
+        *(--SP)=RVM_REG->Cop.S18;
+        *(--SP)=RVM_REG->Cop.S17;
+        *(--SP)=RVM_REG->Cop.S16;
     }
 
     /* STMDB     R0!,{R4-R11,LR} */
@@ -269,22 +269,22 @@ void RMP_PendSV_Handler(void)
      * DCI                 0x8A10              ;Load FPU registers not loaded by lazy stacking. */
     if((RVM_REG->Reg.LR&0x10)==0)
     {
-        RVM_REG->Cop_Reg.S16=*(SP++);
-        RVM_REG->Cop_Reg.S17=*(SP++);
-        RVM_REG->Cop_Reg.S18=*(SP++);
-        RVM_REG->Cop_Reg.S19=*(SP++);
-        RVM_REG->Cop_Reg.S20=*(SP++);
-        RVM_REG->Cop_Reg.S21=*(SP++);
-        RVM_REG->Cop_Reg.S22=*(SP++);
-        RVM_REG->Cop_Reg.S23=*(SP++);
-        RVM_REG->Cop_Reg.S24=*(SP++);
-        RVM_REG->Cop_Reg.S25=*(SP++);
-        RVM_REG->Cop_Reg.S26=*(SP++);
-        RVM_REG->Cop_Reg.S27=*(SP++);
-        RVM_REG->Cop_Reg.S28=*(SP++);
-        RVM_REG->Cop_Reg.S29=*(SP++);
-        RVM_REG->Cop_Reg.S30=*(SP++);
-        RVM_REG->Cop_Reg.S31=*(SP++);
+        RVM_REG->Cop.S16=*(SP++);
+        RVM_REG->Cop.S17=*(SP++);
+        RVM_REG->Cop.S18=*(SP++);
+        RVM_REG->Cop.S19=*(SP++);
+        RVM_REG->Cop.S20=*(SP++);
+        RVM_REG->Cop.S21=*(SP++);
+        RVM_REG->Cop.S22=*(SP++);
+        RVM_REG->Cop.S23=*(SP++);
+        RVM_REG->Cop.S24=*(SP++);
+        RVM_REG->Cop.S25=*(SP++);
+        RVM_REG->Cop.S26=*(SP++);
+        RVM_REG->Cop.S27=*(SP++);
+        RVM_REG->Cop.S28=*(SP++);
+        RVM_REG->Cop.S29=*(SP++);
+        RVM_REG->Cop.S30=*(SP++);
+        RVM_REG->Cop.S31=*(SP++);
     }
 
     RVM_REG->Reg.SP=(rmp_ptr_t)SP;
