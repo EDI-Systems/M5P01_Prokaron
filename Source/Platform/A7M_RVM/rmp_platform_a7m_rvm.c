@@ -85,8 +85,8 @@ void _RMP_Plat_Hook(void)
 {
     /* Check header validity - guarantees that the header is not optimized out.
      * ALL VMs are guaranteed to have three entries: Vector, User and Stub */
-    RVM_ASSERT(RVM_Proc_Desc[0]==RVM_MAGIC_VIRTUAL);
-    RVM_ASSERT(RVM_Proc_Desc[1]==3U);
+    RVM_ASSERT(RVM_Desc[0]==RVM_MAGIC_VIRTUAL);
+    RVM_ASSERT(RVM_Desc[1]==3U);
     /* Enable interrupt, we've finished all initialization */
     RVM_Hyp_Int_Ena();
 }
@@ -261,7 +261,7 @@ void RMP_PendSV_Handler(void)
     RVM_REG->Reg.R10=*(SP++);
     RVM_REG->Reg.R11=*(SP++);
     RVM_REG->Reg.LR=*(SP++);
-                
+
     /* If we use FPU, restore FPU context */
     /* TST                 LR,#0x10            ;Are we using the FPU or not at all?
      * DCI                 0xBF08              ;IT EQ ;If yes, (DCI for compatibility with no FPU support)
