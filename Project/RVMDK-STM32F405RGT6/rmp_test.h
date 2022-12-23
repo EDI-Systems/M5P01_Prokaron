@@ -7,7 +7,7 @@ Description : The configuration file for testing program.
 ******************************************************************************/
 
 /* Config Includes ***********************************************************/
-#include "Platform/rmp_test_STM32F405RG.h"
+#include "Benchmark/Platform/rmp_test_stm32f405rg.h"
 /* End Config Includes *******************************************************/
 
 /* End Of File ***************************************************************/

@@ -72,7 +72,7 @@
           <BeforeMake>
             <RunUserProg1>0</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name>copy.bat</UserProg1Name>
+            <UserProg1Name></UserProg1Name>
             <UserProg2Name></UserProg2Name>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
@@ -314,7 +314,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>1</Optim>
+            <Optim>5</Optim>
             <oTime>1</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>1</OneElfS>
@@ -333,7 +333,7 @@
             <v6LangP>5</v6LangP>
             <vShortEn>0</vShortEn>
             <vShortWch>0</vShortWch>
-            <v6Lto>0</v6Lto>
+            <v6Lto>1</v6Lto>
             <v6WtE>0</v6WtE>
             <v6Rtti>0</v6Rtti>
             <VariousControls>
@@ -382,7 +382,7 @@
       </TargetOption>
       <Groups>
         <Group>
-          <GroupName>MProkaron</GroupName>
+          <GroupName>Kernel</GroupName>
           <Files>
             <File>
               <FileName>rmp_kernel.c</FileName>
@@ -400,9 +400,9 @@
               <FilePath>..\..\Source\Platform\A7M\rmp_platform_a7m.c</FilePath>
             </File>
             <File>
-              <FileName>rmp_platform_a7m_asm_armcc.s</FileName>
+              <FileName>rmp_platform_a7m_armcc.s</FileName>
               <FileType>2</FileType>
-              <FilePath>..\..\Source\Platform\A7M\rmp_platform_a7m_asm_armcc.s</FilePath>
+              <FilePath>..\..\Source\Platform\A7M\rmp_platform_a7m_armcc.s</FilePath>
             </File>
           </Files>
         </Group>
