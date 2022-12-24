@@ -24,7 +24,7 @@ void RMP_Init_Hook(void)
 
 void RMP_Init_Idle(void)
 {
-    RVM_Hyp_Vect_Wait();
+    RVM_Hyp_Vct_Wait();
 }
 /* End Function:RMP_Init *****************************************************/
 

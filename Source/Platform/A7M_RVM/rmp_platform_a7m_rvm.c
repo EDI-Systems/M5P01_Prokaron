@@ -70,8 +70,8 @@ Return      : None.
 ******************************************************************************/
 void _RMP_Low_Level_Init(void)
 {
-    RVM_Virt_Timer_Reg(RMP_SysTick_Handler);
-    RVM_Virt_Ctxsw_Reg(RMP_PendSV_Handler);
+    RVM_Virt_Tim_Reg(RMP_SysTick_Handler);
+    RVM_Virt_Ctx_Reg(RMP_PendSV_Handler);
 }
 /* End Function:_RMP_Low_Level_Init ******************************************/
 
@@ -177,6 +177,7 @@ void RMP_PendSV_Handler(void)
      * MRS       R0,PSP */
     SP=(rmp_ptr_t*)(RVM_REG->Reg.SP);
 
+#if(RVM_A7M_FPU_TYPE!=RVM_A7M_FPU_NONE)
     /* Are we using the FPUs at all? If yes, push FPU registers onto stack */
     /* TST                 LR,#0x10            ;Are we using the FPU or not at all?
      * DCI                 0xBF08              ;IT EQ ;If yes, (DCI for compatibility with no FPU support)
@@ -201,6 +202,7 @@ void RMP_PendSV_Handler(void)
         *(--SP)=RVM_REG->Cop.S17;
         *(--SP)=RVM_REG->Cop.S16;
     }
+#endif
 
     /* STMDB     R0!,{R4-R11,LR} */
     *(--SP)=RVM_REG->Reg.LR;
@@ -214,11 +216,11 @@ void RMP_PendSV_Handler(void)
     *(--SP)=RVM_REG->Reg.R4;
 
     /* Spill all the user-accessible hypercall structure to stack */
-    *(--SP)=RVM_STATE->User.Number;
-    *(--SP)=RVM_STATE->User.Param[0];
-    *(--SP)=RVM_STATE->User.Param[1];
-    *(--SP)=RVM_STATE->User.Param[2];
-    *(--SP)=RVM_STATE->User.Param[3];
+    *(--SP)=RVM_STATE->Usr.Number;
+    *(--SP)=RVM_STATE->Usr.Param[0];
+    *(--SP)=RVM_STATE->Usr.Param[1];
+    *(--SP)=RVM_STATE->Usr.Param[2];
+    *(--SP)=RVM_STATE->Usr.Param[3];
 
     /* Save extra context
      * BL       RMP_Ctx_Save */
@@ -243,11 +245,11 @@ void RMP_PendSV_Handler(void)
     RMP_Ctx_Load();
 
     /* Load the user-accessible hypercall structure to stack */
-    RVM_STATE->User.Param[3]=*(SP++);
-    RVM_STATE->User.Param[2]=*(SP++);
-    RVM_STATE->User.Param[1]=*(SP++);
-    RVM_STATE->User.Param[0]=*(SP++);
-    RVM_STATE->User.Number=*(SP++);
+    RVM_STATE->Usr.Param[3]=*(SP++);
+    RVM_STATE->Usr.Param[2]=*(SP++);
+    RVM_STATE->Usr.Param[1]=*(SP++);
+    RVM_STATE->Usr.Param[0]=*(SP++);
+    RVM_STATE->Usr.Number=*(SP++);
      
     /* Load registers from user stack
      * LDMIA     R0!,{R4-R11,LR}
@@ -262,12 +264,13 @@ void RMP_PendSV_Handler(void)
     RVM_REG->Reg.R11=*(SP++);
     RVM_REG->Reg.LR=*(SP++);
 
+#if(RVM_A7M_FPU_TYPE!=RVM_A7M_FPU_NONE)
     /* If we use FPU, restore FPU context */
     /* TST                 LR,#0x10            ;Are we using the FPU or not at all?
      * DCI                 0xBF08              ;IT EQ ;If yes, (DCI for compatibility with no FPU support)
      * DCI                 0xECB0              ;VLDMIAEQ R0!,{S16-S31}
      * DCI                 0x8A10              ;Load FPU registers not loaded by lazy stacking. */
-    if((RVM_REG->Reg.LR&0x10)==0)
+    if((RVM_REG->Reg.LR&0x10U)==0U)
     {
         RVM_REG->Cop.S16=*(SP++);
         RVM_REG->Cop.S17=*(SP++);
@@ -286,6 +289,7 @@ void RMP_PendSV_Handler(void)
         RVM_REG->Cop.S30=*(SP++);
         RVM_REG->Cop.S31=*(SP++);
     }
+#endif
 
     RVM_REG->Reg.SP=(rmp_ptr_t)SP;
 

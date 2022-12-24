@@ -74,7 +74,7 @@ typedef rmp_s32_t rmp_ret_t;
 #define RMP_INIT_STACK          RMP_INIT_STACK_TAIL(17+5)
 
 /* The virtual machine configs are here */
-#include "A7M/rvm_guest_a7m.h"
+#include "rvm_guest_conf.h"
 
 /* The CPU and application specific macros are here */
 #include "rmp_platform_a7m_rvm_conf.h"
