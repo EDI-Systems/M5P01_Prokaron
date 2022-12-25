@@ -92,9 +92,9 @@ Description : The header file for the kernel.
 #define RMP_DLY2THD(X)              ((volatile struct RMP_Thd*)(((rmp_ptr_t)(X))-sizeof(struct RMP_List)))
 
 /* Printk macros */
-#define RMP_LOG_I(INT)              RMP_Int_Print(INT)
-#define RMP_LOG_H(UINT)             RMP_Hex_Print(UINT)
-#define RMP_LOG_S(STR)              RMP_Str_Print((rmp_s8_t*)(STR))
+#define RMP_DBG_I(INT)              RMP_Int_Print((rmp_cnt_t)(INT))
+#define RMP_DBG_H(UINT)             RMP_Hex_Print((rmp_ptr_t)(UINT))
+#define RMP_DBG_S(STR)              RMP_Str_Print((rmp_s8_t*)(STR))
 
 /* Built-in graphics */
 #ifdef RMP_POINT
@@ -132,15 +132,15 @@ do \
 { \
     if((X)==0) \
     { \
-        RMP_LOG_S("\r\n***\r\nKernel panic - not syncing:\r\n"); \
-        RMP_LOG_S(__FILE__); \
-        RMP_LOG_S(" , Line "); \
-        RMP_LOG_I(__LINE__); \
-        RMP_LOG_S("\r\n"); \
-        RMP_LOG_S(__DATE__); \
-        RMP_LOG_S(" , "); \
-        RMP_LOG_S(__TIME__); \
-        RMP_LOG_S("\r\n"); \
+        RMP_DBG_S("\r\n***\r\nKernel panic - not syncing:\r\n"); \
+        RMP_DBG_S(__FILE__); \
+        RMP_DBG_S(" , Line "); \
+        RMP_DBG_I(__LINE__); \
+        RMP_DBG_S("\r\n"); \
+        RMP_DBG_S(__DATE__); \
+        RMP_DBG_S(" , "); \
+        RMP_DBG_S(__TIME__); \
+        RMP_DBG_S("\r\n"); \
         while(1); \
     } \
 } \

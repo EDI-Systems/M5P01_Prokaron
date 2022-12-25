@@ -41,6 +41,31 @@ volatile struct RMP_Sem Sem_1;
 #ifdef TEST_MEM_POOL
 volatile rmp_ptr_t Pool[TEST_MEM_POOL]={0};
 #endif
+
+
+void Test_Yield_1(void);
+void Test_Mail_1(void);
+void Test_Sem_1(void);
+void Func_1(void);
+
+void Test_Yield_2(void);
+void Test_Mail_2(void);
+void Test_Sem_2(void);
+void Test_Mail_ISR(void);
+void Test_Sem_ISR(void);
+
+#ifdef TEST_MEM_POOL
+rmp_ptr_t Rand(void);
+void Swap(rmp_u8_t* Arg1, rmp_u8_t* Arg2);
+void Test_Mem_Pool(void);
+#endif
+
+#ifdef RMP_COVERAGE
+void Test_Set_1(rmp_ptr_t Param);
+void Test_Set_2(rmp_ptr_t Param);
+#endif
+
+void Func_2(void);
 /* End Globals ***************************************************************/
 
 /* Begin Function:Func_1 ******************************************************
@@ -108,8 +133,9 @@ void Test_Yield_2(void)
         /* Read counter here */
         End=COUNTER_READ();
         Total+=(rmp_tim_t)(End-Start);
-    };
+    }
 }
+
 void Test_Mail_2(void)
 {
     rmp_ptr_t Data;
@@ -178,10 +204,11 @@ rmp_ptr_t Rand(void)
 
 void Swap(rmp_u8_t* Arg1, rmp_u8_t* Arg2)
 {
-    rmp_u8_t Temp;
-    Temp=*Arg1;
+    rmp_u8_t Char;
+    
+    Char=*Arg1;
     *Arg1=*Arg2;
-    *Arg2=Temp;
+    *Arg2=Char;
 }
 
 void Test_Mem_Pool(void)
@@ -211,16 +238,16 @@ void Test_Mem_Pool(void)
         /* Random sequence and number generation */
         for(Count=0;Count<8;Count++)
         {
-            Alloc[Count]=Count;
-            Free[Count]=Count;
-            Size[Count]=Count;
+            Alloc[Count]=(rmp_u8_t)Count;
+            Free[Count]=(rmp_u8_t)Count;
+            Size[Count]=(rmp_u8_t)Count;
         }
         
         for(Count=7;Count>0;Count--)
         {
-            Swap(&Alloc[Count], &Alloc[Rand()%(Count+1)]);
-            Swap(&Free[Count], &Free[Rand()%(Count+1)]);
-            Swap(&Size[Count], &Size[Rand()%(Count+1)]);
+            Swap(&Alloc[Count], &Alloc[Rand()%((rmp_ptr_t)Count+1U)]);
+            Swap(&Free[Count], &Free[Rand()%((rmp_ptr_t)Count+1U)]);
+            Swap(&Size[Count], &Size[Rand()%((rmp_ptr_t)Count+1U)]);
         }
         
         Start=COUNTER_READ();
@@ -250,18 +277,18 @@ void Test_Mem_Pool(void)
         Mem[0]=RMP_Malloc(Pool, (TEST_MEM_POOL>>7)*127);
         if(Mem[0]==0)
         {
-            RMP_LOG_S("Memory test failure: ");
-            RMP_LOG_I(Test_Count);
-            RMP_LOG_S(" runs.\r\n");
+            RMP_DBG_S("Memory test failure: ");
+            RMP_DBG_I(Test_Count);
+            RMP_DBG_S(" runs.\r\n");
             while(1);
         }
         RMP_Free(Pool, Mem[0]); 
     }
     
-    RMP_LOG_S("Memory: ");
+    RMP_DBG_S("Memory: ");
     Memory_Time=Total/160000;
-    RMP_LOG_I(Memory_Time);
-    RMP_LOG_S(" cycles.\r\n");
+    RMP_DBG_I(Memory_Time);
+    RMP_DBG_S(" cycles.\r\n");
 }
 #endif
 
@@ -772,29 +799,29 @@ void Func_2(void)
     /* Yield tests */
     Total=0;
     Test_Yield_2();
-    RMP_LOG_S("Yield: ");
+    RMP_DBG_S("Yield: ");
 
     Yield_Time=Total/10000;
-    RMP_LOG_I(Yield_Time);
-    RMP_LOG_S(" cycles.\r\n");
+    RMP_DBG_I(Yield_Time);
+    RMP_DBG_S(" cycles.\r\n");
     /* Change priority of thread 2, just in case */
     RMP_Thd_Set(&Thd_2,2,RMP_SLICE_MAX);
     
     /* Mailbox tests */
     Total=0;
     Test_Mail_2();
-    RMP_LOG_S("Mailbox: ");
+    RMP_DBG_S("Mailbox: ");
     Mailbox_Time=Total/10000;
-    RMP_LOG_I(Mailbox_Time);
-    RMP_LOG_S(" cycles.\r\n");
+    RMP_DBG_I(Mailbox_Time);
+    RMP_DBG_S(" cycles.\r\n");
     
     /* Semaphore tests */
     Total=0;
     Test_Sem_2();
-    RMP_LOG_S("Semaphore: ");
+    RMP_DBG_S("Semaphore: ");
     Semaphore_Time=Total/10000;
-    RMP_LOG_I(Semaphore_Time);
-    RMP_LOG_S(" cycles.\r\n");
+    RMP_DBG_I(Semaphore_Time);
+    RMP_DBG_S(" cycles.\r\n");
     
     /* Memory pool tests */
 #ifdef TEST_MEM_POOL
@@ -811,14 +838,14 @@ void Func_2(void)
     Total=0;
     Test_Sem_ISR();
     
-    RMP_LOG_S("Mailbox-ISR: ");
+    RMP_DBG_S("Mailbox-ISR: ");
     Mailbox_ISR_Time=Temp/10000;
-    RMP_LOG_I(Mailbox_ISR_Time);
-    RMP_LOG_S(" cycles.\r\n");
-    RMP_LOG_S("Semaphore-ISR: ");
+    RMP_DBG_I(Mailbox_ISR_Time);
+    RMP_DBG_S(" cycles.\r\n");
+    RMP_DBG_S("Semaphore-ISR: ");
     Semaphore_ISR_Time=Total/10000;
-    RMP_LOG_I(Semaphore_ISR_Time);
-    RMP_LOG_S(" cycles.\r\n");
+    RMP_DBG_I(Semaphore_ISR_Time);
+    RMP_DBG_S(" cycles.\r\n");
 
 #ifdef RMP_COVERAGE
     Test_Coverage_2();
@@ -845,9 +872,9 @@ void Int_Handler(void)
         Start=COUNTER_READ();
         if(RMP_Thd_Snd_ISR(&Thd_2, 1)<0)
         {
-            RMP_LOG_S("ISR Mailbox send failure: ");
-            RMP_LOG_I(Count);
-            RMP_LOG_S(" sends.\r\n");
+            RMP_DBG_S("ISR Mailbox send failure: ");
+            RMP_DBG_I(Count);
+            RMP_DBG_S(" sends.\r\n");
             while(1);
         }
     }
@@ -857,9 +884,9 @@ void Int_Handler(void)
         Start=COUNTER_READ();
         if(RMP_Sem_Post_ISR(&Sem_1, 1)<0)
         {
-            RMP_LOG_S("ISR semaphore post failure: ");
-            RMP_LOG_I(Count);
-            RMP_LOG_S(" posts.\r\n");
+            RMP_DBG_S("ISR semaphore post failure: ");
+            RMP_DBG_I(Count);
+            RMP_DBG_S(" posts.\r\n");
             while(1);
         }
     }
@@ -881,14 +908,14 @@ void RMP_Init_Hook(void)
     /* Init the timer */
     Timer_Init();
     /* Clean up the structures */
-    RMP_Clear(&Thd_1,sizeof(struct RMP_Thd));
-    RMP_Clear(&Thd_2,sizeof(struct RMP_Thd));
-    RMP_Clear(&Sem_1,sizeof(struct RMP_Sem));
+    RMP_Clear(&Thd_1, sizeof(struct RMP_Thd));
+    RMP_Clear(&Thd_2, sizeof(struct RMP_Thd));
+    RMP_Clear(&Sem_1, sizeof(struct RMP_Sem));
     /* Create counting semaphore */
     RMP_Sem_Crt(&Sem_1,0);
     /* Start threads */
-    RMP_Thd_Crt(&Thd_1, Func_1, THD1_STACK, (void*)0x1234, 1, 5);
-    RMP_Thd_Crt(&Thd_2, Func_2, THD2_STACK, (void*)0x4321, 1, 1000);
+    RMP_Thd_Crt(&Thd_1, (void*)Func_1, THD1_STACK, (void*)0x1234U, 1U, 5U);
+    RMP_Thd_Crt(&Thd_2, (void*)Func_2, THD2_STACK, (void*)0x4321U, 1U, 1000U);
 #endif
 }
 
