@@ -121,7 +121,7 @@ while(0)
 #define RMP_A7M_PUTCHAR(CHAR) \
 do \
 { \
-    USART1->DR=CHAR; \
+    USART1->DR=(rmp_ptr_t)(CHAR); \
     while((USART1->SR&0x40U)==0U); \
 } \
 while(0)

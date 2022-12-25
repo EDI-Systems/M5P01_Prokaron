@@ -47,10 +47,10 @@ void RMP_Print_Coverage(void)
     {
         if(RMP_Coverage[Count]!=0U)
         {
-            RMP_LOG_I(Count);
-            RMP_LOG_S(":");
-            RMP_LOG_I(RMP_Coverage[Count]);
-            RMP_LOG_S("\r\n");
+            RMP_DBG_I(Count);
+            RMP_DBG_S(":");
+            RMP_DBG_I(RMP_Coverage[Count]);
+            RMP_DBG_S("\r\n");
         }
     }
 }
