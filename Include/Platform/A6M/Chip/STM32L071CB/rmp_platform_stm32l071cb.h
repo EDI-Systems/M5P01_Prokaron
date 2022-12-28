@@ -1,9 +1,9 @@
 /******************************************************************************
-Filename   : rmp_platform_stm32l053c8.h
+Filename   : rmp_platform_stm32l071cb.h
 Author     : pry
 Date       : 24/06/2017
 Licence    : The Unlicense; see LICENSE for details.
-Description: The configuration file for STM32L053C8.
+Description: The configuration file for STM32L071CB.
 ******************************************************************************/
 
 /* Defines *******************************************************************/
@@ -30,16 +30,16 @@ Description: The configuration file for STM32L053C8.
 #define RMP_INT_UNMASK()            RMP_Int_Enable()
 
 /* What is the NVIC priority grouping? */
-#define RMP_CMX_NVIC_GROUPING       RMP_CMX_NVIC_GROUPING_P2S6
+#define RMP_A6M_NVIC_GROUPING       RMP_A6M_NVIC_GROUPING_P2S6
 /* What is the Systick value? */
-#define RMP_CMX_SYSTICK_VAL         (3600U)
+#define RMP_A6M_SYSTICK_VAL         (3600U)
 
 /* Other low-level initialization stuff - clock and serial
  * STM32L0xx APB1<32MHz, APB2<32MHz. 
  * This is the default initialization sequence. If you wish to supply
  * your own, just redirect this macro to a custom function, or do your
  * initialization stuff in the initialization hook (RMP_Start_Hook). */
-#define RMP_CMX_LOW_LEVEL_INIT() \
+#define RMP_A6M_LOW_LEVEL_INIT() \
 do \
 { \
     RCC_OscInitTypeDef RCC_OscInitStruct; \
@@ -57,15 +57,14 @@ do \
      * clocked below the maximum system frequency, to update the voltage scaling value  \
      * regarding system frequency refer to product datasheet.  */ \
     __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1); \
-    /* Enable HSI Oscillator and activate PLL with HSI as source */ \
-    RCC_OscInitStruct.OscillatorType=RCC_OSCILLATORTYPE_HSI; \
-    RCC_OscInitStruct.HSEState=RCC_HSE_OFF; \
-    RCC_OscInitStruct.HSIState=RCC_HSI_ON; \
+    /* Enable HSE Oscillator and activate PLL with HSE as source */ \
+    RCC_OscInitStruct.OscillatorType=RCC_OSCILLATORTYPE_HSE; \
+    RCC_OscInitStruct.HSEState=RCC_HSE_ON; \
+    RCC_OscInitStruct.HSIState=RCC_HSI_OFF; \
     RCC_OscInitStruct.PLL.PLLState=RCC_PLL_ON; \
-    RCC_OscInitStruct.PLL.PLLSource=RCC_PLLSOURCE_HSI; \
-    RCC_OscInitStruct.PLL.PLLMUL=RCC_PLL_MUL4; \
+    RCC_OscInitStruct.PLL.PLLSource=RCC_PLLSOURCE_HSE; \
+    RCC_OscInitStruct.PLL.PLLMUL=RCC_PLL_MUL8; \
     RCC_OscInitStruct.PLL.PLLDIV=RCC_PLL_DIV2; \
-    RCC_OscInitStruct.HSICalibrationValue=0x10; \
     HAL_RCC_OscConfig(&RCC_OscInitStruct); \
     /* Select PLL as system clock source and configure the HCLK, PCLK1 and PCLK2 clock dividers */ \
     RCC_ClkInitStruct.ClockType=(RCC_CLOCKTYPE_SYSCLK|RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2); \
@@ -88,31 +87,31 @@ do \
     HAL_GPIO_Init(GPIOA,&GPIO_Init); \
     /* UART initialization */ \
     UART1_Handle.Instance=USART1; \
-    UART1_Handle.Init.BaudRate=115200; \
+    UART1_Handle.Init.BaudRate=115200U; \
     UART1_Handle.Init.WordLength=UART_WORDLENGTH_8B; \
     UART1_Handle.Init.StopBits=UART_STOPBITS_1; \
     UART1_Handle.Init.Parity=UART_PARITY_NONE; \
     UART1_Handle.Init.HwFlowCtl=UART_HWCONTROL_NONE; \
     UART1_Handle.Init.Mode=UART_MODE_TX; \
     HAL_UART_Init(&UART1_Handle); \
-    RMP_CMX_PUTCHAR('\r'); \
-    RMP_CMX_PUTCHAR('\n'); \
+    RMP_A6M_PUTCHAR('\r'); \
+    RMP_A6M_PUTCHAR('\n'); \
     \
     /* Set the priority of timer, svc and faults to the lowest */ \
-    NVIC_SetPriority(SVC_IRQn, 0xFF); \
-    NVIC_SetPriority(PendSV_IRQn, 0xFF); \
-    NVIC_SetPriority(SysTick_IRQn, 0xFF); \
+    NVIC_SetPriority(SVC_IRQn, 0xFFU); \
+    NVIC_SetPriority(PendSV_IRQn, 0xFFU); \
+    NVIC_SetPriority(SysTick_IRQn, 0xFFU); \
     /* Configure systick */ \
-    SysTick_Config(RMP_CMX_SYSTICK_VAL); \
+    SysTick_Config(RMP_A6M_SYSTICK_VAL); \
 } \
 while(0)
 
 /* This is for debugging output */
-#define RMP_CMX_PUTCHAR(CHAR) \
+#define RMP_A6M_PUTCHAR(CHAR) \
 do \
 { \
-    USART1->TDR=CHAR; \
-    while((USART1->ISR&0x40)==0); \
+    USART1->TDR=(rmp_ptr_t)(CHAR); \
+    while((USART1->ISR&0x40U)==0U); \
 } \
 while(0)
 /* End Defines ***************************************************************/

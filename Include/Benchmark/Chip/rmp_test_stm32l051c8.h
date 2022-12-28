@@ -1,9 +1,9 @@
 /******************************************************************************
-Filename    : rmp_test_STM32L053C8.h
+Filename    : rmp_test_stm32l051c8.h
 Author      : pry 
 Date        : 22/07/2017
 Licence     : The Unlicense; see LICENSE for details.
-Description : The testbench for STM32L053C8.
+Description : The testbench for STM32L051C8.
 ******************************************************************************/
 
 /* Includes ******************************************************************/
@@ -15,7 +15,7 @@ Description : The testbench for STM32L053C8.
 #define THD1_STACK        (&Stack_1[230])
 #define THD2_STACK        (&Stack_2[230])
 /* How to read counter */
-#define COUNTER_READ()    (TIM2->CNT)
+#define COUNTER_READ()    ((rmp_tim_t)(TIM2->CNT))
 /* Are we doing minimal measurements? */
 /* #define MINIMAL_SIZE */
 /* The STM32L0 timers are all 16 bits, so */
@@ -29,6 +29,12 @@ rmp_ptr_t Stack_1[256];
 rmp_ptr_t Stack_2[256];
 TIM_HandleTypeDef TIM2_Handle={0};
 TIM_HandleTypeDef TIM21_Handle={0};
+
+void Timer_Init(void);
+void Int_Init(void);
+void HAL_TIM_Base_MspInit(TIM_HandleTypeDef *htim);
+void TIM21_IRQHandler(void);
+void Int_Disable(void);
 /* End Globals ***************************************************************/
 
 /* Begin Function:Timer_Init **************************************************

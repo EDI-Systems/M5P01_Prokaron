@@ -7,7 +7,7 @@ Description : The configuration file for testing program.
 ******************************************************************************/
 
 /* Config Includes ***********************************************************/
-#include "Platform/rmp_test_HC32L136K8.h"
+#include "Benchmark/Chip/rmp_test_hc32l136k8.h"
 /* End Config Includes *******************************************************/
 
 /* End Of File ***************************************************************/

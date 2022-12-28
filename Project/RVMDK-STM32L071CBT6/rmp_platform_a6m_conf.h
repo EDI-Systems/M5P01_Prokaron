@@ -1,14 +1,14 @@
 /******************************************************************************
-Filename    : rmp_platform.h
-Author      : pry 
-Date        : 22/07/2017
+Filename    : rmp_platform_a6m_conf.h
+Author      : pry
+Date        : 24/06/2017
 Licence     : LGPL v3+; see COPYING for details.
-Description : The platform specific types for RMP.
+Description : The configuration file for ARMv6-M HAL.
 ******************************************************************************/
 
-/* Platform Includes *********************************************************/
-#include "Platform/A6M/rmp_platform_a6m.h"
-/* End Platform Includes *****************************************************/
+/* Config Includes ***********************************************************/
+#include "Platform/A6M/Chip/STM32L071CB/rmp_platform_stm32l071cb.h"
+/* End Config Includes *******************************************************/
 
 /* End Of File ***************************************************************/
 

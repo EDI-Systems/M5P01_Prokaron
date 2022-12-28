@@ -1,24 +1,24 @@
 /******************************************************************************
-Filename    : rmp_platform_a7m.c
+Filename    : rmp_platform_a6m.c
 Author      : pry
 Date        : 04/02/2018
 Licence     : The Unlicense; see LICENSE for details.
-Description : The platform specific file for ARMv7-M.
+Description : The platform specific file for ARMv6-M.
 ******************************************************************************/
 
 /* Includes ******************************************************************/
 #define __HDR_DEFS__
-#include "Platform/A7M/rmp_platform_a7m.h"
+#include "Platform/A6M/rmp_platform_a6m.h"
 #include "Kernel/rmp_kernel.h"
 #undef __HDR_DEFS__
 
 #define __HDR_STRUCTS__
-#include "Platform/A7M/rmp_platform_a7m.h"
+#include "Platform/A6M/rmp_platform_a6m.h"
 #include "Kernel/rmp_kernel.h"
 #undef __HDR_STRUCTS__
 
 /* Private include */
-#include "Platform/A7M/rmp_platform_a7m.h"
+#include "Platform/A6M/rmp_platform_a6m.h"
 
 #define __HDR_PUBLIC_MEMBERS__
 #include "Kernel/rmp_kernel.h"
@@ -77,7 +77,7 @@ Return      : None.
 ******************************************************************************/
 void _RMP_Low_Level_Init(void)
 {    
-    RMP_A7M_LOW_LEVEL_INIT();
+    RMP_A6M_LOW_LEVEL_INIT();
   
     RMP_Int_Disable();
 }
@@ -103,7 +103,7 @@ Return      : None.
 ******************************************************************************/
 void RMP_Putchar(char Char)
 {
-    RMP_A7M_PUTCHAR(Char);
+    RMP_A6M_PUTCHAR(Char);
 }
 /* End Function:RMP_Putchar **************************************************/
 
