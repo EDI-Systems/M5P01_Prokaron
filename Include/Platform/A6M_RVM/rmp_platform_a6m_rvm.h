@@ -1,5 +1,5 @@
 /******************************************************************************
-Filename    : rmp_platform_a7m_rvm.h
+Filename    : rmp_platform_a6m_rvm.h
 Author      : pry
 Date        : 01/04/2017
 Licence     : The Unlicense; see LICENSE for details.
@@ -8,8 +8,8 @@ Description : The header of platform-specific part of RMP for RVM hypervisor.
 
 /* Defines *******************************************************************/
 #ifdef __HDR_DEFS__
-#ifndef __RMP_PLATFORM_A7M_RVM_H_DEFS__
-#define __RMP_PLATFORM_A7M_RVM_H_DEFS__
+#ifndef __RMP_PLATFORM_A6M_RVM_H_DEFS__
+#define __RMP_PLATFORM_A6M_RVM_H_DEFS__
 /*****************************************************************************/
 /* Basic Types ***************************************************************/
 #ifndef __RMP_S32_T__
@@ -77,10 +77,10 @@ typedef rmp_s32_t rmp_ret_t;
 #include "rvm_guest_conf.h"
 
 /* The CPU and application specific macros are here */
-#include "rmp_platform_a7m_rvm_conf.h"
+#include "rmp_platform_a6m_rvm_conf.h"
 /* End System macros *********************************************************/
 /*****************************************************************************/
-/* __RMP_PLATFORM_A7M_RVM_H_DEFS__ */
+/* __RMP_PLATFORM_A6M_RVM_H_DEFS__ */
 #endif
 /* __HDR_DEFS__ */
 #endif
@@ -88,8 +88,8 @@ typedef rmp_s32_t rmp_ret_t;
 
 /* Structs *******************************************************************/
 #ifdef __HDR_STRUCTS__
-#ifndef __RMP_PLATFORM_A7M_RVM_H_STRUCTS__
-#define __RMP_PLATFORM_A7M_RVM_H_STRUCTS__
+#ifndef __RMP_PLATFORM_A6M_RVM_H_STRUCTS__
+#define __RMP_PLATFORM_A6M_RVM_H_STRUCTS__
 
 /* Use defines in these headers */
 #define __HDR_DEFS__
@@ -97,7 +97,7 @@ typedef rmp_s32_t rmp_ret_t;
 /*****************************************************************************/
 
 /*****************************************************************************/
-/* __RMP_PLATFORM_A7M_RVM_H_STRUCTS__ */
+/* __RMP_PLATFORM_A6M_RVM_H_STRUCTS__ */
 #endif
 /* __HDR_STRUCTS__ */
 #endif
@@ -105,8 +105,8 @@ typedef rmp_s32_t rmp_ret_t;
 
 /* Private Global Variables **************************************************/
 #if(!(defined __HDR_DEFS__||defined __HDR_STRUCTS__))
-#ifndef __RMP_PLATFORM_A7M_RVM_MEMBERS__
-#define __RMP_PLATFORM_A7M_RVM_MEMBERS__
+#ifndef __RMP_PLATFORM_A6M_RVM_MEMBERS__
+#define __RMP_PLATFORM_A6M_RVM_MEMBERS__
 
 /* In this way we can use the data structures and definitions in the headers */
 #define __HDR_DEFS__
@@ -169,7 +169,7 @@ __EXTERN__ void _RMP_Plat_Hook(void);
 /*****************************************************************************/
 /* Undefine "__EXTERN__" to avoid redefinition */
 #undef __EXTERN__
-/* __RMP_PLATFORM_A7M_RVM_MEMBERS__ */
+/* __RMP_PLATFORM_A6M_RVM_MEMBERS__ */
 #endif
 /* !(defined __HDR_DEFS__||defined __HDR_STRUCTS__) */
 #endif

@@ -1,14 +1,14 @@
 /******************************************************************************
-Filename    : rmp_platform_cmx_conf.h
-Author      : pry
-Date        : 24/06/2017
+Filename    : rmp_platform.h
+Author      : pry 
+Date        : 22/07/2017
 Licence     : LGPL v3+; see COPYING for details.
-Description : The configuration file for Cortex-M HAL.
+Description : The platform specific types for RMP.
 ******************************************************************************/
 
-/* Config Includes ***********************************************************/
-#include "Platform/CortexM/Chips/STM32L053C8/rmp_platform_STM32L053C8.h"
-/* End Config Includes *******************************************************/
+/* Platform Includes *********************************************************/
+#include "Platform/A6M/rmp_platform_a6m.h"
+/* End Platform Includes *****************************************************/
 
 /* End Of File ***************************************************************/
 

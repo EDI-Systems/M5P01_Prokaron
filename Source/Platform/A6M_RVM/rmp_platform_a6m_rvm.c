@@ -1,5 +1,5 @@
 /******************************************************************************
-Filename    : rmp_platform_a7m_rvm.c
+Filename    : rmp_platform_a6m_rvm.c
 Author      : pry
 Date        : 09/02/2018
 Licence     : The Unlicense; see LICENSE for details.
@@ -8,17 +8,17 @@ Description : The platform specific file for Cortex-M on RVM hypervisor.
 
 /* Includes ******************************************************************/
 #define __HDR_DEFS__
-#include "Platform/A7M_RVM/rmp_platform_a7m_rvm.h"
+#include "Platform/A6M_RVM/rmp_platform_a6m_rvm.h"
 #include "Kernel/rmp_kernel.h"
 #undef __HDR_DEFS__
 
 #define __HDR_STRUCTS__
-#include "Platform/A7M_RVM/rmp_platform_a7m_rvm.h"
+#include "Platform/A6M_RVM/rmp_platform_a6m_rvm.h"
 #include "Kernel/rmp_kernel.h"
 #undef __HDR_STRUCTS__
 
 /* Private include */
-#include "Platform/A7M_RVM/rmp_platform_a7m_rvm.h"
+#include "Platform/A6M_RVM/rmp_platform_a6m_rvm.h"
 
 #define __HDR_PUBLIC_MEMBERS__
 #include "Kernel/rmp_kernel.h"
@@ -165,7 +165,9 @@ void _RMP_Yield(void)
 /* End Function:_RMP_Yield ***************************************************/
 
 /* Begin Function:RMP_PendSV_Handler ******************************************
-Description : The PendSV interrupt routine.
+Description : The PendSV interrupt routine. Real Cortex-M0 does not have STMDB
+              (only very restricted forms of STMIA and LDMIA exists), we're
+              using it here as a comment for demonstration purposes only.
 Input       : None.
 Output      : None.
 Return      : None.
@@ -173,38 +175,12 @@ Return      : None.
 void RMP_PendSV_Handler(void)
 {
     rmp_ptr_t* SP;
+
     /* Spill all the registers onto the user stack
      * MRS      R0, PSP */
     SP=(rmp_ptr_t*)(RVM_REG->Reg.SP);
 
-#if(RVM_A7M_FPU_TYPE!=RVM_A7M_FPU_NONE)
-    /* Are we using the FPUs at all? If yes, push FPU registers onto stack */
-    /* TST      LR, #0x10           ;Are we using the FPU or not at all?
-     * DCI      0xBF08              ;IT EQ ;If yes, (DCI for compatibility with no FPU support)
-     * DCI      0xED20              ;VSTMDBEQ R0!,{S16-S31}
-     * DCI      0x8A10              ;Save FPU registers not saved by lazy stacking. */
-    if((RVM_REG->Reg.LR&0x10U)==0U)
-    {
-        *(--SP)=RVM_REG->Cop.S31;
-        *(--SP)=RVM_REG->Cop.S30;
-        *(--SP)=RVM_REG->Cop.S29;
-        *(--SP)=RVM_REG->Cop.S28;
-        *(--SP)=RVM_REG->Cop.S27;
-        *(--SP)=RVM_REG->Cop.S26;
-        *(--SP)=RVM_REG->Cop.S25;
-        *(--SP)=RVM_REG->Cop.S24;
-        *(--SP)=RVM_REG->Cop.S23;
-        *(--SP)=RVM_REG->Cop.S22;
-        *(--SP)=RVM_REG->Cop.S21;
-        *(--SP)=RVM_REG->Cop.S20;
-        *(--SP)=RVM_REG->Cop.S19;
-        *(--SP)=RVM_REG->Cop.S18;
-        *(--SP)=RVM_REG->Cop.S17;
-        *(--SP)=RVM_REG->Cop.S16;
-    }
-#endif
-
-    /* STMDB    R0!, {R4-R11,LR} */
+    /* STMDB    R0!, {R4-R11, LR} */
     *(--SP)=RVM_REG->Reg.LR;
     *(--SP)=RVM_REG->Reg.R11;
     *(--SP)=RVM_REG->Reg.R10;
@@ -252,7 +228,7 @@ void RMP_PendSV_Handler(void)
     RVM_STATE->Usr.Number=*(SP++);
      
     /* Load registers from user stack
-     * LDMIA    R0!, {R4-R11,LR} */
+     * LDMIA    R0!, {R4-R11, LR} */
     RVM_REG->Reg.R4=*(SP++);
     RVM_REG->Reg.R5=*(SP++);
     RVM_REG->Reg.R6=*(SP++);
@@ -262,33 +238,6 @@ void RMP_PendSV_Handler(void)
     RVM_REG->Reg.R10=*(SP++);
     RVM_REG->Reg.R11=*(SP++);
     RVM_REG->Reg.LR=*(SP++);
-
-#if(RVM_A7M_FPU_TYPE!=RVM_A7M_FPU_NONE)
-    /* If we use FPU, restore FPU context */
-    /* TST      LR, #0x10           ;Are we using the FPU or not at all?
-     * DCI      0xBF08              ;IT EQ ;If yes, (DCI for compatibility with no FPU support)
-     * DCI      0xECB0              ;VLDMIAEQ R0!,{S16-S31}
-     * DCI      0x8A10              ;Load FPU registers not loaded by lazy stacking. */
-    if((RVM_REG->Reg.LR&0x10U)==0U)
-    {
-        RVM_REG->Cop.S16=*(SP++);
-        RVM_REG->Cop.S17=*(SP++);
-        RVM_REG->Cop.S18=*(SP++);
-        RVM_REG->Cop.S19=*(SP++);
-        RVM_REG->Cop.S20=*(SP++);
-        RVM_REG->Cop.S21=*(SP++);
-        RVM_REG->Cop.S22=*(SP++);
-        RVM_REG->Cop.S23=*(SP++);
-        RVM_REG->Cop.S24=*(SP++);
-        RVM_REG->Cop.S25=*(SP++);
-        RVM_REG->Cop.S26=*(SP++);
-        RVM_REG->Cop.S27=*(SP++);
-        RVM_REG->Cop.S28=*(SP++);
-        RVM_REG->Cop.S29=*(SP++);
-        RVM_REG->Cop.S30=*(SP++);
-        RVM_REG->Cop.S31=*(SP++);
-    }
-#endif
 
     /* MSR      PSP, R0 */
     RVM_REG->Reg.SP=(rmp_ptr_t)SP;
@@ -309,7 +258,7 @@ void RMP_SysTick_Handler(void)
 {
     /* PUSH     {LR} */
     /* Note the system that we have entered an interrupt. We are not using tickless here */
-    /* MOV      R0,#0x01 */
+    /* MOV      R0, #0x01 */
     /* BL       _RMP_Tick_Handler */
     _RMP_Tick_Handler(1U);
     /* POP      {PC} */

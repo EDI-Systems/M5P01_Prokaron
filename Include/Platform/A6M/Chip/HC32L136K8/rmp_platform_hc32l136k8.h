@@ -8,8 +8,6 @@ Description: The configuration file for HC32L136K8.
 
 /* Defines *******************************************************************/
 /* The HAL library */
-#include "HC32L136K8TA.h"
-#include "system_hc32l13x.h"
 #include "ddl.h"
 #include "core_cm0plus.h"
 
@@ -31,9 +29,9 @@ Description: The configuration file for HC32L136K8.
 #define RMP_INT_UNMASK()            RMP_Int_Enable()
 
 /* What is the NVIC priority grouping? */
-#define RMP_A7M_NVIC_GROUPING       RMP_A7M_NVIC_GROUPING_P2S6
+#define RMP_A6M_NVIC_GROUPING       RMP_A6M_NVIC_GROUPING_P2S6
 /* What is the Systick value? */
-#define RMP_A7M_SYSTICK_VAL         (24000U)
+#define RMP_A6M_SYSTICK_VAL         (24000U)
 
 /* Other low-level initialization stuff - clock and serial
  * This device requires that you switch from low to high frequency.
@@ -43,7 +41,7 @@ Description: The configuration file for HC32L136K8.
  * This is the default initialization sequence. If you wish to supply
  * your own, just redirect this macro to a custom function, or do your
  * initialization stuff in the initialization hook (RMP_Start_Hook). */
-#define RMP_A7M_LOW_LEVEL_INIT() \
+#define RMP_A6M_LOW_LEVEL_INIT() \
 do \
 { \
     /* Switch to the target clock frequency */ \
@@ -61,12 +59,12 @@ do \
     NVIC_SetPriority(PendSV_IRQn, 0xFF); \
     NVIC_SetPriority(SysTick_IRQn, 0xFF); \
     /* Configure systick */ \
-    SysTick_Config(RMP_A7M_SYSTICK_VAL); \
+    SysTick_Config(RMP_A6M_SYSTICK_VAL); \
 } \
 while(0)
 
 /* This is for debugging output */
-#define RMP_A7M_PUTCHAR(CHAR) \
+#define RMP_A6M_PUTCHAR(CHAR) \
 do \
 { \
     /* Need to add serial print */ \

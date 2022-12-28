@@ -2,10 +2,10 @@
 ;Filename    : rmp_platform_a7m_armcc.s
 ;Author      : pry
 ;Date        : 10/04/2012
-;Description : The assembly part of the RMP RTOS. This is for Cortex-M3/4/7.
+;Description : The assembly part of the RMP RTOS. This is for ARMv7-M.
 ;*****************************************************************************/
 
-;/* The ARM Cortex-M Architecture *********************************************
+;/* The ARMv7-M Architecture **************************************************
 ;R0-R7:General purpose registers that are accessible. 
 ;R8-R12:General purpose registers that can only be reached by 32-bit instructions.
 ;R13:SP/SP_process/SP_main    Stack pointer
@@ -20,45 +20,45 @@
 ;*****************************************************************************/
             
 ;/* Begin Header *************************************************************/
-    ;2^3=8 byte alignment.
-    AREA                ARCH,CODE,READONLY,ALIGN=3                     
-                
-    THUMB
-    REQUIRE8
-    PRESERVE8
+                        ;2^3=8 byte alignment.
+                        AREA                ARCH, CODE, READONLY, ALIGN=3                     
+                                    
+                        THUMB
+                        REQUIRE8
+                        PRESERVE8
 ;/* End Header ***************************************************************/
 
 ;/* Begin Exports ************************************************************/
-    ;Disable all interrupts
-    EXPORT              RMP_Int_Disable      
-    ;Enable all interrupts            
-    EXPORT              RMP_Int_Enable
-    ;Mask/unmask some interrupts
-    EXPORT              RMP_Int_Mask
-    ;Get the MSB                              
-    EXPORT              RMP_MSB_Get
-    ;Start the first thread
-    EXPORT              _RMP_Start
-    ;The PendSV trigger
-    EXPORT              _RMP_Yield
-    ;The system pending service routine              
-    EXPORT              PendSV_Handler 
-    ;The systick timer routine              
-    EXPORT              SysTick_Handler                               
+                        ; Disable all interrupts
+                        EXPORT              RMP_Int_Disable      
+                        ; Enable all interrupts            
+                        EXPORT              RMP_Int_Enable
+                        ; Mask/unmask some interrupts
+                        EXPORT              RMP_Int_Mask
+                        ; Get the MSB                              
+                        EXPORT              RMP_MSB_Get
+                        ; Start the first thread
+                        EXPORT              _RMP_Start
+                        ; The PendSV trigger
+                        EXPORT              _RMP_Yield
+                        ; The system pending service routine              
+                        EXPORT              PendSV_Handler 
+                        ; The systick timer routine              
+                        EXPORT              SysTick_Handler                               
 ;/* End Exports **************************************************************/
 
 ;/* Begin Imports ************************************************************/
-    ;The real task switch handling function
-    IMPORT              _RMP_Run_High 
-    ;The real systick handler function
-    IMPORT              _RMP_Tick_Handler
-    ;The PID of the current thread                     
-    IMPORT              RMP_Thd_Cur
-    ;The stack address of current thread
-    IMPORT              RMP_SP_Cur        
-    ;Save and load extra contexts, such as FPU, peripherals and MPU
-    IMPORT              RMP_Ctx_Save
-    IMPORT              RMP_Ctx_Load
+                        ; The real task switch handling function
+                        IMPORT              _RMP_Run_High 
+                        ; The real systick handler function
+                        IMPORT              _RMP_Tick_Handler
+                        ; The PID of the current thread                     
+                        IMPORT              RMP_Thd_Cur
+                        ; The stack address of current thread
+                        IMPORT              RMP_SP_Cur        
+                        ; Save and load extra contexts, such as FPU, peripherals and MPU
+                        IMPORT              RMP_Ctx_Save
+                        IMPORT              RMP_Ctx_Load
 ;/* End Imports **************************************************************/
 
 ;/* Begin Function:RMP_Int_Disable ********************************************
@@ -67,10 +67,10 @@
 ;Output      : None.
 ;Return      : None.
 ;*****************************************************************************/    
-RMP_Int_Disable
-    ;Disable all interrupts (I is primask,F is Faultmask.)
-    CPSID               I                                                       
-    BX                  LR                                                 
+RMP_Int_Disable         PROC
+                        CPSID               I
+                        BX                  LR
+                        ENDP
 ;/* End Function:RMP_Int_Disable *********************************************/
 
 ;/* Begin Function:RMP_Int_Enable *********************************************
@@ -79,10 +79,10 @@ RMP_Int_Disable
 ;Output      : None.
 ;Return      : None.
 ;*****************************************************************************/
-RMP_Int_Enable
-    ;Enable all interrupts.
-    CPSIE               I               
-    BX                  LR
+RMP_Int_Enable          PROC
+                        CPSIE               I
+                        BX                  LR
+                        ENDP
 ;/* End Function:RMP_Int_Enable **********************************************/
 
 ;/* Begin Function:RMP_Int_Mask ***********************************************
@@ -91,12 +91,12 @@ RMP_Int_Enable
 ;Output      : None.
 ;Return      : None.
 ;*****************************************************************************/
-RMP_Int_Mask
-    ;Mask some interrupts.
-    MSR                 BASEPRI,R0
-    ;We are not influenced by errata #837070 as the next instruction is BX LR.
-    ;Thus we have a free window because the following BX LR falls into it.
-    BX                  LR
+RMP_Int_Mask            PROC
+                        MSR                 BASEPRI, R0
+                        ; We are not influenced by errata #837070 as the next 
+                        ; instruction is BX LR. Thus we have a free window.
+                        BX                  LR
+                        ENDP
 ;/* End Function:RMP_Int_Mask ************************************************/
 
 ;/* Begin Function:RMP_MSB_Get ************************************************
@@ -105,11 +105,12 @@ RMP_Int_Mask
 ;Output      : None.
 ;Return      : rmp_ptr_t R0 - The MSB position.
 ;*****************************************************************************/
-RMP_MSB_Get
-    CLZ                 R1,R0
-    MOVS                R0,#31
-    SUBS                R0,R1
-    BX                  LR
+RMP_MSB_Get             PROC
+                        CLZ                 R1, R0
+                        MOVS                R0, #31
+                        SUBS                R0, R1
+                        BX                  LR
+                        ENDP
 ;/* End Function:RMP_MSB_Get *************************************************/
 
 ;/* Begin Function:_RMP_Yield *************************************************
@@ -118,12 +119,13 @@ RMP_MSB_Get
 ;Output      : None.
 ;Return      : None.
 ;*****************************************************************************/
-_RMP_Yield
-    LDR                 R0,=0xE000ED04      ;The NVIC_INT_CTRL register
-    LDR                 R1,=0x10000000      ;Trigger the PendSV          
-    STR                 R1,[R0]
-    ISB                                     ;Instruction barrier 
-    BX                  LR                                                   
+_RMP_Yield              PROC
+                        LDR                 R0, =0xE000ED04      ;The NVIC_INT_CTRL register
+                        LDR                 R1, =0x10000000      ;Trigger the PendSV          
+                        STR                 R1, [R0]
+                        ISB
+                        BX                  LR
+                        ENDP
 ;/* End Function:_RMP_Yield **************************************************/
 
 ;/* Begin Function:_RMP_Start *************************************************
@@ -132,13 +134,14 @@ _RMP_Yield
 ;Output      : None.
 ;Return      : None.                                   
 ;*****************************************************************************/
-_RMP_Start
-    SUBS                R1,#64              ;This is how we push our registers so move forward
-    MSR                 PSP,R1              ;Set the stack pointer
-    MOVS                R4,#0x02            ;Previleged thread mode
-    MSR                 CONTROL,R4
-    ISB                                     ;Data and instruction barrier
-    BLX                 R0                  ;Branch to our target
+_RMP_Start              PROC
+                        SUBS                R1, #64             ;This is how we push our registers so move forward
+                        MSR                 PSP, R1             ;Set the stack pointer
+                        MOVS                R4, #0x02           ;Previleged thread mode
+                        MSR                 CONTROL, R4
+                        ISB
+                        BX                  R0                  ;Branch to our target
+                        ENDP
 ;/* End Function:_RMP_Start **************************************************/
 
 ;/* Begin Function:PendSV_Handler *********************************************
@@ -153,36 +156,37 @@ _RMP_Start
 ;Output      : None.
 ;Return      : None.
 ;*****************************************************************************/
-PendSV_Handler
-    MRS                 R0,PSP              ;Spill all the registers onto the user stack
-    TST                 LR,#0x10            ;Are we using the FPU or not at all?
-    DCI                 0xBF08              ;IT EQ ;If yes, (DCI for compatibility with no FPU support)
-    DCI                 0xED20              ;VSTMDBEQ R0!,{S16-S31}
-    DCI                 0x8A10              ;Save FPU registers not saved by lazy stacking.
-    STMDB               R0!,{R4-R11,LR}     ;Save the general purpose registers.
-    
-    BL                  RMP_Ctx_Save        ;Save extra context
-                
-    LDR                 R1,=RMP_SP_Cur      ;Save The SP to control block.
-    STR                 R0,[R1]
-                
-    BL                  _RMP_Run_High   ;Get the highest ready task.
-                
-    LDR                 R1,=RMP_SP_Cur      ;Load the SP.
-    LDR                 R0,[R1]
-                
-    BL                  RMP_Ctx_Load        ;Load extra context
+PendSV_Handler          PROC
+                        MRS                 R0,PSP              ; Save registers
+                        TST                 LR,#0x10            ; Save FOU registers
+                        DCI                 0xBF08              ; IT EQ ;If yes, (DCI for compatibility with no FPU support)
+                        DCI                 0xED20              ; VSTMDBEQ R0!,{S16-S31}
+                        DCI                 0x8A10              ; Save FPU registers not saved by lazy stacking.
+                        STMDB               R0!,{R4-R11,LR}     ; Save the general purpose registers.
+                        
+                        BL                  RMP_Ctx_Save        ; Save extra context
+                                    
+                        LDR                 R1,=RMP_SP_Cur      ; Save The SP to control block.
+                        STR                 R0,[R1]
+                                    
+                        BL                  _RMP_Run_High       ; Get the highest ready task.
+                                    
+                        LDR                 R1,=RMP_SP_Cur      ; Load the SP.
+                        LDR                 R0,[R1]
+                                    
+                        BL                  RMP_Ctx_Load        ; Load extra context
 
-    LDMIA               R0!,{R4-R11,LR}     ;Load the general purpose registers.
-    TST                 LR,#0x10            ;Are we using the FPU or not at all?
-    DCI                 0xBF08              ;IT EQ ;If yes, (DCI for compatibility with no FPU support)
-    DCI                 0xECB0              ;VLDMIAEQ R0!,{S16-S31}
-    DCI                 0x8A10              ;Load FPU registers not loaded by lazy stacking.
-    MSR                 PSP,R0
+                        LDMIA               R0!,{R4-R11,LR}     ; Restore registers
+                        TST                 LR,#0x10            ; Load FPU registers
+                        DCI                 0xBF08              ; IT EQ ;If yes, (DCI for compatibility with no FPU support)
+                        DCI                 0xECB0              ; VLDMIAEQ R0!,{S16-S31}
+                        DCI                 0x8A10              ; Load FPU registers not loaded by lazy stacking.
+                        MSR                 PSP,R0
     
-    ;There are some chips that may corrupt on this branch, such as XMC4xxx step AA/step AB
-    ;chips. For those chips, you must manually edit this to PUSH {LR} then POP {PC}. 
-    BX                  LR                  ;The LR will indicate whether we are using FPU.    
+                        ; Some chips such as XMC4xxx step AA/step AB may corrupt on this branch.
+                        ; For those chips, you must manually edit this to PUSH {LR} then POP {PC}. 
+                        BX                  LR                  ; The LR will indicate whether we are using FPU.
+                        ENDP
 ;/* End Function:PendSV_Handler **********************************************/
 
 ;/* Begin Function:SysTick_Handler ********************************************
@@ -197,17 +201,17 @@ PendSV_Handler
 ;Output      : None.
 ;Return      : None.
 ;*****************************************************************************/
-SysTick_Handler
-    PUSH                {LR}
-                
-    MOVS                R0,#0x01            ;We are not using tickless.
-    BL                  _RMP_Tick_Handler
-                
-    POP                 {PC}
-    ALIGN
+SysTick_Handler         PROC
+                        PUSH                {LR}
+                                    
+                        MOVS                R0,#0x01            ;We are not using tickless.
+                        BL                  _RMP_Tick_Handler
+                                    
+                        POP                 {PC}
+                        ENDP
 ;/* End Function:SysTick_Handler *********************************************/
-
-    END
+                        ALIGN
+                        END
 ;/* End Of File **************************************************************/
 
 ;/* Copyright (C) Evo-Devo Instrum. All rights reserved **********************/
