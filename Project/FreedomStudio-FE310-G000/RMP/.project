@@ -53,12 +53,12 @@
 		<link>
 			<name>Platform/fe300prci_driver.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/M0P0_Library/FE310-G000/drivers/fe300prci/fe300prci_driver.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/M0A00_Library/FE310-G000/drivers/fe300prci/fe300prci_driver.c</locationURI>
 		</link>
 		<link>
 			<name>Platform/plic_driver.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/M0P0_Library/FE310-G000/drivers/plic/plic_driver.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/M0A00_Library/FE310-G000/drivers/plic/plic_driver.c</locationURI>
 		</link>
 		<link>
 			<name>Platform/rmp_platform_rv32imac.c</name>

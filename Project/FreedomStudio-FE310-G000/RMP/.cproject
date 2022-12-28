@@ -75,10 +75,10 @@
 							<tool command="${cross_prefix}${cross_c}${cross_suffix}" commandLinePattern="${COMMAND} ${cross_toolchain_flags} ${FLAGS} -c ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}" errorParsers="org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GCCErrorParser" id="ilg.gnumcueclipse.managedbuild.cross.riscv.tool.c.compiler.552833078" name="GNU RISC-V Cross C Compiler" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.tool.c.compiler">
 								<option id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.c.compiler.include.paths.264746979" name="Include paths (-I)" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.c.compiler.include.paths" useByScannerDiscovery="true" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc}/../../MProkaron/Include&quot;"/>
-									<listOptionValue builtIn="false" value="/media/pry/Code/Code_Library/MCU/Mutatus/M0P0_Library/FE310-G000/include"/>
-									<listOptionValue builtIn="false" value="/media/pry/Code/Code_Library/MCU/Mutatus/M0P0_Library/FE310-G000/drivers"/>
-									<listOptionValue builtIn="false" value="/media/pry/Code/Code_Library/MCU/Mutatus/M0P0_Library/FE310-G000/env/freedom-e300-hifive1"/>
-									<listOptionValue builtIn="false" value="/media/pry/Code/Code_Library/MCU/Mutatus/M0P0_Library/FE310-G000/env"/>
+									<listOptionValue builtIn="false" value="/media/pry/Code/Code_Library/MCU/Mutatus/M0A00_Library/FE310-G000/include"/>
+									<listOptionValue builtIn="false" value="/media/pry/Code/Code_Library/MCU/Mutatus/M0A00_Library/FE310-G000/drivers"/>
+									<listOptionValue builtIn="false" value="/media/pry/Code/Code_Library/MCU/Mutatus/M0A00_Library/FE310-G000/env/freedom-e300-hifive1"/>
+									<listOptionValue builtIn="false" value="/media/pry/Code/Code_Library/MCU/Mutatus/M0A00_Library/FE310-G000/env"/>
 								</option>
 								<option id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.c.compiler.warning.missingprototypes.906867530" name="Warn if a global function has no prototype (-Wmissing-prototypes)" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.c.compiler.warning.missingprototypes" useByScannerDiscovery="true" value="false" valueType="boolean"/>
 								<option id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.c.compiler.warning.strictprototypes.1199418776" name="Warn if a function has no arg type (-Wstrict-prototypes)" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.c.compiler.warning.strictprototypes" useByScannerDiscovery="true" value="false" valueType="boolean"/>

@@ -340,7 +340,7 @@
               <MiscControls>-Wno-date-time -Wno-unused-parameter -Wno-missing-variable-declarations -Wno-missing-noreturn -Wno-padded</MiscControls>
               <Define>STM32L0xx, USE_HAL_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>.\;..\..\Include;..\..\..\M0P00_Library\STM32Cube_FW_L0_V1.10.0\Drivers\STM32L0xx_HAL_Driver\Inc;..\..\..\M0P00_Library\STM32Cube_FW_L0_V1.10.0\Drivers\CMSIS\Device\ST\STM32L0xx\Include;..\..\..\M0P0_Library\STM32Cube_FW_L0_V1.10.0\Drivers\CMSIS\Include;..\..\..\M0P00_Library\STM32Cube_FW_L0_V1.10.0\Drivers\STM32L0xx_HAL_Driver\Inc\Conf</IncludePath>
+              <IncludePath>.\;..\..\Include;..\..\..\M0A00_Library\STM32Cube_FW_L0_V1.10.0\Drivers\STM32L0xx_HAL_Driver\Inc;..\..\..\M0A00_Library\STM32Cube_FW_L0_V1.10.0\Drivers\CMSIS\Device\ST\STM32L0xx\Include;..\..\..\M0A00_Library\STM32Cube_FW_L0_V1.10.0\Drivers\CMSIS\Include;..\..\..\M0A00_Library\STM32Cube_FW_L0_V1.10.0\Drivers\STM32L0xx_HAL_Driver\Inc\Conf</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -481,67 +481,67 @@
             <File>
               <FileName>stm32l0xx_hal.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\M0P00_Library\STM32Cube_FW_L0_V1.10.0\Drivers\STM32L0xx_HAL_Driver\Src\stm32l0xx_hal.c</FilePath>
+              <FilePath>..\..\..\M0A00_Library\STM32Cube_FW_L0_V1.10.0\Drivers\STM32L0xx_HAL_Driver\Src\stm32l0xx_hal.c</FilePath>
             </File>
             <File>
               <FileName>stm32l0xx_hal_dma.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\M0P00_Library\STM32Cube_FW_L0_V1.10.0\Drivers\STM32L0xx_HAL_Driver\Src\stm32l0xx_hal_dma.c</FilePath>
+              <FilePath>..\..\..\M0A00_Library\STM32Cube_FW_L0_V1.10.0\Drivers\STM32L0xx_HAL_Driver\Src\stm32l0xx_hal_dma.c</FilePath>
             </File>
             <File>
               <FileName>stm32l0xx_hal_tim.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\M0P00_Library\STM32Cube_FW_L0_V1.10.0\Drivers\STM32L0xx_HAL_Driver\Src\stm32l0xx_hal_tim.c</FilePath>
+              <FilePath>..\..\..\M0A00_Library\STM32Cube_FW_L0_V1.10.0\Drivers\STM32L0xx_HAL_Driver\Src\stm32l0xx_hal_tim.c</FilePath>
             </File>
             <File>
               <FileName>stm32l0xx_hal_tim_ex.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\M0P00_Library\STM32Cube_FW_L0_V1.10.0\Drivers\STM32L0xx_HAL_Driver\Src\stm32l0xx_hal_tim_ex.c</FilePath>
+              <FilePath>..\..\..\M0A00_Library\STM32Cube_FW_L0_V1.10.0\Drivers\STM32L0xx_HAL_Driver\Src\stm32l0xx_hal_tim_ex.c</FilePath>
             </File>
             <File>
               <FileName>stm32l0xx_hal_gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\M0P00_Library\STM32Cube_FW_L0_V1.10.0\Drivers\STM32L0xx_HAL_Driver\Src\stm32l0xx_hal_gpio.c</FilePath>
+              <FilePath>..\..\..\M0A00_Library\STM32Cube_FW_L0_V1.10.0\Drivers\STM32L0xx_HAL_Driver\Src\stm32l0xx_hal_gpio.c</FilePath>
             </File>
             <File>
               <FileName>stm32l0xx_hal_cortex.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\M0P00_Library\STM32Cube_FW_L0_V1.10.0\Drivers\STM32L0xx_HAL_Driver\Src\stm32l0xx_hal_cortex.c</FilePath>
+              <FilePath>..\..\..\M0A00_Library\STM32Cube_FW_L0_V1.10.0\Drivers\STM32L0xx_HAL_Driver\Src\stm32l0xx_hal_cortex.c</FilePath>
             </File>
             <File>
               <FileName>stm32l0xx_hal_rcc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\M0P00_Library\STM32Cube_FW_L0_V1.10.0\Drivers\STM32L0xx_HAL_Driver\Src\stm32l0xx_hal_rcc.c</FilePath>
+              <FilePath>..\..\..\M0A00_Library\STM32Cube_FW_L0_V1.10.0\Drivers\STM32L0xx_HAL_Driver\Src\stm32l0xx_hal_rcc.c</FilePath>
             </File>
             <File>
               <FileName>stm32l0xx_hal_pwr_ex.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\M0P00_Library\STM32Cube_FW_L0_V1.10.0\Drivers\STM32L0xx_HAL_Driver\Src\stm32l0xx_hal_pwr_ex.c</FilePath>
+              <FilePath>..\..\..\M0A00_Library\STM32Cube_FW_L0_V1.10.0\Drivers\STM32L0xx_HAL_Driver\Src\stm32l0xx_hal_pwr_ex.c</FilePath>
             </File>
             <File>
               <FileName>system_stm32l0xx.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\M0P00_Library\STM32Cube_FW_L0_V1.10.0\Drivers\CMSIS\Device\ST\STM32L0xx\Source\Templates\system_stm32l0xx.c</FilePath>
+              <FilePath>..\..\..\M0A00_Library\STM32Cube_FW_L0_V1.10.0\Drivers\CMSIS\Device\ST\STM32L0xx\Source\Templates\system_stm32l0xx.c</FilePath>
             </File>
             <File>
               <FileName>stm32l0xx_hal_uart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\M0P00_Library\STM32Cube_FW_L0_V1.10.0\Drivers\STM32L0xx_HAL_Driver\Src\stm32l0xx_hal_uart.c</FilePath>
+              <FilePath>..\..\..\M0A00_Library\STM32Cube_FW_L0_V1.10.0\Drivers\STM32L0xx_HAL_Driver\Src\stm32l0xx_hal_uart.c</FilePath>
             </File>
             <File>
               <FileName>stm32l0xx_hal_rcc_ex.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\M0P00_Library\STM32Cube_FW_L0_V1.10.0\Drivers\STM32L0xx_HAL_Driver\Src\stm32l0xx_hal_rcc_ex.c</FilePath>
+              <FilePath>..\..\..\M0A00_Library\STM32Cube_FW_L0_V1.10.0\Drivers\STM32L0xx_HAL_Driver\Src\stm32l0xx_hal_rcc_ex.c</FilePath>
             </File>
             <File>
               <FileName>stm32l0xx_hal_uart_ex.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\M0P00_Library\STM32Cube_FW_L0_V1.10.0\Drivers\STM32L0xx_HAL_Driver\Src\stm32l0xx_hal_uart_ex.c</FilePath>
+              <FilePath>..\..\..\M0A00_Library\STM32Cube_FW_L0_V1.10.0\Drivers\STM32L0xx_HAL_Driver\Src\stm32l0xx_hal_uart_ex.c</FilePath>
             </File>
             <File>
               <FileName>startup_stm32l051xx.s</FileName>
               <FileType>2</FileType>
-              <FilePath>..\..\..\M0P00_Library\STM32Cube_FW_L0_V1.10.0\Drivers\CMSIS\Device\ST\STM32L0xx\Source\Templates\arm\startup_stm32l051xx.s</FilePath>
+              <FilePath>..\..\..\M0A00_Library\STM32Cube_FW_L0_V1.10.0\Drivers\CMSIS\Device\ST\STM32L0xx\Source\Templates\arm\startup_stm32l051xx.s</FilePath>
             </File>
           </Files>
         </Group>

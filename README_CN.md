@@ -22,7 +22,7 @@ Click **[HERE](README.md)** for English version.
 &emsp;&emsp;如果想要参与开发，请阅读 **[参与](CONTRIBUTING.md)** 和 **[规范](CODE_OF_CONDUCT.md)** 两个指导文档。如果要提交拉取请求，请使用 **[拉取请求模板](PULL_REQUEST_TEMPLATE.md)** 。
 本软件是EDI的官方作品，因此属于 **公有领域** 。 所有由EDI保留的版权在所有适用的法律条款下尽最大可能地授权给所有实体。
 
-&emsp;&emsp;对于那些由微控制器厂商提供的硬件抽象层软件包，请到 **[M0P0_Library](https://github.com/EDI-Systems/M0P0_Library)** 软件仓库自行下载。
+&emsp;&emsp;对于那些由微控制器厂商提供的硬件抽象层软件包，请到 **[M0A00_Library](https://github.com/EDI-Systems/M0A00_Library)** 软件仓库自行下载。
 
 ## 快速演示
 ### 可在Linux上直接运行的Demo
@@ -238,7 +238,7 @@ Click **[HERE](README.md)** for English version.
 
 ### 编译指南
 
-&emsp;&emsp;在 **_Project_** 文件夹下能够找到多种微控制器的移植好的 **厂商集成开发环境** 或 **Eclipse** 的工程样板。参看各个工程文件夹下的自述文件以获取更多关于如何编译和运行该工程的信息。某些工程需要额外的厂商硬件抽象层库的支持，它们可以在 **[M0P0_Library](https://github.com/EDI-Systems/M0P0_Library)** 软件仓库被找到。
+&emsp;&emsp;在 **_Project_** 文件夹下能够找到多种微控制器的移植好的 **厂商集成开发环境** 或 **Eclipse** 的工程样板。参看各个工程文件夹下的自述文件以获取更多关于如何编译和运行该工程的信息。某些工程需要额外的厂商硬件抽象层库的支持，它们可以在 **[M0A00_Library](https://github.com/EDI-Systems/M0A00_Library)** 软件仓库被找到。
 
 ## 运行测试
 

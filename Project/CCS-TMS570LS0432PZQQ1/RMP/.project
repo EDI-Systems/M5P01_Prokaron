@@ -63,77 +63,77 @@
 		<link>
 			<name>Lib/esm.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/M0P0_Library/TMS570LS04x/source/esm.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/M0A00_Library/TMS570LS04x/source/esm.c</locationURI>
 		</link>
 		<link>
 			<name>Lib/gio.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/M0P0_Library/TMS570LS04x/source/gio.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/M0A00_Library/TMS570LS04x/source/gio.c</locationURI>
 		</link>
 		<link>
 			<name>Lib/notification.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/M0P0_Library/TMS570LS04x/source/notification.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/M0A00_Library/TMS570LS04x/source/notification.c</locationURI>
 		</link>
 		<link>
 			<name>Lib/pinmux.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/M0P0_Library/TMS570LS04x/source/pinmux.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/M0A00_Library/TMS570LS04x/source/pinmux.c</locationURI>
 		</link>
 		<link>
 			<name>Lib/rti.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/M0P0_Library/TMS570LS04x/source/rti.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/M0A00_Library/TMS570LS04x/source/rti.c</locationURI>
 		</link>
 		<link>
 			<name>Lib/sci.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/M0P0_Library/TMS570LS04x/source/sci.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/M0A00_Library/TMS570LS04x/source/sci.c</locationURI>
 		</link>
 		<link>
 			<name>Lib/sys_core.asm</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/M0P0_Library/TMS570LS04x/source/sys_core.asm</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/M0A00_Library/TMS570LS04x/source/sys_core.asm</locationURI>
 		</link>
 		<link>
 			<name>Lib/sys_intvecs.asm</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/M0P0_Library/TMS570LS04x/source/sys_intvecs.asm</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/M0A00_Library/TMS570LS04x/source/sys_intvecs.asm</locationURI>
 		</link>
 		<link>
 			<name>Lib/sys_mpu.asm</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/M0P0_Library/TMS570LS04x/source/sys_mpu.asm</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/M0A00_Library/TMS570LS04x/source/sys_mpu.asm</locationURI>
 		</link>
 		<link>
 			<name>Lib/sys_phantom.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/M0P0_Library/TMS570LS04x/source/sys_phantom.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/M0A00_Library/TMS570LS04x/source/sys_phantom.c</locationURI>
 		</link>
 		<link>
 			<name>Lib/sys_pmu.asm</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/M0P0_Library/TMS570LS04x/source/sys_pmu.asm</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/M0A00_Library/TMS570LS04x/source/sys_pmu.asm</locationURI>
 		</link>
 		<link>
 			<name>Lib/sys_selftest.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/M0P0_Library/TMS570LS04x/source/sys_selftest.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/M0A00_Library/TMS570LS04x/source/sys_selftest.c</locationURI>
 		</link>
 		<link>
 			<name>Lib/sys_startup.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/M0P0_Library/TMS570LS04x/source/sys_startup.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/M0A00_Library/TMS570LS04x/source/sys_startup.c</locationURI>
 		</link>
 		<link>
 			<name>Lib/sys_vim.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/M0P0_Library/TMS570LS04x/source/sys_vim.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/M0A00_Library/TMS570LS04x/source/sys_vim.c</locationURI>
 		</link>
 		<link>
 			<name>Lib/system.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/M0P0_Library/TMS570LS04x/source/system.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/M0A00_Library/TMS570LS04x/source/system.c</locationURI>
 		</link>
 		<link>
 			<name>Platform/rmp_platform_crx.c</name>

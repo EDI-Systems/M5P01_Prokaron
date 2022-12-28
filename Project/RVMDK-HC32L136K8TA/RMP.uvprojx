@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>.;..\..\Include;..\..\..\M0P00_Library\HC32L13x_DDL_V2.1.0\driver\inc;..\..\..\M0P00_Library\HC32L13x_DDL_V2.1.0\mcu\common</IncludePath>
+              <IncludePath>.;..\..\Include;..\..\..\M0A00_Library\HC32L13x_DDL_V2.1.0\driver\inc;..\..\..\M0A00_Library\HC32L13x_DDL_V2.1.0\mcu\common</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -481,42 +481,42 @@
             <File>
               <FileName>ddl.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\M0P00_Library\HC32L13x_DDL_V2.1.0\driver\src\ddl.c</FilePath>
+              <FilePath>..\..\..\M0A00_Library\HC32L13x_DDL_V2.1.0\driver\src\ddl.c</FilePath>
             </File>
             <File>
               <FileName>sysctrl.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\M0P00_Library\HC32L13x_DDL_V2.1.0\driver\src\sysctrl.c</FilePath>
+              <FilePath>..\..\..\M0A00_Library\HC32L13x_DDL_V2.1.0\driver\src\sysctrl.c</FilePath>
             </File>
             <File>
               <FileName>gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\M0P00_Library\HC32L13x_DDL_V2.1.0\driver\src\gpio.c</FilePath>
+              <FilePath>..\..\..\M0A00_Library\HC32L13x_DDL_V2.1.0\driver\src\gpio.c</FilePath>
             </File>
             <File>
               <FileName>timer3.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\M0P00_Library\HC32L13x_DDL_V2.1.0\driver\src\timer3.c</FilePath>
+              <FilePath>..\..\..\M0A00_Library\HC32L13x_DDL_V2.1.0\driver\src\timer3.c</FilePath>
             </File>
             <File>
               <FileName>uart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\M0P00_Library\HC32L13x_DDL_V2.1.0\driver\src\uart.c</FilePath>
+              <FilePath>..\..\..\M0A00_Library\HC32L13x_DDL_V2.1.0\driver\src\uart.c</FilePath>
             </File>
             <File>
               <FileName>interrupts_hc32l13x.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\M0P00_Library\HC32L13x_DDL_V2.1.0\mcu\common\interrupts_hc32l13x.c</FilePath>
+              <FilePath>..\..\..\M0A00_Library\HC32L13x_DDL_V2.1.0\mcu\common\interrupts_hc32l13x.c</FilePath>
             </File>
             <File>
               <FileName>startup_hc32l13x.s</FileName>
               <FileType>2</FileType>
-              <FilePath>..\..\..\M0P00_Library\HC32L13x_DDL_V2.1.0\example\adc\adc_scan_jqr_sw\MDK\startup_hc32l13x.s</FilePath>
+              <FilePath>..\..\..\M0A00_Library\HC32L13x_DDL_V2.1.0\example\adc\adc_scan_jqr_sw\MDK\startup_hc32l13x.s</FilePath>
             </File>
             <File>
               <FileName>system_hc32l13x.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\M0P00_Library\HC32L13x_DDL_V2.1.0\mcu\common\system_hc32l13x.c</FilePath>
+              <FilePath>..\..\..\M0A00_Library\HC32L13x_DDL_V2.1.0\mcu\common\system_hc32l13x.c</FilePath>
             </File>
           </Files>
         </Group>

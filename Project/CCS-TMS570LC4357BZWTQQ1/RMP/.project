@@ -58,67 +58,67 @@
 		<link>
 			<name>Lib/HL_esm.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/M0P0_Library/TMS570LC43x/source/HL_esm.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/M0A00_Library/TMS570LC43x/source/HL_esm.c</locationURI>
 		</link>
 		<link>
 			<name>Lib/HL_gio.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/M0P0_Library/TMS570LC43x/source/HL_gio.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/M0A00_Library/TMS570LC43x/source/HL_gio.c</locationURI>
 		</link>
 		<link>
 			<name>Lib/HL_notification.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/M0P0_Library/TMS570LC43x/source/HL_notification.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/M0A00_Library/TMS570LC43x/source/HL_notification.c</locationURI>
 		</link>
 		<link>
 			<name>Lib/HL_pinmux.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/M0P0_Library/TMS570LC43x/source/HL_pinmux.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/M0A00_Library/TMS570LC43x/source/HL_pinmux.c</locationURI>
 		</link>
 		<link>
 			<name>Lib/HL_rti.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/M0P0_Library/TMS570LC43x/source/HL_rti.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/M0A00_Library/TMS570LC43x/source/HL_rti.c</locationURI>
 		</link>
 		<link>
 			<name>Lib/HL_sci.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/M0P0_Library/TMS570LC43x/source/HL_sci.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/M0A00_Library/TMS570LC43x/source/HL_sci.c</locationURI>
 		</link>
 		<link>
 			<name>Lib/HL_sys_core.asm</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/M0P0_Library/TMS570LC43x/source/HL_sys_core.asm</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/M0A00_Library/TMS570LC43x/source/HL_sys_core.asm</locationURI>
 		</link>
 		<link>
 			<name>Lib/HL_sys_intvecs.asm</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/M0P0_Library/TMS570LC43x/source/HL_sys_intvecs.asm</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/M0A00_Library/TMS570LC43x/source/HL_sys_intvecs.asm</locationURI>
 		</link>
 		<link>
 			<name>Lib/HL_sys_mpu.asm</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/M0P0_Library/TMS570LC43x/source/HL_sys_mpu.asm</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/M0A00_Library/TMS570LC43x/source/HL_sys_mpu.asm</locationURI>
 		</link>
 		<link>
 			<name>Lib/HL_sys_pmu.asm</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/M0P0_Library/TMS570LC43x/source/HL_sys_pmu.asm</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/M0A00_Library/TMS570LC43x/source/HL_sys_pmu.asm</locationURI>
 		</link>
 		<link>
 			<name>Lib/HL_sys_startup.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/M0P0_Library/TMS570LC43x/source/HL_sys_startup.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/M0A00_Library/TMS570LC43x/source/HL_sys_startup.c</locationURI>
 		</link>
 		<link>
 			<name>Lib/HL_sys_vim.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/M0P0_Library/TMS570LC43x/source/HL_sys_vim.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/M0A00_Library/TMS570LC43x/source/HL_sys_vim.c</locationURI>
 		</link>
 		<link>
 			<name>Lib/HL_system.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/M0P0_Library/TMS570LC43x/source/HL_system.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/M0A00_Library/TMS570LC43x/source/HL_system.c</locationURI>
 		</link>
 		<link>
 			<name>Platform/rmp_platform_crx.c</name>
