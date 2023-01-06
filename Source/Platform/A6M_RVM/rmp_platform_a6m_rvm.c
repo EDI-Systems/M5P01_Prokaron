@@ -45,7 +45,7 @@ Other       : When the system stack safe redundancy is set to zero, the stack
               returning from an systick timer interrupt. Thus, we set the XPSR
               to avoid INVSTATE; set PC to the pseudo-process entrance; set LR
               (1) to 0 because the process does not return to anything; set the 
-              R12,R3-R0 to 0; set R11-R4 to 0.
+              R12, R3-R0 to 0; set R11-R4 to 0.
 ******************************************************************************/
 void _RMP_Stack_Init(rmp_ptr_t Entry,
                      rmp_ptr_t Stack,
