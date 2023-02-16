@@ -1,13 +1,13 @@
 /******************************************************************************
-Filename    : rmp_platform_a7m_conf.h
+Filename    : rmp_platform_rv32imac_conf.h
 Author      : pry
 Date        : 24/06/2017
 Licence     : LGPL v3+; see COPYING for details.
-Description : The configuration file for Cortex-M HAL.
+Description : The configuration file for RISC-V HAL.
 ******************************************************************************/
 
 /* Config Includes ***********************************************************/
-#include "Platform/A7M/Chip/STM32F767IG/rmp_platform_stm32f767ig.h"
+#include "Platform/RV32IMAC/Chip/CH32V307VCT6/rmp_platform_ch32v307vct6.h"
 /* End Config Includes *******************************************************/
 
 /* End Of File ***************************************************************/

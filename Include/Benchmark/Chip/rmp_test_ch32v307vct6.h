@@ -1,9 +1,9 @@
 /******************************************************************************
-Filename    : rmp_test_fe310g000.h
+Filename    : rmp_test_ch32v307vct6.h
 Author      : pry 
 Date        : 22/07/2017
 Licence     : The Unlicense; see LICENSE for details.
-Description : The testbench for FE310-G000.
+Description : The testbench for CH32V307VCT6.
 ******************************************************************************/
 
 /* Includes ******************************************************************/
@@ -12,23 +12,22 @@ Description : The testbench for FE310-G000.
 
 /* Defines *******************************************************************/
 /* Where are the initial stacks */
-#define THD1_STACK          (&Stack_1[300])
-#define THD2_STACK          (&Stack_2[300])
+#define THD1_STACK          (&Stack_1[1024])
+#define THD2_STACK          (&Stack_2[1024])
 /* How to read counter */
-#define COUNTER_READ()      (_RMP_Get_MCYCLE())
+#define COUNTER_READ()      (TIM_GetCounter(TIM1))
 /* Are we testing the memory pool? */
 /* #define TEST_MEM_POOL       8192 */
 /* Are we doing minimal measurements? */
 /* #define MINIMAL_SIZE */
-/* The FE310 timers are all 64 bits, however we only need last 32 bits */
-typedef rmp_u32_t rmp_tim_t;
+typedef rmp_u16_t rmp_tim_t;
 /* End Defines ***************************************************************/
 
 /* Globals *******************************************************************/
 #ifndef MINIMAL_SIZE
 void Int_Handler(void);
-rmp_ptr_t Stack_1[512];
-rmp_ptr_t Stack_2[512];
+rmp_ptr_t Stack_1[2048];
+rmp_ptr_t Stack_2[2048];
 /* End Globals ***************************************************************/
 
 /* Begin Function:Timer_Init **************************************************
@@ -40,7 +39,11 @@ Return      : None.
 ******************************************************************************/
 void Timer_Init(void)
 {
-    /* No need to init the measurement timer - we read MCYCLE register instead */
+    /* This processor does not have MCYCLE. Initializing TIM1 for this */
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM1, ENABLE);
+    TIM_CounterModeConfig(TIM1, TIM_CounterMode_Up);
+    TIM_InternalClockConfig(TIM1);
+    TIM_Cmd(TIM1, ENABLE);
 }
 /* End Function:Timer_Init ***************************************************/
 
@@ -57,38 +60,14 @@ Input       : None.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void WDT_Interrupt(void)
+void Test_Handler(void)
 {
-    /* Clear the interrupt pending bit */
-    AON_REG(AON_WDOGKEY)=AON_WDOGKEY_VALUE;
-	AON_REG(AON_WDOGCFG)&=~AON_WDOGCFG_CMPIP;
-    Int_Handler();
+
 }
 
 void Int_Init(void)
 {
-    plic_instance_t RMP_Global_PLIC;
-	/* Set interrupt to the interrupt handler array */
-	RMP_Periph_Vect_Table[INT_WDOGCMP]=(rmp_ptr_t)WDT_Interrupt;
-    /* WDT clock = 32.768kHz. Setting counter to 16 to obtain 500us intervals */
-    AON_REG(AON_WDOGKEY)=AON_WDOGKEY_VALUE;
-    AON_REG(AON_WDOGCMP)=16;
-    /* Feed dog - cannot assume that the pin is not asserted */
-    AON_REG(AON_WDOGKEY)=AON_WDOGKEY_VALUE;
-    AON_REG(AON_WDOGFEED)=AON_WDOGFEED_VALUE;
-	/* Disable WDT before trying to enable interrupt */
-    AON_REG(AON_WDOGKEY)=AON_WDOGKEY_VALUE;
-	AON_REG(AON_WDOGCFG)=0;
-	/* Enable WDT interrupt */
-	RMP_Global_PLIC.base_addr=PLIC_CTRL_ADDR;
-	/* If there is already one pending, get rid of it */
-	PLIC_complete_interrupt(&RMP_Global_PLIC, PLIC_claim_interrupt(&RMP_Global_PLIC));
-	PLIC_set_threshold (&RMP_Global_PLIC,0);
-	PLIC_enable_interrupt(&RMP_Global_PLIC,INT_WDOGCMP);
-	PLIC_set_priority(&RMP_Global_PLIC,INT_WDOGCMP,2);
-	/* Enable WDT with automatic counter zeroing */
-    AON_REG(AON_WDOGKEY)=AON_WDOGKEY_VALUE;
-	AON_REG(AON_WDOGCFG)=AON_WDOGCFG_ENALWAYS|AON_WDOGCFG_ZEROCMP;
+
 }
 /* End Function:Int_Init *****************************************************/
 
@@ -101,14 +80,7 @@ Return      : None.
 ******************************************************************************/
 void Int_Disable(void)
 {
-    plic_instance_t RMP_Global_PLIC;
 
-	/* Disable WDT interrupt */
-	RMP_Global_PLIC.base_addr=PLIC_CTRL_ADDR;
-	PLIC_disable_interrupt(&RMP_Global_PLIC,INT_WDOGCMP);
-	/* Disable WDT */
-	AON_REG(AON_WDOGKEY)=AON_WDOGKEY_VALUE;
-	AON_REG(AON_WDOGCFG)=0;
 }
 #endif
 /* End Function:Int_Disable **************************************************/

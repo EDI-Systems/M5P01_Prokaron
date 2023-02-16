@@ -140,7 +140,7 @@ typedef rmp_s32_t rmp_ret_t;
 #endif
 
 /*****************************************************************************/
-__EXTERN__ rmp_ptr_t RMP_Periph_Vect_Table[RMP_RV32IMAC_INT_NUMBER];
+
 /*****************************************************************************/
 
 /* End Public Global Variables ***********************************************/
@@ -158,9 +158,9 @@ __EXTERN__ void _RMP_Yield(void);
 
 /* Platform specific */
 EXTERN rmp_ptr_t Interrupt_Handler(void);
-EXTERN rmp_ptr_t _RMP_Get_MCAUSE(void);
-EXTERN void _RMP_Set_MTVEC(rmp_ptr_t MTVEC);
-EXTERN rmp_ptr_t _RMP_Get_MCYCLE(void);
+EXTERN rmp_ptr_t _RMP_MCAUSE_Get(void);
+EXTERN void _RMP_MTVEC_Set(rmp_ptr_t MTVEC);
+EXTERN rmp_ptr_t _RMP_MCYCLE_Get(void);
 EXTERN void _RMP_Mem_FENCE(void);
 
 /* Initialization */
@@ -170,9 +170,9 @@ __EXTERN__ void RMP_Putchar(char Char);
 __EXTERN__ void _RMP_Plat_Hook(void);
 
 /* Interrupt handler */
-__EXTERN__ void Periph_Handler(void);
-__EXTERN__ void SysTick_Handler(void);
-__EXTERN__ void PendSV_Handler(void);
+__EXTERN__ void RMP_RV32IMAC_Switch_Handler(void);
+__EXTERN__ void RMP_RV32IMAC_Tick_Handler(void);
+__EXTERN__ void RMP_RV32IMAC_Periph_Handler(rmp_ptr_t Mcause);
 __EXTERN__ void _RMP_Int_Handler(void);
 /*****************************************************************************/
 /* Undefine "__EXTERN__" to avoid redefinition */

@@ -15,11 +15,11 @@ X0     $zero      hard-wired zero
 X1     $ra        return address (caller-save)
 X2     $sp        stack pointer (callee-save)
 X3     $gp        global pointer
-X4     $tp          thread pointer
+X4     $tp        thread pointer
 X5     $t0        temporary (caller-save)
 X6     $t1        temporary (caller-save)
 X7     $t2        temporary (caller-save)
-X8     $s0/fp        saved register/frame pointer (callee-save)
+X8     $s0/fp     saved register/frame pointer (callee-save)
 X9     $s1        saved register (callee-save)
 X10    $a0        argument/return value (caller-save)
 X11    $a1        argument/return value (caller-save)
@@ -95,15 +95,15 @@ F31    $ft11      temporary (caller-save)
     /* Start the first thread */
     .global             _RMP_Start
     /* Get MCAUSE value */
-    .global             _RMP_Get_MCAUSE
+    .global             _RMP_MCAUSE_Get
     /* Set MTVEC value */
-    .global             _RMP_Set_MTVEC
+    .global             _RMP_MTVEC_Set
     /* Get MCYCLE value */
-    .global             _RMP_Get_MCYCLE
+    .global             _RMP_MCYCLE_Get
     /* Fencing memory */
     .global             _RMP_Mem_FENCE
     /* Generic interrupt handler */
-    .global             Interrupt_Handler
+    .global             _RMP_RV32IMAC_Handler
 /* End Exports ***************************************************************/
 
 /* Begin Imports *************************************************************/
@@ -151,8 +151,9 @@ Register Usage : None.
 ******************************************************************************/
 RMP_Int_Disable:
     /* Disable all interrupts */
-    CSRRCI              a0,mstatus,8
-    CSRWI               mie,0
+    //CSRRCI              a0,mstatus,8
+    //CSRWI               mie,0
+    CSRCI                mstatus,8
     RET
 /* End Function:RMP_Int_Disable **********************************************/
 
@@ -164,9 +165,10 @@ Register Usage : None.
 ******************************************************************************/
 RMP_Int_Enable:
     /* Enable all interrupts */
-    CSRRSI              a0,mstatus,8
-    LI                  a0,0x888
-    CSRW                mie,a0
+    CSRSI                mstatus,8
+    //CSRRSI              a0,mstatus,8
+    //LI                  a0,0x888
+    //CSRW                mie,a0
     RET
 /* End Function:RMP_Int_Enable ***********************************************/
 
@@ -215,27 +217,38 @@ _RMP_Start:
     RET
 /* End Function:_RMP_Start ***************************************************/
 
-/* Begin Function:_RMP_Get_MCAUSE *********************************************
+/* Begin Function:_RMP_MCAUSE_Get *********************************************
 Description : Get the mcause register content.
 Input       : None.
 Output      : None.
 Return      : $a0 - MCAUSE value.
 ******************************************************************************/
-_RMP_Get_MCAUSE:
+_RMP_MCAUSE_Get:
     CSRR                a0,mcause
     RET
-/* End Function:_RMP_Get_MCAUSE **********************************************/
+/* End Function:_RMP_MCAUSE_Get **********************************************/
 
-/* Begin Function:_RMP_Set_MTVEC **********************************************
+/* Begin Function:_RMP_MTVEC_Set **********************************************
 Description : Set the mtvec register content.
 Input       : $a0 - MTVEC value.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-_RMP_Set_MTVEC:
+_RMP_MTVEC_Set:
     CSRW                mtvec,a0
     RET
 /* End Function:_RMP_Set_MTVEC ***********************************************/
+
+/* Begin Function:_RMP_MCYCLE_Get *********************************************
+Description : Set the mtvec register content.
+Input       : None.
+Output      : None.
+Return      : $a0 - MCYCLE value.
+******************************************************************************/
+_RMP_MCYCLE_Get:
+    CSRR                a0,mcycle
+    RET
+/* End Function:_RMP_Get_MCYCLE **********************************************/
 
 /* Begin Function:_RMP_Mem_FENCE **********************************************
 Description : Fence the memory accesses to make sure that they are strongly ordered.
@@ -248,17 +261,6 @@ _RMP_Mem_FENCE:
     RET
 /* End Function:_RMP_Mem_FENCE ***********************************************/
 
-/* Begin Function:_RMP_Get_MCYCLE *********************************************
-Description : Set the mtvec register content.
-Input       : None.
-Output      : None.
-Return      : $a0 - MCYCLE value.
-******************************************************************************/
-_RMP_Get_MCYCLE:
-    CSRR                a0,mcycle
-    RET
-/* End Function:_RMP_Get_MCYCLE **********************************************/
-
 /* Begin Function:Interrupt_Handler *******************************************
 Description : The interrupt handling routine. This is the entry of all interrupt
               handlers; we will analyze mcause register to jump to the corresponding
@@ -267,7 +269,7 @@ Input       : None.
 Output      : None.
 ******************************************************************************/
     .align              2
-Interrupt_Handler:
+_RMP_RV32IMAC_Handler:
     /* RISC-V does not support interrupt nesting, as the current specification says.
      * Its interrupt controller does not accept new ones before the old one gets
      * done; and to make things worse, unlike MIPS, it doesn't have IPL field,
