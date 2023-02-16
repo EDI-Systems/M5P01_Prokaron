@@ -1485,7 +1485,7 @@ rmp_ret_t RMP_Thd_Rcv(rmp_ptr_t* Data,
                 RMP_THD_STATE_SET(RMP_Thd_Cur->State, RMP_THD_RCVBLK);
             }
             RMP_Sched_Unlock();
-            
+
             /* Dummy read - to separate the lock & unlock. If the compiler optimizes these two
              * functions(inline them) on some architectures sometimes we never block. */
             *Data=RMP_Thd_Cur->Mailbox;

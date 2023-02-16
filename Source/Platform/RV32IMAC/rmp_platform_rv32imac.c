@@ -13,6 +13,8 @@ Description : The platform specific file for RV32IMAC (FE310). This port is for
               completely ridiculous, about 16kB vs. 16MB, 1:1000.
               This chip also contains various bugs that make it unfit for production
               as well, such as SPI, AON, etc. We need more serious future versions.
+              This is GCC/LLVM specific, and does NOT support other compilers due to
+              use of GCC-specific extensions and conventions.
 ******************************************************************************/
 
 /* Includes ******************************************************************/
@@ -48,12 +50,10 @@ extern rmp_ptr_t __data_end__;
 extern rmp_ptr_t __bss_begin__;
 /* End address for the .bss section */
 extern rmp_ptr_t __bss_end__;
-/* Global pointer address */
-extern rmp_ptr_t __global_pointer$;
 /* The entry address */
 extern int main(void);
 void _start(void);
-void _start(void)
+void __attribute__((weak)) _start(void)
 {
     rmp_u8_t* Src;
     rmp_u8_t* Dst;
@@ -81,6 +81,8 @@ Input       : rmp_ptr_t Entry - The entry of the thread.
 Output      : None.
 Return      : None.
 ******************************************************************************/
+/* Global pointer address */
+extern rmp_ptr_t __global_pointer$;
 void _RMP_Stack_Init(rmp_ptr_t Entry, rmp_ptr_t Stack, rmp_ptr_t Arg)
 {
     rmp_ptr_t* Stack_Ptr;
@@ -136,7 +138,6 @@ Return      : None.
 void _RMP_Low_Level_Init(void)
 {
     RMP_RV32IMAC_LOW_LEVEL_INIT();
-    RMP_Int_Enable();
 }
 /* End Function:_RMP_Low_Level_Init ******************************************/
 
@@ -148,7 +149,7 @@ Return      : None.
 ******************************************************************************/
 void _RMP_Plat_Hook(void)
 {
-    RMP_Int_Enable();
+    RMP_RV32IMAC_PLAT_HOOK();
 }
 /* End Function:_RMP_Plat_Hook ***********************************************/
 
@@ -173,65 +174,54 @@ Return      : None.
 ******************************************************************************/
 void _RMP_Yield(void)
 {
-    CLINT_REG(CLINT_MSIP)=0xFFFFFFFF;
+    RMP_RV32IMAC_SWITCH_SET();
+
     _RMP_Mem_FENCE();
 }
 /* End Function:_RMP_Yield ***************************************************/
 
-/* Begin Function:PendSV_Handler **********************************************
+/* Begin Function:RMP_RV32IMAC_Switch_Handler *********************************
 Description : The PendSV interrupt routine. This is used to switch contexts.
 Input       : None.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void PendSV_Handler(void)
+void RMP_RV32IMAC_Switch_Handler(void)
 {
-    /* Clear the software interrupt, if still pending */
-    CLINT_REG(CLINT_MSIP)=0;
+    RMP_RV32IMAC_SWITCH_CLR();
+
     RMP_Ctx_Save();
     _RMP_Run_High();
     RMP_Ctx_Load();
 }
-/* End Function:PendSV_Handler ***********************************************/
+/* End Function:RMP_RV32IMAC_Switch_Handler **********************************/
 
-/* Begin Function:SysTick_Handler *********************************************
-Description : The SysTick interrupt routine.
+/* Begin Function:RMP_RV32IMAC_Tick_Handler ***********************************
+Description : The Tick interrupt routine.
 Input       : None.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void SysTick_Handler(void)
+void RMP_RV32IMAC_Tick_Handler(void)
 {
-    /* Update the next tick */
-    MTIMECMP=MTIME+RMP_RISCV_TICK_COUNT;
+    /* Update or reset the next tick */
+    RMP_RV32IMAC_TICK_RESET();
+
     _RMP_Tick_Handler(1);
 }
-/* End Function:SysTick_Handler **********************************************/
+/* End Function:RMP_RV32IMAC_Tick_Handler ************************************/
 
-/* Begin Function:Periph_Handler **********************************************
+/* Begin Function:RMP_RV32IMAC_Periph_Handler *********************************
 Description : The handler routine for peripherals.
-Input       : None.
+Input       : rmp_ptr_t Mcause - The mcause register value.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void Periph_Handler(void)
+void RMP_RV32IMAC_Periph_Handler(rmp_ptr_t Mcause)
 {
-    plic_instance_t RMP_Global_PLIC;
-    rmp_ptr_t Int_Number;
-
-    RMP_Global_PLIC.base_addr=PLIC_CTRL_ADDR;
-    /* Read PLIC for the interrupt number, and try to dispatch it to there */
-    Int_Number=PLIC_claim_interrupt(&RMP_Global_PLIC);
-
-    if(Int_Number<RMP_RV32IMAC_INT_NUMBER)
-    {
-        if(RMP_Periph_Vect_Table[Int_Number]!=0)
-            ((void(*)(void))RMP_Periph_Vect_Table[Int_Number])();
-    }
-
-    PLIC_complete_interrupt(&RMP_Global_PLIC,Int_Number);
+    RMP_RV32IMAC_PERIPH_HANDLER();
 }
-/* End Function:Periph_Handler ***********************************************/
+/* End Function:RMP_RV32IMAC_Periph_Handler **********************************/
 
 /* Begin Function:_RMP_Int_Handler ********************************************
 Description : The interrupt handler routine.
@@ -241,21 +231,20 @@ Return      : None.
 ******************************************************************************/
 void _RMP_Int_Handler(void)
 {
-    rmp_ptr_t MCAUSE;
-    MCAUSE=_RMP_Get_MCAUSE();
+    rmp_ptr_t Mcause;
+    Mcause=_RMP_MCAUSE_Get();
 
     /* If this is an exception, die here */
-    if((MCAUSE&0x80000000)==0)
+    if((Mcause&0x80000000)==0)
         while(1);
 
-    switch(MCAUSE&0x7FFFFFFF)
+    switch(Mcause&0x7FFFFFFF)
     {
         /* Machine software interrupt */
-        case 3:PendSV_Handler();break;
-        case 7:SysTick_Handler();break;
-        case 11:Periph_Handler();break;
+        case RMP_RV32IMAC_TICK_MCAUSE:RMP_RV32IMAC_Tick_Handler();break;
+        case RMP_RV32IMAC_SWITCH_MCAUSE:RMP_RV32IMAC_Switch_Handler();break;
         /* Should not be other cases */
-        default:while(1);
+        default:RMP_RV32IMAC_Periph_Handler(Mcause);break;
     }
 }
 /* End Function:_RMP_Int_Handler *********************************************/
