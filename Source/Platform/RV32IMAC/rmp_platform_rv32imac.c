@@ -149,7 +149,8 @@ Return      : None.
 ******************************************************************************/
 void _RMP_Plat_Hook(void)
 {
-    RMP_RV32IMAC_PLAT_HOOK();
+   RMP_RV32IMAC_PLAT_HOOK();
+   //RMP_Int_Enable();
 }
 /* End Function:_RMP_Plat_Hook ***********************************************/
 
