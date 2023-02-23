@@ -28,6 +28,15 @@ typedef rmp_u16_t rmp_tim_t;
 void Int_Handler(void);
 rmp_ptr_t Stack_1[2048];
 rmp_ptr_t Stack_2[2048];
+
+TIM_TimeBaseInitTypeDef TIM4_Handle = {0};
+NVIC_InitTypeDef NVIC_InitStruture = {0};
+
+void Timer_Init(void);
+void Int_Init(void);
+void Int_Disable(void);
+//void TIM4_IRQHandler(void);
+void TIM4_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
 /* End Globals ***************************************************************/
 
 /* Begin Function:Timer_Init **************************************************
@@ -67,10 +76,34 @@ void Test_Handler(void)
 
 void Int_Init(void)
 {
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4, ENABLE);
+    TIM4_Handle.TIM_Prescaler = 0;
+    TIM4_Handle.TIM_CounterMode = TIM_CounterMode_Down;
+    TIM4_Handle.TIM_Period = 21600;
+    TIM4_Handle.TIM_ClockDivision = TIM_CKD_DIV1;
+    TIM4_Handle.TIM_RepetitionCounter = 0;
+    TIM_TimeBaseInit(TIM4,&TIM4_Handle);
 
+
+    /* Clear interrupt pending bit, because we used EGR to update the registers*/
+    TIM_ClearITPendingBit(TIM4, TIM_IT_Update);
+
+    NVIC_InitStruture.NVIC_IRQChannel = TIM4_IRQn;
+    NVIC_InitStruture.NVIC_IRQChannelPreemptionPriority = 0;
+    NVIC_InitStruture.NVIC_IRQChannelSubPriority = 0;
+    NVIC_InitStruture.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&NVIC_InitStruture);
+
+    TIM_ITConfig(TIM4, TIM_IT_Update, ENABLE);
+    TIM_Cmd(TIM4, ENABLE);
 }
 /* End Function:Int_Init *****************************************************/
-
+void TIM4_IRQHandler(void)
+{
+    TIM_ClearITPendingBit(TIM4,TIM_IT_Update);
+    TIM_ClearFlag(TIM4, TIM_FLAG_Update);
+    Int_Handler();
+}
 /* Begin Function:Int_Disable *************************************************
 Description : Disable the periodic interrupt source. This function needs
               to be adapted to your specific hardware.
@@ -80,7 +113,7 @@ Return      : None.
 ******************************************************************************/
 void Int_Disable(void)
 {
-
+    NVIC_DisableIRQ(TIM4_IRQn);
 }
 #endif
 /* End Function:Int_Disable **************************************************/
