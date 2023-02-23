@@ -36,6 +36,7 @@ Description : The platform specific file for RV32IMAC (FE310). This port is for
 #undef __HDR_PUBLIC_MEMBERS__
 /* End Includes **************************************************************/
 
+
 /* Entry *********************************************************************/
 /* This portion is completely GCC specific - if you need to move this to other
  * compilers, this needs to be changed. The linker script should also be changed
