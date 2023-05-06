@@ -23,6 +23,7 @@ volatile rmp_u32_t Temp=0;
 volatile rmp_ptr_t Total=0;
 volatile rmp_ptr_t Temp1=0;
 volatile rmp_ptr_t Temp2=0;
+volatile rmp_ptr_t Temp3=0;
 #endif
 /* Test results also written here */
 volatile rmp_ptr_t Yield_Time=0;
@@ -30,9 +31,11 @@ volatile rmp_ptr_t Mailbox_Time=0;
 volatile rmp_ptr_t Semaphore_Time=0;
 volatile rmp_ptr_t Fifo_Time=0;
 volatile rmp_ptr_t Msgq_Time=0;
+volatile rmp_ptr_t Bmq_Time=0;
 volatile rmp_ptr_t Mailbox_ISR_Time=0;
 volatile rmp_ptr_t Semaphore_ISR_Time=0;
 volatile rmp_ptr_t Msgq_ISR_Time=0;
+volatile rmp_ptr_t Bmq_ISR_Time=0;
 #ifdef TEST_MEM_POOL
 volatile rmp_ptr_t Memory_Time=0;
 #endif
@@ -44,6 +47,7 @@ volatile struct RMP_Sem Sem_1;
 /* Extended kernel objects */
 volatile struct RMP_Fifo Fifo_1;
 volatile struct RMP_Msgq Msgq_1;
+volatile struct RMP_Bmq Bmq_1;
 /* Memory pool */
 #ifdef TEST_MEM_POOL
 volatile rmp_ptr_t Pool[TEST_MEM_POOL]={0};
@@ -54,6 +58,7 @@ void Test_Yield_1(void);
 void Test_Mail_1(void);
 void Test_Sem_1(void);
 void Test_Msgq_1(void);
+void Test_Bmq_1(void);
 void Func_1(void);
 
 void Test_Yield_2(void);
@@ -61,9 +66,11 @@ void Test_Mail_2(void);
 void Test_Sem_2(void);
 void Test_Fifo(void);
 void Test_Msgq_2(void);
+void Test_Bmq_2(void);
 void Test_Mail_ISR(void);
 void Test_Sem_ISR(void);
 void Test_Msgq_ISR(void);
+void Test_Bmq_ISR(void);
 
 #ifdef TEST_MEM_POOL
 rmp_ptr_t Rand(void);
@@ -130,6 +137,18 @@ void Test_Msgq_1(void)
     }
 }
 
+void Test_Bmq_1(void)
+{
+    rmp_cnt_t Count;
+    struct RMP_List Node;
+    for(Count=0;Count<10000;Count++)
+    {
+        /* Read counter here */
+        Start=COUNTER_READ();
+        RMP_Bmq_Snd(&Bmq_1, RMP_SLICE_MAX, &Node);
+    }
+}
+
 void Func_1(void)
 {
     Test_Yield_1();
@@ -138,6 +157,7 @@ void Func_1(void)
     Test_Mail_1();
     Test_Sem_1();
     Test_Msgq_1();
+    Test_Bmq_1();
     while(1);
 }
 /* End Function:Test_Yield ***************************************************/
@@ -219,6 +239,20 @@ void Test_Msgq_2(void)
     }
 }
 
+void Test_Bmq_2(void)
+{
+    rmp_cnt_t Count;
+    volatile struct RMP_List* Receive;
+    
+    for(Count=0;Count<10000;Count++)
+    {
+        RMP_Bmq_Rcv(&Bmq_1, RMP_SLICE_MAX, &Receive);
+        /* Read counter here */
+        End=COUNTER_READ();
+        Total+=(rmp_tim_t)(End-Start);
+    }
+}
+
 void Test_Mail_ISR(void)
 {
     rmp_ptr_t Data;
@@ -252,6 +286,20 @@ void Test_Msgq_ISR(void)
     for(Count=0;Count<10000;Count++)
     {
         RMP_Msgq_Rcv(&Msgq_1, RMP_SLICE_MAX, &Receive);
+        /* Read counter here */
+        End=COUNTER_READ();
+        Total+=(rmp_tim_t)(End-Start);
+    }
+}
+
+void Test_Bmq_ISR(void)
+{
+    static rmp_cnt_t Count;
+    volatile struct RMP_List* Receive;
+    
+    for(Count=0;Count<10000;Count++)
+    {
+        RMP_Bmq_Rcv(&Bmq_1, RMP_SLICE_MAX, &Receive);
         /* Read counter here */
         End=COUNTER_READ();
         Total+=(rmp_tim_t)(End-Start);
@@ -911,6 +959,14 @@ void Func_2(void)
     RMP_DBG_I(Msgq_Time);
     RMP_DBG_S(" cycles.\r\n");
     
+    /* Blocking message queue tests */
+    Total=0;
+    Test_Bmq_2();
+    RMP_DBG_S("Blocking message queue: ");
+    Bmq_Time=Total/10000;
+    RMP_DBG_I(Bmq_Time);
+    RMP_DBG_S(" cycles.\r\n");
+    
     /* Memory pool tests */
 #ifdef TEST_MEM_POOL
     Test_Mem_Pool();
@@ -932,6 +988,11 @@ void Func_2(void)
     /* Message queue from interrupt tests */
     Total=0;
     Test_Msgq_ISR();
+    Temp3=Total;
+    
+    /* Blocking message queue from interrupt tests */
+    Total=0;
+    Test_Bmq_ISR();
     
     /* Print results */
     RMP_DBG_S("Mailbox-ISR: ");
@@ -945,8 +1006,13 @@ void Func_2(void)
     RMP_DBG_S(" cycles.\r\n");
     
     RMP_DBG_S("Message queue-ISR: ");
-    Msgq_ISR_Time=Total/10000;
+    Msgq_ISR_Time=Temp3/10000;
     RMP_DBG_I(Msgq_ISR_Time);
+    RMP_DBG_S(" cycles.\r\n");
+    
+    RMP_DBG_S("Blocking message queue-ISR: ");
+    Bmq_ISR_Time=Total/10000;
+    RMP_DBG_I(Bmq_ISR_Time);
     RMP_DBG_S(" cycles.\r\n");
 
 #ifdef RMP_COVERAGE
@@ -999,7 +1065,19 @@ void Int_Handler(void)
         Start=COUNTER_READ();
         if(RMP_Msgq_Snd_ISR(&Msgq_1, &Node)<0)
         {
-            RMP_DBG_S("ISR message send failure: ");
+            RMP_DBG_S("ISR msgq message send failure: ");
+            RMP_DBG_I(Count);
+            RMP_DBG_S(" sends.\r\n");
+            while(1);
+        }
+    }
+    else if(Count<40000)
+    {
+        Count++;
+        Start=COUNTER_READ();
+        if(RMP_Bmq_Snd_ISR(&Bmq_1, &Node)<0)
+        {
+            RMP_DBG_S("ISR bmq message send failure: ");
             RMP_DBG_I(Count);
             RMP_DBG_S(" sends.\r\n");
             while(1);
@@ -1031,6 +1109,7 @@ void RMP_Init_Hook(void)
     RMP_Sem_Crt(&Sem_1, 0);
     RMP_Fifo_Crt(&Fifo_1);
     RMP_Msgq_Crt(&Msgq_1);
+    RMP_Bmq_Crt(&Bmq_1, 1U);
     
     /* Start threads */
     RMP_Thd_Crt(&Thd_1, (void*)Func_1, THD1_STACK, (void*)0x1234U, 1U, 5U);
