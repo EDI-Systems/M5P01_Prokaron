@@ -74,6 +74,8 @@ Description : The header file for the kernel.
 #define RMP_ERR_FIFO                (-8)
 /* This error is message queue related */
 #define RMP_ERR_MSGQ                (-9)
+/* This error is blocking message queue related */
+#define RMP_ERR_BMQ                 (-10)
 
 /* Power and rounding */
 #define RMP_POW2(POW)               (((rmp_ptr_t)1U)<<(POW))
@@ -260,6 +262,13 @@ struct RMP_Msgq
     struct RMP_Fifo Fifo;
 };
 
+/* The blocking message queue structure */
+struct RMP_Bmq
+{
+    struct RMP_Sem Sem;
+    struct RMP_Msgq Msgq;
+};
+
 /* The head struct of a memory block */
 struct RMP_Mem_Head
 {
@@ -347,6 +356,9 @@ static void _RMP_Run_Del(volatile struct RMP_Thd* Thread);
 static void _RMP_Dly_Ins(volatile struct RMP_Thd* Thread,
                          rmp_ptr_t Slice);
 static void _RMP_Timer_Proc(void);
+static rmp_ret_t _RMP_Sem_Pend_Core(volatile struct RMP_Sem* Semaphore,
+                                    rmp_ptr_t Slice);
+static void _RMP_Sem_Unblock(volatile struct RMP_Sem* Semaphore);
 static void _RMP_Mem_Block(volatile struct RMP_Mem_Head* Addr,
                            rmp_ptr_t Size);
 static void _RMP_Mem_Ins(volatile void* Pool,
@@ -466,11 +478,15 @@ __EXTERN__ rmp_ret_t RMP_Sem_Crt(volatile struct RMP_Sem* Semaphore,
 __EXTERN__ rmp_ret_t RMP_Sem_Del(volatile struct RMP_Sem* Semaphore);
 __EXTERN__ rmp_ret_t RMP_Sem_Pend(volatile struct RMP_Sem* Semaphore,
                                   rmp_ptr_t Slice);
+__EXTERN__ rmp_ret_t RMP_Sem_Pend_Unlock(volatile struct RMP_Sem* Semaphore,
+                                         rmp_ptr_t Slice);
 __EXTERN__ rmp_ret_t RMP_Sem_Abort(volatile struct RMP_Thd* Thread);
 __EXTERN__ rmp_ret_t RMP_Sem_Post(volatile struct RMP_Sem* Semaphore,
                                   rmp_ptr_t Number);
 __EXTERN__ rmp_ret_t RMP_Sem_Post_ISR(volatile struct RMP_Sem* Semaphore,
                                       rmp_ptr_t Number);
+__EXTERN__ rmp_ret_t RMP_Sem_Bcst(volatile struct RMP_Sem* Semaphore);
+__EXTERN__ rmp_ret_t RMP_Sem_Bcst_ISR(volatile struct RMP_Sem* Semaphore);
 
 /* Memory interfaces */
 __EXTERN__ rmp_ret_t RMP_Mem_Init(volatile void* Pool,
@@ -503,6 +519,20 @@ __EXTERN__ rmp_ret_t RMP_Msgq_Rcv(volatile struct RMP_Msgq* Queue,
                                   rmp_ptr_t Slice,
                                   volatile struct RMP_List** Node);
 __EXTERN__ rmp_ret_t RMP_Msgq_Cnt(volatile struct RMP_Msgq* Queue);
+
+__EXTERN__ rmp_ret_t RMP_Bmq_Crt(volatile struct RMP_Bmq* Queue,
+                                 rmp_ptr_t Limit);
+__EXTERN__ rmp_ret_t RMP_Bmq_Del(volatile struct RMP_Bmq* Queue);
+__EXTERN__ rmp_ret_t RMP_Bmq_Snd(volatile struct RMP_Bmq* Queue,
+                                 rmp_ptr_t Slice,
+                                 volatile struct RMP_List* Node);
+__EXTERN__ rmp_ret_t RMP_Bmq_Snd_ISR(volatile struct RMP_Bmq* Queue,
+                                     volatile struct RMP_List* Node);
+__EXTERN__ rmp_ret_t RMP_Bmq_Rcv(volatile struct RMP_Bmq* Queue,
+                                 rmp_ptr_t Slice,
+                                 volatile struct RMP_List** Node);
+__EXTERN__ rmp_ret_t RMP_Bmq_Cnt(volatile struct RMP_Bmq* Queue);
+
 
 /* Built-in graphics */
 #ifdef RMP_POINT
