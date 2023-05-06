@@ -2928,6 +2928,397 @@ void* RMP_Realloc(volatile void* Pool,
 }
 /* End Function:RMP_Realloc **************************************************/
 
+/* Begin Function:RMP_Fifo_Crt ************************************************
+Description : Create a FIFO.
+Input       : volatile struct RMP_Fifo* Fifo - The pointer to the FIFO.
+Output      : None.
+Return      : rmp_ret_t - If successful, 0; or an error code.
+******************************************************************************/
+rmp_ret_t RMP_Fifo_Crt(volatile struct RMP_Fifo* Fifo)
+{
+    /* Check if this FIFO structure could possibly be in use */
+    if(Fifo==RMP_NULL)
+    {
+        RMP_COVERAGE_MARKER();
+        return RMP_ERR_FIFO;
+    }
+    else
+        RMP_COVERAGE_MARKER();
+    
+    RMP_Sched_Lock();
+    
+    /* Create linked list */
+    RMP_List_Crt(&(Fifo->Head));
+    Fifo->Cur_Num=0U;
+    
+    RMP_Sched_Unlock();
+    return 0;
+}
+/* End Function:RMP_Fifo_Crt *************************************************/
+
+/* Begin Function:RMP_Fifo_Read ***********************************************
+Description : Read an element from a FIFO.
+Input       : volatile struct RMP_Fifo* Fifo - The pointer to the FIFO.
+Output      : struct RMP_List** Node - The node read.
+Return      : rmp_ret_t - If successful, 0; or an error code.
+******************************************************************************/
+rmp_ret_t RMP_Fifo_Read(volatile struct RMP_Fifo* Fifo,
+                        volatile struct RMP_List** Node)
+{
+    /* Check if this FIFO structure could possibly be in use */
+    if(Fifo==RMP_NULL)
+    {
+        RMP_COVERAGE_MARKER();
+        return RMP_ERR_FIFO;
+    }
+    else
+        RMP_COVERAGE_MARKER();
+    
+    /* Check the data pointer */
+    if(Node==RMP_NULL)
+    {
+        RMP_COVERAGE_MARKER();
+        return RMP_ERR_OPER;
+    }
+    else
+        RMP_COVERAGE_MARKER();
+    
+    RMP_Sched_Lock();
+    
+    /* See if the FIFO is empty */
+    if(Fifo->Head.Next==&(Fifo->Head))
+    {
+        RMP_COVERAGE_MARKER();
+        RMP_Sched_Unlock();
+        return RMP_ERR_OPER;
+    }
+    else
+        RMP_COVERAGE_MARKER();
+    
+    /* If not, grab one */
+    *Node=Fifo->Head.Next;
+    RMP_List_Del((*Node)->Prev, (*Node)->Next);
+    
+    /* The count should not go down to zero */
+    RMP_ASSERT(Fifo->Cur_Num!=0U);
+    Fifo->Cur_Num--;
+    
+    RMP_Sched_Unlock();
+    return 0;
+}
+/* End Function:RMP_Fifo_Read ************************************************/
+
+/* Begin Function:RMP_Fifo_Write **********************************************
+Description : Write an element to a FIFO.
+Input       : volatile struct RMP_Fifo* Fifo - The pointer to the FIFO.
+              volatile struct RMP_List* Node - The node to put into the FIFO.
+Output      : None.
+Return      : rmp_ret_t - If successful, 0; or an error code.
+******************************************************************************/
+rmp_ret_t RMP_Fifo_Write(volatile struct RMP_Fifo* Fifo,
+                         volatile struct RMP_List* Node)
+{
+    /* Check if this FIFO structure could possibly be in use */
+    if(Fifo==RMP_NULL)
+    {
+        RMP_COVERAGE_MARKER();
+        return RMP_ERR_FIFO;
+    }
+    else
+        RMP_COVERAGE_MARKER();
+
+    /* Check the data pointer */
+    if(Node==RMP_NULL)
+    {
+        RMP_COVERAGE_MARKER();
+        return RMP_ERR_OPER;
+    }
+    else
+        RMP_COVERAGE_MARKER();
+
+    RMP_Sched_Lock();
+
+    /* Write to list and increase count */
+    RMP_List_Ins(Node, Fifo->Head.Prev, &(Fifo->Head));
+    Fifo->Cur_Num++;
+
+    RMP_Sched_Unlock();
+    return 0;
+}
+/* End Function:RMP_Fifo_Write ***********************************************/
+
+/* Begin Function:RMP_Fifo_Write_ISR ******************************************
+Description : Write an element to a FIFO.
+              We do not check whether the scheduler is locked; if we are calling
+              this function, we're pretty sure that it's not.
+Input       : volatile struct RMP_Fifo* Fifo - The pointer to the FIFO.
+              volatile struct RMP_List* Node - The node to put into the FIFO.
+Output      : None.
+Return      : rmp_ret_t - If successful, 0; or an error code.
+******************************************************************************/
+rmp_ret_t RMP_Fifo_Write_ISR(volatile struct RMP_Fifo* Fifo,
+                             volatile struct RMP_List* Node)
+{
+    /* Check if this FIFO structure could possibly be in use */
+    if(Fifo==RMP_NULL)
+    {
+        RMP_COVERAGE_MARKER();
+        return RMP_ERR_FIFO;
+    }
+    else
+        RMP_COVERAGE_MARKER();
+
+    /* Check the data pointer */
+    if(Node==RMP_NULL)
+    {
+        RMP_COVERAGE_MARKER();
+        return RMP_ERR_OPER;
+    }
+    else
+        RMP_COVERAGE_MARKER();
+
+    /* Write to list and increase count */
+    RMP_List_Ins(Node, Fifo->Head.Prev, &(Fifo->Head));
+    Fifo->Cur_Num++;
+
+    return 0;
+}
+/* End Function:RMP_Fifo_Write_ISR *******************************************/
+
+/* Begin Function:RMP_Fifo_Cnt ************************************************
+Description : Get the number of elements in the FIFO.
+Input       : volatile struct RMP_Fifo* Fifo - The pointer to the FIFO.
+Output      : None.
+Return      : rmp_ret_t - If successful, the number of nodes; or an error code.
+******************************************************************************/
+rmp_ret_t RMP_Fifo_Cnt(volatile struct RMP_Fifo* Fifo)
+{
+    /* Check if this FIFO structure could possibly be in use */
+    if(Fifo==RMP_NULL)
+    {
+        RMP_COVERAGE_MARKER();
+        return RMP_ERR_FIFO;
+    }
+    else
+        RMP_COVERAGE_MARKER();
+    
+    return (rmp_ret_t)(Fifo->Cur_Num);
+}
+/* End Function:RMP_Fifo_Cnt *************************************************/
+
+/* Begin Function:RMP_Msgq_Crt ************************************************
+Description : Create a message queue.
+Input       : volatile struct RMP_Msgq* Queue - The pointer to the queue.
+Output      : None.
+Return      : rmp_ret_t - If successful, 0; or an error code.
+******************************************************************************/
+rmp_ret_t RMP_Msgq_Crt(volatile struct RMP_Msgq* Queue)
+{
+    /* Check if this queue structure could possibly be in use */
+    if(Queue==RMP_NULL)
+    {
+        RMP_COVERAGE_MARKER();
+        return RMP_ERR_MSGQ;
+    }
+    else
+        RMP_COVERAGE_MARKER();
+    
+    /* A queue is just a FIFO paired with a counting semaphore */
+    RMP_ASSERT(RMP_Fifo_Crt(&(Queue->Fifo))==0);
+    RMP_ASSERT(RMP_Sem_Crt(&(Queue->Sem),0U)==0);
+    
+    return 0;
+}
+/* End Function:RMP_Msgq_Crt *************************************************/
+
+/* Begin Function:RMP_Msgq_Del ************************************************
+Description : Delete a message queue. Only message queues that are empty may be
+              deleted.
+Input       : volatile struct RMP_Msgq* Queue - The pointer to the queue.
+Output      : None.
+Return      : rmp_ret_t - If successful, 0; or an error code.
+******************************************************************************/
+rmp_ret_t RMP_Msgq_Del(volatile struct RMP_Msgq* Queue)
+{
+    rmp_ret_t Count;
+    
+    /* Check if this queue structure could possibly be in use */
+    if(Queue==RMP_NULL)
+    {
+        RMP_COVERAGE_MARKER();
+        return RMP_ERR_MSGQ;
+    }
+    else
+        RMP_COVERAGE_MARKER();
+    
+    RMP_Sched_Lock();
+    
+    /* See if the FIFO have any element */
+    Count=RMP_Fifo_Cnt(&(Queue->Fifo));
+    RMP_ASSERT(Count>=0);
+    if(Count!=0)
+    {
+        RMP_COVERAGE_MARKER();
+        RMP_Sched_Unlock();
+        return RMP_ERR_OPER;
+    }
+    else
+        RMP_COVERAGE_MARKER();
+    
+    /* Proceed to delete the semaphore */
+    RMP_ASSERT(RMP_Sem_Del(&(Queue->Sem))==0);
+    
+    RMP_Sched_Unlock();
+    return 0;
+}
+/* End Function:RMP_Msgq_Del *************************************************/
+
+/* Begin Function:RMP_Msgq_Snd ************************************************
+Description : Send to a message queue.
+Input       : volatile struct RMP_Msgq* Queue - The pointer to the queue.
+Output      : None.
+Return      : rmp_ret_t - If successful, 0; or an error code.
+******************************************************************************/
+rmp_ret_t RMP_Msgq_Snd(volatile struct RMP_Msgq* Queue,
+                       volatile struct RMP_List* Node)
+{
+    /* Check if this queue structure could possibly be in use */
+    if(Queue==RMP_NULL)
+    {
+        RMP_COVERAGE_MARKER();
+        return RMP_ERR_MSGQ;
+    }
+    else
+        RMP_COVERAGE_MARKER();
+    
+    /* Check the data pointer */
+    if(Node==RMP_NULL)
+    {
+        RMP_COVERAGE_MARKER();
+        return RMP_ERR_OPER;
+    }
+    else
+        RMP_COVERAGE_MARKER();
+    
+    RMP_Sched_Lock();
+    
+    /* Insert the node, then notify the receiver(s) */
+    RMP_ASSERT(RMP_Fifo_Write(&(Queue->Fifo), Node)==0);
+    RMP_Sem_Post(&(Queue->Sem), 1U);
+    
+    RMP_Sched_Unlock();
+    return 0;
+}
+/* End Function:RMP_Msgq_Snd *************************************************/
+
+/* Begin Function:RMP_Msgq_Snd_ISR ********************************************
+Description : Send to a message queue.
+              We do not check whether the scheduler is locked; if we are calling
+              this function, we're pretty sure that it's not.
+Input       : volatile struct RMP_Msgq* Queue - The pointer to the queue.
+Output      : None.
+Return      : rmp_ret_t - If successful, 0; or an error code.
+******************************************************************************/
+rmp_ret_t RMP_Msgq_Snd_ISR(volatile struct RMP_Msgq* Queue,
+                           volatile struct RMP_List* Node)
+{
+    /* Check if this queue structure could possibly be in use */
+    if(Queue==RMP_NULL)
+    {
+        RMP_COVERAGE_MARKER();
+        return RMP_ERR_MSGQ;
+    }
+    else
+        RMP_COVERAGE_MARKER();
+    
+    /* Check the data pointer */
+    if(Node==RMP_NULL)
+    {
+        RMP_COVERAGE_MARKER();
+        return RMP_ERR_OPER;
+    }
+    else
+        RMP_COVERAGE_MARKER();
+    
+    /* Insert the node, then notify the receiver(s) */
+    RMP_ASSERT(RMP_Fifo_Write_ISR(&(Queue->Fifo), Node)==0);
+    RMP_Sem_Post_ISR(&(Queue->Sem), 1U);
+
+    return 0;
+}
+/* End Function:RMP_Msgq_Snd_ISR *********************************************/
+
+/* Begin Function:RMP_Msgq_Rcv ************************************************
+Description : Receive from a message queue.
+Input       : volatile struct RMP_Msgq* Queue - The pointer to the queue.
+              rmp_ptr_t Slice - 
+Output      : volatile struct RMP_List** Node - The node received.
+Output      : None.
+Return      : rmp_ret_t - If successful, 0; or an error code.
+******************************************************************************/
+rmp_ret_t RMP_Msgq_Rcv(volatile struct RMP_Msgq* Queue,
+                       rmp_ptr_t Slice,
+                       volatile struct RMP_List** Node)
+{
+    /* Check if this queue structure could possibly be in use */
+    if(Queue==RMP_NULL)
+    {
+        RMP_COVERAGE_MARKER();
+        return RMP_ERR_MSGQ;
+    }
+    else
+        RMP_COVERAGE_MARKER();
+    
+    /* Check the data pointer */
+    if(Node==RMP_NULL)
+    {
+        RMP_COVERAGE_MARKER();
+        return RMP_ERR_OPER;
+    }
+    else
+        RMP_COVERAGE_MARKER();
+    
+    /* Try to grab a semaphore, and only when we succeed do we proceed - 
+     * there is the possibility that the whole queue gets deleted, so
+     * we need to take that into account. */
+    if(RMP_Sem_Pend(&(Queue->Sem),Slice)<0)
+    {
+        RMP_COVERAGE_MARKER();
+        return RMP_ERR_OPER;
+    }
+    else
+        RMP_COVERAGE_MARKER();
+    
+    /* Grab the data then */
+    RMP_ASSERT(RMP_Fifo_Read(&(Queue->Fifo), Node)==0);
+    
+    return 0;
+}
+/* End Function:RMP_Msgq_Rcv *************************************************/
+
+/* Begin Function:RMP_Msgq_Cnt ************************************************
+Description : Receive from a message queue.
+Input       : volatile struct RMP_Msgq* Queue - The pointer to the queue.
+              rmp_ptr_t Slice - 
+Output      : volatile struct RMP_List** Node - The node received.
+Output      : None.
+Return      : rmp_ret_t - If successful, 0; or an error code.
+******************************************************************************/
+rmp_ret_t RMP_Msgq_Cnt(volatile struct RMP_Msgq* Queue)
+{
+    /* Check if this FIFO structure could possibly be in use */
+    if(Queue==RMP_NULL)
+    {
+        RMP_COVERAGE_MARKER();
+        return RMP_ERR_MSGQ;
+    }
+    else
+        RMP_COVERAGE_MARKER();
+    
+    return RMP_Fifo_Cnt(&(Queue->Fifo));
+}
+/* End Function:RMP_Msgq_Cnt *************************************************/
+
 /* Begin Function:RMP_Line ****************************************************
 Description : Draw a line given the start and end coordinates.
 Input       : rmp_cnt_t Start_X - The start point X coordinate.

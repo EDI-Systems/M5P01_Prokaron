@@ -69,6 +69,12 @@ Description : The header file for the kernel.
 /* This error is memory related */
 #define RMP_ERR_MEM                 (-7)
 
+/* Extended error codes */
+/* This error is FIFO related */
+#define RMP_ERR_FIFO                (-8)
+/* This error is message queue related */
+#define RMP_ERR_MSGQ                (-9)
+
 /* Power and rounding */
 #define RMP_POW2(POW)               (((rmp_ptr_t)1U)<<(POW))
 #define RMP_ROUND_DOWN(NUM,POW)     (((NUM)>>(POW))<<(POW))
@@ -238,6 +244,21 @@ struct RMP_Sem
     rmp_ptr_t Cur_Num;
 };
 
+/* The FIFO structure */
+struct RMP_Fifo
+{
+    /* The datablocks */
+    struct RMP_List Head;
+    /* The current number of datablocks */
+    rmp_ptr_t Cur_Num;
+};
+
+/* The message queue structure */
+struct RMP_Msgq
+{
+    struct RMP_Sem Sem;
+    struct RMP_Fifo Fifo;
+};
 
 /* The head struct of a memory block */
 struct RMP_Mem_Head
@@ -450,7 +471,7 @@ __EXTERN__ rmp_ret_t RMP_Sem_Post(volatile struct RMP_Sem* Semaphore,
                                   rmp_ptr_t Number);
 __EXTERN__ rmp_ret_t RMP_Sem_Post_ISR(volatile struct RMP_Sem* Semaphore,
                                       rmp_ptr_t Number);
-                             
+
 /* Memory interfaces */
 __EXTERN__ rmp_ret_t RMP_Mem_Init(volatile void* Pool,
                                   rmp_ptr_t Size);
@@ -461,6 +482,27 @@ __EXTERN__ void RMP_Free(volatile void* Pool,
 __EXTERN__ void* RMP_Realloc(volatile void* Pool,
                              void* Mem_Ptr,
                              rmp_ptr_t Size);
+                             
+/* Extended system interfaces - these are not real primitives */
+__EXTERN__ rmp_ret_t RMP_Fifo_Crt(volatile struct RMP_Fifo* Fifo);
+__EXTERN__ rmp_ret_t RMP_Fifo_Read(volatile struct RMP_Fifo* Fifo,
+                                   volatile struct RMP_List** Node);
+__EXTERN__ rmp_ret_t RMP_Fifo_Write(volatile struct RMP_Fifo* Fifo,
+                                    volatile struct RMP_List* Node);
+__EXTERN__ rmp_ret_t RMP_Fifo_Write_ISR(volatile struct RMP_Fifo* Fifo,
+                                        volatile struct RMP_List* Node);
+__EXTERN__ rmp_ret_t RMP_Fifo_Cnt(volatile struct RMP_Fifo* Fifo);
+
+__EXTERN__ rmp_ret_t RMP_Msgq_Crt(volatile struct RMP_Msgq* Queue);
+__EXTERN__ rmp_ret_t RMP_Msgq_Del(volatile struct RMP_Msgq* Queue);
+__EXTERN__ rmp_ret_t RMP_Msgq_Snd(volatile struct RMP_Msgq* Queue,
+                                  volatile struct RMP_List* Node);
+__EXTERN__ rmp_ret_t RMP_Msgq_Snd_ISR(volatile struct RMP_Msgq* Queue,
+                                      volatile struct RMP_List* Node);
+__EXTERN__ rmp_ret_t RMP_Msgq_Rcv(volatile struct RMP_Msgq* Queue,
+                                  rmp_ptr_t Slice,
+                                  volatile struct RMP_List** Node);
+__EXTERN__ rmp_ret_t RMP_Msgq_Cnt(volatile struct RMP_Msgq* Queue);
 
 /* Built-in graphics */
 #ifdef RMP_POINT
