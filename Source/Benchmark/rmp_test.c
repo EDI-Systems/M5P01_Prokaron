@@ -21,14 +21,18 @@ volatile rmp_u32_t Total=0;
 volatile rmp_u32_t Temp=0;
 #else
 volatile rmp_ptr_t Total=0;
-volatile rmp_ptr_t Temp=0;
+volatile rmp_ptr_t Temp1=0;
+volatile rmp_ptr_t Temp2=0;
 #endif
 /* Test results also written here */
 volatile rmp_ptr_t Yield_Time=0;
 volatile rmp_ptr_t Mailbox_Time=0;
 volatile rmp_ptr_t Semaphore_Time=0;
+volatile rmp_ptr_t Fifo_Time=0;
+volatile rmp_ptr_t Msgq_Time=0;
 volatile rmp_ptr_t Mailbox_ISR_Time=0;
 volatile rmp_ptr_t Semaphore_ISR_Time=0;
+volatile rmp_ptr_t Msgq_ISR_Time=0;
 #ifdef TEST_MEM_POOL
 volatile rmp_ptr_t Memory_Time=0;
 #endif
@@ -37,6 +41,9 @@ volatile struct RMP_Thd Thd_1;
 volatile struct RMP_Thd Thd_2;
 volatile struct RMP_Thd Thd_Test;
 volatile struct RMP_Sem Sem_1;
+/* Extended kernel objects */
+volatile struct RMP_Fifo Fifo_1;
+volatile struct RMP_Msgq Msgq_1;
 /* Memory pool */
 #ifdef TEST_MEM_POOL
 volatile rmp_ptr_t Pool[TEST_MEM_POOL]={0};
@@ -46,13 +53,17 @@ volatile rmp_ptr_t Pool[TEST_MEM_POOL]={0};
 void Test_Yield_1(void);
 void Test_Mail_1(void);
 void Test_Sem_1(void);
+void Test_Msgq_1(void);
 void Func_1(void);
 
 void Test_Yield_2(void);
 void Test_Mail_2(void);
 void Test_Sem_2(void);
+void Test_Fifo(void);
+void Test_Msgq_2(void);
 void Test_Mail_ISR(void);
 void Test_Sem_ISR(void);
+void Test_Msgq_ISR(void);
 
 #ifdef TEST_MEM_POOL
 rmp_ptr_t Rand(void);
@@ -87,7 +98,7 @@ void Test_Yield_1(void)
 
 void Test_Mail_1(void)
 {
-    static rmp_cnt_t Count;
+    rmp_cnt_t Count;
     for(Count=0;Count<10000;Count++)
     {
         /* Read counter here */
@@ -107,6 +118,18 @@ void Test_Sem_1(void)
     }
 }
 
+void Test_Msgq_1(void)
+{
+    rmp_cnt_t Count;
+    struct RMP_List Node;
+    for(Count=0;Count<10000;Count++)
+    {
+        /* Read counter here */
+        Start=COUNTER_READ();
+        RMP_Msgq_Snd(&Msgq_1, &Node);
+    }
+}
+
 void Func_1(void)
 {
     Test_Yield_1();
@@ -114,6 +137,7 @@ void Func_1(void)
     RMP_Thd_Set(&Thd_2,2,RMP_SLICE_MAX);
     Test_Mail_1();
     Test_Sem_1();
+    Test_Msgq_1();
     while(1);
 }
 /* End Function:Test_Yield ***************************************************/
@@ -161,6 +185,40 @@ void Test_Sem_2(void)
     }
 }
 
+void Test_Fifo(void)
+{
+    rmp_cnt_t Count;
+    struct RMP_List Node;
+    volatile struct RMP_List* Receive;
+    
+    for(Count=0;Count<10000;Count++)
+    {
+        /* FIFO is different in that it is non-blocking */
+        Start=COUNTER_READ();
+        RMP_Fifo_Write(&Fifo_1, &Node);
+        RMP_Fifo_Read(&Fifo_1, &Receive);
+        End=COUNTER_READ();
+        /* This must be the same thing */
+        if(Receive!=&Node)
+            while(1);
+        Total+=(rmp_tim_t)(End-Start);
+    }
+}
+
+void Test_Msgq_2(void)
+{
+    rmp_cnt_t Count;
+    volatile struct RMP_List* Receive;
+    
+    for(Count=0;Count<10000;Count++)
+    {
+        RMP_Msgq_Rcv(&Msgq_1, RMP_SLICE_MAX, &Receive);
+        /* Read counter here */
+        End=COUNTER_READ();
+        Total+=(rmp_tim_t)(End-Start);
+    }
+}
+
 void Test_Mail_ISR(void)
 {
     rmp_ptr_t Data;
@@ -180,6 +238,20 @@ void Test_Sem_ISR(void)
     for(Count=0;Count<10000;Count++)
     {
         RMP_Sem_Pend(&Sem_1, RMP_SLICE_MAX);
+        /* Read counter here */
+        End=COUNTER_READ();
+        Total+=(rmp_tim_t)(End-Start);
+    }
+}
+
+void Test_Msgq_ISR(void)
+{
+    static rmp_cnt_t Count;
+    volatile struct RMP_List* Receive;
+    
+    for(Count=0;Count<10000;Count++)
+    {
+        RMP_Msgq_Rcv(&Msgq_1, RMP_SLICE_MAX, &Receive);
         /* Read counter here */
         End=COUNTER_READ();
         Total+=(rmp_tim_t)(End-Start);
@@ -823,28 +895,58 @@ void Func_2(void)
     RMP_DBG_I(Semaphore_Time);
     RMP_DBG_S(" cycles.\r\n");
     
+    /* Fifo tests */
+    Total=0;
+    Test_Fifo();
+    RMP_DBG_S("FIFO: ");
+    Fifo_Time=Total/10000;
+    RMP_DBG_I(Fifo_Time);
+    RMP_DBG_S(" cycles.\r\n");
+    
+    /* Message queue tests */
+    Total=0;
+    Test_Msgq_2();
+    RMP_DBG_S("Message queue: ");
+    Msgq_Time=Total/10000;
+    RMP_DBG_I(Msgq_Time);
+    RMP_DBG_S(" cycles.\r\n");
+    
     /* Memory pool tests */
 #ifdef TEST_MEM_POOL
     Test_Mem_Pool();
 #endif
 
+    /* Prepare interrupt tests */
+    Int_Init();
+    
     /* Mailbox from interrupt tests */
     Total=0;
-    Int_Init();
     Test_Mail_ISR();
+    Temp1=Total;
     
     /* Semaphore from interrupt tests */
-    Temp=Total;
     Total=0;
     Test_Sem_ISR();
+    Temp2=Total;
     
+    /* Message queue from interrupt tests */
+    Total=0;
+    Test_Msgq_ISR();
+    
+    /* Print results */
     RMP_DBG_S("Mailbox-ISR: ");
-    Mailbox_ISR_Time=Temp/10000;
+    Mailbox_ISR_Time=Temp1/10000;
     RMP_DBG_I(Mailbox_ISR_Time);
     RMP_DBG_S(" cycles.\r\n");
+    
     RMP_DBG_S("Semaphore-ISR: ");
-    Semaphore_ISR_Time=Total/10000;
+    Semaphore_ISR_Time=Temp2/10000;
     RMP_DBG_I(Semaphore_ISR_Time);
+    RMP_DBG_S(" cycles.\r\n");
+    
+    RMP_DBG_S("Message queue-ISR: ");
+    Msgq_ISR_Time=Total/10000;
+    RMP_DBG_I(Msgq_ISR_Time);
     RMP_DBG_S(" cycles.\r\n");
 
 #ifdef RMP_COVERAGE
@@ -865,6 +967,7 @@ Return      : None.
 void Int_Handler(void)
 {
     static rmp_cnt_t Count=0;
+    static struct RMP_List Node;
     
     if(Count<10000)
     {
@@ -890,6 +993,18 @@ void Int_Handler(void)
             while(1);
         }
     }
+    else if(Count<30000)
+    {
+        Count++;
+        Start=COUNTER_READ();
+        if(RMP_Msgq_Snd_ISR(&Msgq_1, &Node)<0)
+        {
+            RMP_DBG_S("ISR message send failure: ");
+            RMP_DBG_I(Count);
+            RMP_DBG_S(" sends.\r\n");
+            while(1);
+        }
+    }
     else
         Int_Disable();
 }
@@ -911,8 +1026,12 @@ void RMP_Init_Hook(void)
     RMP_Clear(&Thd_1, sizeof(struct RMP_Thd));
     RMP_Clear(&Thd_2, sizeof(struct RMP_Thd));
     RMP_Clear(&Sem_1, sizeof(struct RMP_Sem));
-    /* Create counting semaphore */
-    RMP_Sem_Crt(&Sem_1,0);
+    RMP_Clear(&Fifo_1, sizeof(struct RMP_Fifo));
+    /* Create kernel objects */
+    RMP_Sem_Crt(&Sem_1, 0);
+    RMP_Fifo_Crt(&Fifo_1);
+    RMP_Msgq_Crt(&Msgq_1);
+    
     /* Start threads */
     RMP_Thd_Crt(&Thd_1, (void*)Func_1, THD1_STACK, (void*)0x1234U, 1U, 5U);
     RMP_Thd_Crt(&Thd_2, (void*)Func_2, THD2_STACK, (void*)0x4321U, 1U, 1000U);
