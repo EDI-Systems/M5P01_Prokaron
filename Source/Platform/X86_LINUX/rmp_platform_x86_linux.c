@@ -33,7 +33,7 @@ Register Usage : None.
 ******************************************************************************/
 void RMP_Int_Disable(void)
 {
-	RMP_Int_Disabled=1;
+    RMP_Int_Disabled=1;
 }
 /* End Function:RMP_Int_Disable **********************************************/
 
@@ -45,7 +45,7 @@ Register Usage : None.
 ******************************************************************************/
 void RMP_Int_Enable(void)
 {
-	RMP_Int_Disabled=0;
+    RMP_Int_Disabled=0;
 }
 /* End Function:RMP_Int_Enable ***********************************************/
 
@@ -58,42 +58,42 @@ Return      : rmp_ptr_t - The MSB position.
 /* 2*i and 2*i+1 will correspond to the same slot in this table */
 const rmp_u8_t RMP_MSB_Tbl[128]=
 {
-	/* 0-1 */
-	0x00,
-	/* 2-3 */
-	0x01,
-	/* 4-7 */
-	0x02,0x02,
-	/* 8-15 */
-	0x03,0x03,0x03,0x03,
-	/* 16-31 */
-	0x04,0x04,0x04,0x04,0x04,0x04,0x04,0x04,
-	/* 32-63 */
-	0x05,0x05,0x05,0x05,0x05,0x05,0x05,0x05,0x05,0x05,0x05,0x05,0x05,0x05,0x05,0x05,
-	/* 64-127 */
-	0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,
-	0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,
-	/* 128-255 */
-	0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,
-	0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,
-	0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,
-	0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07
+    /* 0-1 */
+    0x00,
+    /* 2-3 */
+    0x01,
+    /* 4-7 */
+    0x02,0x02,
+    /* 8-15 */
+    0x03,0x03,0x03,0x03,
+    /* 16-31 */
+    0x04,0x04,0x04,0x04,0x04,0x04,0x04,0x04,
+    /* 32-63 */
+    0x05,0x05,0x05,0x05,0x05,0x05,0x05,0x05,0x05,0x05,0x05,0x05,0x05,0x05,0x05,0x05,
+    /* 64-127 */
+    0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,
+    0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,
+    /* 128-255 */
+    0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,
+    0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,
+    0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,
+    0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07
 };
 
 rmp_ptr_t RMP_MSB_Get(rmp_ptr_t Val)
 {
-	/* Scan from high bits to low bits */
-	if((Val&0xFF000000)!=0)
-		return RMP_MSB_Tbl[Val>>25]+24;
-	else if((Val&0xFF0000)!=0)
-		return RMP_MSB_Tbl[Val>>17]+16;
-	else if((Val&0xFF00)!=0)
-		return RMP_MSB_Tbl[Val>>9]+8;
-	else if((Val&0xFF)!=0)
-		return RMP_MSB_Tbl[Val>>1];
+    /* Scan from high bits to low bits */
+    if((Val&0xFF000000)!=0)
+        return RMP_MSB_Tbl[Val>>25]+24;
+    else if((Val&0xFF0000)!=0)
+        return RMP_MSB_Tbl[Val>>17]+16;
+    else if((Val&0xFF00)!=0)
+        return RMP_MSB_Tbl[Val>>9]+8;
+    else if((Val&0xFF)!=0)
+        return RMP_MSB_Tbl[Val>>1];
 
-	/* Nothing anywhere */
-	return 0xFFFFFFFF;
+    /* Nothing anywhere */
+    return 0xFFFFFFFF;
 }
 /* End Function:RMP_MSB_Get **************************************************/
 
@@ -105,10 +105,10 @@ Return      : None.
 ******************************************************************************/
 void _RMP_Yield(void)
 {
-	RMP_PendSV_Flag=1;
+    RMP_PendSV_Flag=1;
 
-	if(RMP_Int_Disabled==0)
-		RMP_ASSERT(kill(RMP_User_PID,SIGUSR1)>=0);
+    if(RMP_Int_Disabled==0)
+        RMP_ASSERT(kill(RMP_User_PID,SIGUSR1)>=0);
 }
 /* End Function:_RMP_Yield ***************************************************/
 
@@ -121,27 +121,27 @@ Return       : None.
 /* The signal processing function for invoking the timer interrupts - this will happen per 1 sec */
 void SigAlrm_Handler(int Param)
 {
-	RMP_SysTick_Flag=1;
+    RMP_SysTick_Flag=1;
 
-	if(RMP_Int_Disabled==0)
-		kill(RMP_User_PID,SIGUSR1);
+    if(RMP_Int_Disabled==0)
+        kill(RMP_User_PID,SIGUSR1);
 }
 
 void _RMP_Start(rmp_ptr_t Entry, rmp_ptr_t Stack)
 {
-	int Status;
-	struct itimerval Tick;
+    int Status;
+    struct itimerval Tick;
 
-	/* Set up the timer */
-	memset(&Tick, 0, sizeof(Tick));
-	/* First timeout */
-	Tick.it_value.tv_sec=1;
-	Tick.it_value.tv_usec=0;
-	/* Interval time to run function */
-	Tick.it_interval.tv_sec=1;
-	Tick.it_interval.tv_usec=0;
-	RMP_ASSERT(signal(SIGALRM, SigAlrm_Handler)>=0);
-	RMP_ASSERT(setitimer(ITIMER_REAL, &Tick, NULL)>=0);
+    /* Set up the timer */
+    memset(&Tick, 0, sizeof(Tick));
+    /* First timeout */
+    Tick.it_value.tv_sec=1;
+    Tick.it_value.tv_usec=0;
+    /* Interval time to run function */
+    Tick.it_interval.tv_sec=1;
+    Tick.it_interval.tv_usec=0;
+    RMP_ASSERT(signal(SIGALRM, SigAlrm_Handler)>=0);
+    RMP_ASSERT(setitimer(ITIMER_REAL, &Tick, NULL)>=0);
 
     printf("The test on interrupt response time can take up to 5 minutes. Please wait patiently.\n");
     printf("The performance number printed is not accurate. If you see 6-figure numbers, run again.\n");
@@ -157,31 +157,31 @@ void _RMP_Start(rmp_ptr_t Entry, rmp_ptr_t Stack)
     printf("Remember to kill it after its completion!\n\n");
 
 
-	RMP_Sys_PID=syscall(SYS_gettid);
-	RMP_User_PID=clone((int (*)(void*))(Entry), (void*)Stack, CLONE_VM|SIGCHLD, 0);
+    RMP_Sys_PID=syscall(SYS_gettid);
+    RMP_User_PID=clone((int (*)(void*))(Entry), (void*)Stack, CLONE_VM|SIGCHLD, 0);
     printf("Sys PID is %d, User PID is %d.\n\n",RMP_Sys_PID,RMP_User_PID);
 
     while(1)
     {
-    	/* Wait for the thread to receive the signal */
+        /* Wait for the thread to receive the signal */
         RMP_ASSERT(wait(&Status)>0);
         if(RMP_SysTick_Flag!=0)
         {
-        	RMP_SysTick_Flag=0;
-        	SysTick_Handler();
+            RMP_SysTick_Flag=0;
+            SysTick_Handler();
         }
         else if(RMP_PendSV_Flag!=0)
         {
-        	RMP_PendSV_Flag=0;
-        	PendSV_Handler();
+            RMP_PendSV_Flag=0;
+            PendSV_Handler();
         }
         /* Must be an external interrupt */
         else
         {
-        	if(RMP_Eint_Handler!=0)
-        		RMP_Eint_Handler();
+            if(RMP_Eint_Handler!=0)
+                RMP_Eint_Handler();
         }
-       	/* Resume execution */
+           /* Resume execution */
         RMP_ASSERT(ptrace(PTRACE_CONT, RMP_User_PID,0,0)>=0);
     }
 }
@@ -201,58 +201,58 @@ Return      : None.
 ******************************************************************************/
 void PendSV_Handler(void)
 {
-	rmp_ptr_t* SP;
-	struct pt_regs Regs;
+    rmp_ptr_t* SP;
+    struct pt_regs Regs;
 
-	/* Read the register contents and push to stack */
-	RMP_ASSERT(ptrace(PTRACE_GETREGS, RMP_User_PID, NULL, &Regs)>=0);
+    /* Read the register contents and push to stack */
+    RMP_ASSERT(ptrace(PTRACE_GETREGS, RMP_User_PID, NULL, &Regs)>=0);
 
-	/* Is it in the kernel? if yes... well, we gonna skip it this time until it exits */
-	/* Now push everything to its stack */
-	SP=(rmp_ptr_t*)(Regs.esp);
-	*(--SP)=Regs.xss;
-	*(--SP)=Regs.eflags;
-	*(--SP)=Regs.xcs;
-	*(--SP)=Regs.eip;
-	*(--SP)=Regs.orig_eax;
-	*(--SP)=Regs.xgs;
-	*(--SP)=Regs.xfs;
-	*(--SP)=Regs.xes;
-	*(--SP)=Regs.xds;
-	*(--SP)=Regs.eax;
-	*(--SP)=Regs.ebp;
-	*(--SP)=Regs.edi;
-	*(--SP)=Regs.esi;
-	*(--SP)=Regs.edx;
-	*(--SP)=Regs.ecx;
-	*(--SP)=Regs.ebx;
+    /* Is it in the kernel? if yes... well, we gonna skip it this time until it exits */
+    /* Now push everything to its stack */
+    SP=(rmp_ptr_t*)(Regs.esp);
+    *(--SP)=Regs.xss;
+    *(--SP)=Regs.eflags;
+    *(--SP)=Regs.xcs;
+    *(--SP)=Regs.eip;
+    *(--SP)=Regs.orig_eax;
+    *(--SP)=Regs.xgs;
+    *(--SP)=Regs.xfs;
+    *(--SP)=Regs.xes;
+    *(--SP)=Regs.xds;
+    *(--SP)=Regs.eax;
+    *(--SP)=Regs.ebp;
+    *(--SP)=Regs.edi;
+    *(--SP)=Regs.esi;
+    *(--SP)=Regs.edx;
+    *(--SP)=Regs.ecx;
+    *(--SP)=Regs.ebx;
 
-	RMP_Ctx_Save();
-	RMP_SP_Cur=(rmp_ptr_t)SP;
-	_RMP_Run_High();
-	SP=(rmp_ptr_t*)RMP_SP_Cur;
-	RMP_Ctx_Load();
+    RMP_Ctx_Save();
+    RMP_SP_Cur=(rmp_ptr_t)SP;
+    _RMP_Run_High();
+    SP=(rmp_ptr_t*)RMP_SP_Cur;
+    RMP_Ctx_Load();
 
-	/* Reload register contents from stack */
-	Regs.ebx=*(SP++);
-	Regs.ecx=*(SP++);
-	Regs.edx=*(SP++);
-	Regs.esi=*(SP++);
-	Regs.edi=*(SP++);
-	Regs.ebp=*(SP++);
-	Regs.eax=*(SP++);
-	Regs.xds=*(SP++);
-	Regs.xes=*(SP++);
-	Regs.xfs=*(SP++);
-	Regs.xgs=*(SP++);
-	Regs.orig_eax=*(SP++);
-	Regs.eip=*(SP++);
-	Regs.xcs=*(SP++);
-	Regs.eflags=*(SP++);
-	Regs.xss=*(SP++);
-	Regs.esp=(rmp_ptr_t)SP;
+    /* Reload register contents from stack */
+    Regs.ebx=*(SP++);
+    Regs.ecx=*(SP++);
+    Regs.edx=*(SP++);
+    Regs.esi=*(SP++);
+    Regs.edi=*(SP++);
+    Regs.ebp=*(SP++);
+    Regs.eax=*(SP++);
+    Regs.xds=*(SP++);
+    Regs.xes=*(SP++);
+    Regs.xfs=*(SP++);
+    Regs.xgs=*(SP++);
+    Regs.orig_eax=*(SP++);
+    Regs.eip=*(SP++);
+    Regs.xcs=*(SP++);
+    Regs.eflags=*(SP++);
+    Regs.xss=*(SP++);
+    Regs.esp=(rmp_ptr_t)SP;
 
-	RMP_ASSERT(ptrace(PTRACE_SETREGS, RMP_User_PID, NULL, &Regs)>=0);
+    RMP_ASSERT(ptrace(PTRACE_SETREGS, RMP_User_PID, NULL, &Regs)>=0);
 }
 /* End Function:PendSV_Handler ***********************************************/
 
@@ -270,7 +270,7 @@ Return      : None.
 ******************************************************************************/
 void SysTick_Handler(void)
 {
-	_RMP_Tick_Handler(1);
+    _RMP_Tick_Handler(1);
 }
 /* End Function:SysTick_Handler **********************************************/
 
@@ -285,29 +285,29 @@ Return      : None.
 ******************************************************************************/
 void _RMP_Stack_Init(rmp_ptr_t Entry, rmp_ptr_t Stack, rmp_ptr_t Arg)
 {
-	rmp_ptr_t* Stack_Addr;
+    rmp_ptr_t* Stack_Addr;
 
-	Stack_Addr=(rmp_ptr_t*)Stack;
+    Stack_Addr=(rmp_ptr_t*)Stack;
 
-	Stack_Addr[0]=0x0B0B0B0B;                                        /* EBX */
-	Stack_Addr[1]=0x0C0C0C0C;                                        /* ECX */
-	Stack_Addr[2]=0x0D0D0D0D;                                        /* EDX */
-	Stack_Addr[3]=0x51515151;                                        /* ESI */
-	Stack_Addr[4]=0xD1D1D1D1;                                        /* EDI */
-	Stack_Addr[5]=0x69696969;                                        /* EBP */
-	Stack_Addr[6]=Arg;                                               /* EAX */
-	/* ptrace requires the last 2 bits of segment registers to be 1; see kernel source */
-	Stack_Addr[7]=0x2B;                                              /* XDS */
-	Stack_Addr[8]=0x2B;                                              /* XES */
-	Stack_Addr[9]=0x2B;                                              /* XFS */
-	Stack_Addr[10]=0x63;                                             /* XGS */
-	Stack_Addr[11]=Arg;                                              /* ORIG_EAX */
-	/* Always need to +2, kernel bug */
-	Stack_Addr[12]=Entry;                                            /* EIP */
-	Stack_Addr[13]=0x23;                                             /* ECS */
-	Stack_Addr[14]=0x202;                                            /* EFLAGS */
-	Stack_Addr[15]=0x2B;                                             /* XSS */
-	Stack_Addr[16]=Arg;                                              /* Param */
+    Stack_Addr[0]=0x0B0B0B0B;                                        /* EBX */
+    Stack_Addr[1]=0x0C0C0C0C;                                        /* ECX */
+    Stack_Addr[2]=0x0D0D0D0D;                                        /* EDX */
+    Stack_Addr[3]=0x51515151;                                        /* ESI */
+    Stack_Addr[4]=0xD1D1D1D1;                                        /* EDI */
+    Stack_Addr[5]=0x69696969;                                        /* EBP */
+    Stack_Addr[6]=Arg;                                               /* EAX */
+    /* ptrace requires the last 2 bits of segment registers to be 1; see kernel source */
+    Stack_Addr[7]=0x2B;                                              /* XDS */
+    Stack_Addr[8]=0x2B;                                              /* XES */
+    Stack_Addr[9]=0x2B;                                              /* XFS */
+    Stack_Addr[10]=0x63;                                             /* XGS */
+    Stack_Addr[11]=Arg;                                              /* ORIG_EAX */
+    /* Always need to +2, kernel bug */
+    Stack_Addr[12]=Entry;                                            /* EIP */
+    Stack_Addr[13]=0x23;                                             /* ECS */
+    Stack_Addr[14]=0x202;                                            /* EFLAGS */
+    Stack_Addr[15]=0x2B;                                             /* XSS */
+    Stack_Addr[16]=Arg;                                              /* Param */
 }
 /* End Function:_RMP_Stack_Init **********************************************/
 
@@ -335,8 +335,8 @@ Return      : None.
 ******************************************************************************/
 void _RMP_Plat_Hook(void)
 {
-	/* Let the parent trace me */
-	RMP_ASSERT(ptrace(PTRACE_TRACEME)>=0);
+    /* Let the parent trace me */
+    RMP_ASSERT(ptrace(PTRACE_TRACEME)>=0);
 
     RMP_Int_Enable();
 }
