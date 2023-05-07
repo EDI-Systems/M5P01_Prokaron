@@ -76,7 +76,7 @@ Output      : None.
 Return      : None.
 ******************************************************************************/
 void _RMP_Low_Level_Init(void)
-{    
+{
     RMP_A6M_LOW_LEVEL_INIT();
   
     RMP_Int_Disable();

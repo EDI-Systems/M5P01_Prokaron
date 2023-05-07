@@ -792,7 +792,7 @@ rmp_ret_t RMP_Thd_Crt(volatile struct RMP_Thd* Thread,
                       rmp_ptr_t Prio,
                       rmp_ptr_t Slice)
 {
-    /* Check if the priority and timeslice range is correct */
+    /* Check priority validity */
     if(Prio>=RMP_PREEMPT_PRIO_NUM)
     {
         RMP_COVERAGE_MARKER();
@@ -801,6 +801,7 @@ rmp_ret_t RMP_Thd_Crt(volatile struct RMP_Thd* Thread,
     else
         RMP_COVERAGE_MARKER();
     
+    /* Check slice validity */
     if((Slice==0U)||(Slice>=RMP_SLICE_MAX))
     {
         RMP_COVERAGE_MARKER();
@@ -809,7 +810,7 @@ rmp_ret_t RMP_Thd_Crt(volatile struct RMP_Thd* Thread,
     else
         RMP_COVERAGE_MARKER();
     
-    /* Check if this thread structure could possibly be in use */
+    /* Check thread pointer */
     if(Thread==RMP_NULL)
     {
         RMP_COVERAGE_MARKER();
@@ -820,6 +821,7 @@ rmp_ret_t RMP_Thd_Crt(volatile struct RMP_Thd* Thread,
     
     RMP_Sched_Lock();
     
+    /* Check if the thread is in use */
     if(RMP_THD_STATE(Thread->State)!=RMP_THD_FREE)
     {
         RMP_COVERAGE_MARKER();
@@ -860,7 +862,7 @@ rmp_ret_t RMP_Thd_Del(volatile struct RMP_Thd* Thread)
     rmp_ptr_t State;
     volatile struct RMP_Thd* Release;
     
-    /* Check if this thread structure could possibly be in use */
+    /* Check thread pointer */
     if(Thread==RMP_NULL)
     {
         RMP_COVERAGE_MARKER();
@@ -871,6 +873,7 @@ rmp_ret_t RMP_Thd_Del(volatile struct RMP_Thd* Thread)
     
     RMP_Sched_Lock();
     
+    /* Check if the thread is in use */
     if(RMP_THD_STATE(Thread->State)==RMP_THD_FREE)
     {
         RMP_COVERAGE_MARKER();
@@ -973,7 +976,7 @@ rmp_ret_t RMP_Thd_Set(volatile struct RMP_Thd* Thread,
                       rmp_ptr_t Prio,
                       rmp_ptr_t Slice)
 {
-    /* Check if the priority and timeslice range is correct */
+    /* Check slice validity */
     if(Slice==0U)
     {
         RMP_COVERAGE_MARKER();
@@ -982,7 +985,7 @@ rmp_ret_t RMP_Thd_Set(volatile struct RMP_Thd* Thread,
     else
         RMP_COVERAGE_MARKER();
     
-    /* Check if this thread structure could possibly be in use */
+    /* Check thread pointer */
     if(Thread==RMP_NULL)
     {
         RMP_COVERAGE_MARKER();
@@ -993,6 +996,7 @@ rmp_ret_t RMP_Thd_Set(volatile struct RMP_Thd* Thread,
     
     RMP_Sched_Lock();
     
+    /* Check if the thread is in use */
     if(RMP_THD_STATE(Thread->State)==RMP_THD_FREE)
     {
         RMP_COVERAGE_MARKER();
@@ -1068,7 +1072,7 @@ Return      : rmp_ret_t - If successful, 0; else error code.
 ******************************************************************************/
 rmp_ret_t RMP_Thd_Suspend(volatile struct RMP_Thd* Thread)
 {
-    /* Check if this thread structure could possibly be in use */
+    /* Check thread pointer */
     if(Thread==RMP_NULL)
     {
         RMP_COVERAGE_MARKER();
@@ -1079,6 +1083,7 @@ rmp_ret_t RMP_Thd_Suspend(volatile struct RMP_Thd* Thread)
     
     RMP_Sched_Lock();
     
+    /* Check if the thread is in use */
     if(RMP_THD_STATE(Thread->State)==RMP_THD_FREE)
     {
         RMP_COVERAGE_MARKER();
@@ -1135,7 +1140,7 @@ rmp_ret_t RMP_Thd_Resume(volatile struct RMP_Thd* Thread)
 {
     rmp_ret_t Retval;
     
-    /* Check if this thread structure could possibly be in use */
+    /* Check thread pointer */
     if(Thread==RMP_NULL)
     {
         RMP_COVERAGE_MARKER();
@@ -1146,6 +1151,7 @@ rmp_ret_t RMP_Thd_Resume(volatile struct RMP_Thd* Thread)
 
     RMP_Sched_Lock();
     
+    /* Check if the thread is in use */
     if(RMP_THD_STATE(Thread->State)==RMP_THD_FREE)
     {
         RMP_COVERAGE_MARKER();
@@ -1199,7 +1205,7 @@ rmp_ret_t RMP_Thd_Snd(volatile struct RMP_Thd* Thread,
                       rmp_ptr_t Data,
                       rmp_ptr_t Slice)
 {
-    /* Check if this thread structure could possibly be in use */
+    /* Check thread pointer */
     if(Thread==RMP_NULL)
     {
         RMP_COVERAGE_MARKER();
@@ -1210,6 +1216,7 @@ rmp_ret_t RMP_Thd_Snd(volatile struct RMP_Thd* Thread,
     
     RMP_Sched_Lock();
     
+    /* Check if the thread is in use */
     if(RMP_THD_STATE(Thread->State)==RMP_THD_FREE)
     {
         RMP_COVERAGE_MARKER();
@@ -1307,7 +1314,8 @@ Description : Send to a real-time thread's mailbox. If the mailbox is full, then
               an ISR whose priority is below or equal to the context switch handler's.
               We do not check whether the scheduler is locked; if we are calling this
               function, we're pretty sure that it's not.
-Input       : volatile struct RMP_Thd* Thread - The thread structure of the thread to send to.
+Input       : volatile struct RMP_Thd* Thread - The thread structure of the 
+                                                thread to send to.
               rmp_ptr_t Data - The data to send to that thread.
 Output      : None.
 Return      : rmp_ret_t - If successful, 0; or an error code.
@@ -1315,7 +1323,7 @@ Return      : rmp_ret_t - If successful, 0; or an error code.
 rmp_ret_t RMP_Thd_Snd_ISR(volatile struct RMP_Thd* Thread,
                           rmp_ptr_t Data)
 {
-    /* Check if this thread structure could possibly be in use */
+    /* Check thread pointer */
     if(Thread==RMP_NULL)
     {
         RMP_COVERAGE_MARKER();
@@ -1324,6 +1332,7 @@ rmp_ret_t RMP_Thd_Snd_ISR(volatile struct RMP_Thd* Thread,
     else
         RMP_COVERAGE_MARKER();
     
+    /* Check if the thread is in use */
     if(RMP_THD_STATE(Thread->State)==RMP_THD_FREE)
     {
         RMP_COVERAGE_MARKER();
@@ -1395,6 +1404,7 @@ rmp_ret_t RMP_Thd_Rcv(rmp_ptr_t* Data,
 {
     volatile struct RMP_Thd* Sender;
     
+    /* Check data pointer */
     if(Data==RMP_NULL)
     {
         RMP_COVERAGE_MARKER();
@@ -1510,6 +1520,7 @@ Return      : rmp_ret_t - If successful, 0; or an error code.
 ******************************************************************************/
 rmp_ret_t RMP_Thd_Delay(rmp_ptr_t Slice)
 {
+    /* Check slice validity */
     if((Slice==0U)||(Slice>=RMP_SLICE_MAX))
     {
         RMP_COVERAGE_MARKER();
@@ -1540,7 +1551,7 @@ Return      : rmp_ret_t - If successful, 0; or an error code.
 ******************************************************************************/
 rmp_ret_t RMP_Thd_Cancel(volatile struct RMP_Thd* Thread)
 {
-    /* Check if this thread structure could possibly be in use */
+    /* Check thread pointer */
     if(Thread==RMP_NULL)
     {
         RMP_COVERAGE_MARKER();
@@ -1551,7 +1562,7 @@ rmp_ret_t RMP_Thd_Cancel(volatile struct RMP_Thd* Thread)
     
     RMP_Sched_Lock();
     
-    /* Is it delayed? */
+    /* Check if the thread is in use, and whether it is delayed */
     if(RMP_THD_STATE(Thread->State)!=RMP_THD_DELAYED)
     {
         RMP_COVERAGE_MARKER();
@@ -1583,7 +1594,7 @@ Return      : rmp_ret_t - If successful, 0; or an error code.
 rmp_ret_t RMP_Sem_Crt(volatile struct RMP_Sem* Semaphore,
                       rmp_ptr_t Number)
 {
-    /* Check if this semaphore structure could possibly be in use */
+    /* Check semaphore pointer */
     if(Semaphore==RMP_NULL)
     {
         RMP_COVERAGE_MARKER();
@@ -1594,6 +1605,7 @@ rmp_ret_t RMP_Sem_Crt(volatile struct RMP_Sem* Semaphore,
     
     RMP_Sched_Lock();
     
+    /* Check if the semaphore is in use */
     if(Semaphore->State!=RMP_SEM_FREE)
     {
         RMP_COVERAGE_MARKER();
@@ -1615,11 +1627,11 @@ rmp_ret_t RMP_Sem_Crt(volatile struct RMP_Sem* Semaphore,
 
     /* Initialize contents */
     Semaphore->Cur_Num=Number;
-    Semaphore->State=RMP_SEM_USED;
     RMP_List_Crt(&(Semaphore->Wait_List));
     
-    RMP_Sched_Unlock();
+    Semaphore->State=RMP_SEM_USED;
     
+    RMP_Sched_Unlock();
     return 0;
 }
 /* End Function:RMP_Sem_Crt **************************************************/
@@ -1634,7 +1646,7 @@ rmp_ret_t RMP_Sem_Del(volatile struct RMP_Sem* Semaphore)
 {
     volatile struct RMP_Thd* Thread;
     
-    /* Check if this semaphore structure could possibly be in use */
+    /* Check semaphore pointer */
     if(Semaphore==RMP_NULL)
     {
         RMP_COVERAGE_MARKER();
@@ -1645,6 +1657,7 @@ rmp_ret_t RMP_Sem_Del(volatile struct RMP_Sem* Semaphore)
     
     RMP_Sched_Lock();
     
+    /* Check if the semaphore is in use */
     if(Semaphore->State!=RMP_SEM_USED)
     {
         RMP_COVERAGE_MARKER();
@@ -1674,10 +1687,10 @@ rmp_ret_t RMP_Sem_Del(volatile struct RMP_Sem* Semaphore)
         _RMP_Run_Ins(Thread);
         Thread->Retval=RMP_ERR_OPER;
     }
+    
     Semaphore->State=RMP_SEM_FREE;
     
     RMP_Sched_Unlock();
-
     return 0;
 }
 /* End Function:RMP_Sem_Del **************************************************/
@@ -1692,7 +1705,8 @@ Return      : rmp_ret_t - If successful, the current semaphore number; or an err
 ******************************************************************************/
 rmp_ret_t _RMP_Sem_Pend_Core(volatile struct RMP_Sem* Semaphore,
                              rmp_ptr_t Slice)
-{    
+{
+    /* Check if the semaphore is in use */
     if(Semaphore->State!=RMP_SEM_USED)
     {
         RMP_COVERAGE_MARKER();
@@ -1759,7 +1773,7 @@ Return      : rmp_ret_t - If successful, the current semaphore number; or an err
 rmp_ret_t RMP_Sem_Pend(volatile struct RMP_Sem* Semaphore,
                        rmp_ptr_t Slice)
 {
-    /* Check if this semaphore structure could possibly be in use */
+    /* Check semaphore pointer */
     if(Semaphore==RMP_NULL)
     {
         RMP_COVERAGE_MARKER();
@@ -1786,10 +1800,11 @@ Return      : rmp_ret_t - If successful, the current semaphore number; or an err
 rmp_ret_t RMP_Sem_Pend_Unlock(volatile struct RMP_Sem* Semaphore,
                               rmp_ptr_t Slice)
 {
-    /* Check if this semaphore structure could possibly be in use */
+    /* Check semaphore pointer */
     if(Semaphore==RMP_NULL)
     {
         RMP_COVERAGE_MARKER();
+        RMP_Sched_Unlock();
         return RMP_ERR_SEM;
     }
     else
@@ -1799,6 +1814,7 @@ rmp_ret_t RMP_Sem_Pend_Unlock(volatile struct RMP_Sem* Semaphore,
     if(RMP_Sched_Lock_Cnt!=1U)
     {
         RMP_COVERAGE_MARKER();
+        RMP_Sched_Unlock();
         return RMP_ERR_OPER;
     }
     else
@@ -1816,7 +1832,7 @@ Return      : rmp_ret_t - If successful, 0; or an error code.
 ******************************************************************************/
 rmp_ret_t RMP_Sem_Abort(volatile struct RMP_Thd* Thread)
 {
-    /* Check if this thread structure could possibly be in use */
+    /* Check thread pointer */
     if(Thread==RMP_NULL)
     {
         RMP_COVERAGE_MARKER();
@@ -1827,6 +1843,7 @@ rmp_ret_t RMP_Sem_Abort(volatile struct RMP_Thd* Thread)
 
     RMP_Sched_Lock();
     
+    /* Check if the thread is in use */
     if(RMP_THD_STATE(Thread->State)==RMP_THD_FREE)
     {
         RMP_COVERAGE_MARKER();
@@ -1908,8 +1925,8 @@ Return      : rmp_ret_t - If successful, 0; or an error code.
 rmp_ret_t RMP_Sem_Post(volatile struct RMP_Sem* Semaphore,
                        rmp_ptr_t Number)
 {
-    /* Check if this semaphore structure could possibly be in use */
-    if((Semaphore==RMP_NULL)||(Number==0U))
+    /* Check semaphore pointer */
+    if(Semaphore==RMP_NULL)
     {
         RMP_COVERAGE_MARKER();
         return RMP_ERR_SEM;
@@ -1917,8 +1934,18 @@ rmp_ret_t RMP_Sem_Post(volatile struct RMP_Sem* Semaphore,
     else
         RMP_COVERAGE_MARKER();
     
+    /* Check number validity */
+    if(Number==0U)
+    {
+        RMP_COVERAGE_MARKER();
+        return RMP_ERR_OPER;
+    }
+    else
+        RMP_COVERAGE_MARKER();
+    
     RMP_Sched_Lock();
     
+    /* Check if the semaphore is in use */
     if(Semaphore->State!=RMP_SEM_USED)
     {
         RMP_COVERAGE_MARKER();
@@ -1953,9 +1980,10 @@ rmp_ret_t RMP_Sem_Post(volatile struct RMP_Sem* Semaphore,
 /* End Function:RMP_Sem_Post *************************************************/
 
 /* Begin Function:RMP_Sem_Post_ISR ********************************************
-Description : Post a number of semaphores to the list.
-              We do not check whether the scheduler is locked; if we are calling
-              this function, we're pretty sure that it's not.
+Description : Post a number of semaphores to the list. This function can only be
+              called from an ISR whose priority is below or equal to the context
+              switch handler's. We do not check whether the scheduler is locked;
+              if we are calling this function, we're pretty sure that it's not.
 Input       : volatile struct RMP_Sem* Semaphore - The pointer to the semaphore.
               rmp_ptr_t Number - The number to post.
 Output      : None.
@@ -1964,8 +1992,8 @@ Return      : rmp_ret_t - If successful, 0; or an error code.
 rmp_ret_t RMP_Sem_Post_ISR(volatile struct RMP_Sem* Semaphore,
                            rmp_ptr_t Number)
 {   
-    /* Check if this semaphore structure could possibly be in use */
-    if((Semaphore==RMP_NULL)||(Number==0U))
+    /* Check semaphore pointer */
+    if(Semaphore==RMP_NULL)
     {
         RMP_COVERAGE_MARKER();
         return RMP_ERR_SEM;
@@ -1973,6 +2001,16 @@ rmp_ret_t RMP_Sem_Post_ISR(volatile struct RMP_Sem* Semaphore,
     else
         RMP_COVERAGE_MARKER();
     
+    /* Check number validity */
+    if(Number==0U)
+    {
+        RMP_COVERAGE_MARKER();
+        return RMP_ERR_OPER;
+    }
+    else
+        RMP_COVERAGE_MARKER();
+    
+    /* Check if the semaphore is in use */
     if(Semaphore->State!=RMP_SEM_USED)
     {
         RMP_COVERAGE_MARKER();
@@ -2024,7 +2062,7 @@ rmp_ret_t RMP_Sem_Bcst(volatile struct RMP_Sem* Semaphore)
 {
     rmp_ret_t Number;
     
-    /* Check if this semaphore structure could possibly be in use */
+    /* Check semaphore pointer */
     if(Semaphore==RMP_NULL)
     {
         RMP_COVERAGE_MARKER();
@@ -2035,6 +2073,7 @@ rmp_ret_t RMP_Sem_Bcst(volatile struct RMP_Sem* Semaphore)
     
     RMP_Sched_Lock();
     
+    /* Check if the semaphore is in use */
     if(Semaphore->State!=RMP_SEM_USED)
     {
         RMP_COVERAGE_MARKER();
@@ -2058,9 +2097,10 @@ rmp_ret_t RMP_Sem_Bcst(volatile struct RMP_Sem* Semaphore)
 /* End Function:RMP_Sem_Bcst *************************************************/
 
 /* Begin Function:RMP_Sem_Bcst_ISR ********************************************
-Description : Unblock all threads waiting on the semaphore.
-              We do not check whether the scheduler is locked; if we are calling
-              this function, we're pretty sure that it's not.
+Description : Unblock all threads on the semaphore. This function can only be
+              called from an ISR whose priority is below or equal to the context
+              switch handler's. We do not check whether the scheduler is locked;
+              if we are calling this function, we're pretty sure that it's not.
 Input       : volatile struct RMP_Sem* Semaphore - The pointer to the semaphore.
 Output      : None.
 Return      : rmp_ret_t - If successful, the number of threads unblocked; 
@@ -2070,7 +2110,7 @@ rmp_ret_t RMP_Sem_Bcst_ISR(volatile struct RMP_Sem* Semaphore)
 {   
     rmp_ret_t Number;
     
-    /* Check if this semaphore structure could possibly be in use */
+    /* Check semaphore pointer */
     if(Semaphore==RMP_NULL)
     {
         RMP_COVERAGE_MARKER();
@@ -2079,6 +2119,7 @@ rmp_ret_t RMP_Sem_Bcst_ISR(volatile struct RMP_Sem* Semaphore)
     else
         RMP_COVERAGE_MARKER();
     
+    /* Check if the semaphore is in use */
     if(Semaphore->State!=RMP_SEM_USED)
     {
         RMP_COVERAGE_MARKER();
@@ -2105,9 +2146,47 @@ rmp_ret_t RMP_Sem_Bcst_ISR(volatile struct RMP_Sem* Semaphore)
     else
         RMP_COVERAGE_MARKER();
 
-    return 0;
+    return Number;
 }
 /* End Function:RMP_Sem_Bcst_ISR *********************************************/
+
+/* Begin Function:RMP_Sem_Cnt *************************************************
+Description : Get the number of semaphores.
+Input       : volatile struct RMP_Sem* Semaphore - The pointer to the semaphore.
+Output      : None.
+Return      : rmp_ret_t - If successful, the number of semaphores; or an error code.
+******************************************************************************/
+rmp_ret_t RMP_Sem_Cnt(volatile struct RMP_Sem* Semaphore)
+{
+    rmp_ret_t Count;
+    
+    /* Check semaphore pointer */
+    if(Semaphore==RMP_NULL)
+    {
+        RMP_COVERAGE_MARKER();
+        return RMP_ERR_SEM;
+    }
+    else
+        RMP_COVERAGE_MARKER();
+
+    RMP_Sched_Lock();
+    
+    /* Check if the semaphore is in use */
+	if(Semaphore->State!=RMP_SEM_USED)
+    {
+        RMP_COVERAGE_MARKER();
+        RMP_Sched_Unlock();
+        return RMP_ERR_SEM;
+    }
+    else
+        RMP_COVERAGE_MARKER();
+    
+    Count=(rmp_ret_t)(Semaphore->Cur_Num);
+    
+    RMP_Sched_Unlock();
+    return Count;
+}
+/* End Function:RMP_Sem_Cnt **************************************************/
 
 /* Begin Function:RMP_Ctx_Save ************************************************
 Description : Save hook for extra context, such as FPU, peripherals and MPU.
@@ -3079,7 +3158,7 @@ Return      : rmp_ret_t - If successful, 0; or an error code.
 ******************************************************************************/
 rmp_ret_t RMP_Fifo_Crt(volatile struct RMP_Fifo* Fifo)
 {
-    /* Check if this FIFO structure could possibly be in use */
+    /* Check the FIFO pointer */
     if(Fifo==RMP_NULL)
     {
         RMP_COVERAGE_MARKER();
@@ -3090,14 +3169,72 @@ rmp_ret_t RMP_Fifo_Crt(volatile struct RMP_Fifo* Fifo)
     
     RMP_Sched_Lock();
     
+    /* Check if the FIFO is in use */
+    if(Fifo->State!=RMP_FIFO_FREE)
+    {
+        RMP_COVERAGE_MARKER();
+        RMP_Sched_Unlock();
+        return RMP_ERR_FIFO;
+    }
+    else
+        RMP_COVERAGE_MARKER();
+
     /* Create linked list */
     RMP_List_Crt(&(Fifo->Head));
     Fifo->Cur_Num=0U;
+    Fifo->State=RMP_FIFO_USED;
     
     RMP_Sched_Unlock();
     return 0;
 }
 /* End Function:RMP_Fifo_Crt *************************************************/
+
+/* Begin Function:RMP_Fifo_Del ************************************************
+Description : Delete a FIFO.
+Input       : volatile struct RMP_Fifo* Fifo - The pointer to the FIFO.
+Output      : None.
+Return      : rmp_ret_t - If successful, 0; or an error code.
+******************************************************************************/
+rmp_ret_t RMP_Fifo_Del(volatile struct RMP_Fifo* Fifo)
+{
+    /* Check the FIFO pointer */
+    if(Fifo==RMP_NULL)
+    {
+        RMP_COVERAGE_MARKER();
+        return RMP_ERR_FIFO;
+    }
+    else
+        RMP_COVERAGE_MARKER();
+    
+    RMP_Sched_Lock();
+    
+    /* Check if the FIFO is in use */
+    if(Fifo->State!=RMP_FIFO_USED)
+    {
+        RMP_COVERAGE_MARKER();
+        RMP_Sched_Unlock();
+        return RMP_ERR_FIFO;
+    }
+    else
+        RMP_COVERAGE_MARKER();
+
+    /* See if the FIFO have any elements */
+    if(Fifo->Cur_Num!=0)
+    {
+        RMP_COVERAGE_MARKER();
+        RMP_Sched_Unlock();
+        return RMP_ERR_OPER;
+    }
+    else
+        RMP_COVERAGE_MARKER();
+    
+    /* Mark as free */
+    Fifo->State=RMP_FIFO_FREE;
+    
+    RMP_Sched_Unlock();
+    return 0;
+}
+/* End Function:RMP_Fifo_Del *************************************************/
 
 /* Begin Function:RMP_Fifo_Read ***********************************************
 Description : Read an element from a FIFO.
@@ -3108,7 +3245,7 @@ Return      : rmp_ret_t - If successful, 0; or an error code.
 rmp_ret_t RMP_Fifo_Read(volatile struct RMP_Fifo* Fifo,
                         volatile struct RMP_List** Node)
 {
-    /* Check if this FIFO structure could possibly be in use */
+    /* Check the FIFO pointer */
     if(Fifo==RMP_NULL)
     {
         RMP_COVERAGE_MARKER();
@@ -3128,6 +3265,16 @@ rmp_ret_t RMP_Fifo_Read(volatile struct RMP_Fifo* Fifo,
     
     RMP_Sched_Lock();
     
+    /* Check if the FIFO is in use */
+    if(Fifo->State!=RMP_FIFO_USED)
+    {
+        RMP_COVERAGE_MARKER();
+        RMP_Sched_Unlock();
+        return RMP_ERR_FIFO;
+    }
+    else
+        RMP_COVERAGE_MARKER();
+    
     /* See if the FIFO is empty */
     if(Fifo->Head.Next==&(Fifo->Head))
     {
@@ -3142,7 +3289,7 @@ rmp_ret_t RMP_Fifo_Read(volatile struct RMP_Fifo* Fifo,
     *Node=Fifo->Head.Next;
     RMP_List_Del((*Node)->Prev, (*Node)->Next);
     
-    /* The count should not go down to zero */
+    /* The count should not be zero, decrease it */
     RMP_ASSERT(Fifo->Cur_Num!=0U);
     Fifo->Cur_Num--;
     
@@ -3161,7 +3308,7 @@ Return      : rmp_ret_t - If successful, 0; or an error code.
 rmp_ret_t RMP_Fifo_Write(volatile struct RMP_Fifo* Fifo,
                          volatile struct RMP_List* Node)
 {
-    /* Check if this FIFO structure could possibly be in use */
+    /* Check the FIFO pointer */
     if(Fifo==RMP_NULL)
     {
         RMP_COVERAGE_MARKER();
@@ -3180,6 +3327,16 @@ rmp_ret_t RMP_Fifo_Write(volatile struct RMP_Fifo* Fifo,
         RMP_COVERAGE_MARKER();
 
     RMP_Sched_Lock();
+    
+    /* Check if the FIFO is in use */
+    if(Fifo->State!=RMP_FIFO_USED)
+    {
+        RMP_COVERAGE_MARKER();
+        RMP_Sched_Unlock();
+        return RMP_ERR_FIFO;
+    }
+    else
+        RMP_COVERAGE_MARKER();
 
     /* Write to list and increase count */
     RMP_List_Ins(Node, Fifo->Head.Prev, &(Fifo->Head));
@@ -3191,9 +3348,10 @@ rmp_ret_t RMP_Fifo_Write(volatile struct RMP_Fifo* Fifo,
 /* End Function:RMP_Fifo_Write ***********************************************/
 
 /* Begin Function:RMP_Fifo_Write_ISR ******************************************
-Description : Write an element to a FIFO.
-              We do not check whether the scheduler is locked; if we are calling
-              this function, we're pretty sure that it's not.
+Description : Write an element to a FIFO, from the ISR. This function can only be
+              called from an ISR whose priority is below or equal to the context
+              switch handler's. We do not check whether the scheduler is locked;
+              if we are calling this function, we're pretty sure that it's not.
 Input       : volatile struct RMP_Fifo* Fifo - The pointer to the FIFO.
               volatile struct RMP_List* Node - The node to put into the FIFO.
 Output      : None.
@@ -3202,7 +3360,7 @@ Return      : rmp_ret_t - If successful, 0; or an error code.
 rmp_ret_t RMP_Fifo_Write_ISR(volatile struct RMP_Fifo* Fifo,
                              volatile struct RMP_List* Node)
 {
-    /* Check if this FIFO structure could possibly be in use */
+    /* Check the FIFO pointer */
     if(Fifo==RMP_NULL)
     {
         RMP_COVERAGE_MARKER();
@@ -3216,6 +3374,15 @@ rmp_ret_t RMP_Fifo_Write_ISR(volatile struct RMP_Fifo* Fifo,
     {
         RMP_COVERAGE_MARKER();
         return RMP_ERR_OPER;
+    }
+    else
+        RMP_COVERAGE_MARKER();
+    
+    /* Check if the FIFO is in use */
+    if(Fifo->State!=RMP_FIFO_USED)
+    {
+        RMP_COVERAGE_MARKER();
+        return RMP_ERR_FIFO;
     }
     else
         RMP_COVERAGE_MARKER();
@@ -3236,7 +3403,9 @@ Return      : rmp_ret_t - If successful, the number of nodes; or an error code.
 ******************************************************************************/
 rmp_ret_t RMP_Fifo_Cnt(volatile struct RMP_Fifo* Fifo)
 {
-    /* Check if this FIFO structure could possibly be in use */
+    rmp_ret_t Count;
+    
+    /* Check the FIFO pointer */
     if(Fifo==RMP_NULL)
     {
         RMP_COVERAGE_MARKER();
@@ -3245,7 +3414,22 @@ rmp_ret_t RMP_Fifo_Cnt(volatile struct RMP_Fifo* Fifo)
     else
         RMP_COVERAGE_MARKER();
     
-    return (rmp_ret_t)(Fifo->Cur_Num);
+    RMP_Sched_Lock();
+    
+    /* Check if the FIFO is in use */
+    if(Fifo->State!=RMP_FIFO_USED)
+    {
+        RMP_COVERAGE_MARKER();
+        RMP_Sched_Unlock();
+        return RMP_ERR_FIFO;
+    }
+    else
+        RMP_COVERAGE_MARKER();
+    
+    Count=(rmp_ret_t)(Fifo->Cur_Num);
+    
+    RMP_Sched_Unlock();
+    return Count;
 }
 /* End Function:RMP_Fifo_Cnt *************************************************/
 
@@ -3257,7 +3441,7 @@ Return      : rmp_ret_t - If successful, 0; or an error code.
 ******************************************************************************/
 rmp_ret_t RMP_Msgq_Crt(volatile struct RMP_Msgq* Queue)
 {
-    /* Check if this queue structure could possibly be in use */
+    /* Check the queue pointer */
     if(Queue==RMP_NULL)
     {
         RMP_COVERAGE_MARKER();
@@ -3265,11 +3449,25 @@ rmp_ret_t RMP_Msgq_Crt(volatile struct RMP_Msgq* Queue)
     }
     else
         RMP_COVERAGE_MARKER();
+		
+    RMP_Sched_Lock();
+    
+    /* Check if the queue is in use */
+    if(Queue->State!=RMP_MSGQ_FREE)
+    {
+        RMP_COVERAGE_MARKER();
+        RMP_Sched_Unlock();
+        return RMP_ERR_MSGQ;
+    }
+    else
+        RMP_COVERAGE_MARKER();
     
     /* A queue is just a FIFO paired with a counting semaphore */
+    RMP_ASSERT(RMP_Sem_Crt(&(Queue->Sem), 0U)==0);
     RMP_ASSERT(RMP_Fifo_Crt(&(Queue->Fifo))==0);
-    RMP_ASSERT(RMP_Sem_Crt(&(Queue->Sem),0U)==0);
+    Queue->State=RMP_MSGQ_USED;
     
+    RMP_Sched_Unlock();
     return 0;
 }
 /* End Function:RMP_Msgq_Crt *************************************************/
@@ -3283,9 +3481,7 @@ Return      : rmp_ret_t - If successful, 0; or an error code.
 ******************************************************************************/
 rmp_ret_t RMP_Msgq_Del(volatile struct RMP_Msgq* Queue)
 {
-    rmp_ret_t Count;
-    
-    /* Check if this queue structure could possibly be in use */
+    /* Check the queue pointer */
     if(Queue==RMP_NULL)
     {
         RMP_COVERAGE_MARKER();
@@ -3296,10 +3492,18 @@ rmp_ret_t RMP_Msgq_Del(volatile struct RMP_Msgq* Queue)
     
     RMP_Sched_Lock();
     
-    /* See if the FIFO have any element */
-    Count=RMP_Fifo_Cnt(&(Queue->Fifo));
-    RMP_ASSERT(Count>=0);
-    if(Count!=0)
+    /* Check if the queue is in use */
+    if(Queue->State!=RMP_MSGQ_USED)
+    {
+        RMP_COVERAGE_MARKER();
+        RMP_Sched_Unlock();
+        return RMP_ERR_MSGQ;
+    }
+    else
+        RMP_COVERAGE_MARKER();
+    
+    /* See if the FIFO could be deleted */
+    if(RMP_Fifo_Del(&(Queue->Fifo))<0)
     {
         RMP_COVERAGE_MARKER();
         RMP_Sched_Unlock();
@@ -3307,9 +3511,10 @@ rmp_ret_t RMP_Msgq_Del(volatile struct RMP_Msgq* Queue)
     }
     else
         RMP_COVERAGE_MARKER();
-    
+
     /* Proceed to delete the semaphore */
     RMP_ASSERT(RMP_Sem_Del(&(Queue->Sem))==0);
+    Queue->State=RMP_MSGQ_FREE;
     
     RMP_Sched_Unlock();
     return 0;
@@ -3317,7 +3522,7 @@ rmp_ret_t RMP_Msgq_Del(volatile struct RMP_Msgq* Queue)
 /* End Function:RMP_Msgq_Del *************************************************/
 
 /* Begin Function:RMP_Msgq_Snd ************************************************
-Description : Send to a message queue.
+Description : Send a message to the message queue.
 Input       : volatile struct RMP_Msgq* Queue - The pointer to the queue.
 Output      : None.
 Return      : rmp_ret_t - If successful, 0; or an error code.
@@ -3325,7 +3530,7 @@ Return      : rmp_ret_t - If successful, 0; or an error code.
 rmp_ret_t RMP_Msgq_Snd(volatile struct RMP_Msgq* Queue,
                        volatile struct RMP_List* Node)
 {
-    /* Check if this queue structure could possibly be in use */
+    /* Check the queue pointer */
     if(Queue==RMP_NULL)
     {
         RMP_COVERAGE_MARKER();
@@ -3345,9 +3550,20 @@ rmp_ret_t RMP_Msgq_Snd(volatile struct RMP_Msgq* Queue,
     
     RMP_Sched_Lock();
     
+    /* Check if the queue is in use */
+    if(Queue->State!=RMP_MSGQ_USED)
+    {
+        RMP_COVERAGE_MARKER();
+        RMP_Sched_Unlock();
+        return RMP_ERR_MSGQ;
+    }
+    else
+        RMP_COVERAGE_MARKER();
+    
     /* Note the trick here: we have locked the scheduler, so we're safe to 
      * post the semaphore first. We do this lest the semaphore post may fail
-     * due to maximum number limit. */
+     * due to maximum number limit. Semaphore post is in fact safe tu use
+     * when inside a critical section. */
     if(RMP_Sem_Post(&(Queue->Sem), 1U)<0)
     {
         RMP_COVERAGE_MARKER();
@@ -3366,7 +3582,10 @@ rmp_ret_t RMP_Msgq_Snd(volatile struct RMP_Msgq* Queue,
 /* End Function:RMP_Msgq_Snd *************************************************/
 
 /* Begin Function:RMP_Msgq_Snd_ISR ********************************************
-Description : Send to a message queue.
+Description : Send a message to the message queue. This function can only be
+              called from an ISR whose priority is below or equal to the context
+              switch handler's. We do not check whether the scheduler is locked;
+              if we are calling this function, we're pretty sure that it's not.
               We do not check whether the scheduler is locked; if we are calling
               this function, we're pretty sure that it's not.
 Input       : volatile struct RMP_Msgq* Queue - The pointer to the queue.
@@ -3376,7 +3595,7 @@ Return      : rmp_ret_t - If successful, 0; or an error code.
 rmp_ret_t RMP_Msgq_Snd_ISR(volatile struct RMP_Msgq* Queue,
                            volatile struct RMP_List* Node)
 {
-    /* Check if this queue structure could possibly be in use */
+    /* Check the queue pointer */
     if(Queue==RMP_NULL)
     {
         RMP_COVERAGE_MARKER();
@@ -3390,6 +3609,15 @@ rmp_ret_t RMP_Msgq_Snd_ISR(volatile struct RMP_Msgq* Queue,
     {
         RMP_COVERAGE_MARKER();
         return RMP_ERR_OPER;
+    }
+    else
+        RMP_COVERAGE_MARKER();
+    
+    /* Check if the queue is in use */
+    if(Queue->State!=RMP_MSGQ_USED)
+    {
+        RMP_COVERAGE_MARKER();
+        return RMP_ERR_MSGQ;
     }
     else
         RMP_COVERAGE_MARKER();
@@ -3411,7 +3639,7 @@ rmp_ret_t RMP_Msgq_Snd_ISR(volatile struct RMP_Msgq* Queue,
 /* End Function:RMP_Msgq_Snd_ISR *********************************************/
 
 /* Begin Function:RMP_Msgq_Rcv ************************************************
-Description : Receive from a message queue.
+Description : Receive a message from a message queue.
 Input       : volatile struct RMP_Msgq* Queue - The pointer to the queue.
               rmp_ptr_t Slice - The number of slices to wait.
 Output      : volatile struct RMP_List** Node - The node received.
@@ -3419,10 +3647,10 @@ Output      : None.
 Return      : rmp_ret_t - If successful, 0; or an error code.
 ******************************************************************************/
 rmp_ret_t RMP_Msgq_Rcv(volatile struct RMP_Msgq* Queue,
-                       rmp_ptr_t Slice,
-                       volatile struct RMP_List** Node)
+                       volatile struct RMP_List** Node,
+                       rmp_ptr_t Slice)
 {
-    /* Check if this queue structure could possibly be in use */
+    /* Check the queue pointer */
     if(Queue==RMP_NULL)
     {
         RMP_COVERAGE_MARKER();
@@ -3440,10 +3668,22 @@ rmp_ret_t RMP_Msgq_Rcv(volatile struct RMP_Msgq* Queue,
     else
         RMP_COVERAGE_MARKER();
     
+    RMP_Sched_Lock();
+    
+    /* Check if the queue is in use */
+    if(Queue->State!=RMP_MSGQ_USED)
+    {
+        RMP_COVERAGE_MARKER();
+        RMP_Sched_Unlock();
+        return RMP_ERR_MSGQ;
+    }
+    else
+        RMP_COVERAGE_MARKER();
+    
     /* Try to grab a semaphore, and only when we succeed do we proceed - 
      * there is the possibility that the whole queue gets deleted, so
      * we need to take that into account. */
-    if(RMP_Sem_Pend(&(Queue->Sem), Slice)<0)
+    if(RMP_Sem_Pend_Unlock(&(Queue->Sem), Slice)<0)
     {
         RMP_COVERAGE_MARKER();
         return RMP_ERR_OPER;
@@ -3451,8 +3691,14 @@ rmp_ret_t RMP_Msgq_Rcv(volatile struct RMP_Msgq* Queue,
     else
         RMP_COVERAGE_MARKER();
     
-    /* Grab the data then */
-    RMP_ASSERT(RMP_Fifo_Read(&(Queue->Fifo), Node)==0);
+    /* Grab the data then - we could have a delete race here */
+    if(RMP_Fifo_Read(&(Queue->Fifo), Node)<0)
+    {
+        RMP_COVERAGE_MARKER();
+        return RMP_ERR_OPER;
+    }
+    else
+        RMP_COVERAGE_MARKER();
     
     return 0;
 }
@@ -3460,13 +3706,15 @@ rmp_ret_t RMP_Msgq_Rcv(volatile struct RMP_Msgq* Queue,
 
 /* Begin Function:RMP_Msgq_Cnt ************************************************
 Description : Get the number of nodes in the message queue.
-Input       : volatile struct RMP_Fifo* Fifo - The pointer to the message queue.
+Input       : volatile struct RMP_Msgq* Queue - The pointer to the message queue.
 Output      : None.
 Return      : rmp_ret_t - If successful, the number of nodes; or an error code.
 ******************************************************************************/
 rmp_ret_t RMP_Msgq_Cnt(volatile struct RMP_Msgq* Queue)
 {
-    /* Check if this FIFO structure could possibly be in use */
+    rmp_ret_t Count;
+    
+    /* Check the queue pointer */
     if(Queue==RMP_NULL)
     {
         RMP_COVERAGE_MARKER();
@@ -3475,7 +3723,22 @@ rmp_ret_t RMP_Msgq_Cnt(volatile struct RMP_Msgq* Queue)
     else
         RMP_COVERAGE_MARKER();
     
-    return RMP_Fifo_Cnt(&(Queue->Fifo));
+    RMP_Sched_Lock();
+    
+    /* Check if the queue is in use */
+    if(Queue->State!=RMP_MSGQ_USED)
+    {
+        RMP_COVERAGE_MARKER();
+        RMP_Sched_Unlock();
+        return RMP_ERR_MSGQ;
+    }
+    else
+        RMP_COVERAGE_MARKER();
+    
+    Count=RMP_Fifo_Cnt(&(Queue->Fifo));
+    
+    RMP_Sched_Unlock();
+    return Count;
 }
 /* End Function:RMP_Msgq_Cnt *************************************************/
 
@@ -3489,27 +3752,42 @@ Return      : rmp_ret_t - If successful, 0; or an error code.
 rmp_ret_t RMP_Bmq_Crt(volatile struct RMP_Bmq* Queue,
                       rmp_ptr_t Limit)
 {
-    /* Check if this queue structure could possibly be in use */
+    /* Check the queue pointer */
     if(Queue==RMP_NULL)
     {
         RMP_COVERAGE_MARKER();
-        return RMP_ERR_MSGQ;
+        return RMP_ERR_BMQ;
     }
     else
         RMP_COVERAGE_MARKER();
     
-    /* A blocking queue is just a normal queue paired with a message number
-     * limiting semaphore */
+    RMP_Sched_Lock();
+    
+    /* Check if the queue is in use */
+    if(Queue->State!=RMP_BMQ_FREE)
+    {
+        RMP_COVERAGE_MARKER();
+        RMP_Sched_Unlock();
+        return RMP_ERR_BMQ;
+    }
+    else
+        RMP_COVERAGE_MARKER();
+    
+    /* A blocking queue is just a normal queue paired with a message
+     * number limiting semaphore */
     if((Limit==0U)||(RMP_Sem_Crt(&(Queue->Sem), Limit)<0))
     {
         RMP_COVERAGE_MARKER();
+        RMP_Sched_Unlock();
         return RMP_ERR_OPER;
     }
     else
         RMP_COVERAGE_MARKER();
 
     RMP_ASSERT(RMP_Msgq_Crt(&(Queue->Msgq))==0);
+    Queue->State=RMP_BMQ_USED;
     
+    RMP_Sched_Unlock();
     return 0;
 }
 /* End Function:RMP_Bmq_Crt **************************************************/
@@ -3523,7 +3801,7 @@ Return      : rmp_ret_t - If successful, 0; or an error code.
 ******************************************************************************/
 rmp_ret_t RMP_Bmq_Del(volatile struct RMP_Bmq* Queue)
 {
-    /* Check if this queue structure could possibly be in use */
+    /* Check the queue pointer */
     if(Queue==RMP_NULL)
     {
         RMP_COVERAGE_MARKER();
@@ -3533,6 +3811,16 @@ rmp_ret_t RMP_Bmq_Del(volatile struct RMP_Bmq* Queue)
         RMP_COVERAGE_MARKER();
     
     RMP_Sched_Lock();
+    
+    /* Check if the queue is in use */
+    if(Queue->State!=RMP_BMQ_USED)
+    {
+        RMP_COVERAGE_MARKER();
+        RMP_Sched_Unlock();
+        return RMP_ERR_BMQ;
+    }
+    else
+        RMP_COVERAGE_MARKER();
     
     /* Attempt to delete the message queue first */
     if(RMP_Msgq_Del(&(Queue->Msgq))<0)
@@ -3546,11 +3834,12 @@ rmp_ret_t RMP_Bmq_Del(volatile struct RMP_Bmq* Queue)
     
     /* Proceed to delete the semaphore */
     RMP_ASSERT(RMP_Sem_Del(&(Queue->Sem))==0);
+    Queue->State=RMP_BMQ_FREE;
     
     RMP_Sched_Unlock();
     return 0;
 }
-/* End Function:RMP_Msgq_Del *************************************************/
+/* End Function:RMP_Bmq_Del **************************************************/
 
 /* Begin Function:RMP_Bmq_Snd *************************************************
 Description : Send to a blocking message queue.
@@ -3560,10 +3849,10 @@ Output      : None.
 Return      : rmp_ret_t - If successful, 0; or an error code.
 ******************************************************************************/
 rmp_ret_t RMP_Bmq_Snd(volatile struct RMP_Bmq* Queue,
-                      rmp_ptr_t Slice,
-                      volatile struct RMP_List* Node)
+                      volatile struct RMP_List* Node,
+                      rmp_ptr_t Slice)
 {
-    /* Check if this queue structure could possibly be in use */
+    /* Check the queue pointer */
     if(Queue==RMP_NULL)
     {
         RMP_COVERAGE_MARKER();
@@ -3577,6 +3866,16 @@ rmp_ret_t RMP_Bmq_Snd(volatile struct RMP_Bmq* Queue,
     {
         RMP_COVERAGE_MARKER();
         return RMP_ERR_OPER;
+    }
+    else
+        RMP_COVERAGE_MARKER();
+    
+    /* Check if the queue is in use - no lock needed because we have 
+     * deletion race protection below: assuming the operations can fail. */
+    if(Queue->State!=RMP_BMQ_USED)
+    {
+        RMP_COVERAGE_MARKER();
+        return RMP_ERR_BMQ;
     }
     else
         RMP_COVERAGE_MARKER();
@@ -3589,20 +3888,30 @@ rmp_ret_t RMP_Bmq_Snd(volatile struct RMP_Bmq* Queue,
     }
     else
         RMP_COVERAGE_MARKER();
-    
+
     /* Do the message queue send. This can't fail due to semaphore limit
      * because if it was the case the creation of the blocking message queue
-     * won't succeed at first. */
-    RMP_ASSERT(RMP_Msgq_Snd(&(Queue->Msgq), Node)>=0);
+     * won't succeed at first. However, if the message queue is deleted, then
+     * this could fail in the middle. */
+    if(RMP_Msgq_Snd(&(Queue->Msgq), Node)<0)
+    {
+        RMP_COVERAGE_MARKER();
+        return RMP_ERR_OPER;
+    }
+    else
+        RMP_COVERAGE_MARKER();
     
     return 0;
 }
 /* End Function:RMP_Bmq_Snd **************************************************/
 
 /* Begin Function:RMP_Bmq_Snd_ISR *********************************************
-Description : Send to a blocking message queue.
-              We do not check whether the scheduler is locked; if we are calling
-              this function, we're pretty sure that it's not.
+Description : Send to a blocking message queue. Different from the normal 
+              version, This function does not block (and instead return failure
+              when the queue is full) and can only be called from an ISR whose
+              priority is below or equal to the context switch handler's. We do
+              not check whether the scheduler is locked; if we are calling this
+              function, we're pretty sure that it's not.
 Input       : volatile struct RMP_Bmq* Queue - The pointer to the queue.
 Output      : None.
 Return      : rmp_ret_t - If successful, 0; or an error code.
@@ -3610,7 +3919,7 @@ Return      : rmp_ret_t - If successful, 0; or an error code.
 rmp_ret_t RMP_Bmq_Snd_ISR(volatile struct RMP_Bmq* Queue,
                           volatile struct RMP_List* Node)
 {
-    /* Check if this queue structure could possibly be in use */
+    /* Check the queue pointer */
     if(Queue==RMP_NULL)
     {
         RMP_COVERAGE_MARKER();
@@ -3624,6 +3933,15 @@ rmp_ret_t RMP_Bmq_Snd_ISR(volatile struct RMP_Bmq* Queue,
     {
         RMP_COVERAGE_MARKER();
         return RMP_ERR_OPER;
+    }
+    else
+        RMP_COVERAGE_MARKER();
+    
+    /* Check if the queue is in use */
+    if(Queue->State!=RMP_BMQ_USED)
+    {
+        RMP_COVERAGE_MARKER();
+        return RMP_ERR_BMQ;
     }
     else
         RMP_COVERAGE_MARKER();
@@ -3654,10 +3972,10 @@ Output      : None.
 Return      : rmp_ret_t - If successful, 0; or an error code.
 ******************************************************************************/
 rmp_ret_t RMP_Bmq_Rcv(volatile struct RMP_Bmq* Queue,
-                      rmp_ptr_t Slice,
-                      volatile struct RMP_List** Node)
+                      volatile struct RMP_List** Node,
+                      rmp_ptr_t Slice)
 {
-    /* Check if this queue structure could possibly be in use */
+    /* Check the queue pointer */
     if(Queue==RMP_NULL)
     {
         RMP_COVERAGE_MARKER();
@@ -3675,8 +3993,18 @@ rmp_ret_t RMP_Bmq_Rcv(volatile struct RMP_Bmq* Queue,
     else
         RMP_COVERAGE_MARKER();
     
+    /* Check if the queue is in use - no lock needed because we have 
+     * deletion race protection below: assuming the operations can fail. */
+    if(Queue->State!=RMP_BMQ_USED)
+    {
+        RMP_COVERAGE_MARKER();
+        return RMP_ERR_BMQ;
+    }
+    else
+        RMP_COVERAGE_MARKER();
+    
     /* Attempt a message queue receive */
-    if(RMP_Msgq_Rcv(&(Queue->Msgq), Slice, Node)<0)
+    if(RMP_Msgq_Rcv(&(Queue->Msgq), Node, Slice)<0)
     {
         RMP_COVERAGE_MARKER();
         return RMP_ERR_OPER;
@@ -3684,7 +4012,8 @@ rmp_ret_t RMP_Bmq_Rcv(volatile struct RMP_Bmq* Queue,
     else
         RMP_COVERAGE_MARKER();
                           
-    /* If we're successful, wake up one guy on the send wait list */
+    /* If we're successful, wake up one guy on the send wait list. We don't care 
+     * if this fails: if this fails due to queue deletion, that's totally fine. */
     RMP_Sem_Post(&(Queue->Sem), 1U);
     
     return 0;
@@ -3693,13 +4022,15 @@ rmp_ret_t RMP_Bmq_Rcv(volatile struct RMP_Bmq* Queue,
 
 /* Begin Function:RMP_Bmq_Cnt *************************************************
 Description : Get the number of nodes in the blocking message queue.
-Input       : volatile struct RMP_Fifo* Fifo - The pointer to the message queue.
+Input       : volatile struct RMP_Bmq* Queue - The pointer to the message queue.
 Output      : None.
 Return      : rmp_ret_t - If successful, the number of nodes; or an error code.
 ******************************************************************************/
 rmp_ret_t RMP_Bmq_Cnt(volatile struct RMP_Bmq* Queue)
 {
-    /* Check if this FIFO structure could possibly be in use */
+    rmp_ret_t Count;
+    
+    /* Check the queue pointer */
     if(Queue==RMP_NULL)
     {
         RMP_COVERAGE_MARKER();
@@ -3708,7 +4039,22 @@ rmp_ret_t RMP_Bmq_Cnt(volatile struct RMP_Bmq* Queue)
     else
         RMP_COVERAGE_MARKER();
     
-    return RMP_Msgq_Cnt(&(Queue->Msgq));
+    RMP_Sched_Lock();
+    
+    /* Check if the queue is in use */
+    if(Queue->State!=RMP_MSGQ_USED)
+    {
+        RMP_COVERAGE_MARKER();
+        RMP_Sched_Unlock();
+        return RMP_ERR_MSGQ;
+    }
+    else
+        RMP_COVERAGE_MARKER();
+    
+    Count=RMP_Msgq_Cnt(&(Queue->Msgq));
+    
+    RMP_Sched_Unlock();
+    return Count;
 }
 /* End Function:RMP_Bmq_Cnt **************************************************/
 
