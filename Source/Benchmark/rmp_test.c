@@ -145,7 +145,7 @@ void Test_Bmq_1(void)
     {
         /* Read counter here */
         Start=COUNTER_READ();
-        RMP_Bmq_Snd(&Bmq_1, RMP_SLICE_MAX, &Node);
+        RMP_Bmq_Snd(&Bmq_1, &Node, RMP_SLICE_MAX);
     }
 }
 
@@ -153,7 +153,7 @@ void Func_1(void)
 {
     Test_Yield_1();
     /* Change priority of thread 2 */
-    RMP_Thd_Set(&Thd_2,2,RMP_SLICE_MAX);
+    RMP_Thd_Set(&Thd_2, 2, RMP_SLICE_MAX);
     Test_Mail_1();
     Test_Sem_1();
     Test_Msgq_1();
@@ -232,7 +232,7 @@ void Test_Msgq_2(void)
     
     for(Count=0;Count<10000;Count++)
     {
-        RMP_Msgq_Rcv(&Msgq_1, RMP_SLICE_MAX, &Receive);
+        RMP_Msgq_Rcv(&Msgq_1, &Receive, RMP_SLICE_MAX);
         /* Read counter here */
         End=COUNTER_READ();
         Total+=(rmp_tim_t)(End-Start);
@@ -246,7 +246,7 @@ void Test_Bmq_2(void)
     
     for(Count=0;Count<10000;Count++)
     {
-        RMP_Bmq_Rcv(&Bmq_1, RMP_SLICE_MAX, &Receive);
+        RMP_Bmq_Rcv(&Bmq_1, &Receive, RMP_SLICE_MAX);
         /* Read counter here */
         End=COUNTER_READ();
         Total+=(rmp_tim_t)(End-Start);
@@ -285,7 +285,7 @@ void Test_Msgq_ISR(void)
     
     for(Count=0;Count<10000;Count++)
     {
-        RMP_Msgq_Rcv(&Msgq_1, RMP_SLICE_MAX, &Receive);
+        RMP_Msgq_Rcv(&Msgq_1, &Receive, RMP_SLICE_MAX);
         /* Read counter here */
         End=COUNTER_READ();
         Total+=(rmp_tim_t)(End-Start);
@@ -299,7 +299,7 @@ void Test_Bmq_ISR(void)
     
     for(Count=0;Count<10000;Count++)
     {
-        RMP_Bmq_Rcv(&Bmq_1, RMP_SLICE_MAX, &Receive);
+        RMP_Bmq_Rcv(&Bmq_1, &Receive, RMP_SLICE_MAX);
         /* Read counter here */
         End=COUNTER_READ();
         Total+=(rmp_tim_t)(End-Start);

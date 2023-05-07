@@ -53,6 +53,18 @@ Description : The header file for the kernel.
 #define RMP_MEM_FREE                (0U)
 #define RMP_MEM_USED                (1U)
 
+/* States of FIFOs */
+#define RMP_FIFO_FREE               (0U)
+#define RMP_FIFO_USED               (1U)
+
+/* States of message queues */
+#define RMP_MSGQ_FREE               (0U)
+#define RMP_MSGQ_USED               (1U)
+
+/* States of blocking message queues */
+#define RMP_BMQ_FREE               	(0U)
+#define RMP_BMQ_USED               	(1U)
+
 /* Error codes */
 /* This error is thread related */
 #define RMP_ERR_THD                 (-1)
@@ -253,6 +265,8 @@ struct RMP_Fifo
     struct RMP_List Head;
     /* The current number of datablocks */
     rmp_ptr_t Cur_Num;
+    /* The state of the FIFO */
+    rmp_ptr_t State;
 };
 
 /* The message queue structure */
@@ -260,6 +274,8 @@ struct RMP_Msgq
 {
     struct RMP_Sem Sem;
     struct RMP_Fifo Fifo;
+    /* The state of the message queue */
+    rmp_ptr_t State;
 };
 
 /* The blocking message queue structure */
@@ -267,6 +283,8 @@ struct RMP_Bmq
 {
     struct RMP_Sem Sem;
     struct RMP_Msgq Msgq;
+    /* The state of the blocking message queue */
+    rmp_ptr_t State;
 };
 
 /* The head struct of a memory block */
@@ -487,6 +505,7 @@ __EXTERN__ rmp_ret_t RMP_Sem_Post_ISR(volatile struct RMP_Sem* Semaphore,
                                       rmp_ptr_t Number);
 __EXTERN__ rmp_ret_t RMP_Sem_Bcst(volatile struct RMP_Sem* Semaphore);
 __EXTERN__ rmp_ret_t RMP_Sem_Bcst_ISR(volatile struct RMP_Sem* Semaphore);
+__EXTERN__ rmp_ret_t RMP_Sem_Cnt(volatile struct RMP_Sem* Semaphore);
 
 /* Memory interfaces */
 __EXTERN__ rmp_ret_t RMP_Mem_Init(volatile void* Pool,
@@ -501,6 +520,7 @@ __EXTERN__ void* RMP_Realloc(volatile void* Pool,
                              
 /* Extended system interfaces - these are not real primitives */
 __EXTERN__ rmp_ret_t RMP_Fifo_Crt(volatile struct RMP_Fifo* Fifo);
+__EXTERN__ rmp_ret_t RMP_Fifo_Del(volatile struct RMP_Fifo* Fifo);
 __EXTERN__ rmp_ret_t RMP_Fifo_Read(volatile struct RMP_Fifo* Fifo,
                                    volatile struct RMP_List** Node);
 __EXTERN__ rmp_ret_t RMP_Fifo_Write(volatile struct RMP_Fifo* Fifo,
@@ -516,21 +536,21 @@ __EXTERN__ rmp_ret_t RMP_Msgq_Snd(volatile struct RMP_Msgq* Queue,
 __EXTERN__ rmp_ret_t RMP_Msgq_Snd_ISR(volatile struct RMP_Msgq* Queue,
                                       volatile struct RMP_List* Node);
 __EXTERN__ rmp_ret_t RMP_Msgq_Rcv(volatile struct RMP_Msgq* Queue,
-                                  rmp_ptr_t Slice,
-                                  volatile struct RMP_List** Node);
+                                  volatile struct RMP_List** Node,
+                                  rmp_ptr_t Slice);
 __EXTERN__ rmp_ret_t RMP_Msgq_Cnt(volatile struct RMP_Msgq* Queue);
 
 __EXTERN__ rmp_ret_t RMP_Bmq_Crt(volatile struct RMP_Bmq* Queue,
                                  rmp_ptr_t Limit);
 __EXTERN__ rmp_ret_t RMP_Bmq_Del(volatile struct RMP_Bmq* Queue);
 __EXTERN__ rmp_ret_t RMP_Bmq_Snd(volatile struct RMP_Bmq* Queue,
-                                 rmp_ptr_t Slice,
-                                 volatile struct RMP_List* Node);
+                                 volatile struct RMP_List* Node,
+                                 rmp_ptr_t Slice);
 __EXTERN__ rmp_ret_t RMP_Bmq_Snd_ISR(volatile struct RMP_Bmq* Queue,
                                      volatile struct RMP_List* Node);
 __EXTERN__ rmp_ret_t RMP_Bmq_Rcv(volatile struct RMP_Bmq* Queue,
-                                 rmp_ptr_t Slice,
-                                 volatile struct RMP_List** Node);
+                                 volatile struct RMP_List** Node,
+                                 rmp_ptr_t Slice);
 __EXTERN__ rmp_ret_t RMP_Bmq_Cnt(volatile struct RMP_Bmq* Queue);
 
 
