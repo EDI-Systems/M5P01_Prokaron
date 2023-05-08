@@ -532,15 +532,16 @@ void _RMP_Run_High(void)
         
         Count=(rmp_cnt_t)RMP_MSB_Get(RMP_Bitmap[Count])+(Count<<RMP_WORD_ORDER);
         
-        /* See if the current thread and the next thread are the same. 
+        /* See if the current thread is the highest priority one. 
          * If yes, place the current at the end of the queue. */
         if(RMP_Thd_Cur==(volatile struct RMP_Thd*)(RMP_Run[Count].Next))
         {
             RMP_COVERAGE_MARKER();
+            RMP_ASSERT(RMP_Thd_Cur->Prio==(rmp_ptr_t)Count);
             RMP_List_Del(RMP_Thd_Cur->Run_Head.Prev, RMP_Thd_Cur->Run_Head.Next);
             RMP_List_Ins(&(RMP_Thd_Cur->Run_Head),
-                         RMP_Run[RMP_Thd_Cur->Prio].Prev,
-                         &(RMP_Run[RMP_Thd_Cur->Prio]));
+                         RMP_Run[Count].Prev,
+                         &(RMP_Run[Count]));
         }
         else
             RMP_COVERAGE_MARKER();
@@ -677,10 +678,10 @@ void _RMP_Run_Ins(volatile struct RMP_Thd* Thread)
     if((Thread->State&RMP_THD_SUSPENDED)==0U)
     {
         RMP_COVERAGE_MARKER();
-        /* Insert this into the corresponding runqueue */
+        /* Insert this into the corresponding runqueue's back */
         RMP_List_Ins(&(Thread->Run_Head),RMP_Run[Thread->Prio].Prev,&(RMP_Run[Thread->Prio]));
         /* Set this runlevel as active */
-        RMP_Bitmap[Thread->Prio>>RMP_WORD_ORDER]|=((rmp_ptr_t)1)<<(Thread->Prio&RMP_WORD_MASK);
+        RMP_Bitmap[Thread->Prio>>RMP_WORD_ORDER]|=RMP_POW2(Thread->Prio&RMP_WORD_MASK);
         
         /* Compare this with the current one to see if we need a context switch */
         if(Thread->Prio>RMP_Thd_Cur->Prio)
@@ -2263,21 +2264,21 @@ int main(void)
 #if(RMP_HOOK_EXTRA==1U)
     RMP_Start_Hook();
 #endif
-    
+
     RMP_Tick=0U;
     /* Now initialize the kernel data structures */
     RMP_Sched_Lock_Cnt=0U;
     RMP_Sched_Locked=0U;
     RMP_Sched_Pend=0U;
     RMP_Timer_Pend=0U;
-    
+
     /* Linked lists */
     RMP_List_Crt(&RMP_Delay);
     for(Count=0U;Count<RMP_PREEMPT_PRIO_NUM;Count++)
         RMP_List_Crt(&RMP_Run[Count]);
     for(Count=0U;Count<RMP_BITMAP_SIZE;Count++)
         RMP_Bitmap[Count]=0U;
-        
+
     /* Now boot into the first thread */
     RMP_Clear(&RMP_Init_Thd,sizeof(struct RMP_Thd));
     RMP_Init_Thd.Prio=0U;
@@ -2285,10 +2286,10 @@ int main(void)
     RMP_Init_Thd.Slice_Left=10U;
     RMP_Init_Thd.State=RMP_THD_RUNNING;
     RMP_Init_Thd.Stack=RMP_INIT_STACK;
-    
+
     /* Initialize sending list */
     RMP_List_Crt(&(RMP_Init_Thd.Snd_List));
-    
+
     /* Insert this into the corresponding runqueue */
     RMP_List_Ins(&(RMP_Init_Thd.Run_Head),RMP_Run[0].Prev,&(RMP_Run[0]));
     /* Set this runlevel as active - in fact it is always active */

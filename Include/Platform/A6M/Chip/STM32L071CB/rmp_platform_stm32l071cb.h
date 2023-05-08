@@ -23,8 +23,8 @@ Description: The configuration file for STM32L071CB.
 #define RMP_SEM_CNT_MAX             (1000U)
 /* Are we using custom hooks? */
 #define RMP_HOOK_EXTRA              (0U)
-/* The stzck size of the init thread */
-#define RMP_INIT_STACK_SIZE         (256U)
+/* The stack size of the init thread */
+#define RMP_INIT_STACK_SIZE         (512U)
 /* The mask/unmask interrupt operations */
 #define RMP_INT_MASK()              RMP_Int_Disable()
 #define RMP_INT_UNMASK()            RMP_Int_Enable()

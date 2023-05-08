@@ -1105,8 +1105,10 @@ void RMP_Init_Hook(void)
     RMP_Clear(&Thd_2, sizeof(struct RMP_Thd));
     RMP_Clear(&Sem_1, sizeof(struct RMP_Sem));
     RMP_Clear(&Fifo_1, sizeof(struct RMP_Fifo));
+    RMP_Clear(&Msgq_1, sizeof(struct RMP_Msgq));
+    RMP_Clear(&Bmq_1, sizeof(struct RMP_Bmq));
     /* Create kernel objects */
-    RMP_Sem_Crt(&Sem_1, 0);
+    RMP_Sem_Crt(&Sem_1, 0U);
     RMP_Fifo_Crt(&Fifo_1);
     RMP_Msgq_Crt(&Msgq_1);
     RMP_Bmq_Crt(&Bmq_1, 1U);

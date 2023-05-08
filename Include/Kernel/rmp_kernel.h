@@ -361,7 +361,7 @@ static volatile rmp_ptr_t RMP_Sched_Pend;
 /* Timer events pending */
 static volatile rmp_ptr_t RMP_Timer_Pend;
 
-/* Init thread */
+/* Init thread stack and structure */
 static rmp_ptr_t RMP_Init_Stack[RMP_INIT_STACK_SIZE>>(RMP_WORD_ORDER-3U)];
 static volatile struct RMP_Thd RMP_Init_Thd;
 /*****************************************************************************/
