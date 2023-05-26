@@ -3563,7 +3563,7 @@ rmp_ret_t RMP_Msgq_Snd(volatile struct RMP_Msgq* Queue,
     
     /* Note the trick here: we have locked the scheduler, so we're safe to 
      * post the semaphore first. We do this lest the semaphore post may fail
-     * due to maximum number limit. Semaphore post is in fact safe tu use
+     * due to maximum number limit. Semaphore post is in fact safe to use
      * when inside a critical section. */
     if(RMP_Sem_Post(&(Queue->Sem), 1U)<0)
     {
@@ -3683,7 +3683,10 @@ rmp_ret_t RMP_Msgq_Rcv(volatile struct RMP_Msgq* Queue,
     
     /* Try to grab a semaphore, and only when we succeed do we proceed - 
      * there is the possibility that the whole queue gets deleted, so
-     * we need to take that into account. */
+     * we need to take that into account. Note that the potential 
+     * semaphore-FIFO race here is impossible: unlike condition variables,
+     * semaphore is counting, so if a thread grabs a semaphore it is 
+     * guaranteed that something is in the FIFO. */
     if(RMP_Sem_Pend_Unlock(&(Queue->Sem), Slice)<0)
     {
         RMP_COVERAGE_MARKER();
@@ -4014,7 +4017,10 @@ rmp_ret_t RMP_Bmq_Rcv(volatile struct RMP_Bmq* Queue,
         RMP_COVERAGE_MARKER();
                           
     /* If we're successful, wake up one guy on the send wait list. We don't care 
-     * if this fails: if this fails due to queue deletion, that's totally fine. */
+     * if this fails: if this fails due to queue deletion, that's totally fine.
+     * Also there is no possibility that the FIFO will (even transiently) contain
+     * more elements than the limit: this only gets posted when the FIFO dequeue
+     * is actually performed. */
     RMP_Sem_Post(&(Queue->Sem), 1U);
     
     return 0;
