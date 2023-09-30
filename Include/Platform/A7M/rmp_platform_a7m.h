@@ -65,13 +65,13 @@ typedef rmp_s32_t rmp_ret_t;
 
 /* System macros *************************************************************/
 /* Compiler "extern" keyword setting */
-#define EXTERN                   extern
+#define EXTERN                          extern
 /* The order of bits in one CPU machine word */
-#define RMP_WORD_ORDER           5
+#define RMP_WORD_ORDER                  (5U)
 /* The maximum length of char printing - no need to change this in most cases */
-#define RMP_DEBUG_PRINT_MAX 255
+#define RMP_DEBUG_PRINT_MAX             (255U)
 /* The offset of the stack when initializing */
-#define RMP_INIT_STACK           RMP_INIT_STACK_TAIL(17)
+#define RMP_INIT_STACK                  RMP_INIT_STACK_TAIL(17U)
 
 /* The CPU and application specific macros are here */
 #include "rmp_platform_a7m_conf.h"
@@ -270,7 +270,7 @@ EXTERN void _RMP_Yield(void);
 
 /* Initialization */
 __EXTERN__ void _RMP_Stack_Init(rmp_ptr_t Entry, rmp_ptr_t Stack, rmp_ptr_t Arg);
-__EXTERN__ void _RMP_Low_Level_Init(void);
+__EXTERN__ void _RMP_Lowlvl_Init(void);
 __EXTERN__ void RMP_Putchar(char Char);
 __EXTERN__ void _RMP_Plat_Hook(void);
 /*****************************************************************************/

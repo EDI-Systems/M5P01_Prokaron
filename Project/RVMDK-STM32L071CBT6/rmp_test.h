@@ -7,7 +7,7 @@ Description : The configuration file for testing program.
 ******************************************************************************/
 
 /* Config Includes ***********************************************************/
-#include "Benchmark/Chip/rmp_test_stm32l071cb.h"
+#include "Test/Chip/rmp_test_stm32l071cb.h"
 /* End Config Includes *******************************************************/
 
 /* End Of File ***************************************************************/

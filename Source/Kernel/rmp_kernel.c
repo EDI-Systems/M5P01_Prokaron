@@ -2259,7 +2259,7 @@ int main(void)
 #endif
     
     /* Initialize the kernel data structures first */
-    _RMP_Low_Level_Init();
+    _RMP_Lowlvl_Init();
     
 #if(RMP_HOOK_EXTRA==1U)
     RMP_Start_Hook();
