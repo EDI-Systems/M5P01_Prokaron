@@ -39,7 +39,7 @@ Description: The configuration file for STM32L071CB.
  * This is the default initialization sequence. If you wish to supply
  * your own, just redirect this macro to a custom function, or do your
  * initialization stuff in the initialization hook (RMP_Start_Hook). */
-#define RMP_A6M_LOW_LEVEL_INIT() \
+#define RMP_A6M_LOWLVL_INIT() \
 do \
 { \
     RCC_OscInitTypeDef RCC_OscInitStruct; \

@@ -69,19 +69,19 @@ void _RMP_Stack_Init(rmp_ptr_t Entry, rmp_ptr_t Stack, rmp_ptr_t Arg)
 }
 /* End Function:_RMP_Stack_Init **********************************************/
 
-/* Begin Function:_RMP_Low_Level_Init *****************************************
+/* Begin Function:_RMP_Lowlvl_Init ********************************************
 Description : Initialize the low level hardware of the system.
 Input       : None
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void _RMP_Low_Level_Init(void)
+void _RMP_Lowlvl_Init(void)
 {
-    RMP_A6M_LOW_LEVEL_INIT();
+    RMP_A6M_LOWLVL_INIT();
   
     RMP_Int_Disable();
 }
-/* End Function:_RMP_Low_Level_Init ******************************************/
+/* End Function:_RMP_Lowlvl_Init *********************************************/
 
 /* Begin Function:_RMP_Plat_Hook **********************************************
 Description : Platform-specific hook for system initialization.

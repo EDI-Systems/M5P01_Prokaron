@@ -546,12 +546,12 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>Benchmark</GroupName>
+          <GroupName>Test</GroupName>
           <Files>
             <File>
-              <FileName>rmp_test.c</FileName>
+              <FileName>rmp_benchmark.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\Source\Benchmark\rmp_test.c</FilePath>
+              <FilePath>..\..\Source\Test\rmp_benchmark.c</FilePath>
             </File>
           </Files>
         </Group>

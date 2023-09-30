@@ -3,7 +3,7 @@ Filename    : rmp_platform_a7m_rvm.c
 Author      : pry
 Date        : 09/02/2018
 Licence     : The Unlicense; see LICENSE for details.
-Description : The platform specific file for Cortex-M on RVM hypervisor.
+Description : The platform specific file for ARMv7-M on RVM hypervisor.
 ******************************************************************************/
 
 /* Includes ******************************************************************/
@@ -62,18 +62,18 @@ void _RMP_Stack_Init(rmp_ptr_t Entry,
 }
 /* End Function:_RMP_Stack_Init **********************************************/
 
-/* Begin Function:_RMP_Low_Level_Init *****************************************
+/* Begin Function:_RMP_Lowlvl_Init ********************************************
 Description : Initialize the low level hardware of the system.
 Input       : None
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void _RMP_Low_Level_Init(void)
+void _RMP_Lowlvl_Init(void)
 {
     RVM_Virt_Tim_Reg(RMP_SysTick_Handler);
     RVM_Virt_Ctx_Reg(RMP_PendSV_Handler);
 }
-/* End Function:_RMP_Low_Level_Init ******************************************/
+/* End Function:_RMP_Lowlvl_Init *********************************************/
 
 /* Begin Function:_RMP_Plat_Hook **********************************************
 Description : Platform-specific hook for system initialization.
@@ -100,7 +100,9 @@ Return      : None.
 ******************************************************************************/
 void RMP_Putchar(char Char)
 {
-
+#if(RVM_DEBUG_PRINT!=0U)
+    RVM_Putchar(Char);
+#endif
 }
 /* End Function:RMP_Putchar **************************************************/
 

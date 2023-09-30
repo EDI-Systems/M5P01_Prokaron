@@ -270,7 +270,7 @@ EXTERN void _RMP_Yield(void);
 
 /* Initialization */
 __EXTERN__ void _RMP_Stack_Init(rmp_ptr_t Entry, rmp_ptr_t Stack, rmp_ptr_t Arg);
-__EXTERN__ void _RMP_Low_Level_Init(void);
+__EXTERN__ void _RMP_Lowlvl_Init(void);
 __EXTERN__ void RMP_Putchar(char Char);
 __EXTERN__ void _RMP_Plat_Hook(void);
 /*****************************************************************************/
