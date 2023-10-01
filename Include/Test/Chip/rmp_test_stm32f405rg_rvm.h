@@ -1,9 +1,9 @@
 /******************************************************************************
-Filename    : rmp_test_stm32f767ig_rvm.h
+Filename    : rmp_test_stm32f405rg_rvm.h
 Author      : pry 
 Date        : 22/07/2017
 Licence     : The Unlicense; see LICENSE for details.
-Description : The testbench for STM32F767IG, running in the RVM. 
+Description : The testbench for STM32F405RG, running in the RVM. 
               How to use this test header:
               1. Add relevant test file to the project.
               2. Add memory access permission as follows:
@@ -34,17 +34,17 @@ ARMCC 6.18 -O3 (SysTick turned off to avoid spurious interrupts)
  /_/|_|/_/  /_//_/
 ====================================================
 Test (number in CPU cycles)        : AVG / MAX / MIN
-Yield                              : 1446 / 1520 / 1412
-Mailbox                            : 1636 / 1752 / 1624
-Semaphore                          : 1594 / 1760 / 1560
-FIFO                               : 156 / 272 / 156
-Message queue                      : 1862 / 2064 / 1816
-Blocking message queue             : 2092 / 2180 / 2060
-Memory allocation/free pair        : 338 / 404 / 330
-ISR Mailbox                        : 1314 / 1456 / 1224
-ISR Semaphore                      : 1210 / 1316 / 1160
-ISR Message queue                  : 1418 / 1496 / 1340
-ISR Blocking message queue         : 1601 / 1716 / 1488
+Yield                              : 2064 / 2064 / 2064
+Mailbox                            : 2419 / 2420 / 2400
+Semaphore                          : 2324 / 2324 / 2324
+FIFO                               : 212 / 276 / 212
+Message queue                      : 2688 / 2696 / 2688
+Blocking message queue             : 2968 / 2972 / 2968
+Memory allocation/free pair        : 474 / 480 / 466
+ISR Mailbox                        : 1696 / 1696 / 1696
+ISR Semaphore                      : 1612 / 1612 / 1612
+ISR Message queue                  : 1844 / 1844 / 1844
+ISR Blocking message queue         : 2012 / 2012 / 2012
 
 ARMCC 6.18 -O3 (SysTick turned on, may kick in between)
     ___   __  ___ ___
@@ -53,17 +53,17 @@ ARMCC 6.18 -O3 (SysTick turned on, may kick in between)
  /_/|_|/_/  /_//_/
 ====================================================
 Test (number in CPU cycles)        : AVG / MAX / MIN
-Yield                              : 1448 / 2712 / 1408
-Mailbox                            : 1661 / 2860 / 1604
-Semaphore                          : 1601 / 2832 / 1552
-FIFO                               : 156 / 284 / 156
-Message queue                      : 1864 / 3100 / 1816
-Blocking message queue             : 2096 / 3468 / 2032
-Memory allocation/free pair        : 338 / 506 / 330
-ISR Mailbox                        : 1315 / 2480 / 1224
-ISR Semaphore                      : 1230 / 2304 / 1148
-ISR Message queue                  : 1422 / 2560 / 1316
-ISR Blocking message queue         : 1607 / 2852 / 1488
+Yield                              : 2045 / 3640 / 2044
+Mailbox                            : 2422 / 4036 / 2400
+Semaphore                          : 2326 / 3920 / 2324
+FIFO                               : 212 / 1840 / 212
+Message queue                      : 2690 / 4312 / 2688
+Blocking message queue             : 2970 / 4668 / 2968
+Memory allocation/free pair        : 474 / 691 / 464
+ISR Mailbox                        : 1693 / 3356 / 1692
+ISR Semaphore                      : 1609 / 3264 / 1608
+ISR Message queue                  : 1841 / 3432 / 1840
+ISR Blocking message queue         : 2014 / 5328 / 2012
 ******************************************************************************/
 
 /* Includes ******************************************************************/
@@ -76,12 +76,12 @@ ISR Blocking message queue         : 1607 / 2852 / 1488
 #define THD1_STACK              (&Stack_1[230])
 #define THD2_STACK              (&Stack_2[230])
 /* How to read counter */
-#define COUNTER_READ()          ((TIM2_CNT)<<1)
+#define COUNTER_READ()          ((rmp_tim_t)((TIM2_CNT)<<1))
 /* Are we testing the memory pool? */
 #define TEST_MEM_POOL           (8192U)
 /* Are we doing minimal measurements? */
 /* #define MINIMAL_SIZE */
-/* The STM32F7 timers are all 32 bits, so */
+/* The STM32F4 timers are all 16 bits, so */
 typedef rmp_ptr_t rmp_tim_t;
 
 /* Hardware definitions so we don't rely on STM32 HAL */
@@ -129,7 +129,7 @@ Output      : None.
 Return      : None.
 ******************************************************************************/
 void Timer_Init(void)
-{
+{    
     /* TIM2 clock = 1/2 CPU clock */
     TIM2_CR1=TIM_COUNTERMODE_UP|TIM_CLOCKDIVISION_DIV1;
     TIM2_ARR=(unsigned int)(-1);
@@ -158,7 +158,7 @@ void Int_Init(void)
     
     /* TIM4 clock = 1/2 CPU clock */
     TIM4_CR1=TIM_COUNTERMODE_DOWN|TIM_CLOCKDIVISION_DIV1;
-    TIM4_ARR=21600U;
+    TIM4_ARR=16800U;
     TIM4_PSC=0U;
     RCC_APB1ENR|=RCC_APB1ENR_TIM4;
     TIM4_SR&=~0x01U;
@@ -187,4 +187,3 @@ void Int_Disable(void)
 /* End Of File ***************************************************************/
 
 /* Copyright (C) Evo-Devo Instrum. All rights reserved ***********************/
-

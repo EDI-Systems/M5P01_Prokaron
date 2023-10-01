@@ -39,7 +39,7 @@ Description: The configuration file for STM32F405RG.
  * This is the default initialization sequence. If you wish to supply
  * your own, just redirect this macro to a custom function, or do your
  * initialization stuff in the initialization hook (RMP_Start_Hook). */
-#define RMP_A7M_LOW_LEVEL_INIT() \
+#define RMP_A7M_LOWLVL_INIT() \
 do \
 { \
     RCC_ClkInitTypeDef RCC_ClkInitStruct; \
@@ -60,10 +60,10 @@ do \
     RCC_OscInitStruct.HSEState=RCC_HSE_ON; \
     RCC_OscInitStruct.PLL.PLLState=RCC_PLL_ON; \
     RCC_OscInitStruct.PLL.PLLSource=RCC_PLLSOURCE_HSE; \
-    RCC_OscInitStruct.PLL.PLLM=8; \
-    RCC_OscInitStruct.PLL.PLLN=336; \
+    RCC_OscInitStruct.PLL.PLLM=8U; \
+    RCC_OscInitStruct.PLL.PLLN=336U; \
     RCC_OscInitStruct.PLL.PLLP=RCC_PLLP_DIV2; \
-    RCC_OscInitStruct.PLL.PLLQ=7; \
+    RCC_OscInitStruct.PLL.PLLQ=7U; \
     HAL_RCC_OscConfig(&RCC_OscInitStruct); \
     \
     /* Select PLL as system clock source and configure the HCLK, PCLK1 and PCLK2 clocks dividers */ \

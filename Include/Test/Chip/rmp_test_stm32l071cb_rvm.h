@@ -7,13 +7,10 @@ Description : The testbench for STM32L071CB, running in the RVM.
               How to use this test header:
               1. Add relevant test file to the project.
               2. Add memory access permission as follows:
+                 <Type>V_Device</Type>
                  <Base>0x40000000</Base>
                  <Size>0x20000000</Size>
-                 <Type>Device</Type>
-                 <Attribute>RWS</Attribute>
-                 and
-                 <Base>0xE0000000</Base>
-                 <Size>0x20000000</Size>
+                 <Align>Auto</Align>
                  <Type>Device</Type>
                  <Attribute>RWS</Attribute>
               3. Add kernel function as follows:
@@ -74,8 +71,8 @@ ISR Blocking message queue         : 1741 / 3477 / 1741
 
 /* Defines *******************************************************************/
 /* Where are the initial stacks */
-#define THD1_STACK        (&Stack_1[230])
-#define THD2_STACK        (&Stack_2[230])
+#define THD1_STACK        (&Stack_1[100])
+#define THD2_STACK        (&Stack_2[100])
 /* How to read counter */
 #define COUNTER_READ()    ((rmp_tim_t)(TIM2_CNT))
 /* Are we testing the memory pool? */
@@ -114,8 +111,8 @@ typedef rmp_u16_t rmp_tim_t;
 
 /* Globals *******************************************************************/
 #ifndef MINIMAL_SIZE
-rmp_ptr_t Stack_1[256];
-rmp_ptr_t Stack_2[256];
+rmp_ptr_t Stack_1[128];
+rmp_ptr_t Stack_2[128];
 
 void Timer_Init(void);
 void Int_Init(void);

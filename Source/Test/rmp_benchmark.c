@@ -19,7 +19,7 @@ Description : The performance benchmark for RMP. Do not modify this file; what
  * ~ 3MHz               100
  * ~ 30MHz              10000
  * ~ 300MHz             100000 */
-#define OVERFLOW_NUM    10000
+#define OVERFLOW_NUM    100000
 
 /* Data definitions */
 #define TIME            ((rmp_tim_t)(End-Start))
@@ -568,7 +568,7 @@ void Func_2(void)
         if(Start>End)
         {
             Overflow++;
-            if((Overflow%10000)==0)
+            if((Overflow%OVERFLOW_NUM)==0)
             {
                 RMP_DBG_I(OVERFLOW_NUM);
                 RMP_DBG_S(" overflows\r\n");
