@@ -20,6 +20,8 @@ Description : The performance benchmark for RMP. Do not modify this file; what
  * ~ 30MHz              10000
  * ~ 300MHz             100000 */
 #define OVERFLOW_NUM    100000
+/* Whether to include FPU context */
+/* #define FLOAT_CONTEXT */
 
 /* Data definitions */
 #define TIME            ((rmp_tim_t)(End-Start))
@@ -104,6 +106,8 @@ volatile struct RMP_Bmq Bmq_1;
 #ifdef TEST_MEM_POOL
 volatile rmp_ptr_t Pool[TEST_MEM_POOL]={0};
 #endif
+/* Floating point context */
+volatile float Float=0.0f;
 
 /* Test functions */
 void Test_Yield_1(void);
@@ -198,6 +202,10 @@ void Test_Bmq_1(void)
 
 void Func_1(void)
 {
+#ifdef FLOAT_CONTEXT
+    Float+=1.0f;
+#endif
+
     Test_Yield_1();
     /* Change priority of thread 2 */
     RMP_Thd_Set(&Thd_2, 2, RMP_SLICE_MAX);
@@ -466,6 +474,10 @@ void Func_2(void)
     RMP_DBG_S(" /_/|_|/_/  /_//_/\r\n");
     RMP_DBG_S("====================================================\r\n");
     RMP_DBG_S("Test (number in CPU cycles)        : AVG / MAX / MIN\r\n");
+
+#ifdef FLOAT_CONTEXT
+    Float+=1.0f;
+#endif
     
     /* Yield tests */
     INIT();

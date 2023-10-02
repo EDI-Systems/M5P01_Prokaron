@@ -158,7 +158,7 @@ _RMP_Start              PROC
 ;*****************************************************************************/
 PendSV_Handler          PROC
                         MRS                 R0,PSP              ; Save registers
-                        TST                 LR,#0x10            ; Save FOU registers
+                        TST                 LR,#0x10            ; Save FPU registers
                         DCI                 0xBF08              ; IT EQ ;If yes, (DCI for compatibility with no FPU support)
                         DCI                 0xED20              ; VSTMDBEQ R0!,{S16-S31}
                         DCI                 0x8A10              ; Save FPU registers not saved by lazy stacking.
