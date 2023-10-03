@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-private xmlns="http://www.netbeans.org/ns/project-private/1">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/1"/>
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+        <group name="Masters19024">
+            <file>file:/C:/E/Dev/FreeRTOS/WorkingCopy/FreeRTOS/Demo/PIC32MZ_MPLAB/main.c</file>
+            <file>file:/C:/E/Dev/FreeRTOS/WorkingCopy/FreeRTOS/Demo/PIC32MZ_MPLAB/flop_mz.c</file>
+            <file>file:/C:/E/Dev/FreeRTOS/WorkingCopy/FreeRTOS/Demo/PIC32MZ_MPLAB/FreeRTOSConfig.h</file>
+            <file>file:/C:/E/Dev/FreeRTOS/WorkingCopy/FreeRTOS/Source/portable/MPLAB/PIC32MZ/port.c</file>
+            <file>file:/C:/E/Dev/FreeRTOS/WorkingCopy/FreeRTOS/Source/portable/MPLAB/PIC32MZ/port_asm.S</file>
+        </group>
+        <group>
+            <file>file:/D:/Code_Library/M5P01_Prokaron/Source/Kernel/rmp_kernel.c</file>
+            <file>file:/D:/Code_Library/M5P01_Prokaron/Source/Platform/MIPSM/rmp_platform_mipsm.c</file>
+            <file>file:/D:/Code_Library/M5P01_Prokaron/Include/Platform/MIPSM/rmp_platform_mipsm.h</file>
+            <file>file:/D:/Code_Library/M5P01_Prokaron/Project/MPLAB-PIC32MZ2048EFM100/RMP.X/rmp_platform_mipsm_conf.h</file>
+            <file>file:/D:/Code_Library/M5P01_Prokaron/Include/Platform/MIPSM/Chip/PIC32MZ2048EFM100/rmp_platform_pic32mz2048efm100.h</file>
+            <file>file:/D:/Code_Library/M5P01_Prokaron/Source/Test/rmp_benchmark.c</file>
+            <file>file:/D:/Code_Library/M5P01_Prokaron/Project/MPLAB-PIC32MZ2048EFM100/RMP.X/rmp_test.h</file>
+            <file>file:/D:/Code_Library/M5P01_Prokaron/Include/Test/Chip/rmp_test_pic32mz2048efm100.h</file>
+            <file>file:/D:/Code_Library/M5P01_Prokaron/Project/MPLAB-PIC32MZ2048EFM100/RMP.X/rmp_test_pic32mz2048efm100.s</file>
+            <file>file:/D:/Code_Library/M5P01_Prokaron/Source/Platform/MIPSM/rmp_platform_mipsm_gcc.s</file>
+        </group>
+    </open-files>
+</project-private>

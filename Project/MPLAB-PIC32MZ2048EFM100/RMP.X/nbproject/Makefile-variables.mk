@@ -1,0 +1,10 @@
+#
+# Generated - do not edit!
+#
+# NOCDDL
+#
+CND_BASEDIR=`pwd`
+# PIC32MZ2048_SK configuration
+CND_ARTIFACT_DIR_PIC32MZ2048_SK=dist/PIC32MZ2048_SK/production
+CND_ARTIFACT_NAME_PIC32MZ2048_SK=RMP.X.production.hex
+CND_ARTIFACT_PATH_PIC32MZ2048_SK=dist/PIC32MZ2048_SK/production/RMP.X.production.hex

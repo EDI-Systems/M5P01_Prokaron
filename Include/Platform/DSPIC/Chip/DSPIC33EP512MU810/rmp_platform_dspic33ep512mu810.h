@@ -45,7 +45,7 @@ Description: The configuration file for DSPIC33EP512MU810.
  * This is the default initialization sequence. If you wish to supply
  * your own, just redirect this macro to a custom function, or do your
  * initialization stuff in the initialization hook (RMP_Start_Hook). */
-#define RMP_DSPIC_LOW_LEVEL_INIT() \
+#define RMP_DSPIC_LOWLVL_INIT() \
 do \
 { \
     RMP_Int_Disable(); \
@@ -104,7 +104,10 @@ while(0)
 #define RMP_DSPIC_PUTCHAR(CHAR) \
 do \
 { \
-    /* By default we don't provide this cause DSPIC33 starter board have no UART */ \
+    /*  DSPIC33 starter board have no UART, print to an array instead */ \
+    static rmp_ptr_t Ptr=0; \
+    volatile static rmp_s8_t Output[4096]; \
+    Output[Ptr++]=(CHAR); \
 } \
 while(0)
 /* End Defines ***************************************************************/
