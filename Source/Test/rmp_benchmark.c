@@ -598,7 +598,7 @@ Return      : None.
 ******************************************************************************/
 void Int_Handler(void)
 {
-    static rmp_cnt_t Count=0;
+    static rmp_ptr_t Count=0U;
     static struct RMP_List Node;
     
     if(Count<ROUND_NUM)
@@ -613,7 +613,7 @@ void Int_Handler(void)
             while(1);
         }
     }
-    else if(Count<ROUND_NUM*2)
+    else if(Count<ROUND_NUM*2U)
     {
         Count++;
         Start=COUNTER_READ();
@@ -625,7 +625,7 @@ void Int_Handler(void)
             while(1);
         }
     }
-    else if(Count<ROUND_NUM*3)
+    else if(Count<ROUND_NUM*3U)
     {
         Count++;
         Start=COUNTER_READ();
@@ -637,7 +637,7 @@ void Int_Handler(void)
             while(1);
         }
     }
-    else if(Count<ROUND_NUM*4)
+    else if(Count<ROUND_NUM*4U)
     {
         Count++;
         Start=COUNTER_READ();

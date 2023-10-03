@@ -66,72 +66,72 @@ void _RMP_Stack_Init(rmp_ptr_t Entry, rmp_ptr_t Stack, rmp_ptr_t Arg)
     /* The entry - SFA bit not set */
     Stack_Ptr[0]=Entry;
     /* Last 8 bits of status register, IPL3, PC residue - all zero*/
-    Stack_Ptr[1]=0;
+    Stack_Ptr[1]=0U;
     /* Initial SR - all zero except for IPL, set to 2, because lowest actual level is 1 */
-    Stack_Ptr[2]=((rmp_ptr_t)2)<<5;
+    Stack_Ptr[2]=((rmp_ptr_t)2U)<<5;
     /* W0-W14 */
     Stack_Ptr[3]=Arg;
-    Stack_Ptr[4]=0x0101;
-    Stack_Ptr[5]=0x0202;
-    Stack_Ptr[6]=0x0303;
-    Stack_Ptr[7]=0x0404;
-    Stack_Ptr[8]=0x0505;
-    Stack_Ptr[9]=0x0606;
-    Stack_Ptr[10]=0x0707;
-    Stack_Ptr[11]=0x0808;
-    Stack_Ptr[12]=0x0909;
-    Stack_Ptr[13]=0x1010;
-    Stack_Ptr[14]=0x1111;
-    Stack_Ptr[15]=0x1212;
-    Stack_Ptr[16]=0x1313;
-    Stack_Ptr[17]=0x1414;
+    Stack_Ptr[4]=0x0101U;
+    Stack_Ptr[5]=0x0202U;
+    Stack_Ptr[6]=0x0303U;
+    Stack_Ptr[7]=0x0404U;
+    Stack_Ptr[8]=0x0505U;
+    Stack_Ptr[9]=0x0606U;
+    Stack_Ptr[10]=0x0707U;
+    Stack_Ptr[11]=0x0808U;
+    Stack_Ptr[12]=0x0909U;
+    Stack_Ptr[13]=0x1010U;
+    Stack_Ptr[14]=0x1111U;
+    Stack_Ptr[15]=0x1212U;
+    Stack_Ptr[16]=0x1313U;
+    Stack_Ptr[17]=0x1414U;
     /* We don't use SPLIM with OS, it is always untouched */
     /* ACCAL,ACCAH,ACCAU,ACCBL,ACCBH,ACCBU */
-    Stack_Ptr[18]=0;
-    Stack_Ptr[19]=0;
-    Stack_Ptr[20]=0;
-    Stack_Ptr[21]=0;
-    Stack_Ptr[22]=0;
-    Stack_Ptr[23]=0;
+    Stack_Ptr[18]=0U;
+    Stack_Ptr[19]=0U;
+    Stack_Ptr[20]=0U;
+    Stack_Ptr[21]=0U;
+    Stack_Ptr[22]=0U;
+    Stack_Ptr[23]=0U;
     /* DSRPAG,DSWPAG - reset to what the toolkit initialized it to be */
     Stack_Ptr[24]=RMP_DSRPAG_Val;
     Stack_Ptr[25]=RMP_DSWPAG_Val;
     /* RCOUNT,DCOUNT,DOSTARTL,DOSTARTH,DOENDL,DOENDH */
-    Stack_Ptr[26]=0;
-    Stack_Ptr[27]=0;
-    Stack_Ptr[28]=0;
-    Stack_Ptr[29]=0;
-    Stack_Ptr[30]=0;
-    Stack_Ptr[31]=0;
+    Stack_Ptr[26]=0U;
+    Stack_Ptr[27]=0U;
+    Stack_Ptr[28]=0U;
+    Stack_Ptr[29]=0U;
+    Stack_Ptr[30]=0U;
+    Stack_Ptr[31]=0U;
     /* CORCON */
-    Stack_Ptr[32]=0x0020;
+    Stack_Ptr[32]=0x0020U;
     /* MODCON */
-    Stack_Ptr[33]=0x0000;
+    Stack_Ptr[33]=0x0000U;
     /* XMODSRT,XMODEND,YMODSRT,YMODEND */
-    Stack_Ptr[34]=0x0000;
-    Stack_Ptr[35]=0x0001;
-    Stack_Ptr[36]=0x0000;
-    Stack_Ptr[37]=0x0001;
+    Stack_Ptr[34]=0x0000U;
+    Stack_Ptr[35]=0x0001U;
+    Stack_Ptr[36]=0x0000U;
+    Stack_Ptr[37]=0x0001U;
     /* XBREV */
-    Stack_Ptr[38]=0x0000;
+    Stack_Ptr[38]=0x0000U;
     /* TBLPAG */
     Stack_Ptr[39]=RMP_TBLPAG_Val;
     /* MSTRPR */
-    Stack_Ptr[40]=0x0000;
+    Stack_Ptr[40]=0x0000U;
 }
 /* End Function:_RMP_Stack_Init **********************************************/
 
-/* Begin Function:_RMP_Low_Level_Init *****************************************
+/* Begin Function:_RMP_Lowlvl_Init ********************************************
 Description : Initialize the low level hardware of the system.
 Input       : None
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void _RMP_Low_Level_Init(void)
+void _RMP_Lowlvl_Init(void)
 {
-    RMP_DSPIC_LOW_LEVEL_INIT();
+    RMP_DSPIC_LOWLVL_INIT();
 }
-/* End Function:_RMP_Low_Level_Init ******************************************/
+/* End Function:_RMP_Lowlvl_Init *********************************************/
 
 /* Begin Function:_RMP_Set_Timer **********************************************
 Description    : The function for setting the timer.

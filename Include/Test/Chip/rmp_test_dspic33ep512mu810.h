@@ -1,9 +1,47 @@
 /******************************************************************************
-Filename    : rmp_test_DSPIC33EP512MU810.h
+Filename    : rmp_test_dspic33ep512mu810.h
 Author      : pry 
 Date        : 22/07/2017
 Licence     : The Unlicense; see LICENSE for details.
 Description : The testbench for DSPIC33EP512MU810.
+
+XC16 2.10 (--spec hack disabled)
+    ___   __  ___ ___
+   / _ \ /  |/  // _ \       Simple real-time kernel
+  / , _// /|_/ // ___/       Standard benchmark test
+ /_/|_|/_/  /_//_/
+====================================================
+Test (number in CPU cycles)        : AVG / MAX / MIN
+Yield                              : 524 / 866 / 524
+Mailbox                            : 894 / 1242 / 894
+Semaphore                          : 824 / 1172 / 824
+FIFO                               : 386 / 734 / 386
+Message queue                      : 1364 / 1710 / 1364
+Blocking message queue             : 1843 / 2190 / 1842
+Memory allocation/free pair        : 1267 / 1312 / 1249
+ISR Mailbox                        : 946 / 946 / 946
+ISR Semaphore                      : 898 / 898 / 898
+ISR Message queue                  : 1218 / 1564 / 1216
+ISR Blocking message queue         : 1498 / 1498 / 1498
+
+XC16 2.10 (--spec hack enabled)
+    ___   __  ___ ___
+   / _ \ /  |/  // _ \       Simple real-time kernel
+  / , _// /|_/ // ___/       Standard benchmark test
+ /_/|_|/_/  /_//_/
+====================================================
+Test (number in CPU cycles)        : AVG / MAX / MIN
+Yield                              : 540 / 892 / 540
+Mailbox                            : 844 / 1190 / 844
+Semaphore                          : 784 / 1136 / 784
+FIFO                               : 344 / 686 / 344
+Message queue                      : 1148 / 1498 / 1148
+Blocking message queue             : 1573 / 1924 / 1572
+Memory allocation/free pair        : 1105 / 1150 / 1084
+ISR Mailbox                        : 435 / 1230 / 430
+ISR Semaphore                      : 930 / 930 / 930
+ISR Message queue                  : 1182 / 1182 / 1182
+ISR Blocking message queue         : 1428 / 1428 / 1428
 ******************************************************************************/
 
 /* Includes ******************************************************************/
@@ -12,12 +50,12 @@ Description : The testbench for DSPIC33EP512MU810.
 
 /* Defines *******************************************************************/
 /* Where are the initial stacks */
-#define THD1_STACK          (&Stack_1[300])
-#define THD2_STACK          (&Stack_2[300])
+#define THD1_STACK              (&Stack_1[300])
+#define THD2_STACK              (&Stack_2[300])
 /* How to read counter */
-#define COUNTER_READ()      ((TMR2)<<1)
+#define COUNTER_READ()          ((TMR2)<<1)
 /* Are we testing the memory pool? */
-#define TEST_MEM_POOL       8192
+#define TEST_MEM_POOL           8192
 /* Are we doing minimal measurements? */
 /* #define MINIMAL_SIZE */
 /* Because on this platform, a pointer is 16-bit, thus we need to define this */
@@ -67,9 +105,10 @@ typedef rmp_u16_t rmp_tim_t;
 
 /* Globals *******************************************************************/
 #ifndef MINIMAL_SIZE
-void Int_Handler(void);
 rmp_ptr_t Stack_1[512];
 rmp_ptr_t Stack_2[512];
+
+void Int_Handler(void);
 /* End Globals ***************************************************************/
 
 /* Begin Function:Timer_Init **************************************************

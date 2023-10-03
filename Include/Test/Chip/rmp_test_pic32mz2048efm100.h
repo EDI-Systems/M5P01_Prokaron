@@ -1,9 +1,47 @@
 /******************************************************************************
-Filename    : rmp_test_PIC32MZ2048EFM100.h
+Filename    : rmp_test_pic32mz2048efm100.h
 Author      : pry 
 Date        : 22/07/2017
 Licence     : The Unlicense; see LICENSE for details.
 Description : The testbench for PIC32MZ2048EFM100.
+              This port is considered experimental and without FPU support.
+XC32-GCC 4.35 O3(--specs hack disabled)
+    ___   __  ___ ___
+   / _ \ /  |/  // _ \       Simple real-time kernel
+  / , _// /|_/ // ___/       Standard benchmark test
+ /_/|_|/_/  /_//_/
+====================================================
+Test (number in CPU cycles)        : AVG / MAX / MIN
+Yield                              : 285 / 435 / 285
+Mailbox                            : 402 / 820 / 395
+Semaphore                          : 373 / 745 / 370
+FIFO                               : 151 / 590 / 150
+Message queue                      : 579 / 815 / 575
+Blocking message queue             : 735 / 970 / 730
+Memory allocation/free pair        : 471 / 721 / 458
+ISR Mailbox                        : 445 / 1190 / 440
+ISR Semaphore                      : 425 / 720 / 420
+ISR Message queue                  : 550 / 795 / 545
+ISR Blocking message queue         : 645 / 825 / 640
+
+XC32-GCC 4.35 O3(--specs hack enabled)
+    ___   __  ___ ___
+   / _ \ /  |/  // _ \       Simple real-time kernel
+  / , _// /|_/ // ___/       Standard benchmark test
+ /_/|_|/_/  /_//_/
+====================================================
+Test (number in CPU cycles)        : AVG / MAX / MIN
+Yield                              : 296 / 65301 / 275
+Mailbox                            : 392 / 1160 / 390
+Semaphore                          : 371 / 920 / 365
+FIFO                               : 146 / 685 / 145
+Message queue                      : 538 / 990 / 530
+Blocking message queue             : 669 / 1065 / 660
+Memory allocation/free pair        : 415 / 745 / 401
+ISR Mailbox                        : 435 / 1230 / 430
+ISR Semaphore                      : 415 / 1070 / 410
+ISR Message queue                  : 525 / 1140 / 520
+ISR Blocking message queue         : 615 / 930 / 610
 ******************************************************************************/
 
 /* Includes ******************************************************************/
@@ -81,9 +119,14 @@ typedef rmp_u16_t rmp_tim_t;
 
 /* Globals *******************************************************************/
 #ifndef MINIMAL_SIZE
-void Int_Handler(void);
 rmp_ptr_t Stack_1[512];
 rmp_ptr_t Stack_2[512];
+
+void Timer_Init(void);
+void Int_Init(void);
+void Int_Handler(void);
+void Int_Disable(void);
+void Tim2_Interrupt(void);
 /* End Globals ***************************************************************/
 
 /* Begin Function:Timer_Init **************************************************

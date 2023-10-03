@@ -9,7 +9,6 @@ Description: The configuration file for PIC32MZ2048EFM100.
 /* Defines *******************************************************************/
 /* The MPLAB libraries */
 #include <xc.h>
-#include <sys/attribs.h>
 
 /* Debugging */
 #define RMP_ASSERT_CORRECT          (0U)
@@ -37,7 +36,7 @@ Description: The configuration file for PIC32MZ2048EFM100.
  * This is the default initialization sequence. If you wish to supply
  * your own, just redirect this macro to a custom function, or do your
  * initialization stuff in the initialization hook (RMP_Start_Hook). */
-#define RMP_MIPSM_LOW_LEVEL_INIT() \
+#define RMP_MIPSM_LOWLVL_INIT() \
 do \
 { \
     /* set PBCLK2 to deliver 40MHz clock for PMP/I2C/UART/SPI */ \

@@ -1,0 +1,1 @@
+ -c -mcpu=$(MP_PROCESSOR_OPTION)  -omf=elf -DXPRJ_dspic33ep512mu810_pim=$(CND_CONF)    -specs=specs.txt -I"../../../Include" -I"." -Wa,-g,--no-relax$(MP_EXTRA_AS_POST)  -mdfp="${DFP_DIR}/xc16"D:\Code_Library\M5P01_Prokaron\Project\MPLAB-DSPIC33EP512MU810\RMP.X\rmp_test_dspic33ep512mu810.s

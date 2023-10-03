@@ -72,63 +72,63 @@ void _RMP_Stack_Init(rmp_ptr_t Entry, rmp_ptr_t Stack, rmp_ptr_t Arg)
     Stack_Ptr=(rmp_ptr_t*)Stack;
     /* General purpose registers */
 #if(RMP_MIPSM_INIT_EXTRA==1U)
-    Stack_Ptr[0]=0x01010101;                                    /* R1 */
-    Stack_Ptr[1]=0x02020202;                                    /* R2 */
-    Stack_Ptr[2]=0x03030303;                                    /* R3 */
+    Stack_Ptr[0]=0x01010101U;                                   /* R1 */
+    Stack_Ptr[1]=0x02020202U;                                   /* R2 */
+    Stack_Ptr[2]=0x03030303U;                                   /* R3 */
 #endif
     Stack_Ptr[3]=Arg;                                           /* R4 */
 #if(RMP_MIPSM_INIT_EXTRA==1U)
-    Stack_Ptr[4]=0x05050505;                                    /* R5 */
-    Stack_Ptr[5]=0x06060606;                                    /* R6 */
-    Stack_Ptr[6]=0x07070707;                                    /* R7 */
-    Stack_Ptr[7]=0x08080808;                                    /* R8 */
-    Stack_Ptr[8]=0x09090909;                                    /* R9 */
-    Stack_Ptr[9]=0x10101010;                                    /* R10 */
-    Stack_Ptr[10]=0x11111111;                                   /* R11 */
-    Stack_Ptr[11]=0x12121212;                                   /* R12 */
-    Stack_Ptr[12]=0x13131313;                                   /* R13 */
-    Stack_Ptr[13]=0x14141414;                                   /* R14 */
-    Stack_Ptr[14]=0x15151515;                                   /* R15 */
-    Stack_Ptr[15]=0x16161616;                                   /* R16 */
-    Stack_Ptr[16]=0x17171717;                                   /* R17 */
-    Stack_Ptr[17]=0x18181818;                                   /* R18 */
-    Stack_Ptr[18]=0x19191919;                                   /* R19 */
-    Stack_Ptr[19]=0x24242424;                                   /* R24 */
-    Stack_Ptr[20]=0x25252525;                                   /* R25 */
-    Stack_Ptr[21]=0x30303030;                                   /* R30 */
-    Stack_Ptr[22]=0x31313131;                                   /* R31 */
+    Stack_Ptr[4]=0x05050505U;                                   /* R5 */
+    Stack_Ptr[5]=0x06060606U;                                   /* R6 */
+    Stack_Ptr[6]=0x07070707U;                                   /* R7 */
+    Stack_Ptr[7]=0x08080808U;                                   /* R8 */
+    Stack_Ptr[8]=0x09090909U;                                   /* R9 */
+    Stack_Ptr[9]=0x10101010U;                                   /* R10 */
+    Stack_Ptr[10]=0x11111111U;                                  /* R11 */
+    Stack_Ptr[11]=0x12121212U;                                  /* R12 */
+    Stack_Ptr[12]=0x13131313U;                                  /* R13 */
+    Stack_Ptr[13]=0x14141414U;                                  /* R14 */
+    Stack_Ptr[14]=0x15151515U;                                  /* R15 */
+    Stack_Ptr[15]=0x16161616U;                                  /* R16 */
+    Stack_Ptr[16]=0x17171717U;                                  /* R17 */
+    Stack_Ptr[17]=0x18181818U;                                  /* R18 */
+    Stack_Ptr[18]=0x19191919U;                                  /* R19 */
+    Stack_Ptr[19]=0x24242424U;                                  /* R24 */
+    Stack_Ptr[20]=0x25252525U;                                  /* R25 */
+    Stack_Ptr[21]=0x30303030U;                                  /* R30 */
+    Stack_Ptr[22]=0x31313131U;                                  /* R31 */
     /* Kernel registers */
-    Stack_Ptr[23]=0x26262626;                                   /* R26 */
-    Stack_Ptr[24]=0x27272727;                                   /* R27 */
+    Stack_Ptr[23]=0x26262626U;                                  /* R26 */
+    Stack_Ptr[24]=0x27272727U;                                  /* R27 */
 #endif
     Stack_Ptr[25]=RMP_GP_Val;                                   /* R28 */
 #if(RMP_MIPSM_INIT_EXTRA==1U)
     /* Multiply/divide */
-    Stack_Ptr[26]=0x15151515;                                    /* LO */
-    Stack_Ptr[27]=0x51515151;                                    /* HI */
+    Stack_Ptr[26]=0x15151515U;                                  /* LO */
+    Stack_Ptr[27]=0x51515151U;                                  /* HI */
 #endif
     /* Status registers - The EXL prevents premature interrupt enabling */
     Stack_Ptr[28]=RMP_MIPSM_STATUS_IE|RMP_MIPSM_STATUS_EXL;     /* CP0_STATUS */
     Stack_Ptr[29]=Entry;                                        /* CP0_EPC */
 #if(RMP_MIPSM_INIT_EXTRA==1U)
     /* Some general-purpose scratch regs */
-    Stack_Ptr[30]=0x20202020;                                   /* R20 */
-    Stack_Ptr[31]=0x21212121;                                   /* R21 */
-    Stack_Ptr[32]=0x22222222;                                   /* R22 */
-    Stack_Ptr[33]=0x23232323;                                   /* R23 */
+    Stack_Ptr[30]=0x20202020U;                                  /* R20 */
+    Stack_Ptr[31]=0x21212121U;                                  /* R21 */
+    Stack_Ptr[32]=0x22222222U;                                  /* R22 */
+    Stack_Ptr[33]=0x23232323U;                                  /* R23 */
 #endif
 }
 /* End Function:_RMP_Stack_Init **********************************************/
 
-/* Begin Function:_RMP_Low_Level_Init *****************************************
+/* Begin Function:_RMP_Lowlvl_Init ********************************************
 Description : Initialize the low level hardware of the system.
 Input       : None
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void _RMP_Low_Level_Init(void)
+void _RMP_Lowlvl_Init(void)
 {
-    RMP_MIPSM_LOW_LEVEL_INIT();
+    RMP_MIPSM_LOWLVL_INIT();
     
     RMP_Int_Disable();
     RMP_Int_Nest=0;
@@ -136,7 +136,7 @@ void _RMP_Low_Level_Init(void)
     /* Set the timer timeout value */
     _RMP_Set_Timer(RMP_MIPSM_TICK_VAL/2);
 }
-/* End Function:_RMP_Low_Level_Init ******************************************/
+/* End Function:_RMP_Lowlvl_Init *********************************************/
 
 /* Begin Function:_RMP_Plat_Hook **********************************************
 Description : Platform-specific hook for system initialization.
