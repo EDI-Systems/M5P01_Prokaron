@@ -72,6 +72,8 @@ typedef rmp_s32_t rmp_ret_t;
 #define RMP_DEBUG_PRINT_MAX     (128U)
 /* The offset of the stack when initializing */
 #define RMP_INIT_STACK          RMP_INIT_STACK_TAIL(17U+5U)
+/* FPU registers */
+#define RMP_FPU                 ((volatile struct RVM_A7M_Cop_Struct*)(RVM_REG->Cop))
 
 /* The virtual machine configs are here */
 #include "rvm_guest_conf.h"

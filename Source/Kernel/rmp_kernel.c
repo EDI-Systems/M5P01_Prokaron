@@ -464,7 +464,7 @@ void _RMP_Timer_Proc(void)
         Thread=RMP_DLY2THD(RMP_Delay.Next);
         /* If the value is more than this, then it means that the time have
          * already passed and we have to process this */
-        if((RMP_Tick-Thread->Timeout)>(RMP_ALLBITS>>1))
+        if((RMP_Timestamp-Thread->Timeout)>(RMP_ALLBITS>>1))
         {
             RMP_COVERAGE_MARKER();
             break;
@@ -555,27 +555,27 @@ void _RMP_Run_High(void)
     /* Load the SP value from thread structure */
     RMP_SP_Cur=RMP_Thd_Cur->Stack;
     
-#if(RMP_HOOK_EXTRA==1U)
+#if(RMP_HOOK_EXTRA!=0U)
     RMP_Sched_Hook();
 #endif
 }
 /* End Function:_RMP_Run_High ************************************************/
 
-/* Begin Function:_RMP_Tick_Handler *******************************************
+/* Begin Function:_RMP_Tim_Handler ********************************************
 Description : The system tick timer interrupt routine.
-Input       : rmp_ptr_t Ticks - How many ticks have passed.
+Input       : rmp_ptr_t Slice - How many timeslices have passed.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void _RMP_Tick_Handler(rmp_ptr_t Ticks)
+void _RMP_Tim_Handler(rmp_ptr_t Slice)
 {
     volatile struct RMP_Thd* Thread;
     
     /* Increase the timestamp as always */
-    RMP_Tick+=Ticks;
+    RMP_Timestamp+=Slice;
     
     /* See if the current thread expired. If yes, trigger a scheduler event */
-    if(Ticks>RMP_Thd_Cur->Slice_Left)
+    if(Slice>RMP_Thd_Cur->Slice_Left)
     {
         RMP_COVERAGE_MARKER();
         RMP_Sched_Pend=1U;
@@ -583,7 +583,7 @@ void _RMP_Tick_Handler(rmp_ptr_t Ticks)
     else
     {
         RMP_COVERAGE_MARKER();
-        RMP_Thd_Cur->Slice_Left-=Ticks;
+        RMP_Thd_Cur->Slice_Left-=Slice;
     }
     
     /* Check if there are any timer events */
@@ -593,7 +593,7 @@ void _RMP_Tick_Handler(rmp_ptr_t Ticks)
         Thread=RMP_DLY2THD(RMP_Delay.Next);
         /* If the value is less than this, then it means that the time have
          * already passed and we have to process this */
-        if((RMP_Tick-Thread->Timeout)<=(RMP_ALLBITS>>1))
+        if((RMP_Timestamp-Thread->Timeout)<=(RMP_ALLBITS>>1))
         {
             RMP_COVERAGE_MARKER();
             /* No need to care about scheduler locks if this interrupt can be entered
@@ -615,13 +615,45 @@ void _RMP_Tick_Handler(rmp_ptr_t Ticks)
     else
         RMP_COVERAGE_MARKER();
     
-#if(RMP_HOOK_EXTRA==1U)
-    RMP_Tick_Hook(Ticks);
+#if(RMP_HOOK_EXTRA!=0U)
+    RMP_Tim_Hook(Slice);
 #endif
 }
-/* End Function:_RMP_Tick_Handler ********************************************/
+/* End Function:_RMP_Tim_Handler *********************************************/
 
-/* Begin Function:_RMP_Tick_Near ******************************************
+/* Begin Function:_RMP_Tim_Elapse *********************************************
+Description : Honor the elapse of time from the last timer firing. This is to be
+              called before all potential context switch points to correctly 
+              account for the time elapsed before a context switch.
+              can be called in the ticker hook and scheduler hook to set the next
+              timeout value to implement a tickless kernel. If a tickless kernel
+              is not desired, this function can be ignored.
+Input       : rmp_ptr_t Slice - Number of slices passed since last call of
+                                _RMP_Tim_Elapse or _RMP_Tim_Handler.
+Output      : None.
+Return      : None.
+******************************************************************************/
+void _RMP_Tim_Elapse(rmp_ptr_t Slice)
+{
+    /* Increase the timestamp as always */
+    RMP_Timestamp+=Slice;
+    
+    /* See if the current thread expired. If yes, trigger a scheduler event */
+    if(Slice>RMP_Thd_Cur->Slice_Left)
+    {
+        RMP_COVERAGE_MARKER();
+        RMP_Thd_Cur->Slice_Left=1U;
+        RMP_Sched_Pend=1U;
+    }
+    else
+    {
+        RMP_COVERAGE_MARKER();
+        RMP_Thd_Cur->Slice_Left-=Slice;
+    }
+}
+/* End Function:_RMP_Tim_Elapse **********************************************/
+
+/* Begin Function:_RMP_Tim_Future *********************************************
 Description : Get the nearest timer interrupt arrival time. This is used to set
               the timer after the body of tick handler have been executed. This
               can be called in the ticker hook and scheduler hook to set the next
@@ -629,9 +661,9 @@ Description : Get the nearest timer interrupt arrival time. This is used to set
               is not desired, this function can be ignored.
 Input       : None.
 Output      : None.
-Return      : rmp_ptr_t Ticks - How many ticks until the next timeout.
+Return      : rmp_ptr_t - How many slices to program until the next timeout.
 ******************************************************************************/
-rmp_ptr_t _RMP_Tick_Near(void)
+rmp_ptr_t _RMP_Tim_Future(void)
 {
     rmp_ptr_t Value;
     volatile struct RMP_Thd* Thread;
@@ -647,10 +679,10 @@ rmp_ptr_t _RMP_Tick_Near(void)
         /* See if it is nearer - don't worry about the situation that the timer
          * have overflown, because if that is to happen, it would have been 
          * already processed by the timeout processing routine just before. */
-        if((Thread->Timeout-RMP_Tick)<Value)
+        if((Thread->Timeout-RMP_Timestamp)<Value)
         {
             RMP_COVERAGE_MARKER();
-            Value=Thread->Timeout-RMP_Tick;
+            Value=Thread->Timeout-RMP_Timestamp;
         }
         else
             RMP_COVERAGE_MARKER();
@@ -660,7 +692,7 @@ rmp_ptr_t _RMP_Tick_Near(void)
     
     return Value;
 }
-/* End Function:_RMP_Tick_Near *******************************************/
+/* End Function:_RMP_Tim_Future **********************************************/
 
 /* Begin Function:_RMP_Run_Ins ************************************************
 Description : Set the thread as ready to schedule. That means, put the thread into
@@ -756,7 +788,7 @@ void _RMP_Dly_Ins(volatile struct RMP_Thd* Thread,
     while(Trav_Ptr!=&RMP_Delay)
     {
         Trav_Thd=RMP_DLY2THD(Trav_Ptr);
-        if((Trav_Thd->Timeout-RMP_Tick)>Slice)
+        if((Trav_Thd->Timeout-RMP_Timestamp)>Slice)
         {
             RMP_COVERAGE_MARKER();
             break;
@@ -768,7 +800,7 @@ void _RMP_Dly_Ins(volatile struct RMP_Thd* Thread,
     }
 
     /* Insert this into the list */
-    Thread->Timeout=RMP_Tick+Slice;
+    Thread->Timeout=RMP_Timestamp+Slice;
     RMP_List_Ins(&(Thread->Dly_Head), Trav_Ptr->Prev,Trav_Ptr);
 }
 /* End Function:_RMP_Dly_Ins *************************************************/
@@ -2261,11 +2293,11 @@ int main(void)
     /* Initialize the kernel data structures first */
     _RMP_Lowlvl_Init();
     
-#if(RMP_HOOK_EXTRA==1U)
+#if(RMP_HOOK_EXTRA!=0U)
     RMP_Start_Hook();
 #endif
 
-    RMP_Tick=0U;
+    RMP_Timestamp=0U;
     /* Now initialize the kernel data structures */
     RMP_Sched_Lock_Cnt=0U;
     RMP_Sched_Locked=0U;

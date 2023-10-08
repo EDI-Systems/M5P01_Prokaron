@@ -426,7 +426,7 @@ static void RMP_Progbar_Prog(rmp_cnt_t Coord_X,
 
 /*****************************************************************************/
 /* The current tick counter value - can be read by the application to determine their time */
-__EXTERN__ volatile rmp_ptr_t RMP_Tick;
+__EXTERN__ volatile rmp_ptr_t RMP_Timestamp;
 /* The current thread - the pointer itself is volatile but not its contents */
 __EXTERN__ volatile struct RMP_Thd* volatile RMP_Thd_Cur;
 __EXTERN__ volatile rmp_ptr_t RMP_SP_Cur;
@@ -439,8 +439,9 @@ __EXTERN__ volatile rmp_ptr_t RMP_SP_Cur;
 /* This is the entry of user applications */
 EXTERN void RMP_Init(void);
 __EXTERN__ void _RMP_Run_High(void);
-__EXTERN__ void _RMP_Tick_Handler(rmp_ptr_t Ticks);
-__EXTERN__ rmp_ptr_t _RMP_Tick_Near(void);
+__EXTERN__ void _RMP_Tim_Handler(rmp_ptr_t Slice);
+__EXTERN__ void _RMP_Tim_Elapse(rmp_ptr_t Slice);
+__EXTERN__ rmp_ptr_t _RMP_Tim_Future(void);
 __EXTERN__ void RMP_Clear(volatile void* Addr,
                           rmp_ptr_t Size);
 

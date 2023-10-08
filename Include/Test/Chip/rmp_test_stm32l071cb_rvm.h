@@ -71,10 +71,10 @@ ISR Blocking message queue         : 1741 / 3477 / 1741
 
 /* Defines *******************************************************************/
 /* Where are the initial stacks */
-#define THD1_STACK        (&Stack_1[100])
-#define THD2_STACK        (&Stack_2[100])
+#define THD1_STACK              (&Stack_1[100])
+#define THD2_STACK              (&Stack_2[100])
 /* How to read counter */
-#define COUNTER_READ()    ((rmp_tim_t)(TIM2_CNT))
+#define COUNTER_READ()          ((rmp_tim_t)(TIM2_CNT))
 /* Are we testing the memory pool? */
 /* #define TEST_MEM_POOL     8192 */
 /* Are we doing minimal measurements? */

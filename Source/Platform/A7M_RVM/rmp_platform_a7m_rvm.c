@@ -175,11 +175,12 @@ Return      : None.
 void RMP_PendSV_Handler(void)
 {
     rmp_ptr_t* SP;
+    
     /* Spill all the registers onto the user stack
      * MRS      R0, PSP */
     SP=(rmp_ptr_t*)(RVM_REG->Reg.SP);
 
-#if(RVM_A7M_FPU_TYPE!=RVM_A7M_FPU_NONE)
+#if(RVM_COP_NUM!=0U)
     /* Are we using the FPUs at all? If yes, push FPU registers onto stack */
     /* TST      LR, #0x10           ;Are we using the FPU or not at all?
      * DCI      0xBF08              ;IT EQ ;If yes, (DCI for compatibility with no FPU support)
@@ -187,22 +188,22 @@ void RMP_PendSV_Handler(void)
      * DCI      0x8A10              ;Save FPU registers not saved by lazy stacking. */
     if((RVM_REG->Reg.LR&0x10U)==0U)
     {
-        *(--SP)=RVM_REG->Cop.S31;
-        *(--SP)=RVM_REG->Cop.S30;
-        *(--SP)=RVM_REG->Cop.S29;
-        *(--SP)=RVM_REG->Cop.S28;
-        *(--SP)=RVM_REG->Cop.S27;
-        *(--SP)=RVM_REG->Cop.S26;
-        *(--SP)=RVM_REG->Cop.S25;
-        *(--SP)=RVM_REG->Cop.S24;
-        *(--SP)=RVM_REG->Cop.S23;
-        *(--SP)=RVM_REG->Cop.S22;
-        *(--SP)=RVM_REG->Cop.S21;
-        *(--SP)=RVM_REG->Cop.S20;
-        *(--SP)=RVM_REG->Cop.S19;
-        *(--SP)=RVM_REG->Cop.S18;
-        *(--SP)=RVM_REG->Cop.S17;
-        *(--SP)=RVM_REG->Cop.S16;
+        *(--SP)=RMP_FPU->S31;
+        *(--SP)=RMP_FPU->S30;
+        *(--SP)=RMP_FPU->S29;
+        *(--SP)=RMP_FPU->S28;
+        *(--SP)=RMP_FPU->S27;
+        *(--SP)=RMP_FPU->S26;
+        *(--SP)=RMP_FPU->S25;
+        *(--SP)=RMP_FPU->S24;
+        *(--SP)=RMP_FPU->S23;
+        *(--SP)=RMP_FPU->S22;
+        *(--SP)=RMP_FPU->S21;
+        *(--SP)=RMP_FPU->S20;
+        *(--SP)=RMP_FPU->S19;
+        *(--SP)=RMP_FPU->S18;
+        *(--SP)=RMP_FPU->S17;
+        *(--SP)=RMP_FPU->S16;
     }
 #endif
 
@@ -265,7 +266,7 @@ void RMP_PendSV_Handler(void)
     RVM_REG->Reg.R11=*(SP++);
     RVM_REG->Reg.LR=*(SP++);
 
-#if(RVM_A7M_FPU_TYPE!=RVM_A7M_FPU_NONE)
+#if(RVM_COP_NUM!=0U)
     /* If we use FPU, restore FPU context */
     /* TST      LR, #0x10           ;Are we using the FPU or not at all?
      * DCI      0xBF08              ;IT EQ ;If yes, (DCI for compatibility with no FPU support)
@@ -273,22 +274,22 @@ void RMP_PendSV_Handler(void)
      * DCI      0x8A10              ;Load FPU registers not loaded by lazy stacking. */
     if((RVM_REG->Reg.LR&0x10U)==0U)
     {
-        RVM_REG->Cop.S16=*(SP++);
-        RVM_REG->Cop.S17=*(SP++);
-        RVM_REG->Cop.S18=*(SP++);
-        RVM_REG->Cop.S19=*(SP++);
-        RVM_REG->Cop.S20=*(SP++);
-        RVM_REG->Cop.S21=*(SP++);
-        RVM_REG->Cop.S22=*(SP++);
-        RVM_REG->Cop.S23=*(SP++);
-        RVM_REG->Cop.S24=*(SP++);
-        RVM_REG->Cop.S25=*(SP++);
-        RVM_REG->Cop.S26=*(SP++);
-        RVM_REG->Cop.S27=*(SP++);
-        RVM_REG->Cop.S28=*(SP++);
-        RVM_REG->Cop.S29=*(SP++);
-        RVM_REG->Cop.S30=*(SP++);
-        RVM_REG->Cop.S31=*(SP++);
+        RMP_FPU->S16=*(SP++);
+        RMP_FPU->S17=*(SP++);
+        RMP_FPU->S18=*(SP++);
+        RMP_FPU->S19=*(SP++);
+        RMP_FPU->S20=*(SP++);
+        RMP_FPU->S21=*(SP++);
+        RMP_FPU->S22=*(SP++);
+        RMP_FPU->S23=*(SP++);
+        RMP_FPU->S24=*(SP++);
+        RMP_FPU->S25=*(SP++);
+        RMP_FPU->S26=*(SP++);
+        RMP_FPU->S27=*(SP++);
+        RMP_FPU->S28=*(SP++);
+        RMP_FPU->S29=*(SP++);
+        RMP_FPU->S30=*(SP++);
+        RMP_FPU->S31=*(SP++);
     }
 #endif
 
@@ -313,7 +314,7 @@ void RMP_SysTick_Handler(void)
     /* Note the system that we have entered an interrupt. We are not using tickless here */
     /* MOV      R0,#0x01 */
     /* BL       _RMP_Tick_Handler */
-    _RMP_Tick_Handler(1U);
+    _RMP_Tim_Handler(1U);
     /* POP      {PC} */
 }
 /* End Function:RMP_SysTick_Handler ******************************************/
