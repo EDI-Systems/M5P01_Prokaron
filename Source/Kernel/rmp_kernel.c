@@ -593,7 +593,7 @@ void _RMP_Tim_Handler(rmp_ptr_t Slice)
         Thread=RMP_DLY2THD(RMP_Delay.Next);
         /* If the value is less than this, then it means that the time have
          * already passed and we have to process this */
-        if((RMP_Timestamp-Thread->Timeout)<=(RMP_ALLBITS>>1))
+        if((Thread->Timeout-RMP_Timestamp)>(RMP_ALLBITS>>1))
         {
             RMP_COVERAGE_MARKER();
             /* No need to care about scheduler locks if this interrupt can be entered
@@ -625,9 +625,7 @@ void _RMP_Tim_Handler(rmp_ptr_t Slice)
 Description : Honor the elapse of time from the last timer firing. This is to be
               called before all potential context switch points to correctly 
               account for the time elapsed before a context switch.
-              can be called in the ticker hook and scheduler hook to set the next
-              timeout value to implement a tickless kernel. If a tickless kernel
-              is not desired, this function can be ignored.
+              If a tickless kernel is not desired, this function can be ignored.
 Input       : rmp_ptr_t Slice - Number of slices passed since last call of
                                 _RMP_Tim_Elapse or _RMP_Tim_Handler.
 Output      : None.
@@ -637,28 +635,40 @@ void _RMP_Tim_Elapse(rmp_ptr_t Slice)
 {
     /* Increase the timestamp as always */
     RMP_Timestamp+=Slice;
-    
-    /* There's no need to account for a thread's timeslice in RMP, because
-     * when a thread is switched away from, its timeslice is always replenished
-     * in the background (this is VERY different from RME). However, when
-     * calculating the next timer interrupt with _RMP_Tim_Future, the 
-     * RMP_Timestamp is taken into account, so this function must be called
-     * before the _RMP_Tim_Future. It is not required to call this immediately
-     * on context switch entry (which is the required method for RME), but
-     * doing so is also acceptable */
+
+    /* When calculating the next timer interrupt with _RMP_Tim_Future
+     * in context switches triggered by means other than timer interrupts, and 
+     * when inserting threads in to the delay queue in _RMP_Dly_Ins, we need to
+     * update RMP_Timestamp to the latest value manually. This is where
+     * _RMP_Tim_Elapse kicks in, and why it must be called before these uses. 
+     * It is not required to call this immediately on context switch entry 
+     * (which is the required method for RME), but doing so is acceptable. */
+
+    /* When a context switch is pending, there's no need to account for the 
+     * timeslice of the current thread anymore, because its timeslice is always
+     * replenished immediately. Note that this is VERY different from RME which 
+     * needs user-level budget replenishments.
+     * That said, between context switches, if we can guarantee that the elapsed
+     * time is always tracked exclusively by _RMP_Tim_Handler which accounts for
+     * all timeslice losses, and we can load whatever is left into the hardware
+     * timer without losing track of timeslices. 
+     * We note that there are two usecases for _RMP_Tim_Elapse: (1) in context
+     * switch hooks and (2) in delay hooks, and both will always follow a 
+     * context switch. Thus the optimization is valid. */
 }
 /* End Function:_RMP_Tim_Elapse **********************************************/
 
 /* Begin Function:_RMP_Tim_Future *********************************************
 Description : Get the nearest timer interrupt arrival time. This is used to set
-              the timer after a context switch. If a tickless kernel is not 
-              desired, this function can be ignored.
+              the timer after a context switch or a timer interrupt. If a 
+              tickless kernel is not desired, this function can be ignored.
 Input       : None.
 Output      : None.
 Return      : rmp_ptr_t - How many slices to program until the next timeout.
 ******************************************************************************/
 rmp_ptr_t _RMP_Tim_Future(void)
 {
+    rmp_ptr_t Diff;
     rmp_ptr_t Value;
     volatile struct RMP_Thd* Thread;
     
@@ -670,13 +680,18 @@ rmp_ptr_t _RMP_Tim_Future(void)
     {
         RMP_COVERAGE_MARKER();
         Thread=RMP_DLY2THD(RMP_Delay.Next);
-        /* See if it is nearer - don't worry about the situation that the timer
-         * have overflown, because if that is to happen, it would have been 
-         * already processed by the timeout processing routine just before. */
-        if((Thread->Timeout-RMP_Timestamp)<Value)
+        
+        /* Detect possible overflows - trigger timer interrupt ASAP */
+        Diff=Thread->Timeout-RMP_Timestamp;
+        if(Diff>(RMP_ALLBITS>>1))
         {
             RMP_COVERAGE_MARKER();
-            Value=Thread->Timeout-RMP_Timestamp;
+            Value=1U;
+        }
+        else if(Diff<Value)
+        {
+            RMP_COVERAGE_MARKER();
+            Value=Diff;
         }
         else
             RMP_COVERAGE_MARKER();
@@ -764,9 +779,10 @@ void _RMP_Run_Del(volatile struct RMP_Thd* Thread)
 /* End Function:_RMP_Run_Del *************************************************/
 
 /* Begin Function:_RMP_Dly_Ins ************************************************
-Description : Insert the thread into the delay queue, given some timeslices into the
-              future. The thread must not be in the run queue any more.
-Input       : volatile struct RMP_Thd* Thread - The thread to put into the delay queue.
+Description : Insert the thread into the delay queue, given some timeslices into
+              the future. The thread must not be in the run queue any more.
+Input       : volatile struct RMP_Thd* Thread - The thread to put into the delay
+                                                queue.
               rmp_ptr_t - The timeslices to delay.
 Output      : None.
 Return      : None.
@@ -774,15 +790,25 @@ Return      : None.
 void _RMP_Dly_Ins(volatile struct RMP_Thd* Thread,
                   rmp_ptr_t Slice)
 {
+    rmp_ptr_t Diff;
     volatile struct RMP_List* Trav_Ptr;
     volatile struct RMP_Thd* Trav_Thd;
+
+#if(RMP_HOOK_EXTRA!=0U)
+    /* Potentially update the timestamp if we're running tickless */
+    RMP_Dly_Hook(Slice);
+#endif
     
     /* Find a place to insert this timer */
     Trav_Ptr=RMP_Delay.Next;
     while(Trav_Ptr!=&RMP_Delay)
     {
         Trav_Thd=RMP_DLY2THD(Trav_Ptr);
-        if((Trav_Thd->Timeout-RMP_Timestamp)>Slice)
+        Diff=Trav_Thd->Timeout-RMP_Timestamp;
+        
+        /* If >=(RMP_ALLBITS>>1), then we have overflowed due 
+         * to bumpy timestamp updates in a tickless kernel */
+        if((Diff>Slice)&&(Diff<(RMP_ALLBITS>>1)))
         {
             RMP_COVERAGE_MARKER();
             break;
