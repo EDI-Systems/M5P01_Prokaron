@@ -110,6 +110,9 @@ Description : The header file for the kernel.
 
 /* Get the thread from delay list */
 #define RMP_DLY2THD(X)              ((volatile struct RMP_Thd*)(((rmp_ptr_t)(X))-sizeof(struct RMP_List)))
+/* Detect timer overflow */
+#define RMP_DLY_DIFF(X)             ((X)-RMP_Timestamp)
+#define RMP_DLY_OVF(X)              ((X)>(RMP_ALLBITS>>1))
 
 /* Printk macros */
 #define RMP_DBG_I(INT)              RMP_Int_Print((rmp_cnt_t)(INT))

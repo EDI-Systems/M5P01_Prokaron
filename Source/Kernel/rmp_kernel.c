@@ -462,9 +462,9 @@ void _RMP_Timer_Proc(void)
     while((&RMP_Delay)!=RMP_Delay.Next)
     {
         Thread=RMP_DLY2THD(RMP_Delay.Next);
-        /* If the value is more than this, then it means that the time have
-         * already passed and we have to process this */
-        if((RMP_Timestamp-Thread->Timeout)>(RMP_ALLBITS>>1))
+        
+        /* Stop until we find a timer that is not overflown */
+        if(RMP_DLY_OVF(RMP_DLY_DIFF(Thread->Timeout))==0U)
         {
             RMP_COVERAGE_MARKER();
             break;
@@ -593,7 +593,7 @@ void _RMP_Tim_Handler(rmp_ptr_t Slice)
         Thread=RMP_DLY2THD(RMP_Delay.Next);
         /* If the value is less than this, then it means that the time have
          * already passed and we have to process this */
-        if((Thread->Timeout-RMP_Timestamp)>(RMP_ALLBITS>>1))
+        if(RMP_DLY_OVF(RMP_DLY_DIFF(Thread->Timeout))!=0U)
         {
             RMP_COVERAGE_MARKER();
             /* No need to care about scheduler locks if this interrupt can be entered
@@ -682,8 +682,8 @@ rmp_ptr_t _RMP_Tim_Future(void)
         Thread=RMP_DLY2THD(RMP_Delay.Next);
         
         /* Detect possible overflows - trigger timer interrupt ASAP */
-        Diff=Thread->Timeout-RMP_Timestamp;
-        if(Diff>(RMP_ALLBITS>>1))
+        Diff=RMP_DLY_DIFF(Thread->Timeout);
+        if(RMP_DLY_OVF(Diff)!=0U)
         {
             RMP_COVERAGE_MARKER();
             Value=1U;
@@ -804,11 +804,11 @@ void _RMP_Dly_Ins(volatile struct RMP_Thd* Thread,
     while(Trav_Ptr!=&RMP_Delay)
     {
         Trav_Thd=RMP_DLY2THD(Trav_Ptr);
-        Diff=Trav_Thd->Timeout-RMP_Timestamp;
+        Diff=RMP_DLY_DIFF(Trav_Thd->Timeout);
         
-        /* If >=(RMP_ALLBITS>>1), then we have overflowed due 
-         * to bumpy timestamp updates in a tickless kernel */
-        if((Diff>Slice)&&(Diff<(RMP_ALLBITS>>1)))
+        /* Overflow possible due to bumpy timestamp updates in tickless kernel - 
+         * we need to find one that is greater than us yet is not overflown */
+        if((RMP_DLY_OVF(Diff)==0U)&&(Diff>Slice))
         {
             RMP_COVERAGE_MARKER();
             break;
