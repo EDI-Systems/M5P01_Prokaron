@@ -262,7 +262,7 @@ void RMP_SysTick_Handler(void)
     /* Note the system that we have entered an interrupt. We are not using tickless here */
     /* MOV      R0, #0x01 */
     /* BL       _RMP_Tick_Handler */
-    _RMP_Tick_Handler(1U);
+    _RMP_Tim_Handler(1U);
     /* POP      {PC} */
 }
 /* End Function:RMP_SysTick_Handler ******************************************/
