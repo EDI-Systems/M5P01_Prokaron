@@ -64,6 +64,26 @@ ISR Mailbox                        : 1315 / 2480 / 1224
 ISR Semaphore                      : 1230 / 2304 / 1148
 ISR Message queue                  : 1422 / 2560 / 1316
 ISR Blocking message queue         : 1607 / 2852 / 1488
+
+ARMCC 6.18 -O3 (SysTick turned on, may kick in between, w/FPU context)
+    ___   __  ___ ___
+   / _ \ /  |/  // _ \       Simple real-time kernel
+  / , _// /|_/ // ___/       Standard benchmark test
+ /_/|_|/_/  /_//_/
+====================================================
+Test (number in CPU cycles)        : AVG / MAX / MIN
+Yield                              : 1667 / 2988 / 1640
+Mailbox                            : 1850 / 3068 / 1804
+Semaphore                          : 1777 / 3104 / 1748
+FIFO                               : 160 / 1612 / 160
+Message queue                      : 2046 / 3340 / 2004
+Blocking message queue             : 2344 / 3692 / 2264
+Memory allocation/free pair        : 339 / 692 / 331
+ISR Mailbox                        : 1380 / 2688 / 1296
+ISR Semaphore                      : 1322 / 2604 / 1256
+ISR Message queue                  : 1461 / 2708 / 1384
+ISR Blocking message queue         : 1644 / 2976 / 1560
+
 ******************************************************************************/
 
 /* Includes ******************************************************************/

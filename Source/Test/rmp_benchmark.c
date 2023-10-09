@@ -21,7 +21,7 @@ Description : The performance benchmark for RMP. Do not modify this file; what
  * ~ 300MHz             100000 */
 #define OVERFLOW_NUM    100000
 /* Whether to include FPU context */
-#define FLOAT_CONTEXT
+/* #define FLOAT_CONTEXT */
 
 /* Data definitions */
 #define TIME            ((rmp_tim_t)(End-Start))
