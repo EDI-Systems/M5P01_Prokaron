@@ -638,27 +638,21 @@ void _RMP_Tim_Elapse(rmp_ptr_t Slice)
     /* Increase the timestamp as always */
     RMP_Timestamp+=Slice;
     
-    /* See if the current thread expired. If yes, trigger a scheduler event */
-    if(Slice>RMP_Thd_Cur->Slice_Left)
-    {
-        RMP_COVERAGE_MARKER();
-        RMP_Thd_Cur->Slice_Left=1U;
-        RMP_Sched_Pend=1U;
-    }
-    else
-    {
-        RMP_COVERAGE_MARKER();
-        RMP_Thd_Cur->Slice_Left-=Slice;
-    }
+    /* There's no need to account for a thread's timeslice in RMP, because
+     * when a thread is switched away from, its timeslice is always replenished
+     * in the background (this is VERY different from RME). However, when
+     * calculating the next timer interrupt with _RMP_Tim_Future, the 
+     * RMP_Timestamp is taken into account, so this function must be called
+     * before the _RMP_Tim_Future. It is not required to call this immediately
+     * on context switch entry (which is the required method for RME), but
+     * doing so is also acceptable */
 }
 /* End Function:_RMP_Tim_Elapse **********************************************/
 
 /* Begin Function:_RMP_Tim_Future *********************************************
 Description : Get the nearest timer interrupt arrival time. This is used to set
-              the timer after the body of tick handler have been executed. This
-              can be called in the ticker hook and scheduler hook to set the next
-              timeout value to implement a tickless kernel. If a tickless kernel
-              is not desired, this function can be ignored.
+              the timer after a context switch. If a tickless kernel is not 
+              desired, this function can be ignored.
 Input       : None.
 Output      : None.
 Return      : rmp_ptr_t - How many slices to program until the next timeout.
