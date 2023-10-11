@@ -60,7 +60,7 @@ STATUS      16          Status register.
     /* The real task switch handling function */
     .extern             __RMP_Run_High 
     /* The real systick handler function */
-    .extern             __RMP_Tick_Handler
+    .extern             __RMP_Tim_Handler
     /* The PID of the current thread */
     .extern             _RMP_Thd_Cur
     /* The stack address of current thread */
@@ -307,7 +307,7 @@ __T1Interrupt:
     /* We are not using tickless */
     CLR                 W1
     MOV                 #1,W0
-    CALL                __RMP_Tick_Handler
+    CALL                __RMP_Tim_Handler
     CALL                __RMP_Clear_Timer_Flag
     
     LOAD_CONTEXT

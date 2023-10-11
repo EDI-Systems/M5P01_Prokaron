@@ -337,7 +337,7 @@
             <v6WtE>0</v6WtE>
             <v6Rtti>0</v6Rtti>
             <VariousControls>
-              <MiscControls>-Wno-date-time -Wno-unused-parameter -Wno-missing-variable-declarations -Wno-missing-noreturn -Wno-padded</MiscControls>
+              <MiscControls>-Wno-extra-semi-stmt -Wno-date-time -Wno-unused-parameter -Wno-missing-variable-declarations -Wno-missing-noreturn -Wno-padded</MiscControls>
               <Define>STM32L0xx, USE_HAL_DRIVER</Define>
               <Undefine></Undefine>
               <IncludePath>.\;..\..\Include;..\..\..\M0A00_Library\STM32Cube_FW_L0_V1.10.0\Drivers\STM32L0xx_HAL_Driver\Inc;..\..\..\M0A00_Library\STM32Cube_FW_L0_V1.10.0\Drivers\CMSIS\Device\ST\STM32L0xx\Include;..\..\..\M0A00_Library\STM32Cube_FW_L0_V1.10.0\Drivers\CMSIS\Include;..\..\..\M0A00_Library\STM32Cube_FW_L0_V1.10.0\Drivers\STM32L0xx_HAL_Driver\Inc\Conf</IncludePath>

@@ -165,7 +165,7 @@ void RMP_RV32G_Tick_Handler(void)
     /* Update or reset the next tick */
     RMP_RV32G_TICK_RESET();
 
-    _RMP_Tick_Handler(1U);
+    _RMP_Tim_Handler(1U);
 }
 /* End Function:RMP_RV32G_Tick_Handler ************************************/
 
