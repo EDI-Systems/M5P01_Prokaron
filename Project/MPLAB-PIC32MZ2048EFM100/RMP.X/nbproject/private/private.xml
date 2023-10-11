@@ -10,17 +10,6 @@
             <file>file:/C:/E/Dev/FreeRTOS/WorkingCopy/FreeRTOS/Source/portable/MPLAB/PIC32MZ/port.c</file>
             <file>file:/C:/E/Dev/FreeRTOS/WorkingCopy/FreeRTOS/Source/portable/MPLAB/PIC32MZ/port_asm.S</file>
         </group>
-        <group>
-            <file>file:/D:/Code_Library/M5P01_Prokaron/Source/Kernel/rmp_kernel.c</file>
-            <file>file:/D:/Code_Library/M5P01_Prokaron/Source/Platform/MIPSM/rmp_platform_mipsm.c</file>
-            <file>file:/D:/Code_Library/M5P01_Prokaron/Include/Platform/MIPSM/rmp_platform_mipsm.h</file>
-            <file>file:/D:/Code_Library/M5P01_Prokaron/Project/MPLAB-PIC32MZ2048EFM100/RMP.X/rmp_platform_mipsm_conf.h</file>
-            <file>file:/D:/Code_Library/M5P01_Prokaron/Include/Platform/MIPSM/Chip/PIC32MZ2048EFM100/rmp_platform_pic32mz2048efm100.h</file>
-            <file>file:/D:/Code_Library/M5P01_Prokaron/Source/Test/rmp_benchmark.c</file>
-            <file>file:/D:/Code_Library/M5P01_Prokaron/Project/MPLAB-PIC32MZ2048EFM100/RMP.X/rmp_test.h</file>
-            <file>file:/D:/Code_Library/M5P01_Prokaron/Include/Test/Chip/rmp_test_pic32mz2048efm100.h</file>
-            <file>file:/D:/Code_Library/M5P01_Prokaron/Project/MPLAB-PIC32MZ2048EFM100/RMP.X/rmp_test_pic32mz2048efm100.s</file>
-            <file>file:/D:/Code_Library/M5P01_Prokaron/Source/Platform/MIPSM/rmp_platform_mipsm_gcc.s</file>
-        </group>
+        <group/>
     </open-files>
 </project-private>

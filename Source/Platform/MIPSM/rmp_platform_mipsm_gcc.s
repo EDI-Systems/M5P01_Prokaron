@@ -76,7 +76,7 @@ R31    $ra        return address (used by function call)
     /* The real task switch handling function */
     .extern             _RMP_Run_High 
     /* The real systick handler function */
-    .extern             _RMP_Tick_Handler
+    .extern             _RMP_Tim_Handler
     /* The PID of the current thread */
     .extern             RMP_Thd_Cur
     /* The stack address of current thread */
@@ -469,7 +469,7 @@ SysTick_Handler:
     SAVE_CONTEXT
                 
     LI                  $a0,1
-    JAL                 _RMP_Tick_Handler
+    JAL                 _RMP_Tim_Handler
     NOP
     /* Clear the interrupt flag */
     JAL                 _RMP_Clear_Timer_Flag

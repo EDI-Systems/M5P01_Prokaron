@@ -591,8 +591,7 @@ void _RMP_Tim_Handler(rmp_ptr_t Slice)
     {
         RMP_COVERAGE_MARKER();
         Thread=RMP_DLY2THD(RMP_Delay.Next);
-        /* If the value is less than this, then it means that the time have
-         * already passed and we have to process this */
+        /* If there are overflows, process all pending timers */
         if(RMP_DLY_OVF(RMP_DLY_DIFF(Thread->Timeout))!=0U)
         {
             RMP_COVERAGE_MARKER();

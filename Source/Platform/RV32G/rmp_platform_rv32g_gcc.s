@@ -134,7 +134,7 @@ f31    $ft11      temporary (caller-save)
     /* The real task switch handling function */
     .extern             _RMP_Run_High
     /* The real systick handler function */
-    .extern             _RMP_Tick_Handler
+    .extern             _RMP_Tim_Handler
     /* The current thread */
     .extern             RMP_Thd_Cur
     /* The stack address of current thread */

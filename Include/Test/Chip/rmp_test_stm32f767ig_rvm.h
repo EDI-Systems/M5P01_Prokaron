@@ -53,17 +53,18 @@ ARMCC 6.18 -O3 (SysTick turned on, may kick in between)
  /_/|_|/_/  /_//_/
 ====================================================
 Test (number in CPU cycles)        : AVG / MAX / MIN
-Yield                              : 1448 / 2712 / 1408
-Mailbox                            : 1661 / 2860 / 1604
-Semaphore                          : 1601 / 2832 / 1552
-FIFO                               : 156 / 284 / 156
-Message queue                      : 1864 / 3100 / 1816
-Blocking message queue             : 2096 / 3468 / 2032
-Memory allocation/free pair        : 338 / 506 / 330
-ISR Mailbox                        : 1315 / 2480 / 1224
-ISR Semaphore                      : 1230 / 2304 / 1148
-ISR Message queue                  : 1422 / 2560 / 1316
-ISR Blocking message queue         : 1607 / 2852 / 1488
+Yield                              : 1341 / 2548 / 1296
+Mailbox                            : 1523 / 2732 / 1496
+Semaphore                          : 1458 / 2716 / 1444
+FIFO                               : 170 / 236 / 160
+Message queue                      : 1749 / 2972 / 1684
+Blocking message queue             : 1987 / 3300 / 1924
+Memory allocation/free pair        : 339 / 546 / 332
+ISR Mailbox                        : 1079 / 2292 / 1040
+ISR Semaphore                      : 1032 / 3468 / 988
+ISR Message queue                  : 1236 / 2456 / 1164
+ISR Blocking message queue         : 1424 / 2616 / 1332
+
 
 ARMCC 6.18 -O3 (SysTick turned on, may kick in between, w/FPU context)
     ___   __  ___ ___

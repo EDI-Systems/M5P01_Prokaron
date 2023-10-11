@@ -49,7 +49,7 @@
                         ; The real task switch handling function
                         IMPORT              _RMP_Run_High 
                         ; The real systick handler function
-                        IMPORT              _RMP_Tick_Handler
+                        IMPORT              _RMP_Tim_Handler
                         ; The PID of the current thread                     
                         IMPORT              RMP_Thd_Cur
                         ; The stack address of current thread
@@ -227,7 +227,7 @@ SysTick_Handler         PROC
                         PUSH                {LR}
 
                         MOVS                R0, #0x01           ; We are not using tickless.
-                        BL                  _RMP_Tick_Handler
+                        BL                  _RMP_Tim_Handler
                         
                         POP                 {PC}
                         ENDP
