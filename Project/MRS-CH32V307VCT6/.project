@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
 	<name>RMP</name>
-	<comment/>
+	<comment></comment>
 	<projects>
 	</projects>
 	<buildSpec>
@@ -200,14 +200,14 @@
 			<locationURI>PARENT-3-PROJECT_LOC/M0A00_Library/CH32V30x/User/system_ch32v30x.c</locationURI>
 		</link>
 		<link>
-			<name>Platform/rmp_platform_rv32g.c</name>
+			<name>Platform/rmp_platform_rv32gp.c</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/Source/Platform/RV32G/rmp_platform_rv32g.c</locationURI>
+			<locationURI>PARENT-2-PROJECT_LOC/Source/Platform/RV32GP/rmp_platform_rv32gp.c</locationURI>
 		</link>
 		<link>
-			<name>Platform/rmp_platform_rv32g_gcc.s</name>
+			<name>Platform/rmp_platform_rv32gp_gcc.s</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/Source/Platform/RV32G/rmp_platform_rv32g_gcc.s</locationURI>
+			<locationURI>PARENT-2-PROJECT_LOC/Source/Platform/RV32GP/rmp_platform_rv32gp_gcc.s</locationURI>
 		</link>
 		<link>
 			<name>Test/rmp_benchmark.c</name>
@@ -218,7 +218,7 @@
 	<filteredResources>
 		<filter>
 			<id>1595986042669</id>
-			<name/>
+			<name></name>
 			<type>22</type>
 			<matcher>
 				<id>org.eclipse.ui.ide.multiFilter</id>

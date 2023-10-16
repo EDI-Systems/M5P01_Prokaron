@@ -1,8 +1,9 @@
 /******************************************************************************
-Filename    : rmp_platform_rv32g_gcc.s
+Filename    : rmp_platform_rv32gp_gcc.s
 Author      : pry
 Date        : 10/04/2012
-Description : The assembly part of the RMP RTOS. This is for RV32G.
+Description : The assembly part of the RMP RTOS. This is for RV32G with
+              physical memory access.
               As an open source processor IP, RISC-V have many configurations
               that are implementation-specific. To maximize the applicability
               of this port, certain modifications to the vendor-supplied
@@ -119,15 +120,15 @@ f31    $ft11      temporary (caller-save)
     /* Start the first thread */
     .global             _RMP_Start
     /* Get MCAUSE value */
-    .global             _RMP_MCAUSE_Get
+    .global             __RMP_RV32GP_MCAUSE_Get
     /* Set MTVEC value */
-    .global             _RMP_MTVEC_Set
+    .global             __RMP_RV32GP_MTVEC_Set
     /* Get MCYCLE value */
-    .global             _RMP_MCYCLE_Get
+    .global             __RMP_RV32GP_MCYCLE_Get
     /* Fencing memory */
-    .global             _RMP_Mem_FENCE
+    .global             __RMP_RV32GP_Mem_FENCE
     /* Generic interrupt handler */
-    .global             _RMP_RV32G_Handler
+    .global             __RMP_RV32GP_Handler
 /* End Exports ***************************************************************/
 
 /* Begin Imports *************************************************************/
@@ -143,7 +144,7 @@ f31    $ft11      temporary (caller-save)
     .extern             RMP_Ctx_Save
     .extern             RMP_Ctx_Load
     /* Interrupt handler */
-    .extern             _RMP_Int_Handler
+    .extern             _RMP_RV32GP_Handler
     /* Clear timer & software interrupt flags */
     .extern             _RMP_Clear_Soft_Flag
     .extern             _RMP_Clear_Timer_Flag
@@ -218,51 +219,51 @@ _RMP_Start:
     RET
 /* End Function:_RMP_Start ***************************************************/
 
-/* Begin Function:_RMP_MCAUSE_Get *********************************************
+/* Begin Function:__RMP_RV32GP_MCAUSE_Get *************************************
 Description : Get the mcause register content.
 Input       : None.
 Output      : None.
 Return      : $a0 - MCAUSE value.
 ******************************************************************************/
-_RMP_MCAUSE_Get:
+__RMP_RV32GP_MCAUSE_Get:
     CSRR                a0, mcause
     RET
-/* End Function:_RMP_MCAUSE_Get **********************************************/
+/* End Function:__RMP_RV32GP_MCAUSE_Get **************************************/
 
-/* Begin Function:_RMP_MTVEC_Set **********************************************
+/* Begin Function:__RMP_RV32GP_MTVEC_Set **************************************
 Description : Set the mtvec register content.
 Input       : $a0 - MTVEC value.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-_RMP_MTVEC_Set:
+__RMP_RV32GP_MTVEC_Set:
     CSRW                mtvec, a0
     RET
-/* End Function:_RMP_Set_MTVEC ***********************************************/
+/* End Function:__RMP_RV32GP_MTVEC_Set ***************************************/
 
-/* Begin Function:_RMP_MCYCLE_Get *********************************************
+/* Begin Function:__RMP_RV32GP_MCYCLE_Get *************************************
 Description : Set the mtvec register content.
 Input       : None.
 Output      : None.
 Return      : $a0 - MCYCLE value.
 ******************************************************************************/
-_RMP_MCYCLE_Get:
+__RMP_RV32GP_MCYCLE_Get:
     CSRR                a0, mcycle
     RET
-/* End Function:_RMP_Get_MCYCLE **********************************************/
+/* End Function:__RMP_RV32GP_MCYCLE_Get **************************************/
 
-/* Begin Function:_RMP_Mem_FENCE **********************************************
+/* Begin Function:__RMP_RV32GP_Mem_FENCE **************************************
 Description : Fence the memory accesses to make sure that they are strongly ordered.
 Input       : None.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-_RMP_Mem_FENCE:
+__RMP_RV32GP_Mem_FENCE:
     FENCE
     RET
-/* End Function:_RMP_Mem_FENCE ***********************************************/
+/* End Function:__RMP_RV32GP_Mem_FENCE ***************************************/
 
-/* Begin Function:_RMP_RV32G_Handler ******************************************
+/* Begin Function:__RMP_RV32GP_Handler ****************************************
 Description : The generic interrupt handling routine. This is the entry of all
               interrupt handlers (that are managed by the kernel); we will
               analyze mcause register to jump to the corresponding vector.
@@ -271,7 +272,7 @@ Input       : None.
 Output      : None.
 ******************************************************************************/
     .align              2
-_RMP_RV32G_Handler:
+__RMP_RV32GP_Handler:
     /* RISC-V does not support interrupt nesting, as the current specification says.
      * Its interrupt controller does not accept new ones before the old one gets
      * done; and to make things worse, unlike MIPS, it doesn't have IPL field,
@@ -365,17 +366,17 @@ SAVESKIP:
     /* x0 is always zero thus not saved */
 
     /* Load gp for kernel - defined by linker script */
-    .option push
-    .option norelax
+    .option             push
+    .option             norelax
     LA                  gp, __global_pointer$
-    .option pop
+    .option             pop
     /* Save the sp to control block */
     LA                  a0, RMP_SP_Cur
     SW                  sp, (a0)
     /* Load sp for kernel - defined by linker script */
     LA                  sp, __initial_stack$
     /* Call system main interrupt handler */
-    CALL                _RMP_Int_Handler
+    CALL                _RMP_RV32GP_Handler
     /* Load the sp from control block */
     LA                  a0, RMP_SP_Cur
     LW                  sp, (a0)
@@ -466,7 +467,7 @@ RESTORESKIP:
     LW                  x31, 31*4(sp)
     ADDI                sp, sp, 32*4
     MRET
-/* End Function:_RMP_RV32G_Handler *******************************************/
+/* End Function:__RMP_RV32GP_Handler *****************************************/
 
 /* End Of File ***************************************************************/
 

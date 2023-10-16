@@ -43,7 +43,7 @@ ISR Blocking message queue         : 47692 / 52253 / 47628
 #define THD1_STACK          (&Stack_1[300])
 #define THD2_STACK          (&Stack_2[300])
 /* How to read counter */
-#define COUNTER_READ()      ((rmp_tim_t)_RMP_MCYCLE_Get())
+#define COUNTER_READ()      ((rmp_tim_t)__RMP_RV32GP_MCYCLE_Get())
 /* Are we testing the memory pool? */
 /* #define TEST_MEM_POOL       8192 */
 /* Are we doing minimal measurements? */

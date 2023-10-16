@@ -329,7 +329,7 @@ DMA2_Channel7_IRQHandler:
 DMA2_Channel8_IRQHandler:
 DMA2_Channel9_IRQHandler:
 DMA2_Channel10_IRQHandler:
-DMA2_Channel11_IRQHandler: j _RMP_RV32G_Handler
+DMA2_Channel11_IRQHandler: j __RMP_RV32GP_Handler
 
 	.section	.text.handle_reset,"ax",@progbits
 	.weak	handle_reset

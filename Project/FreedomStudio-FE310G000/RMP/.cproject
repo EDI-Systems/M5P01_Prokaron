@@ -163,6 +163,9 @@
 							</tool>
 						</toolChain>
 					</folderInfo>
+					<fileInfo id="ilg.gnumcueclipse.managedbuild.cross.riscv.config.elf.debug.1719660306.1103512689" name="rmp_platform_rv32g_gcc.s" rcbsApplicability="disable" resourcePath="Platform/rmp_platform_rv32g_gcc.s" toolsToInvoke="ilg.gnumcueclipse.managedbuild.cross.riscv.tool.assembler.515177196.1322305104">
+						<tool id="ilg.gnumcueclipse.managedbuild.cross.riscv.tool.assembler.515177196.1322305104" name="GNU RISC-V Cross Assembler" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.tool.assembler.515177196"/>
+					</fileInfo>
 					<sourceEntries>
 						<entry excluding="Drivers" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>

@@ -9,6 +9,14 @@ Description : The RMP RTOS single-file kernel.
               policy is totally exported, so the user assume full control over this.
               The white-box coverage of 100% of all kernel branches have been reached.
               Formal verification in progress.
+              Use of 'volatile': we make every data structure volatile so all 
+              memory reads and writes to potentially shared structures are 
+              strongly ordered from a compiler perspective. This DOES decrease
+              performance, but can survive smart LTOs without manually adding
+              barriers. The kernel is written such that all frequently read data
+              is a copy of the global data, so the performance loss is mild.
+              Function naming conventions: user-program callable functions have
+              no "_", while internal kernel-only functions begin with "_".
 ******************************************************************************/
 
 /* Includes ******************************************************************/
