@@ -228,6 +228,7 @@ void Test_Yield_2(void)
     rmp_cnt_t Count;
     for(Count=0;Count<ROUND_NUM;Count++)
     {
+        /* *((volatile rmp_ptr_t*)0)=0; */
         RMP_Yield();
         /* Read counter here */
         End=COUNTER_READ();

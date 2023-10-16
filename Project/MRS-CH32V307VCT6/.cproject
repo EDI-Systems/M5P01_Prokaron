@@ -117,6 +117,9 @@
 							</tool>
 						</toolChain>
 					</folderInfo>
+					<fileInfo id="ilg.gnumcueclipse.managedbuild.cross.riscv.config.elf.release.1008047074.1300942500" name="rmp_platform_rv32g_gcc.s" rcbsApplicability="disable" resourcePath="Platform/rmp_platform_rv32g_gcc.s" toolsToInvoke="ilg.gnumcueclipse.managedbuild.cross.riscv.tool.assembler.1244756189.839128171">
+						<tool id="ilg.gnumcueclipse.managedbuild.cross.riscv.tool.assembler.1244756189.839128171" name="GNU RISC-V Cross Assembler" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.tool.assembler.1244756189"/>
+					</fileInfo>
 					<sourceEntries>
 						<entry excluding="Startup|Peripheral|Ld|Debug|Core" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Core"/>
@@ -145,4 +148,5 @@
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
 	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
+	
 </cproject>

@@ -30,47 +30,47 @@ Description : The configuration file for CH32V307VC RISC-V chip.
 #define RMP_INT_UNMASK()                RMP_Int_Enable()
 
 /* 1ms tick time for 96MHz */
-#define RMP_RV32G_TICK_COUNT            (96000U)
+#define RMP_RV32GP_TICK_COUNT           (96000U)
 
 /* Mcause for interrupt vectors */
-#define RMP_RV32G_TICK_MCAUSE           (12U)
-#define RMP_RV32G_SWITCH_MCAUSE         (14U)
+#define RMP_RV32GP_MCAUSE_TIM           (12U)
+#define RMP_RV32GP_MCAUSE_CTX           (14U)
 
 /* Other low-level initialization stuff - clock and serial. 
  * This is the default initialization sequence. If you wish to supply
  * your own, just redirect this macro to a custom function, or do your
  * initialization stuff in the initialization hook (RMP_Start_Hook). */
-#define RMP_RV32G_LOWLVL_INIT() \
+#define RMP_RV32GP_LOWLVL_INIT() \
 do \
 { \
     NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2); \
     Delay_Init(); \
     USART_Printf_Init(115200U); \
     RMP_Int_Disable(); \
-    SysTick->CMP=RMP_RV32G_TICK_COUNT; \
+    SysTick->CMP=RMP_RV32GP_TICK_COUNT; \
     SysTick->CTLR=0x3FU; \
      \
     NVIC_EnableIRQ(Software_IRQn); \
 } \
 while(0)
-//NVIC_EnableIRQ(SysTicK_IRQn);
+
 /* Optional platform hook */
-#define RMP_RV32G_PLAT_HOOK() \
+#define RMP_RV32GP_PLAT_HOOK() \
 extern void Test_Handler(void); \
 Test_Handler()
 
 /* Reprogram the timer or clear timer interrupt flags */
-#define RMP_RV32G_TICK_RESET()          (SysTick->SR=0)
+#define RMP_RV32GP_TIM_CLR()            (SysTick->SR=0)
 
 /* Trigger/clear software interrupt */
-#define RMP_RV32G_SWITCH_SET()          NVIC_SetPendingIRQ(Software_IRQn)
-#define RMP_RV32G_SWITCH_CLR()          NVIC_ClearPendingIRQ(Software_IRQn)
+#define RMP_RV32GP_CTX_SET()            NVIC_SetPendingIRQ(Software_IRQn)
+#define RMP_RV32GP_CTX_CLR()            NVIC_ClearPendingIRQ(Software_IRQn)
 
 /* Peripheral handler hook */
-#define RMP_RV32G_PERIPH_HANDLER()
+#define RMP_RV32GP_VCT_HANDLER(MCAUSE)
 
 /* This is for debugging output */
-#define RMP_RV32G_PUTCHAR(CHAR) \
+#define RMP_RV32GP_PUTCHAR(CHAR) \
 do \
 { \
     printf("%c",CHAR); \

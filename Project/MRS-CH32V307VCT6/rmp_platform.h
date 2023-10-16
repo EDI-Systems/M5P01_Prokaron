@@ -7,7 +7,7 @@ Description : The platform specific types for RMP.
 ******************************************************************************/
 
 /* Platform Includes *********************************************************/
-#include "Platform/RV32G/rmp_platform_rv32g.h"
+#include "Platform/RV32GP/rmp_platform_rv32gp.h"
 /* End Platform Includes *****************************************************/
 
 /* End Of File ***************************************************************/

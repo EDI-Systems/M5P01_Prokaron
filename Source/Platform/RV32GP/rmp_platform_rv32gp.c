@@ -1,28 +1,29 @@
 /******************************************************************************
-Filename    : rmp_platform_rv32g.c
+Filename    : rmp_platform_rv32gp.c
 Author      : pry
 Date        : 04/02/2018
 Licence     : The Unlicense; see LICENSE for details.
-Description : The platform specific file for RV32G. Any subsets that include
-              RV32I are supported by this port, and this is also compatible
-              with processors that support RV32C in addition to RV32G.
+Description : The platform specific file for RV32GP with physical address space.
+              Any subsets that include RV32I are supported by this port, and this
+              is also compatible with processors that support RV32C in addition
+              to RV32GP.
               Note that processors only supporting RV32C are not covered by
-              this port and should use the RV32C port instead.
+              this port and should use the RV32CP port instead.
 ******************************************************************************/
 
 /* Includes ******************************************************************/
 #define __HDR_DEFS__
-#include "Platform/RV32G/rmp_platform_rv32g.h"
+#include "Platform/RV32GP/rmp_platform_rv32gp.h"
 #include "Kernel/rmp_kernel.h"
 #undef __HDR_DEFS__
 
 #define __HDR_STRUCTS__
-#include "Platform/RV32G/rmp_platform_rv32g.h"
+#include "Platform/RV32GP/rmp_platform_rv32gp.h"
 #include "Kernel/rmp_kernel.h"
 #undef __HDR_STRUCTS__
 
 /* Private include */
-#include "Platform/RV32G/rmp_platform_rv32g.h"
+#include "Platform/RV32GP/rmp_platform_rv32gp.h"
 
 #define __HDR_PUBLIC_MEMBERS__
 #include "Kernel/rmp_kernel.h"
@@ -95,7 +96,7 @@ Return      : None.
 ******************************************************************************/
 void _RMP_Lowlvl_Init(void)
 {
-    RMP_RV32G_LOWLVL_INIT();
+    RMP_RV32GP_LOWLVL_INIT();
 }
 /* End Function:_RMP_Lowlvl_Init *********************************************/
 
@@ -119,7 +120,7 @@ Return      : None.
 ******************************************************************************/
 void RMP_Putchar(char Char)
 {
-    RMP_RV32G_PUTCHAR(Char);
+    RMP_RV32GP_PUTCHAR(Char);
 }
 /* End Function:RMP_Putchar **************************************************/
 
@@ -132,56 +133,56 @@ Return      : None.
 ******************************************************************************/
 void _RMP_Yield(void)
 {
-    RMP_RV32G_SWITCH_SET();
+    RMP_RV32GP_CTX_SET();
 
-    _RMP_Mem_FENCE();
+    __RMP_RV32GP_Mem_FENCE();
 }
 /* End Function:_RMP_Yield ***************************************************/
 
-/* Begin Function:RMP_RV32G_Switch_Handler *********************************
+/* Begin Function:__RMP_RV32GP_Ctx_Handler ************************************
 Description : The PendSV interrupt routine. This is used to switch contexts.
 Input       : None.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void RMP_RV32G_Switch_Handler(void)
+void __RMP_RV32GP_Ctx_Handler(void)
 {
-    RMP_RV32G_SWITCH_CLR();
+    RMP_RV32GP_CTX_CLR();
 
     RMP_Ctx_Save();
     _RMP_Run_High();
     RMP_Ctx_Load();
 }
-/* End Function:RMP_RV32G_Switch_Handler **********************************/
+/* End Function:__RMP_RV32GP_Ctx_Handler *************************************/
 
-/* Begin Function:RMP_RV32G_Tick_Handler ***********************************
+/* Begin Function:__RMP_RV32GP_Tim_Handler ************************************
 Description : The Tick interrupt routine.
 Input       : None.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void RMP_RV32G_Tick_Handler(void)
+void __RMP_RV32GP_Tim_Handler(void)
 {
     /* Update or reset the next tick */
-    RMP_RV32G_TICK_RESET();
+    RMP_RV32GP_TIM_CLR();
 
     _RMP_Tim_Handler(1U);
 }
-/* End Function:RMP_RV32G_Tick_Handler ************************************/
+/* End Function:__RMP_RV32GP_Tim_Handler *************************************/
 
-/* Begin Function:RMP_RV32G_Periph_Handler *********************************
+/* Begin Function:__RMP_RV32GP_Vct_Handler ************************************
 Description : The handler routine for peripherals.
 Input       : rmp_ptr_t Mcause - The mcause register value.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void RMP_RV32G_Periph_Handler(rmp_ptr_t Mcause)
+void __RMP_RV32GP_Vct_Handler(rmp_ptr_t Mcause)
 {
-    RMP_RV32G_PERIPH_HANDLER();
+    RMP_RV32GP_VCT_HANDLER(Mcause);
 }
-/* End Function:RMP_RV32G_Periph_Handler **************************************/
+/* End Function:__RMP_RV32GP_Vct_Handler *************************************/
 
-/* Begin Function:_RMP_Int_Handler ********************************************
+/* Begin Function:_RMP_RV32GP_Handler *****************************************
 Description : The interrupt handler routine. This exists due to some processor
               lacking vectored interrupt mechanism, and when this is the case
               we're forced to do it here.
@@ -189,11 +190,11 @@ Input       : None.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void _RMP_Int_Handler(void)
+void _RMP_RV32GP_Handler(void)
 {
     rmp_ptr_t Mcause;
 
-    Mcause=_RMP_MCAUSE_Get();
+    Mcause=__RMP_RV32GP_MCAUSE_Get();
 
     /* If this is an exception, die here */
     RMP_ASSERT((Mcause&0x80000000U)!=0U);
@@ -201,11 +202,11 @@ void _RMP_Int_Handler(void)
     switch(Mcause&0x7FFFFFFFU)
     {
         /* Machine software interrupt */
-        case RMP_RV32G_TICK_MCAUSE:RMP_RV32G_Tick_Handler();break;
+        case RMP_RV32GP_MCAUSE_TIM:__RMP_RV32GP_Tim_Handler();break;
         /* Machine timer interrupt */
-        case RMP_RV32G_SWITCH_MCAUSE:RMP_RV32G_Switch_Handler();break;
+        case RMP_RV32GP_MCAUSE_CTX:__RMP_RV32GP_Ctx_Handler();break;
         /* Other OS-aware cases */
-        default:RMP_RV32G_Periph_Handler(Mcause);break;
+        default:__RMP_RV32GP_Vct_Handler(Mcause);break;
     }
 }
 /* End Function:_RMP_Int_Handler *********************************************/
