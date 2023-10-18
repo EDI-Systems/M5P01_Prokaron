@@ -19,18 +19,20 @@ Description : The performance benchmark for RMP. Do not modify this file; what
  * ~ 3MHz               100
  * ~ 30MHz              10000
  * ~ 300MHz             100000 */
-#define OVERFLOW_NUM    100000
+#define OVERFLOW_NUM    10000
 /* Whether to include FPU context */
 /* #define FLOAT_CONTEXT */
+/* Whether to inject fault intentionally */
+/* #define FAULT_INJECT */
 
 /* Data definitions */
-#define TIME            ((rmp_tim_t)(End-Start))
-#define TOTAL()         (Total+=(TIME))
-#define MAX()           (Max=((TIME)>(Max)?(TIME):(Max)))
-#define MIN()           (Min=((TIME)<(Min)?(TIME):(Min)))
+#define RMP_TIME        ((rmp_tim_t)(End-Start))
+#define RMP_TOTAL()     (Total+=(Diff))
+#define RMP_MAX()       (Max=((Diff)>(Max)?(Diff):(Max)))
+#define RMP_MIN()       (Min=((Diff)<(Min)?(Diff):(Min)))
 
 /* Data initialization */
-#define INIT() \
+#define RMP_INIT() \
 do \
 { \
     Total=0; \
@@ -40,17 +42,18 @@ do \
 while(0)
 
 /* Data extraction */
-#define DATA() \
+#define RMP_DATA() \
 do \
 { \
-    TOTAL(); \
-    MAX(); \
-    MIN(); \
+    Diff=RMP_TIME; \
+    RMP_TOTAL(); \
+    RMP_MAX(); \
+    RMP_MIN(); \
 } \
 while(0)
     
 /* Data printing */
-#define LIST(X) \
+#define RMP_LIST(X) \
 do \
 { \
     RMP_DBG_S(X); \
@@ -69,6 +72,7 @@ while(0)
 #ifndef MINIMAL_SIZE
 volatile rmp_tim_t Start=0;
 volatile rmp_tim_t End=0;
+volatile rmp_tim_t Diff=0;
 volatile rmp_tim_t Min=0;
 volatile rmp_tim_t Max=0;
 volatile rmp_u32_t Overflow=0;
@@ -149,7 +153,7 @@ void Test_Yield_1(void)
     for(Count=0;Count<ROUND_NUM;Count++)
     {
         /* Read counter here */
-        Start=COUNTER_READ();
+        Start=RMP_CNT_READ();
         RMP_Yield();
     }
 }
@@ -160,7 +164,7 @@ void Test_Mail_1(void)
     for(Count=0;Count<ROUND_NUM;Count++)
     {
         /* Read counter here */
-        Start=COUNTER_READ();
+        Start=RMP_CNT_READ();
         RMP_Thd_Snd(&Thd_2, 1, RMP_SLICE_MAX);
     }
 }
@@ -171,7 +175,7 @@ void Test_Sem_1(void)
     for(Count=0;Count<ROUND_NUM;Count++)
     {
         /* Read counter here */
-        Start=COUNTER_READ();
+        Start=RMP_CNT_READ();
         RMP_Sem_Post(&Sem_1, 1);
     }
 }
@@ -183,7 +187,7 @@ void Test_Msgq_1(void)
     for(Count=0;Count<ROUND_NUM;Count++)
     {
         /* Read counter here */
-        Start=COUNTER_READ();
+        Start=RMP_CNT_READ();
         RMP_Msgq_Snd(&Msgq_1, &Node);
     }
 }
@@ -195,7 +199,7 @@ void Test_Bmq_1(void)
     for(Count=0;Count<ROUND_NUM;Count++)
     {
         /* Read counter here */
-        Start=COUNTER_READ();
+        Start=RMP_CNT_READ();
         RMP_Bmq_Snd(&Bmq_1, &Node, RMP_SLICE_MAX);
     }
 }
@@ -228,11 +232,10 @@ void Test_Yield_2(void)
     rmp_cnt_t Count;
     for(Count=0;Count<ROUND_NUM;Count++)
     {
-        /* *((volatile rmp_ptr_t*)0)=0; */
         RMP_Yield();
         /* Read counter here */
-        End=COUNTER_READ();
-        DATA();
+        End=RMP_CNT_READ();
+        RMP_DATA();
     }
 }
 
@@ -244,8 +247,8 @@ void Test_Mail_2(void)
     {
         RMP_Thd_Rcv(&Data, RMP_SLICE_MAX);
         /* Read counter here */
-        End=COUNTER_READ();
-        DATA();
+        End=RMP_CNT_READ();
+        RMP_DATA();
     }
 }
 
@@ -256,8 +259,8 @@ void Test_Sem_2(void)
     {
         RMP_Sem_Pend(&Sem_1, RMP_SLICE_MAX);
         /* Read counter here */
-        End=COUNTER_READ();
-        DATA();
+        End=RMP_CNT_READ();
+        RMP_DATA();
     }
 }
 
@@ -270,11 +273,11 @@ void Test_Fifo(void)
     for(Count=0;Count<ROUND_NUM;Count++)
     {
         /* FIFO is different in that it is non-blocking */
-        Start=COUNTER_READ();
+        Start=RMP_CNT_READ();
         RMP_Fifo_Write(&Fifo_1, &Node);
         RMP_Fifo_Read(&Fifo_1, &Receive);
-        End=COUNTER_READ();
-        DATA();
+        End=RMP_CNT_READ();
+        RMP_DATA();
         /* This must be the same thing */
         if(Receive!=&Node)
             while(1);
@@ -290,8 +293,8 @@ void Test_Msgq_2(void)
     {
         RMP_Msgq_Rcv(&Msgq_1, &Receive, RMP_SLICE_MAX);
         /* Read counter here */
-        End=COUNTER_READ();
-        DATA();
+        End=RMP_CNT_READ();
+        RMP_DATA();
     }
 }
 
@@ -304,8 +307,8 @@ void Test_Bmq_2(void)
     {
         RMP_Bmq_Rcv(&Bmq_1, &Receive, RMP_SLICE_MAX);
         /* Read counter here */
-        End=COUNTER_READ();
-        DATA();
+        End=RMP_CNT_READ();
+        RMP_DATA();
     }
 }
 
@@ -317,8 +320,8 @@ void Test_Mail_ISR(void)
     {
         RMP_Thd_Rcv(&Data, RMP_SLICE_MAX);
         /* Read counter here */
-        End=COUNTER_READ();
-        DATA();
+        End=RMP_CNT_READ();
+        RMP_DATA();
     }
 }
 
@@ -329,8 +332,8 @@ void Test_Sem_ISR(void)
     {
         RMP_Sem_Pend(&Sem_1, RMP_SLICE_MAX);
         /* Read counter here */
-        End=COUNTER_READ();
-        DATA();
+        End=RMP_CNT_READ();
+        RMP_DATA();
     }
 }
 
@@ -343,8 +346,8 @@ void Test_Msgq_ISR(void)
     {
         RMP_Msgq_Rcv(&Msgq_1, &Receive, RMP_SLICE_MAX);
         /* Read counter here */
-        End=COUNTER_READ();
-        DATA();
+        End=RMP_CNT_READ();
+        RMP_DATA();
     }
 }
 
@@ -357,8 +360,8 @@ void Test_Bmq_ISR(void)
     {
         RMP_Bmq_Rcv(&Bmq_1, &Receive, RMP_SLICE_MAX);
         /* Read counter here */
-        End=COUNTER_READ();
-        DATA();
+        End=RMP_CNT_READ();
+        RMP_DATA();
     }
 }
 
@@ -425,7 +428,7 @@ void Test_Mem_Pool(void)
             Swap(&Size[Count], &Size[Rand()%((rmp_ptr_t)Count+1U)]);
         }
         
-        Start=COUNTER_READ();
+        Start=RMP_CNT_READ();
         /* Allocation tests */
         Mem[Alloc[0]]=RMP_Malloc(Pool, Amount[Size[0]]);
         Mem[Alloc[1]]=RMP_Malloc(Pool, Amount[Size[1]]);
@@ -445,8 +448,8 @@ void Test_Mem_Pool(void)
         RMP_Free(Pool,Mem[Free[5]]);
         RMP_Free(Pool,Mem[Free[6]]);
         RMP_Free(Pool,Mem[Free[7]]);
-        End=COUNTER_READ();
-        DATA();
+        End=RMP_CNT_READ();
+        RMP_DATA();
         
         /* This should always be successful because we deallocated everything else */
         Mem[0]=RMP_Malloc(Pool, (TEST_MEM_POOL>>7)*127);
@@ -476,76 +479,81 @@ void Func_2(void)
     RMP_DBG_S("====================================================\r\n");
     RMP_DBG_S("Test (number in CPU cycles)        : AVG / MAX / MIN\r\n");
 
+#ifdef FAULT_INJECT
+    RMP_DBG_S("Injecting fault by accessing NULL address.\r\n");
+    *((volatile rmp_ptr_t*)0U)=0U;
+#endif
+    
 #ifdef FLOAT_CONTEXT
     Float+=1.0f;
 #endif
     
     /* Yield tests */
-    INIT();
+    RMP_INIT();
     Test_Yield_2();
-    LIST("Yield                             ");
+    RMP_LIST("Yield                             ");
     
     /* Change priority of thread 2, just in case */
     RMP_Thd_Set(&Thd_2,2,RMP_SLICE_MAX);
     
     /* Mailbox tests */
-    INIT();
+    RMP_INIT();
     Test_Mail_2();
-    LIST("Mailbox                           ");
+    RMP_LIST("Mailbox                           ");
     
     /* Semaphore tests */
-    INIT();
+    RMP_INIT();
     Test_Sem_2();
-    LIST("Semaphore                         ");
+    RMP_LIST("Semaphore                         ");
     
     /* Fifo tests */
-    INIT();
+    RMP_INIT();
     Test_Fifo();
-    LIST("FIFO                              ");
+    RMP_LIST("FIFO                              ");
     
     /* Message queue tests */
-    INIT();
+    RMP_INIT();
     Test_Msgq_2();
-    LIST("Message queue                     ");
+    RMP_LIST("Message queue                     ");
     
     /* Blocking message queue tests */
-    INIT();
+    RMP_INIT();
     Test_Bmq_2();
-    LIST("Blocking message queue            ");
+    RMP_LIST("Blocking message queue            ");
     
     /* Memory pool tests */
 #ifdef TEST_MEM_POOL
-    INIT();
+    RMP_INIT();
     Test_Mem_Pool();
-    LIST("Memory allocation/free pair       ");
+    RMP_LIST("Memory allocation/free pair       ");
 #endif
 
     /* Prepare interrupt tests */
     Int_Init();
     
     /* Mailbox from interrupt tests */
-    INIT();
+    RMP_INIT();
     Test_Mail_ISR();
     Mail_ISR_Total=Total;
     Mail_ISR_Max=Max;
     Mail_ISR_Min=Min;
     
     /* Semaphore from interrupt tests */
-    INIT();
+    RMP_INIT();
     Test_Sem_ISR();
     Sem_ISR_Total=Total;
     Sem_ISR_Max=Max;
     Sem_ISR_Min=Min;
     
     /* Message queue from interrupt tests */
-    INIT();
+    RMP_INIT();
     Test_Msgq_ISR();
     Msgq_ISR_Total=Total;
     Msgq_ISR_Max=Max;
     Msgq_ISR_Min=Min;
     
     /* Blocking message queue from interrupt tests */
-    INIT();
+    RMP_INIT();
     Test_Bmq_ISR();
     Bmq_ISR_Total=Total;
     Bmq_ISR_Max=Max;
@@ -555,29 +563,29 @@ void Func_2(void)
     Total=Mail_ISR_Total;
     Max=Mail_ISR_Max;
     Min=Mail_ISR_Min;
-    LIST("ISR Mailbox                       ");
+    RMP_LIST("ISR Mailbox                       ");
     
     Total=Sem_ISR_Total;
     Max=Sem_ISR_Max;
     Min=Sem_ISR_Min;
-    LIST("ISR Semaphore                     ");
+    RMP_LIST("ISR Semaphore                     ");
     
     Total=Msgq_ISR_Total;
     Max=Msgq_ISR_Max;
     Min=Msgq_ISR_Min;
-    LIST("ISR Message queue                 ");
+    RMP_LIST("ISR Message queue                 ");
     
     Total=Bmq_ISR_Total;
     Max=Bmq_ISR_Max;
     Min=Bmq_ISR_Min;
-    LIST("ISR Blocking message queue        ");
+    RMP_LIST("ISR Blocking message queue        ");
     
     /* Test stop - keep dumping counter values to detect potential wrong
      * timer clock rate configurations */
     while(1)
     {
         Start=End;
-        End=(rmp_u16_t)COUNTER_READ();
+        End=(rmp_u16_t)RMP_CNT_READ();
         if(Start>End)
         {
             Overflow++;
@@ -605,7 +613,7 @@ void Int_Handler(void)
     if(Count<ROUND_NUM)
     {
         Count++;
-        Start=COUNTER_READ();
+        Start=RMP_CNT_READ();
         if(RMP_Thd_Snd_ISR(&Thd_2, 1)<0)
         {
             RMP_DBG_S("ISR Mailbox send failure: ");
@@ -617,7 +625,7 @@ void Int_Handler(void)
     else if(Count<ROUND_NUM*2U)
     {
         Count++;
-        Start=COUNTER_READ();
+        Start=RMP_CNT_READ();
         if(RMP_Sem_Post_ISR(&Sem_1, 1)<0)
         {
             RMP_DBG_S("ISR semaphore post failure: ");
@@ -629,7 +637,7 @@ void Int_Handler(void)
     else if(Count<ROUND_NUM*3U)
     {
         Count++;
-        Start=COUNTER_READ();
+        Start=RMP_CNT_READ();
         if(RMP_Msgq_Snd_ISR(&Msgq_1, &Node)<0)
         {
             RMP_DBG_S("ISR msgq message send failure: ");
@@ -641,7 +649,7 @@ void Int_Handler(void)
     else if(Count<ROUND_NUM*4U)
     {
         Count++;
-        Start=COUNTER_READ();
+        Start=RMP_CNT_READ();
         if(RMP_Bmq_Snd_ISR(&Bmq_1, &Node)<0)
         {
             RMP_DBG_S("ISR bmq message send failure: ");
@@ -682,7 +690,7 @@ void RMP_Init_Hook(void)
     
     /* Start threads - make sure thread 2 is scheduled first in the test */
     RMP_Thd_Crt(&Thd_2, (void*)Func_2, THD2_STACK, (void*)0x4321U, 1U, 1000U);
-    RMP_Thd_Crt(&Thd_1, (void*)Func_1, THD1_STACK, (void*)0x1234U, 1U, 5U);
+    RMP_Thd_Crt(&Thd_1, (void*)Func_1, THD1_STACK, (void*)0x1234U, 1U, 1000U);
 #endif
 }
 

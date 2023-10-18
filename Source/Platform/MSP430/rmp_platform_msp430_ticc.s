@@ -1,5 +1,5 @@
 ;/*****************************************************************************
-;Filename    : rmp_platform_msp430_asm.s
+;Filename    : rmp_platform_msp430_ticc.s
 ;Author      : pry
 ;Date        : 25/02/2018
 ;Description : The assembly part of the RMP RTOS. This is for MSP430.
@@ -30,16 +30,16 @@
     ;Start the first thread
     .def                _RMP_Start
     ;The system pending service routine              
-    .def                PendSV_Handler 
+    .def                _RMP_MSP430_Ctx_Handler
     ;The systick timer routine              
-    .def                SysTick_Handler                               
+    .def                _RMP_MSP430_Tim_Handler
 ;/* End Exports **************************************************************/
 
 ;/* Begin Imports ************************************************************/
     ;The real task switch handling function
     .global             _RMP_Run_High 
     ;The real systick handler function
-    .global             _RMP_Tick_Handler
+    .global             _RMP_Tim_Handler
     ;The PID of the current thread                     
     .global             RMP_Thd_Cur
     ;The stack address of current thread
@@ -48,8 +48,8 @@
     .global             RMP_Ctx_Save
     .global             RMP_Ctx_Load
     ;Clear flags
-    .global             _RMP_Clear_Soft_Flag
-    .global             _RMP_Clear_Timer_Flag
+    .global             _RMP_MSP430_Ctx_Clr
+    .global             _RMP_MSP430_Tim_Clr
 ;/* End Imports **************************************************************/
 
 ;/* Begin Macros *************************************************************/
@@ -91,7 +91,7 @@ RMP_Int_Disable:        .asmfunc
 ;*****************************************************************************/
     .text
     .align              2
-RMP_Int_Enable:.asmfunc
+RMP_Int_Enable:         .asmfunc
     ;Enable all interrupts
     nop
     eint
@@ -118,7 +118,7 @@ _RMP_Start:             .asmfunc
     .endasmfunc       
 ;/* End Function:_RMP_Start **************************************************/
 
-;/* Begin Function:PendSV_Handler *********************************************
+;/* Begin Function:_RMP_MSP430_Ctx_Handler ************************************
 ;Description : The PendSV interrupt routine. In fact, it will call a C function
 ;              directly. The reason why the interrupt routine must be an assembly
 ;              function is that the compiler may deal with the stack in a different 
@@ -132,12 +132,12 @@ _RMP_Start:             .asmfunc
 ;*****************************************************************************/
     .sect               ".text:_isr"
     .align              2
-PendSV_Handler:         .asmfunc
+_RMP_MSP430_Ctx_Handler: .asmfunc
     ;Spill all the registers onto the user stack
     SAVE_CONTEXT
                 
     ;Clear the interrupt flag
-    call                #_RMP_Clear_Soft_Flag
+    call                #_RMP_MSP430_Ctx_Clr
                 
     ;Save extra context
     call                #RMP_Ctx_Save
@@ -156,9 +156,9 @@ PendSV_Handler:         .asmfunc
 
     LOAD_CONTEXT
     .endasmfunc       
-;/* End Function:PendSV_Handler **********************************************/
+;/* End Function:_RMP_MSP430_Ctx_Handler *************************************/
 
-;/* Begin Function:SysTick_Handler ********************************************
+;/* Begin Function:_RMP_MSP430_Tim_Handler ************************************
 ;Description : The SysTick interrupt routine. In fact, it will call a C function
 ;              directly. The reason why the interrupt routine must be an assembly
 ;              function is that the compiler may deal with the stack in a different 
@@ -172,26 +172,26 @@ PendSV_Handler:         .asmfunc
 ;*****************************************************************************/
     .sect               ".text:_isr"
     .align              2
-SysTick_Handler:        .asmfunc
+_RMP_MSP430_Tim_Handler: .asmfunc
     ;Spill all the registers onto the user stack
     SAVE_CONTEXT
                 
     ;Clear the interrupt flag
-    call                #_RMP_Clear_Timer_Flag
+    call                #_RMP_MSP430_Tim_Clr
                 
     ;Note the system that we have entered an interrupt. We are not using tickless.
     mov                 #0x01,R12
-    call                #_RMP_Tick_Handler
+    call                #_RMP_Tim_Handler
 
     LOAD_CONTEXT
     .endasmfunc
-;/* End Function:SysTick_Handler *********************************************/
+;/* End Function:_RMP_MSP430_Tim_Handler *************************************/
 
-    ;Tailor these according to whatever chip you are using
-    .sect         ".int45"
-    .short        SysTick_Handler
-    .sect         ".int44"
-    .short        PendSV_Handler
+;/* Need to tailor these to specific microcontrollers - asm not portable */
+	.sect         ".int44"
+	.short        _RMP_MSP430_Ctx_Handler
+	.sect         ".int45"
+	.short        _RMP_MSP430_Tim_Handler
 ;/* End Of File **************************************************************/
 
 ;/* Copyright (C) Evo-Devo Instrum. All rights reserved **********************/

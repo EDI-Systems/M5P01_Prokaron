@@ -98,7 +98,7 @@ void Test_Yield_1(void)
     for(Count=0;Count<10000;Count++)
     {
         /* Read counter here */
-        Start=COUNTER_READ();
+        Start=RMP_CNT_READ();
         RMP_Yield();
     }
 }
@@ -109,7 +109,7 @@ void Test_Mail_1(void)
     for(Count=0;Count<10000;Count++)
     {
         /* Read counter here */
-        Start=COUNTER_READ();
+        Start=RMP_CNT_READ();
         RMP_Thd_Snd(&Thd_2, 1, RMP_SLICE_MAX);
     }
 }
@@ -120,7 +120,7 @@ void Test_Sem_1(void)
     for(Count=0;Count<10000;Count++)
     {
         /* Read counter here */
-        Start=COUNTER_READ();
+        Start=RMP_CNT_READ();
         RMP_Sem_Post(&Sem_1, 1);
     }
 }
@@ -132,7 +132,7 @@ void Test_Msgq_1(void)
     for(Count=0;Count<10000;Count++)
     {
         /* Read counter here */
-        Start=COUNTER_READ();
+        Start=RMP_CNT_READ();
         RMP_Msgq_Snd(&Msgq_1, &Node);
     }
 }
@@ -144,7 +144,7 @@ void Test_Bmq_1(void)
     for(Count=0;Count<10000;Count++)
     {
         /* Read counter here */
-        Start=COUNTER_READ();
+        Start=RMP_CNT_READ();
         RMP_Bmq_Snd(&Bmq_1, &Node, RMP_SLICE_MAX);
     }
 }
@@ -175,7 +175,7 @@ void Test_Yield_2(void)
     {
         RMP_Yield();
         /* Read counter here */
-        End=COUNTER_READ();
+        End=RMP_CNT_READ();
         Total+=(rmp_tim_t)(End-Start);
     }
 }
@@ -188,7 +188,7 @@ void Test_Mail_2(void)
     {
         RMP_Thd_Rcv(&Data, RMP_SLICE_MAX);
         /* Read counter here */
-        End=COUNTER_READ();
+        End=RMP_CNT_READ();
         Total+=(rmp_tim_t)(End-Start);
     }
 }
@@ -200,7 +200,7 @@ void Test_Sem_2(void)
     {
         RMP_Sem_Pend(&Sem_1, RMP_SLICE_MAX);
         /* Read counter here */
-        End=COUNTER_READ();
+        End=RMP_CNT_READ();
         Total+=(rmp_tim_t)(End-Start);
     }
 }
@@ -214,10 +214,10 @@ void Test_Fifo(void)
     for(Count=0;Count<10000;Count++)
     {
         /* FIFO is different in that it is non-blocking */
-        Start=COUNTER_READ();
+        Start=RMP_CNT_READ();
         RMP_Fifo_Write(&Fifo_1, &Node);
         RMP_Fifo_Read(&Fifo_1, &Receive);
-        End=COUNTER_READ();
+        End=RMP_CNT_READ();
         /* This must be the same thing */
         if(Receive!=&Node)
             while(1);
@@ -234,7 +234,7 @@ void Test_Msgq_2(void)
     {
         RMP_Msgq_Rcv(&Msgq_1, &Receive, RMP_SLICE_MAX);
         /* Read counter here */
-        End=COUNTER_READ();
+        End=RMP_CNT_READ();
         Total+=(rmp_tim_t)(End-Start);
     }
 }
@@ -248,7 +248,7 @@ void Test_Bmq_2(void)
     {
         RMP_Bmq_Rcv(&Bmq_1, &Receive, RMP_SLICE_MAX);
         /* Read counter here */
-        End=COUNTER_READ();
+        End=RMP_CNT_READ();
         Total+=(rmp_tim_t)(End-Start);
     }
 }
@@ -261,7 +261,7 @@ void Test_Mail_ISR(void)
     {
         RMP_Thd_Rcv(&Data, RMP_SLICE_MAX);
         /* Read counter here */
-        End=COUNTER_READ();
+        End=RMP_CNT_READ();
         Total+=(rmp_tim_t)(End-Start);
     }
 }
@@ -273,7 +273,7 @@ void Test_Sem_ISR(void)
     {
         RMP_Sem_Pend(&Sem_1, RMP_SLICE_MAX);
         /* Read counter here */
-        End=COUNTER_READ();
+        End=RMP_CNT_READ();
         Total+=(rmp_tim_t)(End-Start);
     }
 }
@@ -287,7 +287,7 @@ void Test_Msgq_ISR(void)
     {
         RMP_Msgq_Rcv(&Msgq_1, &Receive, RMP_SLICE_MAX);
         /* Read counter here */
-        End=COUNTER_READ();
+        End=RMP_CNT_READ();
         Total+=(rmp_tim_t)(End-Start);
     }
 }
@@ -301,7 +301,7 @@ void Test_Bmq_ISR(void)
     {
         RMP_Bmq_Rcv(&Bmq_1, &Receive, RMP_SLICE_MAX);
         /* Read counter here */
-        End=COUNTER_READ();
+        End=RMP_CNT_READ();
         Total+=(rmp_tim_t)(End-Start);
     }
 }
@@ -370,7 +370,7 @@ void Test_Mem_Pool(void)
             Swap(&Size[Count], &Size[Rand()%((rmp_ptr_t)Count+1U)]);
         }
         
-        Start=COUNTER_READ();
+        Start=RMP_CNT_READ();
         /* Allocation tests */
         Mem[Alloc[0]]=RMP_Malloc(Pool, Amount[Size[0]]);
         Mem[Alloc[1]]=RMP_Malloc(Pool, Amount[Size[1]]);
@@ -390,7 +390,7 @@ void Test_Mem_Pool(void)
         RMP_Free(Pool,Mem[Free[5]]);
         RMP_Free(Pool,Mem[Free[6]]);
         RMP_Free(Pool,Mem[Free[7]]);
-        End=COUNTER_READ();
+        End=RMP_CNT_READ();
         Total+=(rmp_tim_t)(End-Start);
         
         /* This should always be successful because we deallocated everything else */
@@ -1038,7 +1038,7 @@ void Int_Handler(void)
     if(Count<10000)
     {
         Count++;
-        Start=COUNTER_READ();
+        Start=RMP_CNT_READ();
         if(RMP_Thd_Snd_ISR(&Thd_2, 1)<0)
         {
             RMP_DBG_S("ISR Mailbox send failure: ");
@@ -1050,7 +1050,7 @@ void Int_Handler(void)
     else if(Count<20000)
     {
         Count++;
-        Start=COUNTER_READ();
+        Start=RMP_CNT_READ();
         if(RMP_Sem_Post_ISR(&Sem_1, 1)<0)
         {
             RMP_DBG_S("ISR semaphore post failure: ");
@@ -1062,7 +1062,7 @@ void Int_Handler(void)
     else if(Count<30000)
     {
         Count++;
-        Start=COUNTER_READ();
+        Start=RMP_CNT_READ();
         if(RMP_Msgq_Snd_ISR(&Msgq_1, &Node)<0)
         {
             RMP_DBG_S("ISR msgq message send failure: ");
@@ -1074,7 +1074,7 @@ void Int_Handler(void)
     else if(Count<40000)
     {
         Count++;
-        Start=COUNTER_READ();
+        Start=RMP_CNT_READ();
         if(RMP_Bmq_Snd_ISR(&Bmq_1, &Node)<0)
         {
             RMP_DBG_S("ISR bmq message send failure: ");

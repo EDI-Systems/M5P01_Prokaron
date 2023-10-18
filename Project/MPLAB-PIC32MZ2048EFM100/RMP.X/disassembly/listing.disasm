@@ -4867,7 +4867,7 @@ Feb 28, 2018 1:35:24 PM
 9D0039BC  8FBF001C   LW RA, 28(SP)
 43:                      {
 44:                          /* Read counter here */
-45:                          Start=COUNTER_READ();
+45:                          Start=RMP_CNT_READ();
 9D003998  8E220010   LW V0, 16(S1)
 9D00399C  2610FFFF   ADDIU S0, S0, -1
 9D0039A0  00021880   SLL V1, V0, 2
@@ -4902,7 +4902,7 @@ Feb 28, 2018 1:35:24 PM
 9D003A34  AF828040   SW V0, -32704(GP)
 54:                      {
 55:                          /* Read counter here */
-56:                          Start=COUNTER_READ();
+56:                          Start=RMP_CNT_READ();
 9D0039FC  8E420010   LW V0, 16(S2)
 9D003A08  00021880   SLL V1, V0, 2
 9D003A0C  00431021   ADDU V0, V0, V1
@@ -4942,7 +4942,7 @@ Feb 28, 2018 1:35:24 PM
 9D003AA0  8FBF001C   LW RA, 28(SP)
 65:                      {
 66:                          /* Read counter here */
-67:                          Start=COUNTER_READ();
+67:                          Start=RMP_CNT_READ();
 9D003A74  8E420010   LW V0, 16(S2)
 9D003A80  00021880   SLL V1, V0, 2
 9D003A84  00431021   ADDU V0, V0, V1
@@ -5014,7 +5014,7 @@ Feb 28, 2018 1:35:24 PM
 9D003B10  0F400362   JAL RMP_Yield
 9D003B14  00000000   NOP
 95:                          /* Read counter here */
-96:                          End=COUNTER_READ();
+96:                          End=RMP_CNT_READ();
 9D003B18  8E220010   LW V0, 16(S1)
 9D003B1C  2610FFFF   ADDIU S0, S0, -1
 9D003B20  00021880   SLL V1, V0, 2
@@ -5058,7 +5058,7 @@ Feb 28, 2018 1:35:24 PM
 9D003B8C  0F400808   JAL RMP_Thd_Rcv
 9D003B90  02202821   ADDU A1, S1, ZERO
 108:                         /* Read counter here */
-109:                         End=COUNTER_READ();
+109:                         End=RMP_CNT_READ();
 9D003B94  8E420010   LW V0, 16(S2)
 9D003B98  2610FFFF   ADDIU S0, S0, -1
 9D003B9C  00021880   SLL V1, V0, 2
@@ -5106,7 +5106,7 @@ Feb 28, 2018 1:35:24 PM
 9D003C1C  0F400AFB   JAL RMP_Sem_Pend
 9D003C20  02202821   ADDU A1, S1, ZERO
 120:                         /* Read counter here */
-121:                         End=COUNTER_READ();
+121:                         End=RMP_CNT_READ();
 9D003C24  8E620010   LW V0, 16(S3)
 9D003C28  2610FFFF   ADDIU S0, S0, -1
 9D003C2C  00021880   SLL V1, V0, 2
@@ -5155,7 +5155,7 @@ Feb 28, 2018 1:35:24 PM
 9D003CA0  0F400808   JAL RMP_Thd_Rcv
 9D003CA4  02002821   ADDU A1, S0, ZERO
 133:                         /* Read counter here */
-134:                         End=COUNTER_READ();
+134:                         End=RMP_CNT_READ();
 9D003CA8  8E220010   LW V0, 16(S1)
 9D003CAC  00021880   SLL V1, V0, 2
 9D003CB0  00431021   ADDU V0, V0, V1
@@ -5203,7 +5203,7 @@ Feb 28, 2018 1:35:24 PM
 9D003D30  0F400AFB   JAL RMP_Sem_Pend
 9D003D34  02002821   ADDU A1, S0, ZERO
 145:                         /* Read counter here */
-146:                         End=COUNTER_READ();
+146:                         End=RMP_CNT_READ();
 9D003D38  8E420010   LW V0, 16(S2)
 9D003D3C  00021880   SLL V1, V0, 2
 9D003D40  00431021   ADDU V0, V0, V1
@@ -5402,7 +5402,7 @@ Feb 28, 2018 1:35:24 PM
 9D0038B4  AF828034   SW V0, -32716(GP)
 9D003F88  24420001   ADDIU V0, V0, 1
 9D003FA4  AF828034   SW V0, -32716(GP)
-216:                         Start=COUNTER_READ();
+216:                         Start=RMP_CNT_READ();
 9D003890  3C03BF84   LUI V1, -16508
 9D003894  8C630010   LW V1, 16(V1)
 9D00389C  00032080   SLL A0, V1, 2
@@ -5468,7 +5468,7 @@ Feb 28, 2018 1:35:24 PM
 9D003908  AF828034   SW V0, -32716(GP)
 9D003FEC  24420001   ADDIU V0, V0, 1
 9D004008  AF828034   SW V0, -32716(GP)
-228:                         Start=COUNTER_READ();
+228:                         Start=RMP_CNT_READ();
 9D0038E4  3C03BF84   LUI V1, -16508
 9D0038E8  8C630010   LW V1, 16(V1)
 9D0038F0  00032080   SLL A0, V1, 2
@@ -5631,7 +5631,7 @@ Feb 28, 2018 1:35:24 PM
 15:                  #define THD1_STACK          (&Stack_1[300])
 16:                  #define THD2_STACK          (&Stack_2[300])
 17:                  /* How to read counter */
-18:                  #define COUNTER_READ()      (TMR1*5)
+18:                  #define RMP_CNT_READ()      (TMR1*5)
 19:                  /* Are we doing minimal measurements? */
 20:                  /* #define MINIMAL_SIZE */
 21:                  /* The PIC32 timers are all 16 bits, so */
