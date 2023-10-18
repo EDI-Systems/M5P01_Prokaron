@@ -4,6 +4,24 @@ Author      : pry
 Date        : 22/07/2017
 Licence     : The Unlicense; see LICENSE for details.
 Description : The testbench for STM32F030F4.
+
+ARMCC V6.14 -Oz
+    ___   __  ___ ___
+   / _ \ /  |/  // _ \       Simple real-time kernel
+  / , _// /|_/ // ___/       Standard benchmark test
+ /_/|_|/_/  /_//_/
+====================================================
+Test (number in CPU cycles)        : AVG / MAX / MIN
+Yield                              : 366 / 468 / 356
+Mailbox                            : 758 / 849 / 737
+Semaphore                          : 668 / 764 / 651
+FIFO                               : 366 / 469 / 355
+Message queue                      : 1185 / 1266 / 1154
+Blocking message queue             : 1597 / 1672 / 1560
+ISR Mailbox                        : 686 / 786 / 668
+ISR Semaphore                      : 627 / 724 / 608
+ISR Message queue                  : 952 / 1040 / 923
+ISR Blocking message queue         : 1207 / 1288 / 1170
 ******************************************************************************/
 
 /* Includes ******************************************************************/
@@ -15,7 +33,7 @@ Description : The testbench for STM32F030F4.
 #define THD1_STACK        (&Stack_1[100])
 #define THD2_STACK        (&Stack_2[100])
 /* How to read counter */
-#define COUNTER_READ()    (TIM3->CNT)
+#define RMP_CNT_READ()    (TIM3->CNT)
 /* Are we doing minimal measurements? */
 /* #define MINIMAL_SIZE */
 /* The STM32F0 timers are all 16 bits, so */
@@ -24,11 +42,17 @@ typedef rmp_u16_t rmp_tim_t;
 
 /* Globals *******************************************************************/
 #ifndef MINIMAL_SIZE
-void Int_Handler(void);
 rmp_ptr_t Stack_1[128];
 rmp_ptr_t Stack_2[128];
 TIM_HandleTypeDef TIM3_Handle={0};
 TIM_HandleTypeDef TIM14_Handle={0};
+
+void Timer_Init(void);
+void Int_Init(void);
+void Int_Handler(void);
+void HAL_TIM_Base_MspInit(TIM_HandleTypeDef *htim);
+void TIM14_IRQHandler(void);
+void Int_Disable(void);
 /* End Globals ***************************************************************/
 
 /* Begin Function:Timer_Init **************************************************

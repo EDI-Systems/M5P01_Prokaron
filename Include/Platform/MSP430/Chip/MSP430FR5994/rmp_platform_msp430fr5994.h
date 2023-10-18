@@ -8,7 +8,7 @@ Description: The configuration file for MSP430FR5994.
 
 /* Defines *******************************************************************/
 /* The TI-supplied headers */
-#include <msp430.h>
+#include "msp430fr5994.h"
 #include "driverlib.h"
 
 /* Debugging */
@@ -37,7 +37,7 @@ Description: The configuration file for MSP430FR5994.
  * This is the default initialization sequence. If you wish to supply
  * your own, just redirect this macro to a custom function, or do your
  * initialization stuff in the initialization hook (RMP_Start_Hook). */
-#define RMP_MSP430_LOW_LEVEL_INIT() \
+#define RMP_MSP430_LOWLVL_INIT() \
 do \
 { \
     struct Timer_A_initUpModeParam TIM0_Handle; \
@@ -60,7 +60,7 @@ do \
     CS_initClockSignal(CS_SMCLK, CS_DCOCLK_SELECT, CS_CLOCK_DIVIDER_1); \
     /* Set MCLK = DCO with frequency divider of 1 */ \
     CS_initClockSignal(CS_MCLK, CS_DCOCLK_SELECT, CS_CLOCK_DIVIDER_1); \
-    /* Set the timer 0 and its interrupts - timer 0 will be fully occupied by the OS */\
+    /* Set the timer 0 and its interrupts - timer 0 will be fully occupied by the OS */ \
     TIM0_Handle.clockSource=TIMER_A_CLOCKSOURCE_SMCLK; \
     TIM0_Handle.clockSourceDivider=TIMER_A_CLOCKSOURCE_DIVIDER_16; \
     TIM0_Handle.timerPeriod=RMP_MSP430_TICK_VAL; \
@@ -91,9 +91,9 @@ do \
 while(0)
 
 /* Flag operations */
-#define RMP_MSP430_PEND_SOFT_FLAG()  {TA0CCTL1|=CCIFG;}
-#define RMP_MSP430_CLEAR_SOFT_FLAG() {TA0CCTL1&=~CCIFG;}
-#define RMP_MSP430_CLEAR_TIMER_FLAG() {TA0CCTL0&=~CCIFG;}
+#define RMP_MSP430_CTX_SET()        {TA0CCTL1|=CCIFG;}
+#define RMP_MSP430_CTX_CLR()        {TA0CCTL1&=~CCIFG;}
+#define RMP_MSP430_TIM_CLR()        {TA0CCTL0&=~CCIFG;}
 
 /* This is for debugging output */
 #define RMP_MSP430_PUTCHAR(CHAR) \

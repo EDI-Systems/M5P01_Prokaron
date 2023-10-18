@@ -44,10 +44,13 @@ typedef unsigned char rmp_u8_t;
 /* End Basic Types ***********************************************************/
 
 /* Begin Extended Types ******************************************************/
+/* The CPU and application specific macros are here */
+#include "rmp_platform_msp430_conf.h"
+
 #ifndef __RMP_PTR_T__
 #define __RMP_PTR_T__
 /* The typedef for the pointers - This is the raw style. Pointers must be unsigned */
-#if(RMP_MSP430_X==1U)
+#if(RMP_MSP430_X!=0U)
 typedef rmp_u32_t rmp_ptr_t;
 #else
 typedef rmp_u16_t rmp_ptr_t;
@@ -62,8 +65,8 @@ typedef rmp_s16_t rmp_cnt_t;
 
 #ifndef __RMP_RET_T__
 #define __RMP_RET_T__
-#if(RMP_MSP430_X==1U)
 /* The type for return value */
+#if(RMP_MSP430_X!=0U)
 typedef rmp_s32_t rmp_ret_t;
 #else
 typedef rmp_s16_t rmp_ret_t;
@@ -75,18 +78,15 @@ typedef rmp_s16_t rmp_ret_t;
 /* Compiler "extern" keyword setting */
 #define EXTERN                   extern
 /* The maximum length of char printing - no need to change this in most cases */
-#define RMP_DEBUG_PRINT_MAX 128
+#define RMP_DEBUG_PRINT_MAX      (128U)
 /* The offset of the stack when initializing */
-#define RMP_INIT_STACK           RMP_INIT_STACK_TAIL(12)
-
-/* The CPU and application specific macros are here */
-#include "rmp_platform_msp430_conf.h"
+#define RMP_INIT_STACK           RMP_INIT_STACK_TAIL(12U)
 
 /* The order of bits in one CPU machine word */
 #if(RMP_MSP430_X==1U)
-#define RMP_WORD_ORDER           5
+#define RMP_WORD_ORDER           (5U)
 #else
-#define RMP_WORD_ORDER           4
+#define RMP_WORD_ORDER           (4U)
 #endif
 /* End System macros *********************************************************/
 
@@ -176,7 +176,7 @@ __EXTERN__ void _RMP_Yield(void);
 
 /* Initialization */
 __EXTERN__ void _RMP_Stack_Init(rmp_ptr_t Entry, rmp_ptr_t Stack, rmp_ptr_t Arg);
-__EXTERN__ void _RMP_Low_Level_Init(void);
+__EXTERN__ void _RMP_Lowlvl_Init(void);
 __EXTERN__ void RMP_Putchar(char Char);
 __EXTERN__ void _RMP_Plat_Hook(void);
 

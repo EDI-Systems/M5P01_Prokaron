@@ -26,7 +26,7 @@ static __inline__ unsigned long long rdtsc(void)
     return x;
 }
 
-#define COUNTER_READ()    rdtsc()
+#define RMP_CNT_READ()    rdtsc()
 /* Are we testing the memory pool? */
 #define TEST_MEM_POOL     8192
 /* Are we doing minimal measurements? */

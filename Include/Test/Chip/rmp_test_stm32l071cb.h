@@ -33,7 +33,7 @@ ISR Blocking message queue         : 945 / 1028 / 918
 #define THD1_STACK        (&Stack_1[230])
 #define THD2_STACK        (&Stack_2[230])
 /* How to read counter */
-#define COUNTER_READ()    ((rmp_tim_t)(TIM2->CNT))
+#define RMP_CNT_READ()    ((rmp_tim_t)(TIM2->CNT))
 /* Are we doing minimal measurements? */
 /* #define MINIMAL_SIZE */
 /* The STM32L0 timers are all 16 bits, so */

@@ -15,7 +15,7 @@ Description : The testbench for TMS570LC4357.
 #define THD1_STACK        (&Stack_1[215])
 #define THD2_STACK        (&Stack_2[215])
 /* How to read counter */
-#define COUNTER_READ()    ((rtiREG1->CNT[0].FRCx)<<3)
+#define RMP_CNT_READ()    ((rtiREG1->CNT[0].FRCx)<<3)
 /* Are we testing the memory pool? */
 #define TEST_MEM_POOL     8192
 /* Are we doing minimal measurements? */

@@ -15,7 +15,7 @@ Description : The testbench for STM32F103ZE.
 #define THD1_STACK        (&Stack_1[230])
 #define THD2_STACK        (&Stack_2[230])
 /* How to read counter */
-#define COUNTER_READ()    (TIM2->CNT)
+#define RMP_CNT_READ()    (TIM2->CNT)
 /* Are we testing the memory pool? */
 #define TEST_MEM_POOL     8192
 /* Are we doing minimal measurements? */

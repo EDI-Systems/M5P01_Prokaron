@@ -30,16 +30,16 @@ Description: The configuration file for STM32F030F4.
 #define RMP_INT_UNMASK()            RMP_Int_Enable()
 
 /* What is the NVIC priority grouping? */
-#define RMP_A7M_NVIC_GROUPING       RMP_A7M_NVIC_GROUPING_P2S6
+#define RMP_A6M_NVIC_GROUPING       RMP_A6M_NVIC_GROUPING_P2S6
 /* What is the Systick value? */
-#define RMP_A7M_SYSTICK_VAL         (3600U)
+#define RMP_A6M_SYSTICK_VAL         (3600U)
 
 /* Other low-level initialization stuff - clock and serial
  * STM32F03x APB1<48MHz, APB2<48MHz.
  * This is the default initialization sequence. If you wish to supply
  * your own, just redirect this macro to a custom function, or do your
  * initialization stuff in the initialization hook (RMP_Start_Hook). */
-#define RMP_A7M_LOW_LEVEL_INIT() \
+#define RMP_A6M_LOWLVL_INIT() \
 do \
 { \
     RCC_OscInitTypeDef RCC_OscInitStruct; \
@@ -85,24 +85,24 @@ do \
     UART1_Handle.Init.HwFlowCtl=UART_HWCONTROL_NONE; \
     UART1_Handle.Init.Mode=UART_MODE_TX; \
     HAL_UART_Init(&UART1_Handle); \
-    RMP_A7M_PUTCHAR('\r'); \
-    RMP_A7M_PUTCHAR('\n'); \
+    RMP_A6M_PUTCHAR('\r'); \
+    RMP_A6M_PUTCHAR('\n'); \
     \
     /* Set the priority of timer, svc and faults to the lowest */ \
     NVIC_SetPriority(SVC_IRQn, 0xFF); \
     NVIC_SetPriority(PendSV_IRQn, 0xFF); \
     NVIC_SetPriority(SysTick_IRQn, 0xFF); \
     /* Configure systick */ \
-    SysTick_Config(RMP_A7M_SYSTICK_VAL); \
+    SysTick_Config(RMP_A6M_SYSTICK_VAL); \
 } \
 while(0)
 
 /* This is for debugging output */
-#define RMP_A7M_PUTCHAR(CHAR) \
+#define RMP_A6M_PUTCHAR(CHAR) \
 do \
 { \
     USART1->TDR=CHAR; \
-    while((USART1->ISR&0x40)==0); \
+    while((USART1->ISR&0x40U)==0U); \
 } \
 while(0)
 /* End Defines ***************************************************************/

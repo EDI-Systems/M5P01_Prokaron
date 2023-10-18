@@ -58,7 +58,7 @@ const rmp_u8_t RMP_MSB_Tbl[128]=
 
 rmp_ptr_t RMP_MSB_Get(rmp_ptr_t Val)
 {
-#if(RMP_MSP430_X==1U)
+#if(RMP_MSP430_X!=0U)
     /* Scan one by one */
     if((Val&0xFF000000UL)!=0)
         return RMP_MSB_Tbl[Val>>25]+24;
@@ -83,29 +83,29 @@ rmp_ptr_t RMP_MSB_Get(rmp_ptr_t Val)
 }
 /* End Function:RMP_MSB_Get **************************************************/
 
-/* Begin Function:_RMP_Clear_Soft_Flag ****************************************
+/* Begin Function:_RMP_MSP430_Ctx_Clr *****************************************
 Description : Clear the software interrupt flag in the interrupt controller.
 Input       : None.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void _RMP_Clear_Soft_Flag(void)
+void _RMP_MSP430_Ctx_Clr(void)
 {
-    RMP_MSP430_CLEAR_SOFT_FLAG();
+    RMP_MSP430_CTX_CLR();
 }
-/* End Function:_RMP_Clear_Soft_Flag *****************************************/
+/* End Function:_RMP_MSP430_Ctx_Clr ******************************************/
 
-/* Begin Function:_RMP_Clear_Timer_Flag ***************************************
+/* Begin Function:_RMP_MSP430_Tim_Clr *****************************************
 Description : Clear the timer interrupt flag in the interrupt controller.
 Input       : None.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void _RMP_Clear_Timer_Flag(void)
+void _RMP_MSP430_Tim_Clr(void)
 {
-    RMP_MSP430_CLEAR_TIMER_FLAG();
+    RMP_MSP430_TIM_CLR();
 }
-/* End Function:_RMP_Clear_Timer_Flag ****************************************/
+/* End Function:_RMP_MSP430_Tim_Clr ******************************************/
 
 /* Begin Function:_RMP_Yield **************************************************
 Description : Trigger a yield to another thread. This will always trigger the
@@ -117,7 +117,7 @@ Return      : None.
 void _RMP_Yield(void)
 {
     /* Manully pend the interrupt */
-    RMP_MSP430_PEND_SOFT_FLAG();
+    RMP_MSP430_CTX_SET();
 }
 /* End Function:_RMP_Yield ***************************************************/
 
@@ -152,7 +152,7 @@ void _RMP_Stack_Init(rmp_ptr_t Entry, rmp_ptr_t Stack, rmp_ptr_t Arg)
     Stack_Ptr[11]=0x1515;                                   /* R15 */
 #endif
 
-#if(RMP_MSP430_X==1U)
+#if(RMP_MSP430_X!=0U)
     ((rmp_u16_t*)Stack_Ptr)[24]=0;
     ((rmp_u16_t*)Stack_Ptr)[25]=((Entry>>4)&0xF000)|RMP_MSP430_SR_GIE;
     ((rmp_u16_t*)Stack_Ptr)[26]=Entry&0xFFFF;
@@ -163,19 +163,19 @@ void _RMP_Stack_Init(rmp_ptr_t Entry, rmp_ptr_t Stack, rmp_ptr_t Arg)
 }
 /* End Function:_RMP_Stack_Init **********************************************/
 
-/* Begin Function:_RMP_Low_Level_Init *****************************************
+/* Begin Function:_RMP_Lowlvl_Init ********************************************
 Description : Initialize the low level hardware of the system.
 Input       : None
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void _RMP_Low_Level_Init(void)
+void _RMP_Lowlvl_Init(void)
 {
-    RMP_MSP430_LOW_LEVEL_INIT();
+    RMP_MSP430_LOWLVL_INIT();
 
     RMP_Int_Disable();
 }
-/* End Function:_RMP_Low_Level_Init ******************************************/
+/* End Function:_RMP_Lowlvl_Init *********************************************/
 
 /* Begin Function:_RMP_Plat_Hook **********************************************
 Description : Platform-specific hook for system initialization.
