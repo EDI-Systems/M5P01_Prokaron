@@ -30,18 +30,18 @@ Description: The configuration file for TMS570LS0432.
 #define RMP_INT_MASK()              RMP_Int_Disable()
 #define RMP_INT_UNMASK()            RMP_Int_Enable()
 
-#define RMP_CRX_SYSTICK_VAL         (10000U)
+#define RMP_A7R_SYSTICK_VAL         (10000U)
 
 /* Other low-level initialization stuff - clock and serial. 
  * This is the default initialization sequence. If you wish to supply
  * your own, just redirect this macro to a custom function, or do your
  * initialization stuff in the initialization hook (RMP_Start_Hook). */
-#define RMP_CRX_LOW_LEVEL_INIT() \
+#define RMP_A7R_LOWLVL_INIT() \
 do \
 { \
     /* The TI library is in charge of all the initialization of interrupts and clocks */ \
     rtiInit(); \
-    rtiSetPeriod(rtiCOMPARE0, RMP_CRX_SYSTICK_VAL); \
+    rtiSetPeriod(rtiCOMPARE0, RMP_A7R_SYSTICK_VAL); \
     rtiEnableNotification(rtiNOTIFICATION_COMPARE0); \
     rtiStartCounter(rtiCOUNTER_BLOCK0); \
     /* Enable SCI */ \
@@ -50,7 +50,7 @@ do \
 while(0)
 
 /* This is for debugging output */
-#define RMP_CRX_PUTCHAR(CHAR) \
+#define RMP_A7R_PUTCHAR(CHAR) \
 do \
 { \
     sciSendByte(scilinREG,(CHAR)); \

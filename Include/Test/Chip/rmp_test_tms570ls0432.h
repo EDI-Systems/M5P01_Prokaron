@@ -4,6 +4,25 @@ Author      : pry
 Date        : 22/07/2017
 Licence     : The Unlicense; see LICENSE for details.
 Description : The testbench for TMS570LC4357.
+
+TICC V20.2.7LTS -O4 -mf5
+    ___   __  ___ ___
+   / _ \ /  |/  // _ \       Simple real-time kernel
+  / , _// /|_/ // ___/       Standard benchmark test
+ /_/|_|/_/  /_//_/
+====================================================
+Test (number in CPU cycles)        : AVG / MAX / MIN
+Yield                              : 275 / 416 / 272
+Mailbox                            : 496 / 640 / 488
+Semaphore                          : 462 / 608 / 456
+FIFO                               : 210 / 400 / 208
+Message queue                      : 728 / 912 / 712
+Blocking message queue             : 984 / 1152 / 976
+Memory allocation/free pair        : 564 / 598 / 550
+ISR Mailbox                        : 441 / 496 / 432
+ISR Semaphore                      : 427 / 456 / 424
+ISR Message queue                  : 592 / 656 / 584
+ISR Blocking message queue         : 755 / 816 / 752
 ******************************************************************************/
 
 /* Includes ******************************************************************/

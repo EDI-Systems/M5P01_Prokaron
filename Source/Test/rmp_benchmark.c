@@ -6,6 +6,10 @@ Licence     : The Unlicense; see LICENSE for details.
 Description : The performance benchmark for RMP. Do not modify this file; what
               you need to modify is the test chip header and the platform chip
               header.
+              When Yield Max < 0, there's a chance that the _RMP_Yield is not
+              implemented correctly and the interrupt is not triggered
+              immediately after writing to the software interrupt register.
+              There's also a chance that the stack overflowed.
 ******************************************************************************/
 
 /* Includes ******************************************************************/
@@ -19,7 +23,7 @@ Description : The performance benchmark for RMP. Do not modify this file; what
  * ~ 3MHz               100
  * ~ 30MHz              10000
  * ~ 300MHz             100000 */
-#define OVERFLOW_NUM    10000
+#define OVERFLOW_NUM    100000
 /* Whether to include FPU context */
 /* #define FLOAT_CONTEXT */
 /* Whether to inject fault intentionally */
@@ -35,9 +39,9 @@ Description : The performance benchmark for RMP. Do not modify this file; what
 #define RMP_INIT() \
 do \
 { \
-    Total=0; \
-    Max=0; \
-    Min=65535; \
+    Total=0U; \
+    Max=0U; \
+    Min=65535U; \
 } \
 while(0)
 
@@ -70,6 +74,7 @@ while(0)
 
 /* Globals *******************************************************************/
 #ifndef MINIMAL_SIZE
+volatile rmp_ptr_t Flip=0;
 volatile rmp_tim_t Start=0;
 volatile rmp_tim_t End=0;
 volatile rmp_tim_t Diff=0;
@@ -111,7 +116,9 @@ volatile struct RMP_Bmq Bmq_1;
 volatile rmp_ptr_t Pool[TEST_MEM_POOL]={0};
 #endif
 /* Floating point context */
+#ifdef FLOAT_CONTEXT
 volatile float Float=0.0f;
+#endif
 
 /* Test functions */
 void Test_Yield_1(void);
@@ -152,6 +159,14 @@ void Test_Yield_1(void)
     rmp_cnt_t Count;
     for(Count=0;Count<ROUND_NUM;Count++)
     {
+        /* Test flip result */
+        if(Flip!=0U)
+        {
+            RMP_DBG_S("Yield error in Thd1 @ round ");
+            RMP_DBG_I(Count);
+            RMP_DBG_S(".\r\n");
+        }
+        Flip=1U;
         /* Read counter here */
         Start=RMP_CNT_READ();
         RMP_Yield();
@@ -236,6 +251,18 @@ void Test_Yield_2(void)
         /* Read counter here */
         End=RMP_CNT_READ();
         RMP_DATA();
+        /* Test flip result */
+        if(Flip==0U)
+        {
+            RMP_DBG_S("Yield error in Thd2 @ round ");
+            RMP_DBG_I(Count);
+            RMP_DBG_S(", ");
+            RMP_DBG_I(Start);
+            RMP_DBG_S(", ");
+            RMP_DBG_I(End);
+            RMP_DBG_S(".\r\n");
+        }
+        Flip=0U;
     }
 }
 
