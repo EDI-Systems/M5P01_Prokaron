@@ -1,13 +1,13 @@
 /******************************************************************************
-Filename    : rmp_platform_crx_conf.h
+Filename    : rmp_test.h
 Author      : pry
 Date        : 24/06/2017
 Licence     : LGPL v3+; see COPYING for details.
-Description : The configuration file for Cortex-R HAL.
+Description : The configuration file for testing program.
 ******************************************************************************/
 
 /* Config Includes ***********************************************************/
-#include "Platform/CortexR/Chips/TMS570LS0432/rmp_platform_TMS570LS0432.h"
+#include "Test/Chip/rmp_test_tms570ls0432.h"
 /* End Config Includes *******************************************************/
 
 /* End Of File ***************************************************************/

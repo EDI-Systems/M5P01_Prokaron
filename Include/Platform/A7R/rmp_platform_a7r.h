@@ -1,15 +1,15 @@
 /******************************************************************************
-Filename    : rmp_platform_crx.h
+Filename    : rmp_platform_a7r.h
 Author      : pry
 Date        : 01/04/2017
 Licence     : The Unlicense; see LICENSE for details.
-Description : The header of "rmp_platform_crx.c".
+Description : The header of "rmp_platform_a7r.c".
 ******************************************************************************/
 
 /* Defines *******************************************************************/
 #ifdef __HDR_DEFS__
-#ifndef __RMP_PLATFORM_CRX_H_DEFS__
-#define __RMP_PLATFORM_CRX_H_DEFS__
+#ifndef __RMP_PLATFORM_A7R_H_DEFS__
+#define __RMP_PLATFORM_A7R_H_DEFS__
 /*****************************************************************************/
 /* Basic Types ***************************************************************/
 #ifndef __RMP_S32_T__
@@ -65,37 +65,37 @@ typedef rmp_s32_t rmp_ret_t;
 
 /* System macros *************************************************************/
 /* Compiler "extern" keyword setting */
-#define EXTERN                   extern
+#define EXTERN                  extern
 /* The order of bits in one CPU machine word */
-#define RMP_WORD_ORDER           5
+#define RMP_WORD_ORDER          (5U)
 /* The maximum length of char printing - no need to change this in most cases */
-#define RMP_DEBUG_PRINT_MAX 255
+#define RMP_DEBUG_PRINT_MAX     (255U)
 /* The offset of the stack when initializing */
-#define RMP_INIT_STACK           RMP_INIT_STACK_TAIL(17)
+#define RMP_INIT_STACK          RMP_INIT_STACK_TAIL(17U)
 
 /* The CPU and application specific macros are here */
-#include "rmp_platform_crx_conf.h"
+#include "rmp_platform_a7r_conf.h"
 /* End System macros *********************************************************/
 
-/* Cortex-M specific macros **************************************************/
+/* ARMv7-R specific macros ***************************************************/
 /* Mode definitions */
-#define RMP_CRX_SYS                     (0x1F)
-#define RMP_CRX_USR                     (0x10)
-#define RMP_CRX_SVC                     (0x13)
-#define RMP_CRX_IRQ                     (0x12)
-#define RMP_CRX_FIQ                     (0x11)
-#define RMP_CRX_ABT                     (0x17)
-#define RMP_CRX_UND                     (0x1B)
+#define RMP_A7R_SYS                     (0x1F)
+#define RMP_A7R_USR                     (0x10)
+#define RMP_A7R_SVC                     (0x13)
+#define RMP_A7R_IRQ                     (0x12)
+#define RMP_A7R_FIQ                     (0x11)
+#define RMP_A7R_ABT                     (0x17)
+#define RMP_A7R_UND                     (0x1B)
 
 /* CPSR bit definitions */
-#define RMP_CRX_CPSR_E                  (1<<9)
-#define RMP_CRX_CPSR_A                  (1<<8)
-#define RMP_CRX_CPSR_I                  (1<<7)
-#define RMP_CRX_CPSR_F                  (1<<6)
-#define RMP_CRX_CPSR_T                  (1<<5)
-#define RMP_CRX_CPSR_M(X)               ((X))
+#define RMP_A7R_CPSR_E                  (1<<9)
+#define RMP_A7R_CPSR_A                  (1<<8)
+#define RMP_A7R_CPSR_I                  (1<<7)
+#define RMP_A7R_CPSR_F                  (1<<6)
+#define RMP_A7R_CPSR_T                  (1<<5)
+#define RMP_A7R_CPSR_M(X)               ((X))
 /*****************************************************************************/
-/* __RMP_PLATFORM_CRX_H_DEFS__ */
+/* __RMP_PLATFORM_A7R_H_DEFS__ */
 #endif
 /* __HDR_DEFS__ */
 #endif
@@ -103,8 +103,8 @@ typedef rmp_s32_t rmp_ret_t;
 
 /* Structs *******************************************************************/
 #ifdef __HDR_STRUCTS__
-#ifndef __RMP_PLATFORM_CRX_H_STRUCTS__
-#define __RMP_PLATFORM_CRX_H_STRUCTS__
+#ifndef __RMP_PLATFORM_A7R_H_STRUCTS__
+#define __RMP_PLATFORM_A7R_H_STRUCTS__
 /* We used structs in the header */
 
 /* Use defines in these headers */
@@ -113,7 +113,7 @@ typedef rmp_s32_t rmp_ret_t;
 /*****************************************************************************/
 
 /*****************************************************************************/
-/* __RMP_PLATFORM_CRX_H_STRUCTS__ */
+/* __RMP_PLATFORM_A7R_H_STRUCTS__ */
 #endif
 /* __HDR_STRUCTS__ */
 #endif
@@ -121,8 +121,8 @@ typedef rmp_s32_t rmp_ret_t;
 
 /* Private Global Variables **************************************************/
 #if(!(defined __HDR_DEFS__||defined __HDR_STRUCTS__))
-#ifndef __RMP_PLATFORM_CRX_MEMBERS__
-#define __RMP_PLATFORM_CRX_MEMBERS__
+#ifndef __RMP_PLATFORM_A7R_MEMBERS__
+#define __RMP_PLATFORM_A7R_MEMBERS__
 
 /* In this way we can use the data structures and definitions in the headers */
 #define __HDR_DEFS__
@@ -173,13 +173,13 @@ EXTERN void _RMP_Yield(void);
 
 /* Initialization */
 __EXTERN__ void _RMP_Stack_Init(rmp_ptr_t Entry, rmp_ptr_t Stack, rmp_ptr_t Arg);
-__EXTERN__ void _RMP_Low_Level_Init(void);
+__EXTERN__ void _RMP_Lowlvl_Init(void);
 __EXTERN__ void RMP_Putchar(char Char);
 __EXTERN__ void _RMP_Plat_Hook(void);
 /*****************************************************************************/
 /* Undefine "__EXTERN__" to avoid redefinition */
 #undef __EXTERN__
-/* __RMP_PLATFORM_CRX_MEMBERS__ */
+/* __RMP_PLATFORM_A7R_MEMBERS__ */
 #endif
 /* !(defined __HDR_DEFS__||defined __HDR_STRUCTS__) */
 #endif

@@ -4,6 +4,25 @@ Author      : pry
 Date        : 22/07/2017
 Licence     : The Unlicense; see LICENSE for details.
 Description : The testbench for TMS570LC4357.
+
+TICC V20.2.7LTS -O4 -mf5
+    ___   __  ___ ___
+   / _ \ /  |/  // _ \       Simple real-time kernel
+  / , _// /|_/ // ___/       Standard benchmark test
+ /_/|_|/_/  /_//_/
+====================================================
+Test (number in CPU cycles)        : AVG / MAX / MIN
+Yield                              : 306 / 520 / 304
+Mailbox                            : 493 / 688 / 472
+Semaphore                          : 460 / 696 / 456
+FIFO                               : 193 / 656 / 192
+Message queue                      : 686 / 904 / 672
+Blocking message queue             : 897 / 1128 / 880
+Memory allocation/free pair        : 533 / 632 / 520
+ISR Mailbox                        : 480 / 592 / 480
+ISR Semaphore                      : 464 / 704 / 464
+ISR Message queue                  : 592 / 720 / 592
+ISR Blocking message queue         : 736 / 856 / 736
 ******************************************************************************/
 
 /* Includes ******************************************************************/
@@ -12,8 +31,8 @@ Description : The testbench for TMS570LC4357.
 
 /* Defines *******************************************************************/
 /* Where are the initial stacks */
-#define THD1_STACK        (&Stack_1[215])
-#define THD2_STACK        (&Stack_2[215])
+#define THD1_STACK        (&Stack_1[128])
+#define THD2_STACK        (&Stack_2[128])
 /* How to read counter */
 #define RMP_CNT_READ()    ((rtiREG1->CNT[0].FRCx)<<3)
 /* Are we testing the memory pool? */
@@ -26,9 +45,12 @@ typedef rmp_ptr_t rmp_tim_t;
 
 /* Globals *******************************************************************/
 #ifndef MINIMAL_SIZE
-void Int_Handler(void);
 rmp_ptr_t Stack_1[256];
 rmp_ptr_t Stack_2[256];
+
+void Timer_Init(void);
+void Int_Handler(void);
+void Int_Disable(void);
 /* End Globals ***************************************************************/
 
 /* Begin Function:Timer_Init **************************************************

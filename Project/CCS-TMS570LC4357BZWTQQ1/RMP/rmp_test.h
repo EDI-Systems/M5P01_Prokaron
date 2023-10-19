@@ -7,7 +7,7 @@ Description : The configuration file for testing program.
 ******************************************************************************/
 
 /* Config Includes ***********************************************************/
-#include "Platform/rmp_test_TMS570LC4357.h"
+#include "Test/Chip/rmp_test_tms570lc4357.h"
 /* End Config Includes *******************************************************/
 
 /* End Of File ***************************************************************/

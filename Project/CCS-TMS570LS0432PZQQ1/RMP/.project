@@ -26,11 +26,6 @@
 	</natures>
 	<linkedResources>
 		<link>
-			<name>Benchmark</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
 			<name>Kernel</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -46,9 +41,9 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>Benchmark/rmp_test.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/MProkaron/Benchmark/rmp_test.c</locationURI>
+			<name>Test</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
 			<name>Debug/rmp_test.c</name>
@@ -58,7 +53,7 @@
 		<link>
 			<name>Kernel/rmp_kernel.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/MProkaron/Kernel/rmp_kernel.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Kernel/rmp_kernel.c</locationURI>
 		</link>
 		<link>
 			<name>Lib/esm.c</name>
@@ -136,14 +131,19 @@
 			<locationURI>PARENT-4-PROJECT_LOC/M0A00_Library/TMS570LS04x/source/system.c</locationURI>
 		</link>
 		<link>
-			<name>Platform/rmp_platform_crx.c</name>
+			<name>Platform/rmp_platform_a7r.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/MProkaron/Platform/CortexR/rmp_platform_crx.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Platform/A7R/rmp_platform_a7r.c</locationURI>
 		</link>
 		<link>
-			<name>Platform/rmp_platform_crx_asm.asm</name>
+			<name>Platform/rmp_platform_a7r_ticc.asm</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/MProkaron/Platform/CortexR/rmp_platform_crx_asm.asm</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Platform/A7R/rmp_platform_a7r_ticc.asm</locationURI>
+		</link>
+		<link>
+			<name>Test/rmp_test.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Source/Test/rmp_benchmark.c</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>

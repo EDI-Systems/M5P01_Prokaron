@@ -1,11 +1,11 @@
 ;/*****************************************************************************
-;Filename    : rmp_platform_crx_asm.s
+;Filename    : rmp_platform_a7r_ticc.s
 ;Author      : pry
 ;Date        : 10/04/2012
-;Description : The assembly part of the RMP RTOS. This is for Cortex-R4/5/7/8.
+;Description : The assembly part of the RMP RTOS. This is for ARMv7-R.
 ;*****************************************************************************/
 
-;/* The ARM Cortex-R Architecture *********************************************
+;/* The ARMv7-R Architecture **************************************************
 ; Sys/User     FIQ   Supervisor   Abort     IRQ    Undefined
 ;    R0        R0        R0        R0       R0        R0
 ;    R1        R1        R1        R1       R1        R1
@@ -35,7 +35,7 @@
 ;R15    : PC, Program counter
 ;CPSR   : Program status word
 ;SPSR   : Banked program status word
-;The ARM Cortex-R4/5/7/8 also include a single-accuracy FPU.
+;The ARM Cortex-R4/5/7/8 also include a fp32 FPU.
 ;*****************************************************************************/
 
 ;/* Begin Header *************************************************************/
@@ -68,7 +68,7 @@
     ;The real task switch handling function
     .global             _RMP_Run_High
     ;The real systick handler function
-    .global             _RMP_Tick_Handler
+    .global             _RMP_Tim_Handler
     ;The PID of the current thread
     .global             RMP_Thd_Cur
     ;The stack address of current thread
@@ -147,7 +147,9 @@ _RMP_Yield              .asmfunc
     MOVS                R1,#0x7500          ;The key needed to trigger such interrupt
     STR                 R1,[R0]             ;Trigger the software interrupt
 
-    ISB                                     ;Instruction barrier
+    ISB                                     ;Repeated ISB to make sure interrupt happens
+    ISB
+    ISB
                 
     POP                 {R0-R1}
     BX                  LR
@@ -202,7 +204,7 @@ PendSV_Handler          .asmfunc
     LDR                 R1,RMP_SP_Cur_Addr  ;Save The SP to control block.
     STR                 SP,[R1]
                 
-    BL                  _RMP_Run_High   ;Get the highest ready task.
+    BL                  _RMP_Run_High       ;Get the highest ready task.
                 
     LDR                 R1,RMP_SP_Cur_Addr  ;Load the SP.
     LDR                 SP,[R1]
@@ -236,7 +238,7 @@ SysTick_Handler         .asmfunc
     PUSH                {R0-R3,LR}
                 
     MOVS                R0,#0x01            ;We are not using tickless.
-    BL                  _RMP_Tick_Handler
+    BL                  _RMP_Tim_Handler
 
     POP                 {R0-R3,PC}
     ;RFEIA              SP!

@@ -1,14 +1,14 @@
 /******************************************************************************
-Filename    : rmp_platform.h
-Author      : pry 
-Date        : 22/07/2017
+Filename    : rmp_platform_a7r_conf.h
+Author      : pry
+Date        : 24/06/2017
 Licence     : LGPL v3+; see COPYING for details.
-Description : The platform specific types for RMP.
+Description : The configuration file for ARMv7-R HAL.
 ******************************************************************************/
 
-/* Platform Includes *********************************************************/
-#include "Platform/CortexR/rmp_platform_crx.h"
-/* End Platform Includes *****************************************************/
+/* Config Includes ***********************************************************/
+#include "Platform/A7R/Chip/TMS570LS0432/rmp_platform_tms570ls0432.h"
+/* End Config Includes *******************************************************/
 
 /* End Of File ***************************************************************/
 

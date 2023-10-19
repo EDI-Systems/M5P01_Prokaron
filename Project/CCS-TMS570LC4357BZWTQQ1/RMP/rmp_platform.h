@@ -1,14 +1,14 @@
 /******************************************************************************
-Filename    : rmp_platform_crx_conf.h
-Author      : pry
-Date        : 24/06/2017
+Filename    : rmp_platform.h
+Author      : pry 
+Date        : 22/07/2017
 Licence     : LGPL v3+; see COPYING for details.
-Description : The configuration file for Cortex-R HAL.
+Description : The platform specific types for RMP.
 ******************************************************************************/
 
-/* Config Includes ***********************************************************/
-#include "Platform/CortexR/Chips/TMS570LC4357/rmp_platform_TMS570LC4357.h"
-/* End Config Includes *******************************************************/
+/* Platform Includes *********************************************************/
+#include "Platform/A7R/rmp_platform_a7r.h"
+/* End Platform Includes *****************************************************/
 
 /* End Of File ***************************************************************/
 
