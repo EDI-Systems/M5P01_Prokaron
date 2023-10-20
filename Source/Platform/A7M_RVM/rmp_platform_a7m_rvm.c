@@ -7,6 +7,9 @@ Description : The platform specific file for ARMv7-M on RVM hypervisor.
 ******************************************************************************/
 
 /* Includes ******************************************************************/
+/* The virtual machine configs are here */
+#include "rvm_guest.h"
+
 #define __HDR_DEFS__
 #include "Platform/A7M_RVM/rmp_platform_a7m_rvm.h"
 #include "Kernel/rmp_kernel.h"
@@ -23,9 +26,6 @@ Description : The platform specific file for ARMv7-M on RVM hypervisor.
 #define __HDR_PUBLIC_MEMBERS__
 #include "Kernel/rmp_kernel.h"
 #undef __HDR_PUBLIC_MEMBERS__
-
-/* The virtual machine configs are here */
-#include "rvm_guest.h"
 /* End Includes **************************************************************/
 
 /* Begin Function:_RMP_Stack_Init *********************************************
@@ -40,7 +40,7 @@ Other       : When the system stack safe redundancy is set to zero, the stack
               looks like this when we try to step into the next process by 
               context switch:
                         21  20  19    18 17-14 13  12-5     4      3-0
-              HIGH-->  XPSR PC LR(1) R12 R3-R0 LR R11-R4 Number Param[0-3] -->LOW 
+              HI-->  XPSR PC LR(1) R12 R3-R0 LR R11-R4 Number Param[0-3] -->LO
               We need to set the stack correctly pretending that we are 
               returning from an systick timer interrupt. Thus, we set the XPSR
               to avoid INVSTATE; set PC to the pseudo-process entrance; set LR
@@ -156,13 +156,27 @@ void RMP_Int_Unmask(void)
 
 /* Begin Function:_RMP_Yield **************************************************
 Description : Trigger a yield to a different thread.
+              This implementation includes support for fast context switching. 
+              Though user-level code cannot clear CONTROL.FPCA hence the FPU
+              usage flag will be propagated to all threads, this is still faster
+              than the slow path through the Vct thread.
 Input       : None.
 Output      : None.
 Return      : None.
 ******************************************************************************/
+/* Use "const" to make sure this initializer is in code flash - this will
+ * be optimized out when fast context switching is not enabled */
+volatile struct RVM_Param* const RMP_A7M_RVM_Usr_Param=&(RVM_STATE->Usr);
 void _RMP_Yield(void)
 {
+#if(RMP_A7M_RVM_FAST_YIELD!=0U)
+    if(RVM_STATE->Vct_Act!=0U)
+        RVM_Virt_Yield();
+    else
+        _RMP_A7M_RVM_Yield();
+#else
     RVM_Virt_Yield();
+#endif
 }
 /* End Function:_RMP_Yield ***************************************************/
 
