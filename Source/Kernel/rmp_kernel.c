@@ -419,6 +419,14 @@ void RMP_Sched_Unlock(void)
         else
             RMP_COVERAGE_MARKER();
         
+        /* Calling _RMP_Yield before truely unmasking interrupts is allowed:
+         * (1) We're using a dedicated interrupt handler to switch context.
+         *     In this case, the software interrupt will be pending until we 
+         *     unmask the kernel-aware interrupts.
+         * (2) We're using a routine to do context switch.
+         *     In this case, the routine will unmask interrupts at its end 
+         *     anyway, and will not leave the interrupt disabled when it is 
+         *     exiting. */
         RMP_INT_UNMASK();
     }
     else if(RMP_Sched_Lock_Cnt>1U)
@@ -428,7 +436,7 @@ void RMP_Sched_Unlock(void)
     }
     /* Trying to unlock a scheduler that is not locked - should never happen */
     else
-        while(1U);
+        RMP_ASSERT(0U);
 }
 /* End Function:RMP_Sched_Unlock *********************************************/
 

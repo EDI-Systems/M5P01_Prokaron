@@ -159,6 +159,7 @@ __EXTERN__ void RMP_Int_Unmask(void);
 EXTERN rvm_ptr_t RMP_MSB_Get(rvm_ptr_t Val);
 EXTERN void _RMP_Start(rvm_ptr_t Entry,
                        rvm_ptr_t Stack);
+EXTERN void _RMP_A7M_RVM_Yield(void);
 __EXTERN__ void _RMP_Yield(void);
 
 /* Initialization */

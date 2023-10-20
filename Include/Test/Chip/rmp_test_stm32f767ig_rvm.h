@@ -27,7 +27,7 @@ Description : The testbench for STM32F767IG, running in the RVM.
                  TIM4_SR=0U;
                  return RME_RVM_VCT_SIG_INIT;
 
-ARMCC 6.18 -O3 (SysTick turned off to avoid spurious interrupts)
+ARMCC 6.18 -O3 (SysTick turned off)
     ___   __  ___ ___
    / _ \ /  |/  // _ \       Simple real-time kernel
   / , _// /|_/ // ___/       Standard benchmark test
@@ -46,7 +46,7 @@ ISR Semaphore                      : 1210 / 1316 / 1160
 ISR Message queue                  : 1418 / 1496 / 1340
 ISR Blocking message queue         : 1601 / 1716 / 1488
 
-ARMCC 6.18 -O3 (SysTick turned on, may kick in between)
+ARMCC 6.18 -O3 (SysTick turned on)
     ___   __  ___ ___
    / _ \ /  |/  // _ \       Simple real-time kernel
   / , _// /|_/ // ___/       Standard benchmark test
@@ -66,7 +66,7 @@ ISR Message queue                  : 1236 / 2456 / 1164
 ISR Blocking message queue         : 1424 / 2616 / 1332
 
 
-ARMCC 6.18 -O3 (SysTick turned on, may kick in between, w/FPU context)
+ARMCC 6.18 -O3 (SysTick turned on, w/FPU context)
     ___   __  ___ ___
    / _ \ /  |/  // _ \       Simple real-time kernel
   / , _// /|_/ // ___/       Standard benchmark test
@@ -84,6 +84,25 @@ ISR Mailbox                        : 1380 / 2688 / 1296
 ISR Semaphore                      : 1322 / 2604 / 1256
 ISR Message queue                  : 1461 / 2708 / 1384
 ISR Blocking message queue         : 1644 / 2976 / 1560
+
+ARMCC 6.18 -O3 -LTO (SysTick turned on; fast context switch path enabled)
+    ___   __  ___ ___
+   / _ \ /  |/  // _ \       Simple real-time kernel
+  / , _// /|_/ // ___/       Standard benchmark test
+ /_/|_|/_/  /_//_/
+====================================================
+Test (number in CPU cycles)        : AVG / MAX / MIN
+Yield                              : 221 / 264 / 216
+Mailbox                            : 403 / 1608 / 388
+Semaphore                          : 348 / 1540 / 328
+FIFO                               : 150 / 1308 / 148
+Message queue                      : 589 / 1768 / 548
+Blocking message queue             : 765 / 1992 / 728
+Memory allocation/free pair        : 334 / 493 / 321
+ISR Mailbox                        : 942 / 2072 / 844
+ISR Semaphore                      : 962 / 2184 / 856
+ISR Message queue                  : 1134 / 2292 / 1032
+ISR Blocking message queue         : 1227 / 2444 / 1128
 ******************************************************************************/
 
 /* Includes ******************************************************************/
@@ -93,8 +112,8 @@ ISR Blocking message queue         : 1644 / 2976 / 1560
 
 /* Defines *******************************************************************/
 /* Where are the initial stacks */
-#define THD1_STACK              (&Stack_1[230])
-#define THD2_STACK              (&Stack_2[230])
+#define THD1_STACK              (&Stack_1[200])
+#define THD2_STACK              (&Stack_2[200])
 /* How to read counter */
 #define RMP_CNT_READ()          ((TIM2_CNT)<<1)
 /* Are we testing the memory pool? */
