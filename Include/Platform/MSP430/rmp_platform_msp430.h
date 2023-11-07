@@ -77,17 +77,19 @@ typedef rmp_s16_t rmp_ret_t;
 /* System macros *************************************************************/
 /* Compiler "extern" keyword setting */
 #define EXTERN                   extern
-/* The maximum length of char printing - no need to change this in most cases */
-#define RMP_DEBUG_PRINT_MAX      (128U)
-/* The offset of the stack when initializing */
-#define RMP_INIT_STACK           RMP_INIT_STACK_TAIL(12U)
-
 /* The order of bits in one CPU machine word */
 #if(RMP_MSP430_X==1U)
 #define RMP_WORD_ORDER           (5U)
 #else
 #define RMP_WORD_ORDER           (4U)
 #endif
+/* The maximum length of char printing - no need to change this in most cases */
+#define RMP_DEBUG_PRINT_MAX      (128U)
+/* The offset of the stack when initializing */
+#define RMP_INIT_STACK           RMP_INIT_STACK_TAIL(12U)
+/* MSB/LSB extraction */
+#define RMP_MSB_GET(VAL)         RMP_MSB_Generic(VAL)
+#define RMP_LSB_GET(VAL)         RMP_LSB_Generic(VAL)
 /* End System macros *********************************************************/
 
 /* MSP430 specific macros ****************************************************/
@@ -170,7 +172,6 @@ typedef rmp_s16_t rmp_ret_t;
 EXTERN void RMP_Int_Disable(void);
 EXTERN void RMP_Int_Enable(void);
 
-__EXTERN__ rmp_ptr_t RMP_MSB_Get(rmp_ptr_t Val);
 EXTERN void _RMP_Start(rmp_ptr_t Entry, rmp_ptr_t Stack);
 __EXTERN__ void _RMP_Yield(void);
 

@@ -33,8 +33,6 @@
                         EXPORT              RMP_Int_Enable
                         ; Mask/unmask interrupt dummy
                         EXPORT              RMP_Int_Mask
-                        ; Get the MSB                              
-                        EXPORT              RMP_MSB_Get
                         ; Start the first thread
                         EXPORT              _RMP_Start
                         ; The PendSV trigger
@@ -93,39 +91,6 @@ RMP_Int_Mask            PROC
                         BX                  LR
                         ENDP
 ;/* End Function:RMP_Int_Mask ************************************************/
-
-;/* Begin Function:RMP_MSB_Get ************************************************
-;Description : Get the MSB of the word. Always 21 instructions no matter what.
-;Input       : rmp_ptr_t R0 - The value.
-;Output      : None.
-;Return      : rmp_ptr_t R0 - The MSB position. 
-;*****************************************************************************/
-                        MACRO
-$Label                  CHECK_BITS          $BITS
-                        LSRS                R2, R1, #$BITS
-                        BEQ                 $Label.Skip
-                        ADDS                R0, #$BITS
-                        MOV                 R1, R2
-$Label.Skip
-                        MEND
-                
-RMP_MSB_Get             PROC
-                        ;See if the word passed in is zero. In this case, we return -1.
-                        CMP                 R0, #0
-                        BEQ                 ZERO
-                        MOVS                R1, R0
-                        MOVS                R0, #0
-HEX                     CHECK_BITS          16
-OCT                     CHECK_BITS          8
-QUAD                    CHECK_BITS          4
-BIN                     CHECK_BITS          2
-ONE                     CHECK_BITS          1
-                        BX                  LR
-ZERO
-                        SUBS                R0, #1
-                        BX                  LR
-                        ENDP
-;/* End Function:RMP_MSB_Get *************************************************/
 
 ;/* Begin Function:_RMP_Yield *************************************************
 ;Description : Trigger a yield to another thread.

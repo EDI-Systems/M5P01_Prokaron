@@ -439,6 +439,22 @@ __EXTERN__ volatile rmp_ptr_t RMP_SP_Cur;
 
 /* Public C Function Prototypes **********************************************/
 /*****************************************************************************/
+/* Bit manipualtions */
+__EXTERN__ rmp_ptr_t RMP_MSB_Generic(rmp_ptr_t Value);
+__EXTERN__ rmp_ptr_t RMP_LSB_Generic(rmp_ptr_t Value);
+__EXTERN__ rmp_ptr_t RMP_RBT_Generic(rmp_ptr_t Value);
+/* Debug printing functions */
+__EXTERN__ rmp_cnt_t RMP_Int_Print(rmp_cnt_t Int);
+__EXTERN__ rmp_cnt_t RMP_Hex_Print(rmp_ptr_t Uint);
+__EXTERN__ rmp_cnt_t RMP_Str_Print(rmp_s8_t* String);
+/* List operation functions */
+__EXTERN__ void RMP_List_Crt(volatile struct RMP_List* Head);
+__EXTERN__ void RMP_List_Del(volatile struct RMP_List* Prev,
+                             volatile struct RMP_List* Next);
+__EXTERN__ void RMP_List_Ins(volatile struct RMP_List* New,
+                             volatile struct RMP_List* Prev,
+                             volatile struct RMP_List* Next);
+                             
 /* This is the entry of user applications */
 EXTERN void RMP_Init(void);
 __EXTERN__ void _RMP_Run_High(void);
@@ -448,26 +464,10 @@ __EXTERN__ rmp_ptr_t _RMP_Tim_Future(void);
 __EXTERN__ void RMP_Clear(volatile void* Addr,
                           rmp_ptr_t Size);
 
-/* Some helpers */
-__EXTERN__ rmp_ptr_t RMP_RBIT_Get(rmp_ptr_t Val);
-__EXTERN__ rmp_ptr_t RMP_LSB_Get(rmp_ptr_t Val);
-
 /* Scheduler locking & unlocking */
 __EXTERN__ void RMP_Sched_Lock(void);
 __EXTERN__ void RMP_Sched_Unlock(void);
 
-/* Debug printing functions */
-__EXTERN__ rmp_cnt_t RMP_Int_Print(rmp_cnt_t Int);
-__EXTERN__ rmp_cnt_t RMP_Hex_Print(rmp_ptr_t Uint);
-__EXTERN__ rmp_cnt_t RMP_Str_Print(rmp_s8_t* String);
-
-/* List operation functions */
-__EXTERN__ void RMP_List_Crt(volatile struct RMP_List* Head);
-__EXTERN__ void RMP_List_Del(volatile struct RMP_List* Prev,
-                             volatile struct RMP_List* Next);
-__EXTERN__ void RMP_List_Ins(volatile struct RMP_List* New,
-                             volatile struct RMP_List* Prev,
-                             volatile struct RMP_List* Next);
 
 /* System interfaces */
 __EXTERN__ void RMP_Yield(void);

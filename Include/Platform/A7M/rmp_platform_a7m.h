@@ -72,6 +72,9 @@ typedef rmp_s32_t rmp_ret_t;
 #define RMP_DEBUG_PRINT_MAX             (255U)
 /* The offset of the stack when initializing */
 #define RMP_INIT_STACK                  RMP_INIT_STACK_TAIL(17U)
+/* MSB/LSB extraction */
+#define RMP_MSB_GET(VAL)                _RMP_A7M_MSB_Get(VAL)
+#define RMP_LSB_GET(VAL)                _RMP_A7M_LSB_Get(VAL)
 
 /* The CPU and application specific macros are here */
 #include "rmp_platform_a7m_conf.h"
@@ -264,7 +267,8 @@ EXTERN void RMP_Int_Disable(void);
 EXTERN void RMP_Int_Enable(void);
 EXTERN void RMP_Int_Mask(rmp_ptr_t Level);
 
-EXTERN rmp_ptr_t RMP_MSB_Get(rmp_ptr_t Val);
+EXTERN rmp_ptr_t _RMP_A7M_MSB_Get(rmp_ptr_t Value);
+EXTERN rmp_ptr_t _RMP_A7M_LSB_Get(rmp_ptr_t Value);
 EXTERN void _RMP_Start(rmp_ptr_t Entry, rmp_ptr_t Stack);
 EXTERN void _RMP_Yield(void);
 

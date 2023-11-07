@@ -5,6 +5,7 @@ Date        : 22/07/2017
 Licence     : The Unlicense; see LICENSE for details.
 Description : The testbench for PIC32MZ2048EFM100.
               This port is considered experimental and without FPU support.
+
 XC32-GCC 4.35 O3(--specs hack disabled)
     ___   __  ___ ___
    / _ \ /  |/  // _ \       Simple real-time kernel
@@ -31,17 +32,17 @@ XC32-GCC 4.35 O3(--specs hack enabled)
  /_/|_|/_/  /_//_/
 ====================================================
 Test (number in CPU cycles)        : AVG / MAX / MIN
-Yield                              : 296 / 65301 / 275
-Mailbox                            : 392 / 1160 / 390
-Semaphore                          : 371 / 920 / 365
-FIFO                               : 146 / 685 / 145
-Message queue                      : 538 / 990 / 530
-Blocking message queue             : 669 / 1065 / 660
-Memory allocation/free pair        : 415 / 745 / 401
-ISR Mailbox                        : 435 / 1230 / 430
-ISR Semaphore                      : 415 / 1070 / 410
-ISR Message queue                  : 525 / 1140 / 520
-ISR Blocking message queue         : 615 / 930 / 610
+Yield                              : 260 / 440 / 255
+Mailbox                            : 392 / 1135 / 390
+Semaphore                          : 370 / 935 / 370
+FIFO                               : 146 / 650 / 145
+Message queue                      : 540 / 1195 / 535
+Blocking message queue             : 672 / 1015 / 665
+Memory allocation/free pair        : 364 / 665 / 352
+ISR Mailbox                        : 440 / 1230 / 435
+ISR Semaphore                      : 420 / 925 / 415
+ISR Message queue                  : 530 / 1350 / 525
+ISR Blocking message queue         : 620 / 840 / 615
 ******************************************************************************/
 
 /* Includes ******************************************************************/

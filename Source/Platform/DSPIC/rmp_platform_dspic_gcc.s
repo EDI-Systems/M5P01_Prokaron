@@ -46,8 +46,9 @@ STATUS      16          Status register.
     .global             _RMP_Int_Disable      
     /* Enable all interrupts */        
     .global             _RMP_Int_Enable   
-    /* Get the MSB */
-    .global             _RMP_MSB_Get
+    /* Get the MSB/LSB */
+    .global             _RMP_DSPIC_MSB_Get
+    .global             _RMP_DSPIC_LSB_Get
     /* Start the first thread */
     .global             __RMP_Start
     /* The system pending service routine */
@@ -223,25 +224,32 @@ _RMP_Int_Enable:
     RETURN
 /* End Function:RMP_Int_Enable ***********************************************/
 
-/* Begin Function:RMP_MSB_Get *************************************************
+/* Begin Function:_RMP_DSPIC_MSB_Get ******************************************
 Description    : Get the MSB of the word.
-Input          : ptr_t Val - The value.
+Input          : ptr_t Value - The value.
 Output         : None.
 Return         : ptr_t - The MSB position.   
 Register Usage : None. 
 ******************************************************************************/
-_RMP_MSB_Get:
-    CLR                 W1
-    CPBNE               W1,W0,NON_ZERO
-    MOV                 #0xFFFF,W0
-    RETURN
-NON_ZERO:
-    /* This word is non-zero, we need to find MSB */
+_RMP_DSPIC_MSB_Get:
     FF1L                W0,W0
-    MOV                 #16,W1
-    SUB                 W1,W0,W0
+    SUBR                W0,#16,W0
     RETURN
-/* End Function:RMP_MSB_Get **************************************************/
+/* End Function:_RMP_DSPIC_MSB_Get *******************************************/
+
+/* Begin Function:_RMP_DSPIC_LSB_Get ******************************************
+Description    : Get the LSB of the word.
+Input          : ptr_t Value - The value.
+Output         : None.
+Return         : ptr_t - The LSB position.   
+Register Usage : None. 
+******************************************************************************/
+_RMP_DSPIC_LSB_Get:
+    /* This word is non-zero, we need to find MSB */
+    FF1R                W0,W0
+    SUB                 #1,W0
+    RETURN
+/* End Function:_RMP_DSPIC_LSB_Get *******************************************/
 
 /* Begin Function:_RMP_Start **************************************************
 Description : Jump to the user function and will never return from it.

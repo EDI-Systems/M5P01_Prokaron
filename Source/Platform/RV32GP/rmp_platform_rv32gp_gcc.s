@@ -174,38 +174,6 @@ RMP_Int_Enable:
     RET
 /* End Function:RMP_Int_Enable ***********************************************/
 
-/* Begin Function:RMP_MSB_Get *************************************************
-Description    : Get the MSB of the word. RV32G doesn't always support CLZ which
-                 is an RVB bit extension, so we will have to do it the hard way.
-Input          : ptr_t Val - The value.
-Output         : None.
-Return         : ptr_t - The MSB position.
-Register Usage : None.
-******************************************************************************/
-.macro CHECK_BITS BITS LABEL
-    SRL                 a2, a1, \BITS
-    BEQ                 a2, x0, \LABEL
-    ADDI                a0, a0, \BITS
-    ADD                 a1, a2, x0
-\LABEL:
-.endm
-
-    /* Always 21 instructions no matter what */
-RMP_MSB_Get:
-    BEQ                 a0, x0, ZERO
-    ADD                 a1, a0, x0
-    LI                  a0, 0
-    CHECK_BITS          BITS=16 LABEL=HEX
-    CHECK_BITS          BITS=8  LABEL=OCT
-    CHECK_BITS          BITS=4  LABEL=QUAD
-    CHECK_BITS          BITS=2  LABEL=BIN
-    CHECK_BITS          BITS=1  LABEL=ONE
-    RET
-ZERO:
-    ADDI                a0, a0, -1
-    RET
-/* End Function:RMP_MSB_Get **************************************************/
-
 /* Begin Function:_RMP_Start **************************************************
 Description : Jump to the user function and will never return from it.
 Input       : $a0 - The address to branch to.

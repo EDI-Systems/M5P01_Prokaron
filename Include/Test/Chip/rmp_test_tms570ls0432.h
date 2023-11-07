@@ -12,17 +12,17 @@ TICC V20.2.7LTS -O4 -mf5
  /_/|_|/_/  /_//_/
 ====================================================
 Test (number in CPU cycles)        : AVG / MAX / MIN
-Yield                              : 275 / 416 / 272
-Mailbox                            : 496 / 640 / 488
-Semaphore                          : 462 / 608 / 456
-FIFO                               : 210 / 400 / 208
-Message queue                      : 728 / 912 / 712
-Blocking message queue             : 984 / 1152 / 976
-Memory allocation/free pair        : 564 / 598 / 550
-ISR Mailbox                        : 441 / 496 / 432
-ISR Semaphore                      : 427 / 456 / 424
-ISR Message queue                  : 592 / 656 / 584
-ISR Blocking message queue         : 755 / 816 / 752
+Yield                              : 275 / 408 / 272
+Mailbox                            : 479 / 624 / 472
+Semaphore                          : 467 / 616 / 464
+FIFO                               : 216 / 424 / 216
+Message queue                      : 746 / 960 / 728
+Blocking message queue             : 998 / 1208 / 984
+Memory allocation/free pair        : 482 / 513 / 469
+ISR Mailbox                        : 440 / 512 / 440
+ISR Semaphore                      : 435 / 464 / 424
+ISR Message queue                  : 595 / 648 / 592
+ISR Blocking message queue         : 763 / 832 / 760
 ******************************************************************************/
 
 /* Includes ******************************************************************/

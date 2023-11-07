@@ -50,8 +50,9 @@
     .global             RMP_Int_Enable
      ;Mask/unmask some interrupts
     .global             RMP_Int_Mask
-    ;Get the MSB
-    .global             RMP_MSB_Get
+    ;Get the MSB/LSB
+    .global             _RMP_A7R_MSB_Get
+    .global             _RMP_A7R_LSB_Get
     ;Start the first thread
     .global             _RMP_Start
     ;The PendSV trigger
@@ -120,19 +121,32 @@ RMP_Int_Mask            .asmfunc
     .endasmfunc
 ;/* End Function:RMP_Int_Mask ************************************************/
 
-;/* Begin Function:RMP_MSB_Get ************************************************
+;/* Begin Function:_RMP_A7R_MSB_Get *******************************************
 ;Description : Get the MSB of the word.
 ;Input       : rmp_ptr_t R0 - The value.
 ;Output      : None.
 ;Return      : rmp_ptr_t R0 - The MSB position.
 ;*****************************************************************************/
-RMP_MSB_Get             .asmfunc
+_RMP_A7R_MSB_Get        .asmfunc
     CLZ                 R1,R0
     MOVS                R0,#31
     SUBS                R0,R0,R1
     BX                  LR
     .endasmfunc
-;/* End Function:RMP_MSB_Get *************************************************/
+;/* End Function:RMP_A7R_MSB_Get *********************************************/
+
+;/* Begin Function:RMP_A7R_LSB_Get ********************************************
+;Description : Get the MSB of the word.
+;Input       : rmp_ptr_t R0 - The value.
+;Output      : None.
+;Return      : rmp_ptr_t R0 - The MSB position.
+;*****************************************************************************/
+_RMP_A7R_LSB_Get        .asmfunc
+	RBIT				R0,R0
+    CLZ                 R0,R0
+    BX                  LR
+    .endasmfunc
+;/* End Function:_RMP_A7R_LSB_Get ********************************************/
 
 ;/* Begin Function:_RMP_Yield *************************************************
 ;Description : Trigger a yield to another thread.

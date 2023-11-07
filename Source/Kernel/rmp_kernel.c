@@ -4,11 +4,12 @@ Author      : pry
 Date        : 04/02/2018
 Licence     : The Unlicense; see LICENSE for details.
 Description : The RMP RTOS single-file kernel.
-              This is a single-process kernel that does nothing but simple thread
-              context switches. This operating system's kernel object allocation
-              policy is totally exported, so the user assume full control over this.
-              The white-box coverage of 100% of all kernel branches have been reached.
-              Formal verification in progress.
+              This is a single-process kernel that does nothing but simple 
+              thread context switches. This operating system's kernel object
+              allocation policy is totally exported, so the user assume full
+              control over this.
+              The white-box coverage of 100% of all kernel branches have been
+              reached. Formal verification in progress.
               Use of 'volatile': we make every data structure volatile so all 
               memory reads and writes to potentially shared structures are 
               strongly ordered from a compiler perspective. This DOES decrease
@@ -37,6 +38,419 @@ Description : The RMP RTOS single-file kernel.
 #include "rmp_platform.h"
 #undef __HDR_PUBLIC_MEMBERS__
 /* End Includes **************************************************************/
+
+/* Begin Function:RMP_MSB_Generic *********************************************
+Description : Find the MSB's position. This is a portable solution for all
+              processors; if your processor does not have fast built-in bit
+              manipulation support, you can resort to this when porting.
+Input       : rmp_ptr_t Value - The value to compute for.
+Output      : None.
+Return      : rmp_ptr_t - The result. 0 will be returned for 0.
+******************************************************************************/
+rmp_ptr_t RMP_MSB_Generic(rmp_ptr_t Value)
+{
+    rmp_ptr_t Bit;
+    static const rmp_u8_t Table[256]=
+    {
+        0U, 0U, 1U, 1U, 2U, 2U, 2U, 2U, 3U, 3U, 3U, 3U, 3U, 3U, 3U, 3U,
+        4U, 4U, 4U, 4U, 4U, 4U, 4U, 4U, 4U, 4U, 4U, 4U, 4U, 4U, 4U, 4U,
+        5U, 5U, 5U, 5U, 5U, 5U, 5U, 5U, 5U, 5U, 5U, 5U, 5U, 5U, 5U, 5U,
+        5U, 5U, 5U, 5U, 5U, 5U, 5U, 5U, 5U, 5U, 5U, 5U, 5U, 5U, 5U, 5U,
+        6U, 6U, 6U, 6U, 6U, 6U, 6U, 6U, 6U, 6U, 6U, 6U, 6U, 6U, 6U, 6U,
+        6U, 6U, 6U, 6U, 6U, 6U, 6U, 6U, 6U, 6U, 6U, 6U, 6U, 6U, 6U, 6U,
+        6U, 6U, 6U, 6U, 6U, 6U, 6U, 6U, 6U, 6U, 6U, 6U, 6U, 6U, 6U, 6U,
+        6U, 6U, 6U, 6U, 6U, 6U, 6U, 6U, 6U, 6U, 6U, 6U, 6U, 6U, 6U, 6U,
+        7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U,
+        7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U,
+        7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U,
+        7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U,
+        7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U,
+        7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U,
+        7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U,
+        7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U
+    };
+
+#if(RMP_WORD_ORDER==4U)
+    /* 15-8 */
+    if(Value>=RMP_POW2(8U))
+    {
+        RMP_COVERAGE_MARKER();
+        Bit=8U;
+    }
+    /* 7-0 */
+    else
+    {
+        RMP_COVERAGE_MARKER();
+        Bit=0U;
+    }
+#elif(RMP_WORD_ORDER==5U)
+    /* 31-16 */
+    if(Value>=RMP_POW2(16U))
+    {
+        RMP_COVERAGE_MARKER();
+        /* 31-24 */
+        if(Value>=RMP_POW2(24U))
+        {
+            RMP_COVERAGE_MARKER();
+            Bit=24U;
+        }
+        /* 24-16 */
+        else
+        {
+            RMP_COVERAGE_MARKER();
+            Bit=16U;
+        }
+    }
+    /* 15-0 */
+    else
+    {
+        RMP_COVERAGE_MARKER();
+        /* 15-8 */
+        if(Value>=RMP_POW2(8U))
+        {
+            RMP_COVERAGE_MARKER();
+            Bit=8U;
+        }
+        /* 7-0 */
+        else
+        {
+            RMP_COVERAGE_MARKER();
+            Bit=0U;
+        }
+    }
+#elif(RMP_WORD_ORDER==6U)
+    /* 63-32 */
+    if(Value>=RMP_POW2(32U))
+    {
+        RMP_COVERAGE_MARKER();
+        /* 63-48 */
+        if(Value>=RMP_POW2(48U))
+        {
+            RMP_COVERAGE_MARKER();
+            /* 63-56 */
+            if(Value>=RMP_POW2(56U))
+            {
+                RMP_COVERAGE_MARKER();
+                Bit=56U;
+            }
+            /* 56-48 */
+            else
+            {
+                RMP_COVERAGE_MARKER();
+                Bit=48U;
+            }
+        }
+        /* 47-32 */
+        else
+        {
+            RMP_COVERAGE_MARKER();
+            /* 47-40 */
+            if(Value>=RMP_POW2(40U))
+            {
+                RMP_COVERAGE_MARKER();
+                Bit=40U;
+            }
+            /* 39-32 */
+            else
+            {
+                RMP_COVERAGE_MARKER();
+                Bit=32U;
+            }
+        }
+    }
+    /* 31-0 */
+    else
+    {
+        RMP_COVERAGE_MARKER();
+        /* 31-16 */
+        if(Value>=RMP_POW2(16U))
+        {
+            RMP_COVERAGE_MARKER();
+            /* 31-24 */
+            if(Value>=RMP_POW2(24U))
+            {
+                RMP_COVERAGE_MARKER();
+                Bit=24U;
+            }
+            /* 24-16 */
+            else
+            {
+                RMP_COVERAGE_MARKER();
+                Bit=16U;
+            }
+        }
+        /* 15-0 */
+        else
+        {
+            RMP_COVERAGE_MARKER();
+            /* 15-8 */
+            if(Value>=RMP_POW2(8U))
+            {
+                RMP_COVERAGE_MARKER();
+                Bit=8U;
+            }
+            /* 7-0 */
+            else
+            {
+                RMP_COVERAGE_MARKER();
+                Bit=0U;
+            }
+        }
+    }
+#else
+#error Generic FFS for 128-bits & above are not implemented.
+#endif
+
+    return Table[Value>>Bit]+Bit;
+}
+/* End Function:RMP_MSB_Generic **********************************************/
+
+/* Begin Function:RMP_LSB_Generic *********************************************
+Description : Find the LSB's position. This is a portable solution for all
+              processors; if your processor does not have fast built-in bit
+              manipulation support, you can resort to this when porting.
+Input       : rmp_ptr_t Value - The value to count.
+Output      : None.
+Return      : rmp_ptr_t - The result. 0 will be returned for 0.
+******************************************************************************/
+rmp_ptr_t RMP_LSB_Generic(rmp_ptr_t Value)
+{
+    rmp_ptr_t Bit;
+    static const rmp_u8_t Table[256]=
+    {
+        0U, 0U, 1U, 0U, 2U, 0U, 1U, 0U, 3U, 0U, 1U, 0U, 2U, 0U, 1U, 0U,
+        4U, 0U, 1U, 0U, 2U, 0U, 1U, 0U, 3U, 0U, 1U, 0U, 2U, 0U, 1U, 0U,
+        5U, 0U, 1U, 0U, 2U, 0U, 1U, 0U, 3U, 0U, 1U, 0U, 2U, 0U, 1U, 0U,
+        4U, 0U, 1U, 0U, 2U, 0U, 1U, 0U, 3U, 0U, 1U, 0U, 2U, 0U, 1U, 0U,
+        6U, 0U, 1U, 0U, 2U, 0U, 1U, 0U, 3U, 0U, 1U, 0U, 2U, 0U, 1U, 0U,
+        4U, 0U, 1U, 0U, 2U, 0U, 1U, 0U, 3U, 0U, 1U, 0U, 2U, 0U, 1U, 0U,
+        5U, 0U, 1U, 0U, 2U, 0U, 1U, 0U, 3U, 0U, 1U, 0U, 2U, 0U, 1U, 0U,
+        4U, 0U, 1U, 0U, 2U, 0U, 1U, 0U, 3U, 0U, 1U, 0U, 2U, 0U, 1U, 0U,
+        7U, 0U, 1U, 0U, 2U, 0U, 1U, 0U, 3U, 0U, 1U, 0U, 2U, 0U, 1U, 0U,
+        4U, 0U, 1U, 0U, 2U, 0U, 1U, 0U, 3U, 0U, 1U, 0U, 2U, 0U, 1U, 0U,
+        5U, 0U, 1U, 0U, 2U, 0U, 1U, 0U, 3U, 0U, 1U, 0U, 2U, 0U, 1U, 0U,
+        4U, 0U, 1U, 0U, 2U, 0U, 1U, 0U, 3U, 0U, 1U, 0U, 2U, 0U, 1U, 0U,
+        6U, 0U, 1U, 0U, 2U, 0U, 1U, 0U, 3U, 0U, 1U, 0U, 2U, 0U, 1U, 0U,
+        4U, 0U, 1U, 0U, 2U, 0U, 1U, 0U, 3U, 0U, 1U, 0U, 2U, 0U, 1U, 0U,
+        5U, 0U, 1U, 0U, 2U, 0U, 1U, 0U, 3U, 0U, 1U, 0U, 2U, 0U, 1U, 0U,
+        4U, 0U, 1U, 0U, 2U, 0U, 1U, 0U, 3U, 0U, 1U, 0U, 2U, 0U, 1U, 0U,
+    };
+    
+#if(RMP_WORD_ORDER==4U)
+    /* 16-8 */
+    if((Value<<8)==0U)
+    {
+        RMP_COVERAGE_MARKER();
+        Bit=8U;
+    }
+    /* 7-0 */
+    else
+    {
+        RMP_COVERAGE_MARKER();
+        Bit=0U;
+    }
+#elif(RMP_WORD_ORDER==5U)
+    /* 31-16 */
+    if((Value<<16)==0U)
+    {
+        RMP_COVERAGE_MARKER();
+        /* 31-24 */
+        if((Value<<8)==0U)
+        {
+            RMP_COVERAGE_MARKER();
+            Bit=24U;
+        }
+        /* 24-16 */
+        else
+        {
+            RMP_COVERAGE_MARKER();
+            Bit=16U;
+        }
+    }
+    /* 15-0 */
+    else
+    {
+        RMP_COVERAGE_MARKER();
+        /* 15-8 */
+        if((Value<<24)==0U)
+        {
+            RMP_COVERAGE_MARKER();
+            Bit=8U;
+        }
+        /* 7-0 */
+        else
+        {
+            RMP_COVERAGE_MARKER();
+            Bit=0U;
+        }
+    }
+#elif(RMP_WORD_ORDER==6U)
+    /* 63-32 */
+    if((Value<<32)==0U)
+    {
+        RMP_COVERAGE_MARKER();
+        /* 63-48 */
+        if((Value<<16)==0U)
+        {
+            RMP_COVERAGE_MARKER();
+            /* 63-56 */
+            if((Value<<8)==0U)
+            {
+                RMP_COVERAGE_MARKER();
+                Bit=56U;
+            }
+            /* 56-48 */
+            else
+            {
+                RMP_COVERAGE_MARKER();
+                Bit=48U;
+            }
+        }
+        /* 47-32 */
+        else
+        {
+            RMP_COVERAGE_MARKER();
+            /* 47-40 */
+            if((Value<<24)==0U)
+            {
+                RMP_COVERAGE_MARKER();
+                Bit=40U;
+            }
+            /* 39-32 */
+            else
+            {
+                RMP_COVERAGE_MARKER();
+                Bit=32U;
+            }
+        }
+    }
+    /* 31-0 */
+    else
+    {
+        RMP_COVERAGE_MARKER();
+        /* 31-16 */
+        if((Value<<48)==0U)
+        {
+            RMP_COVERAGE_MARKER();
+            /* 31-24 */
+            if((Value<<40)==0U)
+            {
+                RMP_COVERAGE_MARKER();
+                Bit=24U;
+            }
+            /* 24-16 */
+            else
+            {
+                RMP_COVERAGE_MARKER();
+                Bit=16U;
+            }
+        }
+        /* 15-0 */
+        else
+        {
+            RMP_COVERAGE_MARKER();
+            /* 15-8 */
+            if((Value<<56)==0U)
+            {
+                RMP_COVERAGE_MARKER();
+                Bit=8U;
+            }
+            /* 7-0 */
+            else
+            {
+                RMP_COVERAGE_MARKER();
+                Bit=0U;
+            }
+        }
+    }
+#else
+#error Generic FLS for 128-bits & above are not implemented.
+#endif
+
+    return Table[(rmp_u8_t)(Value>>Bit)]+Bit;
+}
+/* End Function:RMP_LSB_Generic **********************************************/
+
+/* Begin Function:RMP_RBT_Generic *********************************************
+Description : Reverse bit order. This is a portable solution meant for all
+              processors; if your processor does not have fast built-in RBT,
+              you can resort to this instead.
+              This is implemented to be as fast as possible.
+Input       : rmp_ptr_t Value - The value to count.
+Output      : None.
+Return      : rmp_ptr_t - The result.
+******************************************************************************/
+rmp_ptr_t RMP_RBT_Generic(rmp_ptr_t Value)
+{
+    rmp_ptr_t Ret;
+    rmp_ptr_t Src;
+    rmp_u8_t* To;
+    rmp_u8_t* From;
+
+    static const rmp_u8_t Table[256]=
+    {
+        0x00U, 0x80U, 0x40U, 0xC0U, 0x20U, 0xA0U, 0x60U, 0xE0U,
+        0x10U, 0x90U, 0x50U, 0xD0U, 0x30U, 0xB0U, 0x70U, 0xF0U,
+        0x08U, 0x88U, 0x48U, 0xC8U, 0x28U, 0xA8U, 0x68U, 0xE8U,
+        0x18U, 0x98U, 0x58U, 0xD8U, 0x38U, 0xB8U, 0x78U, 0xF8U,
+        0x04U, 0x84U, 0x44U, 0xC4U, 0x24U, 0xA4U, 0x64U, 0xE4U,
+        0x14U, 0x94U, 0x54U, 0xD4U, 0x34U, 0xB4U, 0x74U, 0xF4U,
+        0x0CU, 0x8CU, 0x4CU, 0xCCU, 0x2CU, 0xACU, 0x6CU, 0xECU,
+        0x1CU, 0x9CU, 0x5CU, 0xDCU, 0x3CU, 0xBCU, 0x7CU, 0xFCU,
+        0x02U, 0x82U, 0x42U, 0xC2U, 0x22U, 0xA2U, 0x62U, 0xE2U,
+        0x12U, 0x92U, 0x52U, 0xD2U, 0x32U, 0xB2U, 0x72U, 0xF2U,
+        0x0AU, 0x8AU, 0x4AU, 0xCAU, 0x2AU, 0xAAU, 0x6AU, 0xEAU,
+        0x1AU, 0x9AU, 0x5AU, 0xDAU, 0x3AU, 0xBAU, 0x7AU, 0xFAU,
+        0x06U, 0x86U, 0x46U, 0xC6U, 0x26U, 0xA6U, 0x66U, 0xE6U,
+        0x16U, 0x96U, 0x56U, 0xD6U, 0x36U, 0xB6U, 0x76U, 0xF6U,
+        0x0EU, 0x8EU, 0x4EU, 0xCEU, 0x2EU, 0xAEU, 0x6EU, 0xEEU,
+        0x1EU, 0x9EU, 0x5EU, 0xDEU, 0x3EU, 0xBEU, 0x7EU, 0xFEU,
+        0x01U, 0x81U, 0x41U, 0xC1U, 0x21U, 0xA1U, 0x61U, 0xE1U,
+        0x11U, 0x91U, 0x51U, 0xD1U, 0x31U, 0xB1U, 0x71U, 0xF1U,
+        0x09U, 0x89U, 0x49U, 0xC9U, 0x29U, 0xA9U, 0x69U, 0xE9U,
+        0x19U, 0x99U, 0x59U, 0xD9U, 0x39U, 0xB9U, 0x79U, 0xF9U,
+        0x05U, 0x85U, 0x45U, 0xC5U, 0x25U, 0xA5U, 0x65U, 0xE5U,
+        0x15U, 0x95U, 0x55U, 0xD5U, 0x35U, 0xB5U, 0x75U, 0xF5U,
+        0x0DU, 0x8DU, 0x4DU, 0xCDU, 0x2DU, 0xADU, 0x6DU, 0xEDU,
+        0x1DU, 0x9DU, 0x5DU, 0xDDU, 0x3DU, 0xBDU, 0x7DU, 0xFDU,
+        0x03U, 0x83U, 0x43U, 0xC3U, 0x23U, 0xA3U, 0x63U, 0xE3U,
+        0x13U, 0x93U, 0x53U, 0xD3U, 0x33U, 0xB3U, 0x73U, 0xF3U,
+        0x0BU, 0x8BU, 0x4BU, 0xCBU, 0x2BU, 0xABU, 0x6BU, 0xEBU,
+        0x1BU, 0x9BU, 0x5BU, 0xDBU, 0x3BU, 0xBBU, 0x7BU, 0xFBU,
+        0x07U, 0x87U, 0x47U, 0xC7U, 0x27U, 0xA7U, 0x67U, 0xE7U,
+        0x17U, 0x97U, 0x57U, 0xD7U, 0x37U, 0xB7U, 0x77U, 0xF7U,
+        0x0FU, 0x8FU, 0x4FU, 0xCFU, 0x2FU, 0xAFU, 0x6FU, 0xEFU,
+        0x1FU, 0x9FU, 0x5FU, 0xDFU, 0x3FU, 0xBFU, 0x7FU, 0xFFU
+    };
+
+    Src=Value;
+    To=(rmp_u8_t*)(&Ret);
+    From=(rmp_u8_t*)(&Src);
+
+#if(RMP_WORD_ORDER==4)
+    To[0]=Table[From[1]];
+    To[1]=Table[From[0]];
+#elif(RMP_WORD_ORDER==5)
+    To[0]=Table[From[3]];
+    To[1]=Table[From[2]];
+    To[2]=Table[From[1]];
+    To[3]=Table[From[0]];
+#elif(RMP_WORD_ORDER==6U)
+    To[0]=Table[From[7]];
+    To[1]=Table[From[6]];
+    To[2]=Table[From[5]];
+    To[3]=Table[From[4]];
+    To[4]=Table[From[3]];
+    To[5]=Table[From[2]];
+    To[6]=Table[From[1]];
+    To[7]=Table[From[0]];
+#else
+#error Generic RBT for 128-bits & above are not implemented.
+#endif
+
+    return Ret;
+}
+/* End Function:RMP_RBT_Generic **********************************************/
 
 /* Begin Function:RMP_Print_Coverage ******************************************
 Description : The coverage data printer. Should always be disabled for all cases
@@ -281,7 +695,6 @@ Input          : const rmp_u8_t* Data - The pointer to the dataset.
 Output         : None.
 Return         : rmp_ptr_t - The CRC16 value calculated.
 ******************************************************************************/
-#ifdef __RMP_U8_T__
 #ifdef __RMP_U16_T__
 rmp_ptr_t RMP_CRC16(const rmp_u8_t* Data,
                     rmp_ptr_t Length)
@@ -375,7 +788,6 @@ rmp_ptr_t RMP_CRC16(const rmp_u8_t* Data,
 
     return (rmp_u16_t)(((rmp_u16_t)Temp_High)<<8|Temp_Low);
 }
-#endif
 #endif
 /* End Function:RMP_CRC16 ****************************************************/
 
@@ -546,7 +958,7 @@ void _RMP_Run_High(void)
         else
             RMP_COVERAGE_MARKER();
         
-        Count=(rmp_cnt_t)RMP_MSB_Get(RMP_Bitmap[Count])+(Count<<RMP_WORD_ORDER);
+        Count=(rmp_cnt_t)RMP_MSB_GET(RMP_Bitmap[Count])+(Count<<RMP_WORD_ORDER);
         
         /* See if the current thread is the highest priority one. 
          * If yes, place the current at the end of the queue. */
@@ -2373,95 +2785,6 @@ int main(void)
 }
 /* End Function:main *********************************************************/
 
-/* Begin Function:RMP_RBIT_Get ************************************************
-Description : Reverse the bit order in a word.
-Input       : rmp_ptr_t Val - The input value.
-Output      : None.
-Return      : rmp_ptr_t - The result.
-******************************************************************************/
-rmp_ptr_t RMP_RBIT_Get(rmp_ptr_t Val)
-{
-    rmp_ptr_t Ret;
-    rmp_ptr_t Src;
-    rmp_u8_t* To;
-    rmp_u8_t* From;
-    
-    static const rmp_u8_t RMP_RBIT_Table[256]=
-    {
-        0x00U, 0x80U, 0x40U, 0xC0U, 0x20U, 0xA0U, 0x60U, 0xE0U,
-        0x10U, 0x90U, 0x50U, 0xD0U, 0x30U, 0xB0U, 0x70U, 0xF0U,
-        0x08U, 0x88U, 0x48U, 0xC8U, 0x28U, 0xA8U, 0x68U, 0xE8U,
-        0x18U, 0x98U, 0x58U, 0xD8U, 0x38U, 0xB8U, 0x78U, 0xF8U,
-        0x04U, 0x84U, 0x44U, 0xC4U, 0x24U, 0xA4U, 0x64U, 0xE4U,
-        0x14U, 0x94U, 0x54U, 0xD4U, 0x34U, 0xB4U, 0x74U, 0xF4U,
-        0x0CU, 0x8CU, 0x4CU, 0xCCU, 0x2CU, 0xACU, 0x6CU, 0xECU,
-        0x1CU, 0x9CU, 0x5CU, 0xDCU, 0x3CU, 0xBCU, 0x7CU, 0xFCU,
-        0x02U, 0x82U, 0x42U, 0xC2U, 0x22U, 0xA2U, 0x62U, 0xE2U,
-        0x12U, 0x92U, 0x52U, 0xD2U, 0x32U, 0xB2U, 0x72U, 0xF2U,
-        0x0AU, 0x8AU, 0x4AU, 0xCAU, 0x2AU, 0xAAU, 0x6AU, 0xEAU,
-        0x1AU, 0x9AU, 0x5AU, 0xDAU, 0x3AU, 0xBAU, 0x7AU, 0xFAU,
-        0x06U, 0x86U, 0x46U, 0xC6U, 0x26U, 0xA6U, 0x66U, 0xE6U,
-        0x16U, 0x96U, 0x56U, 0xD6U, 0x36U, 0xB6U, 0x76U, 0xF6U,
-        0x0EU, 0x8EU, 0x4EU, 0xCEU, 0x2EU, 0xAEU, 0x6EU, 0xEEU,
-        0x1EU, 0x9EU, 0x5EU, 0xDEU, 0x3EU, 0xBEU, 0x7EU, 0xFEU,
-        0x01U, 0x81U, 0x41U, 0xC1U, 0x21U, 0xA1U, 0x61U, 0xE1U,
-        0x11U, 0x91U, 0x51U, 0xD1U, 0x31U, 0xB1U, 0x71U, 0xF1U,
-        0x09U, 0x89U, 0x49U, 0xC9U, 0x29U, 0xA9U, 0x69U, 0xE9U,
-        0x19U, 0x99U, 0x59U, 0xD9U, 0x39U, 0xB9U, 0x79U, 0xF9U,
-        0x05U, 0x85U, 0x45U, 0xC5U, 0x25U, 0xA5U, 0x65U, 0xE5U,
-        0x15U, 0x95U, 0x55U, 0xD5U, 0x35U, 0xB5U, 0x75U, 0xF5U,
-        0x0DU, 0x8DU, 0x4DU, 0xCDU, 0x2DU, 0xADU, 0x6DU, 0xEDU,
-        0x1DU, 0x9DU, 0x5DU, 0xDDU, 0x3DU, 0xBDU, 0x7DU, 0xFDU,
-        0x03U, 0x83U, 0x43U, 0xC3U, 0x23U, 0xA3U, 0x63U, 0xE3U,
-        0x13U, 0x93U, 0x53U, 0xD3U, 0x33U, 0xB3U, 0x73U, 0xF3U,
-        0x0BU, 0x8BU, 0x4BU, 0xCBU, 0x2BU, 0xABU, 0x6BU, 0xEBU,
-        0x1BU, 0x9BU, 0x5BU, 0xDBU, 0x3BU, 0xBBU, 0x7BU, 0xFBU,
-        0x07U, 0x87U, 0x47U, 0xC7U, 0x27U, 0xA7U, 0x67U, 0xE7U,
-        0x17U, 0x97U, 0x57U, 0xD7U, 0x37U, 0xB7U, 0x77U, 0xF7U,
-        0x0FU, 0x8FU, 0x4FU, 0xCFU, 0x2FU, 0xAFU, 0x6FU, 0xEFU,
-        0x1FU, 0x9FU, 0x5FU, 0xDFU, 0x3FU, 0xBFU, 0x7FU, 0xFFU
-    };
-    
-    Src=Val;
-    To=(rmp_u8_t*)(&Ret);
-    From=(rmp_u8_t*)(&Src);
-    
-#if(RMP_WORD_ORDER==4)
-    To[0]=RMP_RBIT_Table[From[1]];
-    To[1]=RMP_RBIT_Table[From[0]];
-#elif(RMP_WORD_ORDER==5)
-    To[0]=RMP_RBIT_Table[From[3]];
-    To[1]=RMP_RBIT_Table[From[2]];
-    To[2]=RMP_RBIT_Table[From[1]];
-    To[3]=RMP_RBIT_Table[From[0]];
-#else
-    To[0]=RMP_RBIT_Table[From[7]];
-    To[1]=RMP_RBIT_Table[From[6]];
-    To[2]=RMP_RBIT_Table[From[5]];
-    To[3]=RMP_RBIT_Table[From[4]];
-    To[4]=RMP_RBIT_Table[From[3]];
-    To[5]=RMP_RBIT_Table[From[2]];
-    To[6]=RMP_RBIT_Table[From[1]];
-    To[7]=RMP_RBIT_Table[From[0]];
-#endif
-
-    return Ret;
-}
-/* End Function:RMP_RBIT_Get *************************************************/
-
-/* Begin Function:RMP_LSB_Get *************************************************
-Description : Get the LSB in a word. If the word is all zero, a value that is 
-              equal to the processor word size will be returned.
-Input       : rmp_ptr_t Val - The input value.
-Output      : None.
-Return      : rmp_ptr_t - The LSB found.
-******************************************************************************/
-rmp_ptr_t RMP_LSB_Get(rmp_ptr_t Val)
-{
-    return RMP_WORD_SIZE-1U-RMP_MSB_Get(RMP_RBIT_Get(Val));
-}
-/* End Function:RMP_LSB_Get **************************************************/
-
 /* Begin Function:RMP_Mem_Init ************************************************
 Description : Initialize a trunk of memory as the memory pool. The TLSF allocator's
               FLI will be decided upon the memory block size. Memory allocation does
@@ -2528,7 +2851,7 @@ rmp_ret_t RMP_Mem_Init(volatile void* Pool,
     Mem=(volatile struct RMP_Mem*)Pool;
     Mem->Size=Size;
     /* Calculate the FLI value needed for this - we always align to 64 byte */
-    Mem->FLI_Num=RMP_MSB_Get(Size-sizeof(struct RMP_Mem))-6U+1U;
+    Mem->FLI_Num=RMP_MSB_GET(Size-sizeof(struct RMP_Mem))-6U+1U;
     
     /* Decide the location of the bitmap */
     Offset=sizeof(struct RMP_Mem);
@@ -2615,7 +2938,7 @@ void _RMP_Mem_Ins(volatile void* Pool,
     Size=(rmp_ptr_t)(Mem_Head->Tail)-((rmp_ptr_t)Mem_Head)-sizeof(struct RMP_Mem_Head);
 
     /* Guarantee the Mem_Size is bigger than 64 or a failure will surely occur here */
-    FLI_Level=RMP_MSB_Get(Size)-6U;
+    FLI_Level=RMP_MSB_GET(Size)-6U;
     /* Decide the SLI level directly from the FLI level */
     SLI_Level=(Size>>(FLI_Level+3U))&0x07U;
     /* Calculate the bit position */
@@ -2661,7 +2984,7 @@ void _RMP_Mem_Del(volatile void* Pool,
     Size=(rmp_ptr_t)(Mem_Head->Tail)-((rmp_ptr_t)Mem_Head)-sizeof(struct RMP_Mem_Head);
     
     /* Guarantee the Mem_Size is bigger than 64 or a failure will surely occur here */
-    FLI_Level=RMP_MSB_Get(Size)-6U;
+    FLI_Level=RMP_MSB_GET(Size)-6U;
     /* Decide the SLI level directly from the FLI level */
     SLI_Level=(Size>>(FLI_Level+3U))&0x07U;
     /* Calculate the bit position */
@@ -2708,7 +3031,7 @@ rmp_ret_t _RMP_Mem_Search(volatile void* Pool,
     volatile struct RMP_Mem* Mem;
 
     /* Make sure that it is bigger than 64. 64=2^6 */
-    FLI_Level_Temp=RMP_MSB_Get(Size)-6U;
+    FLI_Level_Temp=RMP_MSB_GET(Size)-6U;
     
     /* Decide the SLI level directly from the FLI level. We plus the number by one here
      * so that we can avoid the list search. However, when the allocated memory is just
@@ -2744,11 +3067,13 @@ rmp_ret_t _RMP_Mem_Search(volatile void* Pool,
     
     /* Try to find one position on this processor word level */
     Level=RMP_MEM_POS(FLI_Level_Temp,SLI_Level_Temp);
-    LSB=RMP_LSB_Get(Mem->Bitmap[Level>>RMP_WORD_ORDER]>>(Level&RMP_WORD_MASK));
+    Word=Mem->Bitmap[Level>>RMP_WORD_ORDER]>>(Level&RMP_WORD_MASK);
+    
     /* If there's at least one block that matches the query, return the level */
-    if(LSB<RMP_WORD_SIZE)
+    if(Word!=0U)
     {
         RMP_COVERAGE_MARKER();
+        LSB=RMP_LSB_GET(Word);
         Level=(Level&(~RMP_WORD_MASK))+LSB+(Level&RMP_WORD_MASK);
         *FLI_Level=Level>>3;
         *SLI_Level=Level&0x07U;
@@ -2767,7 +3092,7 @@ rmp_ret_t _RMP_Mem_Search(volatile void* Pool,
             {
                 RMP_COVERAGE_MARKER();
                 /* Find the actual level */ 
-                LSB=RMP_LSB_Get(Mem->Bitmap[Word]);
+                LSB=RMP_LSB_GET(Mem->Bitmap[Word]);
                 *FLI_Level=((Word<<RMP_WORD_ORDER)+LSB)>>3;
                 *SLI_Level=LSB&0x07U;
                 return 0;

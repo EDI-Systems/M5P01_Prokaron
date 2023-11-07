@@ -1,27 +1,27 @@
 /******************************************************************************
-Filename    : rmp_test_STM32F030F4.h
+Filename    : rmp_test_stm32f030f4.h
 Author      : pry 
 Date        : 22/07/2017
 Licence     : The Unlicense; see LICENSE for details.
 Description : The testbench for STM32F030F4.
 
-ARMCC V6.14 -Oz
+ARMCC V6.14 -Oz 
     ___   __  ___ ___
    / _ \ /  |/  // _ \       Simple real-time kernel
   / , _// /|_/ // ___/       Standard benchmark test
  /_/|_|/_/  /_//_/
 ====================================================
 Test (number in CPU cycles)        : AVG / MAX / MIN
-Yield                              : 366 / 468 / 356
-Mailbox                            : 758 / 849 / 737
-Semaphore                          : 668 / 764 / 651
-FIFO                               : 366 / 469 / 355
-Message queue                      : 1185 / 1266 / 1154
-Blocking message queue             : 1597 / 1672 / 1560
-ISR Mailbox                        : 686 / 786 / 668
-ISR Semaphore                      : 627 / 724 / 608
-ISR Message queue                  : 952 / 1040 / 923
-ISR Blocking message queue         : 1207 / 1288 / 1170
+Yield                              : 362 / 465 / 353
+Mailbox                            : 763 / 852 / 739
+Semaphore                          : 666 / 765 / 649
+FIFO                               : 379 / 776 / 368
+Message queue                      : 1196 / 1279 / 1164
+Blocking message queue             : 1609 / 1672 / 1578
+ISR Mailbox                        : 689 / 786 / 668
+ISR Semaphore                      : 616 / 720 / 604
+ISR Message queue                  : 950 / 1041 / 923
+ISR Blocking message queue         : 1211 / 1292 / 1174
 ******************************************************************************/
 
 /* Includes ******************************************************************/

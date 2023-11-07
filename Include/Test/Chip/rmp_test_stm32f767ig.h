@@ -12,17 +12,17 @@ ARMCC 6.18 -O3
  /_/|_|/_/  /_//_/
 ====================================================
 Test (number in CPU cycles)        : AVG / MAX / MIN
-Yield                              : 180 / 216 / 180
-Mailbox                            : 326 / 440 / 308
-Semaphore                          : 268 / 400 / 268
-FIFO                               : 144 / 208 / 136
-Message queue                      : 509 / 572 / 492
-Blocking message queue             : 703 / 784 / 680
-Memory allocation/free pair        : 376 / 405 / 358
-ISR Mailbox                        : 321 / 396 / 308
-ISR Semaphore                      : 255 / 320 / 252
-ISR Message queue                  : 390 / 476 / 372
-ISR Blocking message queue         : 513 / 596 / 496
+Yield                              : 176 / 224 / 176
+Mailbox                            : 329 / 396 / 324
+Semaphore                          : 277 / 384 / 276
+FIFO                               : 174 / 232 / 168
+Message queue                      : 510 / 612 / 492
+Blocking message queue             : 694 / 764 / 692
+Memory allocation/free pair        : 334 / 368 / 321
+ISR Mailbox                        : 328 / 400 / 308
+ISR Semaphore                      : 259 / 320 / 252
+ISR Message queue                  : 413 / 492 / 400
+ISR Blocking message queue         : 516 / 596 / 492
 ******************************************************************************/
 
 /* Includes ******************************************************************/

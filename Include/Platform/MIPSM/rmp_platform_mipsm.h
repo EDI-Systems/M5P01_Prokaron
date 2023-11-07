@@ -65,13 +65,16 @@ typedef rmp_s32_t rmp_ret_t;
 
 /* System macros *************************************************************/
 /* Compiler "extern" keyword setting */
-#define EXTERN                   extern
+#define EXTERN                  extern
 /* The order of bits in one CPU machine word */
-#define RMP_WORD_ORDER           5
+#define RMP_WORD_ORDER          (5U)
 /* The maximum length of char printing - no need to change this in most cases */
-#define RMP_DEBUG_PRINT_MAX 255
+#define RMP_DEBUG_PRINT_MAX     (255)
 /* The offset of the stack when initializing */
-#define RMP_INIT_STACK           RMP_INIT_STACK_TAIL(64)
+#define RMP_INIT_STACK          RMP_INIT_STACK_TAIL(64)
+/* MSB/LSB extraction */
+#define RMP_MSB_GET(VAL)        _RMP_MIPSM_MSB_Get(VAL)
+#define RMP_LSB_GET(VAL)        _RMP_MIPSM_LSB_Get(VAL)
 
 /* The CPU and application specific macros are here */
 #include "rmp_platform_mipsm_conf.h"
@@ -162,7 +165,8 @@ __EXTERN__ volatile rmp_ptr_t RMP_Int_Nest;
 EXTERN void RMP_Int_Disable(void);
 EXTERN void RMP_Int_Enable(void);
 
-EXTERN rmp_ptr_t RMP_MSB_Get(rmp_ptr_t Val);
+EXTERN rmp_ptr_t _RMP_MIPSM_MSB_Get(rmp_ptr_t Value);
+EXTERN rmp_ptr_t _RMP_MIPSM_LSB_Get(rmp_ptr_t Value);
 EXTERN void _RMP_Start(rmp_ptr_t Entry, rmp_ptr_t Stack);
 EXTERN void _RMP_Yield(void);
 EXTERN void _RMP_Set_Timer(rmp_ptr_t Ticks);

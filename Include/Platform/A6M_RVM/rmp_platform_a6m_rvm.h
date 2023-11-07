@@ -72,6 +72,9 @@ typedef rmp_s32_t rmp_ret_t;
 #define RMP_DEBUG_PRINT_MAX     (128U)
 /* The offset of the stack when initializing */
 #define RMP_INIT_STACK          RMP_INIT_STACK_TAIL(17U+5U)
+/* MSB/LSB extraction */
+#define RMP_MSB_GET(VAL)        RMP_MSB_Generic(VAL)
+#define RMP_LSB_GET(VAL)        RMP_LSB_Generic(VAL)
 
 /* The virtual machine configs are here */
 #include "rvm_guest_conf.h"
@@ -154,7 +157,6 @@ __EXTERN__ void RMP_Int_Disable(void);
 __EXTERN__ void RMP_Int_Mask(void);
 __EXTERN__ void RMP_Int_Unmask(void);
 
-EXTERN rvm_ptr_t RMP_MSB_Get(rvm_ptr_t Val);
 EXTERN void _RMP_Start(rvm_ptr_t Entry,
                        rvm_ptr_t Stack);
 __EXTERN__ void _RMP_Yield(void);
