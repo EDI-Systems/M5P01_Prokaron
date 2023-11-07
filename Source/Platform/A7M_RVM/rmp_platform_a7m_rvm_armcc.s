@@ -28,10 +28,11 @@
 ;/* End Header ***************************************************************/
 
 ;/* Begin Exports ************************************************************/
-                        ;Get the MSB                              
-                        EXPORT              RMP_MSB_Get
                         ;Start the first thread
                         EXPORT              _RMP_Start
+                        ; Get the MSB/LSB in the word
+                        EXPORT              _RMP_A7M_RVM_MSB_Get
+                        EXPORT              _RMP_A7M_RVM_LSB_Get
                         ;Fast-path context switching without invoking the RVM
                         EXPORT              _RMP_A7M_RVM_Yield
 ;/* End Exports **************************************************************/
@@ -51,20 +52,6 @@
                         IMPORT              RMP_A7M_RVM_Usr_Param
 ;/* End Imports **************************************************************/
 
-;/* Begin Function:RMP_MSB_Get ************************************************
-;Description : Get the MSB of the word.
-;Input       : rmp_ptr_t R0 - The value.
-;Output      : None.
-;Return      : rmp_ptr_t R0 - The MSB position.
-;*****************************************************************************/
-RMP_MSB_Get             PROC
-                        CLZ                 R1,R0
-                        MOV                 R0,#31
-                        SUB                 R0,R1
-                        BX                  LR
-                        ENDP
-;/* End Function:RMP_MSB_Get *************************************************/
-
 ;/* Begin Function:_RMP_Start *************************************************
 ;Description : Jump to the user function and will never return from it.
 ;Input       : None.
@@ -78,6 +65,33 @@ _RMP_Start              PROC
                         BX                  R0                  ; Branch to target
                         ENDP
 ;/* End Function:_RMP_Start **************************************************/
+
+;/* Begin Function:_RMP_A7M_RVM_MSB_Get ***************************************
+;Description : Get the MSB of the word.
+;Input       : rvm_ptr_t Val - The value.
+;Output      : None.
+;Return      : rvm_ptr_t - The MSB position.   
+;*****************************************************************************/
+_RMP_A7M_RVM_MSB_Get    PROC
+                        CLZ                 R1, R0
+                        MOV                 R0, #31
+                        SUB                 R0, R1
+                        BX                  LR
+                        ENDP
+;/* End Function:_RMP_A7M_RVM_MSB_Get ****************************************/
+
+;/* Begin Function:_RMP_A7M_RVM_LSB_Get ***************************************
+;Description : Get the LSB of the word.
+;Input       : rvm_ptr_t Val - The value.
+;Output      : None.
+;Return      : rvm_ptr_t - The LSB position.   
+;*****************************************************************************/
+_RMP_A7M_RVM_LSB_Get    PROC
+                        RBIT                R0, R0
+                        CLZ                 R0, R0
+                        BX                  LR
+                        ENDP
+;/* End Function:_RMP_A7M_RVM_LSB_Get ****************************************/
 
 ;/* Begin Function:_RMP_A7M_RVM_Yield *****************************************
 ;Description : Switch from user code to another thread, rather than from the 

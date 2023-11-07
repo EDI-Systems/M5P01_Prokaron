@@ -38,7 +38,7 @@ Semaphore                          : 847 / 1462 / 846
 FIFO                               : 436 / 1051 / 435
 Message queue                      : 1442 / 1443 / 1442
 Blocking message queue             : 1889 / 2501 / 1883
-Memory allocation/free pair        : 3526 / 3679 / 3416
+Memory allocation/free pair        : 3306 / 3488 / 3196
 ISR Mailbox                        : 873 / 1475 / 339
 ISR Semaphore                      : 793 / 1405 / 791
 ISR Message queue                  : 1157 / 1770 / 1154

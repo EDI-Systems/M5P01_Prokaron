@@ -35,8 +35,9 @@
                         EXPORT              RMP_Int_Enable
                         ; Mask/unmask some interrupts
                         EXPORT              RMP_Int_Mask
-                        ; Get the MSB                              
-                        EXPORT              RMP_MSB_Get
+                        ; Get the MSB/LSB
+                        EXPORT              _RMP_A7M_MSB_Get
+                        EXPORT              _RMP_A7M_LSB_Get
                         ; Start the first thread
                         EXPORT              _RMP_Start
                         ; The PendSV trigger
@@ -99,19 +100,32 @@ RMP_Int_Mask            PROC
                         ENDP
 ;/* End Function:RMP_Int_Mask ************************************************/
 
-;/* Begin Function:RMP_MSB_Get ************************************************
+;/* Begin Function:_RMP_A7M_MSB_Get *******************************************
 ;Description : Get the MSB of the word.
 ;Input       : rmp_ptr_t R0 - The value.
 ;Output      : None.
 ;Return      : rmp_ptr_t R0 - The MSB position.
 ;*****************************************************************************/
-RMP_MSB_Get             PROC
+_RMP_A7M_MSB_Get        PROC
                         CLZ                 R1, R0
                         MOVS                R0, #31
                         SUBS                R0, R1
                         BX                  LR
                         ENDP
-;/* End Function:RMP_MSB_Get *************************************************/
+;/* End Function:_RMP_A7M_MSB_Get ********************************************/
+
+;/* Begin Function:_RMP_A7M_LSB_Get *******************************************
+;Description : Get the LSB of the word.
+;Input       : rmp_ptr_t R0 - The value.
+;Output      : None.
+;Return      : rmp_ptr_t R0 - The LSB position.
+;*****************************************************************************/
+_RMP_A7M_LSB_Get        PROC
+                        RBIT                R0, R0
+                        CLZ                 R0, R0
+                        BX                  LR
+                        ENDP
+;/* End Function:_RMP_A7M_LSB_Get ********************************************/
 
 ;/* Begin Function:_RMP_Yield *************************************************
 ;Description : Trigger a yield to another thread.

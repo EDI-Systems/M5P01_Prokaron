@@ -90,8 +90,11 @@ do \
 } \
 while(0)
 
-/* Flag operations */
-#define RMP_MSP430_CTX_SET()        {TA0CCTL1|=CCIFG;}
+/* Flag operations - Currently considered broken, context switch by interrupts are
+ * not possible on this architecture due to lack of software interrupts.
+ * Direct switch style implementation is necessary for this processor. */
+#define NOP()                       __no_operation()
+#define RMP_MSP430_CTX_SET()        {TA0CCTL1|=CCIFG;NOP();NOP();}
 #define RMP_MSP430_CTX_CLR()        {TA0CCTL1&=~CCIFG;}
 #define RMP_MSP430_TIM_CLR()        {TA0CCTL0&=~CCIFG;}
 

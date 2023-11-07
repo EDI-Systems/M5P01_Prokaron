@@ -12,16 +12,16 @@ GCC 8.2.0 -O3 (FPU disabled)
  /_/|_|/_/  /_//_/
 ====================================================
 Test (number in CPU cycles)        : AVG / MAX / MIN
-Yield                              : 347 / 354 / 347
-Mailbox                            : 512 / 542 / 512
-Semaphore                          : 474 / 495 / 474
-FIFO                               : 179 / 192 / 179
-Message queue                      : 685 / 730 / 685
-Blocking message queue             : 881 / 932 / 881
-ISR Mailbox                        : 506 / 521 / 251
-ISR Semaphore                      : 484 / 491 / 484
-ISR Message queue                  : 614 / 656 / 614
-ISR Blocking message queue         : 737 / 752 / 737
+Yield                              : 301 / 312 / 301
+Mailbox                            : 470 / 489 / 470
+Semaphore                          : 418 / 430 / 418
+FIFO                               : 180 / 218 / 180
+Message queue                      : 636 / 676 / 636
+Blocking message queue             : 831 / 853 / 831
+ISR Mailbox                        : 472 / 497 / 258
+ISR Semaphore                      : 424 / 448 / 424
+ISR Message queue                  : 576 / 605 / 576
+ISR Blocking message queue         : 695 / 706 / 695
 
 GCC 8.2.0 -O3 (FPU context active)
     ___   __  ___ ___
@@ -30,16 +30,16 @@ GCC 8.2.0 -O3 (FPU context active)
  /_/|_|/_/  /_//_/
 ====================================================
 Test (number in CPU cycles)        : AVG / MAX / MIN
-Yield                              : 413 / 429 / 413
-Mailbox                            : 586 / 620 / 586
-Semaphore                          : 543 / 561 / 543
-FIFO                               : 180 / 201 / 180
-Message queue                      : 752 / 813 / 752
-Blocking message queue             : 938 / 969 / 938
-ISR Mailbox                        : 598 / 626 / 271
-ISR Semaphore                      : 573 / 585 / 573
-ISR Message queue                  : 707 / 734 / 707
-ISR Blocking message queue         : 825 / 844 / 825
+Yield                              : 378 / 385 / 378
+Mailbox                            : 546 / 576 / 546
+Semaphore                          : 492 / 518 / 492
+FIFO                               : 177 / 198 / 177
+Message queue                      : 719 / 757 / 719
+Blocking message queue             : 909 / 957 / 909
+ISR Mailbox                        : 559 / 585 / 271
+ISR Semaphore                      : 518 / 536 / 518
+ISR Message queue                  : 669 / 707 / 669
+ISR Blocking message queue         : 789 / 815 / 789
 
 GCC 12.2.0 -O3 (FPU disabled)
     ___   __  ___ ___
@@ -48,16 +48,16 @@ GCC 12.2.0 -O3 (FPU disabled)
  /_/|_|/_/  /_//_/
 ====================================================
 Test (number in CPU cycles)        : AVG / MAX / MIN
-Yield                              : 301 / 317 / 301
-Mailbox                            : 487 / 508 / 487
-Semaphore                          : 436 / 466 / 436
-FIFO                               : 180 / 196 / 180
-Message queue                      : 665 / 695 / 665
-Blocking message queue             : 848 / 889 / 848
-ISR Mailbox                        : 473 / 491 / 230
-ISR Semaphore                      : 434 / 468 / 434
-ISR Message queue                  : 582 / 601 / 582
-ISR Blocking message queue         : 711 / 727 / 711
+Yield                              : 259 / 281 / 259
+Mailbox                            : 438 / 471 / 438
+Semaphore                          : 394 / 421 / 394
+FIFO                               : 180 / 199 / 180
+Message queue                      : 607 / 647 / 607
+Blocking message queue             : 769 / 802 / 769
+ISR Mailbox                        : 430 / 452 / 238
+ISR Semaphore                      : 387 / 418 / 387
+ISR Message queue                  : 541 / 564 / 541
+ISR Blocking message queue         : 653 / 672 / 653
 
 GCC 12.2.0 -O3 (FPU context active)
     ___   __  ___ ___
@@ -66,16 +66,16 @@ GCC 12.2.0 -O3 (FPU context active)
  /_/|_|/_/  /_//_/
 ====================================================
 Test (number in CPU cycles)        : AVG / MAX / MIN
-Yield                              : 377 / 401 / 377
-Mailbox                            : 561 / 594 / 561
-Semaphore                          : 508 / 536 / 508
-FIFO                               : 179 / 195 / 179
-Message queue                      : 731 / 777 / 731
-Blocking message queue             : 916 / 947 / 916
-ISR Mailbox                        : 564 / 587 / 257
-ISR Semaphore                      : 529 / 546 / 529
-ISR Message queue                  : 679 / 703 / 679
-ISR Blocking message queue         : 800 / 814 / 800
+Yield                              : 334 / 349 / 334
+Mailbox                            : 510 / 541 / 510
+Semaphore                          : 474 / 493 / 470
+FIFO                               : 180 / 202 / 180
+Message queue                      : 672 / 707 / 672
+Blocking message queue             : 828 / 858 / 828
+ISR Mailbox                        : 521 / 540 / 259
+ISR Semaphore                      : 483 / 507 / 483
+ISR Message queue                  : 618 / 652 / 618
+ISR Blocking message queue         : 733 / 759 / 733
 ******************************************************************************/
 
 /* Includes ******************************************************************/

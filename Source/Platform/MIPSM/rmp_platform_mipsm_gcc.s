@@ -58,8 +58,9 @@ R31    $ra        return address (used by function call)
     .global             RMP_Int_Disable      
     /* Enable all interrupts */        
     .global             RMP_Int_Enable   
-    /* Get the MSB */
-    .global             RMP_MSB_Get
+    /* Get the MSB/LSB */
+    .global             _RMP_MIPSM_MSB_Get
+    .global             _RMP_MIPSM_LSB_Get
     /* Start the first thread */
     .global             _RMP_Start
     /* The context switch trigger */
@@ -324,9 +325,9 @@ _RMP_Set_Timer:
     .end                _RMP_Set_Timer
 /* End Function:_RMP_Set_Timer ***********************************************/
 
-/* Begin Function:RMP_MSB_Get *************************************************
+/* Begin Function:_RMP_MIPSM_MSB_Get ******************************************
 Description    : Get the MSB of the word.
-Input          : ptr_t Val - The value.
+Input          : ptr_t Value - The value.
 Output         : None.
 Return         : ptr_t - The MSB position.   
 Register Usage : None. 
@@ -335,15 +336,39 @@ Register Usage : None.
     .set                nomicromips
     .set                noreorder
     .set                noat
-    .ent                RMP_MSB_Get
-RMP_MSB_Get:
+    .ent                _RMP_MIPSM_MSB_Get
+_RMP_MIPSM_MSB_Get:
     CLZ                 $a0,$a0
     LI                  $v0,31
     SUB                 $v0,$a0
     JR                  $ra
     NOP
-    .end                RMP_MSB_Get
-/* End Function:RMP_MSB_Get **************************************************/
+    .end                _RMP_MIPSM_MSB_Get
+/* End Function:_RMP_MIPSM_MSB_Get *******************************************/
+
+/* Begin Function:_RMP_MIPSM_LSB_Get ******************************************
+Description    : Get the LSB of the word.
+Input          : ptr_t Value - The value.
+Output         : None.
+Return         : ptr_t - The LSB position.   
+Register Usage : None. 
+******************************************************************************/
+    .set                nomips16
+    .set                nomicromips
+    .set                noreorder
+    .set                noat
+    .ent                _RMP_MIPSM_MSB_Get
+_RMP_MIPSM_LSB_Get:
+    ADDIU               $t0,$a0,-1
+    NOT                 $v0,$a0
+    AND                 $t0,$v0,$t0
+    ADDIU               $v0,$zero,32
+    CLZ                 $t0,$t0
+    SUBU                $v0,$v0,$t0
+    JR                  $ra
+    NOP
+    .end                _RMP_MIPSM_MSB_Get
+/* End Function:_RMP_MIPSM_LSB_Get *******************************************/
 
 /* Begin Function:_RMP_Yield **************************************************
 Description : Trigger a yield to another thread.
@@ -361,6 +386,10 @@ _RMP_Yield:
     OR                  $t0,CORE_SW0
     /* Now write back to trigger the software interrupt */
     MTC0                $t0,$13
+    NOP
+    NOP
+    NOP
+    NOP
     JR                  $ra
     NOP
     .end                _RMP_Yield                                           
