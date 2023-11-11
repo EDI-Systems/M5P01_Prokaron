@@ -11,9 +11,6 @@ Description : The testbench for STM32L051C8.
 /* End Includes **************************************************************/
 
 /* Defines *******************************************************************/
-/* Where are the initial stacks */
-#define THD1_STACK        (&Stack_1[230])
-#define THD2_STACK        (&Stack_2[230])
 /* How to read counter */
 #define RMP_CNT_READ()    ((rmp_tim_t)(TIM2->CNT))
 /* Are we doing minimal measurements? */

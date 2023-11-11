@@ -25,83 +25,79 @@ Description : The platform specific file for MSP430.
 #undef __HDR_PUBLIC_MEMBERS__
 /* End Includes **************************************************************/
 
-/* Begin Function:_RMP_MSP430_Ctx_Clr *****************************************
-Description : Clear the software interrupt flag in the interrupt controller.
-Input       : None.
-Output      : None.
-Return      : None.
-******************************************************************************/
-void _RMP_MSP430_Ctx_Clr(void)
-{
-    RMP_MSP430_CTX_CLR();
-}
-/* End Function:_RMP_MSP430_Ctx_Clr ******************************************/
-
-/* Begin Function:_RMP_MSP430_Tim_Clr *****************************************
-Description : Clear the timer interrupt flag in the interrupt controller.
-Input       : None.
-Output      : None.
-Return      : None.
-******************************************************************************/
-void _RMP_MSP430_Tim_Clr(void)
-{
-    RMP_MSP430_TIM_CLR();
-}
-/* End Function:_RMP_MSP430_Tim_Clr ******************************************/
-
 /* Begin Function:_RMP_Yield **************************************************
-Description : Trigger a yield to another thread. This will always trigger the
-              timer 0 compare vector on MSP430.
+Description : Trigger a yield to another thread.
 Input       : None.
 Output      : None.
 Return      : None.
 ******************************************************************************/
 void _RMP_Yield(void)
 {
-    /* Manully pend the interrupt */
-    RMP_MSP430_CTX_SET();
+    if(RMP_MSP430_Int_Act!=0U)
+        RMP_MSP430_Yield_Pend=1U;
+    else
+        _RMP_MSP430_Yield();
 }
 /* End Function:_RMP_Yield ***************************************************/
 
 /* Begin Function:_RMP_Stack_Init *********************************************
 Description : Initiate the process stack when trying to start a process. Never
               call this function in user application.
-Input       : rmp_ptr_t Entry - The entry of the thread.
-              rmp_ptr_t Stack - The stack address of the thread.
-              rmp_ptr_t Arg - The argument to pass to the thread.
+Input       : rmp_ptr_t Stack - The stack address of the thread.
+              rmp_ptr_t Size - The stack size of the thread.
+              rmp_ptr_t Entry - The entry address of the thread.
+              rmp_ptr_t Param - The argument to pass to the thread.
 Output      : None.
-Return      : None.
+Return      : rmp_ptr_t - The adjusted stack location.
 ******************************************************************************/
-void _RMP_Stack_Init(rmp_ptr_t Entry, rmp_ptr_t Stack, rmp_ptr_t Arg)
+rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
+                          rmp_ptr_t Size,
+                          rmp_ptr_t Entry,
+                          rmp_ptr_t Param)
 {
-    rmp_ptr_t* Stack_Ptr=(rmp_ptr_t*)Stack;
+    rmp_ptr_t End;
+    struct RMP_MSP430_Stack* Ptr;
 
-    /* General purpose registers */
-#if(RMP_MSP430_INIT_EXTRA==1U)
-    Stack_Ptr[0]=0x0404;                                    /* R4 */
-    Stack_Ptr[1]=0x0505;                                    /* R5 */
-    Stack_Ptr[2]=0x0606;                                    /* R6 */
-    Stack_Ptr[3]=0x0707;                                    /* R7 */
-    Stack_Ptr[4]=0x0808;                                    /* R8 */
-    Stack_Ptr[5]=0x0909;                                    /* R9 */
-    Stack_Ptr[6]=0x1010;                                    /* R10 */
-    Stack_Ptr[7]=0x1111;                                    /* R11 */
-#endif
-    Stack_Ptr[8]=Arg;                                       /* R12 */
-#if(RMP_MSP430_INIT_EXTRA==1U)
-    Stack_Ptr[9]=0x1313;                                    /* R13 */
-    Stack_Ptr[10]=0x1414;                                   /* R14 */
-    Stack_Ptr[11]=0x1515;                                   /* R15 */
-#endif
+    /* Compute & align stack */
+    End=RMP_ROUND_DOWN(Stack+Size, 2U);
+    Ptr=(struct RMP_MSP430_Stack*)(End-sizeof(struct RMP_MSP430_Stack));
 
 #if(RMP_MSP430_X!=0U)
-    ((rmp_u16_t*)Stack_Ptr)[24]=0;
-    ((rmp_u16_t*)Stack_Ptr)[25]=((Entry>>4)&0xF000)|RMP_MSP430_SR_GIE;
-    ((rmp_u16_t*)Stack_Ptr)[26]=Entry&0xFFFF;
+    Ptr->R12=Param;
+    Ptr->PCSR=RMP_MSP430X_PCSR(Entry, RMP_MSP430_SR_GIE);
+
+    /* Fill the rest for ease of identification */
+    Ptr->R4=0x040404UL;
+    Ptr->R5=0x050505UL;
+    Ptr->R6=0x060606UL;
+    Ptr->R7=0x070707UL;
+    Ptr->R8=0x080808UL;
+    Ptr->R9=0x090909UL;
+    Ptr->R10=0x101010UL;
+    Ptr->R11=0x111111UL;
+    Ptr->R13=0x131313UL;
+    Ptr->R14=0x141414UL;
+    Ptr->R15=0x151515UL;
 #else
-    Stack_Ptr[12]=RMP_MSP430_SR_GIE;                        /* Status */
-    Stack_Ptr[13]=Entry;                                    /* PC */
+    Ptr->R12=Param;
+    Ptr->SR=RMP_MSP430_SR_GIE;
+    Ptr->PC=Entry;
+
+    /* Fill the rest for ease of identification */
+    Ptr->R4=0x0404U;
+    Ptr->R5=0x0505U;
+    Ptr->R6=0x0606U;
+    Ptr->R7=0x0707U;
+    Ptr->R8=0x0808U;
+    Ptr->R9=0x0909U;
+    Ptr->R10=0x1010U;
+    Ptr->R11=0x1111U;
+    Ptr->R13=0x1313U;
+    Ptr->R14=0x1414U;
+    Ptr->R15=0x1515U;
 #endif
+
+    return (rmp_ptr_t)Ptr;
 }
 /* End Function:_RMP_Stack_Init **********************************************/
 
@@ -116,6 +112,10 @@ void _RMP_Lowlvl_Init(void)
     RMP_MSP430_LOWLVL_INIT();
 
     RMP_Int_Disable();
+
+    /* Clear flags */
+    RMP_MSP430_Int_Act=0U;
+    RMP_MSP430_Yield_Pend=0U;
 }
 /* End Function:_RMP_Lowlvl_Init *********************************************/
 
@@ -142,6 +142,20 @@ void RMP_Putchar(char Char)
     RMP_MSP430_PUTCHAR(Char);
 }
 /* End Function:RMP_Putchar **************************************************/
+
+/* Begin Function:_RMP_MSP430_Tim_Handler *************************************
+Description : Timer interrupt routine for MSP430.
+Input       : None
+Output      : None.
+Return      : None.
+******************************************************************************/
+void _RMP_MSP430_Tim_Handler(void)
+{
+    RMP_MSP430_TIM_CLR();
+
+    _RMP_Tim_Handler(1U);
+}
+/* End Function:_RMP_MSP430_Tim_Handler **************************************/
 
 /* End Of File ***************************************************************/
 

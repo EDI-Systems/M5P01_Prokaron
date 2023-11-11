@@ -1,0 +1,126 @@
+import { r as registerInstance, h, H as Host, c as getElement } from './core-800e68f4.js';
+
+var SvgIconColor;
+(function (SvgIconColor) {
+    SvgIconColor["error"] = "error";
+    SvgIconColor["primary"] = "primary";
+    SvgIconColor["secondary"] = "secondary";
+    SvgIconColor["success"] = "success";
+    SvgIconColor["tertiary"] = "tertiary";
+    SvgIconColor["warn"] = "warn";
+    SvgIconColor["reversed"] = "reversed";
+})(SvgIconColor || (SvgIconColor = {}));
+;
+const SvgIconColorValues = [
+    SvgIconColor.error,
+    SvgIconColor.primary,
+    SvgIconColor.secondary,
+    SvgIconColor.success,
+    SvgIconColor.tertiary,
+    SvgIconColor.warn,
+    SvgIconColor.reversed
+];
+
+const SvgIcon = class {
+    constructor(hostRef) {
+        registerInstance(this, hostRef);
+        /**
+         * Property for icon color and style.
+         * Can be one of: `primary`, `secondary`, `tertiary`, `success`, `warn`, `error`. It is `tertiary` by default.
+         * Also, `reversed` can be added as in `primary reversed`. This inverts the foreground and background colors.
+         *
+         * @type {string}
+         * @memberof SvgIcon
+         */
+        this.appearance = 'tertiary';
+        /**
+         * Set the icon to look disabled.
+         *
+         * @type {boolean}
+         * @memberof SvgIcon
+         */
+        this.disabled = false;
+        /**
+         * Place the icon in a circle wrapper.
+         *
+         * @type {boolean}
+         * @memberof SvgIcon
+         */
+        this.circle = false;
+        /**
+         * Path to the assets folder, including any common svg prefix for the icon sets.
+         * NOTE: do not append a trailing slash. Use forward slashes (URI format)
+         *
+         * @type {string}
+         * @memberof SvgIcon
+         */
+        this.pathPrefix = 'assets/icons/ti_icons-';
+        /**
+         * Set true if the .svg file contains multiple icons, and should use #iconName suffix to access an icon from the set
+         *
+         * @type {boolean}
+         * @memberOf SvgIcon
+         */
+        this.multiIconFile = false;
+        /**
+         * The icon set. There are two sets of icons - `actions` and `objects`. The default is `objects`.
+         *
+         * @type {('actions' | 'objects')}
+         * @memberof SvgIcon
+         */
+        this.iconSet = 'objects';
+        /**
+         * Icon size - one of `xxs` (12x12), `xs` (14x14), `s` (18x18), `m` (24x24), `l` (36x36), or `xl` (48x48). Default is `m`.
+         *
+         * @type {('xxs' | 'xs' | 's' | 'm' | 'l' | 'xl')}
+         * @memberof SvgIcon
+         */
+        this.size = 'm';
+    }
+    componentWillLoad() {
+        // get the icon name from the text inside the element if icon name is not defined
+        if (!this.iconName) {
+            this.iconName = this.hostElement.textContent ? this.hostElement.textContent.trim() : 'info-circle';
+        }
+        this.updateIconUrl();
+        this.handleAppearanceChange();
+    }
+    handleAppearanceChange() {
+        // transform appearance string into an array of options
+        const appearances = this.appearance.toLowerCase().split(/\s+/);
+        if (!appearances.some(color => {
+            if ((SvgIconColorValues).indexOf(color) >= 0) {
+                this._color = color;
+                return true;
+            }
+            return false;
+        })) {
+            this._color = SvgIconColor.tertiary; // default color
+        }
+    }
+    updateIconUrl() {
+        this._iconUrl = `${this.pathPrefix}${this.iconSet}${this.multiIconFile ? '.svg#' + this.iconName : '/' + this.iconName + '.svg'}`;
+    }
+    render() {
+        return (h(Host, { class: `
+                        ti-svg-icon-${this._color}
+                        ti-svg-icon-size-${this.size}
+                        ${this.circle && 'ti-svg-icon-circle'}
+                        ${this.disabled && 'ti-svg-icon-disabled'}
+                    ` }, this.multiIconFile ? [
+            h("svg", { role: "img" }, h("use", { xlinkHref: this._iconUrl })),
+            h("span", { style: { 'display': 'none' } }, h("slot", null))
+        ] : (h("div", { class: "ti-svg-icon-bg", style: { backgroundImage: `url('${this._iconUrl}')` } }, h("span", { style: { 'display': 'none' } }, h("slot", null))))));
+    }
+    get hostElement() { return getElement(this); }
+    static get watchers() { return {
+        "appearance": ["handleAppearanceChange"],
+        "iconName": ["updateIconUrl"],
+        "pathPrefix": ["updateIconUrl"],
+        "iconSet": ["updateIconUrl"],
+        "multiIconFile": ["updateIconUrl"]
+    }; }
+    static get style() { return "/*\n* ==========================================================================\n* _polaris.colors.scss\n* This file imports the Polaris color palette.\n* ==========================================================================\n*/\n/*\n* --------------------------------------------------------------------------\n* color palette\n* --------------------------------------------------------------------------\n*/\n/*\n* ==========================================================================\n* _polaris.mixins.scss\n* This file contains Polaris mixins\n* prefix with mix-\n* ==========================================================================\n*/\n/*\n* ==========================================================================\n* _polaris-variables.scss\n* This file contains global-css variables and is using component based naming.\n*\n* Naming structure: [application(namespacing)]-[type]-[function]-[property]\n* ==========================================================================\n*/\n/*\n* --------------------------------------------------------------------------\n* Color variables\n* --------------------------------------------------------------------------\n*/\n/*\n* Polaris Component color definitions\n*/\n/*\n* Polaris Card Background color definitions\n* Ref: (http://polaris/01-ui-style-foundations.html#02-style-principles.03-background-color)\n*/\n/*\n* --------------------------------------------------------------------------\n* shape variables\n* --------------------------------------------------------------------------\n*/\n/*\n* Polaris border radius definitions\n* Ref: (http://polaris/01-ui-style-foundations.html#02-style-principles.05-border-radius)\n*/\n/*\n* Polaris box shadow definitions\n* Ref: (http://polaris/01-ui-style-foundations.html#02-style-principles.06-box-shadow)\n*/\n/*\n* --------------------------------------------------------------------------\n* font variables\n* Ref: (http://polaris/01-ui-style-foundations.html#07-typography-fundamentals)\n* --------------------------------------------------------------------------\n*/\n/*\n* Font stack definitions\n*/\n/*\n* Font families\n*/\n/*\n* Root HTML and BODY tag values\n*/\n/*\n* Font size cadence values\n*/\n/*\n* Standard Paragraph font sizes\n*/\n/*\n* Header tag font sizes\n*/\n/*\n* Line height cadence values\n*/\n/*\n* Font weight values\n*/\n/*\n* --------------------------------------------------------------------------\n* spacing values variables\n* --------------------------------------------------------------------------\n*/\n/*\n* Base spacing cadence values\n* (base grid size x multiplier) / root font size = rem value\n*/\n/*\n* Component/element specific spacing\n*/\n/*\n* --------------------------------------------------------------------------\n* page layout variables\n* --------------------------------------------------------------------------\n*/\n/*\n* --------------------------------------------------------------------------\n* animation variables\n* ref: (http://polaris/01-ui-style-foundations.html#04-motion)\n* --------------------------------------------------------------------------\n*/\n/*\n* Animation easing types\n*/\n/*\n* Animation timings\n*/\n/*\n* --------------------------------------------------------------------------\n* icon size variables\n* --------------------------------------------------------------------------\n*/\n/*\n* --------------------------------------------------------------------------\n* legacy variable names\n* - May still be used in other component repos\n* --------------------------------------------------------------------------\n*/\n/* Font variables */\n/* Space size variables */\n/*\n* ==========================================================================\n* _ti-core.scss\n*\n*  This files contains mixins uses within TI Webcomponents\n* ==========================================================================\n*/\n/*\n * Base style for trigger element\n */\n/*\n* Tooltip trigger main mixin.\n* Use to add style to trigger tooltip display.\n* For example:\n*\n* .tooltip-trigger:hover {\n*     \@include ti-tooltip-trigger();\n* }\n*\n* Typically not used directly, but via the other mixins below.\n*/\n/*\n* Mixin for adding style to trigger tooltip display to\n* an element selector on hover, focus and checked.\n* For example:\n*\n* .tooltip-trigger {\n     \@include ti-tooltip-trigger-element();\n* }\n*/\n/*\n* Mixin for adding style to trigger tooltip display to\n* a web component shadow host on hover, focus and checked.\n* Use in the web component style sheet outside of :host{}.\n* For example:\n*\n* \@include ti-tooltip-trigger-host();\n* :host {\n*     ...\n* }\n*\n* The optional $selector parameter allows a CSS selector\n* which will be added to the :host selector to allow control\n* over the host trigger via a style class or another selector.\n* For example:\n*\n* \@include ti-tooltip-trigger-host(\'.ti-tooltip-trigger\');\n*\n* creates code like\n*\n* :host(.ti-tooltip-trigger:hover) {\n*     ...\n* }\n*\n* instead of\n*\n* :host(:hover) {\n*     ...\n* }\n*/\n:host {\n  display: -ms-inline-flexbox;\n  display: inline-flex;\n  vertical-align: text-bottom;\n  fill: #555555;\n  width: 24px;\n  height: 24px;\n}\n:host svg {\n  display: block;\n  width: 24px;\n  height: 24px;\n  stroke-width: 0;\n}\n:host .ti-svg-icon-bg {\n  background-repeat: no-repeat;\n  background-position: 0 0;\n  width: 24px;\n  height: 24px;\n}\n\n:host(.ti-svg-icon-circle) {\n  border-radius: 100%;\n}\n:host(.ti-svg-icon-circle) svg,\n:host(.ti-svg-icon-circle) .ti-svg-icon-bg {\n  -webkit-transform: scale(0.75);\n  transform: scale(0.75);\n}\n\n/* svg icon size modifiers */\n:host(.ti-svg-icon-size-xxs) {\n  width: 12px;\n  height: 12px;\n}\n:host(.ti-svg-icon-size-xxs) svg {\n  width: 12px;\n  height: 12px;\n}\n:host(.ti-svg-icon-size-xxs) .ti-svg-icon-bg {\n  background-size: 12px;\n  width: 12px;\n  height: 12px;\n  line-height: 12px;\n}\n\n:host(.ti-svg-icon-size-xs) {\n  width: 14px;\n  height: 14px;\n}\n:host(.ti-svg-icon-size-xs) svg {\n  width: 14px;\n  height: 14px;\n}\n:host(.ti-svg-icon-size-xs) .ti-svg-icon-bg {\n  background-size: 14px;\n  width: 14px;\n  height: 14px;\n  line-height: 14px;\n}\n\n:host(.ti-svg-icon-size-s) {\n  width: 18px;\n  height: 18px;\n}\n:host(.ti-svg-icon-size-s) svg {\n  width: 18px;\n  height: 18px;\n}\n:host(.ti-svg-icon-size-s) .ti-svg-icon-bg {\n  background-size: 18px;\n  width: 18px;\n  height: 18px;\n  line-height: 18px;\n}\n\n:host(.ti-svg-icon-size-m) {\n  width: 24px;\n  height: 24px;\n}\n:host(.ti-svg-icon-size-m) svg {\n  width: 24px;\n  height: 24px;\n}\n:host(.ti-svg-icon-size-m) .ti-svg-icon-bg {\n  background-size: 24px;\n  width: 24px;\n  height: 24px;\n  line-height: 24px;\n}\n\n:host(.ti-svg-icon-size-l) {\n  width: 36px;\n  height: 36px;\n}\n:host(.ti-svg-icon-size-l) svg {\n  width: 36px;\n  height: 36px;\n}\n:host(.ti-svg-icon-size-l) .ti-svg-icon-bg {\n  background-size: 36px;\n  width: 36px;\n  height: 36px;\n  line-height: 36px;\n}\n\n:host(.ti-svg-icon-size-xl) {\n  width: 48px;\n  height: 48px;\n}\n:host(.ti-svg-icon-size-xl) svg {\n  width: 48px;\n  height: 48px;\n}\n:host(.ti-svg-icon-size-xl) .ti-svg-icon-bg {\n  background-size: 48px;\n  width: 48px;\n  height: 48px;\n  line-height: 48px;\n}\n\n/* svg icon color modifiers */\n:host(.ti-svg-icon-tertiary) {\n  fill: #555555;\n}\n\n:host(.ti-svg-icon-tertiary.ti-svg-icon-circle) {\n  fill: #ffffff;\n  background-color: #555555;\n}\n\n:host(.ti-svg-icon-secondary) {\n  fill: #115566;\n}\n\n:host(.ti-svg-icon-secondary.ti-svg-icon-circle) {\n  fill: #ffffff;\n  background-color: #115566;\n}\n\n:host(.ti-svg-icon-primary) {\n  fill: #cc0000;\n}\n\n:host(.ti-svg-icon-primary.ti-svg-icon-circle) {\n  fill: #ffffff;\n  background-color: #cc0000;\n}\n\n:host(.ti-svg-icon-disabled) {\n  fill: #cccccc;\n}\n\n:host(.ti-svg-icon-disabled.ti-svg-icon-circle) {\n  fill: #ffffff;\n  background-color: #cccccc;\n}\n\n:host(.ti-svg-icon-reversed) {\n  fill: #ffffff;\n}\n\n:host(.ti-svg-icon-reversed.ti-svg-icon-circle) {\n  fill: #ffffff;\n  background-color: #ffffff;\n}\n\n:host(.ti-svg-icon-error) {\n  fill: #990000;\n}\n\n:host(.ti-svg-icon-error.ti-svg-icon-circle) {\n  fill: #ffffff;\n  background-color: #990000;\n}\n\n:host(.ti-svg-icon-success) {\n  fill: #44bb55;\n}\n\n:host(.ti-svg-icon-success.ti-svg-icon-circle) {\n  fill: #ffffff;\n  background-color: #44bb55;\n}\n\n:host(.ti-svg-icon-warn) {\n  fill: #ff9933;\n}\n\n:host(.ti-svg-icon-warn.ti-svg-icon-circle) {\n  fill: #ffffff;\n  background-color: #ff9933;\n}\n\n/* bg icon color modifiers - position adjust */\n:host(.ti-svg-icon-tertiary.ti-svg-icon-size-xxs.ti-svg-icon-circle) .ti-svg-icon-bg {\n  background-position: 0 -48px;\n}\n\n:host(.ti-svg-icon-secondary.ti-svg-icon-size-xxs) .ti-svg-icon-bg {\n  background-position: 0 -12px;\n}\n\n:host(.ti-svg-icon-secondary.ti-svg-icon-size-xxs.ti-svg-icon-circle) .ti-svg-icon-bg {\n  background-position: 0 -48px;\n}\n\n:host(.ti-svg-icon-primary.ti-svg-icon-size-xxs) .ti-svg-icon-bg {\n  background-position: 0 -24px;\n}\n\n:host(.ti-svg-icon-primary.ti-svg-icon-size-xxs.ti-svg-icon-circle) .ti-svg-icon-bg {\n  background-position: 0 -48px;\n}\n\n:host(.ti-svg-icon-disabled.ti-svg-icon-size-xxs) .ti-svg-icon-bg {\n  background-position: 0 -36px;\n}\n\n:host(.ti-svg-icon-disabled.ti-svg-icon-size-xxs.ti-svg-icon-circle) .ti-svg-icon-bg {\n  background-position: 0 -48px;\n}\n\n:host(.ti-svg-icon-reversed.ti-svg-icon-size-xxs) .ti-svg-icon-bg {\n  background-position: 0 -48px;\n}\n\n:host(.ti-svg-icon-reversed.ti-svg-icon-size-xxs.ti-svg-icon-circle) .ti-svg-icon-bg {\n  background-position: 0 -48px;\n}\n\n:host(.ti-svg-icon-error.ti-svg-icon-size-xxs) .ti-svg-icon-bg {\n  background-position: 0 -60px;\n}\n\n:host(.ti-svg-icon-error.ti-svg-icon-size-xxs.ti-svg-icon-circle) .ti-svg-icon-bg {\n  background-position: 0 -48px;\n}\n\n:host(.ti-svg-icon-success.ti-svg-icon-size-xxs) .ti-svg-icon-bg {\n  background-position: 0 -72px;\n}\n\n:host(.ti-svg-icon-success.ti-svg-icon-size-xxs.ti-svg-icon-circle) .ti-svg-icon-bg {\n  background-position: 0 -48px;\n}\n\n:host(.ti-svg-icon-warn.ti-svg-icon-size-xxs) .ti-svg-icon-bg {\n  background-position: 0 -84px;\n}\n\n:host(.ti-svg-icon-warn.ti-svg-icon-size-xxs.ti-svg-icon-circle) .ti-svg-icon-bg {\n  background-position: 0 -48px;\n}\n\n:host(.ti-svg-icon-tertiary.ti-svg-icon-size-xs.ti-svg-icon-circle) .ti-svg-icon-bg {\n  background-position: 0 -56px;\n}\n\n:host(.ti-svg-icon-secondary.ti-svg-icon-size-xs) .ti-svg-icon-bg {\n  background-position: 0 -14px;\n}\n\n:host(.ti-svg-icon-secondary.ti-svg-icon-size-xs.ti-svg-icon-circle) .ti-svg-icon-bg {\n  background-position: 0 -56px;\n}\n\n:host(.ti-svg-icon-primary.ti-svg-icon-size-xs) .ti-svg-icon-bg {\n  background-position: 0 -28px;\n}\n\n:host(.ti-svg-icon-primary.ti-svg-icon-size-xs.ti-svg-icon-circle) .ti-svg-icon-bg {\n  background-position: 0 -56px;\n}\n\n:host(.ti-svg-icon-disabled.ti-svg-icon-size-xs) .ti-svg-icon-bg {\n  background-position: 0 -42px;\n}\n\n:host(.ti-svg-icon-disabled.ti-svg-icon-size-xs.ti-svg-icon-circle) .ti-svg-icon-bg {\n  background-position: 0 -56px;\n}\n\n:host(.ti-svg-icon-reversed.ti-svg-icon-size-xs) .ti-svg-icon-bg {\n  background-position: 0 -56px;\n}\n\n:host(.ti-svg-icon-reversed.ti-svg-icon-size-xs.ti-svg-icon-circle) .ti-svg-icon-bg {\n  background-position: 0 -56px;\n}\n\n:host(.ti-svg-icon-error.ti-svg-icon-size-xs) .ti-svg-icon-bg {\n  background-position: 0 -70px;\n}\n\n:host(.ti-svg-icon-error.ti-svg-icon-size-xs.ti-svg-icon-circle) .ti-svg-icon-bg {\n  background-position: 0 -56px;\n}\n\n:host(.ti-svg-icon-success.ti-svg-icon-size-xs) .ti-svg-icon-bg {\n  background-position: 0 -84px;\n}\n\n:host(.ti-svg-icon-success.ti-svg-icon-size-xs.ti-svg-icon-circle) .ti-svg-icon-bg {\n  background-position: 0 -56px;\n}\n\n:host(.ti-svg-icon-warn.ti-svg-icon-size-xs) .ti-svg-icon-bg {\n  background-position: 0 -98px;\n}\n\n:host(.ti-svg-icon-warn.ti-svg-icon-size-xs.ti-svg-icon-circle) .ti-svg-icon-bg {\n  background-position: 0 -56px;\n}\n\n:host(.ti-svg-icon-tertiary.ti-svg-icon-size-s.ti-svg-icon-circle) .ti-svg-icon-bg {\n  background-position: 0 -72px;\n}\n\n:host(.ti-svg-icon-secondary.ti-svg-icon-size-s) .ti-svg-icon-bg {\n  background-position: 0 -18px;\n}\n\n:host(.ti-svg-icon-secondary.ti-svg-icon-size-s.ti-svg-icon-circle) .ti-svg-icon-bg {\n  background-position: 0 -72px;\n}\n\n:host(.ti-svg-icon-primary.ti-svg-icon-size-s) .ti-svg-icon-bg {\n  background-position: 0 -36px;\n}\n\n:host(.ti-svg-icon-primary.ti-svg-icon-size-s.ti-svg-icon-circle) .ti-svg-icon-bg {\n  background-position: 0 -72px;\n}\n\n:host(.ti-svg-icon-disabled.ti-svg-icon-size-s) .ti-svg-icon-bg {\n  background-position: 0 -54px;\n}\n\n:host(.ti-svg-icon-disabled.ti-svg-icon-size-s.ti-svg-icon-circle) .ti-svg-icon-bg {\n  background-position: 0 -72px;\n}\n\n:host(.ti-svg-icon-reversed.ti-svg-icon-size-s) .ti-svg-icon-bg {\n  background-position: 0 -72px;\n}\n\n:host(.ti-svg-icon-reversed.ti-svg-icon-size-s.ti-svg-icon-circle) .ti-svg-icon-bg {\n  background-position: 0 -72px;\n}\n\n:host(.ti-svg-icon-error.ti-svg-icon-size-s) .ti-svg-icon-bg {\n  background-position: 0 -90px;\n}\n\n:host(.ti-svg-icon-error.ti-svg-icon-size-s.ti-svg-icon-circle) .ti-svg-icon-bg {\n  background-position: 0 -72px;\n}\n\n:host(.ti-svg-icon-success.ti-svg-icon-size-s) .ti-svg-icon-bg {\n  background-position: 0 -108px;\n}\n\n:host(.ti-svg-icon-success.ti-svg-icon-size-s.ti-svg-icon-circle) .ti-svg-icon-bg {\n  background-position: 0 -72px;\n}\n\n:host(.ti-svg-icon-warn.ti-svg-icon-size-s) .ti-svg-icon-bg {\n  background-position: 0 -126px;\n}\n\n:host(.ti-svg-icon-warn.ti-svg-icon-size-s.ti-svg-icon-circle) .ti-svg-icon-bg {\n  background-position: 0 -72px;\n}\n\n:host(.ti-svg-icon-tertiary.ti-svg-icon-size-m.ti-svg-icon-circle) .ti-svg-icon-bg {\n  background-position: 0 -96px;\n}\n\n:host(.ti-svg-icon-secondary.ti-svg-icon-size-m) .ti-svg-icon-bg {\n  background-position: 0 -24px;\n}\n\n:host(.ti-svg-icon-secondary.ti-svg-icon-size-m.ti-svg-icon-circle) .ti-svg-icon-bg {\n  background-position: 0 -96px;\n}\n\n:host(.ti-svg-icon-primary.ti-svg-icon-size-m) .ti-svg-icon-bg {\n  background-position: 0 -48px;\n}\n\n:host(.ti-svg-icon-primary.ti-svg-icon-size-m.ti-svg-icon-circle) .ti-svg-icon-bg {\n  background-position: 0 -96px;\n}\n\n:host(.ti-svg-icon-disabled.ti-svg-icon-size-m) .ti-svg-icon-bg {\n  background-position: 0 -72px;\n}\n\n:host(.ti-svg-icon-disabled.ti-svg-icon-size-m.ti-svg-icon-circle) .ti-svg-icon-bg {\n  background-position: 0 -96px;\n}\n\n:host(.ti-svg-icon-reversed.ti-svg-icon-size-m) .ti-svg-icon-bg {\n  background-position: 0 -96px;\n}\n\n:host(.ti-svg-icon-reversed.ti-svg-icon-size-m.ti-svg-icon-circle) .ti-svg-icon-bg {\n  background-position: 0 -96px;\n}\n\n:host(.ti-svg-icon-error.ti-svg-icon-size-m) .ti-svg-icon-bg {\n  background-position: 0 -120px;\n}\n\n:host(.ti-svg-icon-error.ti-svg-icon-size-m.ti-svg-icon-circle) .ti-svg-icon-bg {\n  background-position: 0 -96px;\n}\n\n:host(.ti-svg-icon-success.ti-svg-icon-size-m) .ti-svg-icon-bg {\n  background-position: 0 -144px;\n}\n\n:host(.ti-svg-icon-success.ti-svg-icon-size-m.ti-svg-icon-circle) .ti-svg-icon-bg {\n  background-position: 0 -96px;\n}\n\n:host(.ti-svg-icon-warn.ti-svg-icon-size-m) .ti-svg-icon-bg {\n  background-position: 0 -168px;\n}\n\n:host(.ti-svg-icon-warn.ti-svg-icon-size-m.ti-svg-icon-circle) .ti-svg-icon-bg {\n  background-position: 0 -96px;\n}\n\n:host(.ti-svg-icon-tertiary.ti-svg-icon-size-l.ti-svg-icon-circle) .ti-svg-icon-bg {\n  background-position: 0 -144px;\n}\n\n:host(.ti-svg-icon-secondary.ti-svg-icon-size-l) .ti-svg-icon-bg {\n  background-position: 0 -36px;\n}\n\n:host(.ti-svg-icon-secondary.ti-svg-icon-size-l.ti-svg-icon-circle) .ti-svg-icon-bg {\n  background-position: 0 -144px;\n}\n\n:host(.ti-svg-icon-primary.ti-svg-icon-size-l) .ti-svg-icon-bg {\n  background-position: 0 -72px;\n}\n\n:host(.ti-svg-icon-primary.ti-svg-icon-size-l.ti-svg-icon-circle) .ti-svg-icon-bg {\n  background-position: 0 -144px;\n}\n\n:host(.ti-svg-icon-disabled.ti-svg-icon-size-l) .ti-svg-icon-bg {\n  background-position: 0 -108px;\n}\n\n:host(.ti-svg-icon-disabled.ti-svg-icon-size-l.ti-svg-icon-circle) .ti-svg-icon-bg {\n  background-position: 0 -144px;\n}\n\n:host(.ti-svg-icon-reversed.ti-svg-icon-size-l) .ti-svg-icon-bg {\n  background-position: 0 -144px;\n}\n\n:host(.ti-svg-icon-reversed.ti-svg-icon-size-l.ti-svg-icon-circle) .ti-svg-icon-bg {\n  background-position: 0 -144px;\n}\n\n:host(.ti-svg-icon-error.ti-svg-icon-size-l) .ti-svg-icon-bg {\n  background-position: 0 -180px;\n}\n\n:host(.ti-svg-icon-error.ti-svg-icon-size-l.ti-svg-icon-circle) .ti-svg-icon-bg {\n  background-position: 0 -144px;\n}\n\n:host(.ti-svg-icon-success.ti-svg-icon-size-l) .ti-svg-icon-bg {\n  background-position: 0 -216px;\n}\n\n:host(.ti-svg-icon-success.ti-svg-icon-size-l.ti-svg-icon-circle) .ti-svg-icon-bg {\n  background-position: 0 -144px;\n}\n\n:host(.ti-svg-icon-warn.ti-svg-icon-size-l) .ti-svg-icon-bg {\n  background-position: 0 -252px;\n}\n\n:host(.ti-svg-icon-warn.ti-svg-icon-size-l.ti-svg-icon-circle) .ti-svg-icon-bg {\n  background-position: 0 -144px;\n}\n\n:host(.ti-svg-icon-tertiary.ti-svg-icon-size-xl.ti-svg-icon-circle) .ti-svg-icon-bg {\n  background-position: 0 -192px;\n}\n\n:host(.ti-svg-icon-secondary.ti-svg-icon-size-xl) .ti-svg-icon-bg {\n  background-position: 0 -48px;\n}\n\n:host(.ti-svg-icon-secondary.ti-svg-icon-size-xl.ti-svg-icon-circle) .ti-svg-icon-bg {\n  background-position: 0 -192px;\n}\n\n:host(.ti-svg-icon-primary.ti-svg-icon-size-xl) .ti-svg-icon-bg {\n  background-position: 0 -96px;\n}\n\n:host(.ti-svg-icon-primary.ti-svg-icon-size-xl.ti-svg-icon-circle) .ti-svg-icon-bg {\n  background-position: 0 -192px;\n}\n\n:host(.ti-svg-icon-disabled.ti-svg-icon-size-xl) .ti-svg-icon-bg {\n  background-position: 0 -144px;\n}\n\n:host(.ti-svg-icon-disabled.ti-svg-icon-size-xl.ti-svg-icon-circle) .ti-svg-icon-bg {\n  background-position: 0 -192px;\n}\n\n:host(.ti-svg-icon-reversed.ti-svg-icon-size-xl) .ti-svg-icon-bg {\n  background-position: 0 -192px;\n}\n\n:host(.ti-svg-icon-reversed.ti-svg-icon-size-xl.ti-svg-icon-circle) .ti-svg-icon-bg {\n  background-position: 0 -192px;\n}\n\n:host(.ti-svg-icon-error.ti-svg-icon-size-xl) .ti-svg-icon-bg {\n  background-position: 0 -240px;\n}\n\n:host(.ti-svg-icon-error.ti-svg-icon-size-xl.ti-svg-icon-circle) .ti-svg-icon-bg {\n  background-position: 0 -192px;\n}\n\n:host(.ti-svg-icon-success.ti-svg-icon-size-xl) .ti-svg-icon-bg {\n  background-position: 0 -288px;\n}\n\n:host(.ti-svg-icon-success.ti-svg-icon-size-xl.ti-svg-icon-circle) .ti-svg-icon-bg {\n  background-position: 0 -192px;\n}\n\n:host(.ti-svg-icon-warn.ti-svg-icon-size-xl) .ti-svg-icon-bg {\n  background-position: 0 -336px;\n}\n\n:host(.ti-svg-icon-warn.ti-svg-icon-size-xl.ti-svg-icon-circle) .ti-svg-icon-bg {\n  background-position: 0 -192px;\n}\n\n/* modifier for disabled icon */\n:host(.ti-svg-icon-disabled) {\n  fill: #cccccc;\n}\n\n:host(.ti-svg-icon-disabled.ti-svg-icon-circle) {\n  fill: #ffffff;\n  background-color: #cccccc;\n}"; }
+};
+
+export { SvgIcon as ti_svg_icon };

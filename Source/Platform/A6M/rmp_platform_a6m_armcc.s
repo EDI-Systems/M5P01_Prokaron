@@ -131,7 +131,7 @@ _RMP_Start              PROC
 ;              can make way around this problem.
 ;              However, if your compiler support inline assembly functions, this
 ;              can also be written in C.
-;              Cortex-M0 only have STMIA, will have to live with it.
+;              ARMv6-M only have STMIA, will have to live with it.
 ;Input       : None.
 ;Output      : None.
 ;Return      : None.
@@ -141,27 +141,27 @@ PendSV_Handler          PROC
                         MRS                 R0, PSP             ; Spill all the registers onto the user stack
                         SUBS                R0, #36
                         MOV                 R1, R0
-                        STMIA               R1!, {R4-R7}        ; Save low register first due to limitation
+                        STMIA               R1!, {R4-R7}        ; Save low registers first due to limitation
                         MOV                 R7, LR
                         MOV                 R6, R11
                         MOV                 R5, R10
                         MOV                 R4, R9
                         MOV                 R3, R8
-                        STMIA               R1!, {R3-R7}                
-                
+                        STMIA               R1!, {R3-R7}
+
                         BL                  RMP_Ctx_Save        ; Save extra context
                                     
                         LDR                 R1, =RMP_SP_Cur     ; Save The SP to control block.
                         STR                 R0, [R1]
-                                    
+
                         BL                  _RMP_Run_High       ; Get the highest ready task.
                                     
                         LDR                 R1, =RMP_SP_Cur     ; Load the SP.
                         LDR                 R0, [R1]
-                                    
+
                         BL                  RMP_Ctx_Load        ; Load extra context
-                                    
-                        MOV                 R1, R0                      
+
+                        MOV                 R1, R0
                         ADDS                R0, #16
                         LDMIA               R0!, {R3-R7}        ; Load high registers first due to limitation
                         MOV                 R8, R3
@@ -172,7 +172,7 @@ PendSV_Handler          PROC
                         LDMIA               R1!, {R4-R7}
                         MSR                 PSP,R0
 
-                        BX                  LR                  ; Cortex-M0 will never have a FPU.
+                        BX                  LR
                         ENDP
 ;/* End Function:PendSV_Handler **********************************************/
 

@@ -20,10 +20,10 @@ Description : The performance benchmark for RMP. Do not modify this file; what
 /* Number of rounds to test */
 #define ROUND_NUM       10000
 /* Interval of timer overflow reports: 
- * ~ 3MHz               100
+ * ~ 3MHz               1000
  * ~ 30MHz              10000
  * ~ 300MHz             100000 */
-#define OVERFLOW_NUM    100000
+#define OVERFLOW_NUM    10000
 /* Whether to include FPU context */
 /* #define FLOAT_CONTEXT */
 /* Whether to inject fault intentionally */
@@ -716,8 +716,14 @@ void RMP_Init_Hook(void)
     RMP_Bmq_Crt(&Bmq_1, 1U);
     
     /* Start threads - make sure thread 2 is scheduled first in the test */
-    RMP_Thd_Crt(&Thd_2, (void*)Func_2, THD2_STACK, (void*)0x4321U, 1U, 1000U);
-    RMP_Thd_Crt(&Thd_1, (void*)Func_1, THD1_STACK, (void*)0x1234U, 1U, 1000U);
+    RMP_Thd_Crt(&Thd_2,
+                (void*)Func_2, (void*)0x4321U,
+                Stack_2, sizeof(Stack_2),
+                1U, 1000U);
+    RMP_Thd_Crt(&Thd_1,
+                (void*)Func_1, (void*)0x1234U,
+                Stack_1, sizeof(Stack_1),
+                1U, 1000U);
 #endif
 }
 

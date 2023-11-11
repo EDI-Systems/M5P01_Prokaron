@@ -31,59 +31,70 @@ Description : The platform specific file for RV32GP with physical address space.
 /* End Includes **************************************************************/
 
 /* Begin Function:_RMP_Stack_Init *********************************************
-Description : Initiate the thread stack when trying to start a thread. Never
+Description : Initiate the process stack when trying to start a process. Never
               call this function in user application.
-Input       : rmp_ptr_t Entry - The entry of the thread.
-              rmp_ptr_t Stack - The stack address of the thread.
-              rmp_ptr_t Arg - The argument to pass to the thread.
+Input       : rmp_ptr_t Stack - The stack address of the thread.
+              rmp_ptr_t Size - The stack size of the thread.
+              rmp_ptr_t Entry - The entry address of the thread.
+              rmp_ptr_t Param - The argument to pass to the thread.
 Output      : None.
-Return      : None.
+Return      : rmp_ptr_t - The adjusted stack location.
 ******************************************************************************/
 extern rmp_ptr_t __global_pointer$;
-void _RMP_Stack_Init(rmp_ptr_t Entry, rmp_ptr_t Stack, rmp_ptr_t Arg)
+rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
+                          rmp_ptr_t Size,
+                          rmp_ptr_t Entry,
+                          rmp_ptr_t Param)
 {
-    rmp_ptr_t* Stack_Ptr;
+    rmp_ptr_t End;
+    struct RMP_RV32GP_Stack* Ptr;
 
-    Stack_Ptr=(rmp_ptr_t*)Stack;
+    /* Compute & align stack */
+    End=RMP_ROUND_DOWN(Stack+Size, 4U);
+    Ptr=(struct RMP_RV32GP_Stack*)(End-sizeof(struct RMP_RV32GP_Stack));
 
     /* This is where PC is saved */
-    Stack_Ptr[0]=Entry;
-    Stack_Ptr[1]=0x01010101U;
+    Ptr->PC=Entry;
     /* We always initialize the mstatus register to initialize
      * the FPU, but whether it is present depends on the processor */
-    Stack_Ptr[2]=0x1880U|0x2000U;
+    Ptr->MSTATUS=0x1880U|0x2000U;
     /* We always initialize GP to a known value.
      * If a thread modifies this later (by itself), it is fine */
-    Stack_Ptr[3]=(rmp_ptr_t)(&__global_pointer$);
-    Stack_Ptr[4]=0x04040404U;
-    Stack_Ptr[5]=0x05050505U;
-    Stack_Ptr[6]=0x06060606U;
-    Stack_Ptr[7]=0x07070707U;
-    Stack_Ptr[8]=0x08080808U;
-    Stack_Ptr[9]=0x09090909U;
+    Ptr->X3=(rmp_ptr_t)(&__global_pointer$);
     /* x10 for arguments */
-    Stack_Ptr[10]=Arg;
-    Stack_Ptr[11]=0x11111111U;
-    Stack_Ptr[12]=0x12121212U;
-    Stack_Ptr[13]=0x13131313U;
-    Stack_Ptr[14]=0x14141414U;
-    Stack_Ptr[15]=0x15151515U;
-    Stack_Ptr[16]=0x16161616U;
-    Stack_Ptr[17]=0x17171717U;
-    Stack_Ptr[18]=0x18181818U;
-    Stack_Ptr[19]=0x19191919U;
-    Stack_Ptr[20]=0x20202020U;
-    Stack_Ptr[21]=0x21212121U;
-    Stack_Ptr[22]=0x22222222U;
-    Stack_Ptr[23]=0x23232323U;
-    Stack_Ptr[24]=0x24242424U;
-    Stack_Ptr[25]=0x25252525U;
-    Stack_Ptr[26]=0x26262626U;
-    Stack_Ptr[27]=0x27272727U;
-    Stack_Ptr[28]=0x28282828U;
-    Stack_Ptr[29]=0x29292929U;
-    Stack_Ptr[30]=0x30303030U;
-    Stack_Ptr[31]=0x31313131U;
+    Ptr->X10=Param;
+
+    /* Fill the rest for ease of identification */
+    Ptr->X1=0x01010101U;
+    Ptr->X4=0x04040404U;
+    Ptr->X5=0x05050505U;
+    Ptr->X6=0x06060606U;
+    Ptr->X7=0x07070707U;
+    Ptr->X8=0x08080808U;
+    Ptr->X9=0x09090909U;
+    Ptr->X11=0x11111111U;
+    Ptr->X12=0x12121212U;
+    Ptr->X13=0x13131313U;
+    Ptr->X14=0x14141414U;
+    Ptr->X15=0x15151515U;
+    Ptr->X16=0x16161616U;
+    Ptr->X17=0x17171717U;
+    Ptr->X18=0x18181818U;
+    Ptr->X19=0x19191919U;
+    Ptr->X20=0x20202020U;
+    Ptr->X21=0x21212121U;
+    Ptr->X22=0x22222222U;
+    Ptr->X23=0x23232323U;
+    Ptr->X24=0x24242424U;
+    Ptr->X25=0x25252525U;
+    Ptr->X26=0x26262626U;
+    Ptr->X27=0x27272727U;
+    Ptr->X28=0x28282828U;
+    Ptr->X29=0x29292929U;
+    Ptr->X30=0x30303030U;
+    Ptr->X31=0x31313131U;
+
+    return (rmp_ptr_t)Ptr;
 }
 /* End Function:_RMP_Stack_Init **********************************************/
 

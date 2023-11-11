@@ -65,16 +65,16 @@ typedef rmp_s32_t rmp_ret_t;
 
 /* System macros *************************************************************/
 /* Compiler "extern" keyword setting */
-#define EXTERN                  extern
+#define EXTERN                          extern
 /* The order of bits in one CPU machine word */
-#define RMP_WORD_ORDER          (5U)
+#define RMP_WORD_ORDER                  (5U)
+/* Descending stack, 8-byte alignment */
+#define RMP_INIT_STACK                  RMP_INIT_STACK_DESCEND(3U)
 /* The maximum length of char printing - no need to change this in most cases */
-#define RMP_DEBUG_PRINT_MAX     (128U)
-/* The offset of the stack when initializing */
-#define RMP_INIT_STACK          RMP_INIT_STACK_TAIL(17U+5U)
+#define RMP_DEBUG_PRINT_MAX             (128U)
 /* MSB/LSB extraction */
-#define RMP_MSB_GET(VAL)        RMP_MSB_Generic(VAL)
-#define RMP_LSB_GET(VAL)        RMP_LSB_Generic(VAL)
+#define RMP_MSB_GET(VAL)                RMP_MSB_Generic(VAL)
+#define RMP_LSB_GET(VAL)                RMP_LSB_Generic(VAL)
 
 /* The virtual machine configs are here */
 #include "rvm_guest_conf.h"
@@ -98,7 +98,31 @@ typedef rmp_s32_t rmp_ret_t;
 #define __HDR_DEFS__
 #undef __HDR_DEFS__
 /*****************************************************************************/
-
+struct RMP_A6M_RVM_Stack
+{
+    rmp_ptr_t Number;
+    rmp_ptr_t Param0;
+    rmp_ptr_t Param1;
+    rmp_ptr_t Param2;
+    rmp_ptr_t Param3;
+    rmp_ptr_t R4;
+    rmp_ptr_t R5;
+    rmp_ptr_t R6;
+    rmp_ptr_t R7;
+    rmp_ptr_t R8;
+    rmp_ptr_t R9;
+    rmp_ptr_t R10;
+    rmp_ptr_t R11;
+    rmp_ptr_t LR_EXC;
+    rmp_ptr_t R0;
+    rmp_ptr_t R1;
+    rmp_ptr_t R2;
+    rmp_ptr_t R3;
+    rmp_ptr_t R12;
+    rmp_ptr_t LR;
+    rmp_ptr_t PC;
+    rmp_ptr_t XPSR;
+};
 /*****************************************************************************/
 /* __RMP_PLATFORM_A6M_RVM_H_STRUCTS__ */
 #endif
@@ -159,12 +183,14 @@ __EXTERN__ void RMP_Int_Unmask(void);
 
 EXTERN void _RMP_Start(rvm_ptr_t Entry,
                        rvm_ptr_t Stack);
+EXTERN void _RMP_A6M_RVM_Yield(void);
 __EXTERN__ void _RMP_Yield(void);
 
 /* Initialization */
-__EXTERN__ void _RMP_Stack_Init(rvm_ptr_t Entry,
-                                rvm_ptr_t Stack,
-                                rvm_ptr_t Arg);
+__EXTERN__ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
+                                     rmp_ptr_t Size,
+                                     rmp_ptr_t Entry,
+                                     rmp_ptr_t Param);
 __EXTERN__ void _RMP_Lowlvl_Init(void);
 __EXTERN__ void RMP_Putchar(char Char);
 __EXTERN__ void _RMP_Plat_Hook(void);

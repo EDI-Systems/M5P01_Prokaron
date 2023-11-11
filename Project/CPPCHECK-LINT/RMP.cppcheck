@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="1">
+    <builddir>RMP-cppcheck-build-dir</builddir>
+    <platform>native</platform>
+    <analyze-all-vs-configs>false</analyze-all-vs-configs>
+    <check-headers>true</check-headers>
+    <check-unused-templates>true</check-unused-templates>
+    <max-ctu-depth>2</max-ctu-depth>
+    <max-template-recursion>100</max-template-recursion>
+    <includedir>
+        <dir name="D:/Code_Library/M5P01_Prokaron/Include/"/>
+        <dir name="./"/>
+    </includedir>
+    <paths>
+        <dir name="D:/Code_Library/M5P01_Prokaron/Source/Kernel"/>
+        <dir name="D:/Code_Library/M5P01_Prokaron/Include/Kernel"/>
+    </paths>
+    <addons>
+        <addon>y2038</addon>
+        <addon>misra</addon>
+    </addons>
+    <project-name>RMP</project-name>
+</project>

@@ -12,11 +12,11 @@ Description : The header file for the kernel.
 #define __RMP_KERNEL_H_DEFS__
 /*****************************************************************************/
 /* Constants */
-#define RMP_NULL                    ((void*)0U)
+#define RMP_NULL                    ((void*)0)
 
 /* States of threads */
-#define RMP_THD_STATE(X)            ((X)&0xFFU)
-#define RMP_THD_FLAG(X)             ((X)&~0xFFU)
+#define RMP_THD_STATE(X)            ((X)&((rmp_ptr_t)0xFFU))
+#define RMP_THD_FLAG(X)             ((X)&~((rmp_ptr_t)0xFFU))
 #define RMP_THD_STATE_SET(X, S)     ((X)=(RMP_THD_FLAG(X)|(S)))
 
 /* Memory pool position lookup */
@@ -41,7 +41,7 @@ Description : The header file for the kernel.
 /* Blocked on a semaphore with a timeout */
 #define RMP_THD_SEMDLY              (8U)
 /* Suspended */
-#define RMP_THD_SUSPENDED           (1U<<8)
+#define RMP_THD_SUSPENDED           RMP_POW2(8)
 /* Mailbox valid */
 #define RMP_THD_MBOXFUL             (RMP_THD_SUSPENDED<<1)
     
@@ -100,13 +100,15 @@ Description : The header file for the kernel.
 #define RMP_WORD_MASK               (~(RMP_ALLBITS<<RMP_WORD_ORDER))
 #define RMP_ALIGN_ORDER             (RMP_WORD_ORDER-3U)
 #define RMP_ALIGN_MASK              (~(RMP_ALLBITS<<RMP_ALIGN_ORDER))
-#define RMP_BITMAP_SIZE             ((RMP_PREEMPT_PRIO_NUM-1U)/RMP_WORD_SIZE+1U)
+#define RMP_BITMAP_SIZE             ((rmp_ptr_t)((RMP_PREEMPT_PRIO_NUM-1U)/RMP_WORD_SIZE+1U))
 
-/* Stack offset macros */
-/* Head offset, for ascending stacks */
-#define RMP_INIT_STACK_HEAD(X)      (((rmp_ptr_t)RMP_Init_Stack)+(X)*sizeof(rmp_ptr_t))
-/* Tail offset, for descending stacks */
-#define RMP_INIT_STACK_TAIL(X)      (((rmp_ptr_t)RMP_Init_Stack)+RMP_INIT_STACK_SIZE-(X)*sizeof(rmp_ptr_t))
+/* Initial stack helpers */
+#define RMP_INIT_STACK_ROUND        RMP_ROUND_UP(RMP_INIT_STACK_SIZE,RMP_WORD_ORDER-3U)
+#define RMP_INIT_STACK_WORD         (RMP_INIT_STACK_ROUND>>(RMP_WORD_ORDER-3U))
+#define RMP_INIT_STACK_START        ((rmp_ptr_t)RMP_Init_Stack)
+#define RMP_INIT_STACK_END          (RMP_INIT_STACK_START+RMP_INIT_STACK_WORD*sizeof(rmp_ptr_t))
+#define RMP_INIT_STACK_ASCEND(X)    RMP_ROUND_UP(RMP_INIT_STACK_START+sizeof(rmp_ptr_t),X)
+#define RMP_INIT_STACK_DESCEND(X)   RMP_ROUND_DOWN(RMP_INIT_STACK_END-sizeof(rmp_ptr_t),X)
 
 /* Get the thread from delay list */
 #define RMP_DLY2THD(X)              ((volatile struct RMP_Thd*)(((rmp_ptr_t)(X))-sizeof(struct RMP_List)))
@@ -117,23 +119,30 @@ Description : The header file for the kernel.
 /* Printk macros */
 #define RMP_DBG_I(INT)              RMP_Int_Print((rmp_cnt_t)(INT))
 #define RMP_DBG_H(UINT)             RMP_Hex_Print((rmp_ptr_t)(UINT))
-#define RMP_DBG_S(STR)              RMP_Str_Print((rmp_s8_t*)(STR))
+#define RMP_DBG_S(STR)              RMP_Str_Print((const rmp_s8_t*)(STR))
 
 /* Built-in graphics */
 #ifdef RMP_POINT
+/* Absolute difference between two numbers */
+#define RMP_ABS(X,Y)                (((X)>(Y))?((X)-(Y)):((Y)-(X)))
+/* "Shift (signed number) Arithmetically Left/Right": UB if done directly, however:
+ *  (1) for SAL, we guarantee ABS(X) is smaller than UINT_MAX/2^(B+1);
+ *  (2) for SAR, we never shift negative integers. So these operations are safe. */
+#define RMP_SAL(X,B)                ((rmp_cnt_t)(((rmp_ptr_t)(X))<<(B)))
+#define RMP_SAR(X,B)                ((rmp_cnt_t)(((rmp_ptr_t)(X))>>(B)))
 #define RMP_TRANS                   (0x01U)
 #define RMP_MAT_SMALL               (0U)
 #define RMP_MAT_BIG                 (1U)
-#define RMP_MAT_BPOS(MAT,POS)       ((MAT)[(POS)>>3]&RMP_POW2(7U-((POS)&0x07U)))
-#define RMP_MAT_SPOS(MAT,POS)       ((MAT)[(POS)>>3]&RMP_POW2((POS)&0x07U))
-#define RMP_CBOX_CHECK              (1U)
-#define RMP_CBTN_DOWN               (1U)
+#define RMP_MAT_BPOS(MAT,POS)       ((MAT)[((rmp_ptr_t)(POS))>>3]&RMP_POW2(7U-(((rmp_ptr_t)(POS))&0x07U)))
+#define RMP_MAT_SPOS(MAT,POS)       ((MAT)[((rmp_ptr_t)(POS))>>3]&RMP_POW2(((rmp_ptr_t)(POS))&0x07U))
 #define RMP_RBTN_SEL                (1U)
 #define RMP_PBAR_L2R                (0U)
 #define RMP_PBAR_D2U                (1U)
 #define RMP_PBAR_R2L                (2U)
 #define RMP_PBAR_U2D                (3U)
-
+/* Cursor X/Y position extraction */
+#define RMP_CUR_XPOS(A,X)           ((rmp_cnt_t)((rmp_u8_t)((A)[X]&0x0FU)))
+#define RMP_CUR_YPOS(A,Y)           ((rmp_cnt_t)((rmp_u8_t)((A)[X]>>4)))
 #define RMP_CUR_NORM                (0U)
 #define RMP_CUR_BUSY                (1U)
 #define RMP_CUR_QUESTION            (2U)
@@ -153,7 +162,7 @@ Description : The header file for the kernel.
 #define RMP_ASSERT(X) \
 do \
 { \
-    if((X)==0) \
+    if(!(X)) \
     { \
         RMP_DBG_S("\r\n***\r\nKernel panic - not syncing:\r\n"); \
         RMP_DBG_S(__FILE__); \
@@ -365,7 +374,7 @@ static volatile rmp_ptr_t RMP_Sched_Pend;
 static volatile rmp_ptr_t RMP_Timer_Pend;
 
 /* Init thread stack and structure */
-static rmp_ptr_t RMP_Init_Stack[RMP_INIT_STACK_SIZE>>(RMP_WORD_ORDER-3U)];
+static rmp_ptr_t RMP_Init_Stack[RMP_INIT_STACK_WORD];
 static volatile struct RMP_Thd RMP_Init_Thd;
 /*****************************************************************************/
 /* End Private Global Variables **********************************************/
@@ -446,7 +455,7 @@ __EXTERN__ rmp_ptr_t RMP_RBT_Generic(rmp_ptr_t Value);
 /* Debug printing functions */
 __EXTERN__ rmp_cnt_t RMP_Int_Print(rmp_cnt_t Int);
 __EXTERN__ rmp_cnt_t RMP_Hex_Print(rmp_ptr_t Uint);
-__EXTERN__ rmp_cnt_t RMP_Str_Print(rmp_s8_t* String);
+__EXTERN__ rmp_cnt_t RMP_Str_Print(const rmp_s8_t* String);
 /* List operation functions */
 __EXTERN__ void RMP_List_Crt(volatile struct RMP_List* Head);
 __EXTERN__ void RMP_List_Del(volatile struct RMP_List* Prev,
@@ -473,8 +482,9 @@ __EXTERN__ void RMP_Sched_Unlock(void);
 __EXTERN__ void RMP_Yield(void);
 __EXTERN__ rmp_ret_t RMP_Thd_Crt(volatile struct RMP_Thd* Thread, 
                                  void* Entry,
+                                 void* Param, 
                                  void* Stack,
-                                 void* Arg, 
+                                 rmp_ptr_t Size,
                                  rmp_ptr_t Prio,
                                  rmp_ptr_t Slice);
 __EXTERN__ rmp_ret_t RMP_Thd_Del(volatile struct RMP_Thd* Thread);
@@ -594,33 +604,26 @@ __EXTERN__ void RMP_Circle(rmp_cnt_t Center_X,
 __EXTERN__ void RMP_Matrix(rmp_cnt_t Coord_X,
                            rmp_cnt_t Coord_Y,
                            const rmp_u8_t* Matrix,
-                           rmp_cnt_t Bit_Order,
+                           rmp_ptr_t Bit_Order,
                            rmp_cnt_t Length,
                            rmp_cnt_t Width,
                            rmp_ptr_t Color);
 /* This is only exported when color mixing macros available */
-#ifdef RMP_COLOR_25P
-#ifdef RMP_COLOR_50P
-#ifdef RMP_COLOR_75P
+#if((defined RMP_COLOR_25P)&&(defined RMP_COLOR_50P)&&(defined RMP_COLOR_75P))
 __EXTERN__ void RMP_Matrix_AA(rmp_cnt_t Coord_X,
                               rmp_cnt_t Coord_Y,
                               const rmp_u8_t* Matrix,
-                              rmp_cnt_t Bit_Order,
+                              rmp_ptr_t Bit_Order,
                               rmp_cnt_t Length,
                               rmp_cnt_t Width,
                               rmp_ptr_t Color,
                               rmp_ptr_t Back);
 #endif
-#endif
-#endif
 /* These are only provided when all used colors are predefined */
-#ifdef RMP_CTL_WHITE
-#ifdef RMP_CTL_LGREY
-#ifdef RMP_CTL_GREY
-#ifdef RMP_CTL_DGREY
-#ifdef RMP_CTL_DARK
-#ifdef RMP_CTL_DDARK
-#ifdef RMP_CTL_BLACK
+#if((defined RMP_CTL_WHITE)&&(defined RMP_CTL_LGREY)&& \
+    (defined RMP_CTL_GREY)&&(defined RMP_CTL_DGREY)&& \
+    (defined RMP_CTL_DARK)&&(defined RMP_CTL_DDARK)&& \
+    (defined RMP_CTL_BLACK))
 /* Built-in easy controls */
 __EXTERN__ void RMP_Cursor(rmp_cnt_t Coord_X,
                            rmp_cnt_t Coord_Y,
@@ -650,8 +653,7 @@ __EXTERN__ void RMP_Cmdbtn(rmp_cnt_t Coord_X,
                            rmp_cnt_t Width,
                            rmp_ptr_t Status);
 
-__EXTERN__ void RMP_Lineedit_Clr(rmp_cnt_t Coord_X,
-                                 rmp_cnt_t Coord_Y,
+__EXTERN__ void RMP_Lineedit_Clr(rmp_cnt_t Coord_Y,
                                  rmp_cnt_t Length,
                                  rmp_cnt_t Width,
                                  rmp_cnt_t Clr_X,
@@ -689,12 +691,6 @@ __EXTERN__ void RMP_Progbar(rmp_cnt_t Coord_X,
                             rmp_cnt_t Prog,
                             rmp_ptr_t Fore,
                             rmp_ptr_t Back);
-#endif
-#endif
-#endif
-#endif
-#endif
-#endif
 #endif
 #endif
 

@@ -29,9 +29,6 @@ ISR Blocking message queue         : 1211 / 1292 / 1174
 /* End Includes **************************************************************/
 
 /* Defines *******************************************************************/
-/* Where are the initial stacks */
-#define THD1_STACK        (&Stack_1[100])
-#define THD2_STACK        (&Stack_2[100])
 /* How to read counter */
 #define RMP_CNT_READ()    (TIM3->CNT)
 /* Are we doing minimal measurements? */
