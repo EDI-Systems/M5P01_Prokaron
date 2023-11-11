@@ -62,6 +62,24 @@ ISR Mailbox                        : 1377 / 3040 / 1377
 ISR Semaphore                      : 1293 / 2956 / 1293
 ISR Message queue                  : 1533 / 3196 / 1533
 ISR Blocking message queue         : 1741 / 3477 / 1741
+
+ARMCC 6.18 -O3 (SysTick turned on, fastpath enabled)
+    ___   __  ___ ___
+   / _ \ /  |/  // _ \       Simple real-time kernel
+  / , _// /|_/ // ___/       Standard benchmark test
+ /_/|_|/_/  /_//_/
+====================================================
+Test (number in CPU cycles)        : AVG / MAX / MIN
+Yield                              : 469 / 2145 / 467
+Mailbox                            : 841 / 2569 / 837
+Semaphore                          : 717 / 5154 / 711
+FIFO                               : 391 / 2121 / 389
+Message queue                      : 1143 / 2870 / 1138
+Blocking message queue             : 1529 / 3257 / 1521
+ISR Mailbox                        : 1484 / 5909 / 1476
+ISR Semaphore                      : 1376 / 3104 / 1371
+ISR Message queue                  : 1646 / 4815 / 1638
+ISR Blocking message queue         : 1867 / 4979 / 1859
 ******************************************************************************/
 
 /* Includes ******************************************************************/
@@ -70,9 +88,6 @@ ISR Blocking message queue         : 1741 / 3477 / 1741
 /* End Includes **************************************************************/
 
 /* Defines *******************************************************************/
-/* Where are the initial stacks */
-#define THD1_STACK              (&Stack_1[100])
-#define THD2_STACK              (&Stack_2[100])
 /* How to read counter */
 #define RMP_CNT_READ()          ((rmp_tim_t)(TIM2_CNT))
 /* Are we testing the memory pool? */

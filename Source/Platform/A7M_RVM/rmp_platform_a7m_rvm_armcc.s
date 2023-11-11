@@ -97,10 +97,16 @@ _RMP_A7M_RVM_LSB_Get    PROC
 ;Description : Switch from user code to another thread, rather than from the 
 ;              interrupt handler. Need to masquerade the context well so that
 ;              it may be recovered from the interrupt handler as well.
-;              Caveat: user-level code cannot clear CONTROL.FPCA hence all
-;              threads involved will be tainted with the FPU flag and include
-;              a full context save/restore. Yet this is still much faster than
-;              the slow path.
+;              Caveats: 
+;              1. User-level code cannot clear CONTROL.FPCA hence all threads
+;                 in the system will be tainted with the FPU flag and include
+;                 a full context save/restore. Yet this is still much faster
+;                 than the traditional slow path through the PendSV.
+;              2. After the user have stacked up everything on its stack but
+;                 not disabled its interrupt yet, an interrupt may occur, and
+;                 stack again on the user stack. This is allowed, but must be
+;                 taken into account when calculating stack usage.
+;
 ;              The exception extended stack layout is as follows:
 ;
 ;               Unaligned           Aligned
@@ -148,8 +154,8 @@ _RMP_A7M_RVM_LSB_Get    PROC
                         ; Exception stacking for basic frame
                         MACRO
                         EXC_PUSH            $SZ, $XPSR, $LR
-                        SUB                 SP, #4*($SZ-8)
-                        LDR                 R0, [SP, #4*($SZ-7)]; Load real R0 value pushed at start
+                        LDR                 R0, [SP, #4]        ; Load real R0 value pushed at start
+                        SUB                 SP, #4*($SZ-8)      ; Adjust SP to push GP regs
                         PUSH                {R0-R3, R12, LR}    ; Push stack frame GP regs
                         LDR                 R0, [SP, #4*($SZ-2)]; Load real XPSR value pushed at start
                         LDR                 R1, =$XPSR
@@ -158,7 +164,7 @@ _RMP_A7M_RVM_LSB_Get    PROC
                         LDR                 R0, =_RMP_A7M_Skip  ; Push PC with[0] cleared
                         AND                 R0, #0xFFFFFFFE
                         STR                 R0, [SP, #4*6]
-                        MOV                 R12, #$LR           ; Make up the EXC_RETURN
+                        MOV                 LR, #$LR            ; Make up the EXC_RETURN
                         MEND
                         
 ;/* Exception Exit Unstacking ************************************************/
@@ -245,7 +251,7 @@ Stk_Extend_Done         ; Extended frame extra pushing
                         DCI                 0x8A10              ; VPUSH {S16-S31}
 
 Stk_Basic_Done       
-                        PUSH                {R4-R12}            ; Push GP regs
+                        PUSH                {R4-R11, LR}        ; Push GP regs
                         LDR                 R0, =RMP_A7M_RVM_Usr_Param
                         LDR                 R0, [R0]            ; Push hypercall parameters
                         LDMIA               R0, {R1-R5}
@@ -269,10 +275,10 @@ Stk_Basic_Done
                         LDR                 R0, [R0]            ; Pop hypercall parameters
                         POP                 {R1-R5}
                         STMIA               R0, {R1-R5}
-                        POP                 {R4-R12}            ; Pop GP regs
+                        POP                 {R4-R11, LR}        ; Pop GP regs
 
                         ; Read LR and decide whether to restore FPU context.
-                        TST                 R12, #0x00000010    ; LR.EXTENDED
+                        TST                 LR, #0x00000010     ; LR.EXTENDED
                         BEQ                 Uns_Extend
 
 Uns_Basic               ; Basic frame

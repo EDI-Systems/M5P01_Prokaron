@@ -2,9 +2,9 @@
 ;Filename    : rmp_platform_msp430_ticc.s
 ;Author      : pry
 ;Date        : 25/02/2018
-;Description : The assembly part of the RMP RTOS. This is for MSP430.
+;Description : The assembly part of the RMP RTOS. This is for MSP430X.
 ;              This port does not support interrupt preemption, as it makes no 
-;              sense on MSP430(X) because MSP430(X) interrupt priority is fixed.
+;              sense on MSP430 because MSP430 interrupt priority is fixed.
 ;*****************************************************************************/
 
 ;/* The MSP430 Architecture ***************************************************
@@ -13,58 +13,32 @@
 ;R2:SR                        Status register.
 ;R3:CG2                       Constant generator.
 ;R4-R15:                      General purpose registers.
-;Note that MSP430X's register PC,SP,R4-R15 are all 20 bits,while MSP430 is 16 bits.
-;Some variants also have the low energy vector math accelerator.
 ;*****************************************************************************/
 
 ;/* Begin Header *************************************************************/
     .text
-    .align              2
+    .ALIGN              2
 ;/* End Header ***************************************************************/
 
 ;/* Begin Exports ************************************************************/
     ;Disable all interrupts
-    .def                RMP_Int_Disable      
+    .DEF                RMP_Int_Disable
     ;Enable all interrupts            
-    .def                RMP_Int_Enable
+    .DEF                RMP_Int_Enable
     ;Start the first thread
-    .def                _RMP_Start
-    ;The system pending service routine              
-    .def                _RMP_MSP430_Ctx_Handler
-    ;The systick timer routine              
-    .def                _RMP_MSP430_Tim_Handler
+    .DEF                _RMP_Start
+    ;Start the first thread
+    .DEF                _RMP_MSP430_Yield
 ;/* End Exports **************************************************************/
 
 ;/* Begin Imports ************************************************************/
-    ;The real task switch handling function
-    .global             _RMP_Run_High 
-    ;The real systick handler function
-    .global             _RMP_Tim_Handler
-    ;The PID of the current thread                     
-    .global             RMP_Thd_Cur
     ;The stack address of current thread
-    .global             RMP_SP_Cur        
+    .GLOBAL             RMP_SP_Cur
     ;Save and load extra contexts, such as FPU, peripherals and MPU
-    .global             RMP_Ctx_Save
-    .global             RMP_Ctx_Load
-    ;Clear flags
-    .global             _RMP_MSP430_Ctx_Clr
-    .global             _RMP_MSP430_Tim_Clr
+    .GLOBAL             RMP_Ctx_Save
+    .GLOBAL             RMP_Ctx_Load
+    .GLOBAL             _RMP_Run_High
 ;/* End Imports **************************************************************/
-
-;/* Begin Macros *************************************************************/
-; Push everything to stack
-SAVE_CONTEXT            .macro
-    push                SR
-    pushm               #12,R15
-    .endm
-LOAD_CONTEXT            .macro
-    popm                #12,R15
-    pop                 SR
-    nop
-    reti
-    .endm
-;/* End Macros ***************************************************************/
 
 ;/* Begin Function:RMP_Int_Disable ********************************************
 ;Description : The function for disabling all interrupts. Does not allow nesting.
@@ -72,32 +46,28 @@ LOAD_CONTEXT            .macro
 ;Output      : None.
 ;Return      : None.
 ;*****************************************************************************/
-    .text
-    .align              2
-RMP_Int_Disable:        .asmfunc
+RMP_Int_Disable:        .ASMFUNC
     ;Disable all interrupts
-    nop
-    dint
-    nop
-    ret
-    .endasmfunc
+    NOP
+    DINT
+    NOP
+    RET
+    .ENDASMFUNC
 ;/* End Function:RMP_Int_Disable *********************************************/
 
 ;/* Begin Function:RMP_Int_Enable *********************************************
 ;Description : The function for enabling all interrupts. Does not allow nesting.
 ;Input       : None.
 ;Output      : None.
-;Return      : None.                                 
+;Return      : None.
 ;*****************************************************************************/
-    .text
-    .align              2
-RMP_Int_Enable:         .asmfunc
+RMP_Int_Enable:         .ASMFUNC
     ;Enable all interrupts
-    nop
-    eint
-    nop
-    ret
-    .endasmfunc               
+    NOP
+    EINT
+    NOP
+    RET
+    .ENDASMFUNC
 ;/* End Function:RMP_Int_Enable **********************************************/
 
 ;/* Begin Function:_RMP_Start *************************************************
@@ -108,90 +78,73 @@ RMP_Int_Enable:         .asmfunc
 ;Output      : None.
 ;Return      : None.
 ;*****************************************************************************/
-    .text
-    .align              2
-_RMP_Start:             .asmfunc
-    mov                 R13,SP
-    mov                 R12,PC
+_RMP_Start:             .ASMFUNC
+    MOV                 R13,SP
+    MOV                 R12,PC
     ; Dummy return
-    ret
-    .endasmfunc       
+    RET
+    .ENDASMFUNC
 ;/* End Function:_RMP_Start **************************************************/
 
-;/* Begin Function:_RMP_MSP430_Ctx_Handler ************************************
-;Description : The PendSV interrupt routine. In fact, it will call a C function
-;              directly. The reason why the interrupt routine must be an assembly
-;              function is that the compiler may deal with the stack in a different 
-;              way when different optimization level is chosen. An assembly function
-;              can make way around this problem.
-;              However, if your compiler support inline assembly functions, this
-;              can also be written in C.
+;/* Begin Function:_RMP_MSP430_Yield ******************************************
+;Description : Yield from one thread to another without an interrupt.
+;              Note that MSP430's "rotate" is VERY different from regular CPUs.
 ;Input       : None.
 ;Output      : None.
 ;Return      : None.
 ;*****************************************************************************/
-    .sect               ".text:_isr"
-    .align              2
-_RMP_MSP430_Ctx_Handler: .asmfunc
-    ;Spill all the registers onto the user stack
-    SAVE_CONTEXT
-                
-    ;Clear the interrupt flag
-    call                #_RMP_MSP430_Ctx_Clr
-                
-    ;Save extra context
-    call                #RMP_Ctx_Save
-                
-    ;Save The SP to control block.
-    mov                 SP,&RMP_SP_Cur
-                
-    ;Get the highest ready task.
-    call                #_RMP_Run_High
-                
-    ;Load the SP.
-    mov                 &RMP_SP_Cur,SP
-                
-    ;Load extra context
-    call                #RMP_Ctx_Load
+_RMP_MSP430_Yield:      .ASMFUNC
+    ;Disable all interrupts
+    NOP
+    DINT
+    NOP
+    ;Push as if we entered from an interrupt, PC higher half not filled yet
+    PUSH                #_RMP_MSP430_Skip
+    PUSH                SR
 
-    LOAD_CONTEXT
-    .endasmfunc       
-;/* End Function:_RMP_MSP430_Ctx_Handler *************************************/
+    ;Save all GP regs and save SP to block
+    PUSH                R15
+    PUSH                R14
+    PUSH                R13
+    PUSH                R12
+    PUSH                R11
+    PUSH                R10
+    PUSH                R9
+    PUSH                R8
+    PUSH                R7
+    PUSH                R6
+    PUSH                R5
+    PUSH                R4
+    CALL                #RMP_Ctx_Save
+    MOV                 SP, &RMP_SP_Cur
 
-;/* Begin Function:_RMP_MSP430_Tim_Handler ************************************
-;Description : The SysTick interrupt routine. In fact, it will call a C function
-;              directly. The reason why the interrupt routine must be an assembly
-;              function is that the compiler may deal with the stack in a different 
-;              way when different optimization level is chosen. An assembly function
-;              can make way around this problem.
-;              However, if your compiler support inline assembly functions, this
-;              can also be written in C.
-;Input       : None.
-;Output      : None.
-;Return      : None.
-;*****************************************************************************/
-    .sect               ".text:_isr"
-    .align              2
-_RMP_MSP430_Tim_Handler: .asmfunc
-    ;Spill all the registers onto the user stack
-    SAVE_CONTEXT
-                
-    ;Clear the interrupt flag
-    call                #_RMP_MSP430_Tim_Clr
-                
-    ;Note the system that we have entered an interrupt. We are not using tickless.
-    mov                 #0x01,R12
-    call                #_RMP_Tim_Handler
+    ;Set GIE(bit[3]) in SR
+    ADD                 #0x08,12*2(SP)
 
-    LOAD_CONTEXT
-    .endasmfunc
-;/* End Function:_RMP_MSP430_Tim_Handler *************************************/
+    ;Choose highest priority ready thread
+    CALL                #_RMP_Run_High
 
-;/* Need to tailor these to specific microcontrollers - asm not portable */
-	.sect         ".int44"
-	.short        _RMP_MSP430_Ctx_Handler
-	.sect         ".int45"
-	.short        _RMP_MSP430_Tim_Handler
+    ;Pop as if we returned from an interrupt, enabling interrupt
+    MOV                 &RMP_SP_Cur, SP
+    CALL                #RMP_Ctx_Load
+    POP                 R4
+    POP                 R5
+    POP                 R6
+    POP                 R7
+    POP                 R8
+    POP                 R9
+    POP                 R10
+    POP                 R11
+    POP                 R12
+    POP                 R13
+    POP                 R14
+    POP                 R15
+    RETI
+_RMP_MSP430_Skip:
+    RET
+    .ENDASMFUNC
+;/* End Function:_RMP_MSP430_Yield *******************************************/
+
 ;/* End Of File **************************************************************/
 
 ;/* Copyright (C) Evo-Devo Instrum. All rights reserved **********************/

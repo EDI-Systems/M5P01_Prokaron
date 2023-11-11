@@ -28,44 +28,52 @@ Description : The platform specific file for ARMv6-M.
 /* Begin Function:_RMP_Stack_Init *********************************************
 Description : Initiate the process stack when trying to start a process. Never
               call this function in user application.
-              Special note must be taken if you are using va_list, va_arg, va_start
-              and va_end (variable argument related functions), the stack passed
-              in must be 8n+4 byte aligned instead of 4n byte aligned. If this is not
-              adhered to, the va_arg can return wrong results, especially for 64-bit
-              arguments (long long, int64, double). 
-              The reason why we require 8n+4 is that the context size is 17 words,
-              and after popping the context will be aligned to 8n bytes.
-Input       : rmp_ptr_t Entry - The entry address of the thread.
-              rmp_ptr_t Stack - The stack address of the thread.
-              rmp_ptr_t Arg - The argument to pass to the thread.
+              Need to pretend that we're returning from a context switch:
+                  16  15  14    13  12-9  8  7-0 
+              H> XPSR PC LR(1) R12 R3-R0 LR R11-R4 >L 
+Input       : rmp_ptr_t Stack - The stack address of the thread.
+              rmp_ptr_t Size - The stack size of the thread.
+              rmp_ptr_t Entry - The entry address of the thread.
+              rmp_ptr_t Param - The argument to pass to the thread.
 Output      : None.
-Return      : None.
-Other       : When the system stack safe redundancy is set to zero, the stack 
-              looks like this when we try to step into the next process by 
-              context switch: (context size is 17 words)
-              HIGH-->  XPSR PC LR(1) R12 R3-R0 LR R11-R4 -->LOW 
-              We need to set the stack correctly pretending that we are 
-              returning from an systick timer interrupt. Thus, we set the XPSR
-              to avoid INVSTATE; set PC to the pseudo-process entrance; set LR
-              (1) to 0 because the process does not return to anything; set the 
-              R12,R3-R0 to 0; set R11-R4 to 0.
+Return      : rmp_ptr_t - The adjusted stack location.
 ******************************************************************************/
-void _RMP_Stack_Init(rmp_ptr_t Entry, rmp_ptr_t Stack, rmp_ptr_t Arg)
+rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
+                          rmp_ptr_t Size,
+                          rmp_ptr_t Entry,
+                          rmp_ptr_t Param)
 {
-    /* This is the LR value indicating that we never used the FPU */
-    ((rmp_ptr_t*)Stack)[0+8]=0xFFFFFFFD;    
-    /* Cortex-M:Pass the parameter */                            
-    ((rmp_ptr_t*)Stack)[0+9]=Arg;       
-    /* Cortex-M:Set the process entry */
-    ((rmp_ptr_t*)Stack)[6+9]=Entry;
-    /* Cortex-M:Set the T bit or an INVSTATE will happen; don't set STKALIGN, 
-     * and there is no stack padding. The effect of STKALIGN is, if it is set
-     * and the (hardware-pushed) interrupt stack is 8n byte aligned, it will
-     * pop an extra word (to restore the stack to an previous unaligned state);
-     * if the interrupt stack is 8n+4 byte aligned, even if STKALIGN is set, it
-     * will not pop this extra word. The result is, if STKALIGN is set, we will
-     * never be able to get a 8n byte aligned stack, so we do not set it. */                            
-    ((rmp_ptr_t*)Stack)[7+9]=0x01000000;
+    rmp_ptr_t End;
+    struct RMP_A6M_Stack* Ptr;
+    
+    /* Compute & align stack */
+    End=RMP_ROUND_DOWN(Stack+Size, 3U);
+    Ptr=(struct RMP_A6M_Stack*)(End-sizeof(struct RMP_A6M_Stack));
+    
+    /* Set LR_EXC and xPSR accordingly to avoid INVSTATE */
+    Ptr->LR_EXC=0xFFFFFFFDU;
+    Ptr->XPSR=0x01000000U;
+    
+    /* Pass entry and parameter */
+    Ptr->PC=Entry;
+    Ptr->R0=Param;
+    
+    /* Fill the rest for ease of identification */
+    Ptr->R1=0x01010101U;
+    Ptr->R2=0x02020202U;
+    Ptr->R3=0x03030303U;
+    Ptr->R4=0x04040404U;
+    Ptr->R5=0x05050505U;
+    Ptr->R6=0x06060606U;
+    Ptr->R7=0x07070707U;
+    Ptr->R8=0x08080808U;
+    Ptr->R9=0x09090909U;
+    Ptr->R10=0x10101010U;
+    Ptr->R11=0x11111111U;
+    Ptr->R12=0x12121212U;
+    Ptr->LR=0x13131313U;
+    
+    return (rmp_ptr_t)Ptr;
 }
 /* End Function:_RMP_Stack_Init **********************************************/
 

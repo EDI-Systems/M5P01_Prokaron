@@ -76,30 +76,30 @@ typedef rmp_s16_t rmp_ret_t;
 
 /* System macros *************************************************************/
 /* Compiler "extern" keyword setting */
-#define EXTERN                   extern
+#define EXTERN                          extern
 /* The order of bits in one CPU machine word */
 #if(RMP_MSP430_X==1U)
-#define RMP_WORD_ORDER           (5U)
+#define RMP_WORD_ORDER                  (5U)
 #else
-#define RMP_WORD_ORDER           (4U)
+#define RMP_WORD_ORDER                  (4U)
 #endif
 /* The maximum length of char printing - no need to change this in most cases */
-#define RMP_DEBUG_PRINT_MAX      (128U)
-/* The offset of the stack when initializing */
-#define RMP_INIT_STACK           RMP_INIT_STACK_TAIL(12U)
+#define RMP_DEBUG_PRINT_MAX             (128U)
+/* Descending stack, 4-byte alignment */
+#define RMP_INIT_STACK                  RMP_INIT_STACK_DESCEND(2U)
 /* MSB/LSB extraction */
-#define RMP_MSB_GET(VAL)         RMP_MSB_Generic(VAL)
-#define RMP_LSB_GET(VAL)         RMP_LSB_Generic(VAL)
+#define RMP_MSB_GET(VAL)                RMP_MSB_Generic(VAL)
+#define RMP_LSB_GET(VAL)                RMP_LSB_Generic(VAL)
 /* End System macros *********************************************************/
 
 /* MSP430 specific macros ****************************************************/
-#define RMP_MSP430_SR_SCG1      (1<<7)
-#define RMP_MSP430_SR_SCG0      (1<<6)
-#define RMP_MSP430_SR_OSCOFF    (1<<5)
-#define RMP_MSP430_SR_CPUOFF    (1<<4)
-#define RMP_MSP430_SR_GIE       (1<<3)
+#define RMP_MSP430_SR_SCG1              (1<<7)
+#define RMP_MSP430_SR_SCG0              (1<<6)
+#define RMP_MSP430_SR_OSCOFF            (1<<5)
+#define RMP_MSP430_SR_CPUOFF            (1<<4)
+#define RMP_MSP430_SR_GIE               (1<<3)
 
-#define RMP_MSP430X_PCSR(PC,SR) (((PC)<<16)|(((PC)>>4)&0xF000)|(SR))
+#define RMP_MSP430X_PCSR(PC,SR)         (((PC)<<16)|(((PC)>>4)&0xF000)|(SR))
 /*****************************************************************************/
 /* __RMP_PLATFORM_MSP430_H_DEFS__ */
 #endif
@@ -117,7 +117,42 @@ typedef rmp_s16_t rmp_ret_t;
 #define __HDR_DEFS__
 #undef __HDR_DEFS__
 /*****************************************************************************/
-
+#if(RMP_MSP430_X!=0U)
+struct RMP_MSP430_Stack
+{
+    rmp_ptr_t R4;
+    rmp_ptr_t R5;
+    rmp_ptr_t R6;
+    rmp_ptr_t R7;
+    rmp_ptr_t R8;
+    rmp_ptr_t R9;
+    rmp_ptr_t R10;
+    rmp_ptr_t R11;
+    rmp_ptr_t R12;
+    rmp_ptr_t R13;
+    rmp_ptr_t R14;
+    rmp_ptr_t R15;
+    rmp_ptr_t PCSR;
+};
+#else
+struct RMP_MSP430_Stack
+{
+    rmp_ptr_t R4;
+    rmp_ptr_t R5;
+    rmp_ptr_t R6;
+    rmp_ptr_t R7;
+    rmp_ptr_t R8;
+    rmp_ptr_t R9;
+    rmp_ptr_t R10;
+    rmp_ptr_t R11;
+    rmp_ptr_t R12;
+    rmp_ptr_t R13;
+    rmp_ptr_t R14;
+    rmp_ptr_t R15;
+    rmp_ptr_t SR;
+    rmp_ptr_t PC;
+};
+#endif
 /*****************************************************************************/
 /* __RMP_PLATFORM_MSP430_H_STRUCTS__ */
 #endif
@@ -161,7 +196,8 @@ typedef rmp_s16_t rmp_ret_t;
 #endif
 
 /*****************************************************************************/
-
+__EXTERN__ rmp_ptr_t RMP_MSP430_Int_Act;
+__EXTERN__ rmp_ptr_t RMP_MSP430_Yield_Pend;
 /*****************************************************************************/
 
 /* End Public Global Variables ***********************************************/
@@ -173,17 +209,17 @@ EXTERN void RMP_Int_Disable(void);
 EXTERN void RMP_Int_Enable(void);
 
 EXTERN void _RMP_Start(rmp_ptr_t Entry, rmp_ptr_t Stack);
+EXTERN void _RMP_MSP430_Yield(void);
 __EXTERN__ void _RMP_Yield(void);
 
 /* Initialization */
-__EXTERN__ void _RMP_Stack_Init(rmp_ptr_t Entry, rmp_ptr_t Stack, rmp_ptr_t Arg);
+__EXTERN__ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
+                                     rmp_ptr_t Size,
+                                     rmp_ptr_t Entry,
+                                     rmp_ptr_t Param);
 __EXTERN__ void _RMP_Lowlvl_Init(void);
 __EXTERN__ void RMP_Putchar(char Char);
 __EXTERN__ void _RMP_Plat_Hook(void);
-
-/* Platform-dependent hooks */
-__EXTERN__ void _RMP_Clear_Soft_Flag(void);
-__EXTERN__ void _RMP_Clear_Timer_Flag(void);
 /*****************************************************************************/
 /* Undefine "__EXTERN__" to avoid redefinition */
 #undef __EXTERN__

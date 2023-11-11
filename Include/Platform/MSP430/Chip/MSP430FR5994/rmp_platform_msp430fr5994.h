@@ -60,7 +60,7 @@ do \
     CS_initClockSignal(CS_SMCLK, CS_DCOCLK_SELECT, CS_CLOCK_DIVIDER_1); \
     /* Set MCLK = DCO with frequency divider of 1 */ \
     CS_initClockSignal(CS_MCLK, CS_DCOCLK_SELECT, CS_CLOCK_DIVIDER_1); \
-    /* Set the timer 0 and its interrupts - timer 0 will be fully occupied by the OS */ \
+    /* Set the TIMA0 and its interrupts */ \
     TIM0_Handle.clockSource=TIMER_A_CLOCKSOURCE_SMCLK; \
     TIM0_Handle.clockSourceDivider=TIMER_A_CLOCKSOURCE_DIVIDER_16; \
     TIM0_Handle.timerPeriod=RMP_MSP430_TICK_VAL; \
@@ -69,7 +69,6 @@ do \
     TIM0_Handle.timerClear=TIMER_A_SKIP_CLEAR; \
     TIM0_Handle.startTimer=1; \
     Timer_A_initUpMode(TA0_BASE,&TIM0_Handle); \
-    Timer_A_enableCaptureCompareInterrupt(TA0_BASE, OFS_TAxCCTL1); \
     /* UART init */ \
     UART0_Handle.selectClockSource=EUSCI_A_UART_CLOCKSOURCE_SMCLK; \
     UART0_Handle.clockPrescalar=8; \
@@ -90,12 +89,6 @@ do \
 } \
 while(0)
 
-/* Flag operations - Currently considered broken, context switch by interrupts are
- * not possible on this architecture due to lack of software interrupts.
- * Direct switch style implementation is necessary for this processor. */
-#define NOP()                       __no_operation()
-#define RMP_MSP430_CTX_SET()        {TA0CCTL1|=CCIFG;NOP();NOP();}
-#define RMP_MSP430_CTX_CLR()        {TA0CCTL1&=~CCIFG;}
 #define RMP_MSP430_TIM_CLR()        {TA0CCTL0&=~CCIFG;}
 
 /* This is for debugging output */

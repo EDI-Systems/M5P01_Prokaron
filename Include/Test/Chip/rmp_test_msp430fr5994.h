@@ -32,17 +32,17 @@ TICC V21.6.1LTS -O4 -mf5 (OS timer enabled)
  /_/|_|/_/  /_//_/
 ====================================================
 Test (number in CPU cycles)        : AVG / MAX / MIN
-Yield                              : 454 / 1589 / 449
-Mailbox                            : 977 / 1577 / 974
-Semaphore                          : 847 / 1462 / 846
-FIFO                               : 436 / 1051 / 435
-Message queue                      : 1442 / 1443 / 1442
-Blocking message queue             : 1889 / 2501 / 1883
-Memory allocation/free pair        : 3306 / 3488 / 3196
-ISR Mailbox                        : 873 / 1475 / 339
-ISR Semaphore                      : 793 / 1405 / 791
-ISR Message queue                  : 1157 / 1770 / 1154
-ISR Blocking message queue         : 1415 / 2029 / 1412
+Yield                              : 468 / 694 / 468
+Mailbox                            : 1054 / 1278 / 1052
+Semaphore                          : 891 / 1116 / 890
+FIFO                               : 492 / 717 / 492
+Message queue                      : 1573 / 1797 / 1571
+Blocking message queue             : 2072 / 2296 / 2070
+Memory allocation/free pair        : 3291 / 3415 / 3191
+ISR Mailbox                        : 891 / 1115 / 419
+ISR Semaphore                      : 784 / 1009 / 783
+ISR Message queue                  : 1176 / 1400 / 1175
+ISR Blocking message queue         : 1464 / 1687 / 1462
 ******************************************************************************/
 
 /* Includes ******************************************************************/
@@ -50,9 +50,6 @@ ISR Blocking message queue         : 1415 / 2029 / 1412
 /* End Includes **************************************************************/
 
 /* Defines *******************************************************************/
-/* Where are the initial stacks */
-#define THD1_STACK          (&Stack_1[128])
-#define THD2_STACK          (&Stack_2[128])
 /* How to read counter */
 #define RMP_CNT_READ()      (TA1R)
 /* Are we testing the memory pool? */
@@ -85,7 +82,7 @@ Return      : None.
 ******************************************************************************/
 void Timer_Init(void)
 {
-    /* TIM1 clock = CPU clock */
+    /* TIMA1 clock = CPU clock */
     TIM1_Handle.clockSource=TIMER_A_CLOCKSOURCE_SMCLK;
     TIM1_Handle.clockSourceDivider=TIMER_A_CLOCKSOURCE_DIVIDER_1;
     TIM1_Handle.timerPeriod=0xFFFF;
@@ -110,10 +107,8 @@ void Int_Init(void)
     TA1CCTL0|=CCIE;
 }
 
-
 /* The interrupt handler */
-#pragma vector=TIMER1_A0_VECTOR
-__interrupt void TIM1_IRQHandler(void)
+void TIM1_IRQHandler(void)
 {
     TA1CCTL0&=~CCIFG;
     Int_Handler();
@@ -129,7 +124,7 @@ Return      : None.
 ******************************************************************************/
 void Int_Disable(void)
 {
-    /* Disable timer 1 interrupt */
+    /* Disable TIMA1 interrupt */
     TA1CCTL0&=~CCIE;
 }
 #endif

@@ -65,16 +65,16 @@ typedef rmp_s32_t rmp_ret_t;
 
 /* System macros *************************************************************/
 /* Compiler "extern" keyword setting */
-#define EXTERN                      extern
+#define EXTERN                          extern
 /* The order of bits in one CPU machine word */
-#define RMP_WORD_ORDER              (5U)
+#define RMP_WORD_ORDER                  (5U)
 /* The maximum length of char printing - no need to change this in most cases */
-#define RMP_DEBUG_PRINT_MAX         (255U)
-/* The offset of the stack when initializing */
-#define RMP_INIT_STACK              RMP_INIT_STACK_TAIL(17U)
+#define RMP_DEBUG_PRINT_MAX             (255U)
+/* Descending stack, 16-byte alignment */
+#define RMP_INIT_STACK                  RMP_INIT_STACK_DESCEND(4U)
 /* MSB/LSB extraction */
-#define RMP_MSB_GET(VAL)            RMP_MSB_Generic(VAL)
-#define RMP_LSB_GET(VAL)            RMP_LSB_Generic(VAL)
+#define RMP_MSB_GET(VAL)                RMP_MSB_Generic(VAL)
+#define RMP_LSB_GET(VAL)                RMP_LSB_Generic(VAL)
 
 /* The CPU and application specific macros are here */
 #include "rmp_platform_rv32gp_conf.h"
@@ -99,7 +99,41 @@ typedef rmp_s32_t rmp_ret_t;
 #define __HDR_DEFS__
 #undef __HDR_DEFS__
 /*****************************************************************************/
-
+struct RMP_RV32GP_Stack
+{
+    rmp_ptr_t PC;
+    rmp_ptr_t X1;
+    rmp_ptr_t MSTATUS;
+    rmp_ptr_t X3;
+    rmp_ptr_t X4;
+    rmp_ptr_t X5;
+    rmp_ptr_t X6;
+    rmp_ptr_t X7;
+    rmp_ptr_t X8;
+    rmp_ptr_t X9;
+    rmp_ptr_t X10;
+    rmp_ptr_t X11;
+    rmp_ptr_t X12;
+    rmp_ptr_t X13;
+    rmp_ptr_t X14;
+    rmp_ptr_t X15;
+    rmp_ptr_t X16;
+    rmp_ptr_t X17;
+    rmp_ptr_t X18;
+    rmp_ptr_t X19;
+    rmp_ptr_t X20;
+    rmp_ptr_t X21;
+    rmp_ptr_t X22;
+    rmp_ptr_t X23;
+    rmp_ptr_t X24;
+    rmp_ptr_t X25;
+    rmp_ptr_t X26;
+    rmp_ptr_t X27;
+    rmp_ptr_t X28;
+    rmp_ptr_t X29;
+    rmp_ptr_t X30;
+    rmp_ptr_t X31;
+};
 /*****************************************************************************/
 /* __RMP_PLATFORM_RV32GP_H_STRUCTS__ */
 #endif
@@ -166,7 +200,10 @@ EXTERN void __RMP_RV32GP_Mem_FENCE(void);
 EXTERN void __RMP_RV32GP_Handler(void);
 
 /* Initialization */
-__EXTERN__ void _RMP_Stack_Init(rmp_ptr_t Entry, rmp_ptr_t Stack, rmp_ptr_t Arg);
+__EXTERN__ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
+                                     rmp_ptr_t Size,
+                                     rmp_ptr_t Entry,
+                                     rmp_ptr_t Param);
 __EXTERN__ void _RMP_Lowlvl_Init(void);
 __EXTERN__ void RMP_Putchar(char Char);
 __EXTERN__ void _RMP_Plat_Hook(void);

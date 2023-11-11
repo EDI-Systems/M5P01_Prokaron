@@ -30,9 +30,6 @@ ISR Blocking message queue         : 763 / 832 / 760
 /* End Includes **************************************************************/
 
 /* Defines *******************************************************************/
-/* Where are the initial stacks */
-#define THD1_STACK        (&Stack_1[215])
-#define THD2_STACK        (&Stack_2[215])
 /* How to read counter */
 #define RMP_CNT_READ()    ((rtiREG1->CNT[0].FRCx)<<3)
 /* Are we testing the memory pool? */
