@@ -105,7 +105,6 @@ volatile rmp_tim_t Bmq_ISR_Min=0;
 /* Kernel objects */
 volatile struct RMP_Thd Thd_1;
 volatile struct RMP_Thd Thd_2;
-volatile struct RMP_Thd Thd_Test;
 volatile struct RMP_Sem Sem_1;
 /* Extended kernel objects */
 volatile struct RMP_Fifo Fifo_1;
@@ -520,8 +519,8 @@ void Func_2(void)
     Test_Yield_2();
     RMP_LIST("Yield                             ");
     
-    /* Change priority of thread 2, just in case */
-    RMP_Thd_Set(&Thd_2,2,RMP_SLICE_MAX);
+    /* Elevate priority of thread 2 for IPC tests */
+    RMP_Thd_Set(&Thd_2,2U,RMP_SLICE_MAX);
     
     /* Mailbox tests */
     RMP_INIT();

@@ -14,14 +14,12 @@
 
 ;/* Begin Exports ************************************************************/
     ;The systick timer routine
-    .DEF                TIMERA0_VECTOR
-    ;The test timer routine
-    .DEF                TIMERB0_VECTOR
+    .DEF                TIMER0_A0_VECTOR
 ;/* End Exports **************************************************************/
 
 ;/* Begin Imports ************************************************************/
-    ;Handler for MSP430 timer interrupt
-    .GLOBAL             TIM1_IRQHandler
+    ;Tailored tickless handler
+    .GLOBAL             _RMP_MSP430_Tickless_Handler
 ;/* End Imports **************************************************************/
 
 ;/* Begin Function:TIMERA0_VECTOR *********************************************
@@ -30,33 +28,17 @@
 ;Output      : None.
 ;Return      : None.
 ;*****************************************************************************/
-TIMERA0_VECTOR:         .ASMFUNC
+TIMER0_A0_VECTOR:       .ASMFUNC
     RMP_MSP430_INT_SAVE
     ;Get the highest ready task.
-    CALL                #_RMP_MSP430_Tim_Handler
+    CALL                #_RMP_MSP430_Tickless_Handler
     RMP_MSP430_INT_RESTORE
     .ENDASMFUNC
 ;/* End Function:TIMERA0_VECTOR **********************************************/
 
-;/* Begin Function:TIMERB0_VECTOR *********************************************
-;Description : The timer used to generate ticks for the interrupt latency test.
-;Input       : None.
-;Output      : None.
-;Return      : None.
-;*****************************************************************************/
-TIMERB0_VECTOR:         .ASMFUNC
-    RMP_MSP430_INT_SAVE
-    ;Get the highest ready task.
-    CALL                #TIM1_IRQHandler
-    RMP_MSP430_INT_RESTORE
-    .ENDASMFUNC
-;/* End Function:TIMERB0_VECTOR **********************************************/
-
 ;/* Need to tailor these to specific microcontrollers - asm not portable */
-    .sect                 ".int06"
-    .short                TIMERA0_VECTOR
-    .sect                 ".int13"
-    .short                TIMERB0_VECTOR
+    .sect                 ".int09"
+    .short                TIMER0_A0_VECTOR
 ;/* End Of File **************************************************************/
 
 ;/* Copyright (C) Evo-Devo Instrum. All rights reserved **********************/
