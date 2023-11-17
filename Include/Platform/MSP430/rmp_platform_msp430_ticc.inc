@@ -39,19 +39,19 @@ RMP_MSP430_INT_SAVE     .MACRO
     PUSH                R5
     PUSH                R4
     CALL                #RMP_Ctx_Save
-    MOV                 SP, &RMP_SP_Cur
-    MOV                 #1, &RMP_MSP430_Int_Act
+    MOV                 SP,&RMP_SP_Cur
+    MOV                 #1,&RMP_MSP430_Int_Act
     .ENDM
 
 ; Load everything from stack, and deal with pending yields if there is
 RMP_MSP430_INT_RESTORE  .MACRO
-    CMP                 #0, &RMP_MSP430_Yield_Pend
+    CMP                 #0,&RMP_MSP430_Yield_Pend
     JEQ                 RMP_MSP430_YIELD_SKIP?
     CALL                #_RMP_Run_High
-    MOV                 #0, &RMP_MSP430_Yield_Pend
+    MOV                 #0,&RMP_MSP430_Yield_Pend
 RMP_MSP430_YIELD_SKIP?
-    MOV                 #0, &RMP_MSP430_Int_Act
-    MOV                 &RMP_SP_Cur, SP
+    MOV                 #0,&RMP_MSP430_Int_Act
+    MOV                 &RMP_SP_Cur,SP
     CALL                #RMP_Ctx_Load
     POP                 R4
     POP                 R5
@@ -65,6 +65,8 @@ RMP_MSP430_YIELD_SKIP?
     POP                 R13
     POP                 R14
     POP                 R15
+    BIC                 #0xF0,0(SP)
+    BIS					#0x08,0(SP)
     RETI
     .ENDM
 ;/* End Macros ***************************************************************/

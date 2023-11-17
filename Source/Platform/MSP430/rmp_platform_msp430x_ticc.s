@@ -93,8 +93,8 @@ _RMP_Start:             .ASMFUNC
     PUSH                R14
     POPA                R14
     ;Jump to location
-    MOVA                R14, SP
-    MOVA                R12, PC
+    MOVA                R14,SP
+    MOVA                R12,PC
     ; Dummy return
     RETA
     .ENDASMFUNC
@@ -117,9 +117,9 @@ _RMP_MSP430_Yield:      .ASMFUNC
     PUSH                SR
 
     ;Save all GP regs and save SP to block
-    PUSHM.A             #12, R15
+    PUSHM.A             #12,R15
     CALLA               #RMP_Ctx_Save
-    MOVA                SP, &RMP_SP_Cur
+    MOVA                SP,&RMP_SP_Cur
 
     ;PC higher half, and set GIE(bit[3]) in SR
     MOV                 #$HI16(_RMP_MSP430_Skip),R15
@@ -133,9 +133,12 @@ _RMP_MSP430_Yield:      .ASMFUNC
     CALLA               #_RMP_Run_High
 
     ;Pop as if we returned from an interrupt, enabling interrupt
-    MOVA                &RMP_SP_Cur, SP
+    MOVA                &RMP_SP_Cur,SP
     CALLA               #RMP_Ctx_Load
-    POPM.A              #12, R15
+    POPM.A              #12,R15
+    ;Make sure we don't enter LPM mode automatically on return
+    BIC                 #0xF0,0(SP)
+    BIS					#0x08,0(SP)
     RETI
 _RMP_MSP430_Skip:
     RETA

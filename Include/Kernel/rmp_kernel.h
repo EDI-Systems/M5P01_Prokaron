@@ -114,7 +114,7 @@ Description : The header file for the kernel.
 #define RMP_DLY2THD(X)              ((volatile struct RMP_Thd*)(((rmp_ptr_t)(X))-sizeof(struct RMP_List)))
 /* Detect timer overflow */
 #define RMP_DLY_DIFF(X)             ((X)-RMP_Timestamp)
-#define RMP_DLY_OVF(X)              ((X)>(RMP_ALLBITS>>1))
+#define RMP_DLY_OVF(X)              (((X)>(RMP_ALLBITS>>1))||((X)==0))
 
 /* Printk macros */
 #define RMP_DBG_I(INT)              RMP_Int_Print((rmp_cnt_t)(INT))
@@ -365,14 +365,6 @@ static volatile rmp_ptr_t RMP_Bitmap[RMP_BITMAP_SIZE];
 static volatile struct RMP_List RMP_Run[RMP_PREEMPT_PRIO_NUM];
 static volatile struct RMP_List RMP_Delay;
 
-/* Scheduler lock */
-static volatile rmp_ptr_t RMP_Sched_Lock_Cnt;
-static volatile rmp_ptr_t RMP_Sched_Locked;
-/* Scheduler pending */
-static volatile rmp_ptr_t RMP_Sched_Pend;
-/* Timer events pending */
-static volatile rmp_ptr_t RMP_Timer_Pend;
-
 /* Init thread stack and structure */
 static rmp_ptr_t RMP_Init_Stack[RMP_INIT_STACK_WORD];
 static volatile struct RMP_Thd RMP_Init_Thd;
@@ -400,13 +392,10 @@ static rmp_ret_t _RMP_Mem_Search(volatile void* Pool,
                                  rmp_ptr_t* FLI_Level,
                                  rmp_ptr_t* SLI_Level);
 
-#ifdef RMP_CTL_WHITE
-#ifdef RMP_CTL_LGREY
-#ifdef RMP_CTL_GREY
-#ifdef RMP_CTL_DGREY
-#ifdef RMP_CTL_DARK
-#ifdef RMP_CTL_DDARK
-#ifdef RMP_CTL_BLACK
+#if((defined RMP_CTL_WHITE)&&(defined RMP_CTL_LGREY)&& \
+    (defined RMP_CTL_GREY)&&(defined RMP_CTL_DGREY)&& \
+    (defined RMP_CTL_DARK)&&(defined RMP_CTL_DDARK)&& \
+    (defined RMP_CTL_BLACK))
 static void RMP_Radiobtn_Circle(rmp_cnt_t Coord_X,
                                 rmp_cnt_t Coord_Y,
                                 rmp_cnt_t Length);
@@ -418,12 +407,6 @@ static void RMP_Progbar_Prog(rmp_cnt_t Coord_X,
                              rmp_cnt_t Prog,
                              rmp_ptr_t Fore,
                              rmp_ptr_t Back);
-#endif
-#endif
-#endif
-#endif
-#endif
-#endif
 #endif
 /*****************************************************************************/
 #define __EXTERN__
@@ -437,8 +420,16 @@ static void RMP_Progbar_Prog(rmp_cnt_t Coord_X,
 #endif
 
 /*****************************************************************************/
-/* The current tick counter value - can be read by the application to determine their time */
+/* The current tick counter value */
 __EXTERN__ volatile rmp_ptr_t RMP_Timestamp;
+/* Scheduler lock */
+__EXTERN__ volatile rmp_ptr_t RMP_Sched_Lock_Cnt;
+__EXTERN__ volatile rmp_ptr_t RMP_Sched_Locked;
+/* Scheduler pending */
+__EXTERN__ volatile rmp_ptr_t RMP_Sched_Pend;
+/* Timer events pending */
+__EXTERN__ volatile rmp_ptr_t RMP_Timer_Pend;
+
 /* The current thread - the pointer itself is volatile but not its contents */
 __EXTERN__ volatile struct RMP_Thd* volatile RMP_Thd_Cur;
 __EXTERN__ volatile rmp_ptr_t RMP_SP_Cur;
@@ -470,6 +461,7 @@ __EXTERN__ void _RMP_Run_High(void);
 __EXTERN__ void _RMP_Tim_Handler(rmp_ptr_t Slice);
 __EXTERN__ void _RMP_Tim_Elapse(rmp_ptr_t Slice);
 __EXTERN__ rmp_ptr_t _RMP_Tim_Future(void);
+__EXTERN__ rmp_ret_t _RMP_Tim_Idle(void);
 __EXTERN__ void RMP_Clear(volatile void* Addr,
                           rmp_ptr_t Size);
 
@@ -703,15 +695,16 @@ __EXTERN__ rmp_ptr_t RMP_CRC16(const rmp_u8_t* Data,
 #endif
 
 /* Hook functions */
-#if(RMP_HOOK_EXTRA==1U)
-    EXTERN void RMP_Start_Hook(void);
-    EXTERN void RMP_Ctx_Save(void);
-    EXTERN void RMP_Ctx_Load(void);
-    EXTERN void RMP_Sched_Hook(void);
-    EXTERN void RMP_Tick_Hook(rmp_ptr_t Ticks);
+#if(RMP_HOOK_EXTRA!=0U)
+EXTERN void RMP_Start_Hook(void);
+EXTERN void RMP_Ctx_Save(void);
+EXTERN void RMP_Ctx_Load(void);
+EXTERN void RMP_Sched_Hook(void);
+EXTERN void RMP_Tim_Hook(rmp_ptr_t Slice);
+EXTERN void RMP_Dly_Hook(rmp_ptr_t Slice);
 #else
-    __EXTERN__ void RMP_Ctx_Save(void);
-    __EXTERN__ void RMP_Ctx_Load(void);
+__EXTERN__ void RMP_Ctx_Save(void);
+__EXTERN__ void RMP_Ctx_Load(void);
 #endif
 
 EXTERN void RMP_Init_Hook(void);

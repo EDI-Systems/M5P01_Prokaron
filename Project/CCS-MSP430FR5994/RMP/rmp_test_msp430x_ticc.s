@@ -39,7 +39,7 @@ TIMER0_A0_VECTOR:       .ASMFUNC
 ;/* End Function:TIMER0_A0_VECTOR ********************************************/
 
 ;/* Begin Function:TIMER1_A0_VECTOR *******************************************
-;Description : The timer used to generate ticks for the OS.
+;Description : The timer used to generate ticks for the interrupt latency test.
 ;Input       : None.
 ;Output      : None.
 ;Return      : None.

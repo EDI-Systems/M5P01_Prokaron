@@ -116,7 +116,7 @@ _RMP_MSP430_Yield:      .ASMFUNC
     PUSH                R5
     PUSH                R4
     CALL                #RMP_Ctx_Save
-    MOV                 SP, &RMP_SP_Cur
+    MOV                 SP,&RMP_SP_Cur
 
     ;Set GIE(bit[3]) in SR
     ADD                 #0x08,12*2(SP)
@@ -125,7 +125,7 @@ _RMP_MSP430_Yield:      .ASMFUNC
     CALL                #_RMP_Run_High
 
     ;Pop as if we returned from an interrupt, enabling interrupt
-    MOV                 &RMP_SP_Cur, SP
+    MOV                 &RMP_SP_Cur,SP
     CALL                #RMP_Ctx_Load
     POP                 R4
     POP                 R5
@@ -139,6 +139,9 @@ _RMP_MSP430_Yield:      .ASMFUNC
     POP                 R13
     POP                 R14
     POP                 R15
+    ;Make sure we don't enter LPM mode automatically on return
+    BIC                 #0xF0,0(SP)
+    BIS					#0x08,0(SP)
     RETI
 _RMP_MSP430_Skip:
     RET

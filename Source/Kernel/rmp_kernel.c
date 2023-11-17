@@ -1005,7 +1005,7 @@ void _RMP_Run_High(void)
 
     /* There must be one, at least the initial thread must be ready at all moments! */
     RMP_ASSERT(Word>=0);
-    Prio=Word;
+    Prio=(rmp_ptr_t)Word;
     Prio=RMP_MSB_GET(RMP_Bitmap[Prio])+(Prio<<RMP_WORD_ORDER);
 
     /* See if the current thread is the highest priority one.
@@ -1047,12 +1047,13 @@ Return      : None.
 void _RMP_Tim_Handler(rmp_ptr_t Slice)
 {
     volatile struct RMP_Thd* Thread;
+    rmp_ptr_t Diff;
     
     /* Increase the timestamp as always */
     RMP_Timestamp+=Slice;
     
     /* See if the current thread expired. If yes, trigger a scheduler event */
-    if(Slice>RMP_Thd_Cur->Slice_Left)
+    if(Slice>=RMP_Thd_Cur->Slice_Left)
     {
         RMP_COVERAGE_MARKER();
         RMP_Sched_Pend=1U;
@@ -1069,7 +1070,8 @@ void _RMP_Tim_Handler(rmp_ptr_t Slice)
         RMP_COVERAGE_MARKER();
         Thread=RMP_DLY2THD(RMP_Delay.Next);
         /* If there are overflows, process all pending timers */
-        if(RMP_DLY_OVF(RMP_DLY_DIFF(Thread->Timeout))!=0U)
+        Diff=RMP_DLY_DIFF(Thread->Timeout);
+        if(RMP_DLY_OVF(Diff)!=0U)
         {
             RMP_COVERAGE_MARKER();
             /* No need to care about scheduler locks if this interrupt can be entered
@@ -1194,6 +1196,57 @@ rmp_ptr_t _RMP_Tim_Future(void)
 }
 /* End Function:_RMP_Tim_Future **********************************************/
 
+/* Begin Function:_RMP_Tim_Idle ***********************************************
+Description : See if the timer could be idle. When both conditions below are
+              met, we could turn off all kernel clock sources altogether to
+              achieve the lowest possible power:
+              1. The only running thread is the initial idle thread.
+              2. There are no outstanding delay timers.
+Input       : None.
+Output      : None.
+Return      : rmp_ret_t - If yes, 0; else -1.
+******************************************************************************/
+rmp_ret_t _RMP_Tim_Idle(void)
+{
+    /* Are there any threads other than the initial idle thread? */
+    if(RMP_Run[0].Next!=&RMP_Init_Thd)
+    {
+        RMP_COVERAGE_MARKER();
+        return -1;
+    }
+    else
+    {
+        RMP_COVERAGE_MARKER();
+        /* No action required */
+    }
+
+    if(RMP_Run[0].Next!=RMP_Run[0].Prev)
+    {
+        RMP_COVERAGE_MARKER();
+        return -1;
+    }
+    else
+    {
+        RMP_COVERAGE_MARKER();
+        /* No action required */
+    }
+
+    /* Are there any pending timers? */
+    if(RMP_Delay.Next!=&RMP_Delay)
+    {
+        RMP_COVERAGE_MARKER();
+        return -1;
+    }
+    else
+    {
+        RMP_COVERAGE_MARKER();
+        /* No action required */
+    }
+
+    return 0;
+}
+/* End Function:_RMP_Tim_Idle ************************************************/
+
 /* Begin Function:_RMP_Run_Ins ************************************************
 Description : Set the thread as ready to schedule. That means, put the thread into
               the runqueue. When this is called, please make sure that the scheduler
@@ -1310,10 +1363,10 @@ void _RMP_Dly_Ins(volatile struct RMP_Thd* Thread,
     while(Trav_Ptr!=&RMP_Delay)
     {
         Trav_Thd=RMP_DLY2THD(Trav_Ptr);
-        Diff=RMP_DLY_DIFF(Trav_Thd->Timeout);
         
         /* Overflow possible due to bumpy timestamp updates in tickless kernel - 
          * we need to find one that is greater than us yet is not overflown */
+        Diff=RMP_DLY_DIFF(Trav_Thd->Timeout);
         if((RMP_DLY_OVF(Diff)==0U)&&(Diff>Slice))
         {
             RMP_COVERAGE_MARKER();
@@ -3087,8 +3140,8 @@ int main(void)
     /* Now boot into the first thread */
     RMP_Clear(&RMP_Init_Thd,sizeof(struct RMP_Thd));
     RMP_Init_Thd.Prio=0U;
-    RMP_Init_Thd.Slice=10U;
-    RMP_Init_Thd.Slice_Left=10U;
+    RMP_Init_Thd.Slice=65500U;
+    RMP_Init_Thd.Slice_Left=65500U;
     RMP_Init_Thd.State=RMP_THD_RUNNING;
     RMP_Init_Thd.Stack=RMP_INIT_STACK;
 
@@ -5482,7 +5535,6 @@ void RMP_Circle(rmp_cnt_t Center_X,
     rmp_cnt_t Fill_Y;
     rmp_cnt_t Error;  
     rmp_cnt_t Quick;
-    rmp_cnt_t Diff;
 
     Cur_X=0;
     Cur_Y=Radius;
@@ -5562,8 +5614,7 @@ void RMP_Circle(rmp_cnt_t Center_X,
             else 
             {  
                 RMP_COVERAGE_MARKER();
-                Diff=Cur_X-Cur_Y;
-                Error+=RMP_SAL(Diff,2)+10;
+                Error+=RMP_SAL((rmp_ptr_t)Cur_X-(rmp_ptr_t)Cur_Y,2)+10;
                 Cur_Y--;  
             }
 
@@ -5594,8 +5645,7 @@ void RMP_Circle(rmp_cnt_t Center_X,
             else 
             {
                 RMP_COVERAGE_MARKER();
-                Diff=Cur_X-Cur_Y;
-                Error+=RMP_SAL(Diff,2);
+                Error+=RMP_SAL((rmp_ptr_t)Cur_X-(rmp_ptr_t)Cur_Y,2);
                 Cur_Y--;
             }
 
@@ -6577,7 +6627,6 @@ void RMP_Radiobtn_Circle(rmp_cnt_t Coord_X,
     rmp_cnt_t Cur_X;
     rmp_cnt_t Cur_Y;
     rmp_cnt_t Error;
-    rmp_cnt_t Diff;
     
     /* The radius is the length/2 */
     Radius=RMP_SAR(Length,1);
@@ -6611,8 +6660,7 @@ void RMP_Radiobtn_Circle(rmp_cnt_t Coord_X,
         else 
         {
             RMP_COVERAGE_MARKER();
-            Diff=Cur_X-Cur_Y;
-            Error+=RMP_SAL(Diff,2);
+            Error+=RMP_SAL((rmp_ptr_t)Cur_X-(rmp_ptr_t)Cur_Y,2);
             Cur_Y--;
         }
         Cur_X++;
@@ -6645,8 +6693,7 @@ void RMP_Radiobtn_Circle(rmp_cnt_t Coord_X,
         else 
         {
             RMP_COVERAGE_MARKER();
-            Diff=Cur_X-Cur_Y;
-            Error+=RMP_SAL(Diff,2);
+            Error+=RMP_SAL((rmp_ptr_t)Cur_X-(rmp_ptr_t)Cur_Y,2);
             Cur_Y--;  
         }  
         Cur_X++;  

@@ -144,7 +144,8 @@ void RMP_Putchar(char Char)
 /* End Function:RMP_Putchar **************************************************/
 
 /* Begin Function:_RMP_MSP430_Tim_Handler *************************************
-Description : Timer interrupt routine for MSP430.
+Description : Timer interrupt routine for MSP430; this is for normal kernel.
+              For a tickless kernel, the user should supply this handler.
 Input       : None
 Output      : None.
 Return      : None.
