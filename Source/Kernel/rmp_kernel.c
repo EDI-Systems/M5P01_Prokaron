@@ -50,7 +50,7 @@ Return      : rmp_ptr_t - The result. 0 will be returned for 0.
 rmp_ptr_t RMP_MSB_Generic(rmp_ptr_t Value)
 {
     rmp_ptr_t Bit;
-    static const rmp_u8_t Table[256]=
+    static const rmp_u8_t Table[256U]=
     {
         0U, 0U, 1U, 1U, 2U, 2U, 2U, 2U, 3U, 3U, 3U, 3U, 3U, 3U, 3U, 3U,
         4U, 4U, 4U, 4U, 4U, 4U, 4U, 4U, 4U, 4U, 4U, 4U, 4U, 4U, 4U, 4U,
@@ -216,7 +216,7 @@ Return      : rmp_ptr_t - The result. 0 will be returned for 0.
 rmp_ptr_t RMP_LSB_Generic(rmp_ptr_t Value)
 {
     rmp_ptr_t Bit;
-    static const rmp_u8_t Table[256]=
+    static const rmp_u8_t Table[256U]=
     {
         0U, 0U, 1U, 0U, 2U, 0U, 1U, 0U, 3U, 0U, 1U, 0U, 2U, 0U, 1U, 0U,
         4U, 0U, 1U, 0U, 2U, 0U, 1U, 0U, 3U, 0U, 1U, 0U, 2U, 0U, 1U, 0U,
@@ -238,7 +238,7 @@ rmp_ptr_t RMP_LSB_Generic(rmp_ptr_t Value)
     
 #if(RMP_WORD_ORDER==4U)
     /* 16-8 */
-    if((Value<<8)==0U)
+    if((Value<<8U)==0U)
     {
         RMP_COVERAGE_MARKER();
         Bit=8U;
@@ -251,11 +251,11 @@ rmp_ptr_t RMP_LSB_Generic(rmp_ptr_t Value)
     }
 #elif(RMP_WORD_ORDER==5U)
     /* 31-16 */
-    if((Value<<16)==0U)
+    if((Value<<16U)==0U)
     {
         RMP_COVERAGE_MARKER();
         /* 31-24 */
-        if((Value<<8)==0U)
+        if((Value<<8U)==0U)
         {
             RMP_COVERAGE_MARKER();
             Bit=24U;
@@ -272,7 +272,7 @@ rmp_ptr_t RMP_LSB_Generic(rmp_ptr_t Value)
     {
         RMP_COVERAGE_MARKER();
         /* 15-8 */
-        if((Value<<24)==0U)
+        if((Value<<24U)==0U)
         {
             RMP_COVERAGE_MARKER();
             Bit=8U;
@@ -286,15 +286,15 @@ rmp_ptr_t RMP_LSB_Generic(rmp_ptr_t Value)
     }
 #elif(RMP_WORD_ORDER==6U)
     /* 63-32 */
-    if((Value<<32)==0U)
+    if((Value<<32U)==0U)
     {
         RMP_COVERAGE_MARKER();
         /* 63-48 */
-        if((Value<<16)==0U)
+        if((Value<<16U)==0U)
         {
             RMP_COVERAGE_MARKER();
             /* 63-56 */
-            if((Value<<8)==0U)
+            if((Value<<8U)==0U)
             {
                 RMP_COVERAGE_MARKER();
                 Bit=56U;
@@ -311,7 +311,7 @@ rmp_ptr_t RMP_LSB_Generic(rmp_ptr_t Value)
         {
             RMP_COVERAGE_MARKER();
             /* 47-40 */
-            if((Value<<24)==0U)
+            if((Value<<24U)==0U)
             {
                 RMP_COVERAGE_MARKER();
                 Bit=40U;
@@ -329,11 +329,11 @@ rmp_ptr_t RMP_LSB_Generic(rmp_ptr_t Value)
     {
         RMP_COVERAGE_MARKER();
         /* 31-16 */
-        if((Value<<48)==0U)
+        if((Value<<48U)==0U)
         {
             RMP_COVERAGE_MARKER();
             /* 31-24 */
-            if((Value<<40)==0U)
+            if((Value<<40U)==0U)
             {
                 RMP_COVERAGE_MARKER();
                 Bit=24U;
@@ -350,7 +350,7 @@ rmp_ptr_t RMP_LSB_Generic(rmp_ptr_t Value)
         {
             RMP_COVERAGE_MARKER();
             /* 15-8 */
-            if((Value<<56)==0U)
+            if((Value<<56U)==0U)
             {
                 RMP_COVERAGE_MARKER();
                 Bit=8U;
@@ -387,7 +387,7 @@ rmp_ptr_t RMP_RBT_Generic(rmp_ptr_t Value)
     rmp_u8_t* To;
     rmp_u8_t* From;
 
-    static const rmp_u8_t Table[256]=
+    static const rmp_u8_t Table[256U]=
     {
         0x00U, 0x80U, 0x40U, 0xC0U, 0x20U, 0xA0U, 0x60U, 0xE0U,
         0x10U, 0x90U, 0x50U, 0xD0U, 0x30U, 0xB0U, 0x70U, 0xF0U,
@@ -613,17 +613,17 @@ rmp_cnt_t RMP_Hex_Print(rmp_ptr_t Uint)
     Iter=Uint;
     while((Iter>>((sizeof(rmp_ptr_t)*8U)-4U))==0U)
     {
-        Iter<<=4;
+        Iter<<=4U;
         Count++;
     }
 
     /* Count is the number of pts to print */
-    Count=(sizeof(rmp_ptr_t)*2U)-Count;
+    Count=(sizeof(rmp_ptr_t)<<1U)-Count;
     Num=Count;
     while(Count>0U)
     {
         Count--;
-        Iter=(Uint>>(Count*4U))&0x0FU;
+        Iter=(Uint>>(Count<<2U))&0x0FU;
         if(Iter<10U)
         {
             RMP_COVERAGE_MARKER();
@@ -815,7 +815,7 @@ rmp_ptr_t RMP_CRC16(const rmp_u8_t* Data,
         Temp_High=CRC16_Low[Index];
     }
 
-    return (rmp_ptr_t)((((rmp_u16_t)Temp_High)<<8)|Temp_Low);
+    return (rmp_ptr_t)((((rmp_u16_t)Temp_High)<<8U)|Temp_Low);
 }
 #endif
 /* End Function:RMP_CRC16 ****************************************************/
@@ -919,6 +919,7 @@ Return      : None.
 void _RMP_Timer_Proc(void)
 {
     rmp_ptr_t State;
+    rmp_ptr_t Diff;
     volatile struct RMP_Thd* Thread;
     
     /* Process the timer events, if there are any of them */
@@ -926,45 +927,45 @@ void _RMP_Timer_Proc(void)
     {
         Thread=RMP_DLY2THD(RMP_Delay.Next);
         
+        /* This thread is overflown */
+        Diff=RMP_DLY_DIFF(Thread->Timeout);
+        if(RMP_DIFF_OVF(Diff))
+        {
+            RMP_COVERAGE_MARKER();
+            
+            RMP_List_Del(Thread->Dly_Head.Prev, Thread->Dly_Head.Next);
+            State=RMP_THD_STATE(Thread->State);
+            if((State==RMP_THD_SNDDLY)||(State==RMP_THD_SEMDLY))
+            {
+                RMP_COVERAGE_MARKER();
+                RMP_List_Del(Thread->Run_Head.Prev, Thread->Run_Head.Next);
+                Thread->Retval=RMP_ERR_OPER;
+            }
+            else if(State==RMP_THD_RCVDLY)
+            {
+                RMP_COVERAGE_MARKER();
+                Thread->Retval=RMP_ERR_OPER;
+            }
+            else if(State==RMP_THD_DELAYED)
+            {
+                RMP_COVERAGE_MARKER();
+            }
+            else
+            {
+                RMP_COVERAGE_MARKER();
+                RMP_ASSERT(0);
+            }
+
+            /* Set to ready if not suspended */
+            RMP_THD_STATE_SET(Thread->State, RMP_THD_RUNNING);
+            _RMP_Run_Ins(Thread);
+        }
         /* Stop until we find a timer that is not overflown */
-        if(RMP_DLY_OVF(RMP_DLY_DIFF(Thread->Timeout))==0U)
+        else
         {
             RMP_COVERAGE_MARKER();
             break;
         }
-        else
-        {
-            RMP_COVERAGE_MARKER();
-            /* No action required */
-        }
-        
-        /* This thread should be processed */
-        RMP_List_Del(Thread->Dly_Head.Prev, Thread->Dly_Head.Next);
-        State=RMP_THD_STATE(Thread->State);
-        if((State==RMP_THD_SNDDLY)||(State==RMP_THD_SEMDLY))
-        {
-            RMP_COVERAGE_MARKER();
-            RMP_List_Del(Thread->Run_Head.Prev, Thread->Run_Head.Next);
-            Thread->Retval=RMP_ERR_OPER;
-        }
-        else if(State==RMP_THD_RCVDLY)
-        {
-            RMP_COVERAGE_MARKER();
-            Thread->Retval=RMP_ERR_OPER;
-        }
-        else if(State==RMP_THD_DELAYED)
-        {
-            RMP_COVERAGE_MARKER();
-        }
-        else
-        {
-            RMP_COVERAGE_MARKER();
-            RMP_ASSERT(0);
-        }
-
-        RMP_THD_STATE_SET(Thread->State, RMP_THD_RUNNING);
-        /* Set to ready if not suspended */
-        _RMP_Run_Ins(Thread);
     }
 }
 /* Begin Function:_RMP_Timer_Proc ********************************************/
@@ -1071,7 +1072,7 @@ void _RMP_Tim_Handler(rmp_ptr_t Slice)
         Thread=RMP_DLY2THD(RMP_Delay.Next);
         /* If there are overflows, process all pending timers */
         Diff=RMP_DLY_DIFF(Thread->Timeout);
-        if(RMP_DLY_OVF(Diff)!=0U)
+        if(RMP_DIFF_OVF(Diff))
         {
             RMP_COVERAGE_MARKER();
             /* No need to care about scheduler locks if this interrupt can be entered
@@ -1170,7 +1171,7 @@ rmp_ptr_t _RMP_Tim_Future(void)
         
         /* Detect possible overflows - trigger timer interrupt ASAP */
         Diff=RMP_DLY_DIFF(Thread->Timeout);
-        if(RMP_DLY_OVF(Diff)!=0U)
+        if(RMP_DIFF_OVF(Diff))
         {
             RMP_COVERAGE_MARKER();
             Value=1U;
@@ -1209,7 +1210,7 @@ Return      : rmp_ret_t - If yes, 0; else -1.
 rmp_ret_t _RMP_Tim_Idle(void)
 {
     /* Are there any threads other than the initial idle thread? */
-    if(RMP_Run[0].Next!=&RMP_Init_Thd)
+    if(RMP_Run[0].Next!=((volatile struct RMP_List*)&RMP_Init_Thd))
     {
         RMP_COVERAGE_MARKER();
         return -1;
@@ -1367,18 +1368,16 @@ void _RMP_Dly_Ins(volatile struct RMP_Thd* Thread,
         /* Overflow possible due to bumpy timestamp updates in tickless kernel - 
          * we need to find one that is greater than us yet is not overflown */
         Diff=RMP_DLY_DIFF(Trav_Thd->Timeout);
-        if((RMP_DLY_OVF(Diff)==0U)&&(Diff>Slice))
+        if(RMP_DIFF_OVF(Diff)||(Diff<Slice))
         {
             RMP_COVERAGE_MARKER();
-            break;
+            Trav_Ptr=Trav_Ptr->Next;
         }
         else
         {
             RMP_COVERAGE_MARKER();
-            /* No action required */
+            break;
         }
-        
-        Trav_Ptr=Trav_Ptr->Next;
     }
 
     /* Insert this into the list */
@@ -3477,7 +3476,7 @@ rmp_ret_t _RMP_Mem_Search(volatile void* Pool,
         RMP_COVERAGE_MARKER();
         LSB=RMP_LSB_GET(Word);
         Level=(Level&(~RMP_WORD_MASK))+LSB+(Level&RMP_WORD_MASK);
-        *FLI_Level=Level>>3;
+        *FLI_Level=Level>>3U;
         *SLI_Level=Level&0x07U;
         return 0;
     }
@@ -3495,7 +3494,7 @@ rmp_ret_t _RMP_Mem_Search(volatile void* Pool,
                 RMP_COVERAGE_MARKER();
                 /* Find the actual level */ 
                 LSB=RMP_LSB_GET(Mem->Bitmap[Word]);
-                *FLI_Level=((Word<<RMP_WORD_ORDER)+LSB)>>3;
+                *FLI_Level=((Word<<RMP_WORD_ORDER)+LSB)>>3U;
                 *SLI_Level=LSB&0x07U;
                 return 0;
             }

@@ -20,7 +20,7 @@ Description : The header file for the kernel.
 #define RMP_THD_STATE_SET(X, S)     ((X)=(RMP_THD_FLAG(X)|(S)))
 
 /* Memory pool position lookup */
-#define RMP_MEM_POS(FLI, SLI)       ((SLI)+((FLI)<<3))
+#define RMP_MEM_POS(FLI, SLI)       ((SLI)+((FLI)<<3U))
 
 /* This thread is currently unused */
 #define RMP_THD_FREE                (0U)
@@ -41,9 +41,9 @@ Description : The header file for the kernel.
 /* Blocked on a semaphore with a timeout */
 #define RMP_THD_SEMDLY              (8U)
 /* Suspended */
-#define RMP_THD_SUSPENDED           RMP_POW2(8)
+#define RMP_THD_SUSPENDED           RMP_POW2(8U)
 /* Mailbox valid */
-#define RMP_THD_MBOXFUL             (RMP_THD_SUSPENDED<<1)
+#define RMP_THD_MBOXFUL             (RMP_THD_SUSPENDED<<1U)
     
 /* States of semaphores */
 #define RMP_SEM_FREE                (0U)
@@ -114,7 +114,7 @@ Description : The header file for the kernel.
 #define RMP_DLY2THD(X)              ((volatile struct RMP_Thd*)(((rmp_ptr_t)(X))-sizeof(struct RMP_List)))
 /* Detect timer overflow */
 #define RMP_DLY_DIFF(X)             ((X)-RMP_Timestamp)
-#define RMP_DLY_OVF(X)              (((X)>(RMP_ALLBITS>>1))||((X)==0))
+#define RMP_DIFF_OVF(X)             (((X)>(RMP_ALLBITS>>1U))||((X)==0U))
 
 /* Printk macros */
 #define RMP_DBG_I(INT)              RMP_Int_Print((rmp_cnt_t)(INT))
@@ -133,8 +133,8 @@ Description : The header file for the kernel.
 #define RMP_TRANS                   (0x01U)
 #define RMP_MAT_SMALL               (0U)
 #define RMP_MAT_BIG                 (1U)
-#define RMP_MAT_BPOS(MAT,POS)       ((MAT)[((rmp_ptr_t)(POS))>>3]&RMP_POW2(7U-(((rmp_ptr_t)(POS))&0x07U)))
-#define RMP_MAT_SPOS(MAT,POS)       ((MAT)[((rmp_ptr_t)(POS))>>3]&RMP_POW2(((rmp_ptr_t)(POS))&0x07U))
+#define RMP_MAT_BPOS(MAT,POS)       ((MAT)[((rmp_ptr_t)(POS))>>3U]&RMP_POW2(7U-(((rmp_ptr_t)(POS))&0x07U)))
+#define RMP_MAT_SPOS(MAT,POS)       ((MAT)[((rmp_ptr_t)(POS))>>3U]&RMP_POW2(((rmp_ptr_t)(POS))&0x07U))
 #define RMP_RBTN_SEL                (1U)
 #define RMP_PBAR_L2R                (0U)
 #define RMP_PBAR_D2U                (1U)
@@ -142,7 +142,7 @@ Description : The header file for the kernel.
 #define RMP_PBAR_U2D                (3U)
 /* Cursor X/Y position extraction */
 #define RMP_CUR_XPOS(A,X)           ((rmp_cnt_t)((rmp_u8_t)((A)[X]&0x0FU)))
-#define RMP_CUR_YPOS(A,Y)           ((rmp_cnt_t)((rmp_u8_t)((A)[X]>>4)))
+#define RMP_CUR_YPOS(A,Y)           ((rmp_cnt_t)((rmp_u8_t)((A)[X]>>4U)))
 #define RMP_CUR_NORM                (0U)
 #define RMP_CUR_BUSY                (1U)
 #define RMP_CUR_QUESTION            (2U)

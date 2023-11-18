@@ -141,7 +141,7 @@ _RMP_MSP430_Yield:      .ASMFUNC
     POP                 R15
     ;Make sure we don't enter LPM mode automatically on return
     BIC                 #0xF0,0(SP)
-    BIS					#0x08,0(SP)
+    BIS                 #0x08,0(SP)
     RETI
 _RMP_MSP430_Skip:
     RET
@@ -151,3 +151,4 @@ _RMP_MSP430_Skip:
 ;/* End Of File **************************************************************/
 
 ;/* Copyright (C) Evo-Devo Instrum. All rights reserved **********************/
+
