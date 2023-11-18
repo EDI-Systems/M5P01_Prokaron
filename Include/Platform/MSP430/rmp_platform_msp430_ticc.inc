@@ -66,7 +66,7 @@ RMP_MSP430_YIELD_SKIP?
     POP                 R14
     POP                 R15
     BIC                 #0xF0,0(SP)
-    BIS					#0x08,0(SP)
+    BIS                 #0x08,0(SP)
     RETI
     .ENDM
 ;/* End Macros ***************************************************************/
@@ -74,3 +74,4 @@ RMP_MSP430_YIELD_SKIP?
 ;/* End Of File **************************************************************/
 
 ;/* Copyright (C) Evo-Devo Instrum. All rights reserved **********************/
+
