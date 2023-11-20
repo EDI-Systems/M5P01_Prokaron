@@ -30,13 +30,11 @@ Description : The configuration file for FE310-G000 RISC-V chip.
 #define RMP_INT_MASK()              RMP_Int_Disable()
 #define RMP_INT_UNMASK()            RMP_Int_Enable()
 
-#define RMP_RV32GP_INT_NUMBER     	PLIC_NUM_INTERRUPTS
 /* The mtime RTC runs on a 32768kHz crystal. This means 1ms tick time */
-#define RMP_RV32GP_TICK_COUNT       (33U)
-
-/* Mcause for interrupt vectors */
-#define RMP_RV32GP_MCAUSE_TIM       (7U)
-#define RMP_RV32GP_MCAUSE_CTX       (3U)
+#define RMP_RV32P_OSTIM_VAL         (33U)
+/* What is the FPU type? */
+#define RMP_RV32P_COP_RVF           (0U)
+#define RMP_RV32P_COP_RVD           (0U)
 
 /* Some register names */
 #define MTIME                       (*((volatile uint64_t *)(CLINT_CTRL_ADDR + CLINT_MTIME)))
@@ -46,8 +44,8 @@ Description : The configuration file for FE310-G000 RISC-V chip.
  * This is the default initialization sequence. If you wish to supply
  * your own, just redirect this macro to a custom function, or do your
  * initialization stuff in the initialization hook (RMP_Start_Hook). */
-#define RMP_RV32GP_LOWLVL_INIT() \
-extern void _RMP_RV32GP_Handler(void); \
+#define RMP_RV32P_LOWLVL_INIT() \
+extern void _RMP_RV32P_Handler(void); \
 plic_instance_t RMP_Global_PLIC; \
 do \
 { \
@@ -64,7 +62,7 @@ do \
                  -1, /* We don't care about HFROSC */ \
                  -1); \
     /* Initialize trap vectors */ \
-    __RMP_RV32GP_MTVEC_Set((rmp_ptr_t)__RMP_RV32GP_Handler); \
+    _RMP_RV32P_MTVEC_Set((rmp_ptr_t)_RMP_RV32P_Handler); \
     \
     /* Initialize the serial port */ \
     /* Select IOF0 for UART0 RX & TX pins */ \
@@ -75,7 +73,7 @@ do \
     UART0_REG(UART_REG_TXCTRL)|=UART_TXEN; \
     \
     /* Program the timer, and get rid of all pending interrupts */ \
-    MTIMECMP=MTIME+RMP_RV32GP_TICK_COUNT; \
+    MTIMECMP=MTIME+RMP_RV32P_OSTIM_VAL; \
     PLIC_enable_interrupt(&RMP_Global_PLIC,INT_RTCCMP); \
     PLIC_set_priority(&RMP_Global_PLIC,INT_RTCCMP,1); \
 	PLIC_complete_interrupt(&RMP_Global_PLIC, PLIC_claim_interrupt(&RMP_Global_PLIC)); \
@@ -83,34 +81,25 @@ do \
 while(0)
 
 /* Reprogram the timer and clear timer interrupt flags */
-#define RMP_RV32GP_TIM_CLR() \
+#define RMP_RV32P_TIM_CLR() \
 do \
 { \
 	plic_instance_t RMP_Global_PLIC; \
     \
-    MTIMECMP=MTIME+RMP_RV32GP_TICK_COUNT; \
+    MTIMECMP=MTIME+RMP_RV32P_OSTIM_VAL; \
     RMP_Global_PLIC.base_addr=PLIC_CTRL_ADDR; \
     PLIC_complete_interrupt(&RMP_Global_PLIC,INT_RTCCMP); \
 } \
 while(0)
 
-/* Trigger/clear software interrupt */
-#define RMP_RV32GP_CTX_SET()            (CLINT_REG(CLINT_MSIP)=0xFFFFFFFF)
-#define RMP_RV32GP_CTX_CLR()            (CLINT_REG(CLINT_MSIP)=0)
-
-/* Peripheral handler hook */
-#define RMP_RV32GP_VCT_HANDLER(X)       WDT_Interrupt()
-
 /* This is for debugging output */
-#define RMP_RV32GP_PUTCHAR(CHAR) \
+#define RMP_RV32P_PUTCHAR(CHAR) \
 do \
 { \
     while(UART0_REG(UART_REG_TXFIFO)&0x80000000U); \
     UART0_REG(UART_REG_TXFIFO)=(rmp_ptr_t)(CHAR); \
 } \
 while(0)
-
-extern void WDT_Interrupt(void);
 /* End Defines ***************************************************************/
 
 /* End Of File ***************************************************************/

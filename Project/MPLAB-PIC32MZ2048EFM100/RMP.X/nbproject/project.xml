@@ -18,6 +18,7 @@
                 <sourceRootElem>../../../Source/Test</sourceRootElem>
                 <sourceRootElem>../../../Include</sourceRootElem>
                 <sourceRootElem>.</sourceRootElem>
+                <sourceRootElem>../../../Source/Platform/MP32P</sourceRootElem>
             </sourceRootList>
             <confList>
                 <confElem>

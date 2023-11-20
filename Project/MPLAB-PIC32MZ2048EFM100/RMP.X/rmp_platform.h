@@ -7,7 +7,7 @@ Description : The platform specific types for RMP.
 ******************************************************************************/
 
 /* Platform Includes *********************************************************/
-#include "Platform/MIPSM/rmp_platform_mipsm.h"
+#include "Platform/MP32P/rmp_platform_mp32p.h"
 /* End Platform Includes *****************************************************/
 
 /* End Of File ***************************************************************/

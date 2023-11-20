@@ -133,6 +133,7 @@ SECTIONS
          * several impure and malloc pointers in the .sdata section.
          */
         PROVIDE( __global_pointer$ = . + (4K / 2) );
+        PROVIDE( _RMP_Global = . + (4K / 2) );
         
         *(.sdata .sdata.*)
         *(.gnu.linkonce.s.*)
@@ -214,6 +215,7 @@ SECTIONS
         PROVIDE( __heap_end__ = . );    /* µOS++ extension. */
         . += __stack_size;
         PROVIDE( __initial_stack$ = . ); 
+        PROVIDE( _RMP_Stack = . ); 
       } >RAM AT>RAM :phdr_ram
     
 

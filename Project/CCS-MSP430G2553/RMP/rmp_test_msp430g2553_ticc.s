@@ -1,61 +1,43 @@
 ;/*****************************************************************************
-;Filename    : rmp_test_msp430x_ticc.s
+;Filename    : rmp_test_msp430g2553_ticc.s
 ;Author      : pry
 ;Date        : 25/02/2018
-;Description : The test specific assembly vectors for MSP430X.
+;Description : The test specific assembly vectors for MSP430G2553.
 ;*****************************************************************************/
 
 ;/* Begin Header *************************************************************/
     .text
     .sect               ".text:_isr"
-    .ALIGN              2
-    .include            "Platform/MSP430/rmp_platform_msp430x_ticc.inc"
+    .align              2
+    .include            "Platform/MSP430/rmp_platform_msp430_ticc.inc"
 ;/* End Header ***************************************************************/
 
 ;/* Begin Exports ************************************************************/
     ;The systick timer routine
-    .DEF                TIMER0_A0_VECTOR
-    ;The test timer routine
-    .DEF                TIMER1_A0_VECTOR
+    .def                TIMER0_A0_VECTOR
 ;/* End Exports **************************************************************/
 
 ;/* Begin Imports ************************************************************/
-    ;Handler for MSP430 timer interrupt
-    .GLOBAL             TIM1_IRQHandler
+    ;Tailored tickless handler
+    .global             _RMP_MSP430_Tickless_Handler
 ;/* End Imports **************************************************************/
 
-;/* Begin Function:TIMER0_A0_VECTOR *******************************************
+;/* Begin Function:TIMERA0_VECTOR *********************************************
 ;Description : The timer used to generate ticks for the OS.
 ;Input       : None.
 ;Output      : None.
 ;Return      : None.
 ;*****************************************************************************/
-TIMER0_A0_VECTOR:       .ASMFUNC
+TIMER0_A0_VECTOR:       .asmfunc
     RMP_MSP430_INT_SAVE
     ;Get the highest ready task.
-    CALLA               #_RMP_MSP430_Tim_Handler
+    CALL                #_RMP_MSP430_Tickless_Handler
     RMP_MSP430_INT_RESTORE
-    .ENDASMFUNC
-;/* End Function:TIMER0_A0_VECTOR ********************************************/
-
-;/* Begin Function:TIMER1_A0_VECTOR *******************************************
-;Description : The timer used to generate ticks for the interrupt latency test.
-;Input       : None.
-;Output      : None.
-;Return      : None.
-;*****************************************************************************/
-TIMER1_A0_VECTOR:       .ASMFUNC
-    RMP_MSP430_INT_SAVE
-    ;Get the highest ready task.
-    CALLA               #TIM1_IRQHandler
-    RMP_MSP430_INT_RESTORE
-    .ENDASMFUNC
-;/* End Function:TIMER0_A0_VECTOR ********************************************/
+    .endasmfunc
+;/* End Function:TIMERA0_VECTOR **********************************************/
 
 ;/* Need to tailor these to specific microcontrollers - asm not portable */
-    .sect                 ".int41"
-    .short                TIMER1_A0_VECTOR
-    .sect                 ".int45"
+    .sect                 ".int09"
     .short                TIMER0_A0_VECTOR
 ;/* End Of File **************************************************************/
 

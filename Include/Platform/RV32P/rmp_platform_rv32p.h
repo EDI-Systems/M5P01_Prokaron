@@ -1,15 +1,15 @@
 /******************************************************************************
-Filename    : rmp_platform_rv32gp.h
+Filename    : rmp_platform_rv32p.h
 Author      : pry
 Date        : 01/04/2017
 Licence     : The Unlicense; see LICENSE for details.
-Description : The header of "rmp_platform_rv32gp.c".
+Description : The header of "rmp_platform_rv32p.c".
 ******************************************************************************/
 
 /* Defines *******************************************************************/
 #ifdef __HDR_DEFS__
-#ifndef __RMP_PLATFORM_RV32GP_H_DEFS__
-#define __RMP_PLATFORM_RV32GP_H_DEFS__
+#ifndef __RMP_PLATFORM_RV32P_H_DEFS__
+#define __RMP_PLATFORM_RV32P_H_DEFS__
 /*****************************************************************************/
 /* Basic Types ***************************************************************/
 #ifndef __RMP_S32_T__
@@ -77,13 +77,10 @@ typedef rmp_s32_t rmp_ret_t;
 #define RMP_LSB_GET(VAL)                RMP_LSB_Generic(VAL)
 
 /* The CPU and application specific macros are here */
-#include "rmp_platform_rv32gp_conf.h"
+#include "rmp_platform_rv32p_conf.h"
 /* End System macros *********************************************************/
-
-/* RV32GPIMAC specific macros **************************************************/
-
 /*****************************************************************************/
-/* __RMP_PLATFORM_RV32GP_H_DEFS__ */
+/* __RMP_PLATFORM_RV32P_H_DEFS__ */
 #endif
 /* __HDR_DEFS__ */
 #endif
@@ -91,51 +88,51 @@ typedef rmp_s32_t rmp_ret_t;
 
 /* Structs *******************************************************************/
 #ifdef __HDR_STRUCTS__
-#ifndef __RMP_PLATFORM_RV32GP_H_STRUCTS__
-#define __RMP_PLATFORM_RV32GP_H_STRUCTS__
+#ifndef __RMP_PLATFORM_RV32P_H_STRUCTS__
+#define __RMP_PLATFORM_RV32P_H_STRUCTS__
 /* We used structs in the header */
 
 /* Use defines in these headers */
 #define __HDR_DEFS__
 #undef __HDR_DEFS__
 /*****************************************************************************/
-struct RMP_RV32GP_Stack
+struct RMP_RV32P_Stack
 {
-    rmp_ptr_t PC;
-    rmp_ptr_t X1;
     rmp_ptr_t MSTATUS;
-    rmp_ptr_t X3;
-    rmp_ptr_t X4;
-    rmp_ptr_t X5;
-    rmp_ptr_t X6;
-    rmp_ptr_t X7;
-    rmp_ptr_t X8;
-    rmp_ptr_t X9;
-    rmp_ptr_t X10;
-    rmp_ptr_t X11;
-    rmp_ptr_t X12;
-    rmp_ptr_t X13;
-    rmp_ptr_t X14;
-    rmp_ptr_t X15;
-    rmp_ptr_t X16;
-    rmp_ptr_t X17;
-    rmp_ptr_t X18;
-    rmp_ptr_t X19;
-    rmp_ptr_t X20;
-    rmp_ptr_t X21;
-    rmp_ptr_t X22;
-    rmp_ptr_t X23;
-    rmp_ptr_t X24;
-    rmp_ptr_t X25;
-    rmp_ptr_t X26;
-    rmp_ptr_t X27;
-    rmp_ptr_t X28;
-    rmp_ptr_t X29;
-    rmp_ptr_t X30;
-    rmp_ptr_t X31;
+    rmp_ptr_t PC;
+    rmp_ptr_t X1_RA;
+    rmp_ptr_t X3_GP;
+    rmp_ptr_t X4_TP;
+    rmp_ptr_t X5_T0;
+    rmp_ptr_t X6_T1;
+    rmp_ptr_t X7_T2;
+    rmp_ptr_t X8_S0_FP;
+    rmp_ptr_t X9_S1;
+    rmp_ptr_t X10_A0;
+    rmp_ptr_t X11_A1;
+    rmp_ptr_t X12_A2;
+    rmp_ptr_t X13_A3;
+    rmp_ptr_t X14_A4;
+    rmp_ptr_t X15_A5;
+    rmp_ptr_t X16_A6;
+    rmp_ptr_t X17_A7;
+    rmp_ptr_t X18_S2;
+    rmp_ptr_t X19_S3;
+    rmp_ptr_t X20_S4;
+    rmp_ptr_t X21_S5;
+    rmp_ptr_t X22_S6;
+    rmp_ptr_t X23_S7;
+    rmp_ptr_t X24_S8;
+    rmp_ptr_t X25_S9;
+    rmp_ptr_t X26_S10;
+    rmp_ptr_t X27_S11;
+    rmp_ptr_t X28_T3;
+    rmp_ptr_t X29_T4;
+    rmp_ptr_t X30_T5;
+    rmp_ptr_t X31_T6;
 };
 /*****************************************************************************/
-/* __RMP_PLATFORM_RV32GP_H_STRUCTS__ */
+/* __RMP_PLATFORM_RV32P_H_STRUCTS__ */
 #endif
 /* __HDR_STRUCTS__ */
 #endif
@@ -143,8 +140,8 @@ struct RMP_RV32GP_Stack
 
 /* Private Global Variables **************************************************/
 #if(!(defined __HDR_DEFS__||defined __HDR_STRUCTS__))
-#ifndef __RMP_PLATFORM_RV32GP_MEMBERS__
-#define __RMP_PLATFORM_RV32GP_MEMBERS__
+#ifndef __RMP_PLATFORM_RV32P_MEMBERS__
+#define __RMP_PLATFORM_RV32P_MEMBERS__
 
 /* In this way we can use the data structures and definitions in the headers */
 #define __HDR_DEFS__
@@ -177,7 +174,11 @@ struct RMP_RV32GP_Stack
 #endif
 
 /*****************************************************************************/
+EXTERN rmp_ptr_t _RMP_Global;
+EXTERN rmp_ptr_t _RMP_Stack;
 
+__EXTERN__ volatile rmp_ptr_t RMP_RV32P_Int_Act;
+__EXTERN__ volatile rmp_ptr_t _RMP_RV32P_Yield_Pend;
 /*****************************************************************************/
 
 /* End Public Global Variables ***********************************************/
@@ -193,11 +194,12 @@ EXTERN void _RMP_Start(rmp_ptr_t Entry, rmp_ptr_t Stack);
 __EXTERN__ void _RMP_Yield(void);
 
 /* Platform specific */
-EXTERN rmp_ptr_t __RMP_RV32GP_MCAUSE_Get(void);
-EXTERN void __RMP_RV32GP_MTVEC_Set(rmp_ptr_t MTVEC);
-EXTERN rmp_ptr_t __RMP_RV32GP_MCYCLE_Get(void);
-EXTERN void __RMP_RV32GP_Mem_FENCE(void);
-EXTERN void __RMP_RV32GP_Handler(void);
+EXTERN rmp_ptr_t RMP_RV32P_MCYCLE_Get(void);
+EXTERN rmp_ptr_t RMP_RV32P_MCAUSE_Get(void);
+EXTERN void _RMP_RV32P_MTVEC_Set(rmp_ptr_t Value);
+EXTERN void _RMP_RV32P_Yield_NONE(void);
+EXTERN void _RMP_RV32P_Yield_RVF(void);
+EXTERN void _RMP_RV32P_Yield_RVFD(void);
 
 /* Initialization */
 __EXTERN__ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
@@ -209,14 +211,11 @@ __EXTERN__ void RMP_Putchar(char Char);
 __EXTERN__ void _RMP_Plat_Hook(void);
 
 /* Interrupt handler */
-__EXTERN__ void __RMP_RV32GP_Ctx_Handler(void);
-__EXTERN__ void __RMP_RV32GP_Tim_Handler(void);
-__EXTERN__ void __RMP_RV32GP_Vct_Handler(rmp_ptr_t Mcause);
-__EXTERN__ void _RMP_RV32GP_Handler(void);
+__EXTERN__ void _RMP_RV32P_Tim_Handler(void);
 /*****************************************************************************/
 /* Undefine "__EXTERN__" to avoid redefinition */
 #undef __EXTERN__
-/* __RMP_PLATFORM_RV32GP_MEMBERS__ */
+/* __RMP_PLATFORM_RV32P_MEMBERS__ */
 #endif
 /* !(defined __HDR_DEFS__||defined __HDR_STRUCTS__) */
 #endif

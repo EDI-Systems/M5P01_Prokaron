@@ -5,42 +5,6 @@ Date        : 22/07/2017
 Licence     : The Unlicense; see LICENSE for details.
 Description : The testbench for CH32V307VC.
 
-GCC 8.2.0 -O3 (FPU disabled)
-    ___   __  ___ ___
-   / _ \ /  |/  // _ \       Simple real-time kernel
-  / , _// /|_/ // ___/       Standard benchmark test
- /_/|_|/_/  /_//_/
-====================================================
-Test (number in CPU cycles)        : AVG / MAX / MIN
-Yield                              : 301 / 312 / 301
-Mailbox                            : 470 / 489 / 470
-Semaphore                          : 418 / 430 / 418
-FIFO                               : 180 / 218 / 180
-Message queue                      : 636 / 676 / 636
-Blocking message queue             : 831 / 853 / 831
-ISR Mailbox                        : 472 / 497 / 258
-ISR Semaphore                      : 424 / 448 / 424
-ISR Message queue                  : 576 / 605 / 576
-ISR Blocking message queue         : 695 / 706 / 695
-
-GCC 8.2.0 -O3 (FPU context active)
-    ___   __  ___ ___
-   / _ \ /  |/  // _ \       Simple real-time kernel
-  / , _// /|_/ // ___/       Standard benchmark test
- /_/|_|/_/  /_//_/
-====================================================
-Test (number in CPU cycles)        : AVG / MAX / MIN
-Yield                              : 378 / 385 / 378
-Mailbox                            : 546 / 576 / 546
-Semaphore                          : 492 / 518 / 492
-FIFO                               : 177 / 198 / 177
-Message queue                      : 719 / 757 / 719
-Blocking message queue             : 909 / 957 / 909
-ISR Mailbox                        : 559 / 585 / 271
-ISR Semaphore                      : 518 / 536 / 518
-ISR Message queue                  : 669 / 707 / 669
-ISR Blocking message queue         : 789 / 815 / 789
-
 GCC 12.2.0 -O3 (FPU disabled)
     ___   __  ___ ___
    / _ \ /  |/  // _ \       Simple real-time kernel
@@ -48,16 +12,16 @@ GCC 12.2.0 -O3 (FPU disabled)
  /_/|_|/_/  /_//_/
 ====================================================
 Test (number in CPU cycles)        : AVG / MAX / MIN
-Yield                              : 259 / 281 / 259
-Mailbox                            : 438 / 471 / 438
-Semaphore                          : 394 / 421 / 394
-FIFO                               : 180 / 199 / 180
-Message queue                      : 607 / 647 / 607
-Blocking message queue             : 769 / 802 / 769
-ISR Mailbox                        : 430 / 452 / 238
-ISR Semaphore                      : 387 / 418 / 387
-ISR Message queue                  : 541 / 564 / 541
-ISR Blocking message queue         : 653 / 672 / 653
+Yield                              : 246 / 256 / 246
+Mailbox                            : 426 / 451 / 426
+Semaphore                          : 386 / 409 / 386
+FIFO                               : 179 / 196 / 179
+Message queue                      : 605 / 652 / 605
+Blocking message queue             : 767 / 789 / 767
+ISR Mailbox                        : 359 / 382 / 287
+ISR Semaphore                      : 321 / 352 / 321
+ISR Message queue                  : 466 / 499 / 466
+ISR Blocking message queue         : 593 / 609 / 593
 
 GCC 12.2.0 -O3 (FPU context active)
     ___   __  ___ ___
@@ -66,16 +30,16 @@ GCC 12.2.0 -O3 (FPU context active)
  /_/|_|/_/  /_//_/
 ====================================================
 Test (number in CPU cycles)        : AVG / MAX / MIN
-Yield                              : 334 / 349 / 334
-Mailbox                            : 510 / 541 / 510
-Semaphore                          : 474 / 493 / 470
-FIFO                               : 180 / 202 / 180
-Message queue                      : 672 / 707 / 672
-Blocking message queue             : 828 / 858 / 828
-ISR Mailbox                        : 521 / 540 / 259
-ISR Semaphore                      : 483 / 507 / 483
-ISR Message queue                  : 618 / 652 / 618
-ISR Blocking message queue         : 733 / 759 / 733
+Yield                              : 318 / 330 / 318
+Mailbox                            : 495 / 522 / 495
+Semaphore                          : 457 / 478 / 457
+FIFO                               : 182 / 204 / 182
+Message queue                      : 674 / 718 / 674
+Blocking message queue             : 836 / 865 / 836
+ISR Mailbox                        : 405 / 430 / 330
+ISR Semaphore                      : 366 / 390 / 366
+ISR Message queue                  : 500 / 523 / 500
+ISR Blocking message queue         : 624 / 647 / 624
 ******************************************************************************/
 
 /* Includes ******************************************************************/
@@ -109,7 +73,7 @@ void Int_Handler(void);
 void Int_Disable(void);
 
 /* Software-handled stack pushing/popping */
-void TIM4_IRQHandler(void) __attribute__((interrupt()));
+void _TIM4_IRQHandler(void);
 /* End Globals ***************************************************************/
 
 /* Begin Function:Timer_Init **************************************************
@@ -148,7 +112,7 @@ void Int_Init(void)
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4, ENABLE);
     TIM4_Handle.TIM_Prescaler = 0;
     TIM4_Handle.TIM_CounterMode = TIM_CounterMode_Down;
-    TIM4_Handle.TIM_Period = 14400;
+    TIM4_Handle.TIM_Period = 14400*4;
     TIM4_Handle.TIM_ClockDivision = TIM_CKD_DIV1;
     TIM4_Handle.TIM_RepetitionCounter = 0;
     TIM_TimeBaseInit(TIM4,&TIM4_Handle);
@@ -163,7 +127,7 @@ void Int_Init(void)
     TIM_Cmd(TIM4, ENABLE);
 }
 
-void TIM4_IRQHandler(void)
+void _TIM4_IRQHandler(void)
 {
     TIM_ClearITPendingBit(TIM4,TIM_IT_Update);
     TIM_ClearFlag(TIM4, TIM_FLAG_Update);

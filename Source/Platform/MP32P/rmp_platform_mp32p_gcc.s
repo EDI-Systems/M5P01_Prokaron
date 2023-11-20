@@ -1,5 +1,5 @@
 /******************************************************************************
-Filename    : platform_mipsm_asm.s
+Filename    : platform_mp32p_asm.s
 Author      : pry
 Date        : 10/04/2012
 Description : The assembly part of the RMP RTOS.
@@ -59,8 +59,8 @@ R31    $ra        return address (used by function call)
     /* Enable all interrupts */        
     .global             RMP_Int_Enable   
     /* Get the MSB/LSB */
-    .global             _RMP_MIPSM_MSB_Get
-    .global             _RMP_MIPSM_LSB_Get
+    .global             _RMP_MP32P_MSB_Get
+    .global             _RMP_MP32P_LSB_Get
     /* Start the first thread */
     .global             _RMP_Start
     /* The context switch trigger */
@@ -325,7 +325,7 @@ _RMP_Set_Timer:
     .end                _RMP_Set_Timer
 /* End Function:_RMP_Set_Timer ***********************************************/
 
-/* Begin Function:_RMP_MIPSM_MSB_Get ******************************************
+/* Begin Function:_RMP_MP32P_MSB_Get ******************************************
 Description    : Get the MSB of the word.
 Input          : ptr_t Value - The value.
 Output         : None.
@@ -336,17 +336,17 @@ Register Usage : None.
     .set                nomicromips
     .set                noreorder
     .set                noat
-    .ent                _RMP_MIPSM_MSB_Get
-_RMP_MIPSM_MSB_Get:
+    .ent                _RMP_MP32P_MSB_Get
+_RMP_MP32P_MSB_Get:
     CLZ                 $a0,$a0
     LI                  $v0,31
     SUB                 $v0,$a0
     JR                  $ra
     NOP
-    .end                _RMP_MIPSM_MSB_Get
-/* End Function:_RMP_MIPSM_MSB_Get *******************************************/
+    .end                _RMP_MP32P_MSB_Get
+/* End Function:_RMP_MP32P_MSB_Get *******************************************/
 
-/* Begin Function:_RMP_MIPSM_LSB_Get ******************************************
+/* Begin Function:_RMP_MP32P_LSB_Get ******************************************
 Description    : Get the LSB of the word.
 Input          : ptr_t Value - The value.
 Output         : None.
@@ -357,8 +357,8 @@ Register Usage : None.
     .set                nomicromips
     .set                noreorder
     .set                noat
-    .ent                _RMP_MIPSM_MSB_Get
-_RMP_MIPSM_LSB_Get:
+    .ent                _RMP_MP32P_MSB_Get
+_RMP_MP32P_LSB_Get:
     ADDIU               $t0,$a0,-1
     NOT                 $v0,$a0
     AND                 $t0,$v0,$t0
@@ -367,8 +367,8 @@ _RMP_MIPSM_LSB_Get:
     SUBU                $v0,$v0,$t0
     JR                  $ra
     NOP
-    .end                _RMP_MIPSM_MSB_Get
-/* End Function:_RMP_MIPSM_LSB_Get *******************************************/
+    .end                _RMP_MP32P_MSB_Get
+/* End Function:_RMP_MP32P_LSB_Get *******************************************/
 
 /* Begin Function:_RMP_Yield **************************************************
 Description : Trigger a yield to another thread.
@@ -454,14 +454,8 @@ PendSV_Handler:
     INS                 $22,$0,8,1
     MTC0                $22,CP0_CAUSE
     EHB
-    /* Save extra registers */
-    JAL                 RMP_Ctx_Save
-    NOP
     /* Get the highest priority ready task */
     JAL                 _RMP_Run_High
-    NOP
-    /* Restore extra registers */
-    JAL                 RMP_Ctx_Load
     NOP
     /* Clear the interrupt flag in the chip's interrupt controller */
     JAL                 _RMP_Clear_Soft_Flag

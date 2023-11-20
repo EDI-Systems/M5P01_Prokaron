@@ -8,24 +8,23 @@
 ;*****************************************************************************/
 
 ;/* Begin Imports ************************************************************/
-    ;The stack address of current thread
-    .GLOBAL             RMP_SP_Cur
+    ;The kernel stack
+    .global             _RMP_MSP430_SP_Kern
+    ;The current thread stack
+    .global             RMP_SP_Cur
     ;The interrupt active flag
-    .GLOBAL             RMP_MSP430_Int_Act
+    .global             RMP_MSP430_Int_Act
     ;The yield pending flag
-    .GLOBAL             RMP_MSP430_Yield_Pend
-    ;Save and load extra contexts, such as FPU, peripherals and MPU
-    .GLOBAL             RMP_Ctx_Save
-    .GLOBAL             RMP_Ctx_Load
+    .global             _RMP_MSP430_Yield_Pend
     ;Extract highest priority running thread
-    .GLOBAL             _RMP_Run_High
+    .global             _RMP_Run_High
     ;Handler for MSP430 timer interrupt
-    .GLOBAL             _RMP_MSP430_Tim_Handler
+    .global             _RMP_MSP430_Tim_Handler
 ;/* End Imports **************************************************************/
 
 ;/* Begin Macros *************************************************************/
-; Push everything to stack
-RMP_MSP430_INT_SAVE     .MACRO
+;Push everything to stack
+RMP_MSP430_INT_SAVE     .macro
     PUSH                R15
     PUSH                R14
     PUSH                R13
@@ -38,21 +37,20 @@ RMP_MSP430_INT_SAVE     .MACRO
     PUSH                R6
     PUSH                R5
     PUSH                R4
-    CALL                #RMP_Ctx_Save
     MOV                 SP,&RMP_SP_Cur
+    MOV                 &_RMP_MSP430_SP_Kern,SP
     MOV                 #1,&RMP_MSP430_Int_Act
-    .ENDM
+    .endm
 
-; Load everything from stack, and deal with pending yields if there is
-RMP_MSP430_INT_RESTORE  .MACRO
-    CMP                 #0,&RMP_MSP430_Yield_Pend
+;Load everything from stack, and deal with pending yields if there is
+RMP_MSP430_INT_RESTORE  .macro
+    CMP                 #0,&_RMP_MSP430_Yield_Pend
     JEQ                 RMP_MSP430_YIELD_SKIP?
+    MOV                 #0,&_RMP_MSP430_Yield_Pend
     CALL                #_RMP_Run_High
-    MOV                 #0,&RMP_MSP430_Yield_Pend
 RMP_MSP430_YIELD_SKIP?
     MOV                 #0,&RMP_MSP430_Int_Act
     MOV                 &RMP_SP_Cur,SP
-    CALL                #RMP_Ctx_Load
     POP                 R4
     POP                 R5
     POP                 R6
@@ -68,7 +66,7 @@ RMP_MSP430_YIELD_SKIP?
     BIC                 #0xF0,0(SP)
     BIS                 #0x08,0(SP)
     RETI
-    .ENDM
+    .endm
 ;/* End Macros ***************************************************************/
 
 ;/* End Of File **************************************************************/

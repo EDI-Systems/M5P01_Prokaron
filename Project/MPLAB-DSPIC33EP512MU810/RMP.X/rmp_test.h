@@ -7,7 +7,7 @@ Description : The configuration file for testing program.
 ******************************************************************************/
 
 /* Config Includes ***********************************************************/
-#include "Test/Chip/rmp_test_dspic33ep512mu810.h"
+#include "Test/Chip/rmp_test_dspic33ep512.h"
 /* End Config Includes *******************************************************/
 
 /* End Of File ***************************************************************/

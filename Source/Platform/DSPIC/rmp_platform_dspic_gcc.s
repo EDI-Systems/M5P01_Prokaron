@@ -66,9 +66,6 @@ STATUS      16          Status register.
     .extern             _RMP_Thd_Cur
     /* The stack address of current thread */
     .extern             _RMP_SP_Cur
-    /* Save and load extra contexts, such as FPU, peripherals and MPU */
-    .extern             _RMP_Ctx_Save
-    .extern             _RMP_Ctx_Load
     /* The place where we store the kernel sp value */
     .extern             _RMP_SP_Val
     /* Kernel constant pool global pointers */
@@ -286,12 +283,8 @@ Output      : None.
 __INT0Interrupt:
     SAVE_CONTEXT
 
-    /* Save extra registers */
-    CALL                _RMP_Ctx_Save
     /* Get the highest priority ready task */
     CALL                __RMP_Run_High
-    /* Restore extra registers */
-    CALL                _RMP_Ctx_Load
     /* Clear software interrupt flag */
     CALL                __RMP_Clear_Soft_Flag
 

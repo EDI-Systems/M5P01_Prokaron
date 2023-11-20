@@ -196,8 +196,10 @@ struct RMP_MSP430_Stack
 #endif
 
 /*****************************************************************************/
-__EXTERN__ rmp_ptr_t RMP_MSP430_Int_Act;
-__EXTERN__ rmp_ptr_t RMP_MSP430_Yield_Pend;
+__EXTERN__ rmp_ptr_t _RMP_MSP430_SP_Kern;
+
+__EXTERN__ volatile rmp_ptr_t RMP_MSP430_Int_Act;
+__EXTERN__ volatile rmp_ptr_t _RMP_MSP430_Yield_Pend;
 /*****************************************************************************/
 
 /* End Public Global Variables ***********************************************/

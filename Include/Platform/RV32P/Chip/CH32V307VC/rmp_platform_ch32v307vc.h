@@ -29,53 +29,33 @@ Description : The configuration file for CH32V307VC RISC-V chip.
 #define RMP_INT_MASK()                  RMP_Int_Disable()
 #define RMP_INT_UNMASK()                RMP_Int_Enable()
 
-/* 1ms tick time for 96MHz */
-#define RMP_RV32GP_TICK_COUNT           (96000U)
+/* 1ms tick time for 144MHz */
+#define RMP_RV32P_OSTIM_VAL             (144000U)
+/* What is the FPU type? */
+#define RMP_RV32P_COP_RVF               (1U)
+#define RMP_RV32P_COP_RVD               (0U)
 
-/* Mcause for interrupt vectors */
-#define RMP_RV32GP_MCAUSE_TIM           (12U)
-#define RMP_RV32GP_MCAUSE_CTX           (14U)
+/* Reprogram the timer or clear timer interrupt flags */
+#define RMP_RV32P_TIM_CLR()             (SysTick->SR=0)
 
 /* Other low-level initialization stuff - clock and serial. 
  * This is the default initialization sequence. If you wish to supply
  * your own, just redirect this macro to a custom function, or do your
  * initialization stuff in the initialization hook (RMP_Start_Hook). */
-#define RMP_RV32GP_LOWLVL_INIT() \
+#define RMP_RV32P_LOWLVL_INIT() \
 do \
 { \
     NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2); \
-    Delay_Init(); \
     USART_Printf_Init(115200U); \
     RMP_Int_Disable(); \
-    SysTick->CMP=RMP_RV32GP_TICK_COUNT; \
+    SysTick->CMP=RMP_RV32P_OSTIM_VAL; \
     SysTick->CTLR=0x3FU; \
-     \
     NVIC_EnableIRQ(Software_IRQn); \
 } \
 while(0)
 
-/* Optional platform hook */
-#define RMP_RV32GP_PLAT_HOOK() \
-extern void Test_Handler(void); \
-Test_Handler()
-
-/* Reprogram the timer or clear timer interrupt flags */
-#define RMP_RV32GP_TIM_CLR()            (SysTick->SR=0)
-
-/* Trigger/clear software interrupt */
-#define RMP_RV32GP_CTX_SET()            NVIC_SetPendingIRQ(Software_IRQn)
-#define RMP_RV32GP_CTX_CLR()            NVIC_ClearPendingIRQ(Software_IRQn)
-
-/* Peripheral handler hook */
-#define RMP_RV32GP_VCT_HANDLER(MCAUSE)
-
 /* This is for debugging output */
-#define RMP_RV32GP_PUTCHAR(CHAR) \
-do \
-{ \
-    printf("%c",CHAR); \
-} \
-while(0)
+#define RMP_RV32P_PUTCHAR(CHAR)         putchar(CHAR)
 /* End Defines ***************************************************************/
 
 /* End Of File ***************************************************************/
