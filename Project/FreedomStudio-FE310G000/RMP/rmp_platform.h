@@ -7,7 +7,7 @@ Description : The platform specific header for RMP.
 ******************************************************************************/
 
 /* Platform Includes *********************************************************/
-#include "Platform/RV32GP/rmp_platform_rv32gp.h"
+#include "Platform/RV32P/rmp_platform_rv32p.h"
 /* End Platform Includes *****************************************************/
 
 /* End Of File ***************************************************************/

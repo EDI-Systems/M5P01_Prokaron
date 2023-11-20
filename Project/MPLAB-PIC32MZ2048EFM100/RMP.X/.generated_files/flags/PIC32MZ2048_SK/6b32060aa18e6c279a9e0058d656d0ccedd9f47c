@@ -1,0 +1,1 @@
+$(MP_EXTRA_AS_PRE)  -D__DEBUG   -c -mprocessor=$(MP_PROCESSOR_OPTION) -specs=specs.txt -Wa,--defsym=__MPLAB_BUILD=1$(MP_EXTRA_AS_POST),--defsym=__ICD2RAM=1,--defsym=__MPLAB_DEBUG=1,--defsym=__DEBUG=1,--gdwarf-2,-I"." -I"../../../Include" -mdfp="${DFP_DIR}"D:\Code_Library\M5P01_Prokaron\Source\Platform\MP32P\rmp_platform_mp32p_gcc.s

@@ -1,0 +1,1 @@
+$(MP_EXTRA_AS_PRE)  -c -mprocessor=$(MP_PROCESSOR_OPTION) -specs=specs.txt -Wa,--defsym=__MPLAB_BUILD=1$(MP_EXTRA_AS_POST),--gdwarf-2,-I"." -I"../../../Include" -mdfp="${DFP_DIR}"D:\Code_Library\M5P01_Prokaron\Project\MPLAB-PIC32MZ2048EFM100\RMP.X\rmp_test_pic32mz2048.s

@@ -23,27 +23,27 @@
 
 ;/* Begin Header *************************************************************/
     .text
-    .ALIGN              2
+    .align              2
 ;/* End Header ***************************************************************/
 
 ;/* Begin Exports ************************************************************/
     ;Disable all interrupts
-    .DEF                RMP_Int_Disable
+    .def                RMP_Int_Disable
     ;Enable all interrupts            
-    .DEF                RMP_Int_Enable
+    .def                RMP_Int_Enable
     ;Start the first thread
-    .DEF                _RMP_Start
+    .def                _RMP_Start
     ;Start the first thread
-    .DEF                _RMP_MSP430_Yield
+    .def                _RMP_MSP430_Yield
 ;/* End Exports **************************************************************/
 
 ;/* Begin Imports ************************************************************/
-    ;The stack address of current thread
-    .GLOBAL             RMP_SP_Cur
-    ;Save and load extra contexts, such as FPU, peripherals and MPU
-    .GLOBAL             RMP_Ctx_Save
-    .GLOBAL             RMP_Ctx_Load
-    .GLOBAL             _RMP_Run_High
+    ;The real task switch handling function
+    .global             _RMP_Run_High
+    ;The current thread stack
+    .global             RMP_SP_Cur
+    ;The kernel stack
+    .global             _RMP_MSP430_SP_Kern
 ;/* End Imports **************************************************************/
 
 ;/* Begin Function:RMP_Int_Disable ********************************************
@@ -52,13 +52,13 @@
 ;Output      : None.
 ;Return      : None.
 ;*****************************************************************************/
-RMP_Int_Disable:        .ASMFUNC
+RMP_Int_Disable:        .asmfunc
     ;Disable all interrupts
     NOP
     DINT
     NOP
     RETA
-    .ENDASMFUNC
+    .endasmfunc
 ;/* End Function:RMP_Int_Disable *********************************************/
 
 ;/* Begin Function:RMP_Int_Enable *********************************************
@@ -67,13 +67,13 @@ RMP_Int_Disable:        .ASMFUNC
 ;Output      : None.
 ;Return      : None.
 ;*****************************************************************************/
-RMP_Int_Enable:         .ASMFUNC
+RMP_Int_Enable:         .asmfunc
     ;Enable all interrupts
     NOP
     EINT
     NOP
     RETA
-    .ENDASMFUNC
+    .endasmfunc
 ;/* End Function:RMP_Int_Enable **********************************************/
 
 ;/* Begin Function:_RMP_Start *************************************************
@@ -83,7 +83,9 @@ RMP_Int_Enable:         .ASMFUNC
 ;Output      : None.
 ;Return      : None.
 ;*****************************************************************************/
-_RMP_Start:             .ASMFUNC
+_RMP_Start:             .asmfunc
+    ;Save kernel stack
+    MOVA                SP,&_RMP_MSP430_SP_Kern
     ;Place the PC into the same word
     PUSH                R13
     PUSH                R12
@@ -97,7 +99,7 @@ _RMP_Start:             .ASMFUNC
     MOVA                R12,PC
     ; Dummy return
     RETA
-    .ENDASMFUNC
+    .endasmfunc
 ;/* End Function:_RMP_Start **************************************************/
 
 ;/* Begin Function:_RMP_MSP430_Yield ******************************************
@@ -107,7 +109,7 @@ _RMP_Start:             .ASMFUNC
 ;Output      : None.
 ;Return      : None.
 ;*****************************************************************************/
-_RMP_MSP430_Yield:      .ASMFUNC
+_RMP_MSP430_Yield:      .asmfunc
     ;Disable all interrupts
     NOP
     DINT
@@ -118,23 +120,21 @@ _RMP_MSP430_Yield:      .ASMFUNC
 
     ;Save all GP regs and save SP to block
     PUSHM.A             #12,R15
-    CALLA               #RMP_Ctx_Save
-    MOVA                SP,&RMP_SP_Cur
 
-    ;PC higher half, and set GIE(bit[3]) in SR
+    ;Populate PC higher half
     MOV                 #$HI16(_RMP_MSP430_Skip),R15
     RLAM                #4,R15
     RLAM                #4,R15
     RLAM                #4,R15
-    ADD                 #0x08,R15
     ADD                 R15,12*4(SP)
 
-    ;Choose highest priority ready thread
+    ;Choose highest priority ready thread with kernel stack
+    MOVA                SP,&RMP_SP_Cur
+    MOVA                &_RMP_MSP430_SP_Kern,SP
     CALLA               #_RMP_Run_High
+    MOVA                &RMP_SP_Cur,SP
 
     ;Pop as if we returned from an interrupt, enabling interrupt
-    MOVA                &RMP_SP_Cur,SP
-    CALLA               #RMP_Ctx_Load
     POPM.A              #12,R15
     ;Make sure we don't enter LPM mode automatically on return
     BIC                 #0xF0,0(SP)
@@ -142,7 +142,7 @@ _RMP_MSP430_Yield:      .ASMFUNC
     RETI
 _RMP_MSP430_Skip:
     RETA
-    .ENDASMFUNC
+    .endasmfunc
 ;/* End Function:_RMP_MSP430_Yield *******************************************/
 
 ;/* End Of File **************************************************************/

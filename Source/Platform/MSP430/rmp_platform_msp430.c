@@ -34,7 +34,7 @@ Return      : None.
 void _RMP_Yield(void)
 {
     if(RMP_MSP430_Int_Act!=0U)
-        RMP_MSP430_Yield_Pend=1U;
+        _RMP_MSP430_Yield_Pend=1U;
     else
         _RMP_MSP430_Yield();
 }
@@ -115,7 +115,7 @@ void _RMP_Lowlvl_Init(void)
 
     /* Clear flags */
     RMP_MSP430_Int_Act=0U;
-    RMP_MSP430_Yield_Pend=0U;
+    _RMP_MSP430_Yield_Pend=0U;
 }
 /* End Function:_RMP_Lowlvl_Init *********************************************/
 

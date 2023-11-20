@@ -260,10 +260,6 @@ void RMP_PendSV_Handler(void)
     *(--SP)=RVM_STATE->Usr.Param[0];
     *(--SP)=RVM_STATE->Usr.Number;
     
-    /* Save extra context
-     * BL       RMP_Ctx_Save */
-    RMP_Ctx_Save();
-    
     /* Save the SP to control block
      * LDR      R1, =RMP_SP_Cur
      * STR      R0, [R1] */
@@ -277,10 +273,6 @@ void RMP_PendSV_Handler(void)
      * LDR      R1, =RMP_SP_Cur
      * LDR      R0, [R1] */
     SP=(rmp_ptr_t*)RMP_SP_Cur;
-    
-    /* Load extra context
-     * BL       RMP_Ctx_Load */
-    RMP_Ctx_Load();
 
     /* Load the user-accessible hypercall structure to stack */
     RVM_STATE->Usr.Number=*(SP++);

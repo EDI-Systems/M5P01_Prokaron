@@ -982,6 +982,11 @@ void _RMP_Run_High(void)
     rmp_cnt_t Word;
     rmp_ptr_t Prio;
     
+    /* Save potential extra context */
+#if(RMP_HOOK_EXTRA!=0U)
+    RMP_Ctx_Save();
+#endif
+    
     /* Write the SP value to thread structure */
     RMP_Thd_Cur->Stack=RMP_SP_Cur;
     
@@ -1033,7 +1038,9 @@ void _RMP_Run_High(void)
     /* Load the SP value from thread structure */
     RMP_SP_Cur=RMP_Thd_Cur->Stack;
     
+    /* Load potential extra context and do scheduler hook */
 #if(RMP_HOOK_EXTRA!=0U)
+    RMP_Ctx_Load();
     RMP_Sched_Hook();
 #endif
 }
@@ -3037,34 +3044,6 @@ rmp_ret_t RMP_Sem_Cnt(volatile struct RMP_Sem* Semaphore)
     return Count;
 }
 /* End Function:RMP_Sem_Cnt **************************************************/
-
-/* Begin Function:RMP_Ctx_Save ************************************************
-Description : Save hook for extra context, such as FPU, peripherals and MPU.
-Input       : None.
-Output      : None.
-Return      : None.
-******************************************************************************/
-#if(RMP_HOOK_EXTRA==0U)
-void RMP_Ctx_Save(void)
-{
-    return;
-}
-#endif
-/* End Function:RMP_Ctx_Save *************************************************/
-
-/* Begin Function:RMP_Ctx_Load ************************************************
-Description : Load hook for extra context, such as FPU, peripherals and MPU.
-Input       : None.
-Output      : None.
-Return      : None.
-******************************************************************************/
-#if(RMP_HOOK_EXTRA==0U)
-void RMP_Ctx_Load(void)
-{
-    return;
-}
-#endif
-/* End Function:RMP_Ctx_Load *************************************************/
 
 /* Begin Function:RMP_Init ****************************************************
 Description : The entry of the user thread. This is the first user thread that

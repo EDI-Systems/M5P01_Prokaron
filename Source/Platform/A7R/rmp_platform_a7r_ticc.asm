@@ -213,17 +213,11 @@ PendSV_Handler          .asmfunc
     MOV                 R1,#0x0F
     STR                 R1,[R0]
 
-    BL                  RMP_Ctx_Save        ;Save extra context
-                
     LDR                 R1,RMP_SP_Cur_Addr  ;Save The SP to control block.
     STR                 SP,[R1]
-                
     BL                  _RMP_Run_High       ;Get the highest ready task.
-                
     LDR                 R1,RMP_SP_Cur_Addr  ;Load the SP.
     LDR                 SP,[R1]
-                
-    BL                  RMP_Ctx_Load        ;Load extra context
 
     POP                 {R0-R12,LR}
     RFEIA               SP!

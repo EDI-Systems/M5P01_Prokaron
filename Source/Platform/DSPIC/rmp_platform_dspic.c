@@ -4,6 +4,10 @@ Author      : pry
 Date        : 04/02/2018
 Licence     : The Unlicense; see LICENSE for details.
 Description : The platform specific file for DSPIC 33E. This also works for PIC24.
+              The DSPIC compilers are special in the sense that they put all 
+              data in the first 64K, and all code points which could be jumped
+              to in the first 64K. Thus 16-bit rmp_ptr_t is sufficient, yet 
+              when switching context we need to handle 24-bit code pointers.
 ******************************************************************************/
 
 /* Includes ******************************************************************/
@@ -24,6 +28,88 @@ Description : The platform specific file for DSPIC 33E. This also works for PIC2
 #include "Kernel/rmp_kernel.h"
 #undef __HDR_PUBLIC_MEMBERS__
 /* End Includes **************************************************************/
+
+/* Begin Function:_RMP_Stack_Init *********************************************
+Description : Initiate the process stack when trying to start a process. Never
+              call this function in user application.
+Input       : rmp_ptr_t Stack - The stack address of the thread.
+              rmp_ptr_t Size - The stack size of the thread.
+              rmp_ptr_t Entry - The entry address of the thread.
+              rmp_ptr_t Param - The argument to pass to the thread.
+Output      : None.
+Return      : rmp_ptr_t - The adjusted stack location.
+******************************************************************************/
+rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
+                          rmp_ptr_t Size,
+                          rmp_ptr_t Entry,
+                          rmp_ptr_t Param)
+{
+    rmp_ptr_t Start;
+    struct RMP_DSPIC_Stack* Ptr;
+    
+    /* Compute & align stack */
+    Start=RMP_ROUND_UP(Stack, 2U);
+    Ptr=(struct RMP_DSPIC_Stack*)Start;
+
+    /* The entry - SFA bit not set */
+    Ptr->PCL=Entry;
+    /* Last 8 bits of status register, IPL3, PC residue - all zero*/
+    Ptr->PCH=0U;
+    /* Initial SR - all zero except for IPL, set to 2, because lowest actual level is 1 */
+    Ptr->SR=((rmp_ptr_t)2U)<<5;
+    /* W0-W14 */
+    Ptr->W0=Param;
+    Ptr->W1=0x0101U;
+    Ptr->W2=0x0202U;
+    Ptr->W3=0x0303U;
+    Ptr->W4=0x0404U;
+    Ptr->W5=0x0505U;
+    Ptr->W6=0x0606U;
+    Ptr->W7=0x0707U;
+    Ptr->W8=0x0808U;
+    Ptr->W9=0x0909U;
+    Ptr->W10=0x1010U;
+    Ptr->W11=0x1111U;
+    Ptr->W12=0x1212U;
+    Ptr->W13=0x1313U;
+    Ptr->W14=0x1414U;
+    /* We don't use SPLIM with OS, it is always untouched */
+    /* ACCAL,ACCAH,ACCAU,ACCBL,ACCBH,ACCBU */
+    Ptr->ACCAL=0U;
+    Ptr->ACCAH=0U;
+    Ptr->ACCAU=0U;
+    Ptr->ACCBL=0U;
+    Ptr->ACCBH=0U;
+    Ptr->ACCBU=0U;
+    /* DSRPAG,DSWPAG - reset to what the toolkit initialized it to be */
+    Ptr->DSRPAG=RMP_DSRPAG_Val;
+    Ptr->DSWPAG=RMP_DSWPAG_Val;
+    /* RCOUNT,DCOUNT,DOSTARTL,DOSTARTH,DOENDL,DOENDH */
+    Ptr->RCOUNT=0U;
+    Ptr->DCOUNT=0U;
+    Ptr->DOSTARTL=0U;
+    Ptr->DOSTARTH=0U;
+    Ptr->DOENDL=0U;
+    Ptr->DOENDH=0U;
+    /* CORCON */
+    Ptr->CORCON=0x0020U;
+    /* MODCON */
+    Ptr->MODCON=0x0000U;
+    /* XMODSRT,XMODEND,YMODSRT,YMODEND */
+    Ptr->XMODSRT=0x0000U;
+    Ptr->XMODEND=0x0001U;
+    Ptr->YMODSRT=0x0000U;
+    Ptr->YMODEND=0x0001U;
+    /* XBREV */
+    Ptr->XBREV=0x0000U;
+    /* TBLPAG */
+    Ptr->TBLPAG=RMP_TBLPAG_Val;
+    /* MSTRPR */
+    Ptr->MSTRPR=0x0000U;
+
+    return (rmp_ptr_t)Ptr;
+}
+/* End Function:_RMP_Stack_Init **********************************************/
 
 /* Begin Function:_RMP_Clear_Soft_Flag ****************************************
 Description : Clear the software interrupt flag in the interrupt controller.
@@ -48,78 +134,6 @@ void _RMP_Clear_Timer_Flag(void)
     RMP_DSPIC_CLEAR_TIMER_FLAG();
 }
 /* End Function:_RMP_Clear_Timer_Flag ****************************************/
-
-/* Begin Function:_RMP_Stack_Init *********************************************
-Description : Initiate the process stack when trying to start a process. Never
-              call this function in user application.
-Input       : rmp_ptr_t Entry - The entry of the thread.
-              rmp_ptr_t Stack - The stack address of the thread.
-              rmp_ptr_t Arg - The argument to pass to the thread.
-Output      : None.
-Return      : None.
-******************************************************************************/
-void _RMP_Stack_Init(rmp_ptr_t Entry, rmp_ptr_t Stack, rmp_ptr_t Arg)
-{
-    rmp_ptr_t* Stack_Ptr;
-    Stack_Ptr=(rmp_ptr_t*)(Stack-sizeof(rmp_ptr_t)*41);
-    
-    /* The entry - SFA bit not set */
-    Stack_Ptr[0]=Entry;
-    /* Last 8 bits of status register, IPL3, PC residue - all zero*/
-    Stack_Ptr[1]=0U;
-    /* Initial SR - all zero except for IPL, set to 2, because lowest actual level is 1 */
-    Stack_Ptr[2]=((rmp_ptr_t)2U)<<5;
-    /* W0-W14 */
-    Stack_Ptr[3]=Arg;
-    Stack_Ptr[4]=0x0101U;
-    Stack_Ptr[5]=0x0202U;
-    Stack_Ptr[6]=0x0303U;
-    Stack_Ptr[7]=0x0404U;
-    Stack_Ptr[8]=0x0505U;
-    Stack_Ptr[9]=0x0606U;
-    Stack_Ptr[10]=0x0707U;
-    Stack_Ptr[11]=0x0808U;
-    Stack_Ptr[12]=0x0909U;
-    Stack_Ptr[13]=0x1010U;
-    Stack_Ptr[14]=0x1111U;
-    Stack_Ptr[15]=0x1212U;
-    Stack_Ptr[16]=0x1313U;
-    Stack_Ptr[17]=0x1414U;
-    /* We don't use SPLIM with OS, it is always untouched */
-    /* ACCAL,ACCAH,ACCAU,ACCBL,ACCBH,ACCBU */
-    Stack_Ptr[18]=0U;
-    Stack_Ptr[19]=0U;
-    Stack_Ptr[20]=0U;
-    Stack_Ptr[21]=0U;
-    Stack_Ptr[22]=0U;
-    Stack_Ptr[23]=0U;
-    /* DSRPAG,DSWPAG - reset to what the toolkit initialized it to be */
-    Stack_Ptr[24]=RMP_DSRPAG_Val;
-    Stack_Ptr[25]=RMP_DSWPAG_Val;
-    /* RCOUNT,DCOUNT,DOSTARTL,DOSTARTH,DOENDL,DOENDH */
-    Stack_Ptr[26]=0U;
-    Stack_Ptr[27]=0U;
-    Stack_Ptr[28]=0U;
-    Stack_Ptr[29]=0U;
-    Stack_Ptr[30]=0U;
-    Stack_Ptr[31]=0U;
-    /* CORCON */
-    Stack_Ptr[32]=0x0020U;
-    /* MODCON */
-    Stack_Ptr[33]=0x0000U;
-    /* XMODSRT,XMODEND,YMODSRT,YMODEND */
-    Stack_Ptr[34]=0x0000U;
-    Stack_Ptr[35]=0x0001U;
-    Stack_Ptr[36]=0x0000U;
-    Stack_Ptr[37]=0x0001U;
-    /* XBREV */
-    Stack_Ptr[38]=0x0000U;
-    /* TBLPAG */
-    Stack_Ptr[39]=RMP_TBLPAG_Val;
-    /* MSTRPR */
-    Stack_Ptr[40]=0x0000U;
-}
-/* End Function:_RMP_Stack_Init **********************************************/
 
 /* Begin Function:_RMP_Lowlvl_Init ********************************************
 Description : Initialize the low level hardware of the system.

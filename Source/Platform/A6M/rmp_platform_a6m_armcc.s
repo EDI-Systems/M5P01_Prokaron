@@ -18,43 +18,40 @@
 ;*****************************************************************************/
             
 ;/* Begin Header *************************************************************/
-                        ;2^3=8 byte alignment.
-                        AREA                ARCH, CODE, READONLY, ALIGN=3                     
+    ;2^3=8 byte alignment.
+    AREA                ARCH,CODE,READONLY,ALIGN=3                     
                                     
-                        THUMB
-                        REQUIRE8
-                        PRESERVE8
+    THUMB
+    REQUIRE8
+    PRESERVE8
 ;/* End Header ***************************************************************/
 
 ;/* Begin Exports ************************************************************/
-                        ; Disable all interrupts
-                        EXPORT              RMP_Int_Disable      
-                        ; Enable all interrupts            
-                        EXPORT              RMP_Int_Enable
-                        ; Mask/unmask interrupt dummy
-                        EXPORT              RMP_Int_Mask
-                        ; Start the first thread
-                        EXPORT              _RMP_Start
-                        ; The PendSV trigger
-                        EXPORT              _RMP_Yield
-                        ; The system pending service routine              
-                        EXPORT              PendSV_Handler 
-                        ; The systick timer routine              
-                        EXPORT              SysTick_Handler                               
+    ;Disable all interrupts
+    EXPORT              RMP_Int_Disable      
+    ;Enable all interrupts            
+    EXPORT              RMP_Int_Enable
+    ;Mask/unmask interrupt dummy
+    EXPORT              RMP_Int_Mask
+    ;Start the first thread
+    EXPORT              _RMP_Start
+    ;The PendSV trigger
+    EXPORT              _RMP_Yield
+    ;The system pending service routine              
+    EXPORT              PendSV_Handler 
+    ;The systick timer routine              
+    EXPORT              SysTick_Handler                               
 ;/* End Exports **************************************************************/
 
 ;/* Begin Imports ************************************************************/
-                        ; The real task switch handling function
-                        IMPORT              _RMP_Run_High 
-                        ; The real systick handler function
-                        IMPORT              _RMP_Tim_Handler
-                        ; The PID of the current thread                     
-                        IMPORT              RMP_Thd_Cur
-                        ; The stack address of current thread
-                        IMPORT              RMP_SP_Cur        
-                        ; Save and load extra contexts, such as FPU, peripherals and MPU
-                        IMPORT              RMP_Ctx_Save
-                        IMPORT              RMP_Ctx_Load
+    ;The real task switch handling function
+    IMPORT              _RMP_Run_High 
+    ;The real systick handler function
+    IMPORT              _RMP_Tim_Handler
+    ;The PID of the current thread                     
+    IMPORT              RMP_Thd_Cur
+    ;The stack address of current thread
+    IMPORT              RMP_SP_Cur
 ;/* End Imports **************************************************************/
 
 ;/* Begin Function:RMP_Int_Disable ********************************************
@@ -64,9 +61,9 @@
 ;Return      : None.
 ;*****************************************************************************/    
 RMP_Int_Disable         PROC
-                        CPSID               I
-                        BX                  LR
-                        ENDP
+    CPSID               I
+    BX                  LR
+    ENDP
 ;/* End Function:RMP_Int_Disable *********************************************/
 
 ;/* Begin Function:RMP_Int_Enable *********************************************
@@ -76,9 +73,9 @@ RMP_Int_Disable         PROC
 ;Return      : None.
 ;*****************************************************************************/
 RMP_Int_Enable          PROC
-                        CPSIE               I
-                        BX                  LR
-                        ENDP
+    CPSIE               I
+    BX                  LR
+    ENDP
 ;/* End Function:RMP_Int_Enable **********************************************/
 
 ;/* Begin Function:RMP_Int_Mask ***********************************************
@@ -88,8 +85,8 @@ RMP_Int_Enable          PROC
 ;Return      : None.
 ;*****************************************************************************/
 RMP_Int_Mask            PROC
-                        BX                  LR
-                        ENDP
+    BX                  LR
+    ENDP
 ;/* End Function:RMP_Int_Mask ************************************************/
 
 ;/* Begin Function:_RMP_Yield *************************************************
@@ -99,12 +96,12 @@ RMP_Int_Mask            PROC
 ;Return      : None.
 ;*****************************************************************************/
 _RMP_Yield              PROC
-                        LDR                 R0, =0xE000ED04     ; The NVIC_INT_CTRL register
-                        LDR                 R1, =0x10000000     ; Trigger the PendSV          
-                        STR                 R1, [R0]
-                        ISB                                     ; Instruction barrier
-                        BX                  LR
-                        ENDP
+    LDR                 R0,=0xE000ED04      ;The NVIC_INT_CTRL register
+    LDR                 R1,=0x10000000      ;Trigger the PendSV          
+    STR                 R1,[R0]
+    ISB                                     ;Instruction barrier
+    BX                  LR
+    ENDP
 ;/* End Function:_RMP_Yield **************************************************/
 
 ;/* Begin Function:_RMP_Start *************************************************
@@ -114,13 +111,12 @@ _RMP_Yield              PROC
 ;Return      : None.
 ;*****************************************************************************/
 _RMP_Start              PROC
-                        SUBS                R1, #64             ; This is how we push our registers so move forward
-                        MSR                 PSP, R1             ; Set the stack pointer
-                        MOVS                R4, #0x02           ; Previleged thread mode
-                        MSR                 CONTROL, R4
-                        ISB                                     ; Data and instruction barrier
-                        BX                  R0                  ; Branch to our target
-                        ENDP
+    MSR                 PSP,R1              ;Set the stack pointer
+    MOVS                R4,#0x02            ;Previleged thread mode
+    MSR                 CONTROL,R4
+    ISB                                     ;Data and instruction barrier
+    BX                  R0                  ;Branch to our target
+    ENDP
 ;/* End Function:_RMP_Start **************************************************/
 
 ;/* Begin Function:PendSV_Handler *********************************************
@@ -137,43 +133,36 @@ _RMP_Start              PROC
 ;Return      : None.
 ;*****************************************************************************/
 PendSV_Handler          PROC
-                        ; Make space for register list
-                        MRS                 R0, PSP             ; Spill all the registers onto the user stack
-                        SUBS                R0, #36
-                        MOV                 R1, R0
-                        STMIA               R1!, {R4-R7}        ; Save low registers first due to limitation
-                        MOV                 R7, LR
-                        MOV                 R6, R11
-                        MOV                 R5, R10
-                        MOV                 R4, R9
-                        MOV                 R3, R8
-                        STMIA               R1!, {R3-R7}
+    MRS                 R0,PSP              ;Save all the registers onto the user stack
+    SUBS                R0,#36
+    MOV                 R1,R0
+    STMIA               R1!,{R4-R7}         ;Save low registers first due to limitation
+    MOV                 R7,LR
+    MOV                 R6,R11
+    MOV                 R5,R10
+    MOV                 R4,R9
+    MOV                 R3,R8
+    STMIA               R1!,{R3-R7}
 
-                        BL                  RMP_Ctx_Save        ; Save extra context
-                                    
-                        LDR                 R1, =RMP_SP_Cur     ; Save The SP to control block.
-                        STR                 R0, [R1]
+    LDR                 R1,=RMP_SP_Cur      ;Save The SP to control block.
+    STR                 R0,[R1]
+    BL                  _RMP_Run_High       ;Get the highest ready task.
+    LDR                 R1,=RMP_SP_Cur      ;Load the SP.
+    LDR                 R0,[R1]
 
-                        BL                  _RMP_Run_High       ; Get the highest ready task.
-                                    
-                        LDR                 R1, =RMP_SP_Cur     ; Load the SP.
-                        LDR                 R0, [R1]
+    MOV                 R1,R0               ;Load all the registers from the user stack
+    ADDS                R0,#16
+    LDMIA               R0!,{R3-R7}         ;Load high registers first due to limitation
+    MOV                 R8,R3
+    MOV                 R9,R4
+    MOV                 R10,R5
+    MOV                 R11,R6
+    MOV                 LR,R7
+    LDMIA               R1!,{R4-R7}
+    MSR                 PSP,R0
 
-                        BL                  RMP_Ctx_Load        ; Load extra context
-
-                        MOV                 R1, R0
-                        ADDS                R0, #16
-                        LDMIA               R0!, {R3-R7}        ; Load high registers first due to limitation
-                        MOV                 R8, R3
-                        MOV                 R9, R4
-                        MOV                 R10, R5
-                        MOV                 R11, R6
-                        MOV                 LR, R7
-                        LDMIA               R1!, {R4-R7}
-                        MSR                 PSP,R0
-
-                        BX                  LR
-                        ENDP
+    BX                  LR
+    ENDP
 ;/* End Function:PendSV_Handler **********************************************/
 
 ;/* Begin Function:SysTick_Handler ********************************************
@@ -189,16 +178,16 @@ PendSV_Handler          PROC
 ;Return      : None.
 ;*****************************************************************************/
 SysTick_Handler         PROC
-                        PUSH                {LR}
+    PUSH                {LR}
 
-                        MOVS                R0, #0x01           ; We are not using tickless.
-                        BL                  _RMP_Tim_Handler
+    MOVS                R0,#0x01            ;We are not using tickless.
+    BL                  _RMP_Tim_Handler
                         
-                        POP                 {PC}
-                        ENDP
+    POP                 {PC}
+    ENDP
 ;/* End Function:SysTick_Handler *********************************************/
-                        ALIGN
-                        END
+    ALIGN
+    END
 ;/* End Of File **************************************************************/
 
 ;/* Copyright (C) Evo-Devo Instrum. All rights reserved **********************/
