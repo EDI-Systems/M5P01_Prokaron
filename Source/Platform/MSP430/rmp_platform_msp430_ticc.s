@@ -17,27 +17,27 @@
 
 ;/* Begin Header *************************************************************/
     .text
-    .ALIGN              2
+    .align              2
 ;/* End Header ***************************************************************/
 
 ;/* Begin Exports ************************************************************/
     ;Disable all interrupts
-    .DEF                RMP_Int_Disable
+    .def                RMP_Int_Disable
     ;Enable all interrupts            
-    .DEF                RMP_Int_Enable
+    .def                RMP_Int_Enable
     ;Start the first thread
-    .DEF                _RMP_Start
+    .def                _RMP_Start
     ;Start the first thread
-    .DEF                _RMP_MSP430_Yield
+    .def                _RMP_MSP430_Yield
 ;/* End Exports **************************************************************/
 
 ;/* Begin Imports ************************************************************/
-    ;The stack address of current thread
-    .GLOBAL             RMP_SP_Cur
-    ;Save and load extra contexts, such as FPU, peripherals and MPU
-    .GLOBAL             RMP_Ctx_Save
-    .GLOBAL             RMP_Ctx_Load
-    .GLOBAL             _RMP_Run_High
+    ;The real task switch handling function
+    .global             _RMP_Run_High
+    ;The current thread stack
+    .global             RMP_SP_Cur
+    ;The kernel stack
+    .global             _RMP_MSP430_SP_Kern
 ;/* End Imports **************************************************************/
 
 ;/* Begin Function:RMP_Int_Disable ********************************************
@@ -46,13 +46,13 @@
 ;Output      : None.
 ;Return      : None.
 ;*****************************************************************************/
-RMP_Int_Disable:        .ASMFUNC
+RMP_Int_Disable:        .asmfunc
     ;Disable all interrupts
     NOP
     DINT
     NOP
     RET
-    .ENDASMFUNC
+    .endasmfunc
 ;/* End Function:RMP_Int_Disable *********************************************/
 
 ;/* Begin Function:RMP_Int_Enable *********************************************
@@ -61,13 +61,13 @@ RMP_Int_Disable:        .ASMFUNC
 ;Output      : None.
 ;Return      : None.
 ;*****************************************************************************/
-RMP_Int_Enable:         .ASMFUNC
+RMP_Int_Enable:         .asmfunc
     ;Enable all interrupts
     NOP
     EINT
     NOP
     RET
-    .ENDASMFUNC
+    .endasmfunc
 ;/* End Function:RMP_Int_Enable **********************************************/
 
 ;/* Begin Function:_RMP_Start *************************************************
@@ -78,12 +78,15 @@ RMP_Int_Enable:         .ASMFUNC
 ;Output      : None.
 ;Return      : None.
 ;*****************************************************************************/
-_RMP_Start:             .ASMFUNC
+_RMP_Start:             .asmfunc
+    ;Save kernel stack
+	MOV					SP,&_RMP_MSP430_SP_Kern
+	;Make up return address
     MOV                 R13,SP
     MOV                 R12,PC
     ; Dummy return
     RET
-    .ENDASMFUNC
+    .endasmfunc
 ;/* End Function:_RMP_Start **************************************************/
 
 ;/* Begin Function:_RMP_MSP430_Yield ******************************************
@@ -93,7 +96,7 @@ _RMP_Start:             .ASMFUNC
 ;Output      : None.
 ;Return      : None.
 ;*****************************************************************************/
-_RMP_MSP430_Yield:      .ASMFUNC
+_RMP_MSP430_Yield:      .asmfunc
     ;Disable all interrupts
     NOP
     DINT
@@ -115,18 +118,14 @@ _RMP_MSP430_Yield:      .ASMFUNC
     PUSH                R6
     PUSH                R5
     PUSH                R4
-    CALL                #RMP_Ctx_Save
+
+    ;Choose highest priority ready thread with kernel stack
     MOV                 SP,&RMP_SP_Cur
-
-    ;Set GIE(bit[3]) in SR
-    ADD                 #0x08,12*2(SP)
-
-    ;Choose highest priority ready thread
+    MOV					&_RMP_MSP430_SP_Kern,SP
     CALL                #_RMP_Run_High
+    MOV                 &RMP_SP_Cur,SP
 
     ;Pop as if we returned from an interrupt, enabling interrupt
-    MOV                 &RMP_SP_Cur,SP
-    CALL                #RMP_Ctx_Load
     POP                 R4
     POP                 R5
     POP                 R6
@@ -145,7 +144,7 @@ _RMP_MSP430_Yield:      .ASMFUNC
     RETI
 _RMP_MSP430_Skip:
     RET
-    .ENDASMFUNC
+    .endasmfunc
 ;/* End Function:_RMP_MSP430_Yield *******************************************/
 
 ;/* End Of File **************************************************************/

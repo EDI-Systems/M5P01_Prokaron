@@ -71,7 +71,7 @@ typedef rmp_s16_t rmp_ret_t;
 /* The maximum length of char printing - no need to change this in most cases */
 #define RMP_DEBUG_PRINT_MAX     (255U)
 /* The offset of the stack when initializing */
-#define RMP_INIT_STACK          RMP_INIT_STACK_HEAD(64U)
+#define RMP_INIT_STACK          RMP_INIT_STACK_ASCEND(2U)
 /* MSB/LSB extraction */
 #define RMP_MSB_GET(VAL)        RMP_DSPIC_MSB_Get(VAL)
 #define RMP_LSB_GET(VAL)        RMP_DSPIC_LSB_Get(VAL)
@@ -99,7 +99,51 @@ typedef rmp_s16_t rmp_ret_t;
 #define __HDR_DEFS__
 #undef __HDR_DEFS__
 /*****************************************************************************/
-
+struct RMP_DSPIC_Stack
+{
+    /* Common registers */
+    rmp_ptr_t PCL;
+    rmp_ptr_t PCH;
+    rmp_ptr_t SR;
+    rmp_ptr_t W0;
+    rmp_ptr_t W1;
+    rmp_ptr_t W2;
+    rmp_ptr_t W3;
+    rmp_ptr_t W4;
+    rmp_ptr_t W5;
+    rmp_ptr_t W6;
+    rmp_ptr_t W7;
+    rmp_ptr_t W8;
+    rmp_ptr_t W9;
+    rmp_ptr_t W10;
+    rmp_ptr_t W11;
+    rmp_ptr_t W12;
+    rmp_ptr_t W13;
+    rmp_ptr_t W14;
+    rmp_ptr_t ACCAL;
+    rmp_ptr_t ACCAH;
+    rmp_ptr_t ACCAU;
+    rmp_ptr_t ACCBL;
+    rmp_ptr_t ACCBH;
+    rmp_ptr_t ACCBU;
+    rmp_ptr_t DSRPAG;
+    rmp_ptr_t DSWPAG;
+    rmp_ptr_t RCOUNT;
+    rmp_ptr_t DCOUNT;
+    rmp_ptr_t DOSTARTL;
+    rmp_ptr_t DOSTARTH;
+    rmp_ptr_t DOENDL;
+    rmp_ptr_t DOENDH;
+    rmp_ptr_t CORCON;
+    rmp_ptr_t MODCON;
+    rmp_ptr_t XMODSRT;
+    rmp_ptr_t XMODEND;
+    rmp_ptr_t YMODSRT;
+    rmp_ptr_t YMODEND;
+    rmp_ptr_t XBREV;
+    rmp_ptr_t TBLPAG;
+    rmp_ptr_t MSTRPR;
+};
 /*****************************************************************************/
 /* __RMP_PLATFORM_DSPIC_H_STRUCTS__ */
 #endif
@@ -165,7 +209,10 @@ __EXTERN__ void _RMP_Yield(void);
 __EXTERN__ void _RMP_Set_Timer(rmp_ptr_t Ticks);
 
 /* Initialization */
-__EXTERN__ void _RMP_Stack_Init(rmp_ptr_t Entry, rmp_ptr_t Stack, rmp_ptr_t Arg);
+__EXTERN__ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
+                                     rmp_ptr_t Size,
+                                     rmp_ptr_t Entry,
+                                     rmp_ptr_t Param);
 __EXTERN__ void _RMP_Lowlvl_Init(void);
 __EXTERN__ void RMP_Putchar(char Char);
 __EXTERN__ void _RMP_Plat_Hook(void);

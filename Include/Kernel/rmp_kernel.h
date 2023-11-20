@@ -702,9 +702,6 @@ EXTERN void RMP_Ctx_Load(void);
 EXTERN void RMP_Sched_Hook(void);
 EXTERN void RMP_Tim_Hook(rmp_ptr_t Slice);
 EXTERN void RMP_Dly_Hook(rmp_ptr_t Slice);
-#else
-__EXTERN__ void RMP_Ctx_Save(void);
-__EXTERN__ void RMP_Ctx_Load(void);
 #endif
 
 EXTERN void RMP_Init_Hook(void);

@@ -8,30 +8,31 @@ Description : The testbench for FE310-G000.
               to the FE310's instruction cache w/SPI flash. This combination
               easily costs tens of thousands of cycles when it misses.
               Each test needs a full power cycle - FE310 chip is seriously
-              flawed in many aspects especially in that it not having a timer.
+              flawed in many aspects especially in its WDT timer.
 		      This project only worked with the Freedom Studio Beta 3
 		      (FreedomStudio-Win_x86_64-20180122) which is now deprecated
 		      (in fact all releases of the FreedomStudio is as of 2023), and
 		      the provided OpenOCD debugger is very sluggish. It is advised
 		      to stay away from this board unless you already have one.
+		      This is a typical academia chip: looks nice but is useless.
 
-GCC 7.2.0 -O3 (Note: numbers bigger than 1000 does not make much sense)
+GCC 7.2.0 -O3 (Note: numbers > 10000 is due to SPI flash reads)
     ___   __  ___ ___
    / _ \ /  |/  // _ \       Simple real-time kernel
   / , _// /|_/ // ___/       Standard benchmark test
  /_/|_|/_/  /_//_/
 ====================================================
 Test (number in CPU cycles)        : AVG / MAX / MIN
-Yield                              : 32781 / 65283 / 274
-Mailbox                            : 537 / 34672 / 534
-Semaphore                          : 446 / 24650 / 444
-FIFO                               : 172 / 22594 / 165
-Message queue                      : 672 / 27857 / 670
-Blocking message queue             : 944 / 23887 / 940
-ISR Mailbox                        : 643 / 55429 / 635
-ISR Semaphore                      : 47404 / 47478 / 17844
-ISR Message queue                  : 47560 / 47636 / 5542
-ISR Blocking message queue         : 47692 / 52253 / 47628
+Yield                              : 608 / 5146 / 598
+Mailbox                            : 874 / 38957 / 871
+Semaphore                          : 782 / 28967 / 780
+FIFO                               : 158 / 31113 / 155
+Message queue                      : 1027 / 29777 / 1025
+Blocking message queue             : 1223 / 28692 / 1221
+ISR Mailbox                        : 826 / 9596 / 825
+ISR Semaphore                      : 47596 / 47666 / 18046
+ISR Message queue                  : 47612 / 57111 / 32376
+ISR Blocking message queue         : 47856 / 47922 / 480
 ******************************************************************************/
 
 /* Includes ******************************************************************/
@@ -39,11 +40,8 @@ ISR Blocking message queue         : 47692 / 52253 / 47628
 /* End Includes **************************************************************/
 
 /* Defines *******************************************************************/
-/* Where are the initial stacks */
-#define THD1_STACK          (&Stack_1[300])
-#define THD2_STACK          (&Stack_2[300])
 /* How to read counter */
-#define RMP_CNT_READ()      ((rmp_tim_t)__RMP_RV32GP_MCYCLE_Get())
+#define RMP_CNT_READ()      ((rmp_tim_t)RMP_RV32P_MCYCLE_Get())
 /* Are we testing the memory pool? */
 /* #define TEST_MEM_POOL       8192 */
 /* Are we doing minimal measurements? */

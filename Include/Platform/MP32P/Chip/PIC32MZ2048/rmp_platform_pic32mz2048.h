@@ -28,15 +28,13 @@ Description: The configuration file for PIC32MZ2048EFM100.
 #define RMP_INT_UNMASK()            RMP_Int_Enable()
 
 /* What is the tick timer value? */
-#define RMP_MIPSM_TICK_VAL          (20000U)
-/* Do we initialize the rest of the registers when initializing the thread? */
-#define RMP_MIPSM_INIT_EXTRA        (1U)
+#define RMP_MP32P_CORETIM_VAL       (20000U)
 
 /* Other low-level initialization stuff - clock and serial. 
  * This is the default initialization sequence. If you wish to supply
  * your own, just redirect this macro to a custom function, or do your
  * initialization stuff in the initialization hook (RMP_Start_Hook). */
-#define RMP_MIPSM_LOWLVL_INIT() \
+#define RMP_MP32P_LOWLVL_INIT() \
 do \
 { \
     /* set PBCLK2 to deliver 40MHz clock for PMP/I2C/UART/SPI */ \
@@ -77,11 +75,11 @@ do \
 } \
 while(0)
 
-#define RMP_MIPSM_CLEAR_SOFT_FLAG()    do{IFS0CLR=_IFS0_CS0IF_MASK;}while(0)
-#define RMP_MIPSM_CLEAR_TIMER_FLAG()   do{IFS0CLR=_IFS0_CTIF_MASK;}while(0)
+#define RMP_MP32P_CLEAR_SOFT_FLAG()    do{IFS0CLR=_IFS0_CS0IF_MASK;}while(0)
+#define RMP_MP32P_CLEAR_TIMER_FLAG()   do{IFS0CLR=_IFS0_CTIF_MASK;}while(0)
 
 /* This is for debugging output */
-#define RMP_MIPSM_PUTCHAR(CHAR) \
+#define RMP_MP32P_PUTCHAR(CHAR) \
 do \
 { \
     while(U1STAbits.UTXBF!=0); \

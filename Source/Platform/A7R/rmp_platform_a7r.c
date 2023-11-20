@@ -28,38 +28,47 @@ Description : The platform specific file for ARMv7-R.
 /* Begin Function:_RMP_Stack_Init *********************************************
 Description : Initiate the process stack when trying to start a process. Never
               call this function in user application.
-Input       : rmp_ptr_t Entry - The entry of the thread.
-              rmp_ptr_t Stack - The stack address of the thread.
-              rmp_ptr_t Arg - The argument to pass to the thread.
+Input       : rmp_ptr_t Stack - The stack address of the thread.
+              rmp_ptr_t Size - The stack size of the thread.
+              rmp_ptr_t Entry - The entry address of the thread.
+              rmp_ptr_t Param - The argument to pass to the thread.
 Output      : None.
-Return      : None.
+Return      : rmp_ptr_t - The adjusted stack location.
 ******************************************************************************/
-void _RMP_Stack_Init(rmp_ptr_t Entry, rmp_ptr_t Stack, rmp_ptr_t Arg)
+rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
+                          rmp_ptr_t Size,
+                          rmp_ptr_t Entry,
+                          rmp_ptr_t Param)
 {
-    rmp_ptr_t* Stack_Ptr;
+    rmp_ptr_t End;
+    struct RMP_A7R_Stack* Ptr;
 
-    Stack_Ptr=(rmp_ptr_t*)Stack;
-    Stack_Ptr[0]=Arg;
-    Stack_Ptr[1]=0x01010101U;
-    Stack_Ptr[2]=0x02020202U;
-    Stack_Ptr[3]=0x03030303U;
-    Stack_Ptr[4]=0x04040404U;
-    Stack_Ptr[5]=0x05050505U;
-    Stack_Ptr[6]=0x06060606U;
-    Stack_Ptr[7]=0x07070707U;
-    Stack_Ptr[8]=0x08080808U;
-    Stack_Ptr[9]=0x09090909U;
-    Stack_Ptr[10]=0x10101010U;
-    Stack_Ptr[11]=0x11111111U;
-    Stack_Ptr[12]=0x12121212U;
-    Stack_Ptr[13]=0x14141414U;
-    Stack_Ptr[14]=Entry;
+    /* Compute & align stack */
+    End=RMP_ROUND_DOWN(Stack+Size,3U);
+    Ptr=(struct RMP_A7R_Stack*)(End-sizeof(struct RMP_A7R_Stack));
+
+    Ptr->R0=Param;
+    Ptr->R1=0x01010101U;
+    Ptr->R2=0x02020202U;
+    Ptr->R3=0x03030303U;
+    Ptr->R4=0x04040404U;
+    Ptr->R5=0x05050505U;
+    Ptr->R6=0x06060606U;
+    Ptr->R7=0x07070707U;
+    Ptr->R8=0x08080808U;
+    Ptr->R9=0x09090909U;
+    Ptr->R10=0x10101010U;
+    Ptr->R11=0x11111111U;
+    Ptr->R12=0x12121212U;
+    Ptr->LR=0x14141414U;
+    Ptr->PC=Entry;
+    Ptr->CPSR=RMP_A7R_CPSR_E|RMP_A7R_CPSR_A|RMP_A7R_CPSR_F|RMP_A7R_CPSR_M(RMP_A7R_SYS);
 
     /* See if the user code is thumb or ARM */
     if((Entry&0x01U)!=0U)
-        Stack_Ptr[15]=RMP_A7R_CPSR_E|RMP_A7R_CPSR_A|RMP_A7R_CPSR_F|RMP_A7R_CPSR_T|RMP_A7R_CPSR_M(RMP_A7R_SYS);
-    else
-        Stack_Ptr[15]=RMP_A7R_CPSR_E|RMP_A7R_CPSR_A|RMP_A7R_CPSR_F|RMP_A7R_CPSR_M(RMP_A7R_SYS);
+        Ptr->CPSR|=RMP_A7R_CPSR_T;
+
+    return (rmp_ptr_t)Ptr;
 }
 /* End Function:_RMP_Stack_Init **********************************************/
 

@@ -64,7 +64,9 @@
 							<builder buildPath="${workspace_loc:/RMP}/Debug" errorParsers="org.eclipse.cdt.core.GmakeErrorParser;org.eclipse.cdt.core.CWDLocator" id="ilg.gnumcueclipse.managedbuild.cross.riscv.builder.791550463" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="Gnu Make Builder" parallelBuildOn="true" parallelizationNumber="optimal" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.builder"/>
 							<tool command="${cross_prefix}${cross_c}${cross_suffix}" commandLinePattern="${COMMAND} ${cross_toolchain_flags} ${FLAGS} -c ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}" errorParsers="org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GCCErrorParser" id="ilg.gnumcueclipse.managedbuild.cross.riscv.tool.assembler.515177196" name="GNU RISC-V Cross Assembler" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.tool.assembler">
 								<option id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.assembler.usepreprocessor.1008464790" name="Use preprocessor" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.assembler.usepreprocessor" useByScannerDiscovery="false" value="true" valueType="boolean"/>
-								<option id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.assembler.include.paths.2071531252" name="Include paths (-I)" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.assembler.include.paths" useByScannerDiscovery="true"/>
+								<option id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.assembler.include.paths.2071531252" name="Include paths (-I)" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.assembler.include.paths" useByScannerDiscovery="true" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}}/../../../Include&quot;"/>
+								</option>
 								<option id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.assembler.defs.1747764264" name="Defined symbols (-D)" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.assembler.defs" useByScannerDiscovery="true"/>
 								<option id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.assembler.asmlisting.923787424" name="Generate assembler listing (-Wa,-adhlns=&quot;$@.lst&quot;)" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.assembler.asmlisting" useByScannerDiscovery="false" value="true" valueType="boolean"/>
 								<option id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.assembler.verbose.98886744" name="Verbose (-v)" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.assembler.verbose" useByScannerDiscovery="false" value="true" valueType="boolean"/>
@@ -163,9 +165,6 @@
 							</tool>
 						</toolChain>
 					</folderInfo>
-					<fileInfo id="ilg.gnumcueclipse.managedbuild.cross.riscv.config.elf.debug.1719660306.1103512689" name="rmp_platform_rv32g_gcc.s" rcbsApplicability="disable" resourcePath="Platform/rmp_platform_rv32g_gcc.s" toolsToInvoke="ilg.gnumcueclipse.managedbuild.cross.riscv.tool.assembler.515177196.1322305104">
-						<tool id="ilg.gnumcueclipse.managedbuild.cross.riscv.tool.assembler.515177196.1322305104" name="GNU RISC-V Cross Assembler" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.tool.assembler.515177196"/>
-					</fileInfo>
 					<sourceEntries>
 						<entry excluding="Drivers" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>

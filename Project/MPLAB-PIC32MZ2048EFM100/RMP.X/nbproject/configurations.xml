@@ -18,12 +18,12 @@
       <logicalFolder name="f3" displayName="Lib" projectFiles="true">
       </logicalFolder>
       <logicalFolder name="f2" displayName="Platform" projectFiles="true">
-        <itemPath>../../../Source/Platform/MIPSM/rmp_platform_mipsm.c</itemPath>
-        <itemPath>../../../Source/Platform/MIPSM/rmp_platform_mipsm_gcc.s</itemPath>
+        <itemPath>../../../Source/Platform/MP32P/rmp_platform_mp32p.c</itemPath>
+        <itemPath>../../../Source/Platform/MP32P/rmp_platform_mp32p_gcc.s</itemPath>
       </logicalFolder>
       <logicalFolder name="f4" displayName="Test" projectFiles="true">
-        <itemPath>rmp_test_pic32mz2048efm100.s</itemPath>
         <itemPath>../../../Source/Test/rmp_benchmark.c</itemPath>
+        <itemPath>rmp_test_pic32mz2048.s</itemPath>
       </logicalFolder>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
@@ -38,6 +38,7 @@
     <Elem>../../../Source/Test</Elem>
     <Elem>../../../Include</Elem>
     <Elem>.</Elem>
+    <Elem>../../../Source/Platform/MP32P</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -47,7 +48,7 @@
         <targetDevice>PIC32MZ2048EFM100</targetDevice>
         <targetHeader></targetHeader>
         <targetPluginBoard></targetPluginBoard>
-        <platformTool>PKOBSKDEPlatformTool</platformTool>
+        <platformTool>noID</platformTool>
         <languageToolchain>XC32</languageToolchain>
         <languageToolchainVersion>4.35</languageToolchainVersion>
         <platform>3</platform>
@@ -223,6 +224,7 @@
       </C32Global>
       <PKOBSKDEPlatformTool>
         <property key="AutoSelectMemRanges" value="auto"/>
+        <property key="SecureSegment.SegmentProgramming" value="FullChipProgramming"/>
         <property key="ToolFirmwareFilePath"
                   value="Press to browse for a specific firmware version"/>
         <property key="ToolFirmwareOption.UseLatestFirmware" value="true"/>
@@ -248,7 +250,6 @@
         <property key="programoptions.preserveprogramrange" value="false"/>
         <property key="programoptions.usehighvoltageonmclr" value="false"/>
         <property key="programoptions.uselvpprogramming" value="false"/>
-        <property key="安全段。分部编程" value="FullChipProgramming"/>
       </PKOBSKDEPlatformTool>
       <Tool>
         <property key="AutoSelectMemRanges" value="auto"/>

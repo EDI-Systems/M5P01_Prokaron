@@ -51,17 +51,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=../../../Source/Kernel/rmp_kernel.c ../../../Source/Platform/MIPSM/rmp_platform_mipsm.c ../../../Source/Platform/MIPSM/rmp_platform_mipsm_gcc.s rmp_test_pic32mz2048efm100.s ../../../Source/Test/rmp_benchmark.c
+SOURCEFILES_QUOTED_IF_SPACED=../../../Source/Kernel/rmp_kernel.c ../../../Source/Test/rmp_benchmark.c ../../../Source/Platform/MP32P/rmp_platform_mp32p.c ../../../Source/Platform/MP32P/rmp_platform_mp32p_gcc.s rmp_test_pic32mz2048.s
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/_ext/1067945026/rmp_kernel.o ${OBJECTDIR}/_ext/108113399/rmp_platform_mipsm.o ${OBJECTDIR}/_ext/108113399/rmp_platform_mipsm_gcc.o ${OBJECTDIR}/rmp_test_pic32mz2048efm100.o ${OBJECTDIR}/_ext/1730986455/rmp_benchmark.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/_ext/1067945026/rmp_kernel.o.d ${OBJECTDIR}/_ext/108113399/rmp_platform_mipsm.o.d ${OBJECTDIR}/_ext/108113399/rmp_platform_mipsm_gcc.o.d ${OBJECTDIR}/rmp_test_pic32mz2048efm100.o.d ${OBJECTDIR}/_ext/1730986455/rmp_benchmark.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/_ext/1067945026/rmp_kernel.o ${OBJECTDIR}/_ext/1730986455/rmp_benchmark.o ${OBJECTDIR}/_ext/108293047/rmp_platform_mp32p.o ${OBJECTDIR}/_ext/108293047/rmp_platform_mp32p_gcc.o ${OBJECTDIR}/rmp_test_pic32mz2048.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/_ext/1067945026/rmp_kernel.o.d ${OBJECTDIR}/_ext/1730986455/rmp_benchmark.o.d ${OBJECTDIR}/_ext/108293047/rmp_platform_mp32p.o.d ${OBJECTDIR}/_ext/108293047/rmp_platform_mp32p_gcc.o.d ${OBJECTDIR}/rmp_test_pic32mz2048.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/_ext/1067945026/rmp_kernel.o ${OBJECTDIR}/_ext/108113399/rmp_platform_mipsm.o ${OBJECTDIR}/_ext/108113399/rmp_platform_mipsm_gcc.o ${OBJECTDIR}/rmp_test_pic32mz2048efm100.o ${OBJECTDIR}/_ext/1730986455/rmp_benchmark.o
+OBJECTFILES=${OBJECTDIR}/_ext/1067945026/rmp_kernel.o ${OBJECTDIR}/_ext/1730986455/rmp_benchmark.o ${OBJECTDIR}/_ext/108293047/rmp_platform_mp32p.o ${OBJECTDIR}/_ext/108293047/rmp_platform_mp32p_gcc.o ${OBJECTDIR}/rmp_test_pic32mz2048.o
 
 # Source Files
-SOURCEFILES=../../../Source/Kernel/rmp_kernel.c ../../../Source/Platform/MIPSM/rmp_platform_mipsm.c ../../../Source/Platform/MIPSM/rmp_platform_mipsm_gcc.s rmp_test_pic32mz2048efm100.s ../../../Source/Test/rmp_benchmark.c
+SOURCEFILES=../../../Source/Kernel/rmp_kernel.c ../../../Source/Test/rmp_benchmark.c ../../../Source/Platform/MP32P/rmp_platform_mp32p.c ../../../Source/Platform/MP32P/rmp_platform_mp32p_gcc.s rmp_test_pic32mz2048.s
 
 
 
@@ -89,26 +89,26 @@ MP_LINKER_FILE_OPTION=
 # ------------------------------------------------------------------------------------
 # Rules for buildStep: assemble
 ifeq ($(TYPE_IMAGE), DEBUG_RUN)
-${OBJECTDIR}/_ext/108113399/rmp_platform_mipsm_gcc.o: ../../../Source/Platform/MIPSM/rmp_platform_mipsm_gcc.s  .generated_files/flags/PIC32MZ2048_SK/69a343a9600c6254015dadd429034f02ab822e49 .generated_files/flags/PIC32MZ2048_SK/da39a3ee5e6b4b0d3255bfef95601890afd80709
-	@${MKDIR} "${OBJECTDIR}/_ext/108113399" 
-	@${RM} ${OBJECTDIR}/_ext/108113399/rmp_platform_mipsm_gcc.o 
-	${MP_CC} $(MP_EXTRA_AS_PRE)  -D__DEBUG  -D__MPLAB_DEBUGGER_PK3=1 -c -mprocessor=$(MP_PROCESSOR_OPTION)  -specs=specs.txt -o ${OBJECTDIR}/_ext/108113399/rmp_platform_mipsm_gcc.o ../../../Source/Platform/MIPSM/rmp_platform_mipsm_gcc.s  -Wa,--defsym=__MPLAB_BUILD=1$(MP_EXTRA_AS_POST),--defsym=__ICD2RAM=1,--defsym=__MPLAB_DEBUG=1,--defsym=__DEBUG=1,--defsym=__MPLAB_DEBUGGER_PK3=1,--gdwarf-2,-MD="${OBJECTDIR}/_ext/108113399/rmp_platform_mipsm_gcc.o.d",-I"." -I"../../../Include" -mdfp="${DFP_DIR}"
+${OBJECTDIR}/_ext/108293047/rmp_platform_mp32p_gcc.o: ../../../Source/Platform/MP32P/rmp_platform_mp32p_gcc.s  .generated_files/flags/PIC32MZ2048_SK/6b32060aa18e6c279a9e0058d656d0ccedd9f47c .generated_files/flags/PIC32MZ2048_SK/da39a3ee5e6b4b0d3255bfef95601890afd80709
+	@${MKDIR} "${OBJECTDIR}/_ext/108293047" 
+	@${RM} ${OBJECTDIR}/_ext/108293047/rmp_platform_mp32p_gcc.o 
+	${MP_CC} $(MP_EXTRA_AS_PRE)  -D__DEBUG   -c -mprocessor=$(MP_PROCESSOR_OPTION)  -specs=specs.txt -o ${OBJECTDIR}/_ext/108293047/rmp_platform_mp32p_gcc.o ../../../Source/Platform/MP32P/rmp_platform_mp32p_gcc.s  -Wa,--defsym=__MPLAB_BUILD=1$(MP_EXTRA_AS_POST),--defsym=__ICD2RAM=1,--defsym=__MPLAB_DEBUG=1,--defsym=__DEBUG=1,--gdwarf-2,-MD="${OBJECTDIR}/_ext/108293047/rmp_platform_mp32p_gcc.o.d",-I"." -I"../../../Include" -mdfp="${DFP_DIR}"
 	
-${OBJECTDIR}/rmp_test_pic32mz2048efm100.o: rmp_test_pic32mz2048efm100.s  .generated_files/flags/PIC32MZ2048_SK/493442fa8e5b91d40d320faf6e480411b412c8c5 .generated_files/flags/PIC32MZ2048_SK/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/rmp_test_pic32mz2048.o: rmp_test_pic32mz2048.s  .generated_files/flags/PIC32MZ2048_SK/647e331cec4d8c6c15c8da26e9495908602e0a5e .generated_files/flags/PIC32MZ2048_SK/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} ${OBJECTDIR}/rmp_test_pic32mz2048efm100.o 
-	${MP_CC} $(MP_EXTRA_AS_PRE)  -D__DEBUG  -D__MPLAB_DEBUGGER_PK3=1 -c -mprocessor=$(MP_PROCESSOR_OPTION)  -specs=specs.txt -o ${OBJECTDIR}/rmp_test_pic32mz2048efm100.o rmp_test_pic32mz2048efm100.s  -Wa,--defsym=__MPLAB_BUILD=1$(MP_EXTRA_AS_POST),--defsym=__ICD2RAM=1,--defsym=__MPLAB_DEBUG=1,--defsym=__DEBUG=1,--defsym=__MPLAB_DEBUGGER_PK3=1,--gdwarf-2,-MD="${OBJECTDIR}/rmp_test_pic32mz2048efm100.o.d",-I"." -I"../../../Include" -mdfp="${DFP_DIR}"
+	@${RM} ${OBJECTDIR}/rmp_test_pic32mz2048.o 
+	${MP_CC} $(MP_EXTRA_AS_PRE)  -D__DEBUG   -c -mprocessor=$(MP_PROCESSOR_OPTION)  -specs=specs.txt -o ${OBJECTDIR}/rmp_test_pic32mz2048.o rmp_test_pic32mz2048.s  -Wa,--defsym=__MPLAB_BUILD=1$(MP_EXTRA_AS_POST),--defsym=__ICD2RAM=1,--defsym=__MPLAB_DEBUG=1,--defsym=__DEBUG=1,--gdwarf-2,-MD="${OBJECTDIR}/rmp_test_pic32mz2048.o.d",-I"." -I"../../../Include" -mdfp="${DFP_DIR}"
 	
 else
-${OBJECTDIR}/_ext/108113399/rmp_platform_mipsm_gcc.o: ../../../Source/Platform/MIPSM/rmp_platform_mipsm_gcc.s  .generated_files/flags/PIC32MZ2048_SK/8d4ac84b0a9aaee3307b51a69bb4c97556a4e8f2 .generated_files/flags/PIC32MZ2048_SK/da39a3ee5e6b4b0d3255bfef95601890afd80709
-	@${MKDIR} "${OBJECTDIR}/_ext/108113399" 
-	@${RM} ${OBJECTDIR}/_ext/108113399/rmp_platform_mipsm_gcc.o 
-	${MP_CC} $(MP_EXTRA_AS_PRE)  -c -mprocessor=$(MP_PROCESSOR_OPTION)  -specs=specs.txt -o ${OBJECTDIR}/_ext/108113399/rmp_platform_mipsm_gcc.o ../../../Source/Platform/MIPSM/rmp_platform_mipsm_gcc.s  -Wa,--defsym=__MPLAB_BUILD=1$(MP_EXTRA_AS_POST),--gdwarf-2,-MD="${OBJECTDIR}/_ext/108113399/rmp_platform_mipsm_gcc.o.d",-I"." -I"../../../Include" -mdfp="${DFP_DIR}"
+${OBJECTDIR}/_ext/108293047/rmp_platform_mp32p_gcc.o: ../../../Source/Platform/MP32P/rmp_platform_mp32p_gcc.s  .generated_files/flags/PIC32MZ2048_SK/97c98412e16e212eeeb985cb5b943711506cba8f .generated_files/flags/PIC32MZ2048_SK/da39a3ee5e6b4b0d3255bfef95601890afd80709
+	@${MKDIR} "${OBJECTDIR}/_ext/108293047" 
+	@${RM} ${OBJECTDIR}/_ext/108293047/rmp_platform_mp32p_gcc.o 
+	${MP_CC} $(MP_EXTRA_AS_PRE)  -c -mprocessor=$(MP_PROCESSOR_OPTION)  -specs=specs.txt -o ${OBJECTDIR}/_ext/108293047/rmp_platform_mp32p_gcc.o ../../../Source/Platform/MP32P/rmp_platform_mp32p_gcc.s  -Wa,--defsym=__MPLAB_BUILD=1$(MP_EXTRA_AS_POST),--gdwarf-2,-MD="${OBJECTDIR}/_ext/108293047/rmp_platform_mp32p_gcc.o.d",-I"." -I"../../../Include" -mdfp="${DFP_DIR}"
 	
-${OBJECTDIR}/rmp_test_pic32mz2048efm100.o: rmp_test_pic32mz2048efm100.s  .generated_files/flags/PIC32MZ2048_SK/6eea46761e31d184e3791b54df535fc01f2a6c7 .generated_files/flags/PIC32MZ2048_SK/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/rmp_test_pic32mz2048.o: rmp_test_pic32mz2048.s  .generated_files/flags/PIC32MZ2048_SK/83ca9f8332e1e4499b88b4b25222e7f1e9c5cc54 .generated_files/flags/PIC32MZ2048_SK/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} ${OBJECTDIR}/rmp_test_pic32mz2048efm100.o 
-	${MP_CC} $(MP_EXTRA_AS_PRE)  -c -mprocessor=$(MP_PROCESSOR_OPTION)  -specs=specs.txt -o ${OBJECTDIR}/rmp_test_pic32mz2048efm100.o rmp_test_pic32mz2048efm100.s  -Wa,--defsym=__MPLAB_BUILD=1$(MP_EXTRA_AS_POST),--gdwarf-2,-MD="${OBJECTDIR}/rmp_test_pic32mz2048efm100.o.d",-I"." -I"../../../Include" -mdfp="${DFP_DIR}"
+	@${RM} ${OBJECTDIR}/rmp_test_pic32mz2048.o 
+	${MP_CC} $(MP_EXTRA_AS_PRE)  -c -mprocessor=$(MP_PROCESSOR_OPTION)  -specs=specs.txt -o ${OBJECTDIR}/rmp_test_pic32mz2048.o rmp_test_pic32mz2048.s  -Wa,--defsym=__MPLAB_BUILD=1$(MP_EXTRA_AS_POST),--gdwarf-2,-MD="${OBJECTDIR}/rmp_test_pic32mz2048.o.d",-I"." -I"../../../Include" -mdfp="${DFP_DIR}"
 	
 endif
 
@@ -121,23 +121,23 @@ endif
 # ------------------------------------------------------------------------------------
 # Rules for buildStep: compile
 ifeq ($(TYPE_IMAGE), DEBUG_RUN)
-${OBJECTDIR}/_ext/1067945026/rmp_kernel.o: ../../../Source/Kernel/rmp_kernel.c  .generated_files/flags/PIC32MZ2048_SK/b7e1d862cec8ecefd430054c4b5161b3931583cf .generated_files/flags/PIC32MZ2048_SK/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/_ext/1067945026/rmp_kernel.o: ../../../Source/Kernel/rmp_kernel.c  .generated_files/flags/PIC32MZ2048_SK/8af13931d69d59f952e37e0cae8c5cb2af8b4f05 .generated_files/flags/PIC32MZ2048_SK/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}/_ext/1067945026" 
 	@${RM} ${OBJECTDIR}/_ext/1067945026/rmp_kernel.o.d 
 	@${RM} ${OBJECTDIR}/_ext/1067945026/rmp_kernel.o 
-	${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1  -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -I"." -I"../../../Include" -O3 -fno-common -I"../../../Include" -I"./" -Wall -MP -MMD -MF "${OBJECTDIR}/_ext/1067945026/rmp_kernel.o.d" -o ${OBJECTDIR}/_ext/1067945026/rmp_kernel.o ../../../Source/Kernel/rmp_kernel.c    -DXPRJ_PIC32MZ2048_SK=$(CND_CONF)    $(COMPARISON_BUILD)  -specs=specs.txt -Wall -Wextra -mno-dsp -mno-dspr2 -mdfp="${DFP_DIR}"  
+	${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG   -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -I"." -I"../../../Include" -O3 -fno-common -I"../../../Include" -I"./" -Wall -MP -MMD -MF "${OBJECTDIR}/_ext/1067945026/rmp_kernel.o.d" -o ${OBJECTDIR}/_ext/1067945026/rmp_kernel.o ../../../Source/Kernel/rmp_kernel.c    -DXPRJ_PIC32MZ2048_SK=$(CND_CONF)    $(COMPARISON_BUILD)  -specs=specs.txt -Wall -Wextra -mno-dsp -mno-dspr2 -mdfp="${DFP_DIR}"  
 	
-${OBJECTDIR}/_ext/108113399/rmp_platform_mipsm.o: ../../../Source/Platform/MIPSM/rmp_platform_mipsm.c  .generated_files/flags/PIC32MZ2048_SK/4b937e1d8fbd6661ed3dce931e64c70b7a0868af .generated_files/flags/PIC32MZ2048_SK/da39a3ee5e6b4b0d3255bfef95601890afd80709
-	@${MKDIR} "${OBJECTDIR}/_ext/108113399" 
-	@${RM} ${OBJECTDIR}/_ext/108113399/rmp_platform_mipsm.o.d 
-	@${RM} ${OBJECTDIR}/_ext/108113399/rmp_platform_mipsm.o 
-	${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1  -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -I"." -I"../../../Include" -O3 -fno-common -I"../../../Include" -I"./" -Wall -MP -MMD -MF "${OBJECTDIR}/_ext/108113399/rmp_platform_mipsm.o.d" -o ${OBJECTDIR}/_ext/108113399/rmp_platform_mipsm.o ../../../Source/Platform/MIPSM/rmp_platform_mipsm.c    -DXPRJ_PIC32MZ2048_SK=$(CND_CONF)    $(COMPARISON_BUILD)  -specs=specs.txt -Wall -Wextra -mno-dsp -mno-dspr2 -mdfp="${DFP_DIR}"  
-	
-${OBJECTDIR}/_ext/1730986455/rmp_benchmark.o: ../../../Source/Test/rmp_benchmark.c  .generated_files/flags/PIC32MZ2048_SK/dd27d680ba551214101c30c0b5caa65882e95764 .generated_files/flags/PIC32MZ2048_SK/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/_ext/1730986455/rmp_benchmark.o: ../../../Source/Test/rmp_benchmark.c  .generated_files/flags/PIC32MZ2048_SK/89db5e197d247ca36171dd2b2cb096de23f44c0d .generated_files/flags/PIC32MZ2048_SK/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}/_ext/1730986455" 
 	@${RM} ${OBJECTDIR}/_ext/1730986455/rmp_benchmark.o.d 
 	@${RM} ${OBJECTDIR}/_ext/1730986455/rmp_benchmark.o 
-	${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1  -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -I"." -I"../../../Include" -O3 -fno-common -I"../../../Include" -I"./" -Wall -MP -MMD -MF "${OBJECTDIR}/_ext/1730986455/rmp_benchmark.o.d" -o ${OBJECTDIR}/_ext/1730986455/rmp_benchmark.o ../../../Source/Test/rmp_benchmark.c    -DXPRJ_PIC32MZ2048_SK=$(CND_CONF)    $(COMPARISON_BUILD)  -specs=specs.txt -Wall -Wextra -mno-dsp -mno-dspr2 -mdfp="${DFP_DIR}"  
+	${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG   -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -I"." -I"../../../Include" -O3 -fno-common -I"../../../Include" -I"./" -Wall -MP -MMD -MF "${OBJECTDIR}/_ext/1730986455/rmp_benchmark.o.d" -o ${OBJECTDIR}/_ext/1730986455/rmp_benchmark.o ../../../Source/Test/rmp_benchmark.c    -DXPRJ_PIC32MZ2048_SK=$(CND_CONF)    $(COMPARISON_BUILD)  -specs=specs.txt -Wall -Wextra -mno-dsp -mno-dspr2 -mdfp="${DFP_DIR}"  
+	
+${OBJECTDIR}/_ext/108293047/rmp_platform_mp32p.o: ../../../Source/Platform/MP32P/rmp_platform_mp32p.c  .generated_files/flags/PIC32MZ2048_SK/9da0decf9caaccd415b5949ceb80f72f0e7734e9 .generated_files/flags/PIC32MZ2048_SK/da39a3ee5e6b4b0d3255bfef95601890afd80709
+	@${MKDIR} "${OBJECTDIR}/_ext/108293047" 
+	@${RM} ${OBJECTDIR}/_ext/108293047/rmp_platform_mp32p.o.d 
+	@${RM} ${OBJECTDIR}/_ext/108293047/rmp_platform_mp32p.o 
+	${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG   -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -I"." -I"../../../Include" -O3 -fno-common -I"../../../Include" -I"./" -Wall -MP -MMD -MF "${OBJECTDIR}/_ext/108293047/rmp_platform_mp32p.o.d" -o ${OBJECTDIR}/_ext/108293047/rmp_platform_mp32p.o ../../../Source/Platform/MP32P/rmp_platform_mp32p.c    -DXPRJ_PIC32MZ2048_SK=$(CND_CONF)    $(COMPARISON_BUILD)  -specs=specs.txt -Wall -Wextra -mno-dsp -mno-dspr2 -mdfp="${DFP_DIR}"  
 	
 else
 ${OBJECTDIR}/_ext/1067945026/rmp_kernel.o: ../../../Source/Kernel/rmp_kernel.c  .generated_files/flags/PIC32MZ2048_SK/7565dabc2574b6a623599d55bd87be50329fc960 .generated_files/flags/PIC32MZ2048_SK/da39a3ee5e6b4b0d3255bfef95601890afd80709
@@ -146,17 +146,17 @@ ${OBJECTDIR}/_ext/1067945026/rmp_kernel.o: ../../../Source/Kernel/rmp_kernel.c  
 	@${RM} ${OBJECTDIR}/_ext/1067945026/rmp_kernel.o 
 	${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -I"." -I"../../../Include" -O3 -fno-common -I"../../../Include" -I"./" -Wall -MP -MMD -MF "${OBJECTDIR}/_ext/1067945026/rmp_kernel.o.d" -o ${OBJECTDIR}/_ext/1067945026/rmp_kernel.o ../../../Source/Kernel/rmp_kernel.c    -DXPRJ_PIC32MZ2048_SK=$(CND_CONF)    $(COMPARISON_BUILD)  -specs=specs.txt -Wall -Wextra -mno-dsp -mno-dspr2 -mdfp="${DFP_DIR}"  
 	
-${OBJECTDIR}/_ext/108113399/rmp_platform_mipsm.o: ../../../Source/Platform/MIPSM/rmp_platform_mipsm.c  .generated_files/flags/PIC32MZ2048_SK/50ae7082f24911dfb7cb385e798b8144ecec2a32 .generated_files/flags/PIC32MZ2048_SK/da39a3ee5e6b4b0d3255bfef95601890afd80709
-	@${MKDIR} "${OBJECTDIR}/_ext/108113399" 
-	@${RM} ${OBJECTDIR}/_ext/108113399/rmp_platform_mipsm.o.d 
-	@${RM} ${OBJECTDIR}/_ext/108113399/rmp_platform_mipsm.o 
-	${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -I"." -I"../../../Include" -O3 -fno-common -I"../../../Include" -I"./" -Wall -MP -MMD -MF "${OBJECTDIR}/_ext/108113399/rmp_platform_mipsm.o.d" -o ${OBJECTDIR}/_ext/108113399/rmp_platform_mipsm.o ../../../Source/Platform/MIPSM/rmp_platform_mipsm.c    -DXPRJ_PIC32MZ2048_SK=$(CND_CONF)    $(COMPARISON_BUILD)  -specs=specs.txt -Wall -Wextra -mno-dsp -mno-dspr2 -mdfp="${DFP_DIR}"  
-	
 ${OBJECTDIR}/_ext/1730986455/rmp_benchmark.o: ../../../Source/Test/rmp_benchmark.c  .generated_files/flags/PIC32MZ2048_SK/e6c4f78e14628eeca4ac671aa0f1cc7312548beb .generated_files/flags/PIC32MZ2048_SK/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}/_ext/1730986455" 
 	@${RM} ${OBJECTDIR}/_ext/1730986455/rmp_benchmark.o.d 
 	@${RM} ${OBJECTDIR}/_ext/1730986455/rmp_benchmark.o 
 	${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -I"." -I"../../../Include" -O3 -fno-common -I"../../../Include" -I"./" -Wall -MP -MMD -MF "${OBJECTDIR}/_ext/1730986455/rmp_benchmark.o.d" -o ${OBJECTDIR}/_ext/1730986455/rmp_benchmark.o ../../../Source/Test/rmp_benchmark.c    -DXPRJ_PIC32MZ2048_SK=$(CND_CONF)    $(COMPARISON_BUILD)  -specs=specs.txt -Wall -Wextra -mno-dsp -mno-dspr2 -mdfp="${DFP_DIR}"  
+	
+${OBJECTDIR}/_ext/108293047/rmp_platform_mp32p.o: ../../../Source/Platform/MP32P/rmp_platform_mp32p.c  .generated_files/flags/PIC32MZ2048_SK/769636d11d77394b0500031da7236fc9dedb3b77 .generated_files/flags/PIC32MZ2048_SK/da39a3ee5e6b4b0d3255bfef95601890afd80709
+	@${MKDIR} "${OBJECTDIR}/_ext/108293047" 
+	@${RM} ${OBJECTDIR}/_ext/108293047/rmp_platform_mp32p.o.d 
+	@${RM} ${OBJECTDIR}/_ext/108293047/rmp_platform_mp32p.o 
+	${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -I"." -I"../../../Include" -O3 -fno-common -I"../../../Include" -I"./" -Wall -MP -MMD -MF "${OBJECTDIR}/_ext/108293047/rmp_platform_mp32p.o.d" -o ${OBJECTDIR}/_ext/108293047/rmp_platform_mp32p.o ../../../Source/Platform/MP32P/rmp_platform_mp32p.c    -DXPRJ_PIC32MZ2048_SK=$(CND_CONF)    $(COMPARISON_BUILD)  -specs=specs.txt -Wall -Wextra -mno-dsp -mno-dspr2 -mdfp="${DFP_DIR}"  
 	
 endif
 
@@ -171,7 +171,7 @@ endif
 ifeq ($(TYPE_IMAGE), DEBUG_RUN)
 ${DISTDIR}/RMP.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}: ${OBJECTFILES}  nbproject/Makefile-${CND_CONF}.mk    
 	@${MKDIR} ${DISTDIR} 
-	${MP_CC} $(MP_EXTRA_LD_PRE) -g -mdebugger -D__MPLAB_DEBUGGER_PK3=1 -mprocessor=$(MP_PROCESSOR_OPTION)  -o ${DISTDIR}/RMP.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX} ${OBJECTFILES_QUOTED_IF_SPACED}          -DXPRJ_PIC32MZ2048_SK=$(CND_CONF)    -specs=specs.txt $(COMPARISON_BUILD)   -mreserve=data@0x0:0x37F   -Wl,--defsym=__MPLAB_BUILD=1$(MP_EXTRA_LD_POST)$(MP_LINKER_FILE_OPTION),--defsym=__MPLAB_DEBUG=1,--defsym=__DEBUG=1,-D=__DEBUG_D,--defsym=__MPLAB_DEBUGGER_PK3=1,--defsym=_min_heap_size=0,--no-code-in-dinit,--no-dinit-in-serial-mem,-Map="${DISTDIR}/${PROJECTNAME}.${IMAGE_TYPE}.map",--memorysummary,${DISTDIR}/memoryfile.xml -mdfp="${DFP_DIR}"
+	${MP_CC} $(MP_EXTRA_LD_PRE) -g   -mprocessor=$(MP_PROCESSOR_OPTION)  -o ${DISTDIR}/RMP.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX} ${OBJECTFILES_QUOTED_IF_SPACED}          -DXPRJ_PIC32MZ2048_SK=$(CND_CONF)    -specs=specs.txt $(COMPARISON_BUILD)      -Wl,--defsym=__MPLAB_BUILD=1$(MP_EXTRA_LD_POST)$(MP_LINKER_FILE_OPTION),--defsym=__MPLAB_DEBUG=1,--defsym=__DEBUG=1,-D=__DEBUG_D,--defsym=_min_heap_size=0,--no-code-in-dinit,--no-dinit-in-serial-mem,-Map="${DISTDIR}/${PROJECTNAME}.${IMAGE_TYPE}.map",--memorysummary,${DISTDIR}/memoryfile.xml -mdfp="${DFP_DIR}"
 	
 else
 ${DISTDIR}/RMP.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}: ${OBJECTFILES}  nbproject/Makefile-${CND_CONF}.mk   
