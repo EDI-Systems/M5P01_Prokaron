@@ -17,27 +17,8 @@
 ;The above 3 registers are saved into the stack in combination(xPSR).
 ;The ARM Cortex-M4/7 also include a FPU.
 ;*****************************************************************************/
-            
-;/* Begin Header *************************************************************/
-    ;2^3=8 byte alignment.        
-    AREA                INIT,CODE,READONLY,ALIGN=3
-                                    
-    THUMB
-    REQUIRE8
-    PRESERVE8
-;/* End Header ***************************************************************/
 
-;/* Begin Exports ************************************************************/
-    ;Start the first thread
-    EXPORT              _RMP_Start
-    ;Get the MSB/LSB in the word
-    EXPORT              _RMP_A7M_RVM_MSB_Get
-    EXPORT              _RMP_A7M_RVM_LSB_Get
-    ;Fast-path context switching without invoking the RVM
-    EXPORT              _RMP_A7M_RVM_Yield
-;/* End Exports **************************************************************/
-
-;/* Begin Imports ************************************************************/
+;/* Begin Import *************************************************************/
     ;The real task switch handling function
     IMPORT              _RMP_Run_High
     ;The stack address of current thread
@@ -47,7 +28,24 @@
     IMPORT              RMP_Int_Unmask
     ;Hypercall parameter space
     IMPORT              RMP_A7M_RVM_Usr_Param
-;/* End Imports **************************************************************/
+;/* End Import ***************************************************************/
+
+;/* Begin Export *************************************************************/
+    ;Start the first thread
+    EXPORT              _RMP_Start
+    ;Get the MSB/LSB in the word
+    EXPORT              _RMP_A7M_RVM_MSB_Get
+    EXPORT              _RMP_A7M_RVM_LSB_Get
+    ;Fast-path context switching without invoking the RVM
+    EXPORT              _RMP_A7M_RVM_Yield
+;/* End Export ***************************************************************/
+            
+;/* Begin Header *************************************************************/
+    AREA                ARCH,CODE,READONLY,ALIGN=3
+    THUMB
+    REQUIRE8
+    PRESERVE8
+;/* End Header ***************************************************************/
 
 ;/* Begin Function:_RMP_Start *************************************************
 ;Description : Jump to the user function and will never return from it.
