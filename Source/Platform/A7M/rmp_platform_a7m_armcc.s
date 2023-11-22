@@ -18,17 +18,22 @@
 ;
 ;The ARM Cortex-M4/7 also include a FPU.
 ;*****************************************************************************/
-            
-;/* Begin Header *************************************************************/
-    ;2^3=8 byte alignment.
-    AREA                ARCH,CODE,READONLY,ALIGN=3                     
-                                    
-    THUMB
-    REQUIRE8
-    PRESERVE8
-;/* End Header ***************************************************************/
 
-;/* Begin Exports ************************************************************/
+;/* Begin Import *************************************************************/
+    ;The real task switch handling function
+    IMPORT              _RMP_Run_High 
+    ;The real systick handler function
+    IMPORT              _RMP_Tim_Handler
+    ;The PID of the current thread                     
+    IMPORT              RMP_Thd_Cur
+    ;The stack address of current thread
+    IMPORT              RMP_SP_Cur        
+    ;Save and load extra contexts, such as FPU, peripherals and MPU
+    IMPORT              RMP_Ctx_Save
+    IMPORT              RMP_Ctx_Load
+;/* End Import ***************************************************************/
+
+;/* Begin Export *************************************************************/
     ;Disable all interrupts
     EXPORT              RMP_Int_Disable      
     ;Enable all interrupts            
@@ -46,21 +51,14 @@
     EXPORT              PendSV_Handler 
     ;The systick timer routine              
     EXPORT              SysTick_Handler                               
-;/* End Exports **************************************************************/
-
-;/* Begin Imports ************************************************************/
-    ;The real task switch handling function
-    IMPORT              _RMP_Run_High 
-    ;The real systick handler function
-    IMPORT              _RMP_Tim_Handler
-    ;The PID of the current thread                     
-    IMPORT              RMP_Thd_Cur
-    ;The stack address of current thread
-    IMPORT              RMP_SP_Cur        
-    ;Save and load extra contexts, such as FPU, peripherals and MPU
-    IMPORT              RMP_Ctx_Save
-    IMPORT              RMP_Ctx_Load
-;/* End Imports **************************************************************/
+;/* End Export ***************************************************************/
+            
+;/* Begin Header *************************************************************/
+    AREA                ARCH,CODE,READONLY,ALIGN=3
+    THUMB
+    REQUIRE8
+    PRESERVE8
+;/* End Header ***************************************************************/
 
 ;/* Begin Function:RMP_Int_Disable ********************************************
 ;Description : The function for disabling all interrupts. Does not allow nesting.

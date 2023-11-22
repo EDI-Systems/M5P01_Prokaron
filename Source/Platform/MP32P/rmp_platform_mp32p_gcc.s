@@ -47,33 +47,8 @@ R29    $sp        stack pointer
 R30    $fp        frame pointer
 R31    $ra        return address (used by function call)
 ******************************************************************************/
-    
-/* Begin Header **************************************************************/
-    .text
-    .align 4
-/* End Header ****************************************************************/
 
-/* Begin Exports *************************************************************/
-    /* Disable all interrupts */
-    .global             RMP_Int_Disable      
-    /* Enable all interrupts */        
-    .global             RMP_Int_Enable   
-    /* Get the MSB/LSB */
-    .global             _RMP_MP32P_MSB_Get
-    .global             _RMP_MP32P_LSB_Get
-    /* Start the first thread */
-    .global             _RMP_Start
-    /* The context switch trigger */
-    .global             _RMP_Yield
-    /* The system pending service routine */
-    .global             PendSV_Handler 
-    /* The systick timer routine */
-    .global             SysTick_Handler
-    /* Set timer overflow value */
-    .global             _RMP_Set_Timer
-/* End Exports ***************************************************************/
-
-/* Begin Imports *************************************************************/
+/* Begin Import **************************************************************/
     /* The real task switch handling function */
     .extern             _RMP_Run_High 
     /* The real systick handler function */
@@ -93,9 +68,29 @@ R31    $ra        return address (used by function call)
     /* Clear timer & software interrupt flags */
     .extern             _RMP_Clear_Soft_Flag
     .extern             _RMP_Clear_Timer_Flag
-/* End Imports ***************************************************************/
+/* End Import ****************************************************************/
 
-/* Begin Macros **************************************************************/
+/* Begin Export **************************************************************/
+    /* Disable all interrupts */
+    .global             RMP_Int_Disable      
+    /* Enable all interrupts */        
+    .global             RMP_Int_Enable   
+    /* Get the MSB/LSB */
+    .global             _RMP_MP32P_MSB_Get
+    .global             _RMP_MP32P_LSB_Get
+    /* Start the first thread */
+    .global             _RMP_Start
+    /* The context switch trigger */
+    .global             _RMP_Yield
+    /* The system pending service routine */
+    .global             PendSV_Handler 
+    /* The systick timer routine */
+    .global             SysTick_Handler
+    /* Set timer overflow value */
+    .global             _RMP_Set_Timer
+/* End Export ****************************************************************/
+
+/* Begin Macro ***************************************************************/
     .equ                CP0_COUNT,$9
     .equ                CP0_COMPARE,$11
     .equ                CP0_STATUS,$12
@@ -265,7 +260,12 @@ R31    $ra        return address (used by function call)
     ERET
     NOP
 .endm
-/* End Macros ****************************************************************/
+/* End Macro *****************************************************************/
+    
+/* Begin Header **************************************************************/
+    .text
+    .align 4
+/* End Header ****************************************************************/
 
 /* Begin Function:RMP_Int_Disable *********************************************
 Description    : The function for disabling all interrupts. Does not allow nesting.

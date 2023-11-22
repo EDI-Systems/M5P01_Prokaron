@@ -21,12 +21,16 @@
 ;task and not shared between tasks.
 ;*****************************************************************************/
 
-;/* Begin Header *************************************************************/
-    .text
-    .align              2
-;/* End Header ***************************************************************/
+;/* Begin Import *************************************************************/
+    ;The real task switch handling function
+    .global             _RMP_Run_High
+    ;The current thread stack
+    .global             RMP_SP_Cur
+    ;The kernel stack
+    .global             _RMP_MSP430_SP_Kern
+;/* End Import ***************************************************************/
 
-;/* Begin Exports ************************************************************/
+;/* Begin Export *************************************************************/
     ;Disable all interrupts
     .def                RMP_Int_Disable
     ;Enable all interrupts            
@@ -35,16 +39,12 @@
     .def                _RMP_Start
     ;Start the first thread
     .def                _RMP_MSP430_Yield
-;/* End Exports **************************************************************/
+;/* End Export ***************************************************************/
 
-;/* Begin Imports ************************************************************/
-    ;The real task switch handling function
-    .global             _RMP_Run_High
-    ;The current thread stack
-    .global             RMP_SP_Cur
-    ;The kernel stack
-    .global             _RMP_MSP430_SP_Kern
-;/* End Imports **************************************************************/
+;/* Begin Header *************************************************************/
+    .text
+    .align              2
+;/* End Header ***************************************************************/
 
 ;/* Begin Function:RMP_Int_Disable ********************************************
 ;Description : The function for disabling all interrupts. Does not allow nesting.

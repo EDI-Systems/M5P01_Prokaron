@@ -38,12 +38,21 @@
 ;The ARM Cortex-R4/5/7/8 also include a fp32 FPU.
 ;*****************************************************************************/
 
-;/* Begin Header *************************************************************/
-    .text
-    .arm
-;/* End Header ***************************************************************/
+;/* Begin Import *************************************************************/
+    ;The real task switch handling function
+    .global             _RMP_Run_High
+    ;The real systick handler function
+    .global             _RMP_Tim_Handler
+    ;The PID of the current thread
+    .global             RMP_Thd_Cur
+    ;The stack address of current thread
+    .global             RMP_SP_Cur
+    ;Save and load extra contexts, such as FPU, peripherals and MPU
+    .global             RMP_Ctx_Save
+    .global             RMP_Ctx_Load
+;/* End Import ***************************************************************/
 
-;/* Begin Exports ************************************************************/
+;/* Begin Export *************************************************************/
     ;Disable all interrupts
     .global             RMP_Int_Disable
     ;Enable all interrupts
@@ -63,21 +72,12 @@
     .global             rtiNotification     ;SysTick_Handler
     ;Other unused error handlers
     .global             phantomInterrupt
-;/* End Exports **************************************************************/
+;/* End Export ***************************************************************/
 
-;/* Begin Imports ************************************************************/
-    ;The real task switch handling function
-    .global             _RMP_Run_High
-    ;The real systick handler function
-    .global             _RMP_Tim_Handler
-    ;The PID of the current thread
-    .global             RMP_Thd_Cur
-    ;The stack address of current thread
-    .global             RMP_SP_Cur
-    ;Save and load extra contexts, such as FPU, peripherals and MPU
-    .global             RMP_Ctx_Save
-    .global             RMP_Ctx_Load
-;/* End Imports **************************************************************/
+;/* Begin Header *************************************************************/
+    .text
+    .arm
+;/* End Header ***************************************************************/
 
 ;/* Begin Function:RMP_Int_Disable ********************************************
 ;Description : The function for disabling all interrupts. Does not allow nesting.

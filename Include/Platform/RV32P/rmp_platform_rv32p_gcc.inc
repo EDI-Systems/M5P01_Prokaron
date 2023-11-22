@@ -7,7 +7,7 @@ Description : The assembly part of the RMP RTOS. This is for RV32P, and
               as needed.
 ******************************************************************************/
 
-/* Begin Imports *************************************************************/
+/* Begin Import **************************************************************/
     /* The stack address of current thread */
     .global             RMP_SP_Cur
     /* The interrupt active flag */
@@ -21,9 +21,9 @@ Description : The assembly part of the RMP RTOS. This is for RV32P, and
     .global             _RMP_Run_High
     /* Handler for MSP430 timer interrupt */
     .global             _RMP_RV32P_Tim_Handler
-/* End Imports ***************************************************************/
+/* End Import ****************************************************************/
 
-/* Begin Macros **************************************************************/
+/* Begin Macro ***************************************************************/
     /* Save all GP regs */
     .macro              RMP_RV32P_REG_SAVE
     ADDI                sp,sp,-32*4
@@ -392,7 +392,7 @@ Description : The assembly part of the RMP RTOS. This is for RV32P, and
 1:
     RMP_RV32P_REG_RESTORE
     .endm
-/* End Macros ****************************************************************/
+/* End Macro *****************************************************************/
 
 /* End Of File ***************************************************************/
 

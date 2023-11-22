@@ -95,17 +95,7 @@ f30    $ft10      temporary (caller-save)
 f31    $ft11      temporary (caller-save)
 ******************************************************************************/
 
-/* Begin Import **************************************************************/
-    /* The real task switch handling function */
-    .extern             _RMP_Run_High
-    /* The stack address of current thread */
-    .extern             RMP_SP_Cur
-    /* Save and load extra contexts, such as FPU, peripherals and MPU */
-    .extern             RMP_Ctx_Save
-    .extern             RMP_Ctx_Load
-/* End Import ****************************************************************/
-
-/* Begin Export **************************************************************/
+/* Begin Exports *************************************************************/
     /* Disable all interrupts */
     .global             RMP_Int_Disable
     /* Enable all interrupts */
@@ -122,7 +112,17 @@ f31    $ft11      temporary (caller-save)
     .global             _RMP_RV32P_Yield_NONE
     .global             _RMP_RV32P_Yield_RVF
     .global             _RMP_RV32P_Yield_RVFD
-/* End Export ****************************************************************/
+/* End Exports ***************************************************************/
+
+/* Begin Imports *************************************************************/
+    /* The real task switch handling function */
+    .extern             _RMP_Run_High
+    /* The stack address of current thread */
+    .extern             RMP_SP_Cur
+    /* Save and load extra contexts, such as FPU, peripherals and MPU */
+    .extern             RMP_Ctx_Save
+    .extern             RMP_Ctx_Load
+/* End Imports ***************************************************************/
 
 /* Begin Function:RMP_Int_Disable *********************************************
 Description    : The function for disabling all interrupts. Does not allow nesting.
@@ -167,7 +167,7 @@ _RMP_Start:
     RET
 /* End Function:_RMP_Start ***************************************************/
 
-/* Begin Function:RMP_RV32P_MCYCLE_Get ****************************************
+/* Begin Function:RMP_RV32P_MCYCLE_Get ***************************************
 Description : Set the mcycle register content, could be useful for debugging.
 Input       : None.
 Output      : None.
@@ -178,9 +178,9 @@ Return      : $a0 - MCYCLE value.
 RMP_RV32P_MCYCLE_Get:
     CSRR                a0,mcycle
     RET
-/* End Function:RMP_RV32P_MCYCLE_Get *****************************************/
+/* End Function:RMP_RV32P_MCYCLE_Get ****************************************/
 
-/* Begin Function:RMP_RV32P_MCAUSE_Get ****************************************
+/* Begin Function:RMP_RV32P_MCAUSE_Get ***************************************
 Description : Set the mcause register content, could be useful for debugging.
 Input       : None.
 Output      : None.
@@ -191,9 +191,9 @@ Return      : $a0 - MCYCLE value.
 RMP_RV32P_MCAUSE_Get:
     CSRR                a0,mcause
     RET
-/* End Function:RMP_RV32P_MCAUSE_Get *****************************************/
+/* End Function:RMP_RV32P_MCAUSE_Get ****************************************/
 
-/* Begin Function:_RMP_RV32P_MTVEC_Set ****************************************
+/* Begin Function:_RMP_RV32P_MTVEC_Set ***************************************
 Description : Set the mtvec register content.
 Input       : None.
 Output      : None.
@@ -204,9 +204,9 @@ Return      : $a0 - MCYCLE value.
 _RMP_RV32P_MTVEC_Set:
     CSRW                mtvec,a0
     RET
-/* End Function:_RMP_RV32P_MTVEC_Set *****************************************/
+/* End Function:_RMP_RV32P_MTVEC_Set ****************************************/
 
-/* Begin Function:_RMP_RV32P_Yield ********************************************
+/* Begin Function:_RMP_RV32P_Yield *******************************************
 Description : Yield from one thread to another without an interrupt.
               This function has 3 versions:
               1. no coprocessor;
@@ -604,7 +604,7 @@ _RMP_RV32P_Yield_RVFD_Restore_Skip:
     RMP_RV32P_REG_RESTORE
 _RMP_RV32P_Yield_RVFD_Exit:
     RET
-/* End Function:_RMP_RV32P_Yield *********************************************/
+/* End Function:_RMP_RV32P_Yield ********************************************/
 
 /* End Of File ***************************************************************/
 

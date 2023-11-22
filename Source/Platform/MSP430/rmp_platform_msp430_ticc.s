@@ -15,30 +15,30 @@
 ;R4-R15:                      General purpose registers.
 ;*****************************************************************************/
 
-;/* Begin Header *************************************************************/
-    .text
-    .align              2
-;/* End Header ***************************************************************/
-
-;/* Begin Exports ************************************************************/
-    ;Disable all interrupts
-    .def                RMP_Int_Disable
-    ;Enable all interrupts            
-    .def                RMP_Int_Enable
-    ;Start the first thread
-    .def                _RMP_Start
-    ;Start the first thread
-    .def                _RMP_MSP430_Yield
-;/* End Exports **************************************************************/
-
-;/* Begin Imports ************************************************************/
+;/* Begin Import *************************************************************/
     ;The real task switch handling function
     .global             _RMP_Run_High
     ;The current thread stack
     .global             RMP_SP_Cur
     ;The kernel stack
     .global             _RMP_MSP430_SP_Kern
-;/* End Imports **************************************************************/
+;/* End Import ***************************************************************/
+
+;/* Begin Export *************************************************************/
+    ;Disable all interrupts
+    .def                RMP_Int_Disable
+    ;Enable all interrupts
+    .def                RMP_Int_Enable
+    ;Start the first thread
+    .def                _RMP_Start
+    ;Start the first thread
+    .def                _RMP_MSP430_Yield
+;/* End Export ***************************************************************/
+
+;/* Begin Header *************************************************************/
+    .text
+    .align              2
+;/* End Header ***************************************************************/
 
 ;/* Begin Function:RMP_Int_Disable ********************************************
 ;Description : The function for disabling all interrupts. Does not allow nesting.
