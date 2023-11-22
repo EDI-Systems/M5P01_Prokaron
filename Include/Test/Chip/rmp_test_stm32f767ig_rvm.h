@@ -190,8 +190,10 @@ void Int_Init(void)
     /* Connect the physical interrupt to our machine */
     RMP_ASSERT(RVM_Hyp_Vct_Phys(30U, 2U)==0U);
     /* Set the priority of the physical interrupt and enable it */
-    RMP_ASSERT(RVM_A7M_Int_Local_Mod(KFN_INT_LOCAL_MOD, 30U, RVM_A7M_KFN_INT_LOCAL_MOD_SET_STATE, 1U)==0);
-    RMP_ASSERT(RVM_A7M_Int_Local_Mod(KFN_INT_LOCAL_MOD, 30U, RVM_A7M_KFN_INT_LOCAL_MOD_SET_PRIO, 0xFFU)==0);
+    RMP_ASSERT(RVM_A7M_Int_Local_Mod(KFN_INT_LOCAL_MOD,30U,
+               RVM_A7M_KFN_INT_LOCAL_MOD_SET_STATE,1U)==0);
+    RMP_ASSERT(RVM_A7M_Int_Local_Mod(KFN_INT_LOCAL_MOD,30U,
+               RVM_A7M_KFN_INT_LOCAL_MOD_SET_PRIO,0xFFU)==0);
     /* Interrupt generation is initialized too, here we only register our handler */
     RVM_Virt_Vct_Reg(2U, Int_Handler);
     
@@ -216,7 +218,8 @@ Return      : None.
 void Int_Disable(void)
 {
     /* Disable interrupt */
-    RMP_ASSERT(RVM_A7M_Int_Local_Mod(KFN_INT_LOCAL_MOD, 30U, RVM_A7M_KFN_INT_LOCAL_MOD_SET_STATE, 0U)==0);
+    RMP_ASSERT(RVM_A7M_Int_Local_Mod(KFN_INT_LOCAL_MOD,30U,
+                                     RVM_A7M_KFN_INT_LOCAL_MOD_SET_STATE,0U)==0);
     /* Reverse registration */
     RVM_Virt_Vct_Reg(2U,RMP_NULL);
 }

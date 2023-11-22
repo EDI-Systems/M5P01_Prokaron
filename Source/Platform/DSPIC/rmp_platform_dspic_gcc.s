@@ -34,30 +34,8 @@ DOEND       24          DO loop end address and stack.(DSP33EPxx806/810/814 only
 CORCON      16          Core control register.
 STATUS      16          Status register.
 ******************************************************************************/
-    
-/* Begin Header **************************************************************/
-    .text
-    .align 2
-/* End Header ****************************************************************/
 
-/* Begin Exports *************************************************************/
-    /* The DSPIC toolchain mangles all symbols with an extra '_' */
-    /* Disable all interrupts */
-    .global             _RMP_Int_Disable      
-    /* Enable all interrupts */        
-    .global             _RMP_Int_Enable   
-    /* Get the MSB/LSB */
-    .global             _RMP_DSPIC_MSB_Get
-    .global             _RMP_DSPIC_LSB_Get
-    /* Start the first thread */
-    .global             __RMP_Start
-    /* The system pending service routine */
-    .global             __INT0Interrupt 
-    /* The systick timer routine */
-    .global             __T1Interrupt
-/* End Exports ***************************************************************/
-
-/* Begin Imports *************************************************************/
+/* Begin Import **************************************************************/
     /* The real task switch handling function */
     .extern             __RMP_Run_High 
     /* The real systick handler function */
@@ -77,9 +55,26 @@ STATUS      16          Status register.
     /* Clear timer & software interrupt flags */
     .extern             __RMP_Clear_Soft_Flag
     .extern             __RMP_Clear_Timer_Flag
-/* End Imports ***************************************************************/
+/* End Import ****************************************************************/
 
-/* Begin Macros **************************************************************/
+/* Begin Export **************************************************************/
+    /* The DSPIC toolchain mangles all symbols with an extra '_' */
+    /* Disable all interrupts */
+    .global             _RMP_Int_Disable      
+    /* Enable all interrupts */        
+    .global             _RMP_Int_Enable   
+    /* Get the MSB/LSB */
+    .global             _RMP_DSPIC_MSB_Get
+    .global             _RMP_DSPIC_LSB_Get
+    /* Start the first thread */
+    .global             __RMP_Start
+    /* The system pending service routine */
+    .global             __INT0Interrupt 
+    /* The systick timer routine */
+    .global             __T1Interrupt
+/* End Export ****************************************************************/
+
+/* Begin Macro ***************************************************************/
     /* Context saving - not all registers are present in all series. */
 .macro SAVE_CONTEXT
     /* Push everything to stack */
@@ -190,7 +185,12 @@ STATUS      16          Status register.
     POP                 SR
     RETFIE
 .endm
-/* End Macros ****************************************************************/
+/* End Macro *****************************************************************/
+
+/* Begin Header **************************************************************/
+    .text
+    .align 2
+/* End Header ****************************************************************/
 
 /* Begin Function:RMP_Int_Disable *********************************************
 Description    : The function for disabling all interrupts. Does not allow nesting.

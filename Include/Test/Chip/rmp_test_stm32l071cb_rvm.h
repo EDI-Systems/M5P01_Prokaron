@@ -3,7 +3,7 @@ Filename    : rmp_test_stm32l071cb_rvm.h
 Author      : pry 
 Date        : 22/07/2017
 Licence     : The Unlicense; see LICENSE for details.
-Description : The testbench for STM32L071CB, running in the RVM. 
+Description : The testbench for STM32L071CB, running in the RVM. Takes ~3min.
               How to use this test header:
               1. Add relevant test file to the project.
               2. Add memory access permission as follows:
@@ -163,16 +163,18 @@ Return      : None.
 void Int_Init(void)
 {
     /* Connect the physical interrupt to our machine */
-    RMP_ASSERT(RVM_Hyp_Vct_Phys(20U, 2U)==0U);
+    RMP_ASSERT(RVM_Hyp_Vct_Phys(20U,2U)==0U);
     /* Set the priority of the physical interrupt and enable it */
-    RMP_ASSERT(RVM_A6M_Int_Local_Mod(KFN_INT_LOCAL_MOD, 20, RVM_A6M_KFN_INT_LOCAL_MOD_SET_PRIO, 0xFFU)==0);
-    RMP_ASSERT(RVM_A6M_Int_Local_Mod(KFN_INT_LOCAL_MOD, 20, RVM_A6M_KFN_INT_LOCAL_MOD_SET_STATE, 1U)==0);
+    RMP_ASSERT(RVM_A6M_Int_Local_Mod(KFN_INT_LOCAL_MOD,20U,
+               RVM_A6M_KFN_INT_LOCAL_MOD_SET_PRIO,0xFFU)==0);
+    RMP_ASSERT(RVM_A6M_Int_Local_Mod(KFN_INT_LOCAL_MOD,20U,
+               RVM_A6M_KFN_INT_LOCAL_MOD_SET_STATE,1U)==0);
     /* Interrupt generation is initialized too, here we only register our handler */
     RVM_Virt_Vct_Reg(2U, Int_Handler);
     
     /* TIM21 clock = CPU clock */
     TIM21_CR1=TIM_COUNTERMODE_DOWN|TIM_CLOCKDIVISION_DIV1;
-    TIM21_ARR=3600U;
+    TIM21_ARR=3600U*4U;
     TIM21_PSC=0U;
     RCC_APB2ENR|=RCC_APB2ENR_TIM21;
     TIM21_SR&=~0x01U;

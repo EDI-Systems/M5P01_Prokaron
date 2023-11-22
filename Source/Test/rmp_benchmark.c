@@ -10,6 +10,10 @@ Description : The performance benchmark for RMP. Do not modify this file; what
               implemented correctly and the interrupt is not triggered
               immediately after writing to the software interrupt register.
               There's also a chance that the stack overflowed.
+              When testing ISR latencies, the timer firing intervals shall be 
+              set as such that no timer interrupt may be fired while the former
+              one is still being processed, especially considering the fact that
+              the OS tick timer may kick in at any time.
 ******************************************************************************/
 
 /* Includes ******************************************************************/
@@ -348,6 +352,7 @@ void Test_Mail_ISR(void)
         /* Read counter here */
         End=RMP_CNT_READ();
         RMP_DATA();
+        Flip=0U;
     }
 }
 
@@ -360,6 +365,7 @@ void Test_Sem_ISR(void)
         /* Read counter here */
         End=RMP_CNT_READ();
         RMP_DATA();
+        Flip=0U;
     }
 }
 
@@ -374,6 +380,7 @@ void Test_Msgq_ISR(void)
         /* Read counter here */
         End=RMP_CNT_READ();
         RMP_DATA();
+        Flip=0U;
     }
 }
 
@@ -388,6 +395,7 @@ void Test_Bmq_ISR(void)
         /* Read counter here */
         End=RMP_CNT_READ();
         RMP_DATA();
+        Flip=0U;
     }
 }
 
@@ -633,59 +641,85 @@ Return      : None.
 ******************************************************************************/
 void Int_Handler(void)
 {
+    rmp_ret_t Retval;
     static rmp_ptr_t Count=0U;
     static struct RMP_List Node;
+    
+    if(Flip!=0U)
+    {
+        RMP_DBG_S("Interrupt reentered.\r\n");
+    }
+    Flip=1U;
     
     if(Count<ROUND_NUM)
     {
         Count++;
         Start=RMP_CNT_READ();
-        if(RMP_Thd_Snd_ISR(&Thd_2, 1)<0)
+        Retval=RMP_Thd_Snd_ISR(&Thd_2, 1);
+        if(Retval<0)
         {
-            RMP_DBG_S("ISR Mailbox send failure: ");
+            RMP_DBG_S("ISR Mailbox send failed with code ");
+            RMP_DBG_I(Retval);
+            RMP_DBG_S(": ");
             RMP_DBG_I(Count);
             RMP_DBG_S(" sends.\r\n");
-            while(1);
         }
     }
     else if(Count<ROUND_NUM*2U)
     {
         Count++;
         Start=RMP_CNT_READ();
-        if(RMP_Sem_Post_ISR(&Sem_1, 1)<0)
+        Retval=RMP_Sem_Post_ISR(&Sem_1, 1);
+        if(Retval<0)
         {
-            RMP_DBG_S("ISR semaphore post failure: ");
+            RMP_DBG_S("ISR semaphore post failed with code ");
+            RMP_DBG_I(Retval);
+            RMP_DBG_S(": ");
             RMP_DBG_I(Count);
             RMP_DBG_S(" posts.\r\n");
-            while(1);
         }
     }
     else if(Count<ROUND_NUM*3U)
     {
         Count++;
         Start=RMP_CNT_READ();
-        if(RMP_Msgq_Snd_ISR(&Msgq_1, &Node)<0)
+        Retval=RMP_Msgq_Snd_ISR(&Msgq_1, &Node);
+        if(Retval<0)
         {
-            RMP_DBG_S("ISR msgq message send failure: ");
+            RMP_DBG_S("ISR msgq message send failed with code ");
+            RMP_DBG_I(Retval);
+            RMP_DBG_S(": ");
             RMP_DBG_I(Count);
             RMP_DBG_S(" sends.\r\n");
-            while(1);
         }
     }
     else if(Count<ROUND_NUM*4U)
     {
         Count++;
         Start=RMP_CNT_READ();
-        if(RMP_Bmq_Snd_ISR(&Bmq_1, &Node)<0)
+        Retval=RMP_Bmq_Snd_ISR(&Bmq_1, &Node);
+        if(Retval<0)
         {
-            RMP_DBG_S("ISR bmq message send failure: ");
+            RMP_DBG_S("ISR bmq message send failed with code ");
+            RMP_DBG_I(Retval);
+            RMP_DBG_S(": ");
             RMP_DBG_I(Count);
             RMP_DBG_S(" sends.\r\n");
-            while(1);
         }
     }
     else
+    {
+        Retval=0;
         Int_Disable();
+    }
+    
+    if(Retval<0)
+    {
+        RMP_DBG_S("Thd 2 state: 0x");
+        RMP_DBG_H(Thd_2.State);
+        RMP_DBG_S(".\r\n");
+        while(1);
+    }
 }
 #endif
 /* End Function:Int_Handler **************************************************/
