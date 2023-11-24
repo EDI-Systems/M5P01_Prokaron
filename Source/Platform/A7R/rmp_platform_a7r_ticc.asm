@@ -47,9 +47,6 @@
     .global             RMP_Thd_Cur
     ;The stack address of current thread
     .global             RMP_SP_Cur
-    ;Save and load extra contexts, such as FPU, peripherals and MPU
-    .global             RMP_Ctx_Save
-    .global             RMP_Ctx_Load
 ;/* End Import ***************************************************************/
 
 ;/* Begin Export *************************************************************/

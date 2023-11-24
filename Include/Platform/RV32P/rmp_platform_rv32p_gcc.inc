@@ -14,9 +14,6 @@ Description : The assembly part of the RMP RTOS. This is for RV32P, and
     .global             RMP_RV32P_Int_Act
     /* The yield pending flag */
     .global             _RMP_RV32P_Yield_Pend
-    /* Save and load extra contexts, such as FPU, peripherals and MPU */
-    .global             RMP_Ctx_Save
-    .global             RMP_Ctx_Load
     /* Extract highest priority running thread */
     .global             _RMP_Run_High
     /* Handler for MSP430 timer interrupt */
