@@ -27,10 +27,7 @@
     ;The PID of the current thread                     
     IMPORT              RMP_Thd_Cur
     ;The stack address of current thread
-    IMPORT              RMP_SP_Cur        
-    ;Save and load extra contexts, such as FPU, peripherals and MPU
-    IMPORT              RMP_Ctx_Save
-    IMPORT              RMP_Ctx_Load
+    IMPORT              RMP_SP_Cur
 ;/* End Import ***************************************************************/
 
 ;/* Begin Export *************************************************************/

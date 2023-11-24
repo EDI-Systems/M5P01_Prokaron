@@ -100,9 +100,6 @@ f31    $ft11      temporary (caller-save)
     .extern             _RMP_Run_High
     /* The stack address of current thread */
     .extern             RMP_SP_Cur
-    /* Save and load extra contexts, such as FPU, peripherals and MPU */
-    .extern             RMP_Ctx_Save
-    .extern             RMP_Ctx_Load
 /* End Import ****************************************************************/
 
 /* Begin Export **************************************************************/
