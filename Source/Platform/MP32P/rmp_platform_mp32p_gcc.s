@@ -57,9 +57,6 @@ R31    $ra        return address (used by function call)
     .extern             RMP_Thd_Cur
     /* The stack address of current thread */
     .extern             RMP_SP_Cur
-    /* Save and load extra contexts, such as FPU, peripherals and MPU */
-    .extern             RMP_Ctx_Save
-    .extern             RMP_Ctx_Load
     /* The place where we store the kernel gp/sp value */
     .extern             RMP_GP_Val
     .extern             RMP_SP_Val
