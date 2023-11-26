@@ -153,8 +153,8 @@ struct RMP_DSPIC_Stack
 
 /* Private Variable **********************************************************/
 #if(!(defined __HDR_DEF__||defined __HDR_STRUCT__))
-#ifndef __RMP_PLATFORM_DSPIC_PUBLIC__
-#define __RMP_PLATFORM_DSPIC_PUBLIC__
+#ifndef __RMP_PLATFORM_DSPIC_MEMBER__
+#define __RMP_PLATFORM_DSPIC_MEMBER__
 
 /* In this way we can use the data structures and definitions in the headers */
 #define __HDR_DEF__
@@ -223,7 +223,7 @@ __EXTERN__ void _RMP_Clear_Timer_Flag(void);
 /*****************************************************************************/
 /* Undefine "__EXTERN__" to avoid redefinition */
 #undef __EXTERN__
-/* __RMP_PLATFORM_DSPIC_PUBLIC__ */
+/* __RMP_PLATFORM_DSPIC_MEMBER__ */
 #endif
 /* !(defined __HDR_DEF__||defined __HDR_STRUCT__) */
 #endif
