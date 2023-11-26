@@ -140,8 +140,8 @@ struct RMP_RV32P_Stack
 
 /* Private Variable **********************************************************/
 #if(!(defined __HDR_DEF__||defined __HDR_STRUCT__))
-#ifndef __RMP_PLATFORM_RV32P_PUBLIC__
-#define __RMP_PLATFORM_RV32P_PUBLIC__
+#ifndef __RMP_PLATFORM_RV32P_MEMBER__
+#define __RMP_PLATFORM_RV32P_MEMBER__
 
 /* In this way we can use the data structures and definitions in the headers */
 #define __HDR_DEF__
@@ -215,7 +215,7 @@ __EXTERN__ void _RMP_RV32P_Tim_Handler(void);
 /*****************************************************************************/
 /* Undefine "__EXTERN__" to avoid redefinition */
 #undef __EXTERN__
-/* __RMP_PLATFORM_RV32P_PUBLIC__ */
+/* __RMP_PLATFORM_RV32P_MEMBER__ */
 #endif
 /* !(defined __HDR_DEF__||defined __HDR_STRUCT__) */
 #endif
