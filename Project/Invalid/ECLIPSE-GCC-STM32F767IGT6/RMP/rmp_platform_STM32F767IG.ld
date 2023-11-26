@@ -54,7 +54,7 @@ SECTIONS
 {
 /* End Entry Point Definitions ***********************************************/
 
-/* Begin Section:.text ********************************************************
+/* Section:.text **************************************************************
 Description : The program code is stored in the .text section, which goes to FLASH.
 Location    : Flash
 Component   : .text - The code segment.
@@ -72,7 +72,7 @@ Component   : .text - The code segment.
 } > FLASH
 /* End Section:.text *********************************************************/
 
-/* Begin Section:.inits *******************************************************
+/* Section:.inits *************************************************************
 Description : Memory regions initialisation arrays. There are two kinds of arrays
               for each RAM region, one for data and one for bss. Each is iterrated
               at startup and the region initialisation is performed.
@@ -144,7 +144,7 @@ Component   : .data.* - The data section initialization section.
 } > FLASH
 /* End Section:.inits ********************************************************/
 
-/* Begin Section:.data ********************************************************
+/* Section:.data **************************************************************
 Description : The main initialized data section. The program executes knowing that
               the data is in the RAM but the loader puts the initial values in the
               FLASH (inidata). It is one task of the startup to copy the initial
@@ -173,7 +173,7 @@ _sidata = LOADADDR(.data);
 } > RAM AT > FLASH
 /* End Section:.data *********************************************************/
 
-/* Begin Section:.bss *********************************************************
+/* Section:.bss ***************************************************************
 Description : The initialised-to-0 data sections. NOLOAD is used to avoid
               the "section `.bss' type changed to PROGBITS" warning. This is the
               main region which is placed in RAM. Actually the RME does not
@@ -196,7 +196,7 @@ Component   : .bss - The sections to put into the RAM, and initialized to 0.
 } > RAM
 /* End Section:.bss **********************************************************/
 
-/* Begin Section:.noinit ******************************************************
+/* Section:.noinit ************************************************************
 Description : The uninitialised data sections. NOLOAD is used to avoid
               the "section `.noinit' type changed to PROGBITS" warning.
 Location    : RAM
@@ -216,7 +216,7 @@ PROVIDE ( __end = _end_noinit );
 PROVIDE ( __end__ = _end_noinit );
 /* End Section:.noinit *******************************************************/
 
-/* Begin Section:._check_stack ************************************************
+/* Section:._check_stack ******************************************************
 Description : Used for validation only, do not allocate anything here!
               This is just to check that there is enough RAM left for the Main
               stack. It should generate an error if it's full. This stack, 

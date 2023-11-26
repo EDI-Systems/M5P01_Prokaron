@@ -95,7 +95,7 @@ f30    $ft10      temporary (caller-save)
 f31    $ft11      temporary (caller-save)
 ******************************************************************************/
 
-/* Begin Imports *************************************************************/
+/* Import ********************************************************************/
     /* The real task switch handling function */
     .extern             _RMP_Run_High
     /* The stack address of current thread */
@@ -105,18 +105,18 @@ f31    $ft11      temporary (caller-save)
     .extern             RMP_Int_Unmask
     /* Hypercall parameter space */
     .extern             RMP_RV32P_RVM_Usr_Param
-/* End Imports ***************************************************************/
+/* End Import ****************************************************************/
 
-/* Begin Exports *************************************************************/
+/* Export ********************************************************************/
     /* Start the first thread */
     .global             _RMP_Start
     /* Fast-path context switching without invoking the RVM */
     .global             _RMP_RV32P_RVM_Yield_NONE
     .global             _RMP_RV32P_RVM_Yield_RVF
     .global             _RMP_RV32P_RVM_Yield_RVFD
-/* End Exports ***************************************************************/
+/* End Export ****************************************************************/
 
-/* Begin Function:_RMP_Start **************************************************
+/* Function:_RMP_Start ********************************************************
 Description : Jump to the user function and will never return from it.
 Input       : a0 - The address to branch to.
               a1 - The stack to use.
@@ -131,7 +131,7 @@ _RMP_Start:
     RET
 /* End Function:_RMP_Start ***************************************************/
 
-/* Begin Function:_RMP_RV32P_Yield *******************************************
+/* Function:_RMP_RV32P_Yield *************************************************
 Description : Yield from one thread to another without an interrupt.
               This function has 3 versions:
               1. no coprocessor;

@@ -6,7 +6,7 @@ Licence     : The Unlicense; see LICENSE for details.
 Description : The configuration file for CH32V307VC RISC-V chip.
 ******************************************************************************/
 
-/* Defines *******************************************************************/
+/* Define ********************************************************************/
 /* The HAL library */
 #include "ch32v30x.h"
 #include "debug.h"
@@ -56,7 +56,7 @@ while(0)
 
 /* This is for debugging output */
 #define RMP_RV32P_PUTCHAR(CHAR)         putchar(CHAR)
-/* End Defines ***************************************************************/
+/* End Define ****************************************************************/
 
 /* End Of File ***************************************************************/
 

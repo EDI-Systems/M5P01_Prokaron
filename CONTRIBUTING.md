@@ -147,92 +147,92 @@ A example C header file:
     Description : <File description>
     ******************************************************************************/
 
-    /* Defines *******************************************************************/
-    #ifdef __HDR_DEFS__
-    #ifndef __<FILENAME>_H_DEFS__
-    #define __<FILENAME>_H_DEFS__
+    /* Define ********************************************************************/
+    #ifdef __HDR_DEF__
+    #ifndef __<FILENAME>_DEF__
+    #define __<FILENAME>_DEF__
     /*****************************************************************************/
     <Place your defines here>
     /*****************************************************************************/
-    /* __<FILENAME>_H_DEFS__ */
+    /* __<FILENAME>_DEF__ */
     #endif
-    /* __HDR_DEFS__ */
+    /* __HDR_DEF__ */
     #endif
-    /* End Defines ***************************************************************/
+    /* End Define ****************************************************************/
 
-    /* Structs *******************************************************************/
-    #ifdef __HDR_STRUCTS__
-    #ifndef __<FILENAME>_H_STRUCTS__
-    #define __<FILENAME>_H_STRUCTS__
+    /* Struct ********************************************************************/
+    #ifdef __HDR_STRUCT__
+    #ifndef __<FILENAME>_STRUCT__
+    #define __<FILENAME>_STRUCT__
 
     /* Use defines in these headers */
-    #define __HDR_DEFS__
+    #define __HDR_DEF__
     <Place external define import headers here>
-    #undef __HDR_DEFS__
+    #undef __HDR_DEF__
 
     /* We used structs in these headers */
     <Place external struct import headers here>
     /*****************************************************************************/
     <Place struct definitions here>
     /*****************************************************************************/
-    /* __<FILENAME>_H_STRUCTS__ */
+    /* __<FILENAME>_STRUCT__ */
     #endif
-    /* __HDR_STRUCTS__ */
+    /* __HDR_STRUCT__ */
     #endif
-    /* End Structs ***************************************************************/
+    /* End Struct ****************************************************************/
 
-    /* Private Global Variables **************************************************/
-    #if(!(defined __HDR_DEFS__||defined __HDR_STRUCTS__))
-    #ifndef __<FILENAME>_MEMBERS__
-    #define __<FILENAME>_MEMBERS__
+    /* Private Variable **********************************************************/
+    #if(!(defined __HDR_DEF__||defined __HDR_STRUCT__))
+    #ifndef __<FILENAME>_PUBLIC__
+    #define __<FILENAME>_PUBLIC__
 
     /* In this way we can use the data structures and definitions in the headers */
-    #define __HDR_DEFS__
+    #define __HDR_DEF__
     <Place external define import headers here>
-    #undef __HDR_DEFS__
+    #undef __HDR_DEF__
 
-    #define __HDR_STRUCTS__
+    #define __HDR_STRUCT__
     <Place external struct import headers here>
-    #undef __HDR_STRUCTS__
+    #undef __HDR_STRUCT__
 
     /* If the header is not used in the public mode */
-    #ifndef __HDR_PUBLIC_MEMBERS__
+    #ifndef __HDR_PUBLIC__
     /*****************************************************************************/
     <Place private global variables here>
     /*****************************************************************************/
-    /* End Private Global Variables **********************************************/
+    /* End Private Variable ******************************************************/
 
-    /* Private C Function Prototypes *********************************************/ 
+    /* Private Function **********************************************************/ 
     /*****************************************************************************/
     <Place private C function prototypes here>
     /*****************************************************************************/
     #define __EXTERN__
-    /* End Private C Function Prototypes *****************************************/
+    /* End Private Function ******************************************************/
 
-    /* Public Global Variables ***************************************************/
-    /* __HDR_PUBLIC_MEMBERS__ */
+    /* Public Variable ***********************************************************/
+    /* __HDR_PUBLIC__ */
     #else
     #define __EXTERN__ EXTERN 
-    /* __HDR_PUBLIC_MEMBERS__ */
+    /* __HDR_PUBLIC__ */
     #endif
 
     /*****************************************************************************/
     <Place public global variables here>
     /*****************************************************************************/
 
-    /* End Public Global Variables ***********************************************/
+    /* End Public Variable *******************************************************/
 
-    /* Public C Function Prototypes **********************************************/
+    /* Public Function ***********************************************************/
     /*****************************************************************************/
     <Place public C function prototypes here>
     /*****************************************************************************/
     /* Undefine "__EXTERN__" to avoid redefinition */
     #undef __EXTERN__
-    /* __<FILENAME>_MEMBERS__ */
+    /* __<FILENAME>_PUBLIC__ */
     #endif
-    /* !(defined __HDR_DEFS__||defined __HDR_STRUCTS__) */
+    /* !(defined __HDR_DEF__||defined __HDR_STRUCT__) */
     #endif
-    /* End Public C Function Prototypes ******************************************/
+    /* End Public Function *******************************************************/
 
     /* End Of File ***************************************************************/
 
@@ -249,24 +249,24 @@ An example C source file:
     Description : <File description>
     ******************************************************************************/
 
-    /* Includes ******************************************************************/
-    #define __HDR_DEFS__
+    /* Include *******************************************************************/
+    #define __HDR_DEF__
     <Place the headers you wish to import defines here>
-    #undef __HDR_DEFS__
+    #undef __HDR_DEF__
 
-    #define __HDR_STRUCTS__
+    #define __HDR_STRUCT__
     <Place the headers you wish to import structs here>
-    #undef __HDR_STRUCTS__
+    #undef __HDR_STRUCT__
 
     /* Private include */
     <Place the private headers here>
 
-    #define __HDR_PUBLIC_MEMBERS__
+    #define __HDR_PUBLIC__
     <Place the headers you wish to import globals here>
-    #undef __HDR_PUBLIC_MEMBERS__
-    /* End Includes **************************************************************/
+    #undef __HDR_PUBLIC__
+    /* End Include ***************************************************************/
 
-    /* Begin Function:<Name> ******************************************************
+    /* Function:<Name> ************************************************************
     Description : <Description of the function>.
     Input       : <Type> <Argument> - <Explanation>.
     Output      : <Type> <Argument> - <Explanation>.

@@ -6,10 +6,10 @@ Licence     : The Unlicense; see LICENSE for details.
 Description : The header of "rmp_platform_msp430.c".
 ******************************************************************************/
 
-/* Defines *******************************************************************/
-#ifdef __HDR_DEFS__
-#ifndef __RMP_PLATFORM_MSP430_H_DEFS__
-#define __RMP_PLATFORM_MSP430_H_DEFS__
+/* Define ********************************************************************/
+#ifdef __HDR_DEF__
+#ifndef __RMP_PLATFORM_MSP430_DEF__
+#define __RMP_PLATFORM_MSP430_DEF__
 /*****************************************************************************/
 /* Basic Types ***************************************************************/
 #ifndef __RMP_S32_T__
@@ -43,7 +43,7 @@ typedef unsigned char rmp_u8_t;
 #endif
 /* End Basic Types ***********************************************************/
 
-/* Begin Extended Types ******************************************************/
+/* Extended Types ************************************************************/
 /* The CPU and application specific macros are here */
 #include "rmp_platform_msp430_conf.h"
 
@@ -101,21 +101,21 @@ typedef rmp_s16_t rmp_ret_t;
 
 #define RMP_MSP430X_PCSR(PC,SR)         (((PC)<<16)|(((PC)>>4)&0xF000)|(SR))
 /*****************************************************************************/
-/* __RMP_PLATFORM_MSP430_H_DEFS__ */
+/* __RMP_PLATFORM_MSP430_DEF__ */
 #endif
-/* __HDR_DEFS__ */
+/* __HDR_DEF__ */
 #endif
-/* End Defines ***************************************************************/
+/* End Define ****************************************************************/
 
-/* Structs *******************************************************************/
-#ifdef __HDR_STRUCTS__
-#ifndef __RMP_PLATFORM_MSP430_H_STRUCTS__
-#define __RMP_PLATFORM_MSP430_H_STRUCTS__
+/* Struct ********************************************************************/
+#ifdef __HDR_STRUCT__
+#ifndef __RMP_PLATFORM_MSP430_STRUCT__
+#define __RMP_PLATFORM_MSP430_STRUCT__
 /* We used structs in the header */
 
 /* Use defines in these headers */
-#define __HDR_DEFS__
-#undef __HDR_DEFS__
+#define __HDR_DEF__
+#undef __HDR_DEF__
 /*****************************************************************************/
 #if(RMP_MSP430_X!=0U)
 struct RMP_MSP430_Stack
@@ -154,45 +154,45 @@ struct RMP_MSP430_Stack
 };
 #endif
 /*****************************************************************************/
-/* __RMP_PLATFORM_MSP430_H_STRUCTS__ */
+/* __RMP_PLATFORM_MSP430_STRUCT__ */
 #endif
-/* __HDR_STRUCTS__ */
+/* __HDR_STRUCT__ */
 #endif
-/* End Structs ***************************************************************/
+/* End Struct ****************************************************************/
 
-/* Private Global Variables **************************************************/
-#if(!(defined __HDR_DEFS__||defined __HDR_STRUCTS__))
-#ifndef __RMP_PLATFORM_MSP430_MEMBERS__
-#define __RMP_PLATFORM_MSP430_MEMBERS__
+/* Private Variable **********************************************************/
+#if(!(defined __HDR_DEF__||defined __HDR_STRUCT__))
+#ifndef __RMP_PLATFORM_MSP430_PUBLIC__
+#define __RMP_PLATFORM_MSP430_PUBLIC__
 
 /* In this way we can use the data structures and definitions in the headers */
-#define __HDR_DEFS__
+#define __HDR_DEF__
 
-#undef __HDR_DEFS__
+#undef __HDR_DEF__
 
-#define __HDR_STRUCTS__
+#define __HDR_STRUCT__
 
-#undef __HDR_STRUCTS__
+#undef __HDR_STRUCT__
 
 /* If the header is not used in the public mode */
-#ifndef __HDR_PUBLIC_MEMBERS__
+#ifndef __HDR_PUBLIC__
 /*****************************************************************************/
 
 /*****************************************************************************/
-/* End Private Global Variables **********************************************/
+/* End Private Variable ******************************************************/
 
-/* Private C Function Prototypes *********************************************/ 
+/* Private Function **********************************************************/ 
 /*****************************************************************************/
 
 /*****************************************************************************/
 #define __EXTERN__
-/* End Private C Function Prototypes *****************************************/
+/* End Private Function ******************************************************/
 
-/* Public Global Variables ***************************************************/
-/* __HDR_PUBLIC_MEMBERS__ */
+/* Public Variable ***********************************************************/
+/* __HDR_PUBLIC__ */
 #else
 #define __EXTERN__ EXTERN 
-/* __HDR_PUBLIC_MEMBERS__ */
+/* __HDR_PUBLIC__ */
 #endif
 
 /*****************************************************************************/
@@ -202,9 +202,9 @@ __EXTERN__ volatile rmp_ptr_t RMP_MSP430_Int_Act;
 __EXTERN__ volatile rmp_ptr_t _RMP_MSP430_Yield_Pend;
 /*****************************************************************************/
 
-/* End Public Global Variables ***********************************************/
+/* End Public Variable *******************************************************/
 
-/* Public C Function Prototypes **********************************************/
+/* Public Function ***********************************************************/
 /*****************************************************************************/
 /* Interrupts */
 EXTERN void RMP_Int_Disable(void);
@@ -225,11 +225,11 @@ __EXTERN__ void _RMP_Plat_Hook(void);
 /*****************************************************************************/
 /* Undefine "__EXTERN__" to avoid redefinition */
 #undef __EXTERN__
-/* __RMP_PLATFORM_MSP430_MEMBERS__ */
+/* __RMP_PLATFORM_MSP430_PUBLIC__ */
 #endif
-/* !(defined __HDR_DEFS__||defined __HDR_STRUCTS__) */
+/* !(defined __HDR_DEF__||defined __HDR_STRUCT__) */
 #endif
-/* End Public C Function Prototypes ******************************************/
+/* End Public Function *******************************************************/
 
 /* End Of File ***************************************************************/
 

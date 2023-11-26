@@ -18,7 +18,7 @@
 ;The ARM Cortex-M4/7 also include a FPU.
 ;*****************************************************************************/
 
-;/* Begin Import *************************************************************/
+;/* Import *******************************************************************/
     ;The real task switch handling function
     IMPORT              _RMP_Run_High
     ;The stack address of current thread
@@ -30,21 +30,21 @@
     IMPORT              RMP_A6M_RVM_Usr_Param
 ;/* End Import ***************************************************************/
 
-;/* Begin Export *************************************************************/
+;/* Export *******************************************************************/
     ;Start the first thread
     EXPORT              _RMP_Start      
     ;Fast-path context switching without invoking the RVM
     EXPORT              _RMP_A6M_RVM_Yield    
 ;/* End Export ***************************************************************/
             
-;/* Begin Header *************************************************************/
+;/* Header *******************************************************************/
     AREA                ARCH,CODE,READONLY,ALIGN=3
     THUMB
     REQUIRE8
     PRESERVE8
 ;/* End Header ***************************************************************/
 
-;/* Begin Function:_RMP_Start *************************************************
+;/* Function:_RMP_Start *******************************************************
 ;Description : Jump to the user function and will never return from it.
 ;Input       : None.
 ;Output      : None.
@@ -57,7 +57,7 @@ _RMP_Start              PROC
     ENDP
 ;/* End Function:_RMP_Start **************************************************/
 
-;/* Begin Function:_RMP_A6M_RVM_Yield *****************************************
+;/* Function:_RMP_A6M_RVM_Yield ***********************************************
 ;Description : Switch from user code to another thread, rather than from the 
 ;              interrupt handler. Need to masquerade the context well so that
 ;              it may be recovered from the interrupt handler as well.

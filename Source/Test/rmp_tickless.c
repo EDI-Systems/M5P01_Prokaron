@@ -17,11 +17,11 @@ Description : The tickless test for RMP. When you enable tickless for a port,
               5. appropriate routines for fast timer reprogramming.
 ******************************************************************************/
 
-/* Includes ******************************************************************/
+/* Include *******************************************************************/
 #include "rmp_test.h"
-/* End Includes **************************************************************/
+/* End Include ***************************************************************/
 
-/* Globals *******************************************************************/
+/* Global ********************************************************************/
 /* Kernel objects */
 volatile struct RMP_Thd Thd_1;
 volatile struct RMP_Thd Thd_2;
@@ -32,9 +32,9 @@ volatile rmp_ptr_t Thd_Flag;
 /* Test functions */
 void Func_1(void);
 void Func_2(void);
-/* End Globals ***************************************************************/
+/* End Global ****************************************************************/
 
-/* Begin Function:Func_1 ******************************************************
+/* Function:Func_1 ************************************************************
 Description : The test function group 1.
 Input       : None.
 Output      : None.
@@ -69,7 +69,7 @@ void Func_1(void)
 }
 /* End Function:Test_Yield ***************************************************/
 
-/* Begin Function:Func_2 ******************************************************
+/* Function:Func_2 ************************************************************
 Description : The test function group 2.
 Input       : None.
 Output      : None.
@@ -140,7 +140,7 @@ void Func_2(void)
 }
 /* End Function:Func_2 *******************************************************/
 
-/* Begin Function:RMP_Init_Hook ***********************************************
+/* Function:RMP_Init_Hook *****************************************************
 Description : The init thread hook functions.
 Input       : None.
 Output      : None.
@@ -166,7 +166,7 @@ void RMP_Init_Hook(void)
 }
 /* End Function:RMP_Init_Hook ************************************************/
 
-/* Begin Function:RMP_Ctx_Save ************************************************
+/* Function:RMP_Ctx_Save ******************************************************
 Description : Save additional context.
 Input       : None.
 Output      : None.
@@ -178,7 +178,7 @@ void RMP_Ctx_Save(void)
 }
 /* End Function:RMP_Ctx_Save *************************************************/
 
-/* Begin Function:RMP_Ctx_Load ************************************************
+/* Function:RMP_Ctx_Load ******************************************************
 Description : Load additional context.
 Input       : None.
 Output      : None.

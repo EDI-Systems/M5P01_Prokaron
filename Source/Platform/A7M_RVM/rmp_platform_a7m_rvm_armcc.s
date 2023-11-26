@@ -18,7 +18,7 @@
 ;The ARM Cortex-M4/7 also include a FPU.
 ;*****************************************************************************/
 
-;/* Begin Import *************************************************************/
+;/* Import *******************************************************************/
     ;The real task switch handling function
     IMPORT              _RMP_Run_High
     ;The stack address of current thread
@@ -30,7 +30,7 @@
     IMPORT              RMP_A7M_RVM_Usr_Param
 ;/* End Import ***************************************************************/
 
-;/* Begin Export *************************************************************/
+;/* Export *******************************************************************/
     ;Start the first thread
     EXPORT              _RMP_Start
     ;Get the MSB/LSB in the word
@@ -40,14 +40,14 @@
     EXPORT              _RMP_A7M_RVM_Yield
 ;/* End Export ***************************************************************/
             
-;/* Begin Header *************************************************************/
+;/* Header *******************************************************************/
     AREA                ARCH,CODE,READONLY,ALIGN=3
     THUMB
     REQUIRE8
     PRESERVE8
 ;/* End Header ***************************************************************/
 
-;/* Begin Function:_RMP_Start *************************************************
+;/* Function:_RMP_Start *******************************************************
 ;Description : Jump to the user function and will never return from it.
 ;Input       : None.
 ;Output      : None.
@@ -60,7 +60,7 @@ _RMP_Start              PROC
     ENDP
 ;/* End Function:_RMP_Start **************************************************/
 
-;/* Begin Function:_RMP_A7M_RVM_MSB_Get ***************************************
+;/* Function:_RMP_A7M_RVM_MSB_Get *********************************************
 ;Description : Get the MSB of the word.
 ;Input       : rvm_ptr_t Val - The value.
 ;Output      : None.
@@ -74,7 +74,7 @@ _RMP_A7M_RVM_MSB_Get    PROC
     ENDP
 ;/* End Function:_RMP_A7M_RVM_MSB_Get ****************************************/
 
-;/* Begin Function:_RMP_A7M_RVM_LSB_Get ***************************************
+;/* Function:_RMP_A7M_RVM_LSB_Get *********************************************
 ;Description : Get the LSB of the word.
 ;Input       : rvm_ptr_t Val - The value.
 ;Output      : None.
@@ -87,7 +87,7 @@ _RMP_A7M_RVM_LSB_Get    PROC
     ENDP
 ;/* End Function:_RMP_A7M_RVM_LSB_Get ****************************************/
 
-;/* Begin Function:_RMP_A7M_RVM_Yield *****************************************
+;/* Function:_RMP_A7M_RVM_Yield ***********************************************
 ;Description : Switch from user code to another thread, rather than from the 
 ;              interrupt handler. Need to masquerade the context well so that
 ;              it may be recovered from the interrupt handler as well.
@@ -193,7 +193,7 @@ _RMP_A7M_RVM_LSB_Get    PROC
     STR                 R1,[SP,#4*($SZ-1)]
     AND                 R0,#0xFFFFFDFF      ;Clear the XPSR[9]
     STR                 R0,[SP,#4*($SZ-2)]  ;Move XPSR to the second to the last
-    POP                 {R0-R3,R12,LR}    ;Pop GP regs
+    POP                 {R0-R3,R12,LR}      ;Pop GP regs
     ADD                 SP,#4*($SZ-10)      ;Make room for manipulations
     STR                 R0,[SP]             ;Keep R0 original value
     LDR                 R0,[SP,#4*2]        ;Move XPSR back
@@ -251,10 +251,10 @@ Stk_Basic_Done
     PUSH                {R1-R5}
 
     BL                  RMP_Int_Mask        ;Mask interrupts
-    LDR                 R1,=RMP_SP_Cur      ;Save the SP to control block.
+    LDR                 R1,=RMP_SP_Cur      ;Save the SP to control block
     STR                 SP,[R1]
-    BL                  _RMP_Run_High       ;Get the highest ready task.
-    LDR                 R1,=RMP_SP_Cur      ;Load the SP.
+    BL                  _RMP_Run_High       ;Get the highest ready task
+    LDR                 R1,=RMP_SP_Cur      ;Load the SP
     LDR                 SP,[R1]
     BL                  RMP_Int_Unmask      ;Unmask interrupts
 

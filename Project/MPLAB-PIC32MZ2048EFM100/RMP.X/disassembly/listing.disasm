@@ -18,26 +18,26 @@ Feb 28, 2018 1:35:24 PM
 12:                                Add -mno-dsp and -mno-dspr2
 13:                  ******************************************************************************/
 14:                  
-15:                  /* Includes ******************************************************************/
-16:                  #define __HDR_DEFS__
+15:                  /* Include *******************************************************************/
+16:                  #define __HDR_DEF__
 17:                  #include "Platform/MIPSM/platform_mipsm.h"
 18:                  #include "Kernel/kernel.h"
-19:                  #undef __HDR_DEFS__
+19:                  #undef __HDR_DEF__
 20:                  
-21:                  #define __HDR_STRUCTS__
+21:                  #define __HDR_STRUCT__
 22:                  #include "Platform/MIPSM/platform_mipsm.h"
 23:                  #include "Kernel/kernel.h"
-24:                  #undef __HDR_STRUCTS__
+24:                  #undef __HDR_STRUCT__
 25:                  
 26:                  /* Private include */
 27:                  #include "Platform/MIPSM/platform_mipsm.h"
 28:                  
-29:                  #define __HDR_PUBLIC_MEMBERS__
+29:                  #define __HDR_PUBLIC__
 30:                  #include "Kernel/kernel.h"
-31:                  #undef __HDR_PUBLIC_MEMBERS__
-32:                  /* End Includes **************************************************************/
+31:                  #undef __HDR_PUBLIC__
+32:                  /* End Include ***************************************************************/
 33:                  
-34:                  /* Begin Function:_RMP_Clear_Soft_Flag ****************************************
+34:                  /* Function:_RMP_Clear_Soft_Flag **********************************************
 35:                  Description : Clear the software interrupt flag in the interrupt controller.
 36:                  Input       : None.
 37:                  Output      : None.
@@ -54,7 +54,7 @@ Feb 28, 2018 1:35:24 PM
 43:                  }
 44:                  /* End Function:_RMP_Clear_Soft_Flag *****************************************/
 45:                  
-46:                  /* Begin Function:_RMP_Clear_Timer_Flag ***************************************
+46:                  /* Function:_RMP_Clear_Timer_Flag *********************************************
 47:                  Description : Clear the timer interrupt flag in the interrupt controller.
 48:                  Input       : None.
 49:                  Output      : None.
@@ -77,7 +77,7 @@ Feb 28, 2018 1:35:24 PM
 9D004544  27BD0018   ADDIU SP, SP, 24
 57:                  /* End Function:_RMP_Clear_Timer_Flag ****************************************/
 58:                  
-59:                  /* Begin Function:_RMP_Stack_Init *********************************************
+59:                  /* Function:_RMP_Stack_Init ***************************************************
 60:                  Description : Initiate the process stack when trying to start a process. Never
 61:                                call this function in user application.
 62:                  Input       : ptr_t Entry - The entry of the thread.
@@ -236,7 +236,7 @@ Feb 28, 2018 1:35:24 PM
 120:                 }
 121:                 /* End Function:_RMP_Stack_Init **********************************************/
 122:                 
-123:                 /* Begin Function:_RMP_Low_Level_Init *****************************************
+123:                 /* Function:_RMP_Low_Level_Init ***********************************************
 124:                 Description : Initialize the low level hardware of the system.
 125:                 Input       : None
 126:                 Output      : None.
@@ -317,7 +317,7 @@ Feb 28, 2018 1:35:24 PM
 9D0047B4  8FBF0014   LW RA, 20(SP)
 139:                 /* End Function:_RMP_Low_Level_Init ******************************************/
 140:                 
-141:                 /* Begin Function:_RMP_Plat_Hook **********************************************
+141:                 /* Function:_RMP_Plat_Hook ****************************************************
 142:                 Description : Platform-specific hook for system initialization.
 143:                 Input       : None
 144:                 Output      : None.
@@ -331,7 +331,7 @@ Feb 28, 2018 1:35:24 PM
 150:                 }
 151:                 /* End Function:_RMP_Plat_Hook ***********************************************/
 152:                 
-153:                 /* Begin Function:RMP_Putchar *************************************************
+153:                 /* Function:RMP_Putchar *******************************************************
 154:                 Description : Print a character to the debug console.
 155:                 Input       : char Char - The character to print.
 156:                 Output      : None.
@@ -360,26 +360,26 @@ Feb 28, 2018 1:35:24 PM
 9:                                 policy is totally exported, so the user assume full control over this.
 10:                  ******************************************************************************/
 11:                  
-12:                  /* Includes ******************************************************************/
-13:                  #define __HDR_DEFS__
+12:                  /* Include *******************************************************************/
+13:                  #define __HDR_DEF__
 14:                  #include "Platform/RMP_platform.h"
 15:                  #include "Kernel/kernel.h"
-16:                  #undef __HDR_DEFS__
+16:                  #undef __HDR_DEF__
 17:                  
-18:                  #define __HDR_STRUCTS__
+18:                  #define __HDR_STRUCT__
 19:                  #include "Platform/RMP_platform.h"
 20:                  #include "Kernel/kernel.h"
-21:                  #undef __HDR_STRUCTS__
+21:                  #undef __HDR_STRUCT__
 22:                  
 23:                  /* Private include */
 24:                  #include "Kernel/kernel.h"
 25:                  
-26:                  #define __HDR_PUBLIC_MEMBERS__
+26:                  #define __HDR_PUBLIC__
 27:                  #include "Platform/RMP_platform.h"
-28:                  #undef __HDR_PUBLIC_MEMBERS__
-29:                  /* End Includes **************************************************************/
+28:                  #undef __HDR_PUBLIC__
+29:                  /* End Include ***************************************************************/
 30:                  
-31:                  /* Begin Function:RMP_Clear ***************************************************
+31:                  /* Function:RMP_Clear *********************************************************
 32:                  Description : Memset a memory area to zero.
 33:                  Input       : void* Addr - The address to clear.
 34:                                ptr_t Size - The size to clear.
@@ -441,7 +441,7 @@ Feb 28, 2018 1:35:24 PM
 9D0009B0  27BD0020   ADDIU SP, SP, 32
 61:                  /* End Function:RMP_Clear ****************************************************/
 62:                  
-63:                  /* Begin Function:RMP_Int_Print ***********************************************
+63:                  /* Function:RMP_Int_Print *****************************************************
 64:                  Description : Print a signed integer on the debugging console. This integer is
 65:                                printed as decimal with sign.
 66:                  Input       : cnt_t Int - The integer to print.
@@ -619,7 +619,7 @@ Feb 28, 2018 1:35:24 PM
 9D000B38  27BD0028   ADDIU SP, SP, 40
 137:                 /* End Function:RMP_Int_Print ************************************************/
 138:                 
-139:                 /* Begin Function:RMP_Hex_Print **********************************************
+139:                 /* Function:RMP_Hex_Print ****************************************************
 140:                 Description : Print a unsigned integer on the debugging console. This integer is
 141:                               printed as hexadecimal.
 142:                 Input       : ptr_t Uint - The unsigned integer to print.
@@ -720,7 +720,7 @@ Feb 28, 2018 1:35:24 PM
 9D000C18  27BD0028   ADDIU SP, SP, 40
 184:                 /* End Function:RMP_Hex_Print ***********************************************/
 185:                 
-186:                 /* Begin Function:RMP_Str_Print ********************************************
+186:                 /* Function:RMP_Str_Print **************************************************
 187:                 Description : Print a string the kernel console.
 188:                               This is only used for kernel-level debugging.
 189:                 Input       : s8* String - The string to print
@@ -768,7 +768,7 @@ Feb 28, 2018 1:35:24 PM
 9D000C80  27BD0020   ADDIU SP, SP, 32
 208:                 /* End Function:RMP_Str_Print *********************************************/
 209:                 
-210:                 /* Begin Function:RMP_List_Crt ************************************************
+210:                 /* Function:RMP_List_Crt ******************************************************
 211:                 Description : Create a doubly linkled list.
 212:                 Input       : volatile struct RMP_List* Head - The pointer to the list head.
 213:                 Output      : None.
@@ -798,7 +798,7 @@ Feb 28, 2018 1:35:24 PM
 220:                 }
 221:                 /* End Function:RMP_List_Crt *************************************************/
 222:                 
-223:                 /* Begin Function:RMP_List_Del ************************************************
+223:                 /* Function:RMP_List_Del ******************************************************
 224:                 Description : Delete a node from the doubly-linked list.
 225:                 Input       : volatile struct RMP_List* Prev - The prevoius node of the target node.
 226:                               volatile struct RMP_List* Next - The next node of the target node.
@@ -872,7 +872,7 @@ Feb 28, 2018 1:35:24 PM
 234:                 }
 235:                 /* End Function:RMP_List_Del *************************************************/
 236:                 
-237:                 /* Begin Function:RMP_List_Ins ************************************************
+237:                 /* Function:RMP_List_Ins ******************************************************
 238:                 Description : Insert a node to the doubly-linked list.
 239:                 Input       : volatile struct RMP_List* New - The new node to insert.
 240:                               volatile struct RMP_List* Prev - The previous node.
@@ -981,7 +981,7 @@ Feb 28, 2018 1:35:24 PM
 253:                 }
 254:                 /* End Function:RMP_List_Ins *************************************************/
 255:                 
-256:                 /* Begin Function:RMP_Sched_Lock **********************************************
+256:                 /* Function:RMP_Sched_Lock ****************************************************
 257:                 Description : The function locks the scheduler. The locking can be stacked.
 258:                 Input       : None.
 259:                 Output      : None.
@@ -1074,7 +1074,7 @@ Feb 28, 2018 1:35:24 PM
 266:                 }
 267:                 /* End Function:RMP_Sched_Lock ***********************************************/
 268:                 
-269:                 /* Begin Function:RMP_Sched_Unlock ********************************************
+269:                 /* Function:RMP_Sched_Unlock **************************************************
 270:                 Description : The function unlocks the scheduler. The unlocking can be stacked.
 271:                 Input       : None.
 272:                 Output      : None.
@@ -1796,7 +1796,7 @@ Feb 28, 2018 1:35:24 PM
 296:                 }
 297:                 /* End Function:RMP_Sched_Unlock *********************************************/
 298:                 
-299:                 /* Begin Function:RMP_Yield ***************************************************
+299:                 /* Function:RMP_Yield *********************************************************
 300:                 Description : Yield to another thread.
 301:                 Input       : None.
 302:                 Output      : None.
@@ -1823,7 +1823,7 @@ Feb 28, 2018 1:35:24 PM
 315:                 }
 316:                 /* End Function:RMP_Yield ****************************************************/
 317:                 
-318:                 /* Begin Function:_RMP_Timer_Proc *********************************************
+318:                 /* Function:_RMP_Timer_Proc ***************************************************
 319:                 Description : Process RMP timer events.
 320:                 Input       : None.
 321:                 Output      : None.
@@ -1946,9 +1946,9 @@ Feb 28, 2018 1:35:24 PM
 371:                         }
 372:                     }
 373:                 }
-374:                 /* Begin Function:_RMP_Timer_Proc ********************************************/
+374:                 /* Function:_RMP_Timer_Proc **************************************************/
 375:                 
-376:                 /* Begin Function:_RMP_Run_High *******************************************
+376:                 /* Function:_RMP_Run_High *************************************************
 377:                 Description : Get the highest priority ready thread. The return value will be written
 378:                               into the global variables.
 379:                 Input       : None.
@@ -2060,7 +2060,7 @@ Feb 28, 2018 1:35:24 PM
 9D000DF8  27BD0018   ADDIU SP, SP, 24
 427:                 /* End Function:_RMP_Run_High ********************************************/
 428:                 
-429:                 /* Begin Function:_RMP_Tick_Handler *******************************************
+429:                 /* Function:_RMP_Tick_Handler *************************************************
 430:                 Description : The system tick timer interrupt routine.
 431:                 Input       : ptr_t Ticks - How many ticks have passed.
 432:                 Output      : None.
@@ -2150,7 +2150,7 @@ Feb 28, 2018 1:35:24 PM
 9D000F50  8FBF0014   LW RA, 20(SP)
 471:                 /* End Function:_RMP_Tick_Handler ********************************************/
 472:                 
-473:                 /* Begin Function:_RMP_Tick_Near *****************************************
+473:                 /* Function:_RMP_Tick_Near ***********************************************
 474:                 Description : Get the nearest timer interrupt arrival time.
 475:                 Input       : None.
 476:                 Output      : None.
@@ -2200,7 +2200,7 @@ Feb 28, 2018 1:35:24 PM
 9D000FAC  0062100A   MOVZ V0, V1, V0
 504:                 /* End Function:_RMP_Tick_Near ******************************************/
 505:                 
-506:                 /* Begin Function:_RMP_Run_Ins ************************************************
+506:                 /* Function:_RMP_Run_Ins ******************************************************
 507:                 Description : Set the thread as ready to schedule. That means, put the thread into
 508:                               the runqueue. When this is called, please make sure that the scheduler
 509:                               is locked.
@@ -2381,7 +2381,7 @@ Feb 28, 2018 1:35:24 PM
 524:                 }
 525:                 /* End Function:_RMP_Run_Ins *************************************************/
 526:                 
-527:                 /* Begin Function:_RMP_Run_Del ************************************************
+527:                 /* Function:_RMP_Run_Del ******************************************************
 528:                 Description : Clear the thread from the runqueue. When this is called, please 
 529:                               make sure that the scheduler is locked.
 530:                 Input       : struct RMP_Thd* Thread - The thread to clear from the runqueue.
@@ -2522,7 +2522,7 @@ Feb 28, 2018 1:35:24 PM
 546:                 }
 547:                 /* End Function:_RMP_Run_Del *************************************************/
 548:                 
-549:                 /* Begin Function:_RMP_Dly_Ins ************************************************
+549:                 /* Function:_RMP_Dly_Ins ******************************************************
 550:                 Description : Insert the thread into the delay queue, given some timeslices into the
 551:                               future. The thread must not be in the run queue any more.
 552:                 Input       : struct RMP_Thd* Thread - The thread to put into the delay queue.
@@ -2582,7 +2582,7 @@ Feb 28, 2018 1:35:24 PM
 573:                 }
 574:                 /* End Function:_RMP_Dly_Ins *************************************************/
 575:                 
-576:                 /* Begin Function:RMP_Thd_Crt *************************************************
+576:                 /* Function:RMP_Thd_Crt *******************************************************
 577:                 Description : Create a real-time thread.
 578:                 Input       : struct RMP_Thd* Thread - The thread structure provided. The user 
 579:                                                        should make this allocation according to
@@ -2715,7 +2715,7 @@ Feb 28, 2018 1:35:24 PM
 9D0011F8  27BD0020   ADDIU SP, SP, 32
 627:                 /* End Function:RMP_Thd_Crt **************************************************/
 628:                 
-629:                 /* Begin Function:RMP_Thd_Del *************************************************
+629:                 /* Function:RMP_Thd_Del *******************************************************
 630:                 Description : Delete a real-time thread.
 631:                 Input       : struct RMP_Thd* Thread - The thread structure of the thread.
 632:                 Output      : None.
@@ -2900,7 +2900,7 @@ Feb 28, 2018 1:35:24 PM
 9D0014CC  27BD0020   ADDIU SP, SP, 32
 719:                 /* End Function:RMP_Thd_Del **************************************************/
 720:                 
-721:                 /* Begin Function:RMP_Thd_Set *************************************************
+721:                 /* Function:RMP_Thd_Set *******************************************************
 722:                 Description : Change the priority or timeslice of a real-time thread. If one of
 723:                               the changes is not desired, just leave it to RMP_PREEMPT_PRIO_NUM
 724:                               or RMP_SLICE_MAX.
@@ -3024,7 +3024,7 @@ Feb 28, 2018 1:35:24 PM
 9D00171C  27BD0018   ADDIU SP, SP, 24
 779:                 /* End Function:RMP_Thd_Set **************************************************/
 780:                 
-781:                 /* Begin Function:RMP_Thd_Suspend *********************************************
+781:                 /* Function:RMP_Thd_Suspend ***************************************************
 782:                 Description : Suspend the execution of a real-time thread.
 783:                 Input       : struct RMP_Thd* Thread - The thread structure of the thread.
 784:                 Output      : None.
@@ -3117,7 +3117,7 @@ Feb 28, 2018 1:35:24 PM
 9D00194C  27BD0018   ADDIU SP, SP, 24
 817:                 /* End Function:RMP_Thd_Suspend **********************************************/
 818:                 
-819:                 /* Begin Function:RMP_Thd_Resume **********************************************
+819:                 /* Function:RMP_Thd_Resume ****************************************************
 820:                 Description : Resume the execution of a real-time thread.
 821:                 Input       : struct RMP_Thd* Thread - The thread structure of the thread.
 822:                 Output      : None.
@@ -3204,7 +3204,7 @@ Feb 28, 2018 1:35:24 PM
 9D001B10  00000000   NOP
 857:                 /* End Function:RMP_Thd_Resume ***********************************************/
 858:                 
-859:                 /* Begin Function:RMP_Thd_Snd *************************************************
+859:                 /* Function:RMP_Thd_Snd *******************************************************
 860:                 Description : Send to a real-time thread's mailbox. If the mailbox is full, then
 861:                               this operation can potentially block.
 862:                 Input       : struct RMP_Thd* Thread - The thread structure of the thread to send to.
@@ -3380,7 +3380,7 @@ Feb 28, 2018 1:35:24 PM
 9D001EDC  27BD0018   ADDIU SP, SP, 24
 941:                 /* End Function:RMP_Thd_Snd **************************************************/
 942:                 
-943:                 /* Begin Function:RMP_Thd_Snd_ISR *********************************************
+943:                 /* Function:RMP_Thd_Snd_ISR ***************************************************
 944:                 Description : Send to a real-time thread's mailbox. If the mailbox is full, then
 945:                               this operation will just fail. This function can only be called from
 946:                               an ISR whose priority is below or equal to the context switch handler's.
@@ -3487,7 +3487,7 @@ Feb 28, 2018 1:35:24 PM
 9D001F38  27BD0020   ADDIU SP, SP, 32
 995:                 /* End Function:RMP_Thd_Snd_ISR **********************************************/
 996:                 
-997:                 /* Begin Function:RMP_Thd_Rcv *************************************************
+997:                 /* Function:RMP_Thd_Rcv *******************************************************
 998:                 Description : Receive a message from our own mailbox, and this is blocking.
 999:                 Input       : ptr_t Slice - The timeslices to wait, if the mailbox is empty.
 1000:                Output      : ptr_t* Data - The pointer to put the data to.
@@ -3677,7 +3677,7 @@ Feb 28, 2018 1:35:24 PM
 9D002470  27BD0018   ADDIU SP, SP, 24
 1074:                /* End Function:RMP_Thd_Rcv **************************************************/
 1075:                
-1076:                /* Begin Function:RMP_Thd_Delay ***********************************************
+1076:                /* Function:RMP_Thd_Delay *****************************************************
 1077:                Description : Delay the execution of a real-time thread.
 1078:                Input       : ptr_t Slice - The number of timeslices to delay.
 1079:                Output      : None.
@@ -3734,7 +3734,7 @@ Feb 28, 2018 1:35:24 PM
 9D002600  27BD0018   ADDIU SP, SP, 24
 1101:                /* End Function:RMP_Thd_Delay ************************************************/
 1102:                
-1103:                /* Begin Function:RMP_Thd_Cancel **********************************************
+1103:                /* Function:RMP_Thd_Cancel ****************************************************
 1104:                Description : Cancel the real-time thread from a previous delay.
 1105:                Input       : struct RMP_Thd* Thread - The thread structure of the thread.
 1106:                Output      : None.
@@ -3823,7 +3823,7 @@ Feb 28, 2018 1:35:24 PM
 9D0027F0  27BD0018   ADDIU SP, SP, 24
 1138:                /* End Function:RMP_Thd_Cancel ***********************************************/
 1139:                
-1140:                /* Begin Function:RMP_Sem_Crt *************************************************
+1140:                /* Function:RMP_Sem_Crt *******************************************************
 1141:                Description : Create a semaphore in the system.
 1142:                Input       : struct RMP_Sem* Semaphore - The pointer to the semaphore structure.
 1143:                              ptr_t Number - The initial number of this semaphore.
@@ -3917,7 +3917,7 @@ Feb 28, 2018 1:35:24 PM
 9D0029B4  27BD0018   ADDIU SP, SP, 24
 1177:                /* End Function:RMP_Sem_Crt **************************************************/
 1178:                
-1179:                /* Begin Function:RMP_Sem_Del *************************************************
+1179:                /* Function:RMP_Sem_Del *******************************************************
 1180:                Description : Delete a semaphore in the system.
 1181:                Input       : struct RMP_Sem* Semaphore - The pointer to the semaphore structure.
 1182:                Output      : None.
@@ -4032,7 +4032,7 @@ Feb 28, 2018 1:35:24 PM
 9D002BE8  27BD0018   ADDIU SP, SP, 24
 1223:                /* End Function:RMP_Sem_Del **************************************************/
 1224:                
-1225:                /* Begin Function:RMP_Sem_Pend ************************************************
+1225:                /* Function:RMP_Sem_Pend ******************************************************
 1226:                Description : Pend on the semaphore, trying to get one.
 1227:                Input       : struct RMP_Sem* Semaphore - The pointer to the semaphore structure.
 1228:                              ptr_t Slice - The number of slices to wait.
@@ -4190,7 +4190,7 @@ Feb 28, 2018 1:35:24 PM
 9D002F78  27BD0020   ADDIU SP, SP, 32
 1281:                /* End Function:RMP_Sem_Pend *************************************************/
 1282:                
-1283:                /* Begin Function:RMP_Sem_Abort ***********************************************
+1283:                /* Function:RMP_Sem_Abort *****************************************************
 1284:                Description : Abort the waiting of one thread on a semaphore.
 1285:                Input       : struct RMP_Thd* Thread - The thread structure of the thread.
 1286:                Output      : None.
@@ -4315,7 +4315,7 @@ Feb 28, 2018 1:35:24 PM
 9D00321C  27BD0018   ADDIU SP, SP, 24
 1328:                /* End Function:RMP_Sem_Abort ************************************************/
 1329:                
-1330:                /* Begin Function:RMP_Sem_Post ************************************************
+1330:                /* Function:RMP_Sem_Post ******************************************************
 1331:                Description : Post a number of semaphores to the list. This function can only be
 1332:                              called from an ISR whose priority is below or equal to the context
 1333:                              switch handler's.
@@ -4464,7 +4464,7 @@ Feb 28, 2018 1:35:24 PM
 9D0034F8  27BD0018   ADDIU SP, SP, 24
 1385:                /* End Function:RMP_Sem_Post *************************************************/
 1386:                
-1387:                /* Begin Function:RMP_Sem_Post_ISR ********************************************
+1387:                /* Function:RMP_Sem_Post_ISR **************************************************
 1388:                Description : Post a number of semaphores to the list.
 1389:                Input       : struct RMP_Sem* Semaphore - The pointer to the semaphore structure.
 1390:                              ptr_t Number - The number to post.
@@ -4598,7 +4598,7 @@ Feb 28, 2018 1:35:24 PM
 9D0036C0  27BD0030   ADDIU SP, SP, 48
 1437:                /* End Function:RMP_Sem_Post_ISR *********************************************/
 1438:                
-1439:                /* Begin Function:RMP_Start_Hook **********************************************
+1439:                /* Function:RMP_Start_Hook ****************************************************
 1440:                Description : Initialization hook for low-level hardware, executed immediately
 1441:                              after the kernel's low-level initialization.
 1442:                Input       : None.
@@ -4615,7 +4615,7 @@ Feb 28, 2018 1:35:24 PM
 1451:                #endif
 1452:                /* End Function:RMP_Start_Hook ***********************************************/
 1453:                
-1454:                /* Begin Function:RMP_Ctx_Save ************************************************
+1454:                /* Function:RMP_Ctx_Save ******************************************************
 1455:                Description : Save hook for extra context, such as FPU, peripherals and MPU.
 1456:                Input       : None.
 1457:                Output      : None.
@@ -4631,7 +4631,7 @@ Feb 28, 2018 1:35:24 PM
 1465:                #endif
 1466:                /* End Function:RMP_Ctx_Save *************************************************/
 1467:                
-1468:                /* Begin Function:RMP_Ctx_Load ************************************************
+1468:                /* Function:RMP_Ctx_Load ******************************************************
 1469:                Description : Load hook for extra context, such as FPU, peripherals and MPU.
 1470:                Input       : None.
 1471:                Output      : None.
@@ -4647,7 +4647,7 @@ Feb 28, 2018 1:35:24 PM
 1479:                #endif
 1480:                /* End Function:RMP_Ctx_Load *************************************************/
 1481:                
-1482:                /* Begin Function:RMP_Tick_Hook ***********************************************
+1482:                /* Function:RMP_Tick_Hook *****************************************************
 1483:                Description : Save hook for extra context, such as FPU, peripherals and MPU.
 1484:                Input       : ptr_t Ticks - The number of ticks passed. For constant rate ticking
 1485:                                            applications this is always 1; For tickless systems this
@@ -4666,7 +4666,7 @@ Feb 28, 2018 1:35:24 PM
 1496:                #endif
 1497:                /* End Function:RMP_Tick_Hook ************************************************/
 1498:                
-1499:                /* Begin Function:RMP_Init ****************************************************
+1499:                /* Function:RMP_Init **********************************************************
 1500:                Description : The entry of the user thread. This is the first user thread that
 1501:                              will be created.
 1502:                              The user threads should never return.
@@ -4706,7 +4706,7 @@ Feb 28, 2018 1:35:24 PM
 1522:                }
 1523:                /* End Function:RMP_Init *****************************************************/
 1524:                
-1525:                /* Begin Function:main ********************************************************
+1525:                /* Function:main **************************************************************
 1526:                Description : The entrance of the operating system. This function is for 
 1527:                              compatibility with the ARM toolchain.
 1528:                Input       : None.
@@ -4825,11 +4825,11 @@ Feb 28, 2018 1:35:24 PM
 8:                                 header.
 9:                   ******************************************************************************/
 10:                  
-11:                  /* Includes ******************************************************************/
+11:                  /* Include *******************************************************************/
 12:                  #include "test.h"
-13:                  /* End Includes **************************************************************/
+13:                  /* End Include ***************************************************************/
 14:                  
-15:                  /* Globals *******************************************************************/
+15:                  /* Global ********************************************************************/
 16:                  #ifndef MINIMAL_SIZE
 17:                  volatile tim_t Start=0;
 18:                  volatile tim_t End=0;
@@ -4845,9 +4845,9 @@ Feb 28, 2018 1:35:24 PM
 28:                  volatile struct RMP_Thd Thd_1;
 29:                  volatile struct RMP_Thd Thd_2;
 30:                  volatile struct RMP_Sem Sem_1;
-31:                  /* End Globals ***************************************************************/
+31:                  /* End Global ****************************************************************/
 32:                  
-33:                  /* Begin Function:Func_1 ******************************************************
+33:                  /* Function:Func_1 ************************************************************
 34:                  Description : The test function group 1.
 35:                  Input       : None.
 36:                  Output      : None.
@@ -4991,7 +4991,7 @@ Feb 28, 2018 1:35:24 PM
 80:                  }
 81:                  /* End Function:Test_Yield ***************************************************/
 82:                  
-83:                  /* Begin Function:Func_2 ******************************************************
+83:                  /* Function:Func_2 ************************************************************
 84:                  Description : The test function group 2.
 85:                  Input       : None.
 86:                  Output      : None.
@@ -5375,7 +5375,7 @@ Feb 28, 2018 1:35:24 PM
 200:                 }
 201:                 /* End Function:Func_2 *******************************************************/
 202:                 
-203:                 /* Begin Function:Int_Handler *************************************************
+203:                 /* Function:Int_Handler *******************************************************
 204:                 Description : The interrupt handler. Call this in your periodic ISR.
 205:                 Input       : None.
 206:                 Output      : None.
@@ -5532,7 +5532,7 @@ Feb 28, 2018 1:35:24 PM
 240:                 #endif
 241:                 /* End Function:Int_Handler **************************************************/
 242:                 
-243:                 /* Begin Function:RMP_Init ****************************************************
+243:                 /* Function:RMP_Init **********************************************************
 244:                 Description : The init thread hook functions.
 245:                 Input       : None.
 246:                 Output      : None.
@@ -5622,11 +5622,11 @@ Feb 28, 2018 1:35:24 PM
 6:                   Description : The testbench for PIC32MZ2048EFM100.
 7:                   ******************************************************************************/
 8:                   
-9:                   /* Includes ******************************************************************/
+9:                   /* Include *******************************************************************/
 10:                  #include "RMP.h"
-11:                  /* End Includes **************************************************************/
+11:                  /* End Include ***************************************************************/
 12:                  
-13:                  /* Defines *******************************************************************/
+13:                  /* Define ********************************************************************/
 14:                  /* Where are the initial stacks */
 15:                  #define THD1_STACK          (&Stack_1[300])
 16:                  #define THD2_STACK          (&Stack_2[300])
@@ -5691,16 +5691,16 @@ Feb 28, 2018 1:35:24 PM
 75:                  /*** BF1SEQ0 ***/
 76:                  #pragma config TSEQ =       0x0000
 77:                  #pragma config CSEQ =       0xffff
-78:                  /* End Defines ***************************************************************/
+78:                  /* End Define ****************************************************************/
 79:                  
-80:                  /* Globals *******************************************************************/
+80:                  /* Global ********************************************************************/
 81:                  #ifndef MINIMAL_SIZE
 82:                  void Int_Handler(void);
 83:                  ptr_t Stack_1[512];
 84:                  ptr_t Stack_2[512];
-85:                  /* End Globals ***************************************************************/
+85:                  /* End Global ****************************************************************/
 86:                  
-87:                  /* Begin Function:Timer_Init **************************************************
+87:                  /* Function:Timer_Init ********************************************************
 88:                  Description : Initialize the timer for timing measurements. This function needs
 89:                                to be adapted to your specific hardware.
 90:                  Input       : None.
@@ -5734,7 +5734,7 @@ Feb 28, 2018 1:35:24 PM
 102:                 }
 103:                 /* End Function:Timer_Init ***************************************************/
 104:                 
-105:                 /* Begin Function:Int_Init ****************************************************
+105:                 /* Function:Int_Init **********************************************************
 106:                 Description : Initialize an periodic interrupt source. This function needs
 107:                               to be adapted to your specific hardware.
 108:                 Input       : None.
@@ -5804,7 +5804,7 @@ Feb 28, 2018 1:35:24 PM
 9D0038E0  27BD0018   ADDIU SP, SP, 24
 133:                 /* End Function:Int_Init *****************************************************/
 134:                 
-135:                 /* Begin Function:Int_Disable *************************************************
+135:                 /* Function:Int_Disable *******************************************************
 136:                 Description : Disable the periodic interrupt source. This function needs
 137:                               to be adapted to your specific hardware.
 138:                 Input       : None.
@@ -5880,12 +5880,12 @@ Feb 28, 2018 1:35:24 PM
                                                   48:    R31    $ra        return address (used by function call)
                                                   49:    ******************************************************************************/
                                                   50:        
-                                                  51:    /* Begin Header **************************************************************/
+                                                  51:    /* Header ********************************************************************/
                                                   52:                    .text
                                                   53:                    .align 4
                                                   54:    /* End Header ****************************************************************/
                                                   55:    
-                                                  56:    /* Begin Exports *************************************************************/
+                                                  56:    /* Export ********************************************************************/
                                                   57:                    /* Disable all interrupts */
                                                   58:                    .global          RMP_Int_Disable      
                                                   59:                    /* Enable all interrupts */        
@@ -5902,9 +5902,9 @@ Feb 28, 2018 1:35:24 PM
                                                   70:                    .global          SysTick_Handler
                                                   71:                    /* Set timer overflow value */
                                                   72:                    .global          _RMP_Set_Timer
-                                                  73:    /* End Exports ***************************************************************/
+                                                  73:    /* End Export ****************************************************************/
                                                   74:    
-                                                  75:    /* Begin Imports *************************************************************/
+                                                  75:    /* Import ********************************************************************/
                                                   76:                    /* The real task switch handling function */
                                                   77:                    .extern         _RMP_Run_High 
                                                   78:                    /* The real systick handler function */
@@ -5924,9 +5924,9 @@ Feb 28, 2018 1:35:24 PM
                                                   92:                    /* Clear timer & software interrupt flags */
                                                   93:                    .extern          _RMP_Clear_Soft_Flag
                                                   94:                    .extern          _RMP_Clear_Timer_Flag
-                                                  95:    /* End Imports ***************************************************************/
+                                                  95:    /* End Import ****************************************************************/
                                                   96:    
-                                                  97:    /* Begin Macros **************************************************************/
+                                                  97:    /* Macros ********************************************************************/
                                                   98:                    .equ             CP0_COUNT,$9
                                                   99:                    .equ             CP0_COMPARE,$11
                                                   100:                   .equ             CP0_STATUS,$12
@@ -6083,7 +6083,7 @@ Feb 28, 2018 1:35:24 PM
                                                   251:   .endm
                                                   252:   /* End Macros ****************************************************************/
                                                   253:   
-                                                  254:   /* Begin Function:RMP_Int_Disable *********************************************
+                                                  254:   /* Function:RMP_Int_Disable ***************************************************
                                                   255:   Description    : The function for disabling all interrupts. Does not allow nesting.
                                                   256:   Input          : None.
                                                   257:   Output         : None.    
@@ -6102,7 +6102,7 @@ Feb 28, 2018 1:35:24 PM
                                                   270:                   .end             RMP_Int_Disable
                                                   271:   /* End Function:RMP_Int_Disable **********************************************/
                                                   272:   
-                                                  273:   /* Begin Function:RMP_Int_Enable **********************************************
+                                                  273:   /* Function:RMP_Int_Enable ****************************************************
                                                   274:   Description    : The function for enabling all interrupts. Does not allow nesting.
                                                   275:   Input          : None.
                                                   276:   Output         : None.    
@@ -6121,7 +6121,7 @@ Feb 28, 2018 1:35:24 PM
                                                   289:                   .end             RMP_Int_Enable
                                                   290:   /* End Function:RMP_Int_Enable ***********************************************/
                                                   291:   
-                                                  292:   /* Begin Function:_RMP_Set_Timer **********************************************
+                                                  292:   /* Function:_RMP_Set_Timer ****************************************************
                                                   293:   Description    : The function for setting the timer.
                                                   294:   Input          : $a0 - Timer overflow value.
                                                   295:   Output         : None.    
@@ -6141,7 +6141,7 @@ Feb 28, 2018 1:35:24 PM
                                                   309:                   .end             _RMP_Set_Timer
                                                   310:   /* End Function:_RMP_Set_Timer ***********************************************/
                                                   311:   
-                                                  312:   /* Begin Function:RMP_MSB_Get *************************************************
+                                                  312:   /* Function:RMP_MSB_Get *******************************************************
                                                   313:   Description    : Get the MSB of the word.
                                                   314:   Input          : ptr_t Val - The value.
                                                   315:   Output         : None.
@@ -6162,7 +6162,7 @@ Feb 28, 2018 1:35:24 PM
                                                   330:                   .end             RMP_MSB_Get
                                                   331:   /* End Function:RMP_MSB_Get **************************************************/
                                                   332:   
-                                                  333:   /* Begin Function:_RMP_Yield **************************************************
+                                                  333:   /* Function:_RMP_Yield ********************************************************
                                                   334:   Description : Trigger a yield to another thread.
                                                   335:   Input       : None.
                                                   336:   Output      : None.                                      
@@ -6183,7 +6183,7 @@ Feb 28, 2018 1:35:24 PM
                                                   351:                   .end             _RMP_Yield                                           
                                                   352:   /* End Function:_RMP_Yield ***************************************************/
                                                   353:   
-                                                  354:   ;/* Begin Function:_RMP_Start *************************************************
+                                                  354:   ;/* Function:_RMP_Start *******************************************************
                                                   355:   ;Description : Jump to the user function and will never return from it.
                                                   356:   ;Input       : R0 - The address to branch to.
                                                   357:                  R1 - The stack to use.
@@ -6211,7 +6211,7 @@ Feb 28, 2018 1:35:24 PM
                                                   379:                   .end             _RMP_Start
                                                   380:   /* End Function:_RMP_Start ***************************************************/
                                                   381:   
-                                                  382:   /* Begin Function:PendSV_Handler **********************************************
+                                                  382:   /* Function:PendSV_Handler ****************************************************
                                                   383:   Description : The PendSV interrupt routine. In fact, it will call a C function
                                                   384:                 directly. The reason why the interrupt routine must be an assembly
                                                   385:                 function is that the compiler may deal with the stack in a different 
@@ -6390,7 +6390,7 @@ Feb 28, 2018 1:35:24 PM
                                                   558:                   .end             PendSV_Handler
                                                   559:   /* End Function:PendSV_Handler ***********************************************/
                                                   560:   
-                                                  561:   /* Begin Function:SysTick_Handler *********************************************
+                                                  561:   /* Function:SysTick_Handler ***************************************************
                                                   562:   Description : The SysTick interrupt routine. In fact, it will call a C function
                                                   563:                 directly. The reason why the interrupt routine must be an assembly
                                                   564:                 function is that the compiler may deal with the stack in a different 
@@ -6435,12 +6435,12 @@ Feb 28, 2018 1:35:24 PM
                                                   5:     Description : The extra testing file for this chip.
                                                   6:     ******************************************************************************/
                                                   7:         
-                                                  8:     /* Begin Header **************************************************************/
+                                                  8:     /* Header ********************************************************************/
                                                   9:                     .text
                                                   10:                    .align 4
                                                   11:    /* End Header ****************************************************************/
                                                   12:    
-                                                  13:    /* Begin Imports *************************************************************/
+                                                  13:    /* Import ********************************************************************/
                                                   14:                    /* The place where we store the kernel gp/sp value */
                                                   15:                    .extern          RMP_GP_Val
                                                   16:                    .extern          RMP_SP_Val
@@ -6448,9 +6448,9 @@ Feb 28, 2018 1:35:24 PM
                                                   18:                    .extern          RMP_Int_Nest
                                                   19:                    /* The extra routine */
                                                   20:                    .extern          Tim2_Interrupt    
-                                                  21:    /* End Imports ***************************************************************/
+                                                  21:    /* End Import ****************************************************************/
                                                   22:    
-                                                  23:    /* Begin Macros **************************************************************/
+                                                  23:    /* Macros ********************************************************************/
                                                   24:                    .equ             CP0_COUNT,$9
                                                   25:                    .equ             CP0_COMPARE,$11
                                                   26:                    .equ             CP0_STATUS,$12
@@ -6607,7 +6607,7 @@ Feb 28, 2018 1:35:24 PM
                                                   177:   .endm
                                                   178:   /* End Macros ****************************************************************/
                                                   179:   
-                                                  180:   /* Begin Function:Tim2_Handler ************************************************
+                                                  180:   /* Function:Tim2_Handler ******************************************************
                                                   181:   Description : The timer 2 interrupt routine.
                                                   182:   Input       : None.
                                                   183:   Output      : None.                                      

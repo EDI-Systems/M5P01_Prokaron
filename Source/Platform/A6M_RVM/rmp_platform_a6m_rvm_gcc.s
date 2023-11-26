@@ -19,19 +19,19 @@ The above 3 registers are saved into the stack in combination(xPSR).
 The ARM Cortex-M4/7 also include a FPU.
 ******************************************************************************/
 
-/* Begin Header **************************************************************/
+/* Header ********************************************************************/
     .syntax             unified
     .thumb
     .section            ".text"
     .align              3
 /* End Header ****************************************************************/
 
-/* Begin Exports *************************************************************/
+/* Export ********************************************************************/
     .global             RMP_MSB_Get
     .global             _RMP_Start                        
-/* End Exports ***************************************************************/
+/* End Export ****************************************************************/
 
-/* Begin Function:RMP_MSB_Get *************************************************
+/* Function:RMP_MSB_Get *******************************************************
 Description : Get the MSB of the word.
 Input       : rmp_ptr_t R0 - The value.
 Output      : None.
@@ -45,7 +45,7 @@ RMP_MSB_Get:
     BX                  LR
 ;/* End Function:RMP_MSB_Get *************************************************/
 
-/* Begin Function:_RMP_Start **************************************************
+/* Function:_RMP_Start ********************************************************
 Description : Jump to the user function and will never return from it.
 Input       : None.
 Output      : None.

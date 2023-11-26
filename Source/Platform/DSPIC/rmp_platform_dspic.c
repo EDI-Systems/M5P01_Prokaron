@@ -10,26 +10,26 @@ Description : The platform specific file for DSPIC 33E. This also works for PIC2
               when switching context we need to handle 24-bit code pointers.
 ******************************************************************************/
 
-/* Includes ******************************************************************/
-#define __HDR_DEFS__
+/* Include *******************************************************************/
+#define __HDR_DEF__
 #include "Platform/DSPIC/rmp_platform_dspic.h"
 #include "Kernel/rmp_kernel.h"
-#undef __HDR_DEFS__
+#undef __HDR_DEF__
 
-#define __HDR_STRUCTS__
+#define __HDR_STRUCT__
 #include "Platform/DSPIC/rmp_platform_dspic.h"
 #include "Kernel/rmp_kernel.h"
-#undef __HDR_STRUCTS__
+#undef __HDR_STRUCT__
 
 /* Private include */
 #include "Platform/DSPIC/rmp_platform_dspic.h"
 
-#define __HDR_PUBLIC_MEMBERS__
+#define __HDR_PUBLIC__
 #include "Kernel/rmp_kernel.h"
-#undef __HDR_PUBLIC_MEMBERS__
-/* End Includes **************************************************************/
+#undef __HDR_PUBLIC__
+/* End Include ***************************************************************/
 
-/* Begin Function:_RMP_Stack_Init *********************************************
+/* Function:_RMP_Stack_Init ***************************************************
 Description : Initiate the process stack when trying to start a process. Never
               call this function in user application.
 Input       : rmp_ptr_t Stack - The stack address of the thread.
@@ -111,7 +111,7 @@ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
 }
 /* End Function:_RMP_Stack_Init **********************************************/
 
-/* Begin Function:_RMP_Clear_Soft_Flag ****************************************
+/* Function:_RMP_Clear_Soft_Flag **********************************************
 Description : Clear the software interrupt flag in the interrupt controller.
 Input       : None.
 Output      : None.
@@ -123,7 +123,7 @@ void _RMP_Clear_Soft_Flag(void)
 }
 /* End Function:_RMP_Clear_Soft_Flag *****************************************/
 
-/* Begin Function:_RMP_Clear_Timer_Flag ***************************************
+/* Function:_RMP_Clear_Timer_Flag *********************************************
 Description : Clear the timer interrupt flag in the interrupt controller.
 Input       : None.
 Output      : None.
@@ -135,7 +135,7 @@ void _RMP_Clear_Timer_Flag(void)
 }
 /* End Function:_RMP_Clear_Timer_Flag ****************************************/
 
-/* Begin Function:_RMP_Lowlvl_Init ********************************************
+/* Function:_RMP_Lowlvl_Init **************************************************
 Description : Initialize the low level hardware of the system.
 Input       : None
 Output      : None.
@@ -147,7 +147,7 @@ void _RMP_Lowlvl_Init(void)
 }
 /* End Function:_RMP_Lowlvl_Init *********************************************/
 
-/* Begin Function:_RMP_Set_Timer **********************************************
+/* Function:_RMP_Set_Timer ****************************************************
 Description    : The function for setting the timer.
 Input          : rmp_ptr_t Ticks - Timer overflow value.
 Output         : None.    
@@ -159,7 +159,7 @@ void _RMP_Set_Timer(rmp_ptr_t Ticks)
 }
 /* End Function:_RMP_Set_Timer ***********************************************/
 
-/* Begin Function:_RMP_Yield **************************************************
+/* Function:_RMP_Yield ********************************************************
 Description : Trigger a yield to another thread.
 Input       : None.
 Output      : None.                                      
@@ -170,7 +170,7 @@ void _RMP_Yield(void)
 }                                 
 /* End Function:_RMP_Yield ***************************************************/
 
-/* Begin Function:_RMP_Plat_Hook **********************************************
+/* Function:_RMP_Plat_Hook ****************************************************
 Description : Platform-specific hook for system initialization.
 Input       : None
 Output      : None.
@@ -182,7 +182,7 @@ void _RMP_Plat_Hook(void)
 }
 /* End Function:_RMP_Plat_Hook ***********************************************/
 
-/* Begin Function:RMP_Putchar *************************************************
+/* Function:RMP_Putchar *******************************************************
 Description : Print a character to the debug console.
 Input       : char Char - The character to print.
 Output      : None.

@@ -6,12 +6,12 @@ Licence     : The Unlicense; see LICENSE for details.
 Description : The blank project hook file for RMP under RVM hypervisor.
 ******************************************************************************/
 
-/* Includes ******************************************************************/
+/* Include *******************************************************************/
 #include "rmp.h"
 #include "rvm_guest.h"
-/* End Includes **************************************************************/
+/* End Include ***************************************************************/
 
-/* Begin Function:RMP_Init ****************************************************
+/* Function:RMP_Init **********************************************************
 Description : The init thread hook functions.
 Input       : None.
 Output      : None.
