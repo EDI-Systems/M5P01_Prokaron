@@ -3,7 +3,7 @@ Filename   : rmp_platform_stm32f767ig_rvm.h
 Author     : pry
 Date       : 24/06/2017
 Licence    : The Unlicense; see LICENSE for details.
-Description: The configuration file for STM32F767IG.
+Description: The configuration file for STM32F767IG, on RVM.
 ******************************************************************************/
 
 /* Defines *******************************************************************/

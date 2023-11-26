@@ -95,116 +95,41 @@ f30    $ft10      temporary (caller-save)
 f31    $ft11      temporary (caller-save)
 ******************************************************************************/
 
-/* Begin Exports *************************************************************/
-    /* Disable all interrupts */
-    .global             RMP_Int_Disable
-    /* Enable all interrupts */
-    .global             RMP_Int_Enable
-    /* Start the first thread */
-    .global             _RMP_Start
-    /* Get MCYCLE value */
-    .global             RMP_RV32P_MCYCLE_Get
-    /* Get MCAUSE value */
-    .global             RMP_RV32P_MCAUSE_Get
-    /* Set MTVEC value */
-    .global             _RMP_RV32P_MTVEC_Set
-    /* Fast yield */
-    .global             _RMP_RV32P_Yield_NONE
-    .global             _RMP_RV32P_Yield_RVF
-    .global             _RMP_RV32P_Yield_RVFD
-/* End Exports ***************************************************************/
-
 /* Begin Imports *************************************************************/
     /* The real task switch handling function */
     .extern             _RMP_Run_High
     /* The stack address of current thread */
     .extern             RMP_SP_Cur
-    /* Save and load extra contexts, such as FPU, peripherals and MPU */
-    .extern             RMP_Ctx_Save
-    .extern             RMP_Ctx_Load
+    /* Mask/unmask interrupts */
+    .extern             RMP_Int_Mask
+    .extern             RMP_Int_Unmask
+    /* Hypercall parameter space */
+    .extern             RMP_RV32P_RVM_Usr_Param
 /* End Imports ***************************************************************/
 
-/* Begin Function:RMP_Int_Disable *********************************************
-Description    : The function for disabling all interrupts. Does not allow nesting.
-Input          : None.
-Output         : None.
-Register Usage : None.
-******************************************************************************/
-    .section            .text,"ax",@progbits
-    .align              2
-RMP_Int_Disable:
-    /* Disable all interrupts */
-    CSRCI                mstatus,8
-    RET
-/* End Function:RMP_Int_Disable **********************************************/
-
-/* Begin Function:RMP_Int_Enable **********************************************
-Description    : The function for enabling all interrupts. Does not allow nesting.
-Input          : None.
-Output         : None.
-Register Usage : None.
-******************************************************************************/
-    .section            .text,"ax",@progbits
-    .align              2
-RMP_Int_Enable:
-    /* Enable all interrupts */
-    CSRSI                mstatus,8
-    RET
-/* End Function:RMP_Int_Enable ***********************************************/
+/* Begin Exports *************************************************************/
+    /* Start the first thread */
+    .global             _RMP_Start
+    /* Fast-path context switching without invoking the RVM */
+    .global             _RMP_RV32P_RVM_Yield_NONE
+    .global             _RMP_RV32P_RVM_Yield_RVF
+    .global             _RMP_RV32P_RVM_Yield_RVFD
+/* End Exports ***************************************************************/
 
 /* Begin Function:_RMP_Start **************************************************
 Description : Jump to the user function and will never return from it.
-Input       : $a0 - The address to branch to.
-              $a1 - The stack to use.
+Input       : a0 - The address to branch to.
+              a1 - The stack to use.
 Output      : None.
 Return      : None.
 ******************************************************************************/
     .section            .text,"ax",@progbits
-    .align              2
+    .align              3
 _RMP_Start:
     ADD                 sp,x0,a1
     JR                  a0
     RET
 /* End Function:_RMP_Start ***************************************************/
-
-/* Begin Function:RMP_RV32P_MCYCLE_Get ***************************************
-Description : Set the mcycle register content, could be useful for debugging.
-Input       : None.
-Output      : None.
-Return      : $a0 - MCYCLE value.
-******************************************************************************/
-    .section            .text,"ax",@progbits
-    .align              2
-RMP_RV32P_MCYCLE_Get:
-    CSRR                a0,mcycle
-    RET
-/* End Function:RMP_RV32P_MCYCLE_Get ****************************************/
-
-/* Begin Function:RMP_RV32P_MCAUSE_Get ***************************************
-Description : Set the mcause register content, could be useful for debugging.
-Input       : None.
-Output      : None.
-Return      : $a0 - MCYCLE value.
-******************************************************************************/
-    .section            .text,"ax",@progbits
-    .align              2
-RMP_RV32P_MCAUSE_Get:
-    CSRR                a0,mcause
-    RET
-/* End Function:RMP_RV32P_MCAUSE_Get ****************************************/
-
-/* Begin Function:_RMP_RV32P_MTVEC_Set ***************************************
-Description : Set the mtvec register content.
-Input       : None.
-Output      : None.
-Return      : $a0 - MCYCLE value.
-******************************************************************************/
-    .section            .text,"ax",@progbits
-    .align              2
-_RMP_RV32P_MTVEC_Set:
-    CSRW                mtvec,a0
-    RET
-/* End Function:_RMP_RV32P_MTVEC_Set ****************************************/
 
 /* Begin Function:_RMP_RV32P_Yield *******************************************
 Description : Yield from one thread to another without an interrupt.
@@ -217,7 +142,7 @@ Output      : None.
 Return      : None.
 ******************************************************************************/
     /* Save all GP regs */
-    .macro              RMP_RV32P_REG_SAVE LABEL
+.macro RMP_RV32P_REG_SAVE LABEL
     /* RISC-V does not support interrupt nesting, as the current specification says.
      * Its interrupt controller does not accept new ones before the old one gets
      * done; and to make things worse, unlike MIPS, it doesn't have IPL field,
@@ -261,10 +186,10 @@ Return      : None.
     SW                  a0,1*4(sp)
     /* Read mstatus to decide FPU status, but don't save yet */
     CSRR                a0,mstatus
-    .endm
+.endm
 
     /* Actual context switch */
-    .macro              RMP_RV32P_SWITCH
+.macro RMP_RV32P_SWITCH
     /* Save mstatus */
     SW                  a0,0*4(sp)
     /* Load gp for kernel - defined by linker script */
@@ -329,11 +254,12 @@ Return      : None.
     LW                  x31,31*4(sp)
     ADDI                sp,sp,32*4
     MRET
-    .endm
+.endm
 
     /* No coprocessor */
     .section            .text.none,"ax",@progbits
-    .align              2
+    .align              3
+
 _RMP_RV32P_Yield_NONE:
     /* Disable interrupt and save registers */
     CSRCI               mstatus,8
@@ -347,7 +273,7 @@ _RMP_RV32P_Yield_NONE_Exit:
 
     /* Single-precision FPU coprocessor */
     .section            .text.rvf,"ax",@progbits
-    .align              2
+    .align              3
 _RMP_RV32P_Yield_RVF:
     /* Disable interrupt and save registers */
     CSRCI               mstatus,8
@@ -445,7 +371,7 @@ _RMP_RV32P_Yield_RVF_Exit:
 
     /* Double precision FPU coprocessor */
     .section            .text.rvfd,"ax",@progbits
-    .align              2
+    .align              3
 _RMP_RV32P_Yield_RVFD:
     /* Disable interrupt and save registers */
     CSRCI               mstatus,8

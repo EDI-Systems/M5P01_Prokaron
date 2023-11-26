@@ -341,8 +341,8 @@ struct RMP_Mem
 
 /* Private Global Variables **************************************************/
 #if(!(defined __HDR_DEFS__||defined __HDR_STRUCTS__))
-#ifndef __KERNEL_MEMBERS__
-#define __KERNEL_MEMBERS__
+#ifndef __RMP_KERNEL_MEMBERS__
+#define __RMP_KERNEL_MEMBERS__
 
 /* In this way we can use the data structures and definitions in the headers */
 #define __HDR_DEFS__
@@ -714,7 +714,7 @@ __EXTERN__ void RMP_Print_Coverage(void);
 /*****************************************************************************/
 /* Undefine "__EXTERN__" to avoid redefinition */
 #undef __EXTERN__
-/* __KERNEL_MEMBERS__ */
+/* __RMP_KERNEL_MEMBERS__ */
 #endif
 /* !(defined __HDR_DEFS__||defined __HDR_STRUCTS__) */
 #endif
