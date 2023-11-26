@@ -108,9 +108,8 @@ void _RMP_Lowlvl_Init(void)
 {
     RMP_RV32P_LOWLVL_INIT();
 
-    /* Clear flags */
-    RMP_RV32P_Int_Act=0U;
-    _RMP_RV32P_Yield_Pend=0U;
+    RVM_Virt_Tim_Reg(RMP_Tim_Handler);
+    RVM_Virt_Ctx_Reg(RMP_Ctx_Handler);
 }
 /* End Function:_RMP_Lowlvl_Init *********************************************/
 
@@ -122,7 +121,12 @@ Return      : None.
 ******************************************************************************/
 void _RMP_Plat_Hook(void)
 {
-    RMP_Int_Enable();
+    /* Check header validity - guarantees that the header is not optimized out.
+     * ALL VMs are guaranteed to have three entries: Vector, User and Stub */
+    RVM_ASSERT(RVM_Desc[0]==RVM_MAGIC_VIRTUAL);
+    RVM_ASSERT(RVM_Desc[1]==3U);
+    /* Enable interrupt, we've finished all initialization */
+    RVM_Hyp_Int_Ena();
 }
 /* End Function:_RMP_Plat_Hook ***********************************************/
 
@@ -138,6 +142,54 @@ void RMP_Putchar(char Char)
 }
 /* End Function:RMP_Putchar **************************************************/
 
+/* Begin Function:RMP_Int_Enable **********************************************
+Description : Enable interrupts.
+Input       : None.
+Output      : None.
+Return      : None.
+******************************************************************************/
+void RMP_Int_Enable(void)
+{
+    RVM_Hyp_Int_Ena();
+}
+/* End Function:RMP_Int_Enable ***********************************************/
+
+/* Begin Function:RMP_Int_Disable *********************************************
+Description : Disable interrupts.
+Input       : None.
+Output      : None.
+Return      : None.
+******************************************************************************/
+void RMP_Int_Disable(void)
+{
+    RVM_Hyp_Int_Dis();
+}
+/* End Function:RMP_Int_Disable **********************************************/
+
+/* Begin Function:RMP_Int_Mask ************************************************
+Description : Mask interrupts that may do sends.
+Input       : None.
+Output      : None.
+Return      : None.
+******************************************************************************/
+void RMP_Int_Mask(void)
+{
+    RVM_Virt_Int_Mask();
+}
+/* End Function:RMP_Int_Mask *************************************************/
+
+/* Begin Function:RMP_Int_Unmask **********************************************
+Description : Unmask interrupts that may do sends.
+Input       : None.
+Output      : None.
+Return      : None.
+******************************************************************************/
+void RMP_Int_Unmask(void)
+{
+    RVM_Virt_Int_Unmask();
+}
+/* End Function:RMP_Int_Unmask ***********************************************/
+
 /* Begin Function:_RMP_Yield **************************************************
 Description : Trigger a yield to another thread. This will trigger the software
               interrupt in RISC-V.
@@ -145,38 +197,55 @@ Input       : None.
 Output      : None.
 Return      : None.
 ******************************************************************************/
+/* Use "const" to make sure this initializer is in code flash - this will
+ * be optimized out when fast context switching is not enabled */
+volatile struct RVM_Param* const RMP_A7M_RVM_Usr_Param=&(RVM_STATE->Usr);
 void _RMP_Yield(void)
 {
-    if(RMP_RV32P_Int_Act!=0U)
-        _RMP_RV32P_Yield_Pend=1U;
+#if(RMP_RV32P_RVM_FAST_YIELD!=0U)
+    if(RVM_STATE->Vct_Act!=0U)
+        RVM_Virt_Yield();
     else
 #if(RMP_RV32P_COP_RVD!=0U)
 #if(RMP_RV32P_COP_RVF==0U)
 #error RVD extension cannot be selected when RVF extension is not.
 #endif
-        _RMP_RV32P_Yield_RVFD();
+        _RMP_RV32P_RVM_Yield_RVFD();
 #elif(RMP_RV32P_COP_RVF!=0U)
-        _RMP_RV32P_Yield_RVF();
+        _RMP_RV32P_RVM_Yield_RVF();
 #else
-        _RMP_RV32P_Yield_NONE();
+        _RMP_RV32P_RVM_Yield_NONE();
+#endif
+#else
+    RVM_Virt_Yield();
 #endif
 }
 /* End Function:_RMP_Yield ***************************************************/
 
-/* Begin Function:_RMP_RV32P_Tim_Handler *************************************
-Description : The Tick interrupt routine.
+/* Begin Function:RMP_Ctx_Handler *********************************************
+Description : The context switch interrupt routine.
 Input       : None.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void _RMP_RV32P_Tim_Handler(void)
+void RMP_Ctx_Handler(void)
 {
-    /* Update or reset the next tick */
-    RMP_RV32P_TIM_CLR();
 
-    _RMP_Tim_Handler(1U);
+    return;
 }
-/* End Function:_RMP_RV32P_Tim_Handler **************************************/
+/* End Function:RMP_Ctx_Handler **********************************************/
+
+/* Begin Function:RMP_Tim_Handler *********************************************
+Description : The OS tick timer interrupt routine.
+Input       : None.
+Output      : None.
+Return      : None.
+******************************************************************************/
+void RMP_Tim_Handler(void)
+{
+
+}
+/* End Function:RMP_Tim_Handler **********************************************/
 
 /* End Of File ***************************************************************/
 

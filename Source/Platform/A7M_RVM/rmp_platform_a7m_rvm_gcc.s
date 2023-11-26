@@ -41,9 +41,6 @@ The ARM Cortex-M4/7 also include a FPU.
     .global             _RMP_Run_High
     /* The stack address of current thread */
     .global             RMP_SP_Cur
-    /* Save and load extra contexts, such as FPU, peripherals and MPU */
-    .global             RMP_Ctx_Save
-    .global             RMP_Ctx_Load
     /* Mask/unmask interrupts */
     .global             RMP_Int_Mask
     .global             RMP_Int_Unmask
@@ -257,7 +254,6 @@ THUMB Stk_Basic_Done:
     PUSH                {R1-R5}
 
     BL                  RMP_Int_Mask        // Mask interrupts
-    BL                  RMP_Ctx_Save        // Save extra context
 
     LDR                 R1, =RMP_SP_Cur     // Save the SP to control block.
     STR                 SP, [R1]
@@ -267,7 +263,6 @@ THUMB Stk_Basic_Done:
     LDR                 R1, =RMP_SP_Cur     // Load the SP.
     LDR                 SP, [R1]
 
-    BL                  RMP_Ctx_Load        // Load extra context
     BL                  RMP_Int_Unmask      // Unmask interrupts
 
     LDR                 R0, =RMP_A7M_RVM_Usr_Param
