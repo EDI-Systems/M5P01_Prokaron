@@ -183,8 +183,8 @@ A example C header file:
 
     /* Private Variable **********************************************************/
     #if(!(defined __HDR_DEF__||defined __HDR_STRUCT__))
-    #ifndef __<FILENAME>_PUBLIC__
-    #define __<FILENAME>_PUBLIC__
+    #ifndef __<FILENAME>_MEMBER__
+    #define __<FILENAME>_MEMBER__
 
     /* In this way we can use the data structures and definitions in the headers */
     #define __HDR_DEF__
@@ -228,7 +228,7 @@ A example C header file:
     /*****************************************************************************/
     /* Undefine "__EXTERN__" to avoid redefinition */
     #undef __EXTERN__
-    /* __<FILENAME>_PUBLIC__ */
+    /* __<FILENAME>_MEMBER__ */
     #endif
     /* !(defined __HDR_DEF__||defined __HDR_STRUCT__) */
     #endif

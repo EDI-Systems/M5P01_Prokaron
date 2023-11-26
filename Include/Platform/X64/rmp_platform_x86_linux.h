@@ -105,8 +105,8 @@ typedef rmp_s32_t rmp_ret_t;
 
 /* Private Variable **********************************************************/
 #if(!(defined __HDR_DEF__||defined __HDR_STRUCT__))
-#ifndef __RMP_PLATFORM_X86_LINUX_PUBLIC__
-#define __RMP_PLATFORM_X86_LINUX_PUBLIC__
+#ifndef __RMP_PLATFORM_X86_LINUX_MEMBER__
+#define __RMP_PLATFORM_X86_LINUX_MEMBER__
 
 /* In this way we can use the data structures and definitions in the headers */
 #define __HDR_DEF__
@@ -170,7 +170,7 @@ __EXTERN__ void _RMP_Plat_Hook(void);
 /*****************************************************************************/
 /* Undefine "__EXTERN__" to avoid redefinition */
 #undef __EXTERN__
-/* __RMP_PLATFORM_X86_LINUX_PUBLIC__ */
+/* __RMP_PLATFORM_X86_LINUX_MEMBER__ */
 #endif
 /* !(defined __HDR_DEF__||defined __HDR_STRUCT__) */
 #endif
