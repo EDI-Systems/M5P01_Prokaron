@@ -1,15 +1,15 @@
 /******************************************************************************
-Filename    : rmp_platform_rv32p.h
+Filename    : rmp_platform_rv32p_rvm.h
 Author      : pry
 Date        : 01/04/2017
 Licence     : The Unlicense; see LICENSE for details.
-Description : The header of "rmp_platform_rv32p.c".
+Description : The header of "rmp_platform_rv32p_rvm.c".
 ******************************************************************************/
 
 /* Defines *******************************************************************/
 #ifdef __HDR_DEFS__
-#ifndef __RMP_PLATFORM_RV32P_H_DEFS__
-#define __RMP_PLATFORM_RV32P_H_DEFS__
+#ifndef __RMP_PLATFORM_RV32P_RVM_H_DEFS__
+#define __RMP_PLATFORM_RV32P_RVM_H_DEFS__
 /*****************************************************************************/
 /* Basic Types ***************************************************************/
 #ifndef __RMP_S32_T__
@@ -76,11 +76,17 @@ typedef rmp_s32_t rmp_ret_t;
 #define RMP_MSB_GET(VAL)                RMP_MSB_Generic(VAL)
 #define RMP_LSB_GET(VAL)                RMP_LSB_Generic(VAL)
 
+/* FPU registers */
+#define RMP_FPU                         ((volatile struct RVM_RV32P_Cop_Struct*)(RVM_REG->Cop))
+
+/* The virtual machine configs are here */
+#include "rvm_guest_conf.h"
+
 /* The CPU and application specific macros are here */
-#include "rmp_platform_rv32p_conf.h"
+#include "rmp_platform_rv32p_rvm_conf.h"
 /* End System macros *********************************************************/
 /*****************************************************************************/
-/* __RMP_PLATFORM_RV32P_H_DEFS__ */
+/* __RMP_PLATFORM_RV32P_RVM_H_DEFS__ */
 #endif
 /* __HDR_DEFS__ */
 #endif
@@ -88,16 +94,21 @@ typedef rmp_s32_t rmp_ret_t;
 
 /* Structs *******************************************************************/
 #ifdef __HDR_STRUCTS__
-#ifndef __RMP_PLATFORM_RV32P_H_STRUCTS__
-#define __RMP_PLATFORM_RV32P_H_STRUCTS__
+#ifndef __RMP_PLATFORM_RV32P_RVM_H_STRUCTS__
+#define __RMP_PLATFORM_RV32P_RVM_H_STRUCTS__
 /* We used structs in the header */
 
 /* Use defines in these headers */
 #define __HDR_DEFS__
 #undef __HDR_DEFS__
 /*****************************************************************************/
-struct RMP_RV32P_Stack
+struct RMP_RV32P_RVM_Stack
 {
+    rmp_ptr_t Number;
+    rmp_ptr_t Param0;
+    rmp_ptr_t Param1;
+    rmp_ptr_t Param2;
+    rmp_ptr_t Param3;
     rmp_ptr_t MSTATUS;
     rmp_ptr_t PC;
     rmp_ptr_t X1_RA;
@@ -132,7 +143,7 @@ struct RMP_RV32P_Stack
     rmp_ptr_t X31_T6;
 };
 /*****************************************************************************/
-/* __RMP_PLATFORM_RV32P_H_STRUCTS__ */
+/* __RMP_PLATFORM_RV32P_RVM_H_STRUCTS__ */
 #endif
 /* __HDR_STRUCTS__ */
 #endif
@@ -140,8 +151,8 @@ struct RMP_RV32P_Stack
 
 /* Private Global Variables **************************************************/
 #if(!(defined __HDR_DEFS__||defined __HDR_STRUCTS__))
-#ifndef __RMP_PLATFORM_RV32P_MEMBERS__
-#define __RMP_PLATFORM_RV32P_MEMBERS__
+#ifndef __RMP_PLATFORM_RV32P_RVM_MEMBERS__
+#define __RMP_PLATFORM_RV32P_RVM_MEMBERS__
 
 /* In this way we can use the data structures and definitions in the headers */
 #define __HDR_DEFS__
@@ -155,13 +166,16 @@ struct RMP_RV32P_Stack
 /* If the header is not used in the public mode */
 #ifndef __HDR_PUBLIC_MEMBERS__
 /*****************************************************************************/
-
+static rvm_ptr_t RMP_Console_Ptr;
+EXTERN const rvm_ptr_t RVM_Desc[];
 /*****************************************************************************/
 /* End Private Global Variables **********************************************/
 
 /* Private C Function Prototypes *********************************************/ 
 /*****************************************************************************/
-
+/* Interrupts */
+static void RMP_Ctx_Handler(void);
+static void RMP_Tim_Handler(void);
 /*****************************************************************************/
 #define __EXTERN__
 /* End Private C Function Prototypes *****************************************/
@@ -175,10 +189,6 @@ struct RMP_RV32P_Stack
 
 /*****************************************************************************/
 EXTERN rmp_ptr_t _RMP_Global;
-EXTERN rmp_ptr_t _RMP_Stack;
-
-__EXTERN__ volatile rmp_ptr_t RMP_RV32P_Int_Act;
-__EXTERN__ volatile rmp_ptr_t _RMP_RV32P_Yield_Pend;
 /*****************************************************************************/
 
 /* End Public Global Variables ***********************************************/
@@ -186,20 +196,20 @@ __EXTERN__ volatile rmp_ptr_t _RMP_RV32P_Yield_Pend;
 /* Public C Function Prototypes **********************************************/
 /*****************************************************************************/
 /* Interrupts */
-EXTERN void RMP_Int_Disable(void);
-EXTERN void RMP_Int_Enable(void);
-EXTERN void RMP_Int_Mask(rmp_ptr_t Level);
+__EXTERN__ void RMP_Int_Enable(void);
+__EXTERN__ void RMP_Int_Disable(void);
+__EXTERN__ void RMP_Int_Mask(void);
+__EXTERN__ void RMP_Int_Unmask(void);
 
-EXTERN void _RMP_Start(rmp_ptr_t Entry, rmp_ptr_t Stack);
+EXTERN void _RMP_Start(rmp_ptr_t Entry,
+                       rmp_ptr_t Stack);
+EXTERN void _RMP_RV32P_RVM_Yield(void);
 __EXTERN__ void _RMP_Yield(void);
 
 /* Platform specific */
-EXTERN rmp_ptr_t RMP_RV32P_MCYCLE_Get(void);
-EXTERN rmp_ptr_t RMP_RV32P_MCAUSE_Get(void);
-EXTERN void _RMP_RV32P_MTVEC_Set(rmp_ptr_t Value);
-EXTERN void _RMP_RV32P_Yield_NONE(void);
-EXTERN void _RMP_RV32P_Yield_RVF(void);
-EXTERN void _RMP_RV32P_Yield_RVFD(void);
+EXTERN void _RMP_RV32P_RVM_Yield_NONE(void);
+EXTERN void _RMP_RV32P_RVM_Yield_RVF(void);
+EXTERN void _RMP_RV32P_RVM_Yield_RVFD(void);
 
 /* Initialization */
 __EXTERN__ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
@@ -209,13 +219,10 @@ __EXTERN__ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
 __EXTERN__ void _RMP_Lowlvl_Init(void);
 __EXTERN__ void RMP_Putchar(char Char);
 __EXTERN__ void _RMP_Plat_Hook(void);
-
-/* Interrupt handler */
-__EXTERN__ void _RMP_RV32P_Tim_Handler(void);
 /*****************************************************************************/
 /* Undefine "__EXTERN__" to avoid redefinition */
 #undef __EXTERN__
-/* __RMP_PLATFORM_RV32P_MEMBERS__ */
+/* __RMP_PLATFORM_RV32P_RVM_MEMBERS__ */
 #endif
 /* !(defined __HDR_DEFS__||defined __HDR_STRUCTS__) */
 #endif
@@ -224,3 +231,4 @@ __EXTERN__ void _RMP_RV32P_Tim_Handler(void);
 /* End Of File ***************************************************************/
 
 /* Copyright (C) Evo-Devo Instrum. All rights reserved ***********************/
+
