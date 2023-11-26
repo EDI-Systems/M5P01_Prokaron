@@ -82,12 +82,12 @@ ISR Message queue                  : 1646 / 4815 / 1638
 ISR Blocking message queue         : 1867 / 4979 / 1859
 ******************************************************************************/
 
-/* Includes ******************************************************************/
+/* Include *******************************************************************/
 #include "rmp.h"
 #include "rvm_guest.h"
-/* End Includes **************************************************************/
+/* End Include ***************************************************************/
 
-/* Defines *******************************************************************/
+/* Define ********************************************************************/
 /* How to read counter */
 #define RMP_CNT_READ()          ((rmp_tim_t)(TIM2_CNT))
 /* Are we testing the memory pool? */
@@ -122,9 +122,9 @@ typedef rmp_u16_t rmp_tim_t;
 #define TIM_COUNTERMODE_UP      (0U)
 #define TIM_COUNTERMODE_DOWN    (1U<<4)
 #define TIM_CLOCKDIVISION_DIV1  (0U)
-/* End Defines ***************************************************************/
+/* End Define ****************************************************************/
 
-/* Globals *******************************************************************/
+/* Global ********************************************************************/
 #ifndef MINIMAL_SIZE
 rmp_ptr_t Stack_1[128];
 rmp_ptr_t Stack_2[128];
@@ -133,9 +133,9 @@ void Timer_Init(void);
 void Int_Init(void);
 void Int_Handler(void);
 void Int_Disable(void);
-/* End Globals ***************************************************************/
+/* End Global ****************************************************************/
 
-/* Begin Function:Timer_Init **************************************************
+/* Function:Timer_Init ********************************************************
 Description : Initialize the timer for timing measurements. This function needs
               to be adapted to your specific hardware.
 Input       : None.
@@ -153,7 +153,7 @@ void Timer_Init(void)
 }
 /* End Function:Timer_Init ***************************************************/
 
-/* Begin Function:Int_Init ****************************************************
+/* Function:Int_Init **********************************************************
 Description : Initialize an periodic interrupt source. This function needs
               to be adapted to your specific hardware.
 Input       : None.
@@ -183,7 +183,7 @@ void Int_Init(void)
 }
 /* End Function:Int_Init *****************************************************/
 
-/* Begin Function:Int_Disable *************************************************
+/* Function:Int_Disable *******************************************************
 Description : Disable the periodic interrupt source. This function needs
               to be adapted to your specific hardware.
 Input       : None.

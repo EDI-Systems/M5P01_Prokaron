@@ -5,26 +5,26 @@
 ;Description : The test specific assembly vectors for MSP430FR5994.
 ;*****************************************************************************/
 
-;/* Begin Header *************************************************************/
+;/* Header *******************************************************************/
     .text
     .sect               ".text:_isr"
     .align              2
     .include            "Platform/MSP430/rmp_platform_msp430x_ticc.inc"
 ;/* End Header ***************************************************************/
 
-;/* Begin Exports ************************************************************/
+;/* Export *******************************************************************/
     ;The systick timer routine
     .def                TIMER0_A0_VECTOR
     ;The test timer routine
     .def                TIMER1_A0_VECTOR
-;/* End Exports **************************************************************/
+;/* End Export ***************************************************************/
 
-;/* Begin Imports ************************************************************/
+;/* Import *******************************************************************/
     ;Handler for MSP430 timer interrupt
     .global             TIM1_IRQHandler
-;/* End Imports **************************************************************/
+;/* End Import ***************************************************************/
 
-;/* Begin Function:TIMER0_A0_VECTOR *******************************************
+;/* Function:TIMER0_A0_VECTOR *************************************************
 ;Description : The timer used to generate ticks for the OS.
 ;Input       : None.
 ;Output      : None.
@@ -38,7 +38,7 @@ TIMER0_A0_VECTOR:       .asmfunc
     .endasmfunc
 ;/* End Function:TIMER0_A0_VECTOR ********************************************/
 
-;/* Begin Function:TIMER1_A0_VECTOR *******************************************
+;/* Function:TIMER1_A0_VECTOR *************************************************
 ;Description : The timer used to generate ticks for the interrupt latency test.
 ;Input       : None.
 ;Output      : None.

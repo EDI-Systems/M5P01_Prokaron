@@ -20,16 +20,16 @@ TICC V21.6.1LTS -O4 -mf5 (OS timer enabled)
               LPM4       : 77uA  - 650 days AAx2
 ******************************************************************************/
 
-/* Includes ******************************************************************/
+/* Include *******************************************************************/
 #include "rmp.h"
-/* End Includes **************************************************************/
+/* End Include ***************************************************************/
 
-/* Defines *******************************************************************/
+/* Define ********************************************************************/
 #define RMP_TICK_1SEC           (512U)
 #define RMP_BUSY_LOOP           (256U)
-/* End Defines ***************************************************************/
+/* End Define ****************************************************************/
 
-/* Globals *******************************************************************/
+/* Global ********************************************************************/
 rmp_ptr_t Stack_1[48];
 rmp_ptr_t Stack_2[48];
 rmp_ptr_t Slice_Last;
@@ -44,9 +44,9 @@ void RMP_Sched_Hook(void);
 void RMP_Dly_Hook(rmp_ptr_t Slice);
 void RMP_Start_Hook(void);
 void RMP_Init_Idle(void);
-/* End Globals ***************************************************************/
+/* End Global ****************************************************************/
 
-/* Begin Function:RMP_MSP430_Tim_Off ******************************************
+/* Function:RMP_MSP430_Tim_Off ************************************************
 Description : Turn off the timer altogether.
 Input       : None.
 Output      : None.
@@ -62,7 +62,7 @@ void RMP_MSP430_Tim_Off(void)
 }
 /* End Function:RMP_MSP430_Tim_Off *******************************************/
 
-/* Begin Function:RMP_MSP430_Tim_Set ******************************************
+/* Function:RMP_MSP430_Tim_Set ************************************************
 Description : Reprogram the timer for MSP430 series.
               TA0 clock = LFXT1/64 = 512Hz.
 Input       : rmp_ptr_t Slice - The tick value to set.
@@ -94,7 +94,7 @@ void RMP_MSP430_Tim_Set(rmp_ptr_t Slice)
 }
 /* End Function:RMP_MSP430_Tim_Set *******************************************/
 
-/* Begin Function:RMP_MSP430_Tim_Get ******************************************
+/* Function:RMP_MSP430_Tim_Get ************************************************
 Description : Get the elapsed time. The difficulty with MSP430 is that
               1. it lacks one-shot mode, 2. it lacks countdown mode.
 Input       : None.
@@ -117,7 +117,7 @@ rmp_ptr_t RMP_MSP430_Tim_Get(void)
 }
 /* End Function:RMP_MSP430_Tim_Get *******************************************/
 
-/* Begin Function:_RMP_MSP430_Tickless_Handler ********************************
+/* Function:_RMP_MSP430_Tickless_Handler **************************************
 Description : Tickless interrupt routine for MSP430.
 Input       : None
 Output      : None.
@@ -132,7 +132,7 @@ void _RMP_MSP430_Tickless_Handler(void)
 }
 /* End Function:_RMP_MSP430_Tickless_Handler *********************************/
 
-/* Begin Function:RMP_Tim_Hook ************************************************
+/* Function:RMP_Tim_Hook ******************************************************
 Description : RMP timer hook.
 Input       : rmp_ptr_t Slice - Number of slices passed.
 Output      : None.
@@ -152,7 +152,7 @@ void RMP_Tim_Hook(rmp_ptr_t Slice)
 }
 /* End Function:RMP_Tim_Hook *************************************************/
 
-/* Begin Function:RMP_Sched_Hook ***********************************************
+/* Function:RMP_Sched_Hook *****************************************************
 Description : RMP scheduler hook.
 Input       : None.
 Output      : None.
@@ -168,7 +168,7 @@ void RMP_Sched_Hook(void)
 }
 /* End Function:RMP_Sched_Hook ***********************************************/
 
-/* Begin Function:RMP_Dly_Hook ************************************************
+/* Function:RMP_Dly_Hook ******************************************************
 Description : RMP timer hook.
 Input       : rmp_ptr_t Slice - Number of slices to delay.
 Output      : None.
@@ -181,7 +181,7 @@ void RMP_Dly_Hook(rmp_ptr_t Slice)
 }
 /* End Function:RMP_Dly_Hook *************************************************/
 
-/* Begin Function:RMP_Start_Hook **********************************************
+/* Function:RMP_Start_Hook ****************************************************
 Description : RMP start hook. Puts all unused GPIO port input pull-down.
 Input       : None.
 Output      : None.
@@ -208,7 +208,7 @@ void RMP_Start_Hook(void)
 }
 /* End Function:RMP_Start_Hook ***********************************************/
 
-/* Begin Function:RMP_Init_Idle ***********************************************
+/* Function:RMP_Init_Idle *****************************************************
 Description : RMP idle hook.
 Input       : None.
 Output      : None.

@@ -8,11 +8,11 @@ Description : The performance testbench for RMP. Do not modify this file; what
               header.
 ******************************************************************************/
 
-/* Includes ******************************************************************/
+/* Include *******************************************************************/
 #include "rmp_test.h"
-/* End Includes **************************************************************/
+/* End Include ***************************************************************/
 
-/* Globals *******************************************************************/
+/* Global ********************************************************************/
 #ifndef MINIMAL_SIZE
 volatile rmp_tim_t Start=0;
 volatile rmp_tim_t End=0;
@@ -84,9 +84,9 @@ void Test_Set_2(rmp_ptr_t Param);
 #endif
 
 void Func_2(void);
-/* End Globals ***************************************************************/
+/* End Global ****************************************************************/
 
-/* Begin Function:Func_1 ******************************************************
+/* Function:Func_1 ************************************************************
 Description : The test function group 1.
 Input       : None.
 Output      : None.
@@ -162,7 +162,7 @@ void Func_1(void)
 }
 /* End Function:Test_Yield ***************************************************/
 
-/* Begin Function:Func_2 ******************************************************
+/* Function:Func_2 ************************************************************
 Description : The test function group 2.
 Input       : None.
 Output      : None.
@@ -1024,7 +1024,7 @@ void Func_2(void)
 }
 /* End Function:Func_2 *******************************************************/
 
-/* Begin Function:Int_Handler *************************************************
+/* Function:Int_Handler *******************************************************
 Description : The interrupt handler. Call this in your periodic ISR.
 Input       : None.
 Output      : None.
@@ -1089,7 +1089,7 @@ void Int_Handler(void)
 #endif
 /* End Function:Int_Handler **************************************************/
 
-/* Begin Function:RMP_Init ****************************************************
+/* Function:RMP_Init **********************************************************
 Description : The init thread hook functions.
 Input       : None.
 Output      : None.

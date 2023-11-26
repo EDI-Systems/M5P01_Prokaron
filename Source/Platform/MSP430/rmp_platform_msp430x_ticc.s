@@ -21,7 +21,7 @@
 ;task and not shared between tasks.
 ;*****************************************************************************/
 
-;/* Begin Import *************************************************************/
+;/* Import *******************************************************************/
     ;The real task switch handling function
     .global             _RMP_Run_High
     ;The current thread stack
@@ -30,7 +30,7 @@
     .global             _RMP_MSP430_SP_Kern
 ;/* End Import ***************************************************************/
 
-;/* Begin Export *************************************************************/
+;/* Export *******************************************************************/
     ;Disable all interrupts
     .def                RMP_Int_Disable
     ;Enable all interrupts            
@@ -41,12 +41,12 @@
     .def                _RMP_MSP430_Yield
 ;/* End Export ***************************************************************/
 
-;/* Begin Header *************************************************************/
+;/* Header *******************************************************************/
     .text
     .align              2
 ;/* End Header ***************************************************************/
 
-;/* Begin Function:RMP_Int_Disable ********************************************
+;/* Function:RMP_Int_Disable **************************************************
 ;Description : The function for disabling all interrupts. Does not allow nesting.
 ;Input       : None.
 ;Output      : None.
@@ -61,7 +61,7 @@ RMP_Int_Disable:        .asmfunc
     .endasmfunc
 ;/* End Function:RMP_Int_Disable *********************************************/
 
-;/* Begin Function:RMP_Int_Enable *********************************************
+;/* Function:RMP_Int_Enable ***************************************************
 ;Description : The function for enabling all interrupts. Does not allow nesting.
 ;Input       : None.
 ;Output      : None.
@@ -76,7 +76,7 @@ RMP_Int_Enable:         .asmfunc
     .endasmfunc
 ;/* End Function:RMP_Int_Enable **********************************************/
 
-;/* Begin Function:_RMP_Start *************************************************
+;/* Function:_RMP_Start *******************************************************
 ;Description : Jump to the user function and will never return from it.
 ;Input       : rmp_ptr_t R13:R12 - PC.
 ;              rmp_ptr_t R15:R14 - SP.
@@ -102,7 +102,7 @@ _RMP_Start:             .asmfunc
     .endasmfunc
 ;/* End Function:_RMP_Start **************************************************/
 
-;/* Begin Function:_RMP_MSP430_Yield ******************************************
+;/* Function:_RMP_MSP430_Yield ************************************************
 ;Description : Yield from one thread to another without an interrupt.
 ;              Note that MSP430's "rotate" is VERY different from regular CPUs.
 ;Input       : None.

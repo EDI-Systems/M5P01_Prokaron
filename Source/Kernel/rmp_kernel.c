@@ -20,26 +20,26 @@ Description : The RMP RTOS single-file kernel.
               no "_", while internal kernel-only functions begin with "_".
 ******************************************************************************/
 
-/* Includes ******************************************************************/
-#define __HDR_DEFS__
+/* Include *******************************************************************/
+#define __HDR_DEF__
 #include "rmp_platform.h"
 #include "Kernel/rmp_kernel.h"
-#undef __HDR_DEFS__
+#undef __HDR_DEF__
 
-#define __HDR_STRUCTS__
+#define __HDR_STRUCT__
 #include "rmp_platform.h"
 #include "Kernel/rmp_kernel.h"
-#undef __HDR_STRUCTS__
+#undef __HDR_STRUCT__
 
 /* Private include */
 #include "Kernel/rmp_kernel.h"
 
-#define __HDR_PUBLIC_MEMBERS__
+#define __HDR_PUBLIC__
 #include "rmp_platform.h"
-#undef __HDR_PUBLIC_MEMBERS__
-/* End Includes **************************************************************/
+#undef __HDR_PUBLIC__
+/* End Include ***************************************************************/
 
-/* Begin Function:RMP_MSB_Generic *********************************************
+/* Function:RMP_MSB_Generic ***************************************************
 Description : Find the MSB's position. This is a portable solution for all
               processors; if your processor does not have fast built-in bit
               manipulation support, you can resort to this when porting.
@@ -205,7 +205,7 @@ rmp_ptr_t RMP_MSB_Generic(rmp_ptr_t Value)
 }
 /* End Function:RMP_MSB_Generic **********************************************/
 
-/* Begin Function:RMP_LSB_Generic *********************************************
+/* Function:RMP_LSB_Generic ***************************************************
 Description : Find the LSB's position. This is a portable solution for all
               processors; if your processor does not have fast built-in bit
               manipulation support, you can resort to this when porting.
@@ -371,7 +371,7 @@ rmp_ptr_t RMP_LSB_Generic(rmp_ptr_t Value)
 }
 /* End Function:RMP_LSB_Generic **********************************************/
 
-/* Begin Function:RMP_RBT_Generic *********************************************
+/* Function:RMP_RBT_Generic ***************************************************
 Description : Reverse bit order. This is a portable solution meant for all
               processors; if your processor does not have fast built-in RBT,
               you can resort to this instead.
@@ -452,7 +452,7 @@ rmp_ptr_t RMP_RBT_Generic(rmp_ptr_t Value)
 }
 /* End Function:RMP_RBT_Generic **********************************************/
 
-/* Begin Function:RMP_Print_Coverage ******************************************
+/* Function:RMP_Print_Coverage ************************************************
 Description : The coverage data printer. Should always be disabled for all cases
               except where a kernel coverage test is needed. This should never
               be called ny any user application; for EDI coverage testing only.
@@ -485,7 +485,7 @@ void RMP_Print_Coverage(void)
 #endif
 /* End Function:RMP_Print_Coverage *******************************************/
 
-/* Begin Function:RMP_Clear ***************************************************
+/* Function:RMP_Clear *********************************************************
 Description : Memset a memory area to zero.
 Input       : volatile void* Addr - The address to clear.
               rmp_ptr_t Size - The size to clear.
@@ -504,7 +504,7 @@ void RMP_Clear(volatile void* Addr,
 }
 /* End Function:RMP_Clear ****************************************************/
 
-/* Begin Function:RMP_Int_Print ***********************************************
+/* Function:RMP_Int_Print *****************************************************
 Description : Print a signed integer on the debugging console. This integer is
               printed as decimal with sign.
 Input       : rmp_cnt_t Int - The integer to print.
@@ -582,7 +582,7 @@ rmp_cnt_t RMP_Int_Print(rmp_cnt_t Int)
 }
 /* End Function:RMP_Int_Print ************************************************/
 
-/* Begin Function:RMP_Hex_Print ***********************************************
+/* Function:RMP_Hex_Print *****************************************************
 Description : Print a unsigned integer on the debugging console. This integer is
               printed as hexadecimal.
 Input       : rmp_ptr_t Uint - The unsigned integer to print.
@@ -640,7 +640,7 @@ rmp_cnt_t RMP_Hex_Print(rmp_ptr_t Uint)
 }
 /* End Function:RMP_Hex_Print ************************************************/
 
-/* Begin Function:RMP_Str_Print ***********************************************
+/* Function:RMP_Str_Print *****************************************************
 Description : Print a string on the debugging console.
               This is only used for user-level debugging.
 Input       : const rmp_s8_t* String - The string to print.
@@ -670,7 +670,7 @@ rmp_cnt_t RMP_Str_Print(const rmp_s8_t* String)
 }
 /* End Function:RMP_Str_Print ************************************************/
 
-/* Begin Function:RMP_List_Crt ************************************************
+/* Function:RMP_List_Crt ******************************************************
 Description : Create a doubly linkled list.
 Input       : volatile struct RMP_List* Head - The pointer to the list head.
 Output      : None.
@@ -683,7 +683,7 @@ void RMP_List_Crt(volatile struct RMP_List* Head)
 }
 /* End Function:RMP_List_Crt *************************************************/
 
-/* Begin Function:RMP_List_Del ************************************************
+/* Function:RMP_List_Del ******************************************************
 Description : Delete a node from the doubly-linked list.
 Input       : volatile struct RMP_List* Prev - The prevoius node of the target node.
               volatile struct RMP_List* Next - The next node of the target node.
@@ -698,7 +698,7 @@ void RMP_List_Del(volatile struct RMP_List* Prev,
 }
 /* End Function:RMP_List_Del *************************************************/
 
-/* Begin Function:RMP_List_Ins ************************************************
+/* Function:RMP_List_Ins ******************************************************
 Description : Insert a node to the doubly-linked list.
 Input       : volatile struct RMP_List* New - The new node to insert.
               volatile struct RMP_List* Prev - The previous node.
@@ -717,7 +717,7 @@ void RMP_List_Ins(volatile struct RMP_List* New,
 }
 /* End Function:RMP_List_Ins *************************************************/
 
-/* Begin Function:RMP_CRC16 ***************************************************
+/* Function:RMP_CRC16 *********************************************************
 Description    : CRC16 checksum calculation. Polynomial=0xA001.
 Input          : const rmp_u8_t* Data - The pointer to the dataset.
                  rmp_ptr_t Length - The length of the data in bytes.
@@ -820,7 +820,7 @@ rmp_ptr_t RMP_CRC16(const rmp_u8_t* Data,
 #endif
 /* End Function:RMP_CRC16 ****************************************************/
 
-/* Begin Function:RMP_Sched_Lock **********************************************
+/* Function:RMP_Sched_Lock ****************************************************
 Description : The function locks the scheduler. The locking can be stacked.
 Input       : None.
 Output      : None.
@@ -834,7 +834,7 @@ void RMP_Sched_Lock(void)
 }
 /* End Function:RMP_Sched_Lock ***********************************************/
 
-/* Begin Function:RMP_Sched_Unlock ********************************************
+/* Function:RMP_Sched_Unlock **************************************************
 Description : The function unlocks the scheduler. The unlocking can be stacked.
 Input       : None.
 Output      : None.
@@ -887,7 +887,7 @@ void RMP_Sched_Unlock(void)
 }
 /* End Function:RMP_Sched_Unlock *********************************************/
 
-/* Begin Function:RMP_Yield ***************************************************
+/* Function:RMP_Yield *********************************************************
 Description : Yield to another thread.
 Input       : None.
 Output      : None.
@@ -910,7 +910,7 @@ void RMP_Yield(void)
 }
 /* End Function:RMP_Yield ****************************************************/
 
-/* Begin Function:_RMP_Timer_Proc *********************************************
+/* Function:_RMP_Timer_Proc ***************************************************
 Description : Process RMP timer events.
 Input       : None.
 Output      : None.
@@ -968,9 +968,9 @@ void _RMP_Timer_Proc(void)
         }
     }
 }
-/* Begin Function:_RMP_Timer_Proc ********************************************/
+/* Function:_RMP_Timer_Proc **************************************************/
 
-/* Begin Function:_RMP_Run_High ***********************************************
+/* Function:_RMP_Run_High *****************************************************
 Description : Get the highest priority ready thread. The return value will be
               written into the global variables.
 Input       : None.
@@ -1046,7 +1046,7 @@ void _RMP_Run_High(void)
 }
 /* End Function:_RMP_Run_High ************************************************/
 
-/* Begin Function:_RMP_Tim_Handler ********************************************
+/* Function:_RMP_Tim_Handler **************************************************
 Description : The system tick timer interrupt routine.
 Input       : rmp_ptr_t Slice - How many timeslices have passed.
 Output      : None.
@@ -1116,7 +1116,7 @@ void _RMP_Tim_Handler(rmp_ptr_t Slice)
 }
 /* End Function:_RMP_Tim_Handler *********************************************/
 
-/* Begin Function:_RMP_Tim_Elapse *********************************************
+/* Function:_RMP_Tim_Elapse ***************************************************
 Description : Honor the elapse of time from the last timer firing. This is to be
               called before all potential context switch points to correctly 
               account for the time elapsed before a context switch.
@@ -1153,7 +1153,7 @@ void _RMP_Tim_Elapse(rmp_ptr_t Slice)
 }
 /* End Function:_RMP_Tim_Elapse **********************************************/
 
-/* Begin Function:_RMP_Tim_Future *********************************************
+/* Function:_RMP_Tim_Future ***************************************************
 Description : Get the nearest timer interrupt arrival time. This is used to set
               the timer after a context switch or a timer interrupt. If a 
               tickless kernel is not desired, this function can be ignored.
@@ -1204,7 +1204,7 @@ rmp_ptr_t _RMP_Tim_Future(void)
 }
 /* End Function:_RMP_Tim_Future **********************************************/
 
-/* Begin Function:_RMP_Tim_Idle ***********************************************
+/* Function:_RMP_Tim_Idle *****************************************************
 Description : See if the timer could be idle. When both conditions below are
               met, we could turn off all kernel clock sources altogether to
               achieve the lowest possible power:
@@ -1255,7 +1255,7 @@ rmp_ret_t _RMP_Tim_Idle(void)
 }
 /* End Function:_RMP_Tim_Idle ************************************************/
 
-/* Begin Function:_RMP_Run_Ins ************************************************
+/* Function:_RMP_Run_Ins ******************************************************
 Description : Set the thread as ready to schedule. That means, put the thread into
               the runqueue. When this is called, please make sure that the scheduler
               is locked.
@@ -1296,7 +1296,7 @@ void _RMP_Run_Ins(volatile struct RMP_Thd* Thread)
 }
 /* End Function:_RMP_Run_Ins *************************************************/
 
-/* Begin Function:_RMP_Run_Del ************************************************
+/* Function:_RMP_Run_Del ******************************************************
 Description : Clear the thread from the runqueue. When this is called, please 
               make sure that the scheduler is locked. This function also checks whether
               the thread is suspended. If yes, it will not remove it from the queue.
@@ -1345,7 +1345,7 @@ void _RMP_Run_Del(volatile struct RMP_Thd* Thread)
 }
 /* End Function:_RMP_Run_Del *************************************************/
 
-/* Begin Function:_RMP_Dly_Ins ************************************************
+/* Function:_RMP_Dly_Ins ******************************************************
 Description : Insert the thread into the delay queue, given some timeslices into
               the future. The thread must not be in the run queue any more.
 Input       : volatile struct RMP_Thd* Thread - The thread to put into the delay
@@ -1393,7 +1393,7 @@ void _RMP_Dly_Ins(volatile struct RMP_Thd* Thread,
 }
 /* End Function:_RMP_Dly_Ins *************************************************/
 
-/* Begin Function:RMP_Thd_Crt *************************************************
+/* Function:RMP_Thd_Crt *******************************************************
 Description : Create a real-time thread.
 Input       : volatile struct RMP_Thd* Thread - The thread structure provided. 
                                                 The user should make this allocation
@@ -1486,7 +1486,7 @@ rmp_ret_t RMP_Thd_Crt(volatile struct RMP_Thd* Thread,
 }
 /* End Function:RMP_Thd_Crt **************************************************/
 
-/* Begin Function:RMP_Thd_Del *************************************************
+/* Function:RMP_Thd_Del *******************************************************
 Description : Delete a real-time thread.
 Input       : volatile struct RMP_Thd* Thread - The pointer to the thread.
 Output      : None.
@@ -1617,7 +1617,7 @@ rmp_ret_t RMP_Thd_Del(volatile struct RMP_Thd* Thread)
 }
 /* End Function:RMP_Thd_Del **************************************************/
 
-/* Begin Function:RMP_Thd_Set *************************************************
+/* Function:RMP_Thd_Set *******************************************************
 Description : Change the priority or timeslice of a real-time thread. If one of
               the changes is not desired, just leave it to RMP_PREEMPT_PRIO_NUM
               or RMP_SLICE_MAX.
@@ -1743,7 +1743,7 @@ rmp_ret_t RMP_Thd_Set(volatile struct RMP_Thd* Thread,
 }
 /* End Function:RMP_Thd_Set **************************************************/
 
-/* Begin Function:RMP_Thd_Suspend *********************************************
+/* Function:RMP_Thd_Suspend ***************************************************
 Description : Suspend the execution of a real-time thread.
 Input       : volatile struct RMP_Thd* Thread - The pointer to the thread.
 Output      : None.
@@ -1824,7 +1824,7 @@ rmp_ret_t RMP_Thd_Suspend(volatile struct RMP_Thd* Thread)
 }
 /* End Function:RMP_Thd_Suspend **********************************************/
 
-/* Begin Function:RMP_Thd_Resume **********************************************
+/* Function:RMP_Thd_Resume ****************************************************
 Description : Resume the execution of a real-time thread.
 Input       : volatile struct RMP_Thd* Thread - The pointer to the thread.
 Output      : None.
@@ -1895,7 +1895,7 @@ rmp_ret_t RMP_Thd_Resume(volatile struct RMP_Thd* Thread)
 }
 /* End Function:RMP_Thd_Resume ***********************************************/
 
-/* Begin Function:RMP_Thd_Snd *************************************************
+/* Function:RMP_Thd_Snd *******************************************************
 Description : Send to a real-time thread's mailbox. If the mailbox is full, then
               this operation can potentially block.
 Input       : volatile struct RMP_Thd* Thread - The thread structure of the thread to send to.
@@ -2029,7 +2029,7 @@ rmp_ret_t RMP_Thd_Snd(volatile struct RMP_Thd* Thread,
 }
 /* End Function:RMP_Thd_Snd **************************************************/
 
-/* Begin Function:RMP_Thd_Snd_ISR *********************************************
+/* Function:RMP_Thd_Snd_ISR ***************************************************
 Description : Send to a real-time thread's mailbox. If the mailbox is full, then
               this operation will just fail. This function can only be called from
               an ISR whose priority is below or equal to the context switch handler's.
@@ -2129,7 +2129,7 @@ rmp_ret_t RMP_Thd_Snd_ISR(volatile struct RMP_Thd* Thread,
 }
 /* End Function:RMP_Thd_Snd_ISR **********************************************/
 
-/* Begin Function:RMP_Thd_Rcv *************************************************
+/* Function:RMP_Thd_Rcv *******************************************************
 Description : Receive a message from our own mailbox, and this is blocking.
 Input       : rmp_ptr_t Slice - The timeslices to wait, if the mailbox is empty.
 Output      : rmp_ptr_t* Data - The pointer to put the data to.
@@ -2264,7 +2264,7 @@ rmp_ret_t RMP_Thd_Rcv(rmp_ptr_t* Data,
 }
 /* End Function:RMP_Thd_Rcv **************************************************/
 
-/* Begin Function:RMP_Thd_Delay ***********************************************
+/* Function:RMP_Thd_Delay *****************************************************
 Description : Delay the execution of a real-time thread.
 Input       : rmp_ptr_t Slice - The number of timeslices to delay.
 Output      : None.
@@ -2298,7 +2298,7 @@ rmp_ret_t RMP_Thd_Delay(rmp_ptr_t Slice)
 }
 /* End Function:RMP_Thd_Delay ************************************************/
 
-/* Begin Function:RMP_Thd_Cancel **********************************************
+/* Function:RMP_Thd_Cancel ****************************************************
 Description : Cancel the real-time thread from a previous delay.
 Input       : volatile struct RMP_Thd* Thread - The pointer to the thread.
 Output      : None.
@@ -2345,7 +2345,7 @@ rmp_ret_t RMP_Thd_Cancel(volatile struct RMP_Thd* Thread)
 }
 /* End Function:RMP_Thd_Cancel ***********************************************/
 
-/* Begin Function:RMP_Sem_Crt *************************************************
+/* Function:RMP_Sem_Crt *******************************************************
 Description : Create a semaphore in the system.
 Input       : volatile struct RMP_Sem* Semaphore - The pointer to the semaphore.
               rmp_ptr_t Number - The initial number of this semaphore.
@@ -2406,7 +2406,7 @@ rmp_ret_t RMP_Sem_Crt(volatile struct RMP_Sem* Semaphore,
 }
 /* End Function:RMP_Sem_Crt **************************************************/
 
-/* Begin Function:RMP_Sem_Del *************************************************
+/* Function:RMP_Sem_Del *******************************************************
 Description : Delete a semaphore in the system.
 Input       : volatile struct RMP_Sem* Semaphore - The pointer to the semaphore.
 Output      : None.
@@ -2474,7 +2474,7 @@ rmp_ret_t RMP_Sem_Del(volatile struct RMP_Sem* Semaphore)
 }
 /* End Function:RMP_Sem_Del **************************************************/
 
-/* Begin Function:_RMP_Sem_Pend_Core ******************************************
+/* Function:_RMP_Sem_Pend_Core ************************************************
 Description : Pend on the semaphore, trying to get one. This is the core logic.
               When this is entered, the scheduler shall be locked.
 Input       : volatile struct RMP_Sem* Semaphore - The pointer to the semaphore.
@@ -2548,7 +2548,7 @@ rmp_ret_t _RMP_Sem_Pend_Core(volatile struct RMP_Sem* Semaphore,
 }
 /* End Function:_RMP_Sem_Pend_Core *******************************************/
 
-/* Begin Function:RMP_Sem_Pend ************************************************
+/* Function:RMP_Sem_Pend ******************************************************
 Description : Pend on the semaphore, trying to get one.
 Input       : volatile struct RMP_Sem* Semaphore - The pointer to the semaphore.
               rmp_ptr_t Slice - The number of slices to wait.
@@ -2576,7 +2576,7 @@ rmp_ret_t RMP_Sem_Pend(volatile struct RMP_Sem* Semaphore,
 }
 /* End Function:RMP_Sem_Pend *************************************************/
 
-/* Begin Function:RMP_Sem_Pend_Unlock *****************************************
+/* Function:RMP_Sem_Pend_Unlock ***********************************************
 Description : Pend on the semaphore, trying to get one. When we enter this
               function, the scheduler shall be locked, and it would be auto-
               unlocked when we exit.
@@ -2618,7 +2618,7 @@ rmp_ret_t RMP_Sem_Pend_Unlock(volatile struct RMP_Sem* Semaphore,
 }
 /* End Function:RMP_Sem_Pend_Unlock ******************************************/
 
-/* Begin Function:RMP_Sem_Abort ***********************************************
+/* Function:RMP_Sem_Abort *****************************************************
 Description : Abort the waiting of one thread on a semaphore.
 Input       : volatile struct RMP_Thd* Thread - The pointer to the thread.
 Output      : None.
@@ -2690,7 +2690,7 @@ rmp_ret_t RMP_Sem_Abort(volatile struct RMP_Thd* Thread)
 }
 /* End Function:RMP_Sem_Abort ************************************************/
 
-/* Begin Function:_RMP_Sem_Unblock ********************************************
+/* Function:_RMP_Sem_Unblock **************************************************
 Description : Unblock a thread from the semaphore's waitlist.
 Input       : volatile struct RMP_Sem* Semaphore - The pointer to the semaphore.
 Output      : None.
@@ -2724,7 +2724,7 @@ void _RMP_Sem_Unblock(volatile struct RMP_Sem* Semaphore)
 }
 /* End Function:_RMP_Sem_Unblock *********************************************/
 
-/* Begin Function:RMP_Sem_Post ************************************************
+/* Function:RMP_Sem_Post ******************************************************
 Description : Post a number of semaphores to the list.
 Input       : volatile struct RMP_Sem* Semaphore - The pointer to the semaphore.
               rmp_ptr_t Number - The number to post.
@@ -2800,7 +2800,7 @@ rmp_ret_t RMP_Sem_Post(volatile struct RMP_Sem* Semaphore,
 }
 /* End Function:RMP_Sem_Post *************************************************/
 
-/* Begin Function:RMP_Sem_Post_ISR ********************************************
+/* Function:RMP_Sem_Post_ISR **************************************************
 Description : Post a number of semaphores to the list. This function can only be
               called from an ISR whose priority is below or equal to the context
               switch handler's. We do not check whether the scheduler is locked;
@@ -2887,7 +2887,7 @@ rmp_ret_t RMP_Sem_Post_ISR(volatile struct RMP_Sem* Semaphore,
 }
 /* End Function:RMP_Sem_Post_ISR *********************************************/
 
-/* Begin Function:RMP_Sem_Bcst ************************************************
+/* Function:RMP_Sem_Bcst ******************************************************
 Description : Unblock all threads waiting on the semaphore.
 Input       : volatile struct RMP_Sem* Semaphore - The pointer to the semaphore.
 Output      : None.
@@ -2938,7 +2938,7 @@ rmp_ret_t RMP_Sem_Bcst(volatile struct RMP_Sem* Semaphore)
 }
 /* End Function:RMP_Sem_Bcst *************************************************/
 
-/* Begin Function:RMP_Sem_Bcst_ISR ********************************************
+/* Function:RMP_Sem_Bcst_ISR **************************************************
 Description : Unblock all threads on the semaphore. This function can only be
               called from an ISR whose priority is below or equal to the context
               switch handler's. We do not check whether the scheduler is locked;
@@ -3001,7 +3001,7 @@ rmp_ret_t RMP_Sem_Bcst_ISR(volatile struct RMP_Sem* Semaphore)
 }
 /* End Function:RMP_Sem_Bcst_ISR *********************************************/
 
-/* Begin Function:RMP_Sem_Cnt *************************************************
+/* Function:RMP_Sem_Cnt *******************************************************
 Description : Get the number of semaphores.
 Input       : volatile struct RMP_Sem* Semaphore - The pointer to the semaphore.
 Output      : None.
@@ -3045,7 +3045,7 @@ rmp_ret_t RMP_Sem_Cnt(volatile struct RMP_Sem* Semaphore)
 }
 /* End Function:RMP_Sem_Cnt **************************************************/
 
-/* Begin Function:RMP_Init ****************************************************
+/* Function:RMP_Init **********************************************************
 Description : The entry of the user thread. This is the first user thread that
               will be created.
               The user threads should never return.
@@ -3071,7 +3071,7 @@ void RMP_Init(void)
 }
 /* End Function:RMP_Init *****************************************************/
 
-/* Begin Function:main ********************************************************
+/* Function:main **************************************************************
 Description : The entry of the operating system. This function is for 
               compatibility with the toolchains.
 Input       : None.
@@ -3142,7 +3142,7 @@ int main(void)
 }
 /* End Function:main *********************************************************/
 
-/* Begin Function:RMP_Mem_Init ************************************************
+/* Function:RMP_Mem_Init ******************************************************
 Description : Initialize a trunk of memory as the memory pool. The TLSF allocator's
               FLI will be decided upon the memory block size. Memory allocation does
               not lock the scheduler by itself; it is up to you to decide whether a
@@ -3256,7 +3256,7 @@ rmp_ret_t RMP_Mem_Init(volatile void* Pool,
 }
 /* End Function:RMP_Mem_Init *************************************************/
 
-/* Begin Function:_RMP_Mem_Block **********************************************
+/* Function:_RMP_Mem_Block ****************************************************
 Description : Make a memory block from the memory trunk. The memory block is always
               free when created. No parameter check performed here.
 Input       : volatile struct RMP_Mem_Head* Addr - The start address of the
@@ -3280,7 +3280,7 @@ void _RMP_Mem_Block(volatile struct RMP_Mem_Head* Addr,
 }
 /* End Function:_RMP_Mem_Block ***********************************************/
 
-/* Begin Function:_RMP_Mem_Ins ************************************************
+/* Function:_RMP_Mem_Ins ******************************************************
 Description : The memory insertion function, to insert a certain memory block
               into the corresponding FLI and SLI slot.
 Input       : volatile void* Pool - The memory pool.
@@ -3329,7 +3329,7 @@ void _RMP_Mem_Ins(volatile void* Pool,
 }
 /* End Function:_RMP_Mem_Ins *************************************************/
 
-/* Begin Function:_RMP_Mem_Del ************************************************
+/* Function:_RMP_Mem_Del ******************************************************
 Description : The memory deletion function, to delete a certain memory block
               from the corresponding FLI and SLI class.
 Input       : volatile void* Pool - The memory pool.
@@ -3379,7 +3379,7 @@ void _RMP_Mem_Del(volatile void* Pool,
 }
 /* End Function:_RMP_Mem_Del *************************************************/
 
-/* Begin Function:_RMP_Mem_Search *********************************************
+/* Function:_RMP_Mem_Search ***************************************************
 Description : The TLSF memory searcher.
 Input       : rmp_ptr_t Size - The memory size, must be bigger than 64. This must be
                                guaranteed before calling this function or an error
@@ -3490,7 +3490,7 @@ rmp_ret_t _RMP_Mem_Search(volatile void* Pool,
 }
 /* End Function:_RMP_Mem_Search **********************************************/
 
-/* Begin Function:RMP_Malloc **************************************************
+/* Function:RMP_Malloc ********************************************************
 Description : Allocate some memory from a designated memory pool.
 Input       : volatile void* Pool - The pool to allocate from.
               rmp_ptr_t Size - The size of the RAM needed to allocate.
@@ -3572,7 +3572,7 @@ void* RMP_Malloc(volatile void* Pool,
 }
 /* End Function:RMP_Malloc ***************************************************/
 
-/* Begin Function:RMP_Free ****************************************************
+/* Function:RMP_Free **********************************************************
 Description : Free allocated memory, for system use mainly. It will free memory 
               in the name of a certain process, specified by the PID.
 Input       : volatile void* Pool - The pool to free to.
@@ -3703,7 +3703,7 @@ void RMP_Free(volatile void* Pool,
 }
 /* End Function:RMP_Free *****************************************************/
 
-/* Begin Function:RMP_Realloc *************************************************
+/* Function:RMP_Realloc *******************************************************
 Description : Expand or shrink an allocation to the desired size. The behavior
               of this function equals RMP_Malloc if the Mem_Ptr passed in is 0,
               or RMP_Free if the Size passed in is 0.
@@ -4003,7 +4003,7 @@ void* RMP_Realloc(volatile void* Pool,
 }
 /* End Function:RMP_Realloc **************************************************/
 
-/* Begin Function:RMP_Fifo_Crt ************************************************
+/* Function:RMP_Fifo_Crt ******************************************************
 Description : Create a FIFO.
 Input       : volatile struct RMP_Fifo* Fifo - The pointer to the FIFO.
 Output      : None.
@@ -4048,7 +4048,7 @@ rmp_ret_t RMP_Fifo_Crt(volatile struct RMP_Fifo* Fifo)
 }
 /* End Function:RMP_Fifo_Crt *************************************************/
 
-/* Begin Function:RMP_Fifo_Del ************************************************
+/* Function:RMP_Fifo_Del ******************************************************
 Description : Delete a FIFO.
 Input       : volatile struct RMP_Fifo* Fifo - The pointer to the FIFO.
 Output      : None.
@@ -4104,7 +4104,7 @@ rmp_ret_t RMP_Fifo_Del(volatile struct RMP_Fifo* Fifo)
 }
 /* End Function:RMP_Fifo_Del *************************************************/
 
-/* Begin Function:RMP_Fifo_Read ***********************************************
+/* Function:RMP_Fifo_Read *****************************************************
 Description : Read an element from a FIFO.
 Input       : volatile struct RMP_Fifo* Fifo - The pointer to the FIFO.
 Output      : struct RMP_List** Node - The node read.
@@ -4178,7 +4178,7 @@ rmp_ret_t RMP_Fifo_Read(volatile struct RMP_Fifo* Fifo,
 }
 /* End Function:RMP_Fifo_Read ************************************************/
 
-/* Begin Function:RMP_Fifo_Write **********************************************
+/* Function:RMP_Fifo_Write ****************************************************
 Description : Write an element to a FIFO.
 Input       : volatile struct RMP_Fifo* Fifo - The pointer to the FIFO.
               volatile struct RMP_List* Node - The node to put into the FIFO.
@@ -4236,7 +4236,7 @@ rmp_ret_t RMP_Fifo_Write(volatile struct RMP_Fifo* Fifo,
 }
 /* End Function:RMP_Fifo_Write ***********************************************/
 
-/* Begin Function:RMP_Fifo_Write_ISR ******************************************
+/* Function:RMP_Fifo_Write_ISR ************************************************
 Description : Write an element to a FIFO, from the ISR. This function can only be
               called from an ISR whose priority is below or equal to the context
               switch handler's. We do not check whether the scheduler is locked;
@@ -4293,7 +4293,7 @@ rmp_ret_t RMP_Fifo_Write_ISR(volatile struct RMP_Fifo* Fifo,
 }
 /* End Function:RMP_Fifo_Write_ISR *******************************************/
 
-/* Begin Function:RMP_Fifo_Cnt ************************************************
+/* Function:RMP_Fifo_Cnt ******************************************************
 Description : Get the number of elements in the FIFO.
 Input       : volatile struct RMP_Fifo* Fifo - The pointer to the FIFO.
 Output      : None.
@@ -4337,7 +4337,7 @@ rmp_ret_t RMP_Fifo_Cnt(volatile struct RMP_Fifo* Fifo)
 }
 /* End Function:RMP_Fifo_Cnt *************************************************/
 
-/* Begin Function:RMP_Msgq_Crt ************************************************
+/* Function:RMP_Msgq_Crt ******************************************************
 Description : Create a message queue.
 Input       : volatile struct RMP_Msgq* Queue - The pointer to the queue.
 Output      : None.
@@ -4382,7 +4382,7 @@ rmp_ret_t RMP_Msgq_Crt(volatile struct RMP_Msgq* Queue)
 }
 /* End Function:RMP_Msgq_Crt *************************************************/
 
-/* Begin Function:RMP_Msgq_Del ************************************************
+/* Function:RMP_Msgq_Del ******************************************************
 Description : Delete a message queue. Only message queues that are empty may be
               deleted.
 Input       : volatile struct RMP_Msgq* Queue - The pointer to the queue.
@@ -4440,7 +4440,7 @@ rmp_ret_t RMP_Msgq_Del(volatile struct RMP_Msgq* Queue)
 }
 /* End Function:RMP_Msgq_Del *************************************************/
 
-/* Begin Function:RMP_Msgq_Snd ************************************************
+/* Function:RMP_Msgq_Snd ******************************************************
 Description : Send a message to the message queue.
 Input       : volatile struct RMP_Msgq* Queue - The pointer to the queue.
 Output      : None.
@@ -4512,7 +4512,7 @@ rmp_ret_t RMP_Msgq_Snd(volatile struct RMP_Msgq* Queue,
 }
 /* End Function:RMP_Msgq_Snd *************************************************/
 
-/* Begin Function:RMP_Msgq_Snd_ISR ********************************************
+/* Function:RMP_Msgq_Snd_ISR **************************************************
 Description : Send a message to the message queue. This function can only be
               called from an ISR whose priority is below or equal to the context
               switch handler's. We do not check whether the scheduler is locked;
@@ -4581,7 +4581,7 @@ rmp_ret_t RMP_Msgq_Snd_ISR(volatile struct RMP_Msgq* Queue,
 }
 /* End Function:RMP_Msgq_Snd_ISR *********************************************/
 
-/* Begin Function:RMP_Msgq_Rcv ************************************************
+/* Function:RMP_Msgq_Rcv ******************************************************
 Description : Receive a message from a message queue.
 Input       : volatile struct RMP_Msgq* Queue - The pointer to the queue.
               rmp_ptr_t Slice - The number of slices to wait.
@@ -4665,7 +4665,7 @@ rmp_ret_t RMP_Msgq_Rcv(volatile struct RMP_Msgq* Queue,
 }
 /* End Function:RMP_Msgq_Rcv *************************************************/
 
-/* Begin Function:RMP_Msgq_Cnt ************************************************
+/* Function:RMP_Msgq_Cnt ******************************************************
 Description : Get the number of nodes in the message queue.
 Input       : volatile struct RMP_Msgq* Queue - The pointer to the message queue.
 Output      : None.
@@ -4709,7 +4709,7 @@ rmp_ret_t RMP_Msgq_Cnt(volatile struct RMP_Msgq* Queue)
 }
 /* End Function:RMP_Msgq_Cnt *************************************************/
 
-/* Begin Function:RMP_Bmq_Crt *************************************************
+/* Function:RMP_Bmq_Crt *******************************************************
 Description : Create a blocking message queue.
 Input       : volatile struct RMP_Bmq* Queue - The pointer to the queue.
               rmp_ptr_t Limit - The message number limit.
@@ -4768,7 +4768,7 @@ rmp_ret_t RMP_Bmq_Crt(volatile struct RMP_Bmq* Queue,
 }
 /* End Function:RMP_Bmq_Crt **************************************************/
 
-/* Begin Function:RMP_Bmq_Del *************************************************
+/* Function:RMP_Bmq_Del *******************************************************
 Description : Delete a blocking message queue. Only blocking message queues that
               are empty may be deleted.
 Input       : volatile struct RMP_Bmq* Queue - The pointer to the queue.
@@ -4826,7 +4826,7 @@ rmp_ret_t RMP_Bmq_Del(volatile struct RMP_Bmq* Queue)
 }
 /* End Function:RMP_Bmq_Del **************************************************/
 
-/* Begin Function:RMP_Bmq_Snd *************************************************
+/* Function:RMP_Bmq_Snd *******************************************************
 Description : Send to a blocking message queue.
 Input       : volatile struct RMP_Bmq* Queue - The pointer to the queue.
               rmp_ptr_t Slice - The number of slices to wait.
@@ -4905,7 +4905,7 @@ rmp_ret_t RMP_Bmq_Snd(volatile struct RMP_Bmq* Queue,
 }
 /* End Function:RMP_Bmq_Snd **************************************************/
 
-/* Begin Function:RMP_Bmq_Snd_ISR *********************************************
+/* Function:RMP_Bmq_Snd_ISR ***************************************************
 Description : Send to a blocking message queue. Different from the normal 
               version, This function does not block (and instead return failure
               when the queue is full) and can only be called from an ISR whose
@@ -4975,7 +4975,7 @@ rmp_ret_t RMP_Bmq_Snd_ISR(volatile struct RMP_Bmq* Queue,
 }
 /* End Function:RMP_Bmq_Snd_ISR **********************************************/
 
-/* Begin Function:RMP_Bmq_Rcv *************************************************
+/* Function:RMP_Bmq_Rcv *******************************************************
 Description : Receive from a blocking message queue.
 Input       : volatile struct RMP_Bmq* Queue - The pointer to the queue.
               rmp_ptr_t Slice - The number of slices to wait.
@@ -5047,7 +5047,7 @@ rmp_ret_t RMP_Bmq_Rcv(volatile struct RMP_Bmq* Queue,
 }
 /* End Function:RMP_Bmq_Rcv **************************************************/
 
-/* Begin Function:RMP_Bmq_Cnt *************************************************
+/* Function:RMP_Bmq_Cnt *******************************************************
 Description : Get the number of nodes in the blocking message queue.
 Input       : volatile struct RMP_Bmq* Queue - The pointer to the message queue.
 Output      : None.
@@ -5091,7 +5091,7 @@ rmp_ret_t RMP_Bmq_Cnt(volatile struct RMP_Bmq* Queue)
 }
 /* End Function:RMP_Bmq_Cnt **************************************************/
 
-/* Begin Function:RMP_Line ****************************************************
+/* Function:RMP_Line **********************************************************
 Description : Draw a line given the start and end coordinates.
 Input       : rmp_cnt_t Start_X - The start point X coordinate.
               rmp_cnt_t Start_Y - The start point Y coordinate.
@@ -5246,7 +5246,7 @@ void RMP_Line(rmp_cnt_t Start_X,
 }
 /* End Function:RMP_Line *****************************************************/
 
-/* Begin Function:RMP_Dot_Line ************************************************
+/* Function:RMP_Dot_Line ******************************************************
 Description : Draw a dotted line given the start and end coordinates.
 Input       : rmp_cnt_t Start_X - The start point X coordinate.
               rmp_cnt_t Start_Y - The start point Y coordinate.
@@ -5442,7 +5442,7 @@ void RMP_Rectangle(rmp_cnt_t Coord_X,
 }
 /* End Function:RMP_Rectangle ************************************************/
 
-/* Begin Function:RMP_Round_Rect **********************************************
+/* Function:RMP_Round_Rect ****************************************************
 Description : Draw a rectangle with rounded corners.
 Input       : rmp_cnt_t Coord_X - The X position of The top-left corner.
               rmp_cnt_t Coord_Y - The Y position of The top-left corner.
@@ -5487,7 +5487,7 @@ void RMP_Round_Rect(rmp_cnt_t Coord_X,
 }
 /* End Function:RMP_Round_Rect ***********************************************/
 
-/* Begin Function:RMP_Circle **************************************************
+/* Function:RMP_Circle ********************************************************
 Description : Draw a circle on the screen. You can choose whether the circle 
               is filled or not. By setting the fill color to "RMP_TRANS", the 
               circle is not filled. Here, the arc function is not supported.
@@ -5633,7 +5633,7 @@ void RMP_Circle(rmp_cnt_t Center_X,
 }
 /* End Function:RMP_Circle ***************************************************/
 
-/* Begin Function:RMP_Matrix **************************************************
+/* Function:RMP_Matrix ********************************************************
 Description : Display a monochrome bit map in the given color.
 Input       : rmp_cnt_t Coord_X - The X coordinate.
               rmp_cnt_t Coord_Y - The Y coordinate.
@@ -5720,7 +5720,7 @@ void RMP_Matrix(rmp_cnt_t Coord_X,
 }
 /* End Function:RMP_Matrix ***************************************************/
 
-/* Begin Function:RMP_Matrix_AA ***********************************************
+/* Function:RMP_Matrix_AA *****************************************************
 Description : Display a monochrome bit map in the given color, with simple 
               anti-aliasing (FXAA 1X algorithm).
               When using this, three color mixing macros must be provided.
@@ -6018,7 +6018,7 @@ void RMP_Matrix_AA(rmp_cnt_t Coord_X,
 #endif
 /* End Function:RMP_Matrix_AA ************************************************/
 
-/* Begin Function:RMP_Cursor **************************************************
+/* Function:RMP_Cursor ********************************************************
 Description : Draw a cursor (size 16x16) on the screen.
 Input       : rmp_cnt_t Coord_X - The X coordinate of the cursor.
               rmp_cnt_t Coord_Y - The Y coordinate of the cursor.
@@ -6360,7 +6360,7 @@ void RMP_Cursor(rmp_cnt_t Coord_X,
 }
 /* End Function: RMP_Cursor **************************************************/
 
-/* Begin Function:RMP_Checkbox_Set ********************************************
+/* Function:RMP_Checkbox_Set **************************************************
 Description : Set the checbox (tick it).
 Input       : rmp_cnt_t Coord_X - The X coordinate.
               rmp_cnt_t Coord_Y - The Y coordinate.
@@ -6388,7 +6388,7 @@ void RMP_Checkbox_Set(rmp_cnt_t Coord_X,
 }
 /* End Function:RMP_Checkbox_Set *********************************************/
 
-/* Begin Function:RMP_Checkbox_Clr ********************************************
+/* Function:RMP_Checkbox_Clr **************************************************
 Description : Clear the checbox (reset it).
 Input       : rmp_cnt_t Coord_X - The X coordinate.
               rmp_cnt_t Coord_Y - The Y coordinate.
@@ -6416,7 +6416,7 @@ void RMP_Checkbox_Clr(rmp_cnt_t Coord_X,
 }
 /* End Function:RMP_Checkbox_Clr *********************************************/
 
-/* Begin Function:RMP_Checkbox ************************************************
+/* Function:RMP_Checkbox ******************************************************
 Description : Draw the checkbox according to the parameters.
 Input       : rmp_cnt_t Coord_X - The X coordinate.
               rmp_cnt_t Coord_Y - The Y coordinate.
@@ -6457,7 +6457,7 @@ void RMP_Checkbox(rmp_cnt_t Coord_X,
 }
 /* End Function:RMP_Checkbox *************************************************/
 
-/* Begin Function:RMP_Cmdbtn_Down *********************************************
+/* Function:RMP_Cmdbtn_Down ***************************************************
 Description : Turn the command button to a pushed-down version.
 Input       : rmp_cnt_t Coord_X - The X coordinate of its top-left corner.
               rmp_cnt_t Coord_Y - The Y coordinate of its top-left corner.
@@ -6484,7 +6484,7 @@ void RMP_Cmdbtn_Down(rmp_cnt_t Coord_X,
 }
 /* End Function:RMP_Cmdbtn_Down **********************************************/
 
-/* Begin Function:RMP_Cmdbtn_Up ***********************************************
+/* Function:RMP_Cmdbtn_Up *****************************************************
 Description : Turn the command button to a popped-up version.
 Input       : rmp_cnt_t Coord_X - The X coordinate of its top-left corner.
               rmp_cnt_t Coord_Y - The Y coordinate of its top-left corner.
@@ -6511,7 +6511,7 @@ void RMP_Cmdbtn_Up(rmp_cnt_t Coord_X,
 }
 /* End Function:RMP_Cmdbtn_Up ************************************************/
 
-/* Begin Function:RMP_Cmdbtn **************************************************
+/* Function:RMP_Cmdbtn ********************************************************
 Description : Draw a command button.
 Input       : rmp_cnt_t Coord_X - The X coordinate of its top-left corner.
               rmp_cnt_t Coord_Y - The Y coordinate of its top-left corner.
@@ -6542,7 +6542,7 @@ void RMP_Cmdbtn(rmp_cnt_t Coord_X,
 }
 /* End Function:RMP_Cmdbtn ***************************************************/
 
-/* Begin Function:RMP_Lineedit_Clr ********************************************
+/* Function:RMP_Lineedit_Clr **************************************************
 Description : Clear a portion of the line edit box.
 Input       : rmp_cnt_t Clr_X - The X coordinate to start clearing.
               rmp_cnt_t Clr_Len - The length to clear.
@@ -6560,7 +6560,7 @@ void RMP_Lineedit_Clr(rmp_cnt_t Clr_X,
 }
 /* End Function:RMP_Lineedit_Clr *********************************************/
 
-/* Begin Function:RMP_Lineedit ************************************************
+/* Function:RMP_Lineedit ******************************************************
 Description : Draw a line edit box with string on it.
 Input       : rmp_cnt_t Coord_X - The X coordinate of its top-left corner.
               rmp_cnt_t Coord_Y - The Y coordinate of its top-left corner.
@@ -6587,7 +6587,7 @@ void RMP_Lineedit(rmp_cnt_t Coord_X,
 }
 /* End Function:RMP_Lineedit *************************************************/
 
-/* Begin Function:RMP_Radiobtn_Circle *****************************************
+/* Function:RMP_Radiobtn_Circle ***********************************************
 Description : Draw the radio button outside circle according to the parameters.
 Input       : rmp_cnt_t Coord_X - The X coordinate.
               rmp_cnt_t Coord_Y - The Y coordinate.
@@ -6679,7 +6679,7 @@ void RMP_Radiobtn_Circle(rmp_cnt_t Coord_X,
 }
 /* End Function:RMP_Radiobtn_Circle ******************************************/
 
-/* Begin Function:RMP_Radiobtn_Set ********************************************
+/* Function:RMP_Radiobtn_Set **************************************************
 Description : Set the radio button (select it).
 Input       : rmp_cnt_t Coord_X - The X coordinate.
               rmp_cnt_t Coord_Y - The Y coordinate.
@@ -6696,7 +6696,7 @@ void RMP_Radiobtn_Set(rmp_cnt_t Coord_X,
 }
 /* End Function:RMP_Radiobtn_Set *********************************************/
 
-/* Begin Function:RMP_Radiobtn_Clr ********************************************
+/* Function:RMP_Radiobtn_Clr **************************************************
 Description : Set the radio button (reset it).
 Input       : rmp_cnt_t Coord_X - The X coordinate.
               rmp_cnt_t Coord_Y - The Y coordinate.
@@ -6713,7 +6713,7 @@ void RMP_Radiobtn_Clr(rmp_cnt_t Coord_X,
 }
 /* End Function:RMP_Radiobtn_Clr *********************************************/
 
-/* Begin Function:RMP_Radiobtn ************************************************
+/* Function:RMP_Radiobtn ******************************************************
 Description : Draw the radio button according to the parameters.
 Input       : rmp_cnt_t Coord_X - The X coordinate.
               rmp_cnt_t Coord_Y - The Y coordinate.
@@ -6747,7 +6747,7 @@ void RMP_Radiobtn(rmp_cnt_t Coord_X,
 }
 /* End Function:RMP_Radiobtn *************************************************/
 
-/* Begin Function:RMP_Progbar_Set ********************************************
+/* Function:RMP_Progbar_Set **************************************************
 Description : Set the progress of a progress bar.
 Input       : rmp_cnt_t Coord_X - The X coordinate of its top-left corner.
               rmp_cnt_t Coord_Y - The Y coordinate of its top-left corner.
@@ -6874,7 +6874,7 @@ void RMP_Progbar_Set(rmp_cnt_t Coord_X,
 }
 /* End Function:RMP_Progbar_Set **********************************************/
 
-/* Begin Function:RMP_Progbar_Prog ********************************************
+/* Function:RMP_Progbar_Prog **************************************************
 Description : Draw a progress bar's progress part.
 Input       : rmp_cnt_t Coord_X - The X coordinate of its top-left corner.
               rmp_cnt_t Coord_Y - The Y coordinate of its top-left corner.
@@ -7018,7 +7018,7 @@ void RMP_Progbar_Prog(rmp_cnt_t Coord_X,
 }
 /* End Function:RMP_Progbar_Prog *********************************************/
 
-/* Begin Function:RMP_Progbar *************************************************
+/* Function:RMP_Progbar *******************************************************
 Description : Draw a progress bar with string on it.
 Input       : rmp_cnt_t Coord_X - The X coordinate of its top-left corner.
               rmp_cnt_t Coord_Y - The Y coordinate of its top-left corner.

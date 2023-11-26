@@ -6,10 +6,10 @@ Licence     : The Unlicense; see LICENSE for details.
 Description : The header of "rmp_platform_mp32p.c".
 ******************************************************************************/
 
-/* Defines *******************************************************************/
-#ifdef __HDR_DEFS__
-#ifndef __RMP_PLATFORM_MP32P_H_DEFS__
-#define __RMP_PLATFORM_MP32P_H_DEFS__
+/* Define ********************************************************************/
+#ifdef __HDR_DEF__
+#ifndef __RMP_PLATFORM_MP32P_DEF__
+#define __RMP_PLATFORM_MP32P_DEF__
 /*****************************************************************************/
 /* Basic Types ***************************************************************/
 #ifndef __RMP_S32__
@@ -43,7 +43,7 @@ typedef unsigned char rmp_u8_t;
 #endif
 /* End Basic Types ***********************************************************/
 
-/* Begin Extended Types ******************************************************/
+/* Extended Types ************************************************************/
 #ifndef __RMP_PTR_T__
 #define __RMP_PTR_T__
 /* The typedef for the pointers - This is the raw style. Pointers must be unsigned */
@@ -92,21 +92,21 @@ typedef rmp_s32_t rmp_ret_t;
 #define RMP_MP32P_CAUSE_CORESW0         (0x00000100U)
 #define RMP_MP32P_CAUSE_CORESW1         (0x00000200U)
 /*****************************************************************************/
-/* __RMP_PLATFORM_MP32P_H_DEFS__ */
+/* __RMP_PLATFORM_MP32P_DEF__ */
 #endif
-/* __HDR_DEFS__ */
+/* __HDR_DEF__ */
 #endif
-/* End Defines ***************************************************************/
+/* End Define ****************************************************************/
 
-/* Structs *******************************************************************/
-#ifdef __HDR_STRUCTS__
-#ifndef __RMP_PLATFORM_MP32P_H_STRUCTS__
-#define __RMP_PLATFORM_MP32P_H_STRUCTS__
+/* Struct ********************************************************************/
+#ifdef __HDR_STRUCT__
+#ifndef __RMP_PLATFORM_MP32P_STRUCT__
+#define __RMP_PLATFORM_MP32P_STRUCT__
 /* We used structs in the header */
 
 /* Use defines in these headers */
-#define __HDR_DEFS__
-#undef __HDR_DEFS__
+#define __HDR_DEF__
+#undef __HDR_DEF__
 /*****************************************************************************/
 struct RMP_MP32P_Stack
 {
@@ -146,45 +146,45 @@ struct RMP_MP32P_Stack
     rmp_ptr_t R23_S7;
 };
 /*****************************************************************************/
-/* __RMP_PLATFORM_MP32P_H_STRUCTS__ */
+/* __RMP_PLATFORM_MP32P_STRUCT__ */
 #endif
-/* __HDR_STRUCTS__ */
+/* __HDR_STRUCT__ */
 #endif
-/* End Structs ***************************************************************/
+/* End Struct ****************************************************************/
 
-/* Private Global Variables **************************************************/
-#if(!(defined __HDR_DEFS__||defined __HDR_STRUCTS__))
-#ifndef __RMP_PLATFORM_MP32P_MEMBERS__
-#define __RMP_PLATFORM_MP32P_MEMBERS__
+/* Private Variable **********************************************************/
+#if(!(defined __HDR_DEF__||defined __HDR_STRUCT__))
+#ifndef __RMP_PLATFORM_MP32P_PUBLIC__
+#define __RMP_PLATFORM_MP32P_PUBLIC__
 
 /* In this way we can use the data structures and definitions in the headers */
-#define __HDR_DEFS__
+#define __HDR_DEF__
 
-#undef __HDR_DEFS__
+#undef __HDR_DEF__
 
-#define __HDR_STRUCTS__
+#define __HDR_STRUCT__
 
-#undef __HDR_STRUCTS__
+#undef __HDR_STRUCT__
 
 /* If the header is not used in the public mode */
-#ifndef __HDR_PUBLIC_MEMBERS__
+#ifndef __HDR_PUBLIC__
 /*****************************************************************************/
 
 /*****************************************************************************/
-/* End Private Global Variables **********************************************/
+/* End Private Variable ******************************************************/
 
-/* Private C Function Prototypes *********************************************/ 
+/* Private Function **********************************************************/ 
 /*****************************************************************************/
 
 /*****************************************************************************/
 #define __EXTERN__
-/* End Private C Function Prototypes *****************************************/
+/* End Private Function ******************************************************/
 
-/* Public Global Variables ***************************************************/
-/* __HDR_PUBLIC_MEMBERS__ */
+/* Public Variable ***********************************************************/
+/* __HDR_PUBLIC__ */
 #else
 #define __EXTERN__ EXTERN 
-/* __HDR_PUBLIC_MEMBERS__ */
+/* __HDR_PUBLIC__ */
 #endif
 
 /*****************************************************************************/
@@ -193,9 +193,9 @@ __EXTERN__ volatile rmp_ptr_t RMP_SP_Val;
 __EXTERN__ volatile rmp_ptr_t RMP_Int_Nest;
 /*****************************************************************************/
 
-/* End Public Global Variables ***********************************************/
+/* End Public Variable *******************************************************/
 
-/* Public C Function Prototypes **********************************************/
+/* Public Function ***********************************************************/
 /*****************************************************************************/
 /* Interrupts */
 EXTERN void RMP_Int_Disable(void);
@@ -222,11 +222,11 @@ __EXTERN__ void _RMP_Clear_Timer_Flag(void);
 /*****************************************************************************/
 /* Undefine "__EXTERN__" to avoid redefinition */
 #undef __EXTERN__
-/* __RMP_PLATFORM_MP32P_MEMBERS__ */
+/* __RMP_PLATFORM_MP32P_PUBLIC__ */
 #endif
-/* !(defined __HDR_DEFS__||defined __HDR_STRUCTS__) */
+/* !(defined __HDR_DEF__||defined __HDR_STRUCT__) */
 #endif
-/* End Public C Function Prototypes ******************************************/
+/* End Public Function *******************************************************/
 
 /* End Of File ***************************************************************/
 

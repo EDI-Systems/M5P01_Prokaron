@@ -5,12 +5,12 @@ Date        : 10/04/2012
 Description : The extra testing file for this chip.
 ******************************************************************************/
     
-/* Begin Header **************************************************************/
+/* Header ********************************************************************/
     .text
     .align 4
 /* End Header ****************************************************************/
 
-/* Begin Imports *************************************************************/
+/* Import ********************************************************************/
     /* The place where we store the kernel sp value */
     .extern             _RMP_SP_Val
     /* Kernel constant pool global pointers */
@@ -22,9 +22,9 @@ Description : The extra testing file for this chip.
     /* The extra routine */
     .extern             _Tim3_Interrupt    
     .global             __T3Interrupt
-/* End Imports ***************************************************************/
+/* End Import ****************************************************************/
 
-/* Begin Macros **************************************************************/
+/* Macros ********************************************************************/
     /* Context saving - not all registers are present in all series. */
 .macro SAVE_CONTEXT
     /* Push everything to stack */
@@ -137,7 +137,7 @@ Description : The extra testing file for this chip.
 .endm
 /* End Macros ****************************************************************/
 
-/* Begin Function:__T3Interrupt ***********************************************
+/* Function:__T3Interrupt *****************************************************
 Description : The timer 3 interrupt routine.
 Input       : None.
 Output      : None.                                      

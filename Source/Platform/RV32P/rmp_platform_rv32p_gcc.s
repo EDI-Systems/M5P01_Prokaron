@@ -95,14 +95,14 @@ f30    $ft10      temporary (caller-save)
 f31    $ft11      temporary (caller-save)
 ******************************************************************************/
 
-/* Begin Import **************************************************************/
+/* Import ********************************************************************/
     /* The real task switch handling function */
     .extern             _RMP_Run_High
     /* The stack address of current thread */
     .extern             RMP_SP_Cur
 /* End Import ****************************************************************/
 
-/* Begin Export **************************************************************/
+/* Export ********************************************************************/
     /* Disable all interrupts */
     .global             RMP_Int_Disable
     /* Enable all interrupts */
@@ -121,7 +121,7 @@ f31    $ft11      temporary (caller-save)
     .global             _RMP_RV32P_Yield_RVFD
 /* End Export ****************************************************************/
 
-/* Begin Function:RMP_Int_Disable *********************************************
+/* Function:RMP_Int_Disable ***************************************************
 Description    : The function for disabling all interrupts. Does not allow nesting.
 Input          : None.
 Output         : None.
@@ -135,7 +135,7 @@ RMP_Int_Disable:
     RET
 /* End Function:RMP_Int_Disable **********************************************/
 
-/* Begin Function:RMP_Int_Enable **********************************************
+/* Function:RMP_Int_Enable ****************************************************
 Description    : The function for enabling all interrupts. Does not allow nesting.
 Input          : None.
 Output         : None.
@@ -149,7 +149,7 @@ RMP_Int_Enable:
     RET
 /* End Function:RMP_Int_Enable ***********************************************/
 
-/* Begin Function:_RMP_Start **************************************************
+/* Function:_RMP_Start ********************************************************
 Description : Jump to the user function and will never return from it.
 Input       : $a0 - The address to branch to.
               $a1 - The stack to use.
@@ -164,7 +164,7 @@ _RMP_Start:
     RET
 /* End Function:_RMP_Start ***************************************************/
 
-/* Begin Function:RMP_RV32P_MCYCLE_Get ****************************************
+/* Function:RMP_RV32P_MCYCLE_Get **********************************************
 Description : Set the mcycle register content, could be useful for debugging.
 Input       : None.
 Output      : None.
@@ -177,7 +177,7 @@ RMP_RV32P_MCYCLE_Get:
     RET
 /* End Function:RMP_RV32P_MCYCLE_Get *****************************************/
 
-/* Begin Function:RMP_RV32P_MCAUSE_Get ****************************************
+/* Function:RMP_RV32P_MCAUSE_Get **********************************************
 Description : Set the mcause register content, could be useful for debugging.
 Input       : None.
 Output      : None.
@@ -190,7 +190,7 @@ RMP_RV32P_MCAUSE_Get:
     RET
 /* End Function:RMP_RV32P_MCAUSE_Get *****************************************/
 
-/* Begin Function:_RMP_RV32P_MTVEC_Set ****************************************
+/* Function:_RMP_RV32P_MTVEC_Set **********************************************
 Description : Set the mtvec register content.
 Input       : None.
 Output      : None.
@@ -203,7 +203,7 @@ _RMP_RV32P_MTVEC_Set:
     RET
 /* End Function:_RMP_RV32P_MTVEC_Set *****************************************/
 
-/* Begin Function:_RMP_RV32P_Yield ********************************************
+/* Function:_RMP_RV32P_Yield **************************************************
 Description : Yield from one thread to another without an interrupt.
               This function has 3 versions:
               1. no coprocessor;

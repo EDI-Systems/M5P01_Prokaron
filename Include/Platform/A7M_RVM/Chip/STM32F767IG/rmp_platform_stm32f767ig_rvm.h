@@ -6,7 +6,7 @@ Licence    : The Unlicense; see LICENSE for details.
 Description: The configuration file for STM32F767IG, on RVM.
 ******************************************************************************/
 
-/* Defines *******************************************************************/
+/* Define ********************************************************************/
 /* Debugging */
 #define RMP_ASSERT_CORRECT          (0U)
 /* The maximum number of preemption priority levels in the system.
@@ -24,7 +24,7 @@ Description: The configuration file for STM32F767IG, on RVM.
 /* The mask/unmask interrupt operations */
 #define RMP_INT_MASK()              RMP_Int_Mask()
 #define RMP_INT_UNMASK()            RMP_Int_Unmask()
-/* End Defines ***************************************************************/
+/* End Define ****************************************************************/
 
 /* End Of File ***************************************************************/
 

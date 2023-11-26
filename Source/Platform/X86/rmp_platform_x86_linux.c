@@ -6,26 +6,26 @@ Licence     : The Unlicense; see LICENSE for details.
 Description : The platform specific file for x86 Linux port.
 ******************************************************************************/
 
-/* Includes ******************************************************************/
-#define __HDR_DEFS__
+/* Include *******************************************************************/
+#define __HDR_DEF__
 #include "Platform/X86_LINUX/rmp_platform_x86_linux.h"
 #include "Kernel/rmp_kernel.h"
-#undef __HDR_DEFS__
+#undef __HDR_DEF__
 
-#define __HDR_STRUCTS__
+#define __HDR_STRUCT__
 #include "Platform/X86_LINUX/rmp_platform_x86_linux.h"
 #include "Kernel/rmp_kernel.h"
-#undef __HDR_STRUCTS__
+#undef __HDR_STRUCT__
 
 /* Private include */
 #include "Platform/X86_LINUX/rmp_platform_x86_linux.h"
 
-#define __HDR_PUBLIC_MEMBERS__
+#define __HDR_PUBLIC__
 #include "Kernel/rmp_kernel.h"
-#undef __HDR_PUBLIC_MEMBERS__
-/* End Includes **************************************************************/
+#undef __HDR_PUBLIC__
+/* End Include ***************************************************************/
 
-/* Begin Function:RMP_Int_Disable *********************************************
+/* Function:RMP_Int_Disable ***************************************************
 Description    : The function for disabling all interrupts. Does not allow nesting.
 Input          : None.
 Output         : None.
@@ -37,7 +37,7 @@ void RMP_Int_Disable(void)
 }
 /* End Function:RMP_Int_Disable **********************************************/
 
-/* Begin Function:RMP_Int_Enable **********************************************
+/* Function:RMP_Int_Enable ****************************************************
 Description    : The function for enabling all interrupts. Does not allow nesting.
 Input          : None.
 Output         : None.
@@ -49,7 +49,7 @@ void RMP_Int_Enable(void)
 }
 /* End Function:RMP_Int_Enable ***********************************************/
 
-/* Begin Function:RMP_MSB_Get *************************************************
+/* Function:RMP_MSB_Get *******************************************************
 Description : Get the MSB of the word.
 Input       : rmp_ptr_t Val - The value.
 Output      : None.
@@ -97,7 +97,7 @@ rmp_ptr_t RMP_MSB_Get(rmp_ptr_t Val)
 }
 /* End Function:RMP_MSB_Get **************************************************/
 
-/* Begin Function:_RMP_Yield **************************************************
+/* Function:_RMP_Yield ********************************************************
 Description : Trigger a yield to another thread.
 Input       : None.
 Output      : None.
@@ -112,7 +112,7 @@ void _RMP_Yield(void)
 }
 /* End Function:_RMP_Yield ***************************************************/
 
-/* Begin Function:_RMP_Start **************************************************
+/* Function:_RMP_Start ********************************************************
 Description : Jump to the user function and will never return from it.
 Input       : None.
 Output      : None.
@@ -187,7 +187,7 @@ void _RMP_Start(rmp_ptr_t Entry, rmp_ptr_t Stack)
 }
 /* End Function:_RMP_Start ***************************************************/
 
-/* Begin Function:PendSV_Handler **********************************************
+/* Function:PendSV_Handler ****************************************************
 Description : The PendSV interrupt routine. In fact, it will call a C function
               directly. The reason why the interrupt routine must be an assembly
               function is that the compiler may deal with the stack in a different
@@ -256,7 +256,7 @@ void PendSV_Handler(void)
 }
 /* End Function:PendSV_Handler ***********************************************/
 
-/* Begin Function:SysTick_Handler *********************************************
+/* Function:SysTick_Handler ***************************************************
 Description : The SysTick interrupt routine. In fact, it will call a C function
               directly. The reason why the interrupt routine must be an assembly
               function is that the compiler may deal with the stack in a different
@@ -274,7 +274,7 @@ void SysTick_Handler(void)
 }
 /* End Function:SysTick_Handler **********************************************/
 
-/* Begin Function:_RMP_Stack_Init *********************************************
+/* Function:_RMP_Stack_Init ***************************************************
 Description : Initiate the process stack when trying to start a process. Never
               call this function in user application.
 Input       : rmp_ptr_t Entry - The entry of the thread.
@@ -311,7 +311,7 @@ void _RMP_Stack_Init(rmp_ptr_t Entry, rmp_ptr_t Stack, rmp_ptr_t Arg)
 }
 /* End Function:_RMP_Stack_Init **********************************************/
 
-/* Begin Function:_RMP_Low_Level_Init *****************************************
+/* Function:_RMP_Low_Level_Init ***********************************************
 Description : Initialize the low level hardware of the system.
 Input       : None
 Output      : None.
@@ -327,7 +327,7 @@ void _RMP_Low_Level_Init(void)
 }
 /* End Function:_RMP_Low_Level_Init ******************************************/
 
-/* Begin Function:_RMP_Plat_Hook **********************************************
+/* Function:_RMP_Plat_Hook ****************************************************
 Description : Platform-specific hook for system initialization.
 Input       : None
 Output      : None.
@@ -342,7 +342,7 @@ void _RMP_Plat_Hook(void)
 }
 /* End Function:_RMP_Plat_Hook ***********************************************/
 
-/* Begin Function:RMP_Putchar *************************************************
+/* Function:RMP_Putchar *******************************************************
 Description : Print a character to the debug console.
 Input       : char Char - The character to print.
 Output      : None.

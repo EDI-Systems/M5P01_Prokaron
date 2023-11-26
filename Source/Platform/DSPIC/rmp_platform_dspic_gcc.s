@@ -35,7 +35,7 @@ CORCON      16          Core control register.
 STATUS      16          Status register.
 ******************************************************************************/
 
-/* Begin Import **************************************************************/
+/* Import ********************************************************************/
     /* The real task switch handling function */
     .extern             __RMP_Run_High 
     /* The real systick handler function */
@@ -57,7 +57,7 @@ STATUS      16          Status register.
     .extern             __RMP_Clear_Timer_Flag
 /* End Import ****************************************************************/
 
-/* Begin Export **************************************************************/
+/* Export ********************************************************************/
     /* The DSPIC toolchain mangles all symbols with an extra '_' */
     /* Disable all interrupts */
     .global             _RMP_Int_Disable      
@@ -74,7 +74,7 @@ STATUS      16          Status register.
     .global             __T1Interrupt
 /* End Export ****************************************************************/
 
-/* Begin Macro ***************************************************************/
+/* Macro *********************************************************************/
     /* Context saving - not all registers are present in all series. */
 .macro SAVE_CONTEXT
     /* Push everything to stack */
@@ -187,12 +187,12 @@ STATUS      16          Status register.
 .endm
 /* End Macro *****************************************************************/
 
-/* Begin Header **************************************************************/
+/* Header ********************************************************************/
     .text
     .align 2
 /* End Header ****************************************************************/
 
-/* Begin Function:RMP_Int_Disable *********************************************
+/* Function:RMP_Int_Disable ***************************************************
 Description    : The function for disabling all interrupts. Does not allow nesting.
                  This macro only disables interrupt for a short time; this is a 
                  limitation of DSPIC33 architecture. Considering the common usage
@@ -208,7 +208,7 @@ _RMP_Int_Disable:
     RETURN
 /* End Function:RMP_Int_Disable **********************************************/
 
-/* Begin Function:RMP_Int_Enable **********************************************
+/* Function:RMP_Int_Enable ****************************************************
 Description    : The function for enabling all interrupts. Does not allow nesting.
                  Can't directly operate on DISICNT; see errata. Have to use DISI #0.
 Input          : None.
@@ -221,7 +221,7 @@ _RMP_Int_Enable:
     RETURN
 /* End Function:RMP_Int_Enable ***********************************************/
 
-/* Begin Function:_RMP_DSPIC_MSB_Get ******************************************
+/* Function:_RMP_DSPIC_MSB_Get ************************************************
 Description    : Get the MSB of the word.
 Input          : ptr_t Value - The value.
 Output         : None.
@@ -234,7 +234,7 @@ _RMP_DSPIC_MSB_Get:
     RETURN
 /* End Function:_RMP_DSPIC_MSB_Get *******************************************/
 
-/* Begin Function:_RMP_DSPIC_LSB_Get ******************************************
+/* Function:_RMP_DSPIC_LSB_Get ************************************************
 Description    : Get the LSB of the word.
 Input          : ptr_t Value - The value.
 Output         : None.
@@ -248,7 +248,7 @@ _RMP_DSPIC_LSB_Get:
     RETURN
 /* End Function:_RMP_DSPIC_LSB_Get *******************************************/
 
-/* Begin Function:_RMP_Start **************************************************
+/* Function:_RMP_Start ********************************************************
 Description : Jump to the user function and will never return from it.
 Input       : [W0]: Entry of the thread.
               [W1]: Stack of the thread.
@@ -269,7 +269,7 @@ __RMP_Start:
     RETURN
 /* End Function:_RMP_Start ***************************************************/
 
-/* Begin Function:__INT0Interrupt *********************************************
+/* Function:__INT0Interrupt ***************************************************
 Description : The switch interrupt routine. In fact, it will call a C function
               directly. The reason why the interrupt routine must be an assembly
               function is that the compiler may deal with the stack in a different 
@@ -291,7 +291,7 @@ __INT0Interrupt:
     LOAD_CONTEXT
 /* End Function:__INT0Interrupt **********************************************/
 
-/* Begin Function:__T1Interrupt ***********************************************
+/* Function:__T1Interrupt *****************************************************
 Description : The timer 1 interrupt routine. In fact, it will call a C function
               directly. The reason why the interrupt routine must be an assembly
               function is that the compiler may deal with the stack in a different 

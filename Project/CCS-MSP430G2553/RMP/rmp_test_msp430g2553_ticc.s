@@ -5,24 +5,24 @@
 ;Description : The test specific assembly vectors for MSP430G2553.
 ;*****************************************************************************/
 
-;/* Begin Header *************************************************************/
+;/* Header *******************************************************************/
     .text
     .sect               ".text:_isr"
     .align              2
     .include            "Platform/MSP430/rmp_platform_msp430_ticc.inc"
 ;/* End Header ***************************************************************/
 
-;/* Begin Exports ************************************************************/
-    ;The systick timer routine
-    .def                TIMER0_A0_VECTOR
-;/* End Exports **************************************************************/
-
-;/* Begin Imports ************************************************************/
+;/* Import *******************************************************************/
     ;Tailored tickless handler
     .global             _RMP_MSP430_Tickless_Handler
-;/* End Imports **************************************************************/
+;/* End Import ***************************************************************/
 
-;/* Begin Function:TIMERA0_VECTOR *********************************************
+;/* Export *******************************************************************/
+    ;The systick timer routine
+    .def                TIMER0_A0_VECTOR
+;/* End Export ***************************************************************/
+
+;/* Function:TIMERA0_VECTOR ***************************************************
 ;Description : The timer used to generate ticks for the OS.
 ;Input       : None.
 ;Output      : None.

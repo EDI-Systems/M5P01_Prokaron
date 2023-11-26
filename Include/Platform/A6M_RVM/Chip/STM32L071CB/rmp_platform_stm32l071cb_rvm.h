@@ -6,7 +6,7 @@ Licence    : The Unlicense; see LICENSE for details.
 Description: The configuration file for STM32L071CB.
 ******************************************************************************/
 
-/* Defines *******************************************************************/
+/* Define ********************************************************************/
 /* Debugging */
 #define RMP_ASSERT_CORRECT          (0U)
 /* The maximum number of preemption priority levels in the system.
@@ -27,7 +27,7 @@ Description: The configuration file for STM32L071CB.
 
 /* Whether to use fast yield routine */
 #define RMP_A6M_RVM_FAST_YIELD      (1U)
-/* End Defines ***************************************************************/
+/* End Define ****************************************************************/
 
 /* End Of File ***************************************************************/
 

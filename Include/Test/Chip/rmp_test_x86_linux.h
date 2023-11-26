@@ -10,11 +10,11 @@ Description : The testbench for linux OS. This is not particularly fast due to
               for time as little as 1ms. Expect a run of 2-3 minutes.
 ******************************************************************************/
 
-/* Includes ******************************************************************/
+/* Include *******************************************************************/
 #include "rmp.h"
-/* End Includes **************************************************************/
+/* End Include ***************************************************************/
 
-/* Defines *******************************************************************/
+/* Define ********************************************************************/
 /* Where are the initial stacks */
 #define THD1_STACK        (&Stack_1[60000])
 #define THD2_STACK        (&Stack_2[60000])
@@ -36,16 +36,16 @@ typedef unsigned long long rmp_tim_t;
 
 /* Interrupt interval in usec */
 #define TEST_INT_INTERVAL 10000
-/* End Defines ***************************************************************/
+/* End Define ****************************************************************/
 
-/* Globals *******************************************************************/
+/* Global ********************************************************************/
 #ifndef MINIMAL_SIZE
 void Int_Handler(void);
 rmp_ptr_t Stack_1[65536];
 rmp_ptr_t Stack_2[65536];
-/* End Globals ***************************************************************/
+/* End Global ****************************************************************/
 
-/* Begin Function:Timer_Init **************************************************
+/* Function:Timer_Init ********************************************************
 Description : Initialize the timer for timing measurements. This function needs
               to be adapted to your specific hardware.
 Input       : None.
@@ -58,7 +58,7 @@ void Timer_Init(void)
 }
 /* End Function:Timer_Init ***************************************************/
 
-/* Begin Function:Int_Init ****************************************************
+/* Function:Int_Init **********************************************************
 Description : Initialize an periodic interrupt source. This function needs
               to be adapted to your specific hardware.
 Input       : None.
@@ -92,7 +92,7 @@ void Int_Init(void)
 
 /* End Function:Int_Init *****************************************************/
 
-/* Begin Function:Int_Disable *************************************************
+/* Function:Int_Disable *******************************************************
 Description : Disable the periodic interrupt source. This function needs
               to be adapted to your specific hardware.
 Input       : None.
