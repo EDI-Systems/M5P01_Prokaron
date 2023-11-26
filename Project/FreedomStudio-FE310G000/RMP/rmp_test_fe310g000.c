@@ -6,11 +6,11 @@ Licence     : The Unlicense; see LICENSE for details.
 Description : The test specific C vectors for FE310-G000.
 ******************************************************************************/
 
-/* Includes ******************************************************************/
+/* Include *******************************************************************/
 #include "rmp.h"
-/* End Includes **************************************************************/
+/* End Include ***************************************************************/
 
-/* Begin Function:__RMP_RV32P_Handler *****************************************
+/* Function:__RMP_RV32P_Handler ***********************************************
 Description : Generic interrupt handler in C.
 Input       : None.
 Output      : None.

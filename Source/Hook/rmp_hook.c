@@ -6,11 +6,11 @@ Licence     : The Unlicense; see LICENSE for details.
 Description : The blank project hook file for RMP.
 ******************************************************************************/
 
-/* Includes ******************************************************************/
+/* Include *******************************************************************/
 #include "rmp.h"
-/* End Includes **************************************************************/
+/* End Include ***************************************************************/
 
-/* Begin Function:RMP_Init ****************************************************
+/* Function:RMP_Init **********************************************************
 Description : The init thread hook functions.
 Input       : None.
 Output      : None.

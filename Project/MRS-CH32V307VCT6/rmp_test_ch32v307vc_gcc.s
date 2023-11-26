@@ -5,21 +5,21 @@ Date        : 10/04/2012
 Description : The test specific assembly vectors for CH32V307.
 ******************************************************************************/
 
-/* Begin Header **************************************************************/
+/* Header ********************************************************************/
     .section            .text.isr
     .include            "Platform/RV32P/rmp_platform_rv32p_gcc.inc"
 /* End Header ****************************************************************/
 
-/* Begin Imports *************************************************************/
+/* Import ********************************************************************/
     .extern             _TIM4_IRQHandler
-/* End Exports ***************************************************************/
+/* End Import ****************************************************************/
 
-/* Begin Exports *************************************************************/
+/* Export ********************************************************************/
     .global             SysTick_Handler
     .global             TIM4_IRQHandler
-/* End Exports ***************************************************************/
+/* End Export ****************************************************************/
 
-/* Begin Function:SysTick_Handler *********************************************
+/* Function:SysTick_Handler ***************************************************
 Description : System tick timer handler routine.
 Input       : None.
 Output      : None.
@@ -32,7 +32,7 @@ SysTick_Handler:
     RMP_RV32P_INT_RESTORE_RVF
 /* End Function:SysTick_Handler **********************************************/
 
-/* Begin Function:TIM4_IRQHandler *********************************************
+/* Function:TIM4_IRQHandler ***************************************************
 Description : Timer 4 handler routine.
 Input       : None.
 Output      : None.

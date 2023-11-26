@@ -38,7 +38,7 @@
 ;The ARM Cortex-R4/5/7/8 also include a fp32 FPU.
 ;*****************************************************************************/
 
-;/* Begin Import *************************************************************/
+;/* Import *******************************************************************/
     ;The real task switch handling function
     .global             _RMP_Run_High
     ;The real systick handler function
@@ -49,7 +49,7 @@
     .global             RMP_SP_Cur
 ;/* End Import ***************************************************************/
 
-;/* Begin Export *************************************************************/
+;/* Export *******************************************************************/
     ;Disable all interrupts
     .global             RMP_Int_Disable
     ;Enable all interrupts
@@ -71,12 +71,12 @@
     .global             phantomInterrupt
 ;/* End Export ***************************************************************/
 
-;/* Begin Header *************************************************************/
+;/* Header *******************************************************************/
     .text
     .arm
 ;/* End Header ***************************************************************/
 
-;/* Begin Function:RMP_Int_Disable ********************************************
+;/* Function:RMP_Int_Disable **************************************************
 ;Description : The function for disabling all interrupts. Does not allow nesting.
 ;              We never mask FIQs on Cortex-R because they are not allowed to
 ;              perform any non-transparent operations anyway.
@@ -91,7 +91,7 @@ RMP_Int_Disable         .asmfunc
     .endasmfunc
 ;/* End Function:RMP_Int_Disable *********************************************/
 
-;/* Begin Function:RMP_Int_Enable *********************************************
+;/* Function:RMP_Int_Enable ***************************************************
 ;Description : The function for enabling all interrupts. Does not allow nesting.
 ;Input       : None.
 ;Output      : None.
@@ -104,7 +104,7 @@ RMP_Int_Enable          .asmfunc
     .endasmfunc
 ;/* End Function:RMP_Int_Enable **********************************************/
 
-;/* Begin Function:RMP_Int_Mask ***********************************************
+;/* Function:RMP_Int_Mask *****************************************************
 ;Description : The function for masking & unmasking interrupts. This is dummy on
 ;              Cortex-R.
 ;Input       : rmp_ptr_t R0 - The new BASEPRI to set.
@@ -118,7 +118,7 @@ RMP_Int_Mask            .asmfunc
     .endasmfunc
 ;/* End Function:RMP_Int_Mask ************************************************/
 
-;/* Begin Function:_RMP_A7R_MSB_Get *******************************************
+;/* Function:_RMP_A7R_MSB_Get *************************************************
 ;Description : Get the MSB of the word.
 ;Input       : rmp_ptr_t R0 - The value.
 ;Output      : None.
@@ -132,7 +132,7 @@ _RMP_A7R_MSB_Get        .asmfunc
     .endasmfunc
 ;/* End Function:RMP_A7R_MSB_Get *********************************************/
 
-;/* Begin Function:RMP_A7R_LSB_Get ********************************************
+;/* Function:RMP_A7R_LSB_Get **************************************************
 ;Description : Get the MSB of the word.
 ;Input       : rmp_ptr_t R0 - The value.
 ;Output      : None.
@@ -145,7 +145,7 @@ _RMP_A7R_LSB_Get        .asmfunc
     .endasmfunc
 ;/* End Function:_RMP_A7R_LSB_Get ********************************************/
 
-;/* Begin Function:_RMP_Yield *************************************************
+;/* Function:_RMP_Yield *******************************************************
 ;Description : Trigger a yield to another thread.
 ;Input       : None.
 ;Output      : None.
@@ -168,7 +168,7 @@ _RMP_Yield              .asmfunc
 SSI1_Addr .word         0xFFFFFFB0
 ;/* End Function:_RMP_Yield **************************************************/
 
-;/* Begin Function:_RMP_Start *************************************************
+;/* Function:_RMP_Start *******************************************************
 ;Description : Jump to the user function and will never return from it.
 ;              Because the CCS startup code put us into the system state already,
 ;              there's no need to use interrupt return semantics - just branch to it.
@@ -186,7 +186,7 @@ Loop:
     .endasmfunc
 ;/* End Function:_RMP_Start **************************************************/
 
-;/* Begin Function:PendSV_Handler *********************************************
+;/* Function:PendSV_Handler ***************************************************
 ;Description : The PendSV interrupt routine. In fact, it will call a C function
 ;              directly. The reason why the interrupt routine must be an assembly
 ;              function is that the compiler may deal with the stack in a different 
@@ -222,7 +222,7 @@ PendSV_Handler          .asmfunc
 SSIF_Addr .word         0xFFFFFFF8
 ;/* End Function:PendSV_Handler **********************************************/
 
-;/* Begin Function:SysTick_Handler ********************************************
+;/* Function:SysTick_Handler **************************************************
 ;Description : The SysTick interrupt routine. In fact, it will call a C function
 ;              directly. The reason why the interrupt routine must be an assembly
 ;              function is that the compiler may deal with the stack in a different 

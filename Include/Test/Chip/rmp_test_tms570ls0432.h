@@ -25,11 +25,11 @@ ISR Message queue                  : 595 / 648 / 592
 ISR Blocking message queue         : 763 / 832 / 760
 ******************************************************************************/
 
-/* Includes ******************************************************************/
+/* Include *******************************************************************/
 #include "rmp.h"
-/* End Includes **************************************************************/
+/* End Include ***************************************************************/
 
-/* Defines *******************************************************************/
+/* Define ********************************************************************/
 /* How to read counter */
 #define RMP_CNT_READ()    ((rtiREG1->CNT[0].FRCx)<<3)
 /* Are we testing the memory pool? */
@@ -38,16 +38,16 @@ ISR Blocking message queue         : 763 / 832 / 760
 /* #define MINIMAL_SIZE */
 /* The TMS570LS timers are all 32 bits, so */
 typedef rmp_ptr_t rmp_tim_t;
-/* End Defines ***************************************************************/
+/* End Define ****************************************************************/
 
-/* Globals *******************************************************************/
+/* Global ********************************************************************/
 #ifndef MINIMAL_SIZE
 void Int_Handler(void);
 rmp_ptr_t Stack_1[256];
 rmp_ptr_t Stack_2[256];
-/* End Globals ***************************************************************/
+/* End Global ****************************************************************/
 
-/* Begin Function:Timer_Init **************************************************
+/* Function:Timer_Init ********************************************************
 Description : Initialize the timer for timing measurements. This function needs
               to be adapted to your specific hardware.
 Input       : None.
@@ -61,7 +61,7 @@ void Timer_Init(void)
 }
 /* End Function:Timer_Init ***************************************************/
 
-/* Begin Function:Int_Init ****************************************************
+/* Function:Int_Init **********************************************************
 Description : Initialize an periodic interrupt source. This function needs
               to be adapted to your specific hardware.
 Input       : None.
@@ -86,7 +86,7 @@ void rtiInterrupt(void)
 }
 /* End Function:Int_Init *****************************************************/
 
-/* Begin Function:Int_Disable *************************************************
+/* Function:Int_Disable *******************************************************
 Description : Disable the periodic interrupt source. This function needs
               to be adapted to your specific hardware.
 Input       : None.

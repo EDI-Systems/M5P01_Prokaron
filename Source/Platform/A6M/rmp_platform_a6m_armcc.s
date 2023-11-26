@@ -17,7 +17,7 @@
 ;The above 3 registers are saved into the stack in combination(xPSR).
 ;*****************************************************************************/
 
-;/* Begin Import *************************************************************/
+;/* Import *******************************************************************/
     ;The real task switch handling function
     IMPORT              _RMP_Run_High 
     ;The real systick handler function
@@ -28,7 +28,7 @@
     IMPORT              RMP_SP_Cur
 ;/* End Import ***************************************************************/
 
-;/* Begin Export *************************************************************/
+;/* Export *******************************************************************/
     ;Disable all interrupts
     EXPORT              RMP_Int_Disable      
     ;Enable all interrupts            
@@ -45,14 +45,14 @@
     EXPORT              SysTick_Handler                               
 ;/* End Export ***************************************************************/
             
-;/* Begin Header *************************************************************/
+;/* Header *******************************************************************/
     AREA                ARCH,CODE,READONLY,ALIGN=3
     THUMB
     REQUIRE8
     PRESERVE8
 ;/* End Header ***************************************************************/
 
-;/* Begin Function:RMP_Int_Disable ********************************************
+;/* Function:RMP_Int_Disable **************************************************
 ;Description : The function for disabling all interrupts. Does not allow nesting.
 ;Input       : None.
 ;Output      : None.
@@ -64,7 +64,7 @@ RMP_Int_Disable         PROC
     ENDP
 ;/* End Function:RMP_Int_Disable *********************************************/
 
-;/* Begin Function:RMP_Int_Enable *********************************************
+;/* Function:RMP_Int_Enable ***************************************************
 ;Description : The function for enabling all interrupts. Does not allow nesting.
 ;Input       : None.
 ;Output      : None.
@@ -76,7 +76,7 @@ RMP_Int_Enable          PROC
     ENDP
 ;/* End Function:RMP_Int_Enable **********************************************/
 
-;/* Begin Function:RMP_Int_Mask ***********************************************
+;/* Function:RMP_Int_Mask *****************************************************
 ;Description : Cortex-M0 does not allow masking and this is provided as dummy.
 ;Input       : rmp_ptr_t R0 - The new BASEPRI to set.
 ;Output      : None.
@@ -87,7 +87,7 @@ RMP_Int_Mask            PROC
     ENDP
 ;/* End Function:RMP_Int_Mask ************************************************/
 
-;/* Begin Function:_RMP_Yield *************************************************
+;/* Function:_RMP_Yield *******************************************************
 ;Description : Trigger a yield to another thread.
 ;Input       : None.
 ;Output      : None.
@@ -102,7 +102,7 @@ _RMP_Yield              PROC
     ENDP
 ;/* End Function:_RMP_Yield **************************************************/
 
-;/* Begin Function:_RMP_Start *************************************************
+;/* Function:_RMP_Start *******************************************************
 ;Description : Jump to the user function and will never return from it.
 ;Input       : None.
 ;Output      : None.
@@ -117,7 +117,7 @@ _RMP_Start              PROC
     ENDP
 ;/* End Function:_RMP_Start **************************************************/
 
-;/* Begin Function:PendSV_Handler *********************************************
+;/* Function:PendSV_Handler ***************************************************
 ;Description : The PendSV interrupt routine. In fact, it will call a C function
 ;              directly. The reason why the interrupt routine must be an assembly
 ;              function is that the compiler may deal with the stack in a different 
@@ -163,7 +163,7 @@ PendSV_Handler          PROC
     ENDP
 ;/* End Function:PendSV_Handler **********************************************/
 
-;/* Begin Function:SysTick_Handler ********************************************
+;/* Function:SysTick_Handler **************************************************
 ;Description : The SysTick interrupt routine. In fact, it will call a C function
 ;              directly. The reason why the interrupt routine must be an assembly
 ;              function is that the compiler may deal with the stack in a different 

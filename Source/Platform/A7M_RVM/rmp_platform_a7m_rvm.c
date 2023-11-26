@@ -6,29 +6,29 @@ Licence     : The Unlicense; see LICENSE for details.
 Description : The platform specific file for ARMv7-M on RVM hypervisor.
 ******************************************************************************/
 
-/* Includes ******************************************************************/
+/* Include *******************************************************************/
 /* The virtual machine configs are here */
 #include "rvm_guest.h"
 
-#define __HDR_DEFS__
+#define __HDR_DEF__
 #include "Platform/A7M_RVM/rmp_platform_a7m_rvm.h"
 #include "Kernel/rmp_kernel.h"
-#undef __HDR_DEFS__
+#undef __HDR_DEF__
 
-#define __HDR_STRUCTS__
+#define __HDR_STRUCT__
 #include "Platform/A7M_RVM/rmp_platform_a7m_rvm.h"
 #include "Kernel/rmp_kernel.h"
-#undef __HDR_STRUCTS__
+#undef __HDR_STRUCT__
 
 /* Private include */
 #include "Platform/A7M_RVM/rmp_platform_a7m_rvm.h"
 
-#define __HDR_PUBLIC_MEMBERS__
+#define __HDR_PUBLIC__
 #include "Kernel/rmp_kernel.h"
-#undef __HDR_PUBLIC_MEMBERS__
-/* End Includes **************************************************************/
+#undef __HDR_PUBLIC__
+/* End Include ***************************************************************/
 
-/* Begin Function:_RMP_Stack_Init *********************************************
+/* Function:_RMP_Stack_Init ***************************************************
 Description : Initiate the process stack when trying to start a process. Never
               call this function in user application.
               Need to pretend that we're returning from a context switch: 
@@ -83,7 +83,7 @@ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
 }
 /* End Function:_RMP_Stack_Init **********************************************/
 
-/* Begin Function:_RMP_Lowlvl_Init ********************************************
+/* Function:_RMP_Lowlvl_Init **************************************************
 Description : Initialize the low level hardware of the system.
 Input       : None
 Output      : None.
@@ -96,7 +96,7 @@ void _RMP_Lowlvl_Init(void)
 }
 /* End Function:_RMP_Lowlvl_Init *********************************************/
 
-/* Begin Function:_RMP_Plat_Hook **********************************************
+/* Function:_RMP_Plat_Hook ****************************************************
 Description : Platform-specific hook for system initialization.
 Input       : None
 Output      : None.
@@ -113,7 +113,7 @@ void _RMP_Plat_Hook(void)
 }
 /* End Function:_RMP_Plat_Hook ***********************************************/
 
-/* Begin Function:RMP_Putchar *************************************************
+/* Function:RMP_Putchar *******************************************************
 Description : Print a character to the debug console.
 Input       : char Char - The character to print.
 Output      : None.
@@ -127,7 +127,7 @@ void RMP_Putchar(char Char)
 }
 /* End Function:RMP_Putchar **************************************************/
 
-/* Begin Function:RMP_Int_Enable **********************************************
+/* Function:RMP_Int_Enable ****************************************************
 Description : Enable interrupts.
 Input       : None.
 Output      : None.
@@ -139,7 +139,7 @@ void RMP_Int_Enable(void)
 }
 /* End Function:RMP_Int_Enable ***********************************************/
 
-/* Begin Function:RMP_Int_Disable *********************************************
+/* Function:RMP_Int_Disable ***************************************************
 Description : Disable interrupts.
 Input       : None.
 Output      : None.
@@ -151,7 +151,7 @@ void RMP_Int_Disable(void)
 }
 /* End Function:RMP_Int_Disable **********************************************/
 
-/* Begin Function:RMP_Int_Mask ************************************************
+/* Function:RMP_Int_Mask ******************************************************
 Description : Mask interrupts that may do sends.
 Input       : None.
 Output      : None.
@@ -163,7 +163,7 @@ void RMP_Int_Mask(void)
 }
 /* End Function:RMP_Int_Mask *************************************************/
 
-/* Begin Function:RMP_Int_Unmask **********************************************
+/* Function:RMP_Int_Unmask ****************************************************
 Description : Unmask interrupts that may do sends.
 Input       : None.
 Output      : None.
@@ -175,7 +175,7 @@ void RMP_Int_Unmask(void)
 }
 /* End Function:RMP_Int_Unmask ***********************************************/
 
-/* Begin Function:_RMP_Yield **************************************************
+/* Function:_RMP_Yield ********************************************************
 Description : Trigger a yield to a different thread.
               This implementation includes support for fast context switching. 
               Though user-level code cannot clear CONTROL.FPCA hence the FPU
@@ -201,7 +201,7 @@ void _RMP_Yield(void)
 }
 /* End Function:_RMP_Yield ***************************************************/
 
-/* Begin Function:RMP_PendSV_Handler ******************************************
+/* Function:RMP_PendSV_Handler ************************************************
 Description : The PendSV interrupt routine.
 Input       : None.
 Output      : None.
@@ -329,7 +329,7 @@ void RMP_PendSV_Handler(void)
 }
 /* End Function:RMP_PendSV_Handler *******************************************/
 
-/* Begin Function:RMP_SysTick_Handler *****************************************
+/* Function:RMP_SysTick_Handler ***********************************************
 Description : The SysTick interrupt routine.
 Input       : None.
 Output      : None.

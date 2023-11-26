@@ -25,11 +25,11 @@ ISR Message queue                  : 560 / 632 / 552
 ISR Blocking message queue         : 707 / 782 / 702
 ******************************************************************************/
 
-/* Includes ******************************************************************/
+/* Include *******************************************************************/
 #include "rmp.h"
-/* End Includes **************************************************************/
+/* End Include ***************************************************************/
 
-/* Defines *******************************************************************/
+/* Define ********************************************************************/
 /* Where are the initial stacks */
 #define THD1_STACK        (&Stack_1[230])
 #define THD2_STACK        (&Stack_2[230])
@@ -41,9 +41,9 @@ ISR Blocking message queue         : 707 / 782 / 702
 /* #define MINIMAL_SIZE */
 /* The STM32F1 timers are all 16 bits, so */
 typedef rmp_u16_t rmp_tim_t;
-/* End Defines ***************************************************************/
+/* End Define ****************************************************************/
 
-/* Globals *******************************************************************/
+/* Global ********************************************************************/
 #ifndef MINIMAL_SIZE
 rmp_ptr_t Stack_1[256];
 rmp_ptr_t Stack_2[256];
@@ -57,9 +57,9 @@ void Int_Disable(void);
 
 void HAL_TIM_Base_MspInit(TIM_HandleTypeDef *htim);
 void TIM4_IRQHandler(void);
-/* End Globals ***************************************************************/
+/* End Global ****************************************************************/
 
-/* Begin Function:Timer_Init **************************************************
+/* Function:Timer_Init ********************************************************
 Description : Initialize the timer for timing measurements. This function needs
               to be adapted to your specific hardware.
 Input       : None.
@@ -83,7 +83,7 @@ void Timer_Init(void)
 }
 /* End Function:Timer_Init ***************************************************/
 
-/* Begin Function:Int_Init ****************************************************
+/* Function:Int_Init **********************************************************
 Description : Initialize an periodic interrupt source. This function needs
               to be adapted to your specific hardware.
 Input       : None.
@@ -127,7 +127,7 @@ void TIM4_IRQHandler(void)
 }
 /* End Function:Int_Init *****************************************************/
 
-/* Begin Function:Int_Disable *************************************************
+/* Function:Int_Disable *******************************************************
 Description : Disable the periodic interrupt source. This function needs
               to be adapted to your specific hardware.
 Input       : None.

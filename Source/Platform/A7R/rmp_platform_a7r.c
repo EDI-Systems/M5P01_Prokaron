@@ -6,26 +6,26 @@ Licence     : The Unlicense; see LICENSE for details.
 Description : The platform specific file for ARMv7-R.
 ******************************************************************************/
 
-/* Includes ******************************************************************/
-#define __HDR_DEFS__
+/* Include *******************************************************************/
+#define __HDR_DEF__
 #include "Platform/A7R/rmp_platform_a7r.h"
 #include "Kernel/rmp_kernel.h"
-#undef __HDR_DEFS__
+#undef __HDR_DEF__
 
-#define __HDR_STRUCTS__
+#define __HDR_STRUCT__
 #include "Platform/A7R/rmp_platform_a7r.h"
 #include "Kernel/rmp_kernel.h"
-#undef __HDR_STRUCTS__
+#undef __HDR_STRUCT__
 
 /* Private include */
 #include "Platform/A7R/rmp_platform_a7r.h"
 
-#define __HDR_PUBLIC_MEMBERS__
+#define __HDR_PUBLIC__
 #include "Kernel/rmp_kernel.h"
-#undef __HDR_PUBLIC_MEMBERS__
-/* End Includes **************************************************************/
+#undef __HDR_PUBLIC__
+/* End Include ***************************************************************/
 
-/* Begin Function:_RMP_Stack_Init *********************************************
+/* Function:_RMP_Stack_Init ***************************************************
 Description : Initiate the process stack when trying to start a process. Never
               call this function in user application.
 Input       : rmp_ptr_t Stack - The stack address of the thread.
@@ -72,7 +72,7 @@ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
 }
 /* End Function:_RMP_Stack_Init **********************************************/
 
-/* Begin Function:_RMP_Lowlvl_Init ********************************************
+/* Function:_RMP_Lowlvl_Init **************************************************
 Description : Initialize the low level hardware of the system.
 Input       : None
 Output      : None.
@@ -86,7 +86,7 @@ void _RMP_Lowlvl_Init(void)
 }
 /* End Function:_RMP_Lowlvl_Init *********************************************/
 
-/* Begin Function:_RMP_Plat_Hook **********************************************
+/* Function:_RMP_Plat_Hook ****************************************************
 Description : Platform-specific hook for system initialization.
 Input       : None
 Output      : None.
@@ -98,7 +98,7 @@ void _RMP_Plat_Hook(void)
 }
 /* End Function:_RMP_Plat_Hook ***********************************************/
 
-/* Begin Function:RMP_Putchar *************************************************
+/* Function:RMP_Putchar *******************************************************
 Description : Print a character to the debug console.
 Input       : char Char - The character to print.
 Output      : None.

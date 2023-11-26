@@ -35,11 +35,11 @@ ISR Message queue                  : 47612 / 57111 / 32376
 ISR Blocking message queue         : 47856 / 47922 / 480
 ******************************************************************************/
 
-/* Includes ******************************************************************/
+/* Include *******************************************************************/
 #include "rmp.h"
-/* End Includes **************************************************************/
+/* End Include ***************************************************************/
 
-/* Defines *******************************************************************/
+/* Define ********************************************************************/
 /* How to read counter */
 #define RMP_CNT_READ()      ((rmp_tim_t)RMP_RV32P_MCYCLE_Get())
 /* Are we testing the memory pool? */
@@ -48,9 +48,9 @@ ISR Blocking message queue         : 47856 / 47922 / 480
 /* #define MINIMAL_SIZE */
 /* The FE310 timers are all 64 bits, however we only need last 16 bits */
 typedef rmp_u16_t rmp_tim_t;
-/* End Defines ***************************************************************/
+/* End Define ****************************************************************/
 
-/* Globals *******************************************************************/
+/* Global ********************************************************************/
 #ifndef MINIMAL_SIZE
 rmp_ptr_t Stack_1[512];
 rmp_ptr_t Stack_2[512];
@@ -61,9 +61,9 @@ void Int_Handler(void);
 void Int_Disable(void);
 
 void WDT_Interrupt(void);
-/* End Globals ***************************************************************/
+/* End Global ****************************************************************/
 
-/* Begin Function:Timer_Init **************************************************
+/* Function:Timer_Init ********************************************************
 Description : Initialize the timer for timing measurements. This function needs
               to be adapted to your specific hardware.
 Input       : None.
@@ -77,7 +77,7 @@ void Timer_Init(void)
 }
 /* End Function:Timer_Init ***************************************************/
 
-/* Begin Function:Int_Init ****************************************************
+/* Function:Int_Init **********************************************************
 Description : Initialize an periodic interrupt source. This function needs
               to be adapted to your specific hardware. The stuff initialized
               here is actually the watchdog timer.
@@ -135,7 +135,7 @@ void WDT_Interrupt(void)
 }
 /* End Function:Int_Init *****************************************************/
 
-/* Begin Function:Int_Disable *************************************************
+/* Function:Int_Disable *******************************************************
 Description : Disable the periodic interrupt source. This function needs
               to be adapted to your specific hardware.
 Input       : None.

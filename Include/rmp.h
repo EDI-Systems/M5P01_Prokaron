@@ -7,27 +7,27 @@ Description : The header of the RMP RTOS. This header defines the error codes,
               operation flags and system call numbers in a generic way.
 ******************************************************************************/
 
-/* Defines *******************************************************************/
-#ifndef __RMP_H__
-#define __RMP_H__
+/* Define ********************************************************************/
+#ifndef __RMP__
+#define __RMP__
 
-#define __HDR_DEFS__
+#define __HDR_DEF__
 #include "rmp_platform.h"
 #include "Kernel/rmp_kernel.h"
-#undef __HDR_DEFS__
+#undef __HDR_DEF__
 
-#define __HDR_STRUCTS__
+#define __HDR_STRUCT__
 #include "rmp_platform.h"
 #include "Kernel/rmp_kernel.h"
-#undef __HDR_STRUCTS__
+#undef __HDR_STRUCT__
 
-#define __HDR_PUBLIC_MEMBERS__
+#define __HDR_PUBLIC__
 #include "rmp_platform.h"
 #include "Kernel/rmp_kernel.h"
-#undef __HDR_PUBLIC_MEMBERS__
+#undef __HDR_PUBLIC__
 
-#endif /* __RMP_H__ */
-/* End Defines ***************************************************************/
+#endif /* __RMP__ */
+/* End Define ****************************************************************/
 
 /* End Of File ***************************************************************/
 

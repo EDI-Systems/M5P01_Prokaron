@@ -16,11 +16,11 @@ Description : The performance benchmark for RMP. Do not modify this file; what
               the OS tick timer may kick in at any time.
 ******************************************************************************/
 
-/* Includes ******************************************************************/
+/* Include *******************************************************************/
 #include "rmp_test.h"
-/* End Includes **************************************************************/
+/* End Include ***************************************************************/
 
-/* Defines *******************************************************************/
+/* Define ********************************************************************/
 /* Number of rounds to test */
 #define ROUND_NUM       10000
 /* Interval of timer overflow reports: 
@@ -74,9 +74,9 @@ do \
     RMP_DBG_S("\r\n"); \
 } \
 while(0)
-/* End Defines ***************************************************************/
+/* End Define ****************************************************************/
 
-/* Globals *******************************************************************/
+/* Global ********************************************************************/
 #ifndef MINIMAL_SIZE
 volatile rmp_ptr_t Flip=0;
 volatile rmp_tim_t Start=0;
@@ -149,9 +149,9 @@ void Test_Mem_Pool(void);
 #endif
 
 void Func_2(void);
-/* End Globals ***************************************************************/
+/* End Global ****************************************************************/
 
-/* Begin Function:Func_1 ******************************************************
+/* Function:Func_1 ************************************************************
 Description : The test function group 1.
 Input       : None.
 Output      : None.
@@ -239,7 +239,7 @@ void Func_1(void)
 }
 /* End Function:Test_Yield ***************************************************/
 
-/* Begin Function:Func_2 ******************************************************
+/* Function:Func_2 ************************************************************
 Description : The test function group 2.
 Input       : None.
 Output      : None.
@@ -633,7 +633,7 @@ void Func_2(void)
 }
 /* End Function:Func_2 *******************************************************/
 
-/* Begin Function:Int_Handler *************************************************
+/* Function:Int_Handler *******************************************************
 Description : The interrupt handler. Call this in your periodic ISR.
 Input       : None.
 Output      : None.
@@ -724,7 +724,7 @@ void Int_Handler(void)
 #endif
 /* End Function:Int_Handler **************************************************/
 
-/* Begin Function:RMP_Init ****************************************************
+/* Function:RMP_Init **********************************************************
 Description : The init thread hook functions.
 Input       : None.
 Output      : None.

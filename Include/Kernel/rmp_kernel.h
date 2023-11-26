@@ -6,10 +6,10 @@ Licence     : The Unlicense; see LICENSE for details.
 Description : The header file for the kernel.
 ******************************************************************************/
 
-/* Defines *******************************************************************/
-#ifdef __HDR_DEFS__
-#ifndef __RMP_KERNEL_H_DEFS__
-#define __RMP_KERNEL_H_DEFS__
+/* Define ********************************************************************/
+#ifdef __HDR_DEF__
+#ifndef __RMP_KERNEL_DEF__
+#define __RMP_KERNEL_DEF__
 /*****************************************************************************/
 /* Constants */
 #define RMP_NULL                    ((void*)0)
@@ -207,21 +207,21 @@ do \
 while(0)
 #endif
 /*****************************************************************************/
-/* __RMP_KERNEL_H_DEFS__ */
+/* __RMP_KERNEL_DEF__ */
 #endif
-/* __HDR_DEFS__ */
+/* __HDR_DEF__ */
 #endif
-/* End Defines ***************************************************************/
+/* End Define ****************************************************************/
 
-/* Structs *******************************************************************/
-#ifdef __HDR_STRUCTS__
-#ifndef __RMP_KERNEL_H_STRUCTS__
-#define __RMP_KERNEL_H_STRUCTS__
+/* Struct ********************************************************************/
+#ifdef __HDR_STRUCT__
+#ifndef __RMP_KERNEL_STRUCT__
+#define __RMP_KERNEL_STRUCT__
 /* We used structs in the header */
 
 /* Use defines in these headers */
-#define __HDR_DEFS__
-#undef __HDR_DEFS__
+#define __HDR_DEF__
+#undef __HDR_DEF__
 /*****************************************************************************/
 /* The list head structure */
 struct RMP_List
@@ -333,28 +333,28 @@ struct RMP_Mem
     rmp_ptr_t Bitmap[1];
 };
 /*****************************************************************************/
-/* __RMP_KERNEL_H_STRUCTS__ */
+/* __RMP_KERNEL_STRUCT__ */
 #endif
-/* __HDR_STRUCTS__ */
+/* __HDR_STRUCT__ */
 #endif
-/* End Structs ***************************************************************/
+/* End Struct ****************************************************************/
 
-/* Private Global Variables **************************************************/
-#if(!(defined __HDR_DEFS__||defined __HDR_STRUCTS__))
-#ifndef __RMP_KERNEL_MEMBERS__
-#define __RMP_KERNEL_MEMBERS__
+/* Private Variable **********************************************************/
+#if(!(defined __HDR_DEF__||defined __HDR_STRUCT__))
+#ifndef __RMP_KERNEL_PUBLIC__
+#define __RMP_KERNEL_PUBLIC__
 
 /* In this way we can use the data structures and definitions in the headers */
-#define __HDR_DEFS__
+#define __HDR_DEF__
 
-#undef __HDR_DEFS__
+#undef __HDR_DEF__
 
-#define __HDR_STRUCTS__
+#define __HDR_STRUCT__
 
-#undef __HDR_STRUCTS__
+#undef __HDR_STRUCT__
 
 /* If the header is not used in the public mode */
-#ifndef __HDR_PUBLIC_MEMBERS__
+#ifndef __HDR_PUBLIC__
 /*****************************************************************************/
 #ifdef RMP_COVERAGE
 /* For coverage use only */
@@ -369,9 +369,9 @@ static volatile struct RMP_List RMP_Delay;
 static rmp_ptr_t RMP_Init_Stack[RMP_INIT_STACK_WORD];
 static volatile struct RMP_Thd RMP_Init_Thd;
 /*****************************************************************************/
-/* End Private Global Variables **********************************************/
+/* End Private Variable ******************************************************/
 
-/* Private C Function Prototypes *********************************************/ 
+/* Private Function **********************************************************/ 
 /*****************************************************************************/
 static void _RMP_Run_Ins(volatile struct RMP_Thd* Thread);
 static void _RMP_Run_Del(volatile struct RMP_Thd* Thread);
@@ -410,13 +410,13 @@ static void RMP_Progbar_Prog(rmp_cnt_t Coord_X,
 #endif
 /*****************************************************************************/
 #define __EXTERN__
-/* End Private C Function Prototypes *****************************************/
+/* End Private Function ******************************************************/
 
-/* Public Global Variables ***************************************************/
-/* __HDR_PUBLIC_MEMBERS__ */
+/* Public Variable ***********************************************************/
+/* __HDR_PUBLIC__ */
 #else
 #define __EXTERN__ EXTERN 
-/* __HDR_PUBLIC_MEMBERS__ */
+/* __HDR_PUBLIC__ */
 #endif
 
 /*****************************************************************************/
@@ -435,9 +435,9 @@ __EXTERN__ volatile struct RMP_Thd* volatile RMP_Thd_Cur;
 __EXTERN__ volatile rmp_ptr_t RMP_SP_Cur;
 /*****************************************************************************/
 
-/* End Public Global Variables ***********************************************/
+/* End Public Variable *******************************************************/
 
-/* Public C Function Prototypes **********************************************/
+/* Public Function ***********************************************************/
 /*****************************************************************************/
 /* Bit manipualtions */
 __EXTERN__ rmp_ptr_t RMP_MSB_Generic(rmp_ptr_t Value);
@@ -714,11 +714,11 @@ __EXTERN__ void RMP_Print_Coverage(void);
 /*****************************************************************************/
 /* Undefine "__EXTERN__" to avoid redefinition */
 #undef __EXTERN__
-/* __RMP_KERNEL_MEMBERS__ */
+/* __RMP_KERNEL_PUBLIC__ */
 #endif
-/* !(defined __HDR_DEFS__||defined __HDR_STRUCTS__) */
+/* !(defined __HDR_DEF__||defined __HDR_STRUCT__) */
 #endif
-/* End Public C Function Prototypes ******************************************/
+/* End Public Function *******************************************************/
 
 /* End Of File ***************************************************************/
 

@@ -48,7 +48,7 @@ R30    $fp        frame pointer
 R31    $ra        return address (used by function call)
 ******************************************************************************/
 
-/* Begin Import **************************************************************/
+/* Import ********************************************************************/
     /* The real task switch handling function */
     .extern             _RMP_Run_High 
     /* The real systick handler function */
@@ -67,7 +67,7 @@ R31    $ra        return address (used by function call)
     .extern             _RMP_Clear_Timer_Flag
 /* End Import ****************************************************************/
 
-/* Begin Export **************************************************************/
+/* Export ********************************************************************/
     /* Disable all interrupts */
     .global             RMP_Int_Disable      
     /* Enable all interrupts */        
@@ -87,7 +87,7 @@ R31    $ra        return address (used by function call)
     .global             _RMP_Set_Timer
 /* End Export ****************************************************************/
 
-/* Begin Macro ***************************************************************/
+/* Macro *********************************************************************/
     .equ                CP0_COUNT,$9
     .equ                CP0_COMPARE,$11
     .equ                CP0_STATUS,$12
@@ -259,12 +259,12 @@ R31    $ra        return address (used by function call)
 .endm
 /* End Macro *****************************************************************/
     
-/* Begin Header **************************************************************/
+/* Header ********************************************************************/
     .text
     .align 4
 /* End Header ****************************************************************/
 
-/* Begin Function:RMP_Int_Disable *********************************************
+/* Function:RMP_Int_Disable ***************************************************
 Description    : The function for disabling all interrupts. Does not allow nesting.
 Input          : None.
 Output         : None.    
@@ -283,7 +283,7 @@ RMP_Int_Disable:
     .end                RMP_Int_Disable
 /* End Function:RMP_Int_Disable **********************************************/
 
-/* Begin Function:RMP_Int_Enable **********************************************
+/* Function:RMP_Int_Enable ****************************************************
 Description    : The function for enabling all interrupts. Does not allow nesting.
 Input          : None.
 Output         : None.    
@@ -302,7 +302,7 @@ RMP_Int_Enable:
     .end                RMP_Int_Enable
 /* End Function:RMP_Int_Enable ***********************************************/
 
-/* Begin Function:_RMP_Set_Timer **********************************************
+/* Function:_RMP_Set_Timer ****************************************************
 Description    : The function for setting the timer.
 Input          : $a0 - Timer overflow value.
 Output         : None.    
@@ -322,7 +322,7 @@ _RMP_Set_Timer:
     .end                _RMP_Set_Timer
 /* End Function:_RMP_Set_Timer ***********************************************/
 
-/* Begin Function:_RMP_MP32P_MSB_Get ******************************************
+/* Function:_RMP_MP32P_MSB_Get ************************************************
 Description    : Get the MSB of the word.
 Input          : ptr_t Value - The value.
 Output         : None.
@@ -343,7 +343,7 @@ _RMP_MP32P_MSB_Get:
     .end                _RMP_MP32P_MSB_Get
 /* End Function:_RMP_MP32P_MSB_Get *******************************************/
 
-/* Begin Function:_RMP_MP32P_LSB_Get ******************************************
+/* Function:_RMP_MP32P_LSB_Get ************************************************
 Description    : Get the LSB of the word.
 Input          : ptr_t Value - The value.
 Output         : None.
@@ -367,7 +367,7 @@ _RMP_MP32P_LSB_Get:
     .end                _RMP_MP32P_MSB_Get
 /* End Function:_RMP_MP32P_LSB_Get *******************************************/
 
-/* Begin Function:_RMP_Yield **************************************************
+/* Function:_RMP_Yield ********************************************************
 Description : Trigger a yield to another thread.
 Input       : None.
 Output      : None.                                      
@@ -392,7 +392,7 @@ _RMP_Yield:
     .end                _RMP_Yield                                           
 /* End Function:_RMP_Yield ***************************************************/
 
-/* Begin Function:_RMP_Start **************************************************
+/* Function:_RMP_Start ********************************************************
 Description : Jump to the user function and will never return from it.
 Input       : $a0 - The address to branch to.
               $a1 - The stack to use.
@@ -421,7 +421,7 @@ __Loop:
     .end                _RMP_Start
 /* End Function:_RMP_Start ***************************************************/
 
-/* Begin Function:PendSV_Handler **********************************************
+/* Function:PendSV_Handler ****************************************************
 Description : The PendSV interrupt routine. In fact, it will call a C function
               directly. The reason why the interrupt routine must be an assembly
               function is that the compiler may deal with the stack in a different 
@@ -462,7 +462,7 @@ PendSV_Handler:
     .end                PendSV_Handler
 /* End Function:PendSV_Handler ***********************************************/
 
-/* Begin Function:SysTick_Handler *********************************************
+/* Function:SysTick_Handler ***************************************************
 Description : The SysTick interrupt routine. In fact, it will call a C function
               directly. The reason why the interrupt routine must be an assembly
               function is that the compiler may deal with the stack in a different 

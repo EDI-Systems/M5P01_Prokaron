@@ -5,12 +5,12 @@ Date        : 10/04/2012
 Description : The extra testing file for this chip.
 ******************************************************************************/
     
-/* Begin Header **************************************************************/
+/* Header ********************************************************************/
     .text
     .align 4
 /* End Header ****************************************************************/
 
-/* Begin Imports *************************************************************/
+/* Import ********************************************************************/
     /* The place where we store the kernel gp/sp value */
     .extern             RMP_GP_Val
     .extern             RMP_SP_Val
@@ -18,9 +18,9 @@ Description : The extra testing file for this chip.
     .extern             RMP_Int_Nest
     /* The extra routine */
     .extern             Tim2_Interrupt    
-/* End Imports ***************************************************************/
+/* End Import ****************************************************************/
 
-/* Begin Macros **************************************************************/
+/* Macros ********************************************************************/
     .equ                CP0_COUNT,$9
     .equ                CP0_COMPARE,$11
     .equ                CP0_STATUS,$12
@@ -190,7 +190,7 @@ Description : The extra testing file for this chip.
 .endm
 /* End Macros ****************************************************************/
 
-/* Begin Function:Tim2_Handler ************************************************
+/* Function:Tim2_Handler ******************************************************
 Description : The timer 2 interrupt routine.
 Input       : None.
 Output      : None.                                      
