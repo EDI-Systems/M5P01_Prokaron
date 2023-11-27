@@ -118,8 +118,13 @@ f31    $ft11      temporary (caller-save)
     /* Fast yield */
     .global             _RMP_RV32P_Yield_NONE
     .global             _RMP_RV32P_Yield_RVF
-    .global             _RMP_RV32P_Yield_RVFD
+    .global             _RMP_RV32P_Yield_RVD
 /* End Export ****************************************************************/
+
+/* Header ********************************************************************/
+    .section            ".text.arch"
+    .align              3
+/* End Header ****************************************************************/
 
 /* Function:RMP_Int_Disable ***************************************************
 Description    : The function for disabling all interrupts. Does not allow nesting.
@@ -127,8 +132,6 @@ Input          : None.
 Output         : None.
 Register Usage : None.
 ******************************************************************************/
-    .section            .text,"ax",@progbits
-    .align              2
 RMP_Int_Disable:
     /* Disable all interrupts */
     CSRCI                mstatus,8
@@ -141,8 +144,6 @@ Input          : None.
 Output         : None.
 Register Usage : None.
 ******************************************************************************/
-    .section            .text,"ax",@progbits
-    .align              2
 RMP_Int_Enable:
     /* Enable all interrupts */
     CSRSI                mstatus,8
@@ -156,8 +157,6 @@ Input       : $a0 - The address to branch to.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-    .section            .text,"ax",@progbits
-    .align              2
 _RMP_Start:
     ADD                 sp,x0,a1
     JR                  a0
@@ -170,8 +169,6 @@ Input       : None.
 Output      : None.
 Return      : $a0 - MCYCLE value.
 ******************************************************************************/
-    .section            .text,"ax",@progbits
-    .align              2
 RMP_RV32P_MCYCLE_Get:
     CSRR                a0,mcycle
     RET
@@ -183,8 +180,6 @@ Input       : None.
 Output      : None.
 Return      : $a0 - MCYCLE value.
 ******************************************************************************/
-    .section            .text,"ax",@progbits
-    .align              2
 RMP_RV32P_MCAUSE_Get:
     CSRR                a0,mcause
     RET
@@ -196,8 +191,6 @@ Input       : None.
 Output      : None.
 Return      : $a0 - MCYCLE value.
 ******************************************************************************/
-    .section            .text,"ax",@progbits
-    .align              2
 _RMP_RV32P_MTVEC_Set:
     CSRW                mtvec,a0
     RET
@@ -213,7 +206,7 @@ Input       : None.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-    /* Save all GP regs */
+/* Save all GP regs **********************************************************/
     .macro              RMP_RV32P_REG_SAVE LABEL
     /* RISC-V does not support interrupt nesting, as the current specification says.
      * Its interrupt controller does not accept new ones before the old one gets
@@ -283,7 +276,7 @@ Return      : None.
     LW                  a0,0*4(sp)
     .endm
 
-    /* Restore all GP regs and simulate a MRET */
+/* Restore all GP regs and simulate a MRET ***********************************/
     .macro              RMP_RV32P_REG_RESTORE
     /* Load mstatus - force M mode with enabled interrupt */
     LI                  a1,0x1880
@@ -328,9 +321,10 @@ Return      : None.
     MRET
     .endm
 
-    /* No coprocessor */
-    .section            .text.none,"ax",@progbits
-    .align              2
+/* No coprocessor ************************************************************/
+    .section            .text._rmp_rv32p_yield_none
+    .align              3
+
 _RMP_RV32P_Yield_NONE:
     /* Disable interrupt and save registers */
     CSRCI               mstatus,8
@@ -342,9 +336,10 @@ _RMP_RV32P_Yield_NONE:
 _RMP_RV32P_Yield_NONE_Exit:
     RET
 
-    /* Single-precision FPU coprocessor */
-    .section            .text.rvf,"ax",@progbits
-    .align              2
+/* Single-precision FPU coprocessor ******************************************/
+    .section            .text._rmp_rv32p_yield_rvf
+    .align              3
+
 _RMP_RV32P_Yield_RVF:
     /* Disable interrupt and save registers */
     CSRCI               mstatus,8
@@ -440,17 +435,18 @@ _RMP_RV32P_Yield_RVF_Restore_Skip:
 _RMP_RV32P_Yield_RVF_Exit:
     RET
 
-    /* Double precision FPU coprocessor */
-    .section            .text.rvfd,"ax",@progbits
-    .align              2
-_RMP_RV32P_Yield_RVFD:
+/* Double precision FPU coprocessor ******************************************/
+    .section            .text._rmp_rv32p_yield_rvd
+    .align              3
+
+_RMP_RV32P_Yield_RVD:
     /* Disable interrupt and save registers */
     CSRCI               mstatus,8
-    RMP_RV32P_REG_SAVE _RMP_RV32P_Yield_RVFD_Exit
+    RMP_RV32P_REG_SAVE  _RMP_RV32P_Yield_RVD_Exit
     /* See if we have used FPU (mstatus.fs[1]==1) */
     LUI                 a1,4
     AND                 a1,a1,a0
-    BEQZ                a1,_RMP_RV32P_Yield_RVFD_Save_Skip
+    BEQZ                a1,_RMP_RV32P_Yield_RVD_Save_Skip
     /* FPU active, saving context - be compatible with non-FPU cases */
     ADDI                sp,sp,-65*4
     .hword              0x25F3      /* FRCSR   a1 */
@@ -520,13 +516,13 @@ _RMP_RV32P_Yield_RVFD:
     .hword              0x0011
     .hword              0x3027      /* FSD     f0,0*8(sp) */
     .hword              0x0001
-_RMP_RV32P_Yield_RVFD_Save_Skip:
+_RMP_RV32P_Yield_RVD_Save_Skip:
     /* Do context switch */
     RMP_RV32P_SWITCH
     /* See if this task uses FPU */
     LUI                 a1,4
     AND                 a1,a1,a0
-    BEQZ                a1,_RMP_RV32P_Yield_RVFD_Restore_Skip
+    BEQZ                a1,_RMP_RV32P_Yield_RVD_Restore_Skip
     /* FPU active, saving context - for compatibility with non-FPU cases */
     .hword              0x3007      /* FLD     f0,0*8(sp) */
     .hword              0x0001
@@ -596,13 +592,13 @@ _RMP_RV32P_Yield_RVFD_Save_Skip:
     .hword              0x9073      /* FSCSR   a1 */
     .hword              0x0035
     ADDI                sp,sp,65*4
-_RMP_RV32P_Yield_RVFD_Restore_Skip:
+_RMP_RV32P_Yield_RVD_Restore_Skip:
     /* Enable interrupt and restore registers */
     RMP_RV32P_REG_RESTORE
-_RMP_RV32P_Yield_RVFD_Exit:
+_RMP_RV32P_Yield_RVD_Exit:
     RET
 /* End Function:_RMP_RV32P_Yield *********************************************/
-
+    .end
 /* End Of File ***************************************************************/
 
 /* Copyright (C) Evo-Devo Instrum. All rights reserved ***********************/

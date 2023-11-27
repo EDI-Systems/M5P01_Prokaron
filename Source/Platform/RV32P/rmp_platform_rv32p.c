@@ -150,11 +150,9 @@ void _RMP_Yield(void)
     if(RMP_RV32P_Int_Act!=0U)
         _RMP_RV32P_Yield_Pend=1U;
     else
+        /* Selecting RVD implies RVF */
 #if(RMP_RV32P_COP_RVD!=0U)
-#if(RMP_RV32P_COP_RVF==0U)
-#error RVD extension cannot be selected when RVF extension is not.
-#endif
-        _RMP_RV32P_Yield_RVFD();
+        _RMP_RV32P_Yield_RVD();
 #elif(RMP_RV32P_COP_RVF!=0U)
         _RMP_RV32P_Yield_RVF();
 #else

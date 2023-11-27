@@ -21,7 +21,7 @@ Description : The assembly part of the RMP RTOS. This is for RV32P, and
 /* End Import ****************************************************************/
 
 /* Macro *********************************************************************/
-    /* Save all GP regs */
+/* Save all GP regs **********************************************************/
     .macro              RMP_RV32P_REG_SAVE
     ADDI                sp,sp,-32*4
     SW                  x31,31*4(sp)
@@ -59,7 +59,7 @@ Description : The assembly part of the RMP RTOS. This is for RV32P, and
     CSRR                a0,mstatus
     .endm
 
-    /* Prepare for a context switch */
+/* Prepare for a context switch **********************************************/
     .macro              RMP_RV32P_SWITCH_PRE
     SW                  a0,0*4(sp)
     .option             push
@@ -74,7 +74,7 @@ Description : The assembly part of the RMP RTOS. This is for RV32P, and
     SW                  a1,(a0)
     .endm
 
-    /* Finish up the context switch */
+/* Finish up the context switch **********************************************/
     .macro              RMP_RV32P_SWITCH_POST
     LA                  a0,_RMP_RV32P_Yield_Pend
     LW                  a1,(a0)
@@ -89,7 +89,7 @@ Description : The assembly part of the RMP RTOS. This is for RV32P, and
     LW                  a0,0*4(sp)
     .endm
 
-    /* Restore all GP regs */
+/* Restore all GP regs *******************************************************/
     .macro              RMP_RV32P_REG_RESTORE
     LI                  a1,0x1880
     OR                  a0,a0,a1
@@ -130,19 +130,19 @@ Description : The assembly part of the RMP RTOS. This is for RV32P, and
     MRET
     .endm
 
-    /* Save macro for no coprocessor case */
+/* Save macro for no coprocessor case ****************************************/
     .macro              RMP_RV32P_INT_SAVE_NONE
     RMP_RV32P_REG_SAVE
     RMP_RV32P_SWITCH_PRE
     .endm
 
-    /* Load macro for no coprocessor case */
+/* Load macro for no coprocessor case ****************************************/
     .macro              RMP_RV32P_INT_RESTORE_NONE
     RMP_RV32P_SWITCH_POST
     RMP_RV32P_REG_RESTORE
     .endm
 
-    /* Save macro for RVF case */
+/* Save macro for RVF case ***************************************************/
     .macro              RMP_RV32P_INT_SAVE_RVF
     RMP_RV32P_REG_SAVE
     LUI                 a1,4
@@ -188,7 +188,7 @@ Description : The assembly part of the RMP RTOS. This is for RV32P, and
     RMP_RV32P_SWITCH_PRE
     .endm
 
-    /* Load macro for RVF case */
+/* Load macro for RVF case ***************************************************/
     .macro              RMP_RV32P_INT_RESTORE_RVF
     RMP_RV32P_SWITCH_POST
     LUI                 a1,4
@@ -234,7 +234,7 @@ Description : The assembly part of the RMP RTOS. This is for RV32P, and
     RMP_RV32P_REG_RESTORE
     .endm
 
-    /* Save macro for RVFD case */
+/* Save macro for RVFD case **************************************************/
     .macro              RMP_RV32P_INT_SAVE_RVFD
     RMP_RV32P_REG_SAVE
     LUI                 a1,4
@@ -312,7 +312,7 @@ Description : The assembly part of the RMP RTOS. This is for RV32P, and
     RMP_RV32P_SWITCH_PRE
     .endm
 
-    /* Load macro for RVFD case */
+/* Load macro for RVFD case **************************************************/
     .macro              RMP_RV32P_INT_RESTORE_RVFD
     RMP_RV32P_SWITCH_POST
     LUI                 a1,4

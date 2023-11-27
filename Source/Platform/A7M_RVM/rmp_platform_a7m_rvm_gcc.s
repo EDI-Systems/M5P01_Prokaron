@@ -155,7 +155,7 @@ Return      : None.
     ORR                 R0,R1  
     STR                 R0,[SP,#4*7]  
     LDR                 R0,=_RMP_A7M_Skip   /* Push PC with[0] cleared */
-    AND                 R0,#0xFFFFFFFE  
+    AND                 R0,#0xFFFFFFFE
     STR                 R0,[SP,#4*6]  
     MOV                 LR,#\LR             /* Make up the EXC_RETURN */
     .endm
