@@ -25,7 +25,7 @@ Input       : None.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-    .align              2
+    .align              3
 SysTick_Handler:
     RMP_RV32P_INT_SAVE_RVF
     CALL                _RMP_RV32P_Tim_Handler
@@ -38,10 +38,9 @@ Input       : None.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-    .align              2
+    .align              3
 TIM4_IRQHandler:
     RMP_RV32P_INT_SAVE_RVF
-    LI                  a0,1
     CALL                _TIM4_IRQHandler
     RMP_RV32P_INT_RESTORE_RVF
 /* End Function:TIM4_IRQHandler **********************************************/

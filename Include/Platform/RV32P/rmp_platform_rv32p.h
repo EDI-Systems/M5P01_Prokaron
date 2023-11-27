@@ -199,7 +199,7 @@ EXTERN rmp_ptr_t RMP_RV32P_MCAUSE_Get(void);
 EXTERN void _RMP_RV32P_MTVEC_Set(rmp_ptr_t Value);
 EXTERN void _RMP_RV32P_Yield_NONE(void);
 EXTERN void _RMP_RV32P_Yield_RVF(void);
-EXTERN void _RMP_RV32P_Yield_RVFD(void);
+EXTERN void _RMP_RV32P_Yield_RVD(void);
 
 /* Initialization */
 __EXTERN__ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,

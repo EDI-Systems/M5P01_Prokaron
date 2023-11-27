@@ -116,6 +116,11 @@ f31    $ft11      temporary (caller-save)
     .global             _RMP_RV32P_RVM_Yield_RVFD
 /* End Export ****************************************************************/
 
+/* Header ********************************************************************/
+    .section            ".text.arch"
+    .align              3
+/* End Header ****************************************************************/
+
 /* Function:_RMP_Start ********************************************************
 Description : Jump to the user function and will never return from it.
 Input       : a0 - The address to branch to.
@@ -123,8 +128,6 @@ Input       : a0 - The address to branch to.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-    .section            .text,"ax",@progbits
-    .align              3
 _RMP_Start:
     ADD                 sp,x0,a1
     JR                  a0
@@ -142,7 +145,7 @@ Output      : None.
 Return      : None.
 ******************************************************************************/
     /* Save all GP regs */
-.macro RMP_RV32P_REG_SAVE LABEL
+    .macro              RMP_RV32P_REG_SAVE LABEL
     /* RISC-V does not support interrupt nesting, as the current specification says.
      * Its interrupt controller does not accept new ones before the old one gets
      * done; and to make things worse, unlike MIPS, it doesn't have IPL field,
@@ -186,10 +189,10 @@ Return      : None.
     SW                  a0,1*4(sp)
     /* Read mstatus to decide FPU status, but don't save yet */
     CSRR                a0,mstatus
-.endm
+    .endm
 
     /* Actual context switch */
-.macro RMP_RV32P_SWITCH
+    .macro              RMP_RV32P_SWITCH
     /* Save mstatus */
     SW                  a0,0*4(sp)
     /* Load gp for kernel - defined by linker script */
@@ -254,10 +257,10 @@ Return      : None.
     LW                  x31,31*4(sp)
     ADDI                sp,sp,32*4
     MRET
-.endm
+    .endm
 
     /* No coprocessor */
-    .section            .text.none,"ax",@progbits
+    .section            .text._rmp_rv32p_yield_none
     .align              3
 
 _RMP_RV32P_Yield_NONE:
@@ -272,8 +275,9 @@ _RMP_RV32P_Yield_NONE_Exit:
     RET
 
     /* Single-precision FPU coprocessor */
-    .section            .text.rvf,"ax",@progbits
+    .section            .text._rmp_rv32p_yield_rvf
     .align              3
+
 _RMP_RV32P_Yield_RVF:
     /* Disable interrupt and save registers */
     CSRCI               mstatus,8
@@ -370,7 +374,7 @@ _RMP_RV32P_Yield_RVF_Exit:
     RET
 
     /* Double precision FPU coprocessor */
-    .section            .text.rvfd,"ax",@progbits
+    .section            .text._rmp_rv32p_yield_rvfd
     .align              3
 _RMP_RV32P_Yield_RVFD:
     /* Disable interrupt and save registers */
