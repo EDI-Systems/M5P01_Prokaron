@@ -1,29 +1,29 @@
 /******************************************************************************
-Filename    : rmp_platform_rv32p.c
+Filename    : rmp_platform_rv32p_rvm.c
 Author      : pry
 Date        : 04/02/2018
 Licence     : The Unlicense; see LICENSE for details.
-Description : The platform specific file for RV32P with physical address space.
+Description : The platform specific file for RV32 with physical address space.
               Any subsets that include RV32I are supported by this port, and this
               is also compatible with processors that support RV32C in addition
-              to RV32P.
+              to RV32G.
               Note that processors only supporting RV32C are not covered by
               this port and should use the RV32CP port instead.
 ******************************************************************************/
 
 /* Include *******************************************************************/
 #define __HDR_DEF__
-#include "Platform/RV32P/rmp_platform_rv32p.h"
+#include "Platform/RV32P_RVM/rmp_platform_rv32p_rvm.h"
 #include "Kernel/rmp_kernel.h"
 #undef __HDR_DEF__
 
 #define __HDR_STRUCT__
-#include "Platform/RV32P/rmp_platform_rv32p.h"
+#include "Platform/RV32P_RVM/rmp_platform_rv32p_rvm.h"
 #include "Kernel/rmp_kernel.h"
 #undef __HDR_STRUCT__
 
 /* Private include */
-#include "Platform/RV32P/rmp_platform_rv32p.h"
+#include "Platform/RV32P_RVM/rmp_platform_rv32p_rvm.h"
 
 #define __HDR_PUBLIC__
 #include "Kernel/rmp_kernel.h"
@@ -46,11 +46,11 @@ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
                           rmp_ptr_t Param)
 {
     rmp_ptr_t End;
-    struct RMP_RV32P_Stack* Ptr;
+    struct RMP_RV32P_RVM_Stack* Ptr;
 
     /* Compute & align stack */
     End=RMP_ROUND_DOWN(Stack+Size, 4U);
-    Ptr=(struct RMP_RV32P_Stack*)(End-sizeof(struct RMP_RV32P_Stack));
+    Ptr=(struct RMP_RV32P_RVM_Stack*)(End-sizeof(struct RMP_RV32P_RVM_Stack));
 
     /* This is where PC is saved */
     Ptr->PC=Entry;
@@ -106,7 +106,7 @@ Return      : None.
 ******************************************************************************/
 void _RMP_Lowlvl_Init(void)
 {
-    RMP_RV32P_LOWLVL_INIT();
+    RMP_RV32P_RVM_LOWLVL_INIT();
 
     RVM_Virt_Tim_Reg(RMP_Tim_Handler);
     RVM_Virt_Ctx_Reg(RMP_Ctx_Handler);
@@ -138,7 +138,7 @@ Return      : None.
 ******************************************************************************/
 void RMP_Putchar(char Char)
 {
-    RMP_RV32P_PUTCHAR(Char);
+    RMP_RV32P_RVM_PUTCHAR(Char);
 }
 /* End Function:RMP_Putchar **************************************************/
 
@@ -202,16 +202,16 @@ Return      : None.
 volatile struct RVM_Param* const RMP_A7M_RVM_Usr_Param=&(RVM_STATE->Usr);
 void _RMP_Yield(void)
 {
-#if(RMP_RV32P_RVM_FAST_YIELD!=0U)
+#if(RMP_RV32P_RVM_RVM_FAST_YIELD!=0U)
     if(RVM_STATE->Vct_Act!=0U)
         RVM_Virt_Yield();
     else
-#if(RMP_RV32P_COP_RVD!=0U)
-#if(RMP_RV32P_COP_RVF==0U)
+#if(RMP_RV32P_RVM_COP_RVFD!=0U)
+#if(RMP_RV32P_RVM_COP_RVF==0U)
 #error RVD extension cannot be selected when RVF extension is not.
 #endif
         _RMP_RV32P_RVM_Yield_RVFD();
-#elif(RMP_RV32P_COP_RVF!=0U)
+#elif(RMP_RV32P_RVM_COP_RVF!=0U)
         _RMP_RV32P_RVM_Yield_RVF();
 #else
         _RMP_RV32P_RVM_Yield_NONE();

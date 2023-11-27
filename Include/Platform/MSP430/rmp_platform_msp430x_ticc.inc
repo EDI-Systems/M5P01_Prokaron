@@ -23,7 +23,7 @@
 ;/* End Import ***************************************************************/
 
 ;/* Macro ********************************************************************/
-;Push everything to stack - for flags, 16-bit operations are sufficient
+;/* Push everything to stack - for flags, 16-bit operations are sufficient ***/
 RMP_MSP430_INT_SAVE     .macro
     PUSHM.A             #12,R15
     MOVA                SP,&RMP_SP_Cur
@@ -31,7 +31,7 @@ RMP_MSP430_INT_SAVE     .macro
     MOV                 #1,&RMP_MSP430_Int_Act
     .endm
 
-;Load everything from stack, and deal with pending yields if there is
+;/* Load everything from stack, and deal with pending yields if there is *****/
 RMP_MSP430_INT_RESTORE  .macro
     CMP                 #0,&_RMP_MSP430_Yield_Pend
     JEQ                 RMP_MSP430_YIELD_SKIP?

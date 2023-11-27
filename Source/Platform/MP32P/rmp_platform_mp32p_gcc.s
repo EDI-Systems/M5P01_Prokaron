@@ -95,8 +95,9 @@ R31    $ra        return address (used by function call)
     .equ                CP0_EPC,$14
     .equ                CTX_SIZE,136
     .equ                CORE_SW0,0x100
+
     /* Interrupt context saving. These interrupts should not use DSP & FPU */
-.macro    SAVE_CONTEXT
+    .macro              SAVE_CONTEXT
     /* Make room for the context */
     ADDIU               $sp,$sp,-CTX_SIZE
     /* Save 4 regs first so that we can enable interrupts as soon as possible */
@@ -180,10 +181,10 @@ R31    $ra        return address (used by function call)
     LUI                 $gp,%hi(RMP_GP_Val)
     ORI                 $gp,$gp,%lo(RMP_GP_Val)
     LW                  $gp,($gp)
-.endm
+    .endm
                 
     /* Context restoring */
-.macro LOAD_CONTEXT
+    .macro              LOAD_CONTEXT
     /* Protect access to c0 registers */
     DI
     EHB
@@ -256,7 +257,7 @@ R31    $ra        return address (used by function call)
     ADDIU               $sp,$sp,CTX_SIZE
     ERET
     NOP
-.endm
+    .endm
 /* End Macro *****************************************************************/
     
 /* Header ********************************************************************/

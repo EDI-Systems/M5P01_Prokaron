@@ -23,7 +23,7 @@
 ;/* End Import ***************************************************************/
 
 ;/* Macro ********************************************************************/
-;Push everything to stack
+;/* Push everything to stack *************************************************/
 RMP_MSP430_INT_SAVE     .macro
     PUSH                R15
     PUSH                R14
@@ -42,7 +42,7 @@ RMP_MSP430_INT_SAVE     .macro
     MOV                 #1,&RMP_MSP430_Int_Act
     .endm
 
-;Load everything from stack, and deal with pending yields if there is
+;/* Load everything from stack, and deal with pending yields if there is *****/
 RMP_MSP430_INT_RESTORE  .macro
     CMP                 #0,&_RMP_MSP430_Yield_Pend
     JEQ                 RMP_MSP430_YIELD_SKIP?

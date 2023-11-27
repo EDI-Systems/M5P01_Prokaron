@@ -1,5 +1,5 @@
 /******************************************************************************
-Filename    : rmp_test_TMS570LC4357.h
+Filename    : rmp_test_tms570ls0432.h
 Author      : pry 
 Date        : 22/07/2017
 Licence     : The Unlicense; see LICENSE for details.
