@@ -209,20 +209,18 @@ void RMP_PendSV_Handler(void)
 {
     rmp_ptr_t* SP;
 
-    /* Spill all the registers onto the user stack
-     * MRS      R0, PSP */
+    /* MRS      R0,PSP */
     SP=(rmp_ptr_t*)(RVM_REG->Reg.SP);
 
-    /* Equivalent of STMDB R0!, {R4-R11, LR}
-     * SUBS     R0, #36
-     * MOV      R1, R0
-     * STMIA    R1!, {R4-R7}
-     * MOV      R7, LR
-     * MOV      R6, R11
-     * MOV      R5, R10
-     * MOV      R4, R9
-     * MOV      R3, R8
-     * STMIA    R1!, {R3-R7} */
+    /* SUBS     R0,#36              ;Save the general purpose registers
+     * MOV      R1, R0              ;Equivalent of STMDB R0!,{R4-R11,LR}
+     * STMIA    R1!,{R4-R7}         ;Save low registers first due to limitation
+     * MOV      R7,LR
+     * MOV      R6,R11
+     * MOV      R5,R10
+     * MOV      R4,R9
+     * MOV      R3,R8
+     * STMIA    R1!,{R3-R7} */
     *(--SP)=RVM_REG->Reg.LR;
     *(--SP)=RVM_REG->Reg.R11;
     *(--SP)=RVM_REG->Reg.R10;
@@ -233,45 +231,40 @@ void RMP_PendSV_Handler(void)
     *(--SP)=RVM_REG->Reg.R5;
     *(--SP)=RVM_REG->Reg.R4;
 
-    /* Spill all the user-accessible hypercall structure to stack */
+    /* Save all the user-accessible hypercall structure to stack */
     *(--SP)=RVM_STATE->Usr.Param[3];
     *(--SP)=RVM_STATE->Usr.Param[2];
     *(--SP)=RVM_STATE->Usr.Param[1];
     *(--SP)=RVM_STATE->Usr.Param[0];
     *(--SP)=RVM_STATE->Usr.Number;
     
-    /* Save the SP to control block
-     * LDR      R1, =RMP_SP_Cur
-     * STR      R0, [R1] */
+    /* LDR      R1,=RMP_SP_Cur      ;Store the SP to control block
+     * STR      R0,[R1] */
     RMP_SP_Cur=(rmp_ptr_t)SP;
                 
-    /* Get the highest ready task
-     * BL       _RMP_Run_High */
+    /* BL       _RMP_Run_High       ;Get the highest ready task */
     _RMP_Run_High();
     
-    /* Load the SP
-     * LDR      R1, =RMP_SP_Cur
-     * LDR      R0, [R1] */
+    /* LDR      R1,=RMP_SP_Cur      ;Load the SP from control block
+     * LDR      R0,[R1] */
     SP=(rmp_ptr_t*)RMP_SP_Cur;
 
-    /* Load the user-accessible hypercall structure to stack */
+    /* Restore the user-accessible hypercall structure to stack */
     RVM_STATE->Usr.Number=*(SP++);
     RVM_STATE->Usr.Param[0]=*(SP++);
     RVM_STATE->Usr.Param[1]=*(SP++);
     RVM_STATE->Usr.Param[2]=*(SP++);
     RVM_STATE->Usr.Param[3]=*(SP++);
      
-    /* Load registers from user stack
-     * Equivalent of LDMIA R0!, {R4-R11, LR}
-     * MOV      R1, R0                      
-     * ADDS     R0, #16
-     * LDMIA    R0!, {R3-R7}
-     * MOV      R8, R3
-     * MOV      R9, R4
-     * MOV      R10, R5
-     * MOV      R11, R6
-     * MOV      LR, R7
-     * LDMIA    R1!, {R4-R7} */
+    /* MOV      R1,R0               ;Restore the general purpose registers             
+     * ADDS     R0,#16              ;Equivalent of LDMIA R0!,{R4-R11,LR}
+     * LDMIA    R0!,{R3-R7}         ;Restore high registers first due to limitation
+     * MOV      R8,R3
+     * MOV      R9,R4
+     * MOV      R10,R5
+     * MOV      R11,R6
+     * MOV      LR,R7
+     * LDMIA    R1!,{R4-R7} */
     RVM_REG->Reg.R4=*(SP++);
     RVM_REG->Reg.R5=*(SP++);
     RVM_REG->Reg.R6=*(SP++);
@@ -285,7 +278,6 @@ void RMP_PendSV_Handler(void)
     /* MSR      PSP, R0 */
     RVM_REG->Reg.SP=(rmp_ptr_t)SP;
 
-    /* Return from interrupt */
     /* BX       LR */
     return;
 }

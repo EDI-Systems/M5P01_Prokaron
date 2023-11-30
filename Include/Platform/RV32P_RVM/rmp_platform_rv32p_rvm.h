@@ -77,7 +77,8 @@ typedef rmp_s32_t rmp_ret_t;
 #define RMP_LSB_GET(VAL)                RMP_LSB_Generic(VAL)
 
 /* FPU registers */
-#define RMP_FPU                         ((volatile struct RVM_RV32P_Cop_Struct*)(RVM_REG->Cop))
+#define RMP_FPU_RVF                     ((volatile struct RVM_RV32P_RVF_Struct*)(RVM_REG->Cop))
+#define RMP_FPU_RVD                     ((volatile struct RVM_RV32P_RVD_Struct*)(RVM_REG->Cop))
 
 /* The virtual machine configs are here */
 #include "rvm_guest_conf.h"
@@ -209,7 +210,7 @@ __EXTERN__ void _RMP_Yield(void);
 /* Platform specific */
 EXTERN void _RMP_RV32P_RVM_Yield_NONE(void);
 EXTERN void _RMP_RV32P_RVM_Yield_RVF(void);
-EXTERN void _RMP_RV32P_RVM_Yield_RVFD(void);
+EXTERN void _RMP_RV32P_RVM_Yield_RVD(void);
 
 /* Initialization */
 __EXTERN__ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,

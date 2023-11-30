@@ -211,16 +211,13 @@ void RMP_PendSV_Handler(void)
 {
     rmp_ptr_t* SP;
     
-    /* Spill all the registers onto the user stack
-     * MRS      R0, PSP */
+    /* MRS      R0,PSP */
     SP=(rmp_ptr_t*)(RVM_REG->Reg.SP);
 
 #if(RVM_COP_NUM!=0U)
-    /* Are we using the FPUs at all? If yes, push FPU registers onto stack */
-    /* TST      LR, #0x10           ;Are we using the FPU or not at all?
-     * DCI      0xBF08              ;IT EQ ;If yes, (DCI for compatibility with no FPU support)
-     * DCI      0xED20              ;VSTMDBEQ R0!,{S16-S31}
-     * DCI      0x8A10              ;Save FPU registers not saved by lazy stacking. */
+    /* TST      LR,#0x10            ;Save FPU registers
+     * IT       EQ                  ;If FPU used,
+     * VSTMDBEQ R0!,{S16-S31}       ;Save FPU registers not saved by lazy stacking */
     if((RVM_REG->Reg.LR&0x10U)==0U)
     {
         *(--SP)=RMP_FPU->S31;
@@ -242,7 +239,7 @@ void RMP_PendSV_Handler(void)
     }
 #endif
 
-    /* STMDB    R0!, {R4-R11,LR} */
+    /* STMDB    R0!,{R4-R11,LR}     ;Save the general purpose registers */
     *(--SP)=RVM_REG->Reg.LR;
     *(--SP)=RVM_REG->Reg.R11;
     *(--SP)=RVM_REG->Reg.R10;
@@ -253,36 +250,32 @@ void RMP_PendSV_Handler(void)
     *(--SP)=RVM_REG->Reg.R5;
     *(--SP)=RVM_REG->Reg.R4;
 
-    /* Spill all the user-accessible hypercall structure to stack */
+    /* Save all the user-accessible hypercall structure to stack */
     *(--SP)=RVM_STATE->Usr.Param[3];
     *(--SP)=RVM_STATE->Usr.Param[2];
     *(--SP)=RVM_STATE->Usr.Param[1];
     *(--SP)=RVM_STATE->Usr.Param[0];
     *(--SP)=RVM_STATE->Usr.Number;
     
-    /* Save the SP to control block
-     * LDR      R1, =RMP_SP_Cur
-     * STR      R0, [R1] */
+    /* LDR      R1,=RMP_SP_Cur      ;Save the SP to control block
+     * STR      R0,[R1] */
     RMP_SP_Cur=(rmp_ptr_t)SP;
                 
-    /* Get the highest ready task
-     * BL       _RMP_Run_High */
+    /* BL       _RMP_Run_High       ;Get the highest ready task */
     _RMP_Run_High();
     
-    /* Load the SP
-     * LDR      R1, =RMP_SP_Cur
-     * LDR      R0, [R1] */
+    /* LDR      R1,=RMP_SP_Cur      ;Load the SP from control block
+     * LDR      R0,[R1] */
     SP=(rmp_ptr_t*)RMP_SP_Cur;
 
-    /* Load the user-accessible hypercall structure to stack */
+    /* Restore the user-accessible hypercall structure to stack */
     RVM_STATE->Usr.Number=*(SP++);
     RVM_STATE->Usr.Param[0]=*(SP++);
     RVM_STATE->Usr.Param[1]=*(SP++);
     RVM_STATE->Usr.Param[2]=*(SP++);
     RVM_STATE->Usr.Param[3]=*(SP++);
 
-    /* Load registers from user stack
-     * LDMIA    R0!, {R4-R11,LR} */
+    /* LDMIA    R0!,{R4-R11,LR}     ;Restore the general purpose registers */
     RVM_REG->Reg.R4=*(SP++);
     RVM_REG->Reg.R5=*(SP++);
     RVM_REG->Reg.R6=*(SP++);
@@ -294,11 +287,9 @@ void RMP_PendSV_Handler(void)
     RVM_REG->Reg.LR=*(SP++);
 
 #if(RVM_COP_NUM!=0U)
-    /* If we use FPU, restore FPU context */
-    /* TST      LR, #0x10           ;Are we using the FPU or not at all?
-     * DCI      0xBF08              ;IT EQ ;If yes, (DCI for compatibility with no FPU support)
-     * DCI      0xECB0              ;VLDMIAEQ R0!,{S16-S31}
-     * DCI      0x8A10              ;Load FPU registers not loaded by lazy stacking. */
+    /* TST      LR,#0x10            ;Load FPU registers
+     * IT       EQ                  ;If FPU used,
+     * VLDMIAEQ R0!,{S16-S31}       ;Load FPU registers not loaded by lazy stacking */
     if((RVM_REG->Reg.LR&0x10U)==0U)
     {
         RMP_FPU->S16=*(SP++);
@@ -320,10 +311,9 @@ void RMP_PendSV_Handler(void)
     }
 #endif
 
-    /* MSR      PSP, R0 */
+    /* MSR      PSP,R0 */
     RVM_REG->Reg.SP=(rmp_ptr_t)SP;
 
-    /* Return from interrupt */
     /* BX       LR */
     return;
 }

@@ -92,10 +92,11 @@ _RMP_A7M_RVM_LSB_Get    PROC
 ;              interrupt handler. Need to masquerade the context well so that
 ;              it may be recovered from the interrupt handler as well.
 ;              Caveats: 
-;              1. User-level code cannot clear CONTROL.FPCA hence all threads
-;                 in the system will be tainted with the FPU flag and include
-;                 a full context save/restore. Yet this is still much faster
-;                 than the traditional slow path through the PendSV.
+;              1. User-level code cannot clear CONTROL.FPCA (this is correct, 
+;                 if it can then there is a serious security loophole) hence 
+;                 all threads in the system will be tainted with the FPU active
+;                 flag and include a full context save/restore. However this is
+;                 still hugely faster than the slow path through the PendSV.
 ;              2. After the user have stacked up everything on its stack but
 ;                 not disabled its interrupt yet, an interrupt may occur, and
 ;                 stack again on the user stack. This is allowed, but must be
