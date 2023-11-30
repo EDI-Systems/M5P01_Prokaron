@@ -24,6 +24,9 @@ Description: The configuration file for STM32F767IG, on RVM.
 /* The mask/unmask interrupt operations */
 #define RMP_INT_MASK()              RMP_Int_Mask()
 #define RMP_INT_UNMASK()            RMP_Int_Unmask()
+
+/* Whether to use fast yield routine */
+#define RMP_A7M_RVM_FAST_YIELD      (1U)
 /* End Define ****************************************************************/
 
 /* End Of File ***************************************************************/
