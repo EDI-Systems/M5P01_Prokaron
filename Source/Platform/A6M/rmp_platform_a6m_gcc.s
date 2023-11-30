@@ -16,33 +16,41 @@ APSR                         Application Program Status Register.
 EPSR                         Execute Program Status Register.
 The above 3 registers are saved into the stack in combination(xPSR).
 ******************************************************************************/
-            
-/* Header ********************************************************************/
-    .syntax             unified
-    .thumb
-    .section            ".text"
-    .align              3
-/* End Header ****************************************************************/
-
-/* Export ********************************************************************/
-    .global             RMP_Int_Disable       
-    .global             RMP_Int_Enable
-    .global             RMP_Int_Mask     
-    .global             RMP_MSB_Get
-    .global             _RMP_Start
-    .global             _RMP_Yield        
-    .global             PendSV_Handler 
-    .global             SysTick_Handler                               
-/* End Export ****************************************************************/
 
 /* Import ********************************************************************/
-    .extern             _RMP_Run_High 
-    .extern             _RMP_Tick_Handler     
+    /* The real task switch handling function */
+    .extern             _RMP_Run_High
+    /* The real systick handler function */
+    .extern             _RMP_Tim_Handler
+    /* The PID of the current thread */
     .extern             RMP_Thd_Cur
-    .extern             RMP_SP_Cur        
-    .extern             RMP_Ctx_Save
-    .extern             RMP_Ctx_Load
+    /* The stack address of current thread */
+    .extern             RMP_SP_Cur
 /* End Import ****************************************************************/
+
+/* Export ********************************************************************/
+    /* Disable all interrupts */
+    .global             RMP_Int_Disable
+    /* Enable all interrupts */
+    .global             RMP_Int_Enable
+    /* Mask/unmask interrupt dummy */
+    .global             RMP_Int_Mask
+    /* Start the first thread */
+    .global             _RMP_Start
+    /* The PendSV trigger */
+    .global             _RMP_Yield
+    /* The system pending service routine */
+    .global             PendSV_Handler
+    /* The systick timer routine */
+    .global             SysTick_Handler
+/* End Export ****************************************************************/
+
+/* Header ********************************************************************/
+    .section            ".text.arch"
+    .syntax             unified
+    .thumb
+    .align              3
+/* End Header ****************************************************************/
 
 /* Function:RMP_Int_Disable ***************************************************
 Description : The function for disabling all interrupts. Does not allow nesting.
@@ -52,11 +60,8 @@ Return      : None.
 ******************************************************************************/
     .thumb_func
 RMP_Int_Disable:
-    .fnstart
-    .cantunwind
-    CPSID               I                                                       
-    BX                  LR       
-    .fnend				
+    CPSID               I
+    BX                  LR
 /* End Function:RMP_Int_Disable **********************************************/
 
 /* Function:RMP_Int_Enable ****************************************************
@@ -65,13 +70,10 @@ Input       : None.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-.thumb_func
+    .thumb_func
 RMP_Int_Enable:
-    .fnstart
-    .cantunwind
     CPSIE               I               
     BX                  LR
-    .fnend				
 /* End Function:RMP_Int_Enable ***********************************************/
 
 /* Function:RMP_Int_Mask ******************************************************
@@ -82,44 +84,8 @@ Return      : None.
 ******************************************************************************/
     .thumb_func
 RMP_Int_Mask:
-    .fnstart
-    .cantunwind                                                     
     BX                  LR
-    .fnend
 /* End Function:RMP_Int_Mask *************************************************/
-
-/* Function:RMP_MSB_Get *******************************************************
-Description : Get the MSB of the word.
-Input       : rmp_ptr_t R0 - The value.
-Output      : None.
-Return      : rmp_ptr_t R0 - The MSB position. 
-******************************************************************************/
-    MACRO
-$Label CHECK_BITS       $BITS
-    LSRS                R2,R1,#$BITS
-    BEQ                 $Label.Skip
-    ADDS                R0,#$BITS
-    MOV                 R1,R2
-$Label.Skip
-    MEND
-                
-    ;Always 21 instructions no matter what
-RMP_MSB_Get
-    ;See if the word passed in is zero. In this case, we return -1.
-    CMP                 R0,#0
-    BEQ                 ZERO
-    MOVS                R1,R0
-    MOVS                R0,#0
-HEX CHECK_BITS          16
-OCT CHECK_BITS          8
-QUAD CHECK_BITS         4
-BIN CHECK_BITS          2
-ONE CHECK_BITS          1
-    BX                  LR
-ZERO
-    SUBS                R0,#1
-    BX                  LR
-/* End Function:RMP_MSB_Get **************************************************/
 
 /* Function:_RMP_Yield ********************************************************
 Description : Trigger a yield to another thread.
@@ -129,15 +95,11 @@ Return      : None.
 ******************************************************************************/
     .thumb_func
 _RMP_Yield:
-    .fnstart
-    .cantunwind
-    LDR                 R0,=0xE000ED04        
-    LDR                 R1,=0x10000000        
+    LDR                 R0,=0xE000ED04      /* The NVIC_INT_CTRL register */
+    LDR                 R1,=0x10000000      /* Trigger the PendSV */
     STR                 R1,[R0]
-                   
-    ISB 
+    ISB                                     /* Instruction barrier */
     BX                  LR         
-    .fnend
 /* End Function:_RMP_Yield ***************************************************/
 
 /* Function:_RMP_Start ********************************************************
@@ -148,16 +110,11 @@ Return      : None.
 ******************************************************************************/
     .thumb_func
 _RMP_Start:
-    .fnstart
-    .cantunwind
-    SUBS                R1,#64               
-    MSR                 PSP,R1                
-    MOVS                R4,#0x02              
+    MSR                 PSP,R1              /* Set the stack pointer */
+    MOVS                R4,#0x02            /* Previleged thread mode */
     MSR                 CONTROL,R4
-                                 
-    ISB
-    BLX                 R0              
-    .fnend
+    ISB                                     /* Data and instruction barrier */
+    BLX                 R0                  /* Branch to our target */
 /* End Function:_RMP_Start ***************************************************/
 
 /* Function:PendSV_Handler ****************************************************
@@ -168,16 +125,14 @@ Description : The PendSV interrupt routine. In fact, it will call a C function
               can make way around this problem.
               However, if your compiler support inline assembly functions, this
               can also be written in C.
+              ARMv6-M only have STMIA, will have to live with it.
 Input       : None.
 Output      : None.
 Return      : None.
 ******************************************************************************/
     .thumb_func
 PendSV_Handler:
-    .fnstart
-    .cantunwind
-    /* Make space for register list */
-    MRS                 R0,PSP              /* Spill all the registers onto the user stack */
+    MRS                 R0,PSP              /* Save all the registers onto the user stack */
     SUBS                R0,#36
     MOV                 R1,R0
     STMIA               R1!,{R4-R7}         /* Save low register first due to limitation */
@@ -186,21 +141,15 @@ PendSV_Handler:
     MOV                 R5,R10
     MOV                 R4,R9
     MOV                 R3,R8
-    STMIA               R1!,{R3-R7}                
-                
-    BL                  RMP_Ctx_Save        /* Save extra context */
-                
+    STMIA               R1!,{R3-R7}
+
     LDR                 R1,=RMP_SP_Cur      /* Save The SP to control block */
     STR                 R0,[R1]
-                
-    BL                  _RMP_Run_High   /* Get the highest ready task */
-                
+    BL                  _RMP_Run_High       /* Get the highest ready task */
     LDR                 R1,=RMP_SP_Cur      /* Load the SP */
     LDR                 R0,[R1]
-                
-    BL                  RMP_Ctx_Load        /* Load extra context */
-                
-    MOV                 R1,R0                      
+
+    MOV                 R1,R0               /* Load all the registers from the user stack */
     ADDS                R0,#16
     LDMIA               R0!,{R3-R7}         /* Load high registers first due to limitation */
     MOV                 R8,R3
@@ -211,9 +160,7 @@ PendSV_Handler:
     LDMIA               R1!,{R4-R7}
     MSR                 PSP,R0
 
-    BX                  LR                  /* Cortex-M0 will never have a FPU */
-    .fnend
-    .ltorg
+    BX                  LR
 /* End Function:PendSV_Handler ***********************************************/
 
 /* Function:SysTick_Handler ***************************************************
@@ -230,16 +177,12 @@ Return      : None.
 ******************************************************************************/
     .thumb_func
 SysTick_Handler:
-    .fnstart
-    .cantunwind
     PUSH                {LR}
     
-    MOVS                R0,#0x01                    
-    BL                  _RMP_Tick_Handler
+    MOVS                R0,#0x01            /* We are not using tickless. */
+    BL                  _RMP_Tim_Handler
     
     POP                 {PC}
-    NOP
-    .fnend
 /* End Function:SysTick_Handler **********************************************/
 
     .end
