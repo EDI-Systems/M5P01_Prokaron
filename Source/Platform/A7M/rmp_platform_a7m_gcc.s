@@ -21,13 +21,13 @@ The ARM Cortex-M4/7 also include a FPU.
 
 /* Import ********************************************************************/
     /* The real task switch handling function */
-    .global             _RMP_Run_High
+    .extern             _RMP_Run_High
     /* The real systick handler function */
-    .global             _RMP_Tim_Handler
+    .extern             _RMP_Tim_Handler
     /* The PID of the current thread */
-    .global             RMP_Thd_Cur
+    .extern             RMP_Thd_Cur
     /* The stack address of current thread */
-    .global             RMP_SP_Cur
+    .extern             RMP_SP_Cur
 /* End Import ****************************************************************/
             
 /* Export ********************************************************************/
@@ -65,11 +65,8 @@ Return      : None.
 ******************************************************************************/
     .thumb_func
 RMP_Int_Disable:
-    .fnstart
-    .cantunwind
-    CPSID               I                                                       
-    BX                  LR       
-    .fnend
+    CPSID               I
+    BX                  LR
 /* End Function:RMP_Int_Disable **********************************************/
 
 /* Function:RMP_Int_Enable ****************************************************
@@ -80,11 +77,8 @@ Return      : None.
 ******************************************************************************/
     .thumb_func
 RMP_Int_Enable:
-    .fnstart
-    .cantunwind
     CPSIE               I               
-    BX                  LR
-    .fnend				
+    BX                  LR			
 /* End Function:RMP_Int_Enable ***********************************************/
 
 /* Function:RMP_Int_Mask ******************************************************
@@ -95,13 +89,10 @@ Return      : None.
 ******************************************************************************/
     .thumb_func
 RMP_Int_Mask:
-    .fnstart
-    .cantunwind
     MSR                 BASEPRI,R0
     /* We are not influenced by errata #837070 as the next */
     /* instruction is BX LR. Thus we have a free window. */
     BX                  LR
-    .fnend
 /* End Function:RMP_Int_Mask *************************************************/
 
 /* Function:_RMP_A7M_MSB_Get **************************************************
@@ -112,13 +103,10 @@ Return      : rmp_ptr_t R0 - The MSB position.
 ******************************************************************************/
     .thumb_func
 _RMP_A7M_MSB_Get:
-    .fnstart
-    .cantunwind
     CLZ                 R1,R0
     MOVS                R0,#31
     SUBS                R0,R1
     BX                  LR
-    .fnend
 /* End Function:_RMP_A7M_MSB_Get *********************************************/
 
 /* Function:_RMP_A7M_LSB_Get **************************************************
@@ -129,12 +117,9 @@ Return      : rmp_ptr_t R0 - The LSB position.
 ******************************************************************************/
     .thumb_func
 _RMP_A7M_LSB_Get:
-    .fnstart
-    .cantunwind
     RBIT                R0,R0
     CLZ                 R0,R0
     BX                  LR
-    .fnend
 /* End Function:_RMP_A7M_LSB_Get *********************************************/
 
 /* Function:_RMP_Yield ********************************************************
@@ -145,14 +130,11 @@ Return      : None.
 ******************************************************************************/
     .thumb_func
 _RMP_Yield:
-    .fnstart
-    .cantunwind
     LDR                 R0,=0xE000ED04      /* The NVIC_INT_CTRL register */
     LDR                 R1,=0x10000000      /* Trigger the PendSV */
     STR                 R1,[R0]
     ISB 
-    BX                  LR         
-    .fnend
+    BX                  LR
 /* End Function:_RMP_Yield ***************************************************/
 
 /* Function:_RMP_Start ********************************************************
@@ -163,14 +145,11 @@ Return      : None.
 ******************************************************************************/
     .thumb_func
 _RMP_Start:
-    .fnstart
-    .cantunwind           
     MSR                 PSP,R1              /* Set the stack pointer */
     MOVS                R4,#0x02            /* Previleged thread mode */
     MSR                 CONTROL,R4
     ISB
     BLX                 R0                  /* Branch to our target */
-    .fnend
 /* End Function:_RMP_Start ***************************************************/
 
 /* Function:PendSV_Handler ****************************************************
@@ -187,8 +166,6 @@ Return      : None.
 ******************************************************************************/
     .thumb_func
 PendSV_Handler:
-    .fnstart
-    .cantunwind
     MRS                 R0,PSP              /* Save registers */
     TST                 LR,#0x10            /* Save FPU registers */
     .hword              0xBF08              /* IT EQ ;If yes, (DCI for compatibility with no FPU support) */
@@ -209,8 +186,9 @@ PendSV_Handler:
     .hword              0x8A10              /* Load FPU registers not loaded by lazy stacking. */
     MSR                 PSP,R0
     
+    /* Some chips such as XMC4xxx step AA/step AB may corrupt on this branch. */
+    /* For those chips, you must manually edit this to PUSH {LR} then POP {PC}. */
     BX                  LR                       
-    .fnend				
 /* End Function:PendSV_Handler ***********************************************/
 
 /* Function:SysTick_Handler ***************************************************
@@ -227,16 +205,12 @@ Return      : None.
 ******************************************************************************/
     .thumb_func
 SysTick_Handler:
-    .fnstart
-    .cantunwind
     PUSH                {LR}
     
     MOVS                R0,#0x01            /* We are not using tickless. */
     BL                  _RMP_Tim_Handler
     
     POP                 {PC}
-    NOP
-    .fnend
 /* End Function:SysTick_Handler **********************************************/
 
     .end
