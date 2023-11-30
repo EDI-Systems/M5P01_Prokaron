@@ -202,6 +202,14 @@ Description : Yield from one thread to another without an interrupt.
               1. no coprocessor;
               2. single-precision FPU;
               3. double-precision FPU coexisting with the single-precision FPU.
+              In cases 2. and 3., the "Clean" state cannot be used for speedup
+              because we put the FPU context on stack. The "Clean" state assumes
+              a persistent context storage across context switches which is
+              usually a separate struct rather than the thread stack, but RMP
+              doesn't fall into this category (RME does). Of course, it is the
+              user's freedom to rewrite this routine and enable RMP_Ctx_Save and
+              RMP_Ctx_Load to save/restore FPU to/from standalone structs, but
+              this is out of the scope of a standard RMP port.
 Input       : None.
 Output      : None.
 Return      : None.
