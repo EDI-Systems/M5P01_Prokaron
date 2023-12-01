@@ -1,41 +1,44 @@
-/* GNU linker script for STM32F405 */
+/* GNU linker script for STM32F767 */
 
 ENTRY(Reset_Handler)
 
 MEMORY
 {
-    FLASH (rx)      : ORIGIN = 0x08000000, LENGTH = 1024k   /* entire flash, 1 MiB */
-    CCM (xrw)       : ORIGIN = 0x10000000, LENGTH = 64k     /* 64 KiB */
-    RAM (xrw)       : ORIGIN = 0x20000000, LENGTH = 128k    /* 128 KiB */
+    FLASH (rx)		: ORIGIN = 0x8000000, LENGTH = 1024K
+    RAM (xrw)		: ORIGIN = 0x20000000, LENGTH = 512K
 }
 
 _estack = ORIGIN(RAM) + LENGTH(RAM);
 __stack_size = 4k;
 
+/* Sections */
 SECTIONS
 {
+    /* The startup code into FLASH memory */
     .isr_vector :
     {
         . = ALIGN(4);
-        KEEP(*(.isr_vector))
+        KEEP(*(.isr_vector)) /* Startup code */
         . = ALIGN(4);
     } >FLASH
 
+    /* The progRAM code and other data into FLASH memory */
     .text :
     {
         . = ALIGN(8);
-        *(.text)
-        *(.text*)
+        *(.text)           /* .text sections (code) */
+        *(.text*)          /* .text* sections (code) */
         *(.rodata)
         *(.rodata*)
         *(.glue_7)         /* glue arm to thumb code */
         *(.glue_7t)        /* glue thumb to arm code */
-        *(.eh_frame)
-    
-        KEEP(*(.init))
-        KEEP(*(.fini))
+        *(.eh_fRAMe)
+
+        KEEP (*(.init))
+        KEEP (*(.fini))
+
         . = ALIGN(8);
-        _etext = .;
+        _etext = .;        /* define a global symbols at end of code */
         . = ALIGN(8);
         PROVIDE(_sidata = .);
     } >FLASH
@@ -47,6 +50,7 @@ SECTIONS
         KEEP (*(.preinit_array*))
         PROVIDE_HIDDEN (__preinit_array_end = .);
     } >FLASH
+    
     .init_array :
     {
         . = ALIGN(8);
@@ -55,6 +59,7 @@ SECTIONS
         KEEP (*(.init_array*))
         PROVIDE_HIDDEN (__init_array_end = .);
     } >FLASH
+    
     .fini_array :
     {
         . = ALIGN(8);
@@ -64,7 +69,7 @@ SECTIONS
         PROVIDE_HIDDEN (__fini_array_end = .);
     } >FLASH
 
-    .data :
+    .data : 
     {
         . = ALIGN(4);
         PROVIDE(_sdata = .);
@@ -72,7 +77,7 @@ SECTIONS
         *(.data*)
         . = ALIGN(4);
         PROVIDE(_edata = .);
-    } >RAM AT>FLASH
+    } >RAM AT> FLASH
 
     .bss :
     {
@@ -86,7 +91,7 @@ SECTIONS
         __bss_end__ = .;
         PROVIDE(_ebss = .);
     } >RAM
-
+    
     .stack :
     {
         . = ALIGN(8);
@@ -99,6 +104,4 @@ SECTIONS
         PROVIDE( _RMP_Stack = .);
         PROVIDE( _estack = .);
     } >RAM
-
-    
 }

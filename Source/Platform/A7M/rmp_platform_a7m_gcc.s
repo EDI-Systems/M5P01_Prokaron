@@ -166,24 +166,24 @@ Return      : None.
 ******************************************************************************/
     .thumb_func
 PendSV_Handler:
-    MRS                 R0,PSP              /* Save registers */
+    MRS                 R0,PSP
     TST                 LR,#0x10            /* Save FPU registers */
-    .hword              0xBF08              /* IT EQ ;If yes, (DCI for compatibility with no FPU support) */
+    .hword              0xBF08              /* IT EQ ;If FPU used, */
     .hword              0xED20              /* VSTMDBEQ R0!,{S16-S31} */
-    .hword              0x8A10              /* Save FPU registers not saved by lazy stacking. */
-    STMDB               R0!,{R4-R11,LR}     /* Save the general purpose registers. */
+    .hword              0x8A10              /* Save FPU registers not saved by lazy stacking */
+    STMDB               R0!,{R4-R11,LR}     /* Save the general purpose registers */
     
-    LDR                 R1,=RMP_SP_Cur      /* Save The SP to control block. */
+    LDR                 R1,=RMP_SP_Cur      /* Store The SP to control block */
     STR                 R0,[R1]
-    BL                  _RMP_Run_High       /* Get the highest ready task. */
-    LDR                 R1,=RMP_SP_Cur      /* Load the SP. */
+    BL                  _RMP_Run_High       /* Get the highest ready task */
+    LDR                 R1,=RMP_SP_Cur      /* Load the SP from control block */
     LDR                 R0,[R1]  
     
-    LDMIA               R0!,{R4-R11,LR}     /* Restore registers */
-    TST                 LR,#0x10            /* Load FPU registers */
-    .hword              0xBF08              /* IT EQ ;If yes, (DCI for compatibility with no FPU support) */
+    LDMIA               R0!,{R4-R11,LR}     /* Restore the general purpose registers */
+    TST                 LR,#0x10            /* Restore FPU registers */
+    .hword              0xBF08              /* IT EQ ;If FPU used, */
     .hword              0xECB0              /* VLDMIAEQ R0!,{S16-S31} */
-    .hword              0x8A10              /* Load FPU registers not loaded by lazy stacking. */
+    .hword              0x8A10              /* Restore FPU registers not loaded by lazy stacking */
     MSR                 PSP,R0
     
     /* Some chips such as XMC4xxx step AA/step AB may corrupt on this branch. */
