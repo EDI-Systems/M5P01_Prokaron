@@ -132,10 +132,10 @@ Return      : None.
 ******************************************************************************/
     .thumb_func
 PendSV_Handler:
-    MRS                 R0,PSP              /* Save all the registers onto the user stack */
-    SUBS                R0,#36
-    MOV                 R1,R0
-    STMIA               R1!,{R4-R7}         /* Save low register first due to limitation */
+    MRS                 R0,PSP
+    SUBS                R0,#36              /* Save the general purpose registers */
+    MOV                 R1,R0               /* Equivalent of STMDB R0!,{R4-R11,LR} */
+    STMIA               R1!,{R4-R7}         /* Save low registers first due to limitation */
     MOV                 R7,LR
     MOV                 R6,R11
     MOV                 R5,R10
@@ -146,12 +146,12 @@ PendSV_Handler:
     LDR                 R1,=RMP_SP_Cur      /* Save The SP to control block */
     STR                 R0,[R1]
     BL                  _RMP_Run_High       /* Get the highest ready task */
-    LDR                 R1,=RMP_SP_Cur      /* Load the SP */
+    LDR                 R1,=RMP_SP_Cur      /* Load the SP from control block */
     LDR                 R0,[R1]
 
-    MOV                 R1,R0               /* Load all the registers from the user stack */
-    ADDS                R0,#16
-    LDMIA               R0!,{R3-R7}         /* Load high registers first due to limitation */
+    MOV                 R1,R0               /* Restore the general purpose registers */
+    ADDS                R0,#16              /* Equivalent of LDMIA R0!,{R4-R11,LR} */
+    LDMIA               R0!,{R3-R7}         /* Restore high registers first due to limitation */
     MOV                 R8,R3
     MOV                 R9,R4
     MOV                 R10,R5
