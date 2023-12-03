@@ -215,7 +215,7 @@ Output      : None.
 Return      : None.
 ******************************************************************************/
 /* Save all GP regs **********************************************************/
-    .macro              RMP_RV32P_REG_SAVE LABEL
+    .macro              RMP_RV32P_SAVE LABEL
     /* RISC-V does not support interrupt nesting, as the current specification says.
      * Its interrupt controller does not accept new ones before the old one gets
      * done; and to make things worse, unlike MIPS, it doesn't have IPL field,
@@ -278,7 +278,7 @@ Return      : None.
     .endm
 
 /* Restore all GP regs and simulate a MRET ***********************************/
-    .macro              RMP_RV32P_REG_RESTORE
+    .macro              RMP_RV32P_RESTORE
     LI                  a1,0x1880           /* Load mstatus - force M mode with enabled interrupt */
     OR                  a0,a0,a1
     CSRW                mstatus,a0
@@ -324,9 +324,9 @@ Return      : None.
 
 _RMP_RV32P_Yield_NONE:
     CSRCI               mstatus,8           /* Disable interrupt and save registers */
-    RMP_RV32P_REG_SAVE _RMP_RV32P_Yield_NONE_Exit
+    RMP_RV32P_SAVE      _RMP_RV32P_Yield_NONE_Exit
     RMP_RV32P_SWITCH                        /* Do context switch */
-    RMP_RV32P_REG_RESTORE                   /* Enable interrupt and restore registers */
+    RMP_RV32P_RESTORE                       /* Enable interrupt and restore registers */
 _RMP_RV32P_Yield_NONE_Exit:
     RET
 
@@ -336,7 +336,7 @@ _RMP_RV32P_Yield_NONE_Exit:
 
 _RMP_RV32P_Yield_RVF:
     CSRCI               mstatus,8           /* Disable interrupt and save registers */
-    RMP_RV32P_REG_SAVE _RMP_RV32P_Yield_RVF_Exit
+    RMP_RV32P_SAVE      _RMP_RV32P_Yield_RVF_Exit
     LUI                 a1,4                /* See if FPU is used (mstatus.fs[1]==1) */
     AND                 a1,a1,a0
     BEQZ                a1,_RMP_RV32P_Yield_RVF_Save_Skip
@@ -418,7 +418,7 @@ _RMP_RV32P_Yield_RVF_Save_Skip:
     .hword              0x0035
     ADDI                sp,sp,33*4
 _RMP_RV32P_Yield_RVF_Restore_Skip:
-    RMP_RV32P_REG_RESTORE                   /* Enable interrupt and restore registers */
+    RMP_RV32P_RESTORE                       /* Enable interrupt and restore registers */
 _RMP_RV32P_Yield_RVF_Exit:
     RET
 
@@ -428,7 +428,7 @@ _RMP_RV32P_Yield_RVF_Exit:
 
 _RMP_RV32P_Yield_RVD:
     CSRCI               mstatus,8           /* Disable interrupt and save registers */
-    RMP_RV32P_REG_SAVE  _RMP_RV32P_Yield_RVD_Exit
+    RMP_RV32P_SAVE      _RMP_RV32P_Yield_RVD_Exit
     LUI                 a1,4                /* See if FPU is used (mstatus.fs[1]==1) */
     AND                 a1,a1,a0
     BEQZ                a1,_RMP_RV32P_Yield_RVD_Save_Skip
@@ -574,7 +574,7 @@ _RMP_RV32P_Yield_RVD_Save_Skip:
     .hword              0x0035
     ADDI                sp,sp,65*4
 _RMP_RV32P_Yield_RVD_Restore_Skip:
-    RMP_RV32P_REG_RESTORE                   /* Enable interrupt and restore registers */
+    RMP_RV32P_RESTORE                       /* Enable interrupt and restore registers */
 _RMP_RV32P_Yield_RVD_Exit:
     RET
 /* End Function:_RMP_RV32P_Yield *********************************************/

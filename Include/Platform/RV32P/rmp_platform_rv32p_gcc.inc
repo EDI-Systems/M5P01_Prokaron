@@ -22,7 +22,7 @@ Description : The assembly part of the RMP RTOS. This is for RV32P, and
 
 /* Macro *********************************************************************/
 /* Save all GP regs **********************************************************/
-    .macro              RMP_RV32P_REG_SAVE
+    .macro              RMP_RV32P_SAVE
     ADDI                sp,sp,-31*4
     SW                  x31,30*4(sp)
     SW                  x30,29*4(sp)
@@ -92,7 +92,7 @@ Description : The assembly part of the RMP RTOS. This is for RV32P, and
     .endm
 
 /* Restore all GP regs *******************************************************/
-    .macro              RMP_RV32P_REG_RESTORE
+    .macro              RMP_RV32P_RESTORE
     LI                  a1,0x1880
     OR                  a0,a0,a1
     CSRW                mstatus,a0
@@ -134,19 +134,19 @@ Description : The assembly part of the RMP RTOS. This is for RV32P, and
 
 /* Save macro for no coprocessor case ****************************************/
     .macro              RMP_RV32P_INT_SAVE_NONE
-    RMP_RV32P_REG_SAVE
+    RMP_RV32P_SAVE
     RMP_RV32P_SWITCH_PRE
     .endm
 
 /* Load macro for no coprocessor case ****************************************/
     .macro              RMP_RV32P_INT_RESTORE_NONE
     RMP_RV32P_SWITCH_POST
-    RMP_RV32P_REG_RESTORE
+    RMP_RV32P_RESTORE
     .endm
 
 /* Save macro for RVF case ***************************************************/
     .macro              RMP_RV32P_INT_SAVE_RVF
-    RMP_RV32P_REG_SAVE
+    RMP_RV32P_SAVE
     LUI                 a1,4
     AND                 a1,a1,a0
     BEQZ                a1,1f
@@ -233,12 +233,12 @@ Description : The assembly part of the RMP RTOS. This is for RV32P, and
     .hword              0x0035
     ADDI                sp,sp,33*4
 1:
-    RMP_RV32P_REG_RESTORE
+    RMP_RV32P_RESTORE
     .endm
 
 /* Save macro for RVD case ***************************************************/
     .macro              RMP_RV32P_INT_SAVE_RVD
-    RMP_RV32P_REG_SAVE
+    RMP_RV32P_SAVE
     LUI                 a1,4
     AND                 a1,a1,a0
     BEQZ                a1,1f
@@ -389,7 +389,7 @@ Description : The assembly part of the RMP RTOS. This is for RV32P, and
     .hword              0x0035
     ADDI                sp,sp,65*4
 1:
-    RMP_RV32P_REG_RESTORE
+    RMP_RV32P_RESTORE
     .endm
 /* End Macro *****************************************************************/
 
