@@ -23,6 +23,9 @@ Description : The configuration file for CH32V307VC, on RVM.
 /* The mask/unmask interrupt operations */
 #define RMP_INT_MASK()                  RMP_Int_Mask()
 #define RMP_INT_UNMASK()                RMP_Int_Unmask()
+
+/* Whether to use fast yield routine */
+#define RMP_RV32P_RVM_FAST_YIELD        (1U)
 /* End Define ****************************************************************/
 
 /* End Of File ***************************************************************/
