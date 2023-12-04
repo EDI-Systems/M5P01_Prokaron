@@ -1,16 +1,16 @@
 ###############################################################################
 #Filename    : RMP
-#Author      : hrs
+#Author      : Runsheng Hou
 #Date        : 29/11/2023 16:55:31
 #Licence     : LGPL v3+; see COPYING for details.
 #Description : Generic Makefile (based on gcc). This file is intended
-#              to be used with STM32F405RG, and the GNU toolchain.
+#              to be used with STM32F030F4, and the GNU toolchain.
 ###############################################################################
 
 # Config ######################################################################
 TARGET=RMP
-CPU=-mcpu=cortex-m4 -mthumb
-CDEFS=-DSTM32F405xx -DUSE_HAL_DRIVER -DHSE_VALUE=8000000 -DPLL_M=8
+CPU=-mcpu=cortex-m0 -mthumb
+CDEFS=-DSTM32L071xx -DUSE_HAL_DRIVER
 
 CFLAGS=-O3 -specs=nano.specs -fsigned-char -fno-common -fno-strict-aliasing -fdata-sections -ffunction-sections -ffreestanding
 AFLAGS=-fdata-sections -ffunction-sections
@@ -25,29 +25,31 @@ PREFIX=arm-none-eabi-
 # Source ######################################################################
 INCS+=-I./Include
 INCS+=-I../../Include
-INCS+=-I../../../M0A00_Library/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Include
-INCS+=-I../../../M0A00_Library/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Device/ST/STM32F4xx/Include
-INCS+=-I../../../M0A00_Library/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Driver/Inc
-INCS+=-I../../../M0A00_Library/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Driver/Inc/Conf
+INCS+=-I../../../M0A00_Library/STM32Cube_FW_L0_V1.10.0/Drivers/CMSIS/Include
+INCS+=-I../../../M0A00_Library/STM32Cube_FW_L0_V1.10.0/Drivers/CMSIS/Device/ST/STM32L0xx/Include
+INCS+=-I../../../M0A00_Library/STM32Cube_FW_L0_V1.10.0/Drivers/STM32L0xx_HAL_Driver/Inc
+INCS+=-I../../../M0A00_Library/STM32Cube_FW_L0_V1.10.0/Drivers/STM32L0xx_HAL_Driver/Inc/Conf
 
 CSRCS+=../../Source/Kernel/rmp_kernel.c
 CSRCS+=../../Source/Test/rmp_benchmark.c
-CSRCS+=../../Source/Platform/A7M/rmp_platform_a7m.c
-CSRCS+=../../../M0A00_Library/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Device/ST/STM32F4xx/Source/Templates/system_stm32f4xx.c
-CSRCS+=../../../M0A00_Library/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim.c
-CSRCS+=../../../M0A00_Library/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim_ex.c
-CSRCS+=../../../M0A00_Library/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc.c
-CSRCS+=../../../M0A00_Library/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc_ex.c
-CSRCS+=../../../M0A00_Library/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.c
-CSRCS+=../../../M0A00_Library/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_gpio.c
-CSRCS+=../../../M0A00_Library/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.c
-CSRCS+=../../../M0A00_Library/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma.c
-CSRCS+=../../../M0A00_Library/STM32Cube_FW_F4_V1.21.0/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_cortex.c
+CSRCS+=../../Source/Platform/A6M/rmp_platform_a6m.c
+CSRCS+=../../../M0A00_Library/STM32Cube_FW_L0_V1.10.0/Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_hal.c
+CSRCS+=../../../M0A00_Library/STM32Cube_FW_L0_V1.10.0/Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_dma.c
+CSRCS+=../../../M0A00_Library/STM32Cube_FW_L0_V1.10.0/Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_tim.c
+CSRCS+=../../../M0A00_Library/STM32Cube_FW_L0_V1.10.0/Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_tim_ex.c
+CSRCS+=../../../M0A00_Library/STM32Cube_FW_L0_V1.10.0/Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_gpio.c
+CSRCS+=../../../M0A00_Library/STM32Cube_FW_L0_V1.10.0/Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_cortex.c
+CSRCS+=../../../M0A00_Library/STM32Cube_FW_L0_V1.10.0/Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_rcc.c
+CSRCS+=../../../M0A00_Library/STM32Cube_FW_L0_V1.10.0/Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_pwr_ex.c
+CSRCS+=../../../M0A00_Library/STM32Cube_FW_L0_V1.10.0/Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_uart.c
+CSRCS+=../../../M0A00_Library/STM32Cube_FW_L0_V1.10.0/Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_rcc_ex.c
+CSRCS+=../../../M0A00_Library/STM32Cube_FW_L0_V1.10.0/Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_uart_ex.c
+CSRCS+=../../../M0A00_Library/STM32Cube_FW_L0_V1.10.0/Drivers/CMSIS/Device/ST/STM32L0xx/Source/Templates/system_stm32l0xx.c
 
-ASRCS+=../../Source/Platform/A7M/rmp_platform_a7m_gcc.s
-ASRCS+=../../../M0A00_Library/STM32Cube_FW_F4_V1.21.0/Drivers/CMSIS/Device/ST/STM32F4xx/Source/Templates/gcc/startup_stm32f405xx.s
+ASRCS+=../../Source/Platform/A6M/rmp_platform_a6m_gcc.s
+ASRCS+=../../../M0A00_Library/STM32Cube_FW_L0_V1.10.0/Drivers/CMSIS/Device/ST/STM32L0xx/Source/Templates/gcc/startup_stm32l071xx.s
 
-LDSCRIPT=rmp_platform_stm32f405rg.ld
+LDSCRIPT=rmp_platform_stm32l071cb.ld
 LIBS=-lc -lnosys
 # End Source ##################################################################
 
