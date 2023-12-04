@@ -15,7 +15,7 @@ CDEFS=-DSTM32F030x6 -DUSE_HAL_DRIVER
 CFLAGS=-Os -specs=nano.specs -fsigned-char -fno-common -fno-strict-aliasing -fdata-sections -ffunction-sections -ffreestanding
 AFLAGS=-fdata-sections -ffunction-sections
 WFLAGS=-Wall -Wno-strict-aliasing
-DFLAGS=-g3 -gdwarf-2
+DFLAGS=-g3
 LFLAGS=-specs=nano.specs -specs=nosys.specs -Wl,--gc-sections,--cref
 
 OBJDIR=Objects
@@ -94,23 +94,28 @@ mkdir:
 
 # Compile C sources
 %.o:%.c
-	$(CC) -c $(CPU) $(CDEFS) $(INCS) $(CFLAGS) -MMD -MP -MF "$(DEP)" -Wa,-a,-ad,-alms="$(LST)" "$<" -o "$(OBJ)"
+	@echo [CC] "$<"
+	@$(CC) -c $(CPU) $(CDEFS) $(INCS) $(CFLAGS) $(DFLAGS) -MMD -MP -MF "$(DEP)" -Wa,-a,-ad,-alms="$(LST)" "$<" -o "$(OBJ)"
 
 # Assemble ASM sources
 %.o:%.s
-	$(AS) -c $(CPU) $(INCS) $(AFLAGS) "$<" -o "$(OBJ)"
+	@echo [AS] "$<"
+	@$(AS) -c $(CPU) $(INCS) $(AFLAGS) $(DFLAGS) "$<" -o "$(OBJ)"
 
 # Link ELF target file and print size
 $(TARGET).elf:$(COBJS) $(AOBJS)
-	$(LD) $(OBJDIR)/*.o $(CPU) $(LFLAGS) -T $(LDSCRIPT) -Wl,-Map=$(MAP) $(LIBS) -o $(OBJ)
-	$(SZ) $(OBJ)
+	@echo [LD] "$@"
+	@$(LD) $(OBJDIR)/*.o $(CPU) $(LFLAGS) $(DFLAGS) -T $(LDSCRIPT) -Wl,-Map=$(MAP) $(LIBS) -o $(OBJ)
+	@$(SZ) $(OBJ)
 
 # Create hex/bin programming files
 $(TARGET).hex:$(TARGET).elf
-	$(HEX) "$(OBJDIR)/$<" "$(OBJDIR)/$@"
+	@echo [HEX] "$@"
+	@$(HEX) "$(OBJDIR)/$<" "$(OBJDIR)/$@"
 
 $(TARGET).bin:$(TARGET).elf
-	$(BIN) "$(OBJDIR)/$<" "$(OBJDIR)/$@"
+	@echo [BIN] "$@"
+	@$(BIN) "$(OBJDIR)/$<" "$(OBJDIR)/$@"
 
 # Clean up
 clean:
