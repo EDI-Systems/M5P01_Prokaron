@@ -15,9 +15,6 @@ Description : The testbench for linux OS. This is not particularly fast due to
 /* End Include ***************************************************************/
 
 /* Define ********************************************************************/
-/* Where are the initial stacks */
-#define THD1_STACK        (&Stack_1[60000])
-#define THD2_STACK        (&Stack_2[60000])
 /* How to read counter */
 static __inline__ unsigned long long rdtsc(void)
 {
@@ -87,7 +84,7 @@ void Int_Init(void)
     Tick.it_interval.tv_sec=0;
     Tick.it_interval.tv_usec=TEST_INT_INTERVAL;
     RMP_ASSERT(setitimer(ITIMER_REAL, &Tick, NULL)>=0);
-    RMP_LOG_S("Timer init done - testing interrupts.\r\n");
+    RMP_DBG_S("Timer init done - testing interrupts.\r\n");
 }
 
 /* End Function:Int_Init *****************************************************/

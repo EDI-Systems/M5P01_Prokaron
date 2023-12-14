@@ -185,26 +185,9 @@ do \
 while(0)
 #endif
     
-/* Coverage switch - not to be enabled in most cases; user should not touch this */
-/* #define RMP_COVERAGE */
-
-/* Test marker macro */
-#ifdef RMP_COVERAGE
-#define RMP_COVERAGE_LINES          (6144U)
-#define RMP_COVERAGE_MARKER() \
-do \
-{ \
-    RMP_Coverage[__LINE__]++; \
-    RMP_Coverage[0]=RMP_Coverage[__LINE__]; \
-} \
-while(0)
-#else
-#define RMP_COVERAGE_MARKER() \
-do \
-{ \
-    \
-} \
-while(0)
+/* Coverage switch detection */
+#ifndef RMP_COVERAGE_MARKER
+#define RMP_COVERAGE_MARKER()
 #endif
 /*****************************************************************************/
 /* __RMP_KERNEL_DEF__ */

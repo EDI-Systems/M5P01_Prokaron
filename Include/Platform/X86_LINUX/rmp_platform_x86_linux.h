@@ -65,18 +65,22 @@ typedef rmp_s32_t rmp_ret_t;
 
 /* System macros *************************************************************/
 /* Compiler "extern" keyword setting */
-#define EXTERN                   extern
+#define EXTERN                          extern
 /* The order of bits in one CPU machine word */
-#define RMP_WORD_ORDER           5
+#define RMP_WORD_ORDER                  (5U)
+/* Descending stack, 16-byte alignment */
+#define RMP_INIT_STACK                  RMP_INIT_STACK_DESCEND(4U)
 /* The maximum length of char printing - no need to change this in most cases */
-#define RMP_DEBUG_PRINT_MAX 255
-/* The offset of the stack when initializing */
-#define RMP_INIT_STACK           RMP_INIT_STACK_TAIL(1024)
+#define RMP_DEBUG_PRINT_MAX             (255U)
+/* MSB/LSB extraction */
+#define RMP_MSB_GET(VAL)                RMP_MSB_Generic(VAL)
+#define RMP_LSB_GET(VAL)                RMP_LSB_Generic(VAL)
 
+/* The CPU and application specific macros are here */
 #include "rmp_platform_x86_linux_conf.h"
-/* End System macros *********************************************************/
 
-/* Cortex-M specific macros **************************************************/
+
+/* End System macros *********************************************************/
 
 /*****************************************************************************/
 /* __RMP_PLATFORM_X86_LINUX_DEF__ */
@@ -95,7 +99,27 @@ typedef rmp_s32_t rmp_ret_t;
 #define __HDR_DEF__
 #undef __HDR_DEF__
 /*****************************************************************************/
-
+struct RMP_X86_LINUX_Stack
+{
+    /* To avoid conflict with linux header, we use REG_ prefix */
+    rmp_ptr_t REG_EBX;
+    rmp_ptr_t REG_ECX;
+    rmp_ptr_t REG_EDX;
+    rmp_ptr_t REG_ESI;
+    rmp_ptr_t REG_EDI;
+    rmp_ptr_t REG_EBP;
+    rmp_ptr_t REG_EAX;
+    rmp_ptr_t REG_XDS;
+    rmp_ptr_t REG_XES;
+    rmp_ptr_t REG_XFS;
+    rmp_ptr_t REG_XGS;
+    rmp_ptr_t REG_ORIG_EAX;
+    rmp_ptr_t REG_EIP;
+    rmp_ptr_t REG_ECS;
+    rmp_ptr_t REG_EFLAGS;
+    rmp_ptr_t REG_XSS;
+    rmp_ptr_t REG_Param;
+};
 /*****************************************************************************/
 /* __RMP_PLATFORM_X86_LINUX_STRUCT__ */
 #endif
@@ -158,13 +182,15 @@ __EXTERN__ void (*volatile RMP_Eint_Handler)(void);
 __EXTERN__ void RMP_Int_Disable(void);
 __EXTERN__ void RMP_Int_Enable(void);
 
-__EXTERN__ rmp_ptr_t RMP_MSB_Get(rmp_ptr_t Val);
 __EXTERN__ void _RMP_Start(rmp_ptr_t Entry, rmp_ptr_t Stack);
 __EXTERN__ void _RMP_Yield(void);
 
 /* Initialization */
-__EXTERN__ void _RMP_Stack_Init(rmp_ptr_t Entry, rmp_ptr_t Stack, rmp_ptr_t Arg);
-__EXTERN__ void _RMP_Low_Level_Init(void);
+__EXTERN__ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
+                                     rmp_ptr_t Size,
+                                     rmp_ptr_t Entry,
+                                     rmp_ptr_t Param);
+__EXTERN__ void _RMP_Lowlvl_Init(void);
 __EXTERN__ void RMP_Putchar(char Char);
 __EXTERN__ void _RMP_Plat_Hook(void);
 /*****************************************************************************/
