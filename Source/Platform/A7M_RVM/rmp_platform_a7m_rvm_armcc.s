@@ -150,7 +150,9 @@ _RMP_A7M_RVM_LSB_Get    PROC
     MACRO
     EXC_PUSH            $SZ,$XPSR,$LR
     LDR                 R0,[SP,#4]          ;Load real R0 value pushed at start
-    SUB                 SP,#4*($SZ-8)       ;Adjust SP to push GP regs
+    IF                  (($SZ-8)!=0)        ;Adjust SP to push GP regs when needed
+    SUB                 SP,#4*($SZ-8)
+    ENDIF
     PUSH                {R0-R3,R12,LR}      ;Push stack frame GP regs
     LDR                 R0,[SP,#4*($SZ-2)]  ;Load real XPSR value pushed at start
     LDR                 R1,=$XPSR
@@ -172,40 +174,41 @@ _RMP_A7M_RVM_LSB_Get    PROC
     MEND
                         
     ;Exception unstacking for basic frame:
-    ;The original consists of [PAD] [FPU] XPSR PC LR R12 R3-R0. 
-    ;This is not very ideal for restoring the context without touching the 
-    ;XPSR, which is susceptible to changes.
-    ;PC R0 XPSR Temp .... is far more ideal. To handle this, the snippet
-    ;1. transforms the stack into           PC XPSR LR ... R0
-    ;2. pops off GP regs and result in      PC XPSR
-    ;3. makes more space on stack           PC XPSR ---- Temp
-    ;4. stores R0 to temp                   PC XPSR ---- R0
-    ;5. moves XPSR to back                  PC ---- XPSR R0
-    ;6. moves R0 to front                   PC R0   XPSR ----
-    ;7. restores xpsr through R0            PC R0
-    ;8. restores R0 and PC                  PC R0
+    ;The original sequence is [PAD] [FPU] XPSR PC LR R12 R3-R0. This is not
+    ;ideal for manual restoring, because restoring PC and SP simulaneously
+    ;must be the last step. Thus, we need to transform it.
+    ;1. When there is [PAD] or [FPU]:
+    ;   Original    : [PAD] [FPU]  XPSR PC LR   R12 R3  - R0
+    ;   Transformed : PC   R0 XPSR   [EMPTY]    R12 R3-R1 LR
+    ;2. When there is neither [PAD] nor [FPU]:
+    ;   Original    : XPSR PC LR   R12 R3  - R0
+    ;   Transformed : PC   R0 XPSR R12 R3-R1 LR
+    ;This is done in 4 steps:
+    ;1. Restore LR from the stack, so it won't be overwritten;
+    ;2. Pop off R0, load XPSR, load PC, and rearrange them at the end;
+    ;3. Pop off R1-R3, pop off LR, then skip the middle;
+    ;4. Restore XPSR through R0, then restore R0 and PC.
     ;Note that in the transformation we never place variables at lower 
     ;addresses than the current SP, as this will run the risk of a racing
     ;interrupt erasing the variable.
     MACRO
     EXC_POP             $SZ
-    LDR                 R1,[SP,#4*6]        ;Move PC to the last
-    ORR                 R1,#0x00000001
-    STR                 R1,[SP,#4*($SZ-1)]
-    AND                 R0,#0xFFFFFDFF      ;Clear the XPSR[9]
-    STR                 R0,[SP,#4*($SZ-2)]  ;Move XPSR to the second to the last
-    POP                 {R0-R3,R12,LR}      ;Pop GP regs
-    ADD                 SP,#4*($SZ-10)      ;Make room for manipulations
-    STR                 R0,[SP]             ;Keep R0 original value
-    LDR                 R0,[SP,#4*2]        ;Move XPSR back
-    STR                 R0,[SP,#4*1]
-    LDR                 R0,[SP]             ;Move R0 to front
-    STR                 R0,[SP,#4*2]
-    ADD                 SP,#4
-    POP                 {R0}
+    LDR                 LR,[SP,#4*5]        ;Restore LR
+    POP                 {R0}                ;Load R0/XPSR/PC into R0/R1/R2
+    LDR                 R1,[SP,#4*6]
+    AND                 R1,#0xFFFFFDFF      ;Clear XPSR[9]
+    LDR                 R2,[SP,#4*5]
+    ORR                 R2,#0x00000001      ;Set PC[0]
+    STR                 R1,[SP,#4*($SZ-4)]  ;Rearrange to H-PC-R0-XPSR-L
+    STR                 R0,[SP,#4*($SZ-3)]
+    STR                 R2,[SP,#4*($SZ-2)]
+    POP                 {R1-R3,R12}         ;Pop GP regs
+    IF                  (($SZ-8)!=0)        ;Skip [PAD] and [FPU] when needed
+    ADD                 SP,#4*($SZ-8)
+    ENDIF
+    POP                 {R0}                ;Pop XPSR through R0
     MSR                 XPSR,R0
-    POP                 {R0}
-    POP                 {PC}
+    POP                 {R0,PC}             ;Pop R0 and PC
     MEND
                         
 ;/* User-level Context Switch ************************************************/

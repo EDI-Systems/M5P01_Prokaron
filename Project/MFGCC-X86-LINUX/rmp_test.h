@@ -7,7 +7,7 @@ Description : The configuration file for testing program.
 ******************************************************************************/
 
 /* Config Includes ***********************************************************/
-#include "Platform/rmp_test_X86_linux.h"
+#include "Test/Chip/rmp_test_x86_linux.h"
 /* End Config Includes *******************************************************/
 
 /* End Of File ***************************************************************/

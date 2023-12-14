@@ -25,6 +25,18 @@ Description : The platform specific file for x86 Linux port.
 #undef __HDR_PUBLIC__
 /* End Include ***************************************************************/
 
+/* Function:_RMP_Lowlvl_Init ***************************************************
+Description    : Initialize the low level hardware of the system.
+Input          : None.
+Output         : None.
+Register Usage : None.
+******************************************************************************/
+void _RMP_Lowlvl_Init(void)
+{
+
+}
+/* End Function:_RMP_Lowlvl_Init **********************************************/
+
 /* Function:RMP_Int_Disable ***************************************************
 Description    : The function for disabling all interrupts. Does not allow nesting.
 Input          : None.
@@ -227,12 +239,11 @@ void PendSV_Handler(void)
     *(--SP)=Regs.ecx;
     *(--SP)=Regs.ebx;
 
-    RMP_Ctx_Save();
+    /* Context saved to stack */
     RMP_SP_Cur=(rmp_ptr_t)SP;
     _RMP_Run_High();
     SP=(rmp_ptr_t*)RMP_SP_Cur;
-    RMP_Ctx_Load();
-
+    
     /* Reload register contents from stack */
     Regs.ebx=*(SP++);
     Regs.ecx=*(SP++);
@@ -270,44 +281,53 @@ Return      : None.
 ******************************************************************************/
 void SysTick_Handler(void)
 {
-    _RMP_Tick_Handler(1);
+    _RMP_Tim_Handler(1U);
 }
 /* End Function:SysTick_Handler **********************************************/
 
 /* Function:_RMP_Stack_Init ***************************************************
 Description : Initiate the process stack when trying to start a process. Never
               call this function in user application.
-Input       : rmp_ptr_t Entry - The entry of the thread.
-              rmp_ptr_t Stack - The stack address of the thread.
-              rmp_ptr_t Arg - The argument to pass to the thread.
+Input       : rmp_ptr_t Stack - The stack address of the thread.
+              rmp_ptr_t Size - The stack size of the thread.
+              rmp_ptr_t Entry - The entry address of the thread.
+              rmp_ptr_t Param - The argument to pass to the thread.
 Output      : None.
-Return      : None.
+Return      : rmp_ptr_t - The adjusted stack location.
 ******************************************************************************/
-void _RMP_Stack_Init(rmp_ptr_t Entry, rmp_ptr_t Stack, rmp_ptr_t Arg)
+rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
+                          rmp_ptr_t Size,
+                          rmp_ptr_t Entry,
+                          rmp_ptr_t Param)
 {
-    rmp_ptr_t* Stack_Addr;
+    rmp_ptr_t End;
+    struct RMP_X86_LINUX_Stack* Ptr;
+    
+    /* Compute & align stack */
+    End=RMP_ROUND_DOWN(Stack+Size, 4U);
+    Ptr=(struct RMP_X86_LINUX_Stack*)(End-sizeof(struct RMP_X86_LINUX_Stack));
 
-    Stack_Addr=(rmp_ptr_t*)Stack;
-
-    Stack_Addr[0]=0x0B0B0B0B;                                        /* EBX */
-    Stack_Addr[1]=0x0C0C0C0C;                                        /* ECX */
-    Stack_Addr[2]=0x0D0D0D0D;                                        /* EDX */
-    Stack_Addr[3]=0x51515151;                                        /* ESI */
-    Stack_Addr[4]=0xD1D1D1D1;                                        /* EDI */
-    Stack_Addr[5]=0x69696969;                                        /* EBP */
-    Stack_Addr[6]=Arg;                                               /* EAX */
+    Ptr->REG_EBX=0x0B0B0B0B;
+    Ptr->REG_ECX=0x0C0C0C0C;
+    Ptr->REG_EDX=0x0D0D0D0D;
+    Ptr->REG_ESI=0x51515151;
+    Ptr->REG_EDI=0xD1D1D1D1;
+    Ptr->REG_EBP=0x69696969;
+    Ptr->REG_EAX=Param;
     /* ptrace requires the last 2 bits of segment registers to be 1; see kernel source */
-    Stack_Addr[7]=0x2B;                                              /* XDS */
-    Stack_Addr[8]=0x2B;                                              /* XES */
-    Stack_Addr[9]=0x2B;                                              /* XFS */
-    Stack_Addr[10]=0x63;                                             /* XGS */
-    Stack_Addr[11]=Arg;                                              /* ORIG_EAX */
+    Ptr->REG_XDS=0x2B;
+    Ptr->REG_XES=0x2B;
+    Ptr->REG_XFS=0x2B;
+    Ptr->REG_XGS=0x63;
+    Ptr->REG_ORIG_EAX=Param;
     /* Always need to +2, kernel bug */
-    Stack_Addr[12]=Entry;                                            /* EIP */
-    Stack_Addr[13]=0x23;                                             /* ECS */
-    Stack_Addr[14]=0x202;                                            /* EFLAGS */
-    Stack_Addr[15]=0x2B;                                             /* XSS */
-    Stack_Addr[16]=Arg;                                              /* Param */
+    Ptr->REG_EIP=Entry;
+    Ptr->REG_ECS=0x23;
+    Ptr->REG_EFLAGS=0x202;
+    Ptr->REG_XSS=0x2B;
+    Ptr->REG_Param=Param;
+
+    return (rmp_ptr_t)Ptr;
 }
 /* End Function:_RMP_Stack_Init **********************************************/
 

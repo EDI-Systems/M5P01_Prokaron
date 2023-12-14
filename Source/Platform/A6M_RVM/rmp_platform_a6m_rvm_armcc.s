@@ -101,10 +101,10 @@ _RMP_Start              PROC
     ;Exception stacking
     MACRO
     EXC_PUSH            $SZ,$XPSR,$LR
-    SUB                 SP,#4*($SZ-7)       ;Adjust SP to before pushing R0-R3
-    LDR                 R0,[SP,#4*($SZ-5)]  ;Load real R0/R1 value pushed at start
-    LDR                 R1,[SP,#4*($SZ-7)]
-    PUSH                {R0-R3}             ;Push GP regs without overwrites
+    LDR                 R0,[SP,#4*2]        ;Load real R0/R1 value pushed at start
+    LDR                 R1,[SP]
+    SUB                 SP,#4*($SZ-7)       ;Adjust SP to push GP regs
+    PUSH                {R0-R3}             ;Push stack frame GP regs
     MOV                 R0,R12
     MOV                 R1,LR
     STR                 R0,[SP,#4*4]
@@ -132,46 +132,44 @@ _RMP_Start              PROC
     MEND
                         
     ;Exception unstacking for basic frame:
-    ;The original consists of [PAD] [FPU] XPSR PC LR R12 R3-R0. 
-    ;This is not very ideal for restoring the context without touching the 
-    ;XPSR, which is susceptible to changes.
-    ;PC R0 XPSR Temp .... is far more ideal. To handle this, the snippet
-    ;1. transforms the stack into           PC XPSR LR ... R0
-    ;2. pops off GP regs and result in      PC XPSR
-    ;3. makes more space on stack           PC XPSR ---- Temp
-    ;4. stores R0 to temp                   PC XPSR ---- R0
-    ;5. moves XPSR to back                  PC ---- XPSR R0
-    ;6. moves R0 to front                   PC R0   XPSR ----
-    ;7. restores xpsr through R0            PC R0
-    ;8. restores R0 and PC                  PC R0
+    ;The original sequence is [PAD] XPSR PC LR R12 R3-R0. This is not
+    ;ideal for manual restoring, because restoring PC and SP simulaneously
+    ;must be the last step. Thus, we need to transform it.
+    ;1. When there is [PAD]:
+    ;   Original    : [PAD] XPSR PC   LR      R12 R3  - R0
+    ;   Transformed : PC    R0   XPSR [EMPTY] R12 R3-R1 LR
+    ;2. When there is no [PAD]:
+    ;   Original    : XPSR PC LR   R12 R3  - R0
+    ;   Transformed : PC   R0 XPSR R12 R3-R1 LR
+    ;This is done in 4 steps:
+    ;1. Restore LR from the stack, so it won't be overwritten;
+    ;2. Pop off R0, load XPSR, load PC, and rearrange them at the end;
+    ;3. Pop off R1-R3, pop off LR, then skip the middle;
+    ;4. Restore XPSR through R0, then restore R0 and PC.
     ;Note that in the transformation we never place variables at lower 
     ;addresses than the current SP, as this will run the risk of a racing
     ;interrupt erasing the variable.
     MACRO
     EXC_POP             $SZ
-    LDR                 R1,[SP,#4*6]        ;Move PC to the last
-    LDR                 R2,=0x00000001
-    ORRS                R1,R2
-    STR                 R1,[SP,#4*($SZ-1)]
-    LDR                 R2,=0xFFFFFDFF      ;Clear the XPSR[9]
-    ANDS                R0,R2
-    STR                 R0,[SP,#4*($SZ-2)]  ;Move XPSR to the second to the last
-    LDR                 R0,[SP,#4*4]        ;Pop GP regs without overwrites
+    LDR                 R0,[SP,#4*4]        ;Restore LR/R12
     LDR                 R1,[SP,#4*5]
     MOV                 R12,R0
     MOV                 LR,R1
-    POP                 {R0-R3}
-    ADD                 SP,#4*($SZ-8)       ;Make room for manipulations
-    STR                 R0,[SP]             ;Keep R0 original value
-    LDR                 R0,[SP,#4*2]        ;Move XPSR back
-    STR                 R0,[SP,#4*1]
-    LDR                 R0,[SP]             ;Move R0 to front
-    STR                 R0,[SP,#4*2]
-    ADD                 SP,#4
-    POP                 {R0}
+    POP                 {R0}                ;Load R0/XPSR/PC into R0/R1/R2
+    LDR                 R1,[SP,#4*6]
+    LDR                 R3,=0xFFFFFDFF      ;Clear XPSR[9]
+    ANDS                R1,R3
+    LDR                 R2,[SP,#4*5]
+    LDR                 R3,=0x00000001      ;Set PC[0]
+    ORRS                R2,R3
+    STR                 R1,[SP,#4*($SZ-4)]  ;Rearrange to H-PC-R0-XPSR-L
+    STR                 R0,[SP,#4*($SZ-3)]
+    STR                 R2,[SP,#4*($SZ-2)]
+    POP                 {R1-R3}             ;Pop GP regs
+    ADD                 SP,#4*($SZ-7)       ;Skip R12/[PAD]
+    POP                 {R0}                ;Pop XPSR through R0
     MSR                 XPSR,R0
-    POP                 {R0}
-    POP                 {PC}
+    POP                 {R0,PC}             ;Pop R0 and PC
     MEND
                         
 ;/* User-level Context Switch ************************************************/
