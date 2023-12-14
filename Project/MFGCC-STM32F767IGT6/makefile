@@ -95,27 +95,27 @@ mkdir:
 
 # Compile C sources
 %.o:%.c
-	@echo [CC] "$<"
+	@echo "    CC      $(notdir $<)"
 	@$(CC) -c $(CPU) $(CDEFS) $(INCS) $(CFLAGS) $(DFLAGS) -MMD -MP -MF "$(DEP)" -Wa,-a,-ad,-alms="$(LST)" "$<" -o "$(OBJ)"
 
 # Assemble ASM sources
 %.o:%.s
-	@echo [AS] "$<"
+	@echo "    AS      $(notdir $<)"
 	@$(AS) -c $(CPU) $(INCS) $(AFLAGS) $(DFLAGS) "$<" -o "$(OBJ)"
 
 # Link ELF target file and print size
 $(TARGET).elf:$(COBJS) $(AOBJS)
-	@echo [LD] "$@"
+	@echo "    LD [P]  $(notdir $@)"
 	@$(LD) $(OBJDIR)/*.o $(CPU) $(LFLAGS) $(DFLAGS) -T $(LDSCRIPT) -Wl,-Map=$(MAP) $(LIBS) -o $(OBJ)
 	@$(SZ) $(OBJ)
 
 # Create hex/bin programming files
 $(TARGET).hex:$(TARGET).elf
-	@echo [HEX] "$@"
+	@echo "    HEX     $(notdir $@)"
 	@$(HEX) "$(OBJDIR)/$<" "$(OBJDIR)/$@"
 
 $(TARGET).bin:$(TARGET).elf
-	@echo [BIN] "$@"
+	@echo "    BIN     $(notdir $@)"
 	@$(BIN) "$(OBJDIR)/$<" "$(OBJDIR)/$@"
 
 # Clean up
