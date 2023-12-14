@@ -77,7 +77,7 @@ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
     Ptr->R10=0x10101010U;
     Ptr->R11=0x11111111U;
     Ptr->R12=0x12121212U;
-    Ptr->LR=0x13131313U;
+    Ptr->LR=0x14141414U;
     
     return (rmp_ptr_t)Ptr;
 }
