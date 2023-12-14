@@ -23,14 +23,14 @@ The ARM Cortex-M4/7 also include a FPU.
     .thumb
 /* Import ********************************************************************/
     /* The real task switch handling function */
-    .global             _RMP_Run_High
+    .extern             _RMP_Run_High
     /* The stack address of current thread */
-    .global             RMP_SP_Cur
+    .extern             RMP_SP_Cur
     /* Mask/unmask interrupts */
-    .global             RMP_Int_Mask
-    .global             RMP_Int_Unmask
+    .extern             RMP_Int_Mask
+    .extern             RMP_Int_Unmask
     /* Hypercall parameter space */
-    .global             RMP_A7M_RVM_Usr_Param
+    .extern             RMP_A7M_RVM_Usr_Param
 /* End Import ****************************************************************/
 
 /* Export ********************************************************************/
