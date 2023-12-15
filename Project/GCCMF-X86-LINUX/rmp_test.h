@@ -1,6 +1,6 @@
 /******************************************************************************
 Filename    : rmp_test.h
-Author      : pry
+Author      : pry wyh
 Date        : 24/06/2017
 Licence     : LGPL v3+; see COPYING for details.
 Description : The configuration file for testing program.
