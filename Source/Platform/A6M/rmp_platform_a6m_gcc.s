@@ -1,5 +1,5 @@
 /******************************************************************************
-Filename    : rmp_platform_cm0_asm_gcc.s
+Filename    : rmp_platform_a6m_gcc.s
 Author      : pry
 Date        : 10/04/2012
 Description : The assembly part of the RMP RTOS. This is for Cortex-M0/0+/1.

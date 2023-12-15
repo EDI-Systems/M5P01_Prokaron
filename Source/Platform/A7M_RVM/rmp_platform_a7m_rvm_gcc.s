@@ -1,5 +1,5 @@
 /******************************************************************************
-Filename    : rmp_platform_cmx_rvm_asm.S
+Filename    : rmp_platform_a7m_rvm_gcc.s
 Author      : pry
 Date        : 09/02/2018
 Description : The assembly part of the RMP RTOS for the RVM virtual machine monitor.

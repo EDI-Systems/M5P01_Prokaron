@@ -1,5 +1,5 @@
 /******************************************************************************
-Filename    : rmp_platform_a7m_asm_gcc.s
+Filename    : rmp_platform_a7m_gcc.s
 Author      : songleifeng
 Date        : 07/19/2018
 Description : The assembly part of the RMP RTOS. This is for ARMv7-M.
