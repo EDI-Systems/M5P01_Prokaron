@@ -1,5 +1,5 @@
 ;/*****************************************************************************
-;Filename    : rmp_platform_cmx_asm.s
+;Filename    : rmp_platform_a8m_armcc.s
 ;Author      : pry
 ;Date        : 10/04/2012
 ;Description : The assembly part of the RMP RTOS. This is for Cortex-M3/4/7.
