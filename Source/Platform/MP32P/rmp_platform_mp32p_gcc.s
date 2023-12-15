@@ -1,5 +1,5 @@
 /******************************************************************************
-Filename    : platform_mp32p_asm.s
+Filename    : rmp_platform_mp32p_gcc.s
 Author      : pry
 Date        : 10/04/2012
 Description : The assembly part of the RMP RTOS.
