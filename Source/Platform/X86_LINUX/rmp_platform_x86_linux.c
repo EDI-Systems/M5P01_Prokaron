@@ -1,6 +1,6 @@
 /******************************************************************************
 Filename    : rmp_platform_x86_linux.c
-Author      : pry
+Author      : pry wyh
 Date        : 04/02/2018
 Licence     : The Unlicense; see LICENSE for details.
 Description : The platform specific file for x86 Linux port.

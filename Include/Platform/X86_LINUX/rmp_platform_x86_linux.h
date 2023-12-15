@@ -1,6 +1,6 @@
 /******************************************************************************
 Filename    : rmp_platform_x86_linux.h
-Author      : pry
+Author      : pry wyh
 Date        : 01/04/2017
 Licence     : The Unlicense; see LICENSE for details.
 Description : The header of "rmp_platform_x86_linux.c".
