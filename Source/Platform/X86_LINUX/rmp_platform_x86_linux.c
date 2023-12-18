@@ -155,18 +155,15 @@ void _RMP_Start(rmp_ptr_t Entry, rmp_ptr_t Stack)
     RMP_ASSERT(signal(SIGALRM, SigAlrm_Handler)>=0);
     RMP_ASSERT(setitimer(ITIMER_REAL, &Tick, NULL)>=0);
 
-    printf("The test on interrupt response time can take up to 5 minutes. Please wait patiently.\n");
-    printf("The performance number printed is not accurate. If you see 6-figure numbers, run again.\n");
-    printf("Additionally, the interrupt test may fail, because the Linux scheduler is not\n");
-    printf("guaranteed to pick the user thread after the system thread have finished its\n");
-    printf("signal handling. If another signal comes again before the user thread gets a\n");
-    printf("chance to run, then it will fail because the mailbox is not empty yet. Should\n");
-    printf("this happen on your computer(due to performance issues), increase the macro\n");
-    printf("TEST_INT_INTERVAL's (in test_X86_LINUX.h) value. However this macro's value\n");
-    printf("have a linear relationship with interrupt response test runtime, so configure it\n");
-    printf("according to your needs. The default value 10000 corresponds to 200 seconds.\n");
-    printf("This test will continue to run if not killed manually (mimicking the MCUs).\n");
-    printf("Remember to kill it after its completion!\n\n");
+    printf("The test on interrupt latency can take up to 5 minutes depending on your setup.\n"
+           "The performance number printed is not accurate (usually only the minumum matters).\n"
+           "Additionally, the interrupt test may fail, cause the Linux scheduler is not guaranteed\n"
+           "to pick the user thread after the system thread have finished its signal handling.\n"
+           "If another signal comes again before the user thread gets a chance to run, then it fails\n"
+           "because the mailbox, etc. is not empty yet. Should this happen on your computer(due to\n"
+           "performance or virtualization issues), increase the value of TEST_INT_INTERVAL macro\n"
+           "(in test_x86_linux.h). However, interrupt latency test runtime scales linearly with\n"
+           "this value. The default value 10000 corresponds to about 5 minutes.\n");
 
 
     RMP_Sys_PID=syscall(SYS_gettid);
