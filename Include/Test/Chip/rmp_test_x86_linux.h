@@ -26,6 +26,8 @@ static __inline__ unsigned long long rdtsc(void)
 #define RMP_CNT_READ()    rdtsc()
 /* Are we testing the memory pool? */
 #define TEST_MEM_POOL     8192
+/* Exit the test after everything */
+#define TEST_EXIT
 /* Are we doing minimal measurements? */
 /* #define MINIMAL_SIZE */
 /* The POSIX timers are all 64 bits, so */
@@ -76,14 +78,14 @@ void Int_Init(void)
     RMP_Eint_Handler=TIM_IRQHandler;
 
     /* Set up the timer */
-    memset(&Tick, 0, sizeof(Tick));
+    memset(&Tick,0,sizeof(Tick));
     /* First timeout */
     Tick.it_value.tv_sec=0;
     Tick.it_value.tv_usec=TEST_INT_INTERVAL;
     /* Interval time to run function */
     Tick.it_interval.tv_sec=0;
     Tick.it_interval.tv_usec=TEST_INT_INTERVAL;
-    RMP_ASSERT(setitimer(ITIMER_REAL, &Tick, NULL)>=0);
+    RMP_ASSERT(setitimer(ITIMER_REAL,&Tick,NULL)>=0);
     RMP_DBG_S("Timer init done - testing interrupts.\r\n");
 }
 
@@ -103,12 +105,26 @@ void Int_Disable(void)
     RMP_Eint_Handler=0;
 
     /* Set up the timer */
-    memset(&Tick, 0, sizeof(Tick));
+    memset(&Tick,0,sizeof(Tick));
     /* Stop the itimer */
-    RMP_ASSERT(setitimer(ITIMER_REAL, &Tick, NULL)>=0);
+    RMP_ASSERT(setitimer(ITIMER_REAL,&Tick,NULL)>=0);
+}
+/* End Function:Int_Disable **************************************************/
+
+/* Function:Test_Exit *********************************************************
+Description : Exit the test.
+Input       : None.
+Output      : None.
+Return      : None.
+******************************************************************************/
+void Test_Exit(void)
+{
+    printf("All tests done - exiting process.\n");
+    kill(0,SIGKILL);
+    exit(0);
 }
 #endif
-/* End Function:Int_Disable **************************************************/
+/* End Function:Test_Exit ****************************************************/
 
 /* End Of File ***************************************************************/
 

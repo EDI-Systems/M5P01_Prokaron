@@ -614,8 +614,11 @@ void Func_2(void)
     Min=Bmq_ISR_Min;
     RMP_LIST("ISR Blocking message queue        ");
     
-    /* Test stop - keep dumping counter values to detect potential wrong
-     * timer clock rate configurations */
+    /* Test stop - Decide whether to exit, or keep dumping counter values
+     * to detect potentially wrong timer clock rate configurations */
+#ifdef TEST_EXIT
+    Test_Exit();
+#else
     while(1)
     {
         Start=End;
@@ -630,6 +633,7 @@ void Func_2(void)
             }
         }
     }
+#endif
 }
 /* End Function:Func_2 *******************************************************/
 
