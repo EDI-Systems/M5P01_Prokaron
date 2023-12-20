@@ -15,17 +15,9 @@ Description : The testbench for linux OS. This is not particularly fast due to
 /* End Include ***************************************************************/
 
 /* Define ********************************************************************/
-/* How to read counter */
-static __inline__ unsigned long long rdtsc(void)
-{
-    unsigned long long int x;
-    __asm__ volatile (".byte 0x0f, 0x31" : "=A" (x));
-    return x;
-}
-
-#define RMP_CNT_READ()    rdtsc()
+#define RMP_CNT_READ()      RDTSC_Read()
 /* Are we testing the memory pool? */
-#define TEST_MEM_POOL     8192
+#define TEST_MEM_POOL       (8192U)
 /* Exit the test after everything */
 #define TEST_EXIT
 /* Are we doing minimal measurements? */
@@ -33,8 +25,10 @@ static __inline__ unsigned long long rdtsc(void)
 /* The POSIX timers are all 64 bits, so */
 typedef unsigned long long rmp_tim_t;
 
+/* Number of rounds - too many is useless on this demo port */
+#define ROUND_NUM           (20U)
 /* Interrupt interval in usec */
-#define TEST_INT_INTERVAL 10000
+#define TEST_INT_INTERVAL   (50000U)
 /* End Define ****************************************************************/
 
 /* Global ********************************************************************/
@@ -51,6 +45,16 @@ Input       : None.
 Output      : None.
 Return      : None.
 ******************************************************************************/
+/* How to read counter */
+static __inline__ unsigned long long RDTSC_Read(void)
+{
+    unsigned long long int Value;
+    
+    __asm__ __volatile__ (".byte 0x0f, 0x31" : "=A" (Value));
+    
+    return Value;
+}
+
 void Timer_Init(void)
 {
     /* Already initialized on power-on, this is x86 and we have RDTSC */

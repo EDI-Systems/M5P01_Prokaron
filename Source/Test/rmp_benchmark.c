@@ -22,12 +22,16 @@ Description : The performance benchmark for RMP. Do not modify this file; what
 
 /* Define ********************************************************************/
 /* Number of rounds to test */
+#ifndef ROUND_NUM
 #define ROUND_NUM       10000
+#endif
 /* Interval of timer overflow reports: 
  * ~ 3MHz               1000
  * ~ 30MHz              10000
  * ~ 300MHz             100000 */
+#ifndef OVERFLOW_NUM
 #define OVERFLOW_NUM    10000
+#endif
 /* Whether to include FPU context */
 /* #define FLOAT_CONTEXT */
 /* Whether to inject fault intentionally */
@@ -45,7 +49,7 @@ do \
 { \
     Total=0U; \
     Max=0U; \
-    Min=65535U; \
+    Min=((rmp_tim_t)-1); \
 } \
 while(0)
 
