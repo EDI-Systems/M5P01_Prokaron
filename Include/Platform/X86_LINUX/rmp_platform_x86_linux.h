@@ -78,8 +78,6 @@ typedef rmp_s32_t rmp_ret_t;
 
 /* The CPU and application specific macros are here */
 #include "rmp_platform_x86_linux_conf.h"
-
-
 /* End System macros *********************************************************/
 
 /*****************************************************************************/

@@ -16,6 +16,7 @@ Description: The configuration file for POSIX platform.
 #include <signal.h>
 #include <string.h>
 #include <errno.h>
+#include <sched.h>
 #include <sys/time.h>
 #include <sys/types.h>
 #include <sys/wait.h>

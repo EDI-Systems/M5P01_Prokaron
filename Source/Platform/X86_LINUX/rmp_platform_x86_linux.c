@@ -61,54 +61,6 @@ void RMP_Int_Enable(void)
 }
 /* End Function:RMP_Int_Enable ***********************************************/
 
-/* Function:RMP_MSB_Get *******************************************************
-Description : Get the MSB of the word.
-Input       : rmp_ptr_t Val - The value.
-Output      : None.
-Return      : rmp_ptr_t - The MSB position.
-******************************************************************************/
-/* 2*i and 2*i+1 will correspond to the same slot in this table */
-const rmp_u8_t RMP_MSB_Tbl[128]=
-{
-    /* 0-1 */
-    0x00,
-    /* 2-3 */
-    0x01,
-    /* 4-7 */
-    0x02,0x02,
-    /* 8-15 */
-    0x03,0x03,0x03,0x03,
-    /* 16-31 */
-    0x04,0x04,0x04,0x04,0x04,0x04,0x04,0x04,
-    /* 32-63 */
-    0x05,0x05,0x05,0x05,0x05,0x05,0x05,0x05,0x05,0x05,0x05,0x05,0x05,0x05,0x05,0x05,
-    /* 64-127 */
-    0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,
-    0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,
-    /* 128-255 */
-    0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,
-    0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,
-    0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,
-    0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x07
-};
-
-rmp_ptr_t RMP_MSB_Get(rmp_ptr_t Val)
-{
-    /* Scan from high bits to low bits */
-    if((Val&0xFF000000)!=0)
-        return RMP_MSB_Tbl[Val>>25]+24;
-    else if((Val&0xFF0000)!=0)
-        return RMP_MSB_Tbl[Val>>17]+16;
-    else if((Val&0xFF00)!=0)
-        return RMP_MSB_Tbl[Val>>9]+8;
-    else if((Val&0xFF)!=0)
-        return RMP_MSB_Tbl[Val>>1];
-
-    /* Nothing anywhere */
-    return 0xFFFFFFFF;
-}
-/* End Function:RMP_MSB_Get **************************************************/
-
 /* Function:_RMP_Yield ********************************************************
 Description : Trigger a yield to another thread.
 Input       : None.
@@ -130,7 +82,7 @@ Input       : None.
 Output      : None.
 Return       : None.
 ******************************************************************************/
-/* The signal processing function for invoking the timer interrupts - this will happen per 1 sec */
+/* The timer interrupt signal processing - this will happen every second */
 void SigAlrm_Handler(int Param)
 {
     RMP_SysTick_Flag=1;
@@ -145,35 +97,45 @@ void _RMP_Start(rmp_ptr_t Entry, rmp_ptr_t Stack)
     struct itimerval Tick;
 
     /* Set up the timer */
-    memset(&Tick, 0, sizeof(Tick));
+    memset(&Tick,0,sizeof(Tick));
     /* First timeout */
     Tick.it_value.tv_sec=1;
     Tick.it_value.tv_usec=0;
     /* Interval time to run function */
     Tick.it_interval.tv_sec=1;
     Tick.it_interval.tv_usec=0;
-    RMP_ASSERT(signal(SIGALRM, SigAlrm_Handler)>=0);
-    RMP_ASSERT(setitimer(ITIMER_REAL, &Tick, NULL)>=0);
+    RMP_ASSERT(signal(SIGALRM,SigAlrm_Handler)>=0);
+    RMP_ASSERT(setitimer(ITIMER_REAL,&Tick,NULL)>=0);
 
-    printf("The test on interrupt latency can take up to 5 minutes depending on your setup.\n"
-           "The performance number printed is not accurate (usually only the minumum matters).\n"
-           "Additionally, the interrupt test may fail, cause the Linux scheduler is not guaranteed\n"
-           "to pick the user thread after the system thread have finished its signal handling.\n"
-           "If another signal comes again before the user thread gets a chance to run, then it fails\n"
-           "because the mailbox, etc. is not empty yet. Should this happen on your computer(due to\n"
-           "performance or virtualization issues), increase the value of TEST_INT_INTERVAL macro\n"
-           "(in test_x86_linux.h). However, interrupt latency test runtime scales linearly with\n"
-           "this value. The default value 10000 corresponds to about 5 minutes.\n");
+    printf("The test on interrupt latency can take up to 5 minutes depending on\n"
+           "your setup. The performance number printed is not accurate (usually\n"
+           "only the minumum matters). Additionally, the interrupt test may fail,\n"
+           "cause the Linux scheduler is not guaranteed to pick the user thread\n"
+           "after the system thread have finished its signal handling. If another\n"
+           "signal comes again before the user thread gets a chance to run, then\n"
+           "it fails because the mailbox, etc. is not empty yet. Should this\n"
+           "happen on your computer(due toperformance or virtualization issues),\n"
+           "increase the value of TEST_INT_INTERVAL macro(in test_x86_linux.h).\n"
+           "However, interrupt latency test runtime scales linearly with this.\n");
 
-
+    /* Fork user thread */
     RMP_Sys_PID=syscall(SYS_gettid);
-    RMP_User_PID=clone((int (*)(void*))(Entry), (void*)Stack, CLONE_VM|SIGCHLD, 0);
-    printf("Sys PID is %d, User PID is %d.\n\n",RMP_Sys_PID,RMP_User_PID);
+    RMP_User_PID=clone((int (*)(void*))(Entry),(void*)Stack,CLONE_VM|SIGCHLD,0);
+    printf("\nSys PID is %d, User PID is %d.\n",RMP_Sys_PID,RMP_User_PID);
 
+    /* If needed, set priority - may work in some cases
+     * struct sched_param Param;
+     * Param.sched_priority=sched_get_priority_max(SCHED_FIFO);
+     * RMP_ASSERT(Param.sched_priority>=0);
+     * RMP_ASSERT(sched_setscheduler(RMP_Sys_PID,SCHED_FIFO,&Param)>=0);
+     * RMP_ASSERT(sched_setscheduler(RMP_User_PID,SCHED_FIFO,&Param)>=0); */
+    
     while(1)
     {
         /* Wait for the thread to receive the signal */
         RMP_ASSERT(wait(&Status)>0);
+        
+        /* Handle system interrupts */
         if(RMP_SysTick_Flag!=0)
         {
             RMP_SysTick_Flag=0;
@@ -190,8 +152,9 @@ void _RMP_Start(rmp_ptr_t Entry, rmp_ptr_t Stack)
             if(RMP_Eint_Handler!=0)
                 RMP_Eint_Handler();
         }
-           /* Resume execution */
-        RMP_ASSERT(ptrace(PTRACE_CONT, RMP_User_PID,0,0)>=0);
+        
+        /* Resume execution */
+        RMP_ASSERT(ptrace(PTRACE_CONT,RMP_User_PID,0,0)>=0);
     }
 }
 /* End Function:_RMP_Start ***************************************************/
@@ -214,7 +177,7 @@ void PendSV_Handler(void)
     struct pt_regs Regs;
 
     /* Read the register contents and push to stack */
-    RMP_ASSERT(ptrace(PTRACE_GETREGS, RMP_User_PID, NULL, &Regs)>=0);
+    RMP_ASSERT(ptrace(PTRACE_GETREGS,RMP_User_PID,NULL,&Regs)>=0);
 
     /* Is it in the kernel? if yes... well, we gonna skip it this time until it exits */
     /* Now push everything to its stack */
@@ -260,7 +223,7 @@ void PendSV_Handler(void)
     Regs.xss=*(SP++);
     Regs.esp=(rmp_ptr_t)SP;
 
-    RMP_ASSERT(ptrace(PTRACE_SETREGS, RMP_User_PID, NULL, &Regs)>=0);
+    RMP_ASSERT(ptrace(PTRACE_SETREGS,RMP_User_PID,NULL,&Regs)>=0);
 }
 /* End Function:PendSV_Handler ***********************************************/
 
