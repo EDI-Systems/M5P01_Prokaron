@@ -1,5 +1,5 @@
 /******************************************************************************
-Filename    : rmp_test_STM32F103ZE.h
+Filename    : rmp_test_stm32f103ze.h
 Author      : pry,lzy
 Date        : 22/07/2017
 Licence     : The Unlicense; see LICENSE for details.

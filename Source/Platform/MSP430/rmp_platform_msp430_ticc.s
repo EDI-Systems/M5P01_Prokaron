@@ -80,8 +80,8 @@ RMP_Int_Enable:         .asmfunc
 ;*****************************************************************************/
 _RMP_Start:             .asmfunc
     ;Save kernel stack
-	MOV					SP,&_RMP_MSP430_SP_Kern
-	;Make up return address
+    MOV                 SP,&_RMP_MSP430_SP_Kern
+    ;Make up return address
     MOV                 R13,SP
     MOV                 R12,PC
     ; Dummy return
@@ -121,7 +121,7 @@ _RMP_MSP430_Yield:      .asmfunc
 
     ;Choose highest priority ready thread with kernel stack
     MOV                 SP,&RMP_SP_Cur
-    MOV					&_RMP_MSP430_SP_Kern,SP
+    MOV                 &_RMP_MSP430_SP_Kern,SP
     CALL                #_RMP_Run_High
     MOV                 &RMP_SP_Cur,SP
 

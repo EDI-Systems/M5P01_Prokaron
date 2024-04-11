@@ -2345,6 +2345,26 @@ rmp_ret_t RMP_Thd_Cancel(volatile struct RMP_Thd* Thread)
 }
 /* End Function:RMP_Thd_Cancel ***********************************************/
 
+/* Function:RMP_Thd_Loop ******************************************************
+Description : Enter a useless loop to waste some time. Can be used when the
+              scheduler is locked. The delay caused by each loop is chip and
+			  toolchain specific.
+Input       : rmp_ptr_t Loop - The number of useless loops to run.
+Output      : None.
+Return      : None.
+******************************************************************************/
+void RMP_Thd_Loop(rmp_ptr_t Loop)
+{
+	volatile rmp_ptr_t Current;
+	
+	/* Just waste some time */
+	for(Current=0U;Current<Loop;Current++)
+	{
+        RMP_COVERAGE_MARKER();
+	}
+}
+/* End Function:RMP_Thd_Loop *************************************************/
+
 /* Function:RMP_Sem_Crt *******************************************************
 Description : Create a semaphore in the system.
 Input       : volatile struct RMP_Sem* Semaphore - The pointer to the semaphore.
@@ -3257,8 +3277,8 @@ rmp_ret_t RMP_Mem_Init(volatile void* Pool,
 /* End Function:RMP_Mem_Init *************************************************/
 
 /* Function:_RMP_Mem_Block ****************************************************
-Description : Make a memory block from the memory trunk. The memory block is always
-              free when created. No parameter check performed here.
+Description : Make a memory block from the memory trunk. The memory block is
+              always free when created. No parameter check performed here.
 Input       : volatile struct RMP_Mem_Head* Addr - The start address of the
                                                    memory block, word-aligned.
               rmp_ptr_t Size - The size of the memory block, word-aligned.
