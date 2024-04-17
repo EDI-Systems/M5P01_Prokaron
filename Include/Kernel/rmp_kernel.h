@@ -305,8 +305,8 @@ struct RMP_Mem
 {
     /* The number of FLIs in the system */
     rmp_ptr_t FLI_Num;
-    /* The start address of the actual memory pool */
-    rmp_ptr_t Start;
+    /* The base address of the actual memory pool */
+    rmp_ptr_t Base;
     /* The size of this pool, including the header, bitmap and list table */
     rmp_ptr_t Size;
     /* The location of the list table itself */
@@ -548,13 +548,13 @@ __EXTERN__ rmp_ret_t RMP_Bmq_Cnt(volatile struct RMP_Bmq* Queue);
 EXTERN void RMP_POINT(rmp_cnt_t Coord_X,
                       rmp_cnt_t Coord_Y,
                       rmp_ptr_t Color);
-__EXTERN__ void RMP_Line(rmp_cnt_t Start_X,
-                         rmp_cnt_t Start_Y,
+__EXTERN__ void RMP_Line(rmp_cnt_t Begin_X,
+                         rmp_cnt_t Begin_Y,
                          rmp_cnt_t End_X,
                          rmp_cnt_t End_Y,
                          rmp_ptr_t Color);
-__EXTERN__ void RMP_Dot_Line(rmp_cnt_t Start_X,
-                             rmp_cnt_t Start_Y,
+__EXTERN__ void RMP_Dot_Line(rmp_cnt_t Begin_X,
+                             rmp_cnt_t Begin_Y,
                              rmp_cnt_t End_X,
                              rmp_cnt_t End_Y,
                              rmp_ptr_t Dot,
