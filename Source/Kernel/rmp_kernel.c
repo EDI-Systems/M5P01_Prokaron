@@ -3265,12 +3265,12 @@ rmp_ret_t RMP_Mem_Init(volatile void* Pool,
     /* Calculate the offset of the actual allocatable memory - each FLI have
      * 8 SLIs, and each SLI has a corresponding table header */
     Offset+=sizeof(struct RMP_List)*8U*Mem->FLI_Num;
-    Mem->Start=((rmp_ptr_t)Mem)+Offset;
+    Mem->Base=((rmp_ptr_t)Mem)+Offset;
     
     /* Initialize the first big block */
-    _RMP_Mem_Block((struct RMP_Mem_Head*)(Mem->Start), Size-Offset);
+    _RMP_Mem_Block((struct RMP_Mem_Head*)(Mem->Base), Size-Offset);
     /* Insert the memory into the corresponding level */
-    _RMP_Mem_Ins(Pool,(struct RMP_Mem_Head*)(Mem->Start));
+    _RMP_Mem_Ins(Pool,(struct RMP_Mem_Head*)(Mem->Base));
     
     return 0;
 }
@@ -3679,7 +3679,7 @@ void RMP_Free(volatile void* Pool,
     /* Now check if we can merge it with the lower blocks */
     Merge_Left=0U;
     Left_Head=((volatile struct RMP_Mem_Tail*)(((rmp_ptr_t)Mem_Head)-sizeof(struct RMP_Mem_Tail)))->Head;
-    if((rmp_ptr_t)Mem_Head!=Mem->Start)
+    if((rmp_ptr_t)Mem_Head!=Mem->Base)
     {
         RMP_COVERAGE_MARKER();
 
@@ -5113,8 +5113,8 @@ rmp_ret_t RMP_Bmq_Cnt(volatile struct RMP_Bmq* Queue)
 
 /* Function:RMP_Line **********************************************************
 Description : Draw a line given the start and end coordinates.
-Input       : rmp_cnt_t Start_X - The start point X coordinate.
-              rmp_cnt_t Start_Y - The start point Y coordinate.
+Input       : rmp_cnt_t Begin_X - The begin point X coordinate.
+              rmp_cnt_t Begin_Y - The begin point Y coordinate.
               rmp_cnt_t End_X - The end point X coordinate.
               rmp_cnt_t End_Y - The end point Y coordinate.
               rmp_ptr_t Color - The color of the line.
@@ -5122,8 +5122,8 @@ Output      : None.
 Return      : None.
 ******************************************************************************/
 #ifdef RMP_POINT
-void RMP_Line(rmp_cnt_t Start_X,
-              rmp_cnt_t Start_Y,
+void RMP_Line(rmp_cnt_t Begin_X,
+              rmp_cnt_t Begin_Y,
               rmp_cnt_t End_X,
               rmp_cnt_t End_Y,
               rmp_ptr_t Color)
@@ -5137,51 +5137,51 @@ void RMP_Line(rmp_cnt_t Start_X,
     rmp_cnt_t Cur_Y;
     
     /* See if this line is horizontal or vertical. If so we speed it up */
-    if(Start_X==End_X)
+    if(Begin_X==End_X)
     {
         RMP_COVERAGE_MARKER();
 
         /* Vertical */
-        if(Start_Y>End_Y)
+        if(Begin_Y>End_Y)
         {
             RMP_COVERAGE_MARKER();
             Dir_Y=End_Y;
-            Trav_Y=Start_Y;
+            Trav_Y=Begin_Y;
         }
         else
         {
             RMP_COVERAGE_MARKER();
-            Dir_Y=Start_Y;
+            Dir_Y=Begin_Y;
             Trav_Y=End_Y;
         }
         
         for(Cur_Y=Dir_Y;Cur_Y<=Trav_Y;Cur_Y++)
         {
-            RMP_POINT(Start_X,Cur_Y,Color);
+            RMP_POINT(Begin_X,Cur_Y,Color);
         }
         return;
     }
-    else if(Start_Y==End_Y)
+    else if(Begin_Y==End_Y)
     {
         RMP_COVERAGE_MARKER();
 
         /* Horizontal */
-        if(Start_X>End_X)
+        if(Begin_X>End_X)
         {
             RMP_COVERAGE_MARKER();
             Dir_X=End_X;
-            Trav_X=Start_X;
+            Trav_X=Begin_X;
         }
         else
         {
             RMP_COVERAGE_MARKER();
-            Dir_X=Start_X;
+            Dir_X=Begin_X;
             Trav_X=End_X;
         }
         
         for(Cur_X=Dir_X;Cur_X<=Trav_X;Cur_X++)
         {
-            RMP_POINT(Cur_X,Start_Y,Color);
+            RMP_POINT(Cur_X,Begin_Y,Color);
         }
         return;
     }
@@ -5193,11 +5193,11 @@ void RMP_Line(rmp_cnt_t Start_X,
 
     Error=0;
     /* Get their absolute value, and then draw the line */
-    Trav_X=RMP_ABS(Start_X,End_X);
-    Trav_Y=RMP_ABS(Start_Y,End_Y);
+    Trav_X=RMP_ABS(Begin_X,End_X);
+    Trav_Y=RMP_ABS(Begin_Y,End_Y);
 
     /* Decide the increment direction */
-    if((End_X-Start_X)>0)
+    if((End_X-Begin_X)>0)
     {
         RMP_COVERAGE_MARKER();
         Dir_X=1;
@@ -5208,7 +5208,7 @@ void RMP_Line(rmp_cnt_t Start_X,
         Dir_X=-1;
     }
 
-    if((End_Y-Start_Y)>0)
+    if((End_Y-Begin_Y)>0)
     {
         RMP_COVERAGE_MARKER();
         Dir_Y=1;
@@ -5223,8 +5223,8 @@ void RMP_Line(rmp_cnt_t Start_X,
     {
         RMP_COVERAGE_MARKER();
 
-        Cur_Y=Start_Y;
-        for(Cur_X=Start_X;Cur_X!=(End_X+Dir_X);Cur_X+=Dir_X)
+        Cur_Y=Begin_Y;
+        for(Cur_X=Begin_X;Cur_X!=(End_X+Dir_X);Cur_X+=Dir_X)
         {
             RMP_POINT(Cur_X,Cur_Y,Color);
             Error+=Trav_Y;
@@ -5245,8 +5245,8 @@ void RMP_Line(rmp_cnt_t Start_X,
     {
         RMP_COVERAGE_MARKER();
 
-        Cur_X=Start_X;
-        for(Cur_Y=Start_Y;Cur_Y!=(End_Y+Dir_Y);Cur_Y+=Dir_Y)
+        Cur_X=Begin_X;
+        for(Cur_Y=Begin_Y;Cur_Y!=(End_Y+Dir_Y);Cur_Y+=Dir_Y)
         {
             RMP_POINT(Cur_X,Cur_Y,Color);
             Error+=Trav_X;
@@ -5268,8 +5268,8 @@ void RMP_Line(rmp_cnt_t Start_X,
 
 /* Function:RMP_Dot_Line ******************************************************
 Description : Draw a dotted line given the start and end coordinates.
-Input       : rmp_cnt_t Start_X - The start point X coordinate.
-              rmp_cnt_t Start_Y - The start point Y coordinate.
+Input       : rmp_cnt_t Begin_X - The begin point X coordinate.
+              rmp_cnt_t Begin_Y - The begin point Y coordinate.
               rmp_cnt_t End_X - The end point X coordinate.
               rmp_cnt_t End_Y - The end point Y coordinate.
               rmp_ptr_t Dot - The color of the dotted line.
@@ -5277,8 +5277,8 @@ Input       : rmp_cnt_t Start_X - The start point X coordinate.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void RMP_Dot_Line(rmp_cnt_t Start_X,
-                  rmp_cnt_t Start_Y,
+void RMP_Dot_Line(rmp_cnt_t Begin_X,
+                  rmp_cnt_t Begin_Y,
                   rmp_cnt_t End_X,
                   rmp_cnt_t End_Y,
                   rmp_ptr_t Dot,
@@ -5294,11 +5294,11 @@ void RMP_Dot_Line(rmp_cnt_t Start_X,
 
     Error=0;
     /* Get their absolute value, and then draw the line */
-    Trav_X=RMP_ABS(Start_X,End_X);
-    Trav_Y=RMP_ABS(Start_Y,End_Y);
+    Trav_X=RMP_ABS(Begin_X,End_X);
+    Trav_Y=RMP_ABS(Begin_Y,End_Y);
 
     /* Decide the increment direction */
-    if((End_X-Start_X)>0)
+    if((End_X-Begin_X)>0)
     {
         RMP_COVERAGE_MARKER();
         Dir_X=1;
@@ -5309,7 +5309,7 @@ void RMP_Dot_Line(rmp_cnt_t Start_X,
         Dir_X=-1;
     }
 
-    if((End_Y-Start_Y)>0)
+    if((End_Y-Begin_Y)>0)
     {
         RMP_COVERAGE_MARKER();
         Dir_Y=1;
@@ -5324,8 +5324,8 @@ void RMP_Dot_Line(rmp_cnt_t Start_X,
     {
         RMP_COVERAGE_MARKER();
 
-        Cur_Y=Start_Y;
-        for(Cur_X=Start_X;Cur_X!=(End_X+Dir_X);Cur_X+=Dir_X)
+        Cur_Y=Begin_Y;
+        for(Cur_X=Begin_X;Cur_X!=(End_X+Dir_X);Cur_X+=Dir_X)
         {
             /* Draw the dot and the white space alternatively */
             if((Cur_X&0x01)!=0)
@@ -5367,8 +5367,8 @@ void RMP_Dot_Line(rmp_cnt_t Start_X,
     {
         RMP_COVERAGE_MARKER();
 
-        Cur_X=Start_X;
-        for(Cur_Y=Start_Y;Cur_Y!=(End_Y+Dir_Y);Cur_Y+=Dir_Y)
+        Cur_X=Begin_X;
+        for(Cur_Y=Begin_Y;Cur_Y!=(End_Y+Dir_Y);Cur_Y+=Dir_Y)
         {
             /* Draw the dot and the white space alternatively */
             if((((rmp_ptr_t)Cur_Y)&0x01U)!=0U)
