@@ -1,0 +1,35 @@
+;******************************************************************************
+;Filename    : stm32f767ig.sct
+;Author      : hrs
+;Date        : 12/04/2024 18:26:07
+;Licence     : LGPL v3+; see COPYING for details.
+;Description : The scatter file for ARMv7-M layout. This file is intended
+;              to be used with STM32F767IG.
+;******************************************************************************
+
+;LR_IROM1 *********************************************************************
+LR_IROM1 0x08000000 0x00100000
+{
+    ; load region size_region
+    ER_IROM1 0x08000000 0x00100000  
+    {  
+        ; load address = execution address
+        *.o (RESET, +First)
+        *(InRoot$$Sections)
+        .ANY (+RO)
+        .ANY (+XO)
+    }
+    RW_IRAM1 0x20000000 0x00070000  
+    {
+        .ANY (+RW +ZI)
+    }
+    RW_IRAM2 0x20070000 0x00010000  
+	{  
+		; DMA buffer is manually placed here, see ethernetif.h for details
+    }
+}
+;End LR_IROM1 *****************************************************************
+
+;End Of File ******************************************************************
+
+;Copyright (C) Evo-Devo Instrum. All rights reserved **************************
