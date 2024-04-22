@@ -36,8 +36,9 @@ Description : Define netif priority and stacksize and declare ethernetif_init
 #define NETIF_IN_TASK_PRIO              (2U)
 #define NETIF_IN_TASK_STACK_SIZE        (4096U)
 
-err_t ethernetif_init(struct netif* netif);
+
 void ethernetif_input(void* netif);
+err_t ethernetif_init(struct netif* netif);
 
 #endif
 /* End Define ****************************************************************/
