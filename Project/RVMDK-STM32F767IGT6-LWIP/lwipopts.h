@@ -130,7 +130,7 @@ a lot of data that needs to be copied, this should be set high. */
  * for certain critical regions during buffer allocation, deallocation and memory
  * allocation and deallocation.
  */
-#define SYS_LIGHTWEIGHT_PROT        0
+#define SYS_LIGHTWEIGHT_PROT        1
 
 
 /* ---------- TCP options ---------- */
@@ -228,12 +228,10 @@ The STM32F4x7 allows computing and verifying the IP, UDP, TCP and ICMP checksums
 #define DEFAULT_ACCEPTMBOX_SIZE         10
 #define DEFAULT_THREAD_STACKSIZE        1024
 
-
 #define TCPIP_THREAD_NAME              "lwip_thread"
 #define TCPIP_THREAD_STACKSIZE          4096
 #define TCPIP_MBOX_SIZE                 8
 #define TCPIP_THREAD_PRIO               6
 #define LWIP_SO_RCVTIMEO                1
-
 
 #endif /* __LWIPOPTS_H__ */

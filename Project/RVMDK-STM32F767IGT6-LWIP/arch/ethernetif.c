@@ -73,7 +73,7 @@ struct RMP_Sem ETH_Rx_Semaphore;
 /* Helper functions */
 uint32_t HAL_GetTick(void)
 {
-  return RMP_Timestamp;
+    return RMP_Timestamp;
 }
 
 void HAL_Delay(uint32_t Delay)
@@ -177,16 +177,16 @@ low_level_init(struct netif* netif)
     GPIO_Init_Struct.Alternate=GPIO_AF11_ETH;
     /* ETH_CLK/ETH_MDIO/ETH_CRS */
     GPIO_Init_Struct.Pin=GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_7;
-    HAL_GPIO_Init(GPIOA, &GPIO_Init_Struct);
+    HAL_GPIO_Init(GPIOA,&GPIO_Init_Struct);
     /* ETH_MDC/ETH_RXD0/ETH_RXD1 */
     GPIO_Init_Struct.Pin=GPIO_PIN_1|GPIO_PIN_4|GPIO_PIN_5;
-    HAL_GPIO_Init(GPIOC, &GPIO_Init_Struct);
+    HAL_GPIO_Init(GPIOC,&GPIO_Init_Struct);
     /* ETH_TX_EN */
     GPIO_Init_Struct.Pin=GPIO_PIN_11; 
-    HAL_GPIO_Init(GPIOB, &GPIO_Init_Struct);
+    HAL_GPIO_Init(GPIOB,&GPIO_Init_Struct);
     /* ETH_TXD0/ETH_TXD1 */
     GPIO_Init_Struct.Pin=GPIO_PIN_13|GPIO_PIN_14; 
-    HAL_GPIO_Init(GPIOG, &GPIO_Init_Struct);
+    HAL_GPIO_Init(GPIOG,&GPIO_Init_Struct);
     
     /* PHY reset */
     PCF8574_Pin_Set(7,1);
@@ -204,7 +204,7 @@ low_level_init(struct netif* netif)
     ETH_Handler.Init.ChecksumMode=ETH_CHECKSUM_BY_HARDWARE;
     ETH_Handler.Init.MediaInterface=ETH_MEDIA_INTERFACE_RMII;
     RMP_ASSERT(HAL_ETH_Init(&ETH_Handler)==HAL_OK);
-    HAL_NVIC_SetPriority(ETH_IRQn, 0x07, 0);
+    HAL_NVIC_SetPriority(ETH_IRQn,0x07,0);
     HAL_NVIC_EnableIRQ(ETH_IRQn);
     
     /* DMA Buffer initialization */
@@ -263,7 +263,6 @@ low_level_init(struct netif* netif)
  *       to become available since the stack doesn't retry to send a packet
  *       dropped because of memory failure (except for the TCP timers).
  */
-
 static err_t
 low_level_output(struct netif* netif,struct pbuf* p)
 {
@@ -305,15 +304,15 @@ low_level_output(struct netif* netif,struct pbuf* p)
         
         /*  Length of data to be sent */
         Bytes_Left=Tmp_Buf->len;
-        Payload_Ptr=0; 
+        Payload_Ptr=0;
         
         /* Write the data in pbuf to the Ethernet send descriptor */
-        while((Bytes_Left+Buffer_Ptr)>ETH_TX_BUF_SIZE )
+        while((Bytes_Left+Buffer_Ptr)>ETH_TX_BUF_SIZE)
         {
             /* Copy data into the Tx Buffer of the Ethernet transmit descriptor */
             memcpy(&Buffer[Buffer_Ptr],&Payload[Payload_Ptr],(ETH_TX_BUF_SIZE-Buffer_Ptr));
             /* DmaTxDsc points to the next transmit descriptor */
-            DMA_TX_Desc=(ETH_DMADescTypeDef *)(DMA_TX_Desc->Buffer2NextDescAddr);
+            DMA_TX_Desc=(ETH_DMADescTypeDef*)(DMA_TX_Desc->Buffer2NextDescAddr);
             /* Check if the new send descriptor is valid */
             if((DMA_TX_Desc->Status&ETH_DMATXDESC_OWN)!=(rmp_u32_t)RESET)
             {
@@ -324,7 +323,7 @@ low_level_output(struct netif* netif,struct pbuf* p)
             
             /* Update the Buffer address */
             Buffer=(rmp_u8_t*)(DMA_TX_Desc->Buffer1Addr);
-            Bytes_Left=Bytes_Left -(ETH_TX_BUF_SIZE-Buffer_Ptr);
+            Bytes_Left=Bytes_Left-(ETH_TX_BUF_SIZE-Buffer_Ptr);
             Payload_Ptr=Payload_Ptr+(ETH_TX_BUF_SIZE-Buffer_Ptr);
             Frame_Len=Frame_Len+(ETH_TX_BUF_SIZE-Buffer_Ptr);
             Buffer_Ptr=0;
@@ -383,7 +382,7 @@ low_level_input(struct netif* netif)
     
     /* Check if data is received */
     if(HAL_ETH_GetReceivedFrame(&ETH_Handler)!=HAL_OK)
-    return RMP_NULL;
+        return RMP_NULL;
     
     /*  Get received Ethernet frame length */
     Length=ETH_Handler.RxFrameInfos.length;
@@ -392,7 +391,7 @@ low_level_input(struct netif* netif)
   Length += ETH_PAD_SIZE; /* allow room for Ethernet padding */
 #endif
     /* Get the data Buffer of the received Ethernet frame */
-    Buffer=(rmp_u8_t *)ETH_Handler.RxFrameInfos.buffer;
+    Buffer=(rmp_u8_t*)ETH_Handler.RxFrameInfos.buffer;
     
     /* Allocate space for pbuf */
     Ret_Buf=pbuf_alloc(PBUF_RAW,Length,PBUF_POOL);
@@ -405,7 +404,7 @@ low_level_input(struct netif* netif)
         
         for(Tmp_Buf=Ret_Buf;Tmp_Buf!=RMP_NULL;Tmp_Buf=Tmp_Buf->next)
         { 
-            Payload=(rmp_u8_t *)Tmp_Buf->payload;
+            Payload=(rmp_u8_t*)Tmp_Buf->payload;
             Bytes_Left=Tmp_Buf->len;
             Payload_Ptr=0;
             
@@ -415,9 +414,9 @@ low_level_input(struct netif* netif)
                 /* Copy data to pbuf */
                 memcpy(&Payload[Payload_Ptr],&Buffer[Buffer_Ptr],(ETH_RX_BUF_SIZE-Buffer_Ptr));
                  /* DMA_RX_Desc points to the next receive descriptor */
-                DMA_RX_Desc=(ETH_DMADescTypeDef *)(DMA_RX_Desc->Buffer2NextDescAddr);
+                DMA_RX_Desc=(ETH_DMADescTypeDef*)(DMA_RX_Desc->Buffer2NextDescAddr);
                 /* Update Buffer address */
-                Buffer=(rmp_u8_t *)(DMA_RX_Desc->Buffer1Addr);
+                Buffer=(rmp_u8_t*)(DMA_RX_Desc->Buffer1Addr);
  
                 Bytes_Left=Bytes_Left-(ETH_RX_BUF_SIZE-Buffer_Ptr);
                 Payload_Ptr=Payload_Ptr+(ETH_RX_BUF_SIZE-Buffer_Ptr);
@@ -430,7 +429,7 @@ low_level_input(struct netif* netif)
     }
     else
     {
-        /* drop packet(); write your own packet loss function here */
+        pbuf_free(Ret_Buf);
         LINK_STATS_INC(link.memerr);
         LINK_STATS_INC(link.drop);
         MIB2_STATS_NETIF_INC(netif,ifindiscards);
@@ -440,10 +439,10 @@ low_level_input(struct netif* netif)
     DMA_RX_Desc=ETH_Handler.RxFrameInfos.FSRxDesc;
     
     for(Count=0;Count<ETH_Handler.RxFrameInfos.SegCount;Count++)
-    {  
+    {
         /* Marker descriptors are owned by the DMA */
         DMA_RX_Desc->Status|=ETH_DMARXDESC_OWN;
-        DMA_RX_Desc=(ETH_DMADescTypeDef *)(DMA_RX_Desc->Buffer2NextDescAddr);
+        DMA_RX_Desc=(ETH_DMADescTypeDef*)(DMA_RX_Desc->Buffer2NextDescAddr);
     }
     /* Clear Segment Counter */
     ETH_Handler.RxFrameInfos.SegCount=0;
@@ -497,21 +496,14 @@ ethernetif_input(void* netif)
     {
         if(RMP_Sem_Pend(&ETH_Rx_Semaphore,RMP_SLICE_MAX)!=RMP_ERR_OPER)
         {
-            RMP_Sched_Lock();
-            
             /* Pull packet from the driver */
             Tmp_Buf=low_level_input(Netif);
             if(Tmp_Buf==RMP_NULL)
-            {
-                RMP_Sched_Unlock();
                 continue;
-            }
 
             /* Throw the packet at the lwIP stack */
             if(Netif->input(Tmp_Buf,Netif)!=ERR_OK)
                 pbuf_free(Tmp_Buf);
-            
-            RMP_Sched_Unlock();
         }
     }
 }
@@ -570,7 +562,7 @@ ethernetif_init(struct netif* netif)
 #endif /* LWIP_IPV6 */
     netif->linkoutput=low_level_output;
 
-    ETH_If->ethaddr=(struct eth_addr *)&(netif->hwaddr[0]);
+    ETH_If->ethaddr=(struct eth_addr*)&(netif->hwaddr[0]);
 
     /* initialize the hardware */
     low_level_init(netif);

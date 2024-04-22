@@ -12,7 +12,7 @@ Description : Define LwIP porting related functions.
 /* End Include ***************************************************************/
 
 /* Variable ******************************************************************/
-u32_t Sys_Pool[SYS_POOL_SIZE];
+rmp_u32_t Sys_Pool[SYS_POOL_SIZE];
 struct RMP_List Msg_List;
 sys_mbox_msg_t Msg_Array[MSG_ARRAY_SIZE];
 /* End Variable **************************************************************/
@@ -52,7 +52,7 @@ rmp_u32_t sys_rand(void)
     
     return Seed;
 }
-/* End Function:sys_init *****************************************************/
+/* End Function:sys_rand *****************************************************/
 
 /* Function:sys_now ***********************************************************
 Description : Get current system time.
@@ -66,21 +66,54 @@ u32_t sys_now(void)
 }
 /* End Function:sys_now ******************************************************/
 
+/* Function:sys_arch_protect **************************************************
+Description : This function does a "fast" critical region protection. This 
+              function is only called during very short critical regions.
+Input       : None.
+Output      : None.
+Return      : sys_prot_t - Returns the previous protection level.
+******************************************************************************/
+sys_prot_t sys_arch_protect(void)
+{
+    RMP_Sched_Lock();
+    return 1;
+}
+/* End Function:sys_arch_protect *********************************************/
+
+/* Function:sys_arch_unprotect ************************************************
+Description : This function does a "fast" set of critical region protection to 
+              the value specified by pval.
+Input       : sys_prot_t pval - Not used.
+Output      : None.
+Return      : None.
+******************************************************************************/
+void sys_arch_unprotect(sys_prot_t pval)
+{
+    /* Unused variable - dewarn */
+    (void)pval;
+    RMP_Sched_Unlock();
+}
+/* End Function:sys_arch_unprotect *******************************************/
+
 /* Function:sys_sem_new *******************************************************
 Description : Create a new semaphore.
-Input       : None.
+Input       : sys_sem_t* sem - Pointer to the semaphore to create.
+              u8_t count - Initial count of the semaphore.
 Output      : None.
 Return      : err_t - Status of execution, ERR_OK means successful.
 ******************************************************************************/
-err_t sys_sem_new(sys_sem_t* sem,u8_t count)
+err_t sys_sem_new(sys_sem_t* sem,
+                  u8_t count)
 {
     err_t Ret;
-    LWIP_ASSERT("Semaphore is NULL",sem!=SYS_SEM_NULL);
-    LWIP_ASSERT("initial_count invalid (not 0 or 1)",(count==0)||(count==1));
+    LWIP_ASSERT("Semaphore is NULL.",sem!=SYS_SEM_NULL);
+    LWIP_ASSERT("Initial count is invalid (not 0 or 1).",(count==0)||(count==1));
     Ret=RMP_Sem_Crt(sem,count);
     
-    if(Ret==0) return ERR_OK;
-    else return Ret;
+    if(Ret==0) 
+        return ERR_OK;
+    
+    return Ret;
 }
 /* End Function:sys_sem_new **************************************************/
 
@@ -102,9 +135,10 @@ Input       : sys_sem_t* sem - The semaphore to wait for.
               u32_t Timeout - Timeout in milliseconds to wait.if Timeout==0
               means wait forever.
 Output      : None.
-Return      : None.
+Return      : u32_t - SYS_ARCH_TIMEOUT on timeout, any other value on success.
 ******************************************************************************/
-u32_t sys_arch_sem_wait(sys_sem_t* sem, u32_t Timeout)
+u32_t sys_arch_sem_wait(sys_sem_t* sem,
+                        u32_t Timeout)
 {
     u32_t Ret;
     if(sem==SYS_SEM_NULL) 
@@ -171,7 +205,8 @@ Input       : sys_mbox_t* mbox - pointer to the mbox to create.
 Output      : None.
 Return      : err_t - ERR_OK if successful, another err_t otherwise.
 ******************************************************************************/
-err_t sys_mbox_new(sys_mbox_t* mbox, int size)
+err_t sys_mbox_new(sys_mbox_t* mbox,
+                   int size)
 {
     err_t Ret;
     LWIP_ASSERT("mailbox is NULL",mbox!=SYS_MBOX_NULL);
@@ -189,7 +224,8 @@ Input       : sys_mbox_t* mbox - mbox to posts the message.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void sys_mbox_post(sys_mbox_t* mbox, void* msg)
+void sys_mbox_post(sys_mbox_t* mbox,
+                   void* msg)
 {
     volatile struct RMP_List* Head;
 
@@ -213,7 +249,8 @@ Output      : None.
 Return      : err_t - Returns ERR_MEM if it is full, else, ERR_OK if the msg 
               is posted.
 ******************************************************************************/
-err_t sys_mbox_trypost(sys_mbox_t* mbox, void* msg)
+err_t sys_mbox_trypost(sys_mbox_t* mbox,
+                       void* msg)
 {
     err_t Ret;
     volatile struct RMP_List* Head;
@@ -232,10 +269,8 @@ err_t sys_mbox_trypost(sys_mbox_t* mbox, void* msg)
         RMP_Sched_Unlock();
         return ERR_MEM;
     }
-    else
-    {
-        return ERR_OK;
-    }
+    
+    return ERR_OK;
 }
 /* End Function:sys_mbox_trypost *********************************************/
 
@@ -248,7 +283,8 @@ Output      : None.
 Return      : err_t - Returns ERR_MEM if it is full, else, ERR_OK if the msg 
               is posted.
 ******************************************************************************/
-err_t sys_mbox_trypost_fromisr(sys_mbox_t* mbox, void* msg)
+err_t sys_mbox_trypost_fromisr(sys_mbox_t* mbox,
+                               void* msg)
 {
     err_t Ret;
     volatile struct RMP_List* Head;
@@ -264,8 +300,8 @@ err_t sys_mbox_trypost_fromisr(sys_mbox_t* mbox, void* msg)
         RMP_List_Ins(Head,&Msg_List,Msg_List.Next);
         return ERR_MEM;
     }
-    else
-        return ERR_OK;
+
+    return ERR_OK;
 }
 /* End Function:sys_mbox_trypost_fromisr *************************************/
 
@@ -280,10 +316,12 @@ Output      : None.
 Return      : u32_t - SYS_ARCH_TIMEOUT if there was a timeout, any other 
               value if a messages is received.
 ******************************************************************************/
-u32_t sys_arch_mbox_fetch(sys_mbox_t* mbox, void** msg, u32_t timeout_ms)
+u32_t sys_arch_mbox_fetch(sys_mbox_t* mbox,
+                          void** msg,
+                          u32_t timeout_ms)
 {
     u32_t Timeout;
-    u32_t Ret;
+    rmp_ret_t Ret;
     volatile struct RMP_List* Head;
 
     if(timeout_ms==0)
@@ -313,7 +351,8 @@ Output      : None.
 Return      : u32_t - SYS_ARCH_TIMEOUT if there was a Timeout, any other 
               value if a messages is received.
 ******************************************************************************/
-u32_t sys_arch_mbox_tryfetch(sys_mbox_t* mbox,void** msg)
+u32_t sys_arch_mbox_tryfetch(sys_mbox_t* mbox,
+                             void** msg)
 {
     return sys_arch_mbox_fetch(mbox,msg,0);
 }
@@ -336,7 +375,7 @@ void sys_mbox_free(sys_mbox_t* mbox)
 Description : Check if given mailbox valid.
 Input       : sys_mbox_t* mbox - mbox to delete.
 Output      : None.
-Return      : int - Returns 1 if the mailbox is valid, 0 if it is not valid.
+Return      : int - Returns 1 if the mailbox is valid, 0 not valid.
 ******************************************************************************/
 int sys_mbox_valid(sys_mbox_t* mbox)
 {
@@ -366,7 +405,11 @@ Input       : const char* name - human-readable name for the thread.
 Output      : None.
 Return      : sys_thread_t - return the id of the new thread.
 ******************************************************************************/
-sys_thread_t sys_thread_new(const char* name, lwip_thread_fn thread, void* arg, int stacksize, int prio)
+sys_thread_t sys_thread_new(const char* name,
+                            lwip_thread_fn thread,
+                            void* arg,
+                            int stacksize,
+                            int prio)
 {
     sys_thread_t Thd;
     void* Stack;
