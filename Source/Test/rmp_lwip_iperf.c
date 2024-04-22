@@ -53,7 +53,7 @@ Input       : void* arg - Additonal args.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-static void LWIP_Iperf_Report(void *arg,
+static void LWIP_Iperf_Report(void* arg,
                               enum lwiperf_report_type report_type,
                               const ip_addr_t* local_addr,
                               u16_t local_port,
@@ -73,13 +73,13 @@ static void LWIP_Iperf_Report(void *arg,
             RMP_DBG_S("TCP_ABORTED_REMOTE");
         else RMP_DBG_I(report_type);
         RMP_DBG_S("\r\nIPv4 Remote address                : ");
-        RMP_DBG_I(((u8_t *)remote_addr)[0]);
+        RMP_DBG_I(((u8_t*)remote_addr)[0]);
         RMP_DBG_S(".");
-        RMP_DBG_I(((u8_t *)remote_addr)[1]);
+        RMP_DBG_I(((u8_t*)remote_addr)[1]);
         RMP_DBG_S(".");
-        RMP_DBG_I(((u8_t *)remote_addr)[2]);
+        RMP_DBG_I(((u8_t*)remote_addr)[2]);
         RMP_DBG_S(".");
-        RMP_DBG_I(((u8_t *)remote_addr)[3]);
+        RMP_DBG_I(((u8_t*)remote_addr)[3]);
         RMP_DBG_S("\r\nIPv4 Remote port                   : ");
         RMP_DBG_I(remote_port);
         RMP_DBG_S("\r\nBytes transferred                  : ");

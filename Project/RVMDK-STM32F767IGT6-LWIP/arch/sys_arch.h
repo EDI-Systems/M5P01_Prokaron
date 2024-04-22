@@ -6,8 +6,6 @@ Licence     : The Unlicense; see LICENSE for details.
 Description : Define LwIP porting related data structures.
 ******************************************************************************/
 
-
-
 /* Define ********************************************************************/
 #include "rmp.h"
 
