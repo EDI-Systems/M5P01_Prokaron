@@ -23,7 +23,7 @@ Description: The configuration file for STM32F030F4.
 #define RMP_SEM_CNT_MAX             (1000U)
 /* Are we using custom hooks? */
 #define RMP_HOOK_EXTRA              (0U)
-/* The stzck size of the init thread */
+/* The stack size of the init thread */
 #define RMP_INIT_STACK_SIZE         (256U)
 /* The mask/unmask interrupt operations */
 #define RMP_INT_MASK()              RMP_Int_Disable()

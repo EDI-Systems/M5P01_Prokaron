@@ -19,9 +19,6 @@ Description : The header file for the kernel.
 #define RMP_THD_FLAG(X)             ((X)&~((rmp_ptr_t)0xFFU))
 #define RMP_THD_STATE_SET(X, S)     ((X)=(RMP_THD_FLAG(X)|(S)))
 
-/* Memory pool position lookup */
-#define RMP_MEM_POS(FLI, SLI)       ((SLI)+((FLI)<<3U))
-
 /* This thread is currently unused */
 #define RMP_THD_FREE                (0U)
 /* This thread is currently running */
@@ -94,19 +91,17 @@ Description : The header file for the kernel.
 #define RMP_ROUND_DOWN(NUM,POW)     (((NUM)>>(POW))<<(POW))
 #define RMP_ROUND_UP(NUM,POW)       RMP_ROUND_DOWN((NUM)+RMP_POW2(POW)-1U,POW)
 
-/* Word sizes settings */
+/* Word sizes settings - only assume 8 bits for char, even if it exceeds 8 bits */
 #define RMP_ALLBITS                 (~((rmp_ptr_t)0U))
 #define RMP_WORD_SIZE               RMP_POW2(RMP_WORD_ORDER)
 #define RMP_WORD_MASK               (~(RMP_ALLBITS<<RMP_WORD_ORDER))
-#define RMP_ALIGN_ORDER             (RMP_WORD_ORDER-3U)
-#define RMP_ALIGN_MASK              (~(RMP_ALLBITS<<RMP_ALIGN_ORDER))
-#define RMP_BITMAP_SIZE             ((rmp_ptr_t)((RMP_PREEMPT_PRIO_NUM-1U)/RMP_WORD_SIZE+1U))
+
+/* Scheduler bitmap */
+#define RMP_PRIO_WORD_NUM           (RMP_ROUND_UP(RMP_PREEMPT_PRIO_NUM,RMP_WORD_ORDER)>>RMP_WORD_ORDER)
 
 /* Initial stack helpers */
-#define RMP_INIT_STACK_ROUND        RMP_ROUND_UP(RMP_INIT_STACK_SIZE,RMP_WORD_ORDER-3U)
-#define RMP_INIT_STACK_WORD         (RMP_INIT_STACK_ROUND>>(RMP_WORD_ORDER-3U))
 #define RMP_INIT_STACK_START        ((rmp_ptr_t)RMP_Init_Stack)
-#define RMP_INIT_STACK_END          (RMP_INIT_STACK_START+RMP_INIT_STACK_WORD*sizeof(rmp_ptr_t))
+#define RMP_INIT_STACK_END          (RMP_INIT_STACK_START+RMP_INIT_STACK_SIZE)
 #define RMP_INIT_STACK_ASCEND(X)    RMP_ROUND_UP(RMP_INIT_STACK_START+sizeof(rmp_ptr_t),X)
 #define RMP_INIT_STACK_DESCEND(X)   RMP_ROUND_DOWN(RMP_INIT_STACK_END-sizeof(rmp_ptr_t),X)
 
@@ -120,6 +115,10 @@ Description : The header file for the kernel.
 #define RMP_DBG_I(INT)              RMP_Int_Print((rmp_cnt_t)(INT))
 #define RMP_DBG_H(UINT)             RMP_Hex_Print((rmp_ptr_t)(UINT))
 #define RMP_DBG_S(STR)              RMP_Str_Print((const rmp_s8_t*)(STR))
+
+/* Memory pool */
+#define RMP_MEM_WORD_NUM(FLI)       (RMP_ROUND_UP((FLI)<<3,RMP_WORD_ORDER)>>RMP_WORD_ORDER)
+#define RMP_MEM_POS(FLI, SLI)       ((SLI)+((FLI)<<3U))
 
 /* Built-in graphics */
 #ifdef RMP_POINT
@@ -181,6 +180,7 @@ while(0)
 #define RMP_ASSERT(X) \
 do \
 { \
+    (void)(X); \
 } \
 while(0)
 #endif
@@ -344,12 +344,12 @@ struct RMP_Mem
 static volatile rmp_ptr_t RMP_Coverage[RMP_COVERAGE_LINES];
 #endif
 /* The scheduler bitmap */
-static volatile rmp_ptr_t RMP_Bitmap[RMP_BITMAP_SIZE];
+static volatile rmp_ptr_t RMP_Bitmap[RMP_PRIO_WORD_NUM];
 static volatile struct RMP_List RMP_Run[RMP_PREEMPT_PRIO_NUM];
 static volatile struct RMP_List RMP_Delay;
 
 /* Init thread stack and structure */
-static rmp_ptr_t RMP_Init_Stack[RMP_INIT_STACK_WORD];
+static rmp_u8_t RMP_Init_Stack[RMP_INIT_STACK_SIZE];
 static volatile struct RMP_Thd RMP_Init_Thd;
 /*****************************************************************************/
 /* End Private Variable ******************************************************/
