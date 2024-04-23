@@ -1,28 +1,28 @@
 /******************************************************************************
-Filename    : rmp_test_stm32f103re.h
+Filename    : rmp_test_stm32f103rb.h
 Author      : pry 
 Date        : 22/07/2017
 Licence     : The Unlicense; see LICENSE for details.
-Description : The testbench for STM32F103RE.
+Description : The testbench for STM32F103RB.
 
-ARMCC 6.14 -O3
+ARMCC V6.21 -O3
     ___   __  ___ ___
    / _ \ /  |/  // _ \       Simple real-time kernel
   / , _// /|_/ // ___/       Standard benchmark test
  /_/|_|/_/  /_//_/
 ====================================================
 Test (number in CPU cycles)        : AVG / MAX / MIN
-Yield                              : 228 / 308 / 226
-Mailbox                            : 444 / 516 / 440
-Semaphore                          : 403 / 476 / 400
-FIFO                               : 216 / 294 / 214
-Message queue                      : 704 / 778 / 698
-Blocking message queue             : 947 / 1018 / 938
-Memory allocation/free pair        : 626 / 654 / 611
-ISR Mailbox                        : 413 / 490 / 410
-ISR Semaphore                      : 372 / 450 / 370
-ISR Message queue                  : 560 / 632 / 552
-ISR Blocking message queue         : 707 / 782 / 702
+Yield                              : 203 / 280 / 202
+Mailbox                            : 438 / 512 / 434
+Semaphore                          : 385 / 460 / 378
+FIFO                               : 226 / 306 / 224
+Message queue                      : 684 / 762 / 678
+Blocking message queue             : 930 / 1004 / 922
+Memory allocation/free pair        : 518 / 546 / 504
+ISR Mailbox                        : 392 / 468 / 386
+ISR Semaphore                      : 354 / 434 / 352
+ISR Message queue                  : 542 / 620 / 536
+ISR Blocking message queue         : 707 / 782 / 700
 ******************************************************************************/
 
 /* Include *******************************************************************/
@@ -33,7 +33,7 @@ ISR Blocking message queue         : 707 / 782 / 702
 /* How to read counter */
 #define RMP_CNT_READ()    (TIM2->CNT)
 /* Are we testing the memory pool? */
-#define TEST_MEM_POOL     (8192U)
+#define TEST_MEM_POOL     (3584U)
 /* Are we doing minimal measurements? */
 /* #define MINIMAL_SIZE */
 /* The STM32F1 timers are all 16 bits, so */

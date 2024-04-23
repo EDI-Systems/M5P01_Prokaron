@@ -810,8 +810,8 @@ rmp_ptr_t RMP_CRC16(const rmp_u8_t* Data,
     Temp_Low=0xFFU;
     for(Data_Cnt=0U;Data_Cnt<Length;Data_Cnt++)
     {
-        Index=Temp_Low^Data[Data_Cnt];
-        Temp_Low=(rmp_u8_t)(Temp_High^CRC16_High[Index]);
+        Index=(Temp_Low^Data[Data_Cnt])&0xFFU;
+        Temp_Low=(rmp_u8_t)(Temp_High^CRC16_High[Index])&0xFFU;
         Temp_High=CRC16_Low[Index];
     }
 
@@ -994,7 +994,7 @@ void _RMP_Run_High(void)
      * can be entered, the scheduler can't be locked */
     RMP_Sched_Pend=0U;
     /* See which one is ready, and pick it */
-    Prio=RMP_BITMAP_SIZE-1U;
+    Prio=RMP_PRIO_WORD_NUM-1U;
     for(Word=(rmp_cnt_t)Prio;Word>=0;Word--)
     {
         if(RMP_Bitmap[Word]!=0U)
@@ -3101,7 +3101,7 @@ Return      : int - This function never returns.
 int main(void)
 {
     rmp_ptr_t Count;
-    
+
 #ifdef RMP_COVERAGE
     /* Initialize coverage markers if coverage enabled */
     for(Count=0U;Count<RMP_COVERAGE_LINES;Count++)
@@ -3130,7 +3130,7 @@ int main(void)
     {
         RMP_List_Crt(&RMP_Run[Count]);
     }
-    for(Count=0U;Count<RMP_BITMAP_SIZE;Count++)
+    for(Count=0U;Count<RMP_PRIO_WORD_NUM;Count++)
     {
         RMP_Bitmap[Count]=0U;
     }
@@ -3219,8 +3219,8 @@ rmp_ret_t RMP_Mem_Init(volatile void* Pool,
         /* No action required */
     }
     
-    /* See if the address and size is word-aligned */
-    if(((((rmp_ptr_t)Pool)&RMP_ALIGN_MASK)!=0U)||((Size&RMP_ALIGN_MASK)!=0U))
+    /* See if the address and size is word-aligned - divisions will be optimized out */
+    if(((((rmp_ptr_t)Pool)%sizeof(rmp_ptr_t))!=0U)||((Size%sizeof(rmp_ptr_t))!=0U))
     {
         RMP_COVERAGE_MARKER();
         return RMP_ERR_MEM;
@@ -3238,12 +3238,13 @@ rmp_ret_t RMP_Mem_Init(volatile void* Pool,
     
     /* Decide the location of the bitmap */
     Offset=sizeof(struct RMP_Mem);
-    Bitmap_Size=RMP_ROUND_UP(Mem->FLI_Num,RMP_ALIGN_ORDER);
-    /* Initialize the bitmap */
-    for(FLI_Cnt=0U;FLI_Cnt<(Bitmap_Size>>RMP_ALIGN_ORDER);FLI_Cnt++)
+    /* Initialize the bitmap - how many words are needed for this bitmap? */
+    Bitmap_Size=RMP_MEM_WORD_NUM(Mem->FLI_Num);
+    for(FLI_Cnt=0U;FLI_Cnt<Bitmap_Size;FLI_Cnt++)
     {
         Mem->Bitmap[FLI_Cnt]=0U;
     }
+    Bitmap_Size*=sizeof(rmp_ptr_t);
     
     /* Decide the location of the allocation table - "-sizeof(rmp_ptr_t)" is
      * because we defined the length=1 in our struct already */
@@ -3479,11 +3480,11 @@ rmp_ret_t _RMP_Mem_Search(volatile void* Pool,
         *SLI_Level=Level&0x07U;
         return 0;
     }
-    /* No one exactly fits */
+    /* No one exactly fits, compute the size of bitmap and look through it */
     else
     {
         RMP_COVERAGE_MARKER();
-        Limit=RMP_ROUND_UP(Mem->FLI_Num,RMP_ALIGN_ORDER)>>RMP_ALIGN_ORDER;
+        Limit=RMP_MEM_WORD_NUM(Mem->FLI_Num);
         /* From the next word, query one by one */
         for(Word=(Level>>RMP_WORD_ORDER)+1U;Word<Limit;Word++)
         {
@@ -3924,8 +3925,9 @@ void* RMP_Realloc(volatile void* Pool,
             /* No action required */
         }
         
-        /* Copy old memory to new memory - we know that this is always aligned, so this is fine */
-        for(Count=0U;Count<(Mem_Size>>RMP_ALIGN_ORDER);Count++)
+        /* Copy old memory to new memory - we know that it must be aligned to word boundary */
+        Mem_Size/=sizeof(rmp_ptr_t);
+        for(Count=0U;Count<Mem_Size;Count++)
         {
             ((rmp_ptr_t*)New_Mem)[Count]=((rmp_ptr_t*)Mem_Ptr)[Count];
         }
