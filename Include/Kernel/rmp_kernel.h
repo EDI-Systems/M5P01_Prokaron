@@ -118,7 +118,7 @@ Description : The header file for the kernel.
 
 /* Memory pool */
 #define RMP_MEM_WORD_NUM(FLI)       (RMP_ROUND_UP((FLI)<<3,RMP_WORD_ORDER)>>RMP_WORD_ORDER)
-#define RMP_MEM_POS(FLI, SLI)       ((SLI)+((FLI)<<3U))
+#define RMP_MEM_POS(FLI,SLI)        ((SLI)+((FLI)<<3U))
 
 /* Built-in graphics */
 #ifdef RMP_POINT
