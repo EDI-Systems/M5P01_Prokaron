@@ -3402,7 +3402,8 @@ void _RMP_Mem_Del(volatile void* Pool,
 
 /* Function:_RMP_Mem_Search ***************************************************
 Description : The TLSF memory searcher.
-Input       : rmp_ptr_t Size - The memory size, must be bigger than 64. This must be
+Input       : volatile void* Pool - The memory pool.
+              rmp_ptr_t Size - The memory size, must be bigger than 64. This must be
                                guaranteed before calling this function or an error
                                will unavoidably occur.
 Output      : rmp_ptr_t* FLI_Level - The FLI level found.
@@ -3414,32 +3415,32 @@ rmp_ret_t _RMP_Mem_Search(volatile void* Pool,
                           rmp_ptr_t* FLI_Level,
                           rmp_ptr_t* SLI_Level)
 {
-    rmp_ptr_t FLI_Level_Temp;
-    rmp_ptr_t SLI_Level_Temp;
     rmp_ptr_t Level;
     rmp_ptr_t Word;
     rmp_ptr_t Limit;
     rmp_ptr_t LSB;
+    rmp_ptr_t FLI_Search;
+    rmp_ptr_t SLI_Search;
     volatile struct RMP_Mem* Mem;
 
-    /* Make sure that it is bigger than 64. 64=2^6 */
-    FLI_Level_Temp=RMP_MSB_GET(Size)-6U;
+    /* Make sure that it is bigger than 64=2^6 */
+    FLI_Search=RMP_MSB_GET(Size)-6U;
     
     /* Decide the SLI level directly from the FLI level. We plus the number by one here
      * so that we can avoid the list search. However, when the allocated memory is just
      * one of the levels, then we don't need to jump to the next level and can fit directly */
-    SLI_Level_Temp=(Size>>(FLI_Level_Temp+3U))&0x07U;
-    if(Size!=(RMP_POW2(FLI_Level_Temp+3U)*(SLI_Level_Temp+8U)))
+    SLI_Search=(Size>>(FLI_Search+3U))&0x07U;
+    if(Size!=(RMP_POW2(FLI_Search+3U)*(SLI_Search+8U)))
     {
         RMP_COVERAGE_MARKER();
-        SLI_Level_Temp++;
+        SLI_Search++;
         
-        /* If the SLI level is the largest of the SLI level, then jump to the next FLI level */
-        if(SLI_Level_Temp==8U)
+        /* If the SLI level is the largest of the SLI levels, then jump to the next FLI level */
+        if(SLI_Search==8U)
         {
             RMP_COVERAGE_MARKER();
-            FLI_Level_Temp+=1U;
-            SLI_Level_Temp=0U;
+            FLI_Search+=1U;
+            SLI_Search=0U;
         }
         else
         {
@@ -3455,7 +3456,7 @@ rmp_ret_t _RMP_Mem_Search(volatile void* Pool,
     
     /* Check if the FLI level is over the boundary */
     Mem=(volatile struct RMP_Mem*)Pool;
-    if(FLI_Level_Temp>=Mem->FLI_Num)
+    if(FLI_Search>=Mem->FLI_Num)
     {
         RMP_COVERAGE_MARKER();
         return -1;
@@ -3466,8 +3467,9 @@ rmp_ret_t _RMP_Mem_Search(volatile void* Pool,
         /* No action required */
     }
     
-    /* Try to find one position on this processor word level */
-    Level=RMP_MEM_POS(FLI_Level_Temp,SLI_Level_Temp);
+    /* Try to find the word that contains this level, then right shift away the
+     * lower levels to extract the ones that can satisfy this alocation request */
+    Level=RMP_MEM_POS(FLI_Search,SLI_Search);
     Word=Mem->Bitmap[Level>>RMP_WORD_ORDER]>>(Level&RMP_WORD_MASK);
     
     /* If there's at least one block that matches the query, return the level */
@@ -3475,7 +3477,8 @@ rmp_ret_t _RMP_Mem_Search(volatile void* Pool,
     {
         RMP_COVERAGE_MARKER();
         LSB=RMP_LSB_GET(Word);
-        Level=(Level&(~RMP_WORD_MASK))+LSB+(Level&RMP_WORD_MASK);
+        /* Need to compensate for the lower levels that were shifted away */
+        Level=(Level&(~RMP_WORD_MASK))+(LSB+(Level&RMP_WORD_MASK));
         *FLI_Level=Level>>3U;
         *SLI_Level=Level&0x07U;
         return 0;
@@ -3728,7 +3731,7 @@ void RMP_Free(volatile void* Pool,
 Description : Expand or shrink an allocation to the desired size. The behavior
               of this function equals RMP_Malloc if the Mem_Ptr passed in is 0,
               or RMP_Free if the Size passed in is 0.
-Input       : volatile void* Pool - The pool to allocate from.
+Input       : volatile void* Pool - The pool to reallocate from.
               void* Mem_Ptr - The old memory block to expand.
               rmp_ptr_t Size - The size of the RAM needed to resize to.
 Output      : None.
