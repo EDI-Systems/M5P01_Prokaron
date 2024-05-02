@@ -91,7 +91,6 @@ _RMP_Start:             .asmfunc
 
 ;/* Function:_RMP_MSP430_Yield ************************************************
 ;Description : Yield from one thread to another without an interrupt.
-;              Note that MSP430's "rotate" is VERY different from regular CPUs.
 ;Input       : None.
 ;Output      : None.
 ;Return      : None.
