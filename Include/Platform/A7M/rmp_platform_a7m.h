@@ -80,7 +80,7 @@ typedef rmp_s32_t rmp_ret_t;
 #include "rmp_platform_a7m_conf.h"
 /* End System macros *********************************************************/
 
-/* Cortex-M specific macros **************************************************/
+/* ARMv7-M specific macros ***************************************************/
 /* MPU operation flag */
 #define RMP_A7M_MPU_CLR                 (0)
 #define RMP_A7M_MPU_UPD                 (1)
@@ -113,11 +113,6 @@ typedef rmp_s32_t rmp_ret_t;
 #define RMP_A7M_EXC_RET_RET_PSP         (1<<2)
 /* Is this interrupt taken to a secured domain? 1 means yes, 0 means no */
 #define RMP_A7M_EXC_INT_SECURE_DOMAIN   (1<<0)
-/* FPU type definitions */
-#define RMP_A7M_FPU_NONE                (0)
-#define RMP_A7M_FPU_VFPV4               (1)
-#define RMP_A7M_FPU_FPV5_SP             (2)
-#define RMP_A7M_FPU_FPV5_DP             (3)
 
 /* Some useful SCB definitions */
 #define RMP_A7M_SHCSR_USGFAULTENA       (1<<18)

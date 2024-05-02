@@ -259,7 +259,7 @@ Return      : None.
     CSRR                a0,mstatus          /* Read mstatus to decide FPU status, but don't save yet */
     .endm
 
-    /* Actual context switch */
+/* Actual context switch *****************************************************/
     .macro              RMP_RV32P_SWITCH
     ADDI                sp,sp,-4            /* Save mstatus */
     SW                  a0,0*4(sp)
