@@ -1,0 +1,563 @@
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower_components/paper-menu/paper-submenu.html">
+<link rel="import" href="../../bower_components/paper-item/paper-icon-item.html">
+<link rel="import" href="../../bower_components/paper-styles/paper-styles.html">
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner-lite.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/iron-fit-behavior/iron-fit-behavior.html">
+<link rel="import" href="../../elements/ti-rov-table/ti-rov-table.html">
+
+
+<dom-module id="ti-rov-customview">
+  <template>
+
+    <!-- include Polymer layout style classes -->
+    <style include="iron-flex iron-flex-alignment"></style>
+
+    <!-- include common rov view styles -->
+    <style include="ti-rov-styles"></style>
+    <style include="ti-rov-viewStyles"></style>
+
+    <!-- CSS rules for this element -->
+    <style is="custom-style">
+
+      :host {
+        display: inline-block;
+        backgroundColor: white;
+        position: absolute;
+      }
+
+      #refreshButton, #closeButton  {
+        padding-top: 0px;
+        padding-bottom: 0px;
+      }
+
+      #viewLabel { /* style of name shown in tool bar */
+        margin-left: 6px;
+        font-size: 14px;
+        font-weight: bold;
+        font-family: var(--rovFontFamily);
+        pointer-events: none;
+      }
+
+      #tiRovTable {
+        position: relative;
+        margin-left: 5px;
+        margin-top: 0px;
+        margin-bottom: 5px;
+        float: left;
+      }
+
+      #viewPaperCard { /* style of top-level container (paper-card) */
+        min-width: 250px;
+        min-height: 95px;
+        margin-top:8px;
+        margin-right:0px;
+        border: 1px solid #D3D3D3;
+        background-color: var(--rovTableBackgroundColor);
+      }
+
+      /* this addon's content style */
+      #viewContentDiv {
+        display: block;
+        position: static;
+        top: 36px;
+        bottom: 0px;
+        width: 100%;
+        margin-top:0px;
+        margin-bottom: 0px;
+        overflow-y: auto;
+        background-color: var(--rovTableBackgroundColor);
+      }
+
+      #dragDiv {
+        display: block;
+        margin-top: 2px;
+        position: relative;
+        overflow: hidden;
+        max-height: 36px;
+        background-color: var(--rovTableBackgroundColor);
+      }
+
+      #tableSettingsMenu {
+        margin: 0px;
+        padding: 10px 0px 10px 0px;
+      }
+
+      .tableSettingsMenuIconItem {
+        font-family: var(--rovFontFamily) !important;
+        font-size: var(--rovContentFontSize) !important;
+        --paper-item-min-height: 24px;
+        cursor: pointer;
+        padding: 0px 0px 0px 0px;
+        margin-top: 3px;
+        margin-bottom: 3px;
+        margin-left: 4px;
+        margin-right: 8px;
+        text-transform: none;
+        --paper-item-icon-width: 20px;
+      }
+
+      .tableSettingMenuIcon {
+        height: 20px;
+        width: 20px;
+      }
+
+      .tableSettingsMenuItemLabel {
+        font-size: var(--rovContentFontSize);
+        margin-left: 6px;
+      }
+
+      .settingsH {
+        font-family: var(--rovFontFamily);
+        font-size: var(--rovContentFontSize);
+        font-weight: bold !important;
+        margin-bottom: 1px !important;
+        margin-top: 1px !important;
+        margin-left: 15px;
+      }
+
+      .settingsRow {
+        font-family: var(--rovFontFamily);
+        font-size: var(--rovContentFontSize);
+        padding-top: 0px;
+        padding-bottom: 0px;
+        margin-left: 15px;
+        min-height: 32px;
+      }
+
+      #cellNamesMenu {
+        margin: 0px;
+        padding: 0;
+        --paper-menu-focused-item-after: {
+          color: transparent;
+        };
+      }
+
+      .cellNamesMenuItem {
+        font-family: var(--rovFontFamily) !important;
+        font-size: var(--rovContentFontSize) !important;
+        --paper-item-min-height: 24px;
+        margin-left: 30px;
+        margin-right: 2px;
+        padding: 0px 42px 0px 0px;
+        --paper-item-focused-before: {
+          color: transparent;
+        };
+        position: relative;
+      }
+
+      .cellNamesMenuIcon {
+        display: inline-block;
+        height: 2px;
+        width: 28px;
+        margin: 0px 0px 1px 0px;
+      }
+
+      .cellNamesMenuItemLabel {
+        font-size: var(--rovContentFontSize);
+        margin-left: 6px;
+      }
+
+      .cellNamesMenuButton {
+        display: inline-block;
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        padding: 0;
+        margin: 0px 0px 1px 0px;
+        --paper-icon-button: {
+          color: #595959;
+        };
+        --paper-icon-button-hover: {
+          color: black;
+        };
+      }
+
+      #tableNameDialog {
+        margin: 0;
+      }
+
+      #cellPropertiesDialog {
+        margin: 0;
+        max-width: 456px;
+        min-width: 250px;
+        position: fixed;
+        line-height: 24px;
+      }
+
+      #primaryKeyMenu, #actionMenu {
+        margin-left: 0px;
+        margin-top: 0px;
+        --paper-menu-button: {
+          padding-top: 0px;
+          padding-bottom: 0px;
+        };
+        --paper-input-container: {
+          padding-top: 0px;
+          padding-bottom: 0px;
+        };
+        --paper-input-container-color: black;
+        --paper-input-container-focus-color: black;
+        --paper-input-container-input: {
+          font-family: var(--rovFontFamily);
+          font-size: var(--rovContentFontSize);
+          color: black;
+          margin-left: 3px;
+          line-height: 24px;
+        };
+        --paper-input-container-label: {
+          font-family: var(--rovFontFamily);
+          font-size: var(--rovContentFontSize);
+        }
+      }
+      .primaryKeyItem, .actionItem {
+        min-height: 22px;
+        height: 22px;
+        font-family: var(--rovFontFamily);
+        font-size: var(--rovContentFontSize);
+      }
+
+      .cellPropertiesInput {
+        margin-top: 0px;
+        padding-top: 2px;
+        margin-left: 0px;
+        display: inline-block;
+        font-size: var(--rovContentFontSize);
+        --paper-input-container-color: #118899;
+        --paper-input-container-focus-color: black;
+        --paper-input-container-input: {
+          font-size: var(--rovContentFontSize);
+          font-family: var(--rovFontFamily);
+          color: black;
+        };
+        --paper-input-container: {
+          padding-top: 0px;
+          padding-bottom: 4px;
+        };
+      }
+
+      #closeTableSettingsMenuDialog {
+        display: inline-block;
+        position: absolute;
+        right: 2px;
+        width: 16px;
+        height: 16px;
+        padding: 0;
+        margin: 0px 0px 1px 0px;
+        --paper-icon-button: {
+          color: black;
+        };
+      }
+
+      .erroricon {
+        width: 16px;
+        height: 16px;
+        color: rgb(204, 0, 0);
+        --iron-icon-stroke-color: white;
+      }
+
+      .actionSelectCheckbox {
+        font-family: var(--rovFontFamily);
+        --paper-checkbox-size: 14px;
+        --paper-checkbox-unchecked-color: #118899;
+        --paper-checkbox-unchecked-ink-color: transparent;
+        --paper-checkbox-checked-color: #118899;
+        --paper-checkbox-checked-ink-color: #118899;
+        --paper-checkbox-checkmark-color: white;
+        --paper-checkbox-label-color: #333333;
+
+      }
+
+      .actionSelectDiv {
+        max-height: 20px;
+        margin: 0px 0px 0px 4px;
+      }
+
+      #notifyLogCommentText {
+        font-family: var(--rovFontFamily);
+        font-size: var(--rovContentFontSize);
+        resize: none;
+        width: 88%;
+      }
+
+      #notifyLogCommentText:focus {
+        outline: none !important;
+        border-color: #118899;
+        box-shadow: 0 0 1px #118899;
+      }
+
+      #notifyLogCommentDialog {
+        margin: 0;
+        position: fixed;
+        line-height: 24px;
+      }
+
+      #notifyLogCommentButton {
+        width: 15px;
+        height: 15px;
+        padding: 0;
+        margin: 0px 0px 0px 30px;
+        --paper-icon-button: {
+          color: #118899;
+        };
+        --paper-icon-button-hover: {
+          color: #0d6573;
+        };
+      }
+
+      #logViewerDialog {
+        min-height: 300px;
+        min-width: 400px;
+        position: absolute;
+      }
+
+      #logViewerText {
+        min-height: 230px;
+        min-width: 375px;
+        overflow-y: auto;
+        width: 100%;
+      }
+
+      .logViewerButton {
+        margin-left: 0px;
+        margin-right: 0px;
+        padding-left: 4px;
+        padding-right: 0px;
+      }
+
+      #notifyLogSettingsButton {
+        --paper-icon-button: {
+          color: #118899;
+          background-color: transparent;
+        };
+      }
+
+      #logViewerTitleBar:hover {
+        cursor: var(--rovDragDivCursor);
+      }
+
+      #cellPropertiesSubMenu {
+        margin: 0;
+        padding: 0;
+      }
+
+    </style>
+
+    <div id="logViewerDialog" class="rovDialog" style="position:fixed" on-keypress="logViewerKeyPress" draggable="true" hidden>
+      <h3 id="logViewerTitleBar" class="rovDialogTitle" on-mousedown="logDragMouseDown">{{logViewerTitle}}<iron-icon id="logViewerDialogClose" class="rovDialogCloseIcon" icon="close"></iron-icon></h3>
+      <div style="margin-top:10px;margin-left:14px;padding-right:0px;margin-right:14px;margin-bottom:12px;padding-left:0px;">
+        <textarea id="logViewerText" rows="15" readonly></textarea>
+      </div>
+      <span id="notifyLogSizeDiv" class="settingsRow" style="margin-top:10px;padding-left:0px;margin-left:10px;">
+        <paper-icon-button id="notifyLogSettingsButton" style="width:20px;height:20px;padding:0;" icon="{{notifyLogOptionsButton}}" on-click="notifyLogSettingsClicked" title$="{{notifyLogOptionsTooltip}}" role="button" tabindex="0"></paper-icon-button>
+        <span id="notifyLogSizeLabel" style="margin-right:2px" hidden$="{{notifyLogOptionsHidden}}">Size:</span>
+        <input id="notifyLogSizeInput" class="rovDialogInput" style="font-size:var(--rovContentFontSize);margin-bottom:10px;" on-input="logSettingsChanged" type="text" size="6" hidden$="{{notifyLogOptionsHidden}}">
+        <span hidden$="{{notifyLogOptionsHidden}}">lines</span>
+        <iron-icon id="notifyLogSizeInputInvalid" class="erroricon" title="Invalid size" icon="error" hidden></iron-icon>
+      </span>
+      <div style="margin:0;padding:0;position:absolute;bottom:0px;right:0px;">
+        <paper-button id="applyLogOptionsButton" class="rovDialogButton logViewerButton" on-click="applyLogSettingsClicked" title="Apply changes to log buffer" hidden$="{{notifyLogOptionsHidden}}" disabled>Apply</paper-button>
+        <paper-button id="exportLogButton" class="rovDialogButton logViewerButton" on-click="exportLogClicked" title="Export log to downloads directory">Export</paper-button>
+        <paper-button id="clearLogButton" class="rovDialogButton logViewerButton" on-click="clearLogClicked" title="Clear log">Clear</paper-button>
+        <paper-button class="rovDialogButton logViewerButton" style="padding-right:6px;" autofocus on-click="logViewerCloseClicked">Close</paper-button>
+      </div>
+      <div id="notifyLogWrapDiv" class="settingsRow" style="margin-top:0px;padding-left:0px;" hidden$="{{notifyLogOptionsHidden}}">
+        <paper-checkbox class="actionSelectCheckbox" id="notifyLogWrapCheckbox" style="margin-top:0px;margin-left:24px;padding-left:0px;" on-click="logSettingsChanged">Wrap when full</paper-checkbox>
+      </div>
+    </div>
+
+    <paper-dialog id="notifyLogCommentDialog" class="rovDialog" on-keypress="notifyLogCommentKeyPress" no-cancel-on-outside-click alwaysOnTop>
+      <h3 class="rovDialogTitle">Notification log comment<iron-icon id="notifyLogCommentDialogClose" class="rovDialogCloseIcon" icon="close" on-click="notifyLogCommentDialogCloseClicked"></iron-icon></h3>
+      <div style="margin-top:10px;margin-left:14px;padding-left:0px;"><label class="rovDialogLabel">Comment</label></div>
+      <div style="margin-top:0px;margin-left:14px;padding-right:0px;margin-right:0px;padding-left:0px;">
+        <textarea id="notifyLogCommentText" rows="4"></textarea>
+      </div>
+      <div style="margin-right:32px;padding-top:0px;padding-bottom:4px;" class="buttons">
+        <paper-button class="rovDialogButton" autofocus on-click="notifyLogCommentOkClicked">OK</paper-button>
+        <paper-button class="rovDialogButton" dialog-dismiss>Cancel</paper-button>
+      </div>
+    </paper-dialog>
+
+    <paper-dialog id="customViewOptionsMenuDialog" style="position:fixed;margin-right:0px;" on-keypress="viewOptionsKeyPress">
+      <div style="margin-top:16px;"><paper-icon-button id="closeViewOptionsButton" title="Close" on-click="closeViewOptions" icon="close" role="button" tabindex="0"></paper-icon-button></div>
+      <paper-listbox id="customViewOptionsMenu" class="attachedListbox" on-iron-select="customViewOptionsMenuItemSelected">
+        <paper-item id="columnsTapped" class="viewOptionsMenuItem" hidden$="{{!selectableColumnsVisible}}" >
+          <paper-button class="viewOptionsMenuButton">
+            <iron-icon class="viewOptionsMenuButtonIcon" icon="view-column"></iron-icon>
+            <label class="viewOptionsMenuButtonLabel" style="cursor:pointer;" title="Columns settings">Columns settings</label>
+          </paper-button>
+        </paper-item>
+        <paper-item id="onSave" class="viewOptionsMenuItem">
+          <paper-button class="viewOptionsMenuButton">
+            <iron-icon class="viewOptionsMenuButtonIcon" icon="file-download"></iron-icon>
+            <label class="viewOptionsMenuButtonLabel" style="cursor:pointer;" title="Save the current view in your downloads directory">Save data displayed in view</label>
+          </paper-button>
+        </paper-item>
+        <paper-item id="fixedFontItem" class="viewOptionsMenuItem">
+          <paper-checkbox class="viewOptionsCheckbox" id="fixedFontCheckbox" on-change="fixedFontChanged">Use fixed width font</paper-checkbox>
+        </paper-item>
+        <paper-item id="dividerItem" class="viewOptionsMenuItem" style="cursor:default">
+          <div class="viewOptionsMenuButtonChar">/</div>
+          <label class="viewOptionsMenuButtonLabel">Repeat divider</label>
+          <input type="number" id="dividerInput" value="{{repeatDivider}}" min="1" max="32" on-change="dividerChanged" disabled$="{{!repeatRefreshEnabled}}"></input>
+          <iron-icon id="dividerDisableIcon" class="dividerToggleIcon" icon="av:stop" title="Disable repeat refresh in this view" on-click="dividerToggleClicked" hidden$="{{!repeatRefreshEnabled}}"></iron-icon>
+          <iron-icon id="dividerEnableIcon" class="dividerToggleIcon" icon="autorenew" title="Enable repeat refresh in this view" on-click="dividerToggleClicked" hidden$="{{repeatRefreshEnabled}}"></iron-icon>
+        </paper-item>
+        <paper-item id="openLogViewer" class="viewOptionsMenuItem">
+          <paper-button class="viewOptionsMenuButton">
+            <iron-icon class="viewOptionsMenuButtonIcon" icon="view-headline"></iron-icon>
+            <label class="viewOptionsMenuButtonLabel" style="cursor:pointer;" title="Open notification log">Show notification log</label>
+          </paper-button>
+        </paper-item>
+        <paper-item id="newCustomCell" class="viewOptionsMenuItem">
+          <paper-button class="viewOptionsMenuButton">
+            <iron-icon class="viewOptionsMenuButtonIcon" icon="image:crop-7-5"></iron-icon>
+            <label class="viewOptionsMenuButtonLabel" style="cursor:pointer;" title="Add a new custom cell to table">New custom cell</label>
+          </paper-button>
+        </paper-item>
+      </paper-listbox>
+    </paper-dialog>
+
+    <paper-dialog id="cellPropertiesDialog" class="rovDialog" on-keypress="rovCustomViewDialogKeyPress" no-cancel-on-outside-click alwaysOnTop on-iron-overlay-closed="onCellPropertiesDialogClosed">
+      <h3 class="rovDialogTitle">{{cellPropertiesDlgTitle}}<paper-icon-button class="rovDialogCloseIcon" style="padding:0;" icon="close" dialog-dismiss></paper-icon-button></h3>
+      <section style="margin-top:0px;padding:0px;" hidden$="{{primaryKeySectionHidden}}">
+        <h4 class="settingsH">Row key</h4>
+        <div class="settingsRow" style="padding-right:26px">
+          <span id="primaryKeyLabel" style="margin-right:6px">Column:value</span>
+          <paper-dropdown-menu id="primaryKeyMenu" label="{{primaryKeyMenuLabel}}" no-label-float no-animations placeholder=" ">
+            <paper-listbox id="primaryKeyListbox" class="dropdown-content">
+              <template is="dom-repeat" items="{{primaryKeyMenuItems}}">
+                <paper-item class="primaryKeyItem">{{item}}</paper-item>
+              </template>
+            </paper-listbox>
+          </paper-dropdown-menu>
+        </div>
+      </section>
+      <section style="margin-top:0px;padding:0px;" hidden$="{{titleSectionHidden}}">
+        <h4 class="settingsH">Title</h4>
+        <div class="settingsRow">
+          <iron-icon id="cellNameInvalidIcon" class="erroricon" style="position:absolute;left:6px;margin-top:6px;" title$="{{cellNameErrorDesc}}" icon="error" hidden></iron-icon>
+          <paper-input id="assignedCellNameInput" class="cellPropertiesInput" style="width:97%;" on-value-changed="cellNameChanged" type="text" placeholder=" " no-label-float no-animations></paper-input>
+        </div>
+      </section>
+      <section style="margin-top:0px;padding:0px;" hidden$="{{expressionSectionHidden}}">
+        <h4 class="settingsH" style="padding-top:5px;">Expression</h4>
+        <div class="settingsRow">
+          <iron-icon id="cellExpressionInvalidIcon" class="erroricon" style="position:absolute;left:6px;margin-top:6px;" title$="{{cellExpressionErrorDesc}}" icon="error" hidden></iron-icon>
+          <paper-input id="cellExpressionInput" class="cellPropertiesInput" style="width:97%;" on-value-changed="cellExpressionChanged" type="text" placeholder=" " no-label-float no-animations></paper-input>
+        </div>
+        <div class="settingsRow" style="margin-top:8px;">
+          <span style="margin-right:6px;font-weight:bold">Action:</span>
+          <span id="actionLabel" style="margin-right:4px;width:30px">{{actionLabelValue}}</span>
+          <div class="actionSelectDiv">
+            <paper-checkbox id="notifyActionBox" class="actionSelectCheckbox" on-click="actionSelectCheckboxClicked" hidden$="{{actionDisabled}}">Display notification</paper-checkbox>
+          </div>
+          <div class="actionSelectDiv">
+            <paper-checkbox id="logNotificationsActionBox" class="actionSelectCheckbox" on-click="actionSelectCheckboxClicked" hidden$="{{actionDisabled}}">Log notifications</paper-checkbox>
+            <paper-icon-button id="notifyLogCommentButton" icon="editor:insert-comment" on-click="notifyLogCommentClicked" role="button" title="Add comment to notification when logged" hidden$="{{actionDisabled}}"></paper-icon-button>
+          </div>
+          <div class="actionSelectDiv"><paper-checkbox id="stopUpdatesActionBox" class="actionSelectCheckbox" on-click="actionSelectCheckboxClicked" hidden$="{{actionDisabled}}">Stop updating this view</paper-checkbox></div>
+          <div class="actionSelectDiv"><paper-checkbox id="stopAllUpdatesActionBox" class="actionSelectCheckbox" on-click="actionSelectCheckboxClicked" hidden$="{{actionDisabled}}">Stop updating all views</paper-checkbox></div>
+          <div class="actionSelectDiv"><paper-checkbox id="saveViewActionBox" class="actionSelectCheckbox" on-click="actionSelectCheckboxClicked" hidden$="{{actionDisabled}}">Save this view's data</paper-checkbox></div>
+          <div class="actionSelectDiv"><paper-checkbox id="saveAllViewsActionBox" class="actionSelectCheckbox" on-click="actionSelectCheckboxClicked" hidden$="{{actionDisabled}}">Save all views' data</paper-checkbox></div>
+        </div>
+      </section>
+      <div class="buttons" style="padding-top:0px;padding-bottom:0px;">
+        <paper-button class="rovDialogButton" autofocus on-click="cellPropertiesDialogOkClicked">OK</paper-button>
+        <paper-button class="rovDialogButton" dialog-dismiss>Cancel</paper-button>
+      </div>
+    </paper-dialog>
+
+    <paper-dialog id="tableSettingsMenuDialog" style="position:fixed;margin-right:0px;margin-left:0px;">
+      <paper-icon-button id="closeTableSettingsMenuDialog" icon="close" on-click="closeTableSettingsClicked" role="button"></paper-icon-button>
+      <paper-listbox id="tableSettingsMenu" class="attachedListbox">
+        <paper-listbox id="cellPropertiesSubMenu" label="Cell properties" on-click="cellPropertiesClicked">
+          <paper-icon-item class="tableSettingsMenuIconItem">
+            <iron-icon class="tableSettingsMenuIcon" icon="image:crop-7-5" item-icon></iron-icon>
+            <label class="tableSettingsMenuItemLabel" style="cursor:pointer;">Cell properties</label>
+          </paper-icon-item>
+          <paper-listbox id="cellNamesMenu" class="sublist" hidden>
+            <template id="cellNamesMenuTemplate" is="dom-repeat" items="{{cellNamesMenuItems}}">
+              <paper-item id$="{{item.id}}" class="cellNamesMenuItem"  style="cursor:{{item.cursor}}" title$="{{item.title}}" role="menuitem" on-click="cellNameMenuItemSelected">
+                <label class="cellNamesMenuItemLabel" style="cursor:{{item.cursor}}">{{item.label}}</label>
+                <paper-icon-button id$="{{item.cellId}}" class="cellNamesMenuButton" style="right:20px;" icon="image:grid-on" on-click="displayTableView" role="button" title="Display table view" hidden$="{{item.isCustom}}"></paper-icon-button>
+                <paper-icon-button id$="{{item.cellId}}" class="cellNamesMenuButton" style="right:2px;" icon="close" on-click="deleteCell" role="button" title="Remove this cell" hidden$="{{removeButtonHidden}}"></paper-icon-button>
+              </paper-item>
+            </template>
+          </paper-listbox>
+        </paper-listbox>
+        <paper-icon-item id="tableNameClicked" class="tableSettingsMenuIconItem"  on-click="tableSettingsMenuItemClicked">
+          <iron-icon class="tableSettingsMenuIcon" icon="av:web-asset" item-icon></iron-icon>
+          <label class="tableSettingsMenuItemLabel" style="cursor:pointer;">Table name</label>
+        </paper-icon-item>
+      </paper-listbox>
+    </paper-dialog>
+
+    <paper-dialog id="tableNameDialog" class="rovDialog layout.vertical self-stretch" style="position:fixed;" on-keypress="rovCustomViewDialogKeyPress" no-cancel-on-outside-click alwaysOnTop>
+      <h3 class="rovDialogTitle">Table name<paper-icon-button class="rovDialogCloseIcon" style="padding:0;" icon="close" dialog-dismiss></paper-icon-button></h3>
+      <section id="tableNameSection" style="margin-top:0px;padding:0px;">
+        <div class="settingsRow">
+          <paper-input id="tableNameInput" class="cellPropertiesInput" style="width:97%;" label="Name" value$="{{tableName}}" type="text" placeholder=" " autofocus></paper-input>
+        </div>
+      </section>
+      <div class="buttons" style="padding-top:0px;padding-bottom:0px;">
+        <paper-button class="rovDialogButton" autofocus on-click="tableNameDialogOkClicked">Save</paper-button>
+        <paper-button class="rovDialogButton" dialog-dismiss>Cancel</paper-button>
+      </div>
+    </paper-dialog>
+
+    <!-- local DOM for this element -->
+    <paper-card id="viewPaperCard" elevation="2" on-click="viewClicked"  on-dragover="viewDragOver">
+
+      <!-- define the toolbar region that responds to drag actions -->
+      <div id="dragDiv" draggable="{{draggable}}" on-mousedown="viewDragMouseDown">
+        <!-- display a label within the toolbar of this element -->
+        <label id="viewLabel" title$="{{viewTooltip}}">{{tableName}}</label>
+
+        <!-- add the standard view buttons to this element -->
+        <paper-icon-button id="refreshButton" class="viewToobarButton" hidden$="{{viewRefresh}}" icon="refresh" on-click="onRefresh" role="button" tabindex="0" title="Refresh view"></paper-icon-button>
+        <paper-spinner-lite id="refreshSpinner" hidden$="{{!viewRefresh}}" active></paper-spinner-lite>
+        <paper-icon-button id="customViewMenuButton" class="viewToobarButton" icon="menu" on-click="viewOptionsMenuClicked" role="button" tabindex="0"  title="View options"></paper-icon-button>
+        <paper-icon-button id="settingsButton" class="viewToobarButton" icon="settings" on-click="tableSettingsClicked" role="button" tabindex="0" title="Table settings"></paper-icon-button>
+        <paper-icon-button id="closeButton" class="viewToobarButton" icon="close" on-click="closeView" role="button" tabindex="0" title="Close view"></paper-icon-button>
+      </div>
+
+     <!-- Place your content here -->
+      <div id="viewContentDiv">
+        <ti-rov-table id="tiRovTable"></ti-rov-table>
+      </div>
+
+      <!-- enable resizing for the paper-card element -->
+      <div class="resizerTopRight" on-mousedown="resizerClicked" hidden$="{{resizeViewsDisabled}}"></div>
+      <div class="resizerTopLeft" on-mousedown="resizerClicked" hidden$="{{resizeViewsDisabled}}"></div>
+      <div class="resizerBottomLeft" on-mousedown="resizerClicked" hidden$="{{resizeViewsDisabled}}"></div>
+      <div class="resizerBottomRight" on-mousedown="resizerClicked" hidden$="{{resizeViewsDisabled}}"></div>
+      <ti-rov-viewoptions id="rovViewOptions"></ti-rov-viewoptions>
+      <div id="viewStatusConsole" hidden>
+        <paper-icon-button id="closeViewStatusButton" icon="close" on-click="closeViewStatusClicked" role="button" tabindex="0"></paper-icon-button>
+        <ul id="viewStatusList">
+          <template is="dom-repeat" items="{{compressedStatusItems}}" as="item">
+            <li class="viewStatusItem">
+              <label class="viewStatusCountLabel" style$="{{item.countStyle}}">{{item.count}}</label>
+              <iron-icon icon$="{{item.icon}}" class$="{{item.iconClass}}"></iron-icon>
+              <label style="margin-top:3px;">{{item.message}}</label>
+            </li>
+          </template>
+        </ul>
+      </div>
+    </paper-card>
+
+  </template>
+
+  <!-- load this element's code  -->
+  <script src="ti-rov-customview.js"></script>
+
+</dom-module>

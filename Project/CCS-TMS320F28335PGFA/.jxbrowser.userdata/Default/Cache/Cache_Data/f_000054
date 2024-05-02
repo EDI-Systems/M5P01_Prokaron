@@ -1,0 +1,481 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../paper-dialog/paper-dialog.html">
+<link rel="import" href="../ti-widget-common/ti-widget-image.html">
+<link rel="import" href="../ti-widget-common/ti-widget-label.html">
+<link rel="import" href="../ti-widget-common/ti-widget-panel.html">
+<link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../iron-icons/iron-icons.html">
+<link rel="import" href="../iron-icon/iron-icon.html">
+
+<!--
+`ti-core-cloudagent-installdialog` is used to help users install the TI Cloud Agent.
+
+@group Ti Elements
+@element ti-core-cloudagent-installdialog
+@homepage elements/ti-guicomposer-helpindex/demo.html
+@demo demo.html
+-->
+<dom-module id='ti-core-cloudagent-installdialog'  >
+
+    <template>
+        <style is="custom-style">
+
+        </style>
+        <paper-dialog id="paper_dialog" no-cancel-on-outside-click is-modal with-backdrop transition="paper-dialog-transition" auto-close-disabled="true" style="z-index:2000;background-color: white; ">
+            <div style="text-align:left;padding-left:25px;padding-top:25px;padding-right:25px;padding-bottom:20px;overflow-x:hidden;">
+                <div style="padding-bottom:20px;">
+                    <table>
+                        <tr >
+                            <td>
+                                <!-- <iron-icon id="connectionIndicator" icon="ti-core-icons:nolink" style="height:40px;width:40px;padding-bottom:7px;"></iron-icon></td>  -->
+                                <span style="font-size:x-large;height:40px;">{{dialogTitle}}  </span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <template is="dom-if" restamp="true" if="{{!_isError}}">
+
+                    <div id="description" ></div>
+                    <ul>
+
+                        <template is="dom-repeat" items="{{_steps}}" as="step" index-as="stepIndex" >
+                            <li><div style="padding-bottom:2px;vertical-align:middle;"> <b>Step {{_getStepIndexPlus1(stepIndex)}}:</b> {{step.caption}}
+                                <template is="dom-if" restamp="true" if="{{step.hasAButton}}" >
+
+                                    <paper-button id$="[[_getStepBtnId(stepIndex)]]" raised  on-click="stepBtnClickHdlr" >{{step.buttonCaption}}</paper-button>
+                                </template>
+                                {{step.text}}</div><br/>
+                            </li>
+                        </template>
+
+                        <li><a href$="{{helpUrl}}" target="_blank">{{helpText}}</a></li>
+                    </ul>
+                </template>
+                <template is="dom-if" restamp="true" if="{{_isError}}">
+
+                    <div id="deviceNameDiv">Device: {{xmlDeviceName}}</div>
+                </template>
+                <div align="center">
+                    <iron-icon id="warningIcon" icon="info" style="display:none;color:darkorange" ></iron-icon>
+                    <ti-widget-label id="statusLabel" style="color:black;" wrap label=""></ti-widget-label>
+                </div>
+                <template is="dom-if" restamp="true" if="{{!_isError}}">
+
+                    <div  align="center" style="padding-left:80px;">
+                        <paper-button raised id="btnClose" on-click="finishBtnClickHdlr" style="float:right">Finish</paper-button>
+                    </div>
+                </template>
+                <template is="dom-if" restamp="true" if="{{_isError}}">
+
+                    <paper-button id="buttonCancel" on-click="toggle" style="float:right">Close&nbsp;<iron-icon icon="close" style="width:18px;padding-left:18px;" ></iron-icon></paper-button>
+                </template>
+            </div>
+        </paper-dialog>
+        <div id="splash" style="width:100%; height:100%; z-index: 999999; background-color: #eeeeee; position: absolute;display:none">
+            <div style="width: 100%; height: 100%; background: url('./images/loading.gif') no-repeat center"></div>
+        </div>
+
+    </template>
+
+
+    <!-- ------------------------------------------------------------------------------------- -->
+    <script>
+
+
+
+        Polymer ({
+            is: 'ti-core-cloudagent-installdialog',
+            _myTimeout: undefined,
+            helpUrl: '',
+            helpText: '',
+            finishStep: undefined,
+            detailsUrl: '',
+            detailsText: '',
+
+            hostAttributes: {
+            },
+            _getStepBtnId: function(stepIndex) {
+                return("btn_"+stepIndex);
+            },
+            _getStepIndexPlus1: function(stepIndex){
+                return stepIndex + 1;
+            },
+            /**
+             * Fired when the user clicks the Finish button on the dialog
+             *
+             * @event cloudAgentInstallDialogFinished
+             */
+
+            properties: {
+                _isError: {
+                    type: Boolean,
+                    value: false,
+                    notify: true
+                },
+                _steps: {
+                    type: Array,
+                    value:  undefined,
+                    notify: true
+
+                },
+                /**
+                 * Array of strings, with each string containing an agent.js string constant with the reason for displaying this dialog.
+                 * Valid error values include:
+                 *  <p> <br/>
+                 *  TICloudAgent.InvalidAgentVersion
+                 *  TICloudAgent.InvalidExtensionVersion
+                 *  TICloudAgent.MissingExtension
+                 *  TICloudAgent.AgentNotStarted
+                 *
+                 * @attribute errors
+                 * @type Array
+                 * @default undefined
+                 */
+                errors: {
+                    type: Array,
+                    value: undefined,
+                    notify: true
+                },
+                /**
+                 * title displayed at the top of the dialog
+                 *
+                 * @attribute dialogTitle
+                 * @type String
+                 * @default TI Cloud Agent Installation
+                 */
+                dialogTitle: {
+                    notify: true,
+                    type: String,
+                    value: "TI Cloud Agent Installation"
+
+                },
+                /**
+                 * the device xmlFileName in the ccxml file for the device that the user was attempting to access.
+                 * The installer will install the support files needed for this device as part of the cloud agent installation
+                 *
+                 * @attribute xmlDeviceName
+                 * @type String
+                 * @default ""
+                 */
+                xmlDeviceName: {
+                    notify: true,
+                    type: String,
+                    value: ""
+                },
+                /**
+                 * the connection xmlFileName in the ccxml file for the device that the user was attempting to access.
+                 * The installer will install the support files needed for this connection as part of the cloud agent installation
+                 *
+                 * @attribute xmlConnectionName
+                 * @type String
+                 * @default ""
+                 */
+                xmlConnectionName: {
+                    notify: true,
+                    type: String,
+                    value: ""
+                },
+                /**
+                 * status string that is displayed at the bottom of the dialog. An error icon is displayed if the string contains
+                 * the word 'error'.  A warning icon is displayed if the string contains the word 'warning'.  Otherwise an info icon
+                 * is displayed.
+                 *
+                 * @attribute status
+                 * @type String
+                 * @default ""
+                 */
+                status: {
+                    notify: true,
+                    type: String,
+                    value: "",
+                    observer: "statusChangedHdlr"
+                }
+            },
+
+            /**
+             *
+             */
+            toggle: function() {
+                if (this._myTimeout) {
+                    window.clearTimeout(this._myTimeout);
+                }
+                var dialog = this.$.paper_dialog;
+                this.isWizardOpen = !this.isWizardOpen;
+                this.clearStatus();
+                if (this.isWizardOpen){
+                    this.configureComponents();
+                } else {
+                    this.unconfigureComponents();
+                }
+                dialog.toggle();
+                try {
+                    Polymer.updateStyles();
+                } catch(e){
+                }
+
+            },
+            open: function(){
+                if (!this.isWizardOpen){
+                    this.toggle();
+                }
+            },
+            close: function(){
+                if (this.isWizardOpen){
+                    this.toggle();
+                }
+            },
+            clearStatus: function(){
+                this.warningIcon.style.display = 'none';
+                this.warningIcon.style.color='blue';
+                this.warningIcon.icon=' ';
+                this.statusLabel.style.color = 'black';
+                this.statusLabel.label = '';
+                this.errorMsgReceived = false;
+                this.splice('_steps',0,this._steps.length);
+                this.updateStyles();
+                // this.$.btnOpenSerialPort.style.display = 'none';
+            },
+
+            displayErrorMessage: function(msg){
+                this.open();
+                this._isError = true;
+                this.dialogTitle = "Error connecting to target...";
+                this.clearStatus();
+                this._notifyUser("error", "red", "Error : " + msg, "red");
+            },
+            configureComponents: function(){
+                this._isError = false;
+                this.dialogTitle =  "TI Cloud Agent Installation";
+                var _self = this;
+                var descr;
+
+                if ((this.errors !== undefined) && (this.errors !== null)) {
+                    var cleanDeviceName = undefined;
+                    if ((this.xmlDeviceName) && (this.xmlDeviceName.length > 0)){
+                        cleanDeviceName = this.xmlDeviceName;
+                    }
+                    var cleanConnectionName = undefined;
+                    if ((this.xmlConnectionName) && (this.xmlConnectionName.length > 0)){
+                        cleanConnectionName = this.xmlConnectionName;
+                    }
+                    TICloudAgent.Install.getInstallWizard({
+                        errors: this.errors,
+                        deviceID: cleanDeviceName,
+                        connectionID: cleanConnectionName
+                    }).then(function (wizardObj) {
+                        descr = _self.createDescription(wizardObj.description, wizardObj.detailsLink);
+                        console.log('descr.innerHTML = ' + descr.innerHTML);
+                        _self.querySelector('#description').innerHTML = descr.innerHTML;
+                        _self.detailsUrl = wizardObj.detailsLink.url;
+                        _self.detailsText = wizardObj.detailsLink.text;
+                        _self.finishStep = wizardObj.finishStep;
+                        for (var i = 0; i < wizardObj.steps.length; i++) {
+                            var nextStep = _self.createStep(wizardObj.steps[i], i + 1);
+                            _self.push('_steps',nextStep);
+                            var index = _self._steps.length-1;
+                            _self.notifyPath('_steps.*.caption',_self._steps[index].caption);
+                            _self.notifyPath('_steps.*.hasAButton',_self._steps[index].hasAButton);
+                            _self.notifyPath('_steps.*.buttonCaption',_self._steps[index].buttonCaption);
+                            _self.notifyPath('_steps.*.text',_self._steps[index].text);
+                            _self.notifyPath('_steps.*.action',_self._steps[index].action);
+                        }
+                        _self.helpUrl = wizardObj.helpLink.url;
+                        _self.helpText = wizardObj.helpLink.text;
+                    }).fail(function (error) {
+                        var msg = error;
+                        if (error !== undefined) {
+                            if (Array.isArray(error)) {
+                                msg = error[0];
+                            }
+                            if (msg.message !== undefined) {
+                                msg = msg.message;
+                            } else if (msg.msg !== undefined) {
+                                msg = msg.msg;
+                            }
+                        }
+                        console.log("ti-core-cloudagent-installdialog.configureComponents: fail error.message=" + msg);
+                        _self._notifyUser("error", "red", "Error : " + msg, "red");
+                    });
+                    // Hide the readme.md file if it is being displayed, since it has a higher z-index than the dialog backdrop.
+                    var readmeMd = document.querySelector('ti-widget-readme');
+                    if ((readmeMd) && (readmeMd.isVisible)){
+                        readmeMd.isVisible = false;
+                    }
+                } else {
+                    // nothing to display, so don't display the dialog.
+                    console.log('ti-core-cloudagent-installdialog called with no errors to display.');
+                    this.toggle();
+                }
+            },
+            unconfigureComponents: function(){
+            },
+            createDescription: function( desc, details ) {
+                // TODO: Polymer 1.2 - need to rework to use Polymer.dom APIs for true shadow dom creation?
+                var descDiv = document.createElement("div");
+                var heading = document.createElement("b");
+                Polymer.dom(heading).appendChild(  document.createTextNode( desc ) );
+
+                Polymer.dom(descDiv).appendChild( heading );
+
+                if( details ) {
+
+                    Polymer.dom(descDiv).appendChild( document.createTextNode( "(" ) );
+
+                    var a = document.createElement( "a" );
+                    Polymer.dom(a).appendChild( document.createTextNode( details.text ) );
+                    a.href = details.url;
+                    a.target = "_blank";
+                    Polymer.dom(descDiv).appendChild( a );
+
+                    Polymer.dom(descDiv).appendChild( document.createTextNode( ")" ) );
+                }
+
+                return Polymer.dom(descDiv);
+            },
+            createStep: function( step, i ) {
+
+                var obj = {
+                    caption: "",
+                    hasAButton: false,
+                    buttonCaption: "",
+                    text: "",
+                    action: undefined
+                };
+                // break up the action text so we can insert the button at the right spot
+                var stepTextParts = step.action.text.split("$");
+                obj.caption = stepTextParts[0];
+
+                if( stepTextParts.length == 3 && step.action.handler ) {
+                    obj.hasAButton = true;
+                    obj.buttonCaption = stepTextParts[1];
+                    obj.action = step.action;
+                    obj.text = stepTextParts[2];
+                    // fix typo
+                    if (obj.text.indexOf("extention") >= 0){
+                        obj.text = obj.text.replace("extention","extension");
+                    }
+                }
+                return obj;
+            },
+            _stepBtnClickHdlr: function(event){
+                console.log("wizard button clicked: target id = "+ event.target.id);
+                var id = event.target.id;
+                var index = id.substring(id.indexOf('_')+1,id.length);
+                var step = this._steps[index];
+                step.action.handler();
+            },
+            stepBtnClickHdlr: undefined,
+            stringEndsWith: function(str, suffix) {
+                return str.indexOf(suffix, str.length - suffix.length) !== -1;
+            },
+            stringStartsWith: function(str, prefix){
+                return str.indexOf(prefix) === 0;
+            },
+            _finishBtnClickHdlr: function(event){
+                this.$.splash.style.display="";
+                try{
+                    Polymer.updateStyles();
+                } catch(e){
+
+                }
+                this.fire('cloudAgentInstallDialogFinished');
+                this.async(function(){
+                    // If being run from the designer, ensure that the user is not prompted to save the design prior to the restart by saving the project automatically
+                    var designer = window.parent.document.querySelector('#designer');
+                    if (designer){
+                        designer.saveAction();
+                    }
+                    this.toggle();
+
+
+                    if ((this.finishStep !== undefined) && (this.finishStep.action)){
+                        // TODO: Brute force hack - need to get agent.js to reload parent page.
+                        if ((this.finishStep.action.text) && (this.stringStartsWith(this.finishStep.action.text.toLowerCase(),'$refresh$ page'))) {
+                            window.parent.location.reload(true);
+                        } else {
+                            try {
+                                this.finishStep.action.handler();
+                            }
+                            catch(ex){
+                                console.log("ti-core-cloudagent-installdialog: exception ex="+ex);
+                            }
+                        }
+                    } else {
+                        // reload the page in order to enable the browser extension
+                        window.parent.location.reload(true);
+//                    window.location.reload(true);
+                    }
+                }.bind(this),10)
+
+            },
+            finishBtnClickHdlr: undefined,
+            _statusChangedHdlr: function(e){
+                if ((!this.$) || (!e) || (!e.currentTarget)) return;
+                var msg = e.currentTarget.status;
+                if (msg.toUpperCase().indexOf('WARNING') >= 0){
+                    this.notifyUser("warning", "orange", e.currentTarget.status, "black");
+                } else {
+                    if (msg.toUpperCase().indexOf("ERROR") >= 0){
+                        this.errorMsgReceived = true;
+                        this.notifyUser("error", "red", msg, "red");
+                    } else {
+                        if (!this.errorMsgReceived) {
+                            this.notifyUser("info", "blue", msg, "black");
+                        }
+                    }
+                }
+            },
+            statusChangedHdlr: undefined,
+            errorMsgReceived: false,
+
+            _notifyUser: function(iconName,iconColor, msgText, textColor){
+                var _self = this;
+
+                this.async(function() {
+                    if (_self.statusLabel) {
+                        if ((msgText !== undefined) && (msgText !== null)) {
+                            _self.statusLabel.style.color = textColor;
+                            _self.statusLabel.label = msgText;
+                            _self.statusLabel.style.display = '';
+                        } else {
+                            _self.statusLabel.style.display = 'none';
+                        }
+                        if (iconName) {
+                            _self.warningIcon.style.color = iconColor;
+                            _self.warningIcon.icon = iconName;
+                            _self.warningIcon.style.display = '';
+                        } else {
+                            _self.warningIcon.style.display = 'none';
+                        }
+                        var btnClose = this.$.paper_dialog.querySelector('#btnClose');
+                        if ((btnClose) && (btnClose.disabled)) {
+                            if ((iconColor === 'red')||(iconColor === 'green')){
+                                btnClose.disabled = false;
+                            }
+                        }
+                    }
+                    _self.updateStyles();
+
+                },1);
+            },
+            notifyUser: undefined,
+            numTimesWaiting: 0,
+            created: function() {
+                this.statusChangedHdlr = this._statusChangedHdlr.bind(this);
+            },
+            ready: function () {
+                this.notifyUser = this._notifyUser.bind(this);
+                this.statusChangedHdlr = this._statusChangedHdlr.bind(this);
+                this.stepBtnClickHdlr = this._stepBtnClickHdlr.bind(this);
+                this.finishBtnClickHdlr = this._finishBtnClickHdlr.bind(this);
+                this.statusLabel = this.$.statusLabel;
+                this.warningIcon = this.$.warningIcon;
+                this._steps = [];
+                this.notifyPath('_steps',this._steps);
+            }
+
+        });
+    </script>
+
+
+</dom-module>

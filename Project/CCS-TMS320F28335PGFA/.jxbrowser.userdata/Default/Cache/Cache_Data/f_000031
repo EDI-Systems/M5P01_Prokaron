@@ -1,0 +1,472 @@
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower_components/paper-menu/paper-submenu.html">
+<link rel="import" href="../../bower_components/paper-item/paper-icon-item.html">
+<link rel="import" href="../../bower_components/paper-styles/paper-styles.html">
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner-lite.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/iron-fit-behavior/iron-fit-behavior.html">
+
+<dom-module id="ti-rov-graph">
+  <template>
+
+    <!-- include Polymer layout style classes -->
+    <style include="iron-flex iron-flex-alignment"></style>
+
+    <!-- include common rov view styles -->
+    <style include="ti-rov-styles"></style>
+    <style include="ti-rov-viewStyles"></style>
+
+    <!-- CSS rules for this element -->
+    <style is="custom-style">
+
+      :host {
+        display: inline-block;
+        backgroundColor: white;
+        position: absolute;
+      }
+
+      #graph {
+        min-width: 270px;
+        min-height: 200px;
+      }
+
+      #closeButton { /* close button element styling */
+        padding-top: 0px;
+        float: right;
+      }
+
+      #viewLabel { /* style of name shown in tool bar */
+        margin-left: 15px;
+        font-size: 14px;
+        font-weight: bold;
+        font-family: var(--rovFontFamily);
+        pointer-events: none;
+      }
+
+      #viewPaperCard { /* style of top-level container (paper-card) */
+        margin-top:8px;
+        margin-right:0px;
+        border: 1px solid #D3D3D3;
+      }
+
+      /* this addon's content style */
+      #viewContentDiv {
+        display: block;
+        position: absolute;
+        top: 36px;
+        bottom: 0px;
+        width: 100%;
+        margin-top:0px;
+        margin-bottom: 0px;
+      }
+
+      #chartOptionsMenu {
+        margin: 0px;
+        padding: 10px 0px 10px 0px;
+      }
+
+      .chartOptionsMenuIconItem {
+        font-family: var(--rovFontFamily) !important;
+        font-size: var(--rovContentFontSize) !important;
+        --paper-item-min-height: 24px;
+        cursor: pointer;
+        padding: 0px 0px 0px 0px;
+        margin-top: 3px;
+        margin-bottom: 3px;
+        margin-left: 4px;
+        margin-right: 8px;
+        text-transform: none;
+        --paper-item-icon-width: 20px;
+      }
+
+      .chartOptionsMenuIcon {
+        height: 20px;
+        width: 20px;
+      }
+
+      .chartOptionsMenuItemLabel {
+        font-size: var(--rovContentFontSize);
+        margin-left: 6px;
+      }
+
+      .settingsH {
+        font-family: var(--rovFontFamily);
+        font-size: var(--rovContentFontSize);
+        font-weight: bold !important;
+        margin-bottom: 1px !important;
+        margin-top: 1px !important;
+        margin-left: 15px;
+      }
+
+      .settingsRow {
+        font-family: var(--rovFontFamily);
+        font-size: var(--rovContentFontSize);
+        padding-top: 0px;
+        padding-bottom: 0px;
+        margin-left: 15px;
+        min-height: 32px;
+      }
+
+      #traceNamesMenu {
+        margin: 0px;
+        padding: 0;
+        --paper-menu-focused-item-after: {
+          color: transparent;
+        };
+      }
+
+      .traceNamesMenuIconItem {
+        font-family: var(--rovFontFamily) !important;
+        font-size: var(--rovContentFontSize) !important;
+        --paper-item-min-height: 24px;
+        margin-left: 30px;
+        margin-right: 2px;
+        padding: 0px 42px 0px 0px;
+        --paper-item-focused-before: {
+          color: transparent;
+        };
+        --paper-item-icon-width: 30px;
+        position: relative;
+        cursor: pointer;
+      }
+
+      .traceNamesMenuIcon {
+        display: inline-block;
+        height: 2px;
+        width: 28px;
+        margin: 0px 0px 1px 0px;
+      }
+
+      .traceNamesMenuItemLabel {
+        font-size: var(--rovContentFontSize);
+        cursor: pointer;
+        margin-left: 6px;
+      }
+
+      .traceNamesMenuButton {
+        display: inline-block;
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        padding: 0;
+        margin: 0px 0px 1px 0px;
+        --paper-icon-button: {
+          color: #595959;
+        };
+        --paper-icon-button-hover: {
+          color: black;
+        };
+      }
+
+      #tracePropertiesDialog, #graphNameDialog {
+        margin: 0;
+      }
+
+      #primaryKeyMenu {
+        margin-left: 0px;
+        margin-top: 0px;
+        --paper-menu-button: {
+          padding-top: 0px;
+          padding-bottom: 0px;
+        };
+        --paper-input-container: {
+          padding-top: 0px;
+          padding-bottom: 0px;
+        };
+        --paper-input-container-color: black;
+        --paper-input-container-focus-color: black;
+        --paper-input-container-input: {
+          font-family: var(--rovFontFamily);
+          font-size: var(--rovContentFontSize);
+          color: black;
+          margin-left: 3px;
+          line-height: 24px;
+        };
+        --paper-input-container-label: {
+          font-family: var(--rovFontFamily);
+          font-size: var(--rovContentFontSize);
+        }
+      }
+      .primaryKeyItem {
+        min-height: 22px;
+        height: 22px;
+        font-family: var(--rovFontFamily);
+        font-size: var(--rovContentFontSize);
+      }
+
+      .tracePropertiesInput {
+        margin-top: 0px;
+        padding-top: 2px;
+        margin-left: 0px;
+        display: inline-block;
+        font-size: var(--rovContentFontSize);
+        --paper-input-container-color: #118899;
+        --paper-input-container-focus-color: black;
+        --paper-input-container-input: {
+          font-size: var(--rovContentFontSize);
+          font-family: var(--rovFontFamily);
+          color: black;
+        };
+        --paper-input-container: {
+          padding-top: 0px;
+          padding-bottom: 4px;
+        };
+      }
+
+      #closeChartOptionsDialog {
+        display: inline-block;
+        position: absolute;
+        right: 2px;
+        width: 16px;
+        height: 16px;
+        padding: 0;
+        margin: 0px 0px 1px 0px;
+        --paper-icon-button: {
+          color: black;
+        };
+      }
+
+      #logViewerDialog {
+        min-height: 300px;
+        min-width: 400px;
+        position: absolute;
+      }
+
+      #logViewerText {
+        min-height: 230px;
+        min-width: 375px;
+        overflow-y: auto;
+        width: 100%;
+      }
+
+      .logViewerButton {
+        margin-left: 0px;
+        margin-right: 0px;
+        padding-left: 4px;
+        padding-right: 0px;
+      }
+
+      #notifyLogSettingsButton {
+        --paper-icon-button: {
+          color: #118899;
+          background-color: transparent;
+        };
+      }
+
+      .actionSelectCheckbox {
+        font-family: var(--rovFontFamily);
+        --paper-checkbox-size: 14px;
+        --paper-checkbox-unchecked-color: #118899;
+        --paper-checkbox-unchecked-ink-color: transparent;
+        --paper-checkbox-checked-color: #118899;
+        --paper-checkbox-checked-ink-color: #118899;
+        --paper-checkbox-checkmark-color: white;
+        --paper-checkbox-label-color: #333333;
+      }
+
+      #logViewerTitleBar:hover {
+        cursor: var(--rovDragDivCursor);
+      }
+
+
+      #tracePropertiesSubMenu {
+        margin: 0;
+        padding: 0;
+      }
+
+    </style>
+
+    <div id="logViewerDialog" class="rovDialog" style="position:fixed" on-keypress="logViewerKeyPress" draggable="true" hidden>
+      <h3 id="logViewerTitleBar" class="rovDialogTitle" on-mousedown="logDragMouseDown">{{logViewerTitle}}<iron-icon id="logViewerDialogClose" class="rovDialogCloseIcon" icon="close"></iron-icon></h3>
+      <div style="margin-top:10px;margin-left:14px;padding-right:0px;margin-right:14px;margin-bottom:12px;padding-left:0px;">
+        <textarea id="logViewerText" rows="15" readonly></textarea>
+      </div>
+      <span id="notifyLogSizeDiv" class="settingsRow" style="margin-top:10px;padding-left:0px;margin-left:10px;">
+        <paper-icon-button id="notifyLogSettingsButton" style="width:20px;height:20px;padding:0;" icon="{{notifyLogOptionsButton}}" on-click="notifyLogSettingsClicked" title$="{{notifyLogOptionsTooltip}}" role="button" tabindex="0"></paper-icon-button>
+        <span id="notifyLogSizeLabel" style="margin-right:2px" hidden$="{{notifyLogOptionsHidden}}">Size:</span>
+        <input id="notifyLogSizeInput" class="rovDialogInput" style="font-size:var(--rovContentFontSize);margin-bottom:10px;" on-input="logSettingsChanged" type="text" size="6" hidden$="{{notifyLogOptionsHidden}}">
+        <span hidden$="{{notifyLogOptionsHidden}}">lines</span>
+        <iron-icon id="notifyLogSizeInputInvalid" class="erroricon" title="Invalid size" icon="error" hidden></iron-icon>
+      </span>
+      <div style="margin:0;padding:0;position:absolute;bottom:0px;right:0px;">
+        <paper-button id="applyLogOptionsButton" class="rovDialogButton logViewerButton" on-click="applyLogSettingsClicked" title="Apply changes to log buffer" hidden$="{{notifyLogOptionsHidden}}" disabled>Apply</paper-button>
+        <paper-button id="exportLogButton" class="rovDialogButton logViewerButton" on-click="exportLogClicked" title="Export log to downloads directory">Export</paper-button>
+        <paper-button id="clearLogButton" class="rovDialogButton logViewerButton" on-click="clearLogClicked" title="Clear log">Clear</paper-button>
+        <paper-button class="rovDialogButton logViewerButton" style="padding-right:6px;" autofocus on-click="logViewerCloseClicked">Close</paper-button>
+      </div>
+      <div id="notifyLogWrapDiv" class="settingsRow" style="margin-top:0px;padding-left:0px;" hidden$="{{notifyLogOptionsHidden}}">
+        <paper-checkbox class="actionSelectCheckbox" id="notifyLogWrapCheckbox" style="margin-top:0px;margin-left:24px;padding-left:0px;" on-click="logSettingsChanged">Wrap when full</paper-checkbox>
+      </div>
+    </div>
+
+    <paper-dialog id="customViewOptionsMenuDialog" style="position:fixed;margin-right:0px;" on-keypress="viewOptionsKeyPress">
+      <div style="margin-top:16px;"><paper-icon-button id="closeViewOptionsButton" title="Close" on-click="closeViewOptions" icon="close" role="button" tabindex="0"></paper-icon-button></div>
+      <paper-listbox id="customViewOptionsMenu" class="attachedListbox" on-iron-select="customViewOptionsMenuItemSelected">
+        <paper-item id="onSave" class="viewOptionsMenuItem">
+          <paper-button class="viewOptionsMenuButton">
+            <iron-icon class="viewOptionsMenuButtonIcon" icon="file-download"></iron-icon>
+            <label class="viewOptionsMenuButtonLabel" style="cursor:pointer;" title="Save the current view in your downloads directory">Save data displayed in view</label>
+          </paper-button>
+        </paper-item>
+        <paper-item id="dividerItem" class="viewOptionsMenuItem" style="cursor:default">
+          <div class="viewOptionsMenuButtonChar">/</div>
+          <label class="viewOptionsMenuButtonLabel">Repeat divider</label>
+          <input type="number" id="dividerInput" value="{{repeatDivider}}" min="1" max="32" on-change="dividerChanged" disabled$="{{!repeatRefreshEnabled}}"></input>
+          <iron-icon id="dividerDisableIcon" class="dividerToggleIcon" icon="av:stop" title="Disable repeat refresh in this view" on-click="dividerToggleClicked" hidden$="{{!repeatRefreshEnabled}}"></iron-icon>
+          <iron-icon id="dividerEnableIcon" class="dividerToggleIcon" icon="autorenew" title="Enable repeat refresh in this view" on-click="dividerToggleClicked" hidden$="{{repeatRefreshEnabled}}"></iron-icon>
+        </paper-item>
+        <paper-item id="openLogViewer" class="viewOptionsMenuItem" hidden$="{{openLogViewerHidden}}">
+          <paper-button class="viewOptionsMenuButton">
+            <iron-icon class="viewOptionsMenuButtonIcon" icon="view-headline"></iron-icon>
+            <label class="viewOptionsMenuButtonLabel" style="cursor:pointer;" title="Open notification log">Show notification log</label>
+          </paper-button>
+        </paper-item>
+      </paper-listbox>
+    </paper-dialog>
+
+    <paper-dialog id="tracePropertiesDialog" class="rovDialog layout.vertical self-stretch" style="position:fixed;line-height:24px;" on-keypress="rovGraphDialogKeyPress" no-cancel-on-outside-click alwaysOnTop on-iron-overlay-closed="onTracePropertiesDialogClosed">
+      <h3 class="rovDialogTitle">Trace properties<paper-icon-button class="rovDialogCloseIcon" style="padding:0;" icon="close" dialog-dismiss></paper-icon-button></h3>
+      <section style="margin-top:0px;padding:0px;" hidden$="{{primaryKeySectionHidden}}">
+        <h4 class="settingsH">Row key</h4>
+        <div class="settingsRow" style="padding-right:26px">
+          <span id="primaryKeyLabel" style="margin-right:6px">Column:value</span>
+          <paper-dropdown-menu id="primaryKeyMenu" label="{{primaryKeyMenuLabel}}" no-label-float no-animations placeholder=" " on-iron-select="onPrimaryKeySelected">
+            <paper-listbox id="primaryKeyListbox" class="dropdown-content">
+              <template is="dom-repeat" items="{{primaryKeyMenuItems}}">
+                <paper-item class="primaryKeyItem">{{item}}</paper-item>
+              </template>
+            </paper-listbox>
+          </paper-dropdown-menu>
+        </div>
+      </section>
+      <section style="margin-top:0px;padding:0px;">
+        <h4 class="settingsH">Legend</h4>
+        <div class="settingsRow">
+          <paper-input id="assignedTraceNameInput" class="tracePropertiesInput" style="width:97%;" label="Title" type="text" placeholder=" "></paper-input>
+        </div>
+      </section>
+      <div class="buttons" style="padding-top:0px;padding-bottom:0px;">
+        <paper-button class="rovDialogButton" autofocus on-click="tracePropertiesDialogOkClicked">OK</paper-button>
+        <paper-button class="rovDialogButton" dialog-dismiss>Cancel</paper-button>
+      </div>
+    </paper-dialog>
+
+    <paper-dialog id="axesLabelsDialog" class="rovDialog" style="position:fixed;" on-keypress="rovGraphDialogKeyPress" no-cancel-on-outside-click alwaysOnTop>
+      <h3 class="rovDialogTitle">Axes labels<paper-icon-button class="rovDialogCloseIcon" style="padding:0;" icon="close" dialog-dismiss></paper-icon-button></h3>
+      <section style="margin-top:0px;padding:0px;">
+        <div class="settingsRow">
+          <paper-input id="xAxisInput" class="tracePropertiesInput" style="width:97%;" label="X Axis" value$="{{xAxisLabel}}" type="text" placeholder=" " autofocus></paper-input>
+        </div>
+        <div class="settingsRow" style="padding-top:5px;">
+          <paper-input id="yAxisInput" class="tracePropertiesInput" style="width:97%;" label="Y Axis" value$="{{yAxisLabel}}" type="text" placeholder=" "></paper-input>
+        </div>
+      </section>
+      <div class="buttons" style="padding-top:0px;padding-bottom:0px;">
+        <paper-button class="rovDialogButton" autofocus on-click="axesLabelsDialogOkClicked">OK</paper-button>
+        <paper-button class="rovDialogButton" dialog-dismiss>Cancel</paper-button>
+      </div>
+    </paper-dialog>
+
+    <paper-dialog id="chartOptionsMenuDialog" style="position:fixed;margin-right:0px;margin-left:0px;">
+      <paper-icon-button id="closeChartOptionsDialog" icon="close" on-click="closeChartOptionsClicked" role="button"></paper-icon-button>
+      <paper-listbox id="chartOptionsMenu" class="attachedListbox">
+        <paper-listbox id="tracePropertiesSubMenu" label="Trace properties" on-click="tracePropertiesClicked">
+          <paper-icon-item class="chartOptionsMenuIconItem">
+            <iron-icon class="chartOptionsMenuIcon" icon="editor:show-chart" item-icon></iron-icon>
+            <label class="chartOptionsMenuItemLabel" style="cursor:pointer;">Trace properties</label>
+          </paper-icon-item>
+          <paper-listbox id="traceNamesMenu" class="sublist" hidden>
+            <template id="traceNamesMenuTemplate" is="dom-repeat" items="{{traceNamesMenuItems}}">
+              <paper-icon-item id$="{{item.id}}" class="traceNamesMenuIconItem" title$="{{item.title}}" role="menuitem" on-click="traceNameMenuItemSelected">
+                <div class="traceNamesMenuIcon" style$="{{item.style}}" item-icon></div>
+                <label class="traceNamesMenuItemLabel">{{item.label}}</label>
+                <paper-icon-button id$="{{item.traceId}}" class="traceNamesMenuButton" style="right:20px;" icon="image:grid-on" on-click="displayTableView" role="button" title="Display table view"></paper-icon-button>
+                <paper-icon-button id$="{{item.traceId}}" class="traceNamesMenuButton" style="right:2px;" icon="close" on-click="deleteTrace" role="button" title="Remove this trace" hidden$="{{removeButtonHidden}}"></paper-icon-button>
+              </paper-icon-item>
+            </template>
+          </paper-listbox>
+        </paper-listbox>
+        <paper-icon-item id="graphNameClicked" class="chartOptionsMenuIconItem"  on-click="chartOptionsMenuItemClicked">
+          <iron-icon class="chartOptionsMenuIcon" icon="av:web-asset" item-icon></iron-icon>
+          <label class="chartOptionsMenuItemLabel" style="cursor:pointer;">Graph name</label>
+        </paper-icon-item>
+        <paper-icon-item id="axesLabelsClicked" class="chartOptionsMenuIconItem"  on-click="chartOptionsMenuItemClicked">
+          <iron-icon class="chartOptionsMenuIcon" icon="label-outline" item-icon></iron-icon>
+          <label class="chartOptionsMenuItemLabel" style="cursor:pointer;">Axes labels</label>
+        </paper-icon-item>
+        <paper-item id="modeBarItem" class="viewOptionsMenuItem">
+          <paper-checkbox class="viewOptionsCheckbox" id="showModeBarCheckbox" on-change="showModeBarChanged">Show plot toolbar</paper-checkbox>
+        </paper-item>
+      </paper-listbox>
+    </paper-dialog>
+
+    <paper-dialog id="graphNameDialog" class="rovDialog layout.vertical self-stretch" style="position:fixed;" on-keypress="rovGraphDialogKeyPress" no-cancel-on-outside-click alwaysOnTop>
+      <h3 class="rovDialogTitle">Graph name<paper-icon-button class="rovDialogCloseIcon" style="padding:0;" icon="close" dialog-dismiss></paper-icon-button></h3>
+      <section id="graphNameSection" style="margin-top:0px;padding:0px;">
+        <div class="settingsRow">
+          <paper-input id="graphNameInput" class="tracePropertiesInput" style="width:97%;" label="Name" value$="{{graphName}}" type="text" placeholder=" " autofocus></paper-input>
+        </div>
+      </section>
+      <div class="buttons" style="padding-top:0px;padding-bottom:0px;">
+        <paper-button class="rovDialogButton" autofocus on-click="graphNameDialogOkClicked">Save</paper-button>
+        <paper-button class="rovDialogButton" dialog-dismiss>Cancel</paper-button>
+      </div>
+    </paper-dialog>
+
+
+    <!-- local DOM for this element -->
+    <paper-card id="viewPaperCard" style="min-width: 410px;min-height: 310px;" elevation="2" on-click="viewClicked" on-dragover="viewDragOver">
+
+      <!-- define the toolbar region that responds to drag actions -->
+      <div id="dragDiv" style="margin-top:2px;position:relative;" draggable="{{draggable}}" on-mousedown="viewDragMouseDown">
+        <!-- display a label within the toolbar of this element -->
+        <label id="viewLabel" title$="{{viewTooltip}}">{{graphName}}</label>
+
+        <!-- add the standard view buttons to this element -->
+        <paper-icon-button id="refreshButton" class="viewToobarButton" hidden$="{{viewRefresh}}" icon="refresh" on-click="onRefresh" role="button" tabindex="0" title="Refresh view"></paper-icon-button>
+        <paper-spinner-lite id="refreshSpinner" hidden$="{{!viewRefresh}}" active></paper-spinner-lite>
+        <paper-icon-button id="customViewMenuButton" class="viewToobarButton" icon="menu" on-click="viewOptionsMenuClicked" role="button" tabindex="0"  title="View options"></paper-icon-button>
+        <paper-icon-button id="settingsButton" class="viewToobarButton" icon="settings" on-click="chartSettingsClicked" role="button" tabindex="0" title="Chart settings"></paper-icon-button>
+        <paper-icon-button id="closeButton" class="viewToobarButton" icon="close" on-click="closeView" role="button" tabindex="0" title="Close view"></paper-icon-button>
+      </div>
+
+     <!-- Place your content here -->
+      <div id="viewContentDiv">
+        <div id="graph"></div>
+      </div>
+
+      <!-- enable resizing for the paper-card element -->
+      <div class="resizerTopRight" on-mousedown="resizerClicked" hidden$="{{resizeViewsDisabled}}"></div>
+      <div class="resizerTopLeft" on-mousedown="resizerClicked" hidden$="{{resizeViewsDisabled}}"></div>
+      <div class="resizerBottomLeft" on-mousedown="resizerClicked" hidden$="{{resizeViewsDisabled}}"></div>
+      <div class="resizerBottomRight" on-mousedown="resizerClicked" hidden$="{{resizeViewsDisabled}}"></div>
+      <ti-rov-viewoptions id="rovViewOptions"></ti-rov-viewoptions>
+
+      <!-- div for showing errors -->
+      <div id="viewStatusConsole" hidden>
+        <paper-icon-button id="closeViewStatusButton" icon="close" on-click="closeViewStatusClicked" role="button" tabindex="0"></paper-icon-button>
+        <ul id="viewStatusList">
+          <template is="dom-repeat" items="{{compressedStatusItems}}" as="item">
+            <li class="viewStatusItem">
+              <label class="viewStatusCountLabel" style$="{{item.countStyle}}">{{item.count}}</label>
+              <iron-icon icon$="{{item.icon}}" class$="{{item.iconClass}}"></iron-icon>
+              <label style="margin-top:3px;">{{item.message}}</label>
+            </li>
+          </template>
+        </ul>
+      </div>
+    </paper-card>
+
+  </template>
+
+  <!-- load this element's code  -->
+  <script src="ti-rov-graph.js"></script>
+
+</dom-module>

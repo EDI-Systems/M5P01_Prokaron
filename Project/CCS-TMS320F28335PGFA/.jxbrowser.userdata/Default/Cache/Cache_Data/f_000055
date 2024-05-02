@@ -1,0 +1,857 @@
+<!--
+    Copyright (c) 2014, Texas Instruments Incorporated
+    All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without
+    modification, are permitted provided that the following conditions
+    are met:
+
+    *   Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
+    notice, this list of conditions and the following disclaimer in the
+    documentation and/or other materials provided with the distribution.
+    *   Neither the name of Texas Instruments Incorporated nor the names of
+    its contributors may be used to endorse or promote products derived
+    from this software without specific prior written permission.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+    AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+    THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+    PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+    CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+    EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+    PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+    OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+    WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+    OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+    EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../paper-progress/paper-progress.html">
+<link rel="import" href="../iron-icons/iron-icons.html">
+<link rel="import" href="../ti-core-icons/ti-core-icons.html">
+<link rel="import" href="../iron-image/iron-image.html">
+<link rel="import" href="../paper-toast/paper-toast.html">
+<link rel="import" href="../ti-widget-common/ti-widget-label.html">
+<link rel="import" href="../ti-core-assets/ti-core-assets.html">
+<!--
+`ti-widget-statusbar`
+
+Status bar widget - a bar along the bottom of the application page that can display an icon image, status text and a progress bar
+
+Example:
+
+    <ti-widget-statusbar iconName="folder" statusString1="hello world!"></ti-widget-statusbar>
+
+@group TI Core
+@element ti-widget-statusbar
+@demo demo.html
+-->
+<dom-module id='ti-widget-statusbar'  >
+
+    <template>
+        <script id="statusbarMarker" src="statusbar-marker.js"></script>
+
+        <style>
+            :host {
+                display: block;
+                position: static;
+
+            }
+            body {
+                height: 100%;
+                margin: 0;
+                padding: 0;
+                /*      font-family: 'Open Sans', sans-serif !important;  */
+                position: static;
+            }
+            .iconimage {
+                float: left;
+                background-color: transparent;
+                left: 0px;
+                top: 3px;
+                position: relative;
+                padding-left: 5px;
+                padding-right: 5px;
+                display: var(--display-icon-image);
+            }
+            .statusinfo {
+                float: left;
+                left: 10px;
+                top: 5px;
+                /*		font-family: 'Open Sans', sans-serif !important; */
+                font-size: 13px;
+                /*        color:#0;  */
+                /*      background-color: #ececec;  */
+                position: relative;
+                /*        border-style: inset; */
+                /*        border-width: 1px;  */
+                margin-left:5px;
+                padding-left: 5px;
+                padding-right: 5px;
+                white-space:nowrap;
+            }
+
+            a:hover, a:focus {
+                text-decoration: none;
+            }
+            .container {
+
+                /*        background-color: #ececec;  */
+                width: 100%;
+                height: 28px;
+                position: fixed;
+                font-size: 13px;
+                z-index:1000;
+                bottom:0px;
+                left:0px;
+                right:0px;
+                margin-bottom:0px;
+                border-top-style: outset;
+                border-width: 1px;
+                white-space:nowrap;
+            }
+            paper-progress {
+                display: block;
+                width: 100%;
+                position: fixed;
+                z-index:1001;
+                bottom:0px;
+                left:0px;
+                right:0px;
+                margin-bottom:28px;
+                padding:0;
+            }
+            paper-progress::shadow #activeProgress {
+                background-color: lime;
+            }
+            .percentcomplete {
+
+                background-color: transparent;
+                width: 100%;
+                height: 28px;
+                position: absolute;
+                z-index:1002;
+                bottom:0px;
+                left:0px;
+                right:0px;
+                margin-bottom:0px;
+            }
+            .icons {
+                /* color: grey; */
+            }
+            #logo {
+                float: right;
+                white-space:nowrap;
+                font-style:italic;
+                padding-right:8px;
+                vertical-align:middle;
+                font-size:9px;
+            }
+            paper-toast {
+                bottom: 45px;
+                left: 0;
+                right:0;
+            }
+        </style>
+        <paper-toast id="toast" text=""  style$={{_getToastStyle(_toastMaxHeight,_toastCtr)}}"  duration="{{_toastDuration}}">
+            <span style="vertical-align:middle;">
+                <img src="{{_toastImagePath}}" style$="{{_toastImageStyle}};">{{driverInstallMsgSuffix}}
+                <span style="float:right;top:0;margin-top:-15px;margin-right:-20px;">
+                    <iron-icon style="width:20px" icon="close"  on-click="hideToast"></iron-icon>
+                </span>
+            </span>
+        </paper-toast>
+        <paper-progress value="{{progress}}" style$="visibility:{{_progressBarVisibilityStyle}};color:{{progressColor}}" hidden$="[[_integratedIDE]]"></paper-progress>
+
+        <div id="footer" class="container" hidden$="[[_integratedIDE]]">
+            <template is="dom-if" if="[[_isAppIconVisible(appIconName)]]">
+                <div class="iconimage" id="appicon" on-up="_onAppIconClickHdlr" style$="[[appIconStyle]];"><iron-icon  id="statusBarAppIcon" class="icons" icon="{{appIconName}}" title="{{tooltipAppIcon}}"></iron-icon><!--<img src="{{iconImagePath}}"/>--></div>
+            </template>
+            <template is="dom-if" if="[[!hideConnectIcon]]">
+                <div class="iconimage" id="iconimage" on-up="onClickHdlr" style$="visibility:[[_iconVisibilityStyle]];"><iron-icon  id="statusBarIcon" class="icons" icon="{{iconName}}" title="{{tooltipIconImage}}"></iron-icon><!--<img src="{{iconImagePath}}"/>--></div>
+            </template>
+            <div class="statusinfo" id="status1" style$="white-space:normal;visibility:[[_statusString1VisibilityStyle]];" title="{{tooltipStatusString1}}">{{statusString1}}<paper-tooltip position="top"></paper-tooltip></div>
+            <div class="statusinfo" id="status2" style$="white-space:normal;visibility:[[_statusString2VisibilityStyle]]" title="{{tooltipStatusString2}}">{{statusString2}}<paper-tooltip position="top"></paper-tooltip></div>
+            <div class="statusinfo" id="status3" style$="white-space:normal;visibility:[[_statusString3VisibilityStyle]]" title="{{tooltipStatusString3}}">{{statusString3}}<paper-tooltip position="top"></paper-tooltip></div>
+            <div class="percentcomplete" align="center" style$="visibility:[[_percentStringVisibilityStyle]];">{{progress}} %</div>
+            <div class="logo" id="logo" style$="{{_getLogoStyle(_showTiLogo, _inDesigner)}}">
+                <iron-image id="imageWidget"  style="width:180px;height:28px;" sizing="contain"></iron-image>
+            </div>
+        </div>
+    </template>
+    <script>
+        var gc = gc || {};
+
+        if (window.parent.gc)
+        {
+            // take the designer from the parent iframe, if available.
+            gc.fileCache = gc.fileCache || window.parent.gc.fileCache;
+        }
+        if (window.global && global.document && global.document.gc)
+        {
+            // take the designer from the global node-webkit document if available
+            gc.fileCache = gc.fileCache || global.document.gc.fileCache;
+        }
+        Polymer ({
+            is: 'ti-widget-statusbar',
+            _progressBarVisibilityStyle: "hidden",
+            _percentStringVisibilityStyle: "hidden",
+            _statusString1VisibilityStyle: "hidden",
+            _statusString2VisibilityStyle: "hidden",
+            _statusString3VisibilityStyle: "hidden",
+            _iconVisibilityStyle: "hidden",
+            _logoWidth: 0,
+            _toastDuration: 12000,
+            hostAttributes: {
+            },
+            /**
+             * Fired when connect icon has been clicked
+             *
+             * @event iconclicked
+             */
+            /**
+             * Fired when the application icon icon has been clicked
+             *
+             * @event appiconclicked
+             */
+            /**
+             * Fired when the statusbar attached lifecycle event is called
+             *
+             * @event ti-widget-statusbar-attached
+             */
+            properties: {
+                /**
+                 * Controls whether the progress bar is visible or not.
+                 *
+                 * @attribute progressBarEnabled
+                 * @type boolean
+                 * @default false
+                 */
+                progressBarEnabled: {
+                    notify: true,
+                    type: Boolean,
+                    value: false,
+                    observer: "progressBarEnabledChanged"
+                },
+                /**
+                 * Controls whether the progress percent complete text is visible or not.
+                 *
+                 * @attribute showProgressPercentString
+                 * @type boolean
+                 * @default false
+                 */
+                showProgressPercentString: {
+                    notify: true,
+                    type: Boolean,
+                    value: true
+                },
+                /**
+                 * A value (0-100) that represents the percentage complete to show in the progress bar.
+                 *
+                 * @attribute progress
+                 * @type number
+                 * @default 0
+                 */
+                progress: {
+                    notify: true,
+                    type: Number,
+                    value: 0
+                },
+                /**
+                 * Color of the progress bar (default is TI Torquoise(
+                 *
+                 * @attribute progressColor
+                 * @type string
+                 * @default #115566
+                 */
+                progressColor: {
+                    notify: true,
+                    type: String,
+                    value: "#115566"
+                },
+                /**
+                 * The first status string to display in the status bar text field
+                 *
+                 * @attribute statusString1
+                 * @type string
+                 * @default ""
+                 */
+                statusString1: {
+                    notify: true,
+                    type: String,
+                    value: "",
+                    observer: "statusString1Changed"
+                },
+                /**
+                 * The tooltip text for the first status string to display in the status bar text field
+                 *
+                 * @attribute tooltipStatusString1
+                 * @type string
+                 * @default ""
+                 */
+                tooltipStatusString1: {
+                    notify: true,
+                    type: String,
+                    value: ""
+                },
+                /**
+                 * The second status string to display in the status bar text field
+                 *
+                 * @attribute statusString2
+                 * @type string
+                 * @default ""
+                 */
+                statusString2: {
+                    notify: true,
+                    type: String,
+                    value: "",
+                    observer: "statusString2Changed"
+                },
+                /**
+                 * The tooltip text for the second status string to display in the status bar text field
+                 *
+                 * @attribute tooltipStatusString2
+                 * @type string
+                 * @default ""
+                 */
+                tooltipStatusString2: {
+                    notify: true,
+                    type: String,
+                    value: ""
+                },
+                /**
+                 * The third status string to display in the status bar text field
+                 *
+                 * @attribute statusString3
+                 * @type string
+                 * @default ""
+                 */
+                statusString3: {
+                    notify: true,
+                    type: String,
+                    value: "",
+                    observer: "statusString3Changed"
+                },
+                driverInstallMsgSuffix: {
+                    notify: false,
+                    type: String,
+                    value: ""
+                },
+                _toastImageStyle: {
+                    notify: false,
+                    type: String,
+                    value: "display:none;"
+                },
+                /**
+                 * The tooltip text for the third status string to display in the status bar text field
+                 *
+                 * @attribute tooltipStatusString3
+                 * @type string
+                 * @default ""
+                 */
+                tooltipStatusString3: {
+                    notify: true,
+                    type: String,
+                    value: ""
+                },
+                /**
+                 * The name of an application-specific icon from the iron-icons set to be displayed at the left of the status bar.
+                 * Set name to empty string to display nothing.  The name should be of the form <icon set name>:<icon name>
+                 * e.g. ti-core-icons:link  or communication:email.
+                 * The core icons can be referenced just by the icon name e.g. lock
+                 * For names of icons, see https://www.polymer-project.org/components/iron-icons/demo.html
+                 *
+                 * @attribute appIconName
+                 * @type string
+                 * @default "ti-core-icons:view-list"
+                 */
+                appIconName: {
+                    notify: true,
+                    type: String,
+                    value: "",
+                    observer: "appIconNameChanged"
+                },
+                /**
+                 * css style to apply to the appIcon (if appIconName is specified)
+                 *
+                 * @attribute appIconStyle
+                 * @type string
+                 * @default "color: white;display:inline-block;"
+                 */
+                appIconStyle: {
+                    notify: true,
+                    type: String,
+                    value: "color: white;display:inline-block;"
+                },
+                /**
+                 * The string to display as a tooltip when the mouse hovers over the appIcon.  empty to display nothing
+                 *
+                 * @attribute tooltipAppIcon
+                 * @type string
+                 * @default ""
+                 */
+                tooltipAppIcon: {
+                    notify: true,
+                    type: String,
+                    value: ""
+                },
+                /**
+                 * The name of an icon from the iron-icons set to be displayed at the left of the status bar.
+                 * Set name to empty string to display nothing.  The name should be of the form <icon set name>:<icon name>
+                 * e.g. ti-core-icons:link  or communication:email.
+                 * The core icons can be referenced just by the icon name e.g. lock
+                 * For names of icons, see https://www.polymer-project.org/components/iron-icons/demo.html
+                 *
+                 * @attribute iconName
+                 * @type string
+                 * @default "ti-core-icons:nolink"
+                 */
+                iconName: {
+                    notify: true,
+                    type: String,
+                    value: "ti-core-icons:nolink",
+                    observer: "iconNameChanged"
+                },
+                /**
+                 * The icon will only fire an iconclicked event if the iconEnabled property is true.
+                 * It is the responsibility of the iconclicked event handler to change the iconEnabled
+                 * value to false if event throttling is required.
+                 *
+                 * @attribute iconEnabled
+                 * @type boolean
+                 * @default true
+                 */
+                iconEnabled: {
+                    notify: true,
+                    type: Boolean,
+                    value: true,
+                    observer: "iconEnabledChanged"
+                },
+                /**
+                 * The string to display as a tooltip when the mouse hovers over the icon.  empty to display nothing
+                 *
+                 * @attribute tooltipIconImage
+                 * @type string
+                 * @default ""
+                 */
+                tooltipIconImage: {
+                    notify: true,
+                    type: String,
+                    value: ""
+                },
+                /** Set to true when object ready has occurred
+                 * @attribute initialized
+                 * @type boolean
+                 * @default false
+                 */
+                initialized: {
+                    notify: true,
+                    type: Boolean,
+                    value: false
+                },
+                /*
+                 * Controls whether the TI Logo is displayed in the lower right corner or not
+                 *
+                 * @attribute showTiLogo
+                 * @type boolean
+                 * @default true
+                 */
+                _showTiLogo:  {
+                    notify: true,
+                    type: Boolean,
+                    value: false
+                },
+                _toastMaxHeight: {
+                    notify: true,
+                    type: String,
+                    value: "120px"
+                },
+                _toastImagePath: {
+                    notify: true,
+                    type: String,
+                    value: ""
+                },
+                _toastCtr: {
+                    notify: true,
+                    type: Number,
+                    value: 0
+                },
+                _inDesigner: {
+                    notify: true,
+                    type: Boolean,
+                    value: false
+                },
+                _integratedIDE: {
+                    notify: true,
+                    type: Boolean,
+                    value: false
+                },
+                /**
+                 * when true, the statusBarIcon (used to show the connection status) is not displayed
+                 *
+                 * @attribute hideConnectIcon
+                 * @type Boolean
+                 * @default false
+                 */
+                hideConnectIcon: {
+                    notify: true,
+                    type: Boolean,
+                    value: false,
+                    observer: "_hideConnectIconChanged"
+                }
+            },
+            _hideConnectIconChanged: function(newValue,oldValue){
+                if (!newValue){
+                    var statusBarIcon = this.querySelector('#statusBarIcon');
+                    if (statusBarIcon) {
+                        statusBarIcon.disabled = !this.iconEnabled;
+                    }
+                }
+            },
+            _isAppIconVisible: function(appIconName){
+                var result = false;
+                if ((appIconName) && (appIconName.length > 0)) {
+                    result = true;
+                }
+                return result;
+            },
+            _getToastStyle: function(_toastMaxHeight,toastCtr){
+                return "max-height:"+this._toastMaxHeight+";";
+            },
+            _onAppIconClickHdlr: function(event){
+                console.log("ti-widget-statusbar: onAppIconClickHdlr - click event received.");
+                this.fire('appiconclicked');
+            },
+            _onClickHdlr: function(event){
+                console.log("ti-widget-statusbar: onClickHdlr - click event received.");
+                if (this.iconEnabled) {
+                    this.fire('iconclicked');
+                }
+            },
+            onClickHdlr: undefined,
+            iconEnabledChanged: function(){
+                var statusBarIcon = this.querySelector('#statusBarIcon');
+                if (statusBarIcon){
+                    statusBarIcon.disabled = !this.iconEnabled;
+                }
+            },
+            getPosition: function (element) {
+                var xPosition = 0;
+                var yPosition = 0;
+
+                while (element) {
+                    xPosition += (element.offsetLeft - element.scrollLeft + element.clientLeft);
+                    yPosition += (element.offsetTop - element.scrollTop + element.clientTop);
+                    element = element.offsetParent;
+                }
+                return {x: xPosition, y: yPosition};
+            },
+            _resizeEventHdlr: function(e) {
+                if ((!this.$) || (!this.$.logo)) return;
+                var logoElem = this.$.logo;
+                if (this._logoWidth === 0){
+                    this._logoWidth =  logoElem.getBoundingClientRect().width;
+                }
+
+                var status3elem = this.$.status3;
+                var posStatus3 = this.getPosition(status3elem);
+                var rect = status3elem.getBoundingClientRect();
+                var status3Right = posStatus3.x + rect.width ;
+                var isCaptionVisible = true;
+                //console.log('string3: pos.x='+posStatus3.x+', pos.y='+posStatus3.y+", width="+rect.width+", window.innerWidth="+window.innerWidth+",status3Right="+status3Right+", logoWidth="+this.logoWidth);
+                if (window.innerWidth < (status3Right + this._logoWidth + 20)) {
+
+                    isCaptionVisible = false;
+                    if (window.innerWidth < (status3Right + this._logoWidth)){
+                        this.$.logo.style.display='none';
+                    } else {
+                        this.$.logo.style.display='';
+
+                    }
+                } else {
+
+                    this.$.logo.style.display='';
+                }
+
+
+            },
+            resizeEventHdlr: undefined,
+            progressBarEnabledChanged: function() {
+                if (!this.progressBarEnabled){
+                    this._progressBarVisibilityStyle = 'hidden';
+                    this._percentStringVisibilityStyle = 'hidden';
+                } else {
+                    this._progressBarVisibilityStyle = '';
+                    if (this.showProgressPercentString){
+                        this._percentStringVisibilityStyle = '';
+                    } else {
+                        this._percentStringVisibilityStyle = 'hidden';
+                    }
+                }
+            },
+            showToastMessage: function(msgStrBeforeImg, duration, msgStrAfterImg, imagePath, maxHeight){
+                if ((!this.$) || (!this.$.toast)) return;
+                if ((maxHeight) && (maxHeight.length > 0)) {
+                    if (maxHeight.indexOf("px") === -1){
+                        maxHeight = maxHeight+"px";
+                    }
+                    this._toastMaxHeight = maxHeight;
+                } else {
+                    this._toastMaxHeight = "120px";
+                }
+                if (duration < 800){
+                    this._toastDuration = 800;
+                } else {
+                    this._toastDuration = duration;
+                }
+                this._toastCtr++;
+                this.$.toast.text = msgStrBeforeImg;
+                if (msgStrAfterImg) {
+                    this.driverInstallMsgSuffix = msgStrAfterImg;
+                } else {
+                    this.driverInstallMsgSuffix = "";
+                }
+                this._toastImagePath = this.fixImagePath(imagePath);
+                if  ((this._toastImagePath) && (this._toastImagePath.length > 0)) {
+                    this._toastImageStyle = "";
+                } else {
+                    this._toastImageStyle = "display:none;"
+                }
+
+                this.$.toast.updateStyles();
+                this.$.toast.opened = true;
+                this.async(function(){
+                    // reapply the styles once the toast has become visible
+                    this._toastCtr++;
+                }.bind(this),50);
+                this.style.zIndex = "9000"; // put the toast in front of the + button
+                window.setTimeout(function(){
+                    this.style.zIndex = "auto";
+                }.bind(this),duration+1);
+            },
+            /**
+             * returns the path to the components folder, with no trailing / at the end.
+             * @function getPathToComponentFolder
+             * @returns {string}
+             */
+            getPathToComponentFolder: function(){
+                var markerObj = document.querySelector("#statusbarMarker");
+                url = "/.";
+                if (markerObj) {
+                    url = markerObj.src;
+                }
+                var result= url.substring(0,url.lastIndexOf("/ti-widget-statusbar"));
+                return result;
+            },
+            fixImagePath: function(imagePath){
+                var result = imagePath;
+                var baseUrl= this.getPathToComponentFolder()+'/ti-widget-statusbar';
+
+                if (imagePath) {
+                    result = baseUrl+imagePath;
+                    if (imagePath.startsWith('..')) {
+                        result = imagePath;
+                    } else {
+                        // TODO: figure out how to display images that are in the app folder
+                        if (!imagePath.startsWith('/')) {
+                            result = baseUrl+'/'+imagePath;
+                        }
+                    }
+                    // make sure the UAC image and Chrome_popupBlocker image works!
+                    if (imagePath.indexOf('UAC.png') > 0){
+                        result = baseUrl + '/images/UAC.png';
+                    } else if (imagePath.indexOf('popupBlocker') > 0){
+                        result = baseUrl + '/images/Chrome_popupBlocker.gif';
+                    }
+                }
+                return result;
+            },
+            showOnlyProgressBar: function() {
+                this.$.iconimage.style.display ="none";
+                this.$.status1.style.display ="none";
+                this.$.status2.style.display ="none";
+                this.$.status3.style.display ="none";
+
+            },
+            
+            showOnlyProgressBarAndStatus: function() {
+                this.$.iconimage.style.display ="none";
+                this.$.status1.style.color = "#333";
+                this.$.status2.style.color = "#333";
+                this.$.status3.style.color = "#333";
+            },
+
+            hideToast: function(){
+                if ((!this.$) || (!this.$.toast)) return;
+                this.$.toast.opened = false;
+            },
+            showProgressPercentString: function() {
+                if (!this.showProgressPercentString){
+                    this._percentStringVisibilityStyle = 'hidden';
+                } else {
+                    this._percentStringVisibilityStyle = '';
+                }
+            },
+
+            statusString1Changed: function(){
+                if (this.statusString1.length > 0){
+                    this._statusString1VisibilityStyle = '';
+                } else {
+                    this._statusString1VisibilityStyle = 'hidden';
+                }
+                // hide the logo if it will interefere with the status strings
+                var _self = this;
+                window.setTimeout(function(){_self.resizeEventHdlr();},100);
+            },
+            statusString2Changed: function(){
+                if (this.statusString2.length > 0){
+                    this._statusString2VisibilityStyle = '';
+                } else {
+                    this._statusString2VisibilityStyle = 'hidden';
+                }
+                var _self = this;
+                window.setTimeout(function(){_self.resizeEventHdlr();},100);
+            },
+            statusString3Changed: function(){
+                if (this.statusString3.length > 0){
+                    this._statusString3VisibilityStyle = '';
+                } else {
+                    this._statusString3VisibilityStyle = 'hidden';
+                }
+                var _self = this;
+                window.setTimeout(function(){_self.resizeEventHdlr();},100);
+            },
+            setIconName: function(name){
+                this.iconName = name;
+            },
+            getIconName: function(){
+                return this.iconName;
+            },
+            appIconNameChanged: function(){
+                if (this.appIconName.length > 0){
+                    this.appIconVisibilityStyle = '';
+                } else {
+                    this.appIconVisibilityStyle = 'hidden';
+                }
+            },
+            iconNameChanged: function(){
+                if (this.iconName.length > 0){
+                    this._iconVisibilityStyle = '';
+                } else {
+                    this._iconVisibilityStyle = 'hidden';
+                }
+            },
+            _getRightOffset: function(showTiLogo){
+                var result = "8px";    // TODO: replace with a margin variable
+                if (showTiLogo){
+                    result = "195px";  // TODO: determine width of logo programmatically
+                }
+                return result;
+            },
+            created: function() {
+                this.resizeEventHdlr = this._resizeEventHdlr.bind(this);
+                this.onClickHdlr = this._onClickHdlr.bind(this);
+                this.updateBranding = this._updateBranding.bind(this);
+            },
+            ready: function() {
+                // see https://github.com/Polymer/polymer/issues/329
+                this.enteredView();
+            },
+            enteredView: function() {
+                this.progress = 0;
+                this.style.position = 'static';
+                this.iconNameChanged();
+                this.initialized = true;
+            },
+            attached: function() {
+                this.fire("ti-widget-statusbar-attached", this.$);
+
+                if(gc) {
+                    gc.services = gc.services || {};
+                    gc.services['ti-widget-statusbar'] = this;
+                }
+
+                this.async(function() {
+                    this.domReady();
+                }.bind(this),1);
+            },
+            detached: function() {
+                if (gc.services['ti-widget-statusbar'] === this) {
+                    gc.services['ti-widget-statusbar'] = undefined;
+                }
+            },
+            _getLogoStyle: function(_showTiLogo, _inDesigner){
+                var result = "";
+                if (!_showTiLogo){
+                    result = "display:none;";
+                }
+                var useTransparent = _inDesigner || (document.querySelector('body').className === "ti-analogevm-theme");
+                result += "background-color:" + (useTransparent ? "transparent" : "#191919");
+                return result;
+            },
+            _updateBranding: function(){
+                // Enable the TI Logo if tiBrandingEnabled is set in the project.json file
+                var _self = this;
+                var logoElement = _self.$.logo;
+                var projectJsonFilePath = 'project.json';
+                console.log("ti-widget-statusbar.updateBranding: about to read "+projectJsonFilePath);
+                gc.fileCache.readJsonFile(projectJsonFilePath).then(function(manifest) {
+                    if (manifest.tiBrandingEnabled){
+                        _self._showTiLogo = true;
+                    } else {
+                        _self._showTiLogo = false;
+                    }
+                    if (!_self._showTiLogo) {
+                        _self._TiLogoDisplayStyle = "none";
+                    }
+                    console.log("ti-widget-statusbar.updateBranding: _showTiLogo = "+_self._showTiLogo);
+
+                }).fail(function(err){
+                    console.log('ti-widget-statusbar.updateBranding: gc.fileCache.readJsonFile threw exception err='+err);
+                    // exception usually caused by executing this from a demo project in the components folder
+                    _self.showTiLogo = false;
+                }).finally(function() {
+                    if (logoElement) {
+                        logoElement.style.display = _self._TiLogoDisplayStyle;
+                    }
+                });
+
+
+            },
+            updateBranding: undefined,
+            domReady: function(){
+                var _self = this;
+                window.onresize = function(e){
+                    //console.log("Got a resize Event!");
+                    _self.resizeEventHdlr();
+                };
+                if (this.$.imageWidget) {
+                    this._inDesigner = this.parentElement.id == "designer";
+                    this.$.imageWidget.src = this.resolveUrl("../ti-widget-common/images/ti_horiz_banner_" +
+                        (this._inDesigner  ? "black" : "white") + ".svg");
+                }
+
+                if ((window.parent)&& (window.parent.document)){
+                    window.parent.document.addEventListener("tiBrandingChanged", this.updateBranding);
+                }
+
+                this.updateBranding();
+
+                if (gc.desktop && gc.desktop.isCCS()) {
+                    this._integratedIDE = true;
+                    var viewport = document.querySelector("#viewport");
+                    if (viewport) {
+                        viewport.style.bottom = "0px";
+                    }
+                    var poweredBy = document.querySelector("#poweredby");
+                    if (poweredBy) {
+                        poweredBy._noUpdate = true;
+                        poweredBy.style.bottom = "0px";
+                    }
+                }
+
+            }
+        });
+    </script>
+</dom-module>

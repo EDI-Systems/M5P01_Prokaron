@@ -1,0 +1,2604 @@
+
+<!--
+    Copyright (c) 2015, Texas Instruments Incorporated
+    All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without
+    modification, are permitted provided that the following conditions
+    are met:
+
+    *   Redistributions of source code must retain the above copyright
+        notice, this list of conditions and the following disclaimer.
+        notice, this list of conditions and the following disclaimer in the
+        documentation and/or other materials provided with the distribution.
+    *   Neither the name of Texas Instruments Incorporated nor the names of
+        its contributors may be used to endorse or promote products derived
+        from this software without specific prior written permission.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+    AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+    THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+    PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+    CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+    EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+    PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+    OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+    WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+    OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+    EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../ti-core-assets/ti-core-assets.html">
+<script src="agent.js"></script>
+<link rel="import" href="../ti-core-cloudagent-installdialog/ti-core-cloudagent-installdialog.html">
+
+<link rel="import" href="../ti-widget-statusbar/ti-widget-statusbar.html">
+<link rel="import" href="../iron-icons/iron-icons.html">
+
+<link rel="import" href="../paper-progress/paper-progress.html">
+<link rel="import" href="../paper-tooltip/paper-tooltip.html">
+
+<script src='./SingletonService.js'></script>
+
+<!--
+`ti-core-backplane` establishes communication between the browser and TI Cloud Agent
+    - used to start/stop services on TI Cloud Agent
+    - provides TI Cloud Agent installation files for Windows, Linux and Mac
+    - handles discovery process and websocket port negotiation with TI Cloud Agent
+    - provides events to tell application when to display connect / disconnect / download TI Cloud Agent buttons
+    - provides APIs for application to call in order to initiate connect / disconnect actions
+
+Example:
+
+    <ti-core-backplane></ti-core-backplane>
+
+See demo for a full working example of how to use this component.
+
+@group Ti Elements
+@element ti-core-backplane
+@homepage elements/ti-guicomposer-helpindex/demo.html
+@hero hero.svg
+@demo demo.html
+-->
+<dom-module id='ti-core-backplane'> 
+    <template id="backplaneTemplate"> 
+    </template> 
+    <script>
+        var gc = gc || {};
+        // TODO: allow backplane component in iframe to access agent.js: var TICloudAgent = window.parent.TICloudAgent || TICloudAgent;
+        if (window.parent.gc)
+        {
+            // take the designer from the parent iframe, if available.
+            gc.designer = gc.designer || window.parent.gc.designer;
+            gc.desktop = gc.desktop || window.parent.gc.desktop;
+        }
+        if (window.global && global.document && global.document.gc)
+        {
+            // take the designer from the global node-webkit document if available
+            gc.designer = gc.designer || global.document.gc.designer;
+            gc.desktop = gc.desktop || global.document.gc.desktop;
+        }
+        var TICloudAgent = window.parent.TICloudAgent || window.TICloudAgent;
+        
+        var TI_HID_VENDOR_ID= 8263;
+        var serialPortListPromise;
+        var tiHidPortListPromise;
+        var sequencer = Q();
+
+        gc.SingletonService ({
+            is: 'ti-core-backplane',
+            // NOTE: you cannot have behaviors in ti-core-backplane due to the use of gc.SingletonService.
+            _self: undefined,
+            agent: undefined,
+            ds: undefined,
+            file: null,
+            isDebugServerConfigured: false,
+            isErrorPending: false,
+            cores: undefined,
+            core: undefined,
+            portFailure: null,
+            portRequested: false,
+            deleteStatusBarUponDetach: false,
+            myTimeout: null,
+            progressPercent: 0,
+            statusBar: undefined,
+            _target: undefined,
+            selectedDeviceCcxmlString: undefined,
+            oneTimeCallback_onInstallDialog: undefined,
+            states: [
+                {
+                    'name': 'disconnected',
+                    'statusString': 'Disconnected.',
+                    'waitForUser': true,
+                    'caption': 'Connect',
+                    'skip': false,
+                    'events': {
+                        'gotoNextState': 'connectingToCloudAgent',
+                        'onConnectBtnClicked': 'connectingToCloudAgent',
+                        'onCloudAgentConnected': 'ready',
+                        'onFailedToConnect': 'failedToConnect',
+                        'onOpenInstallDialog': 'downloadTICloudAgent',
+                        'onDisconnectBtnClicked': 'disconnected',
+                        'onError': 'error'
+                    }
+                },
+                {
+                    'name': 'connectingToCloudAgent',
+                    'statusString': 'Connecting...',
+                    'caption': 'Disconnect',
+                    'waitForUser': false,
+                    'skip': false,
+                    'events': {
+                        'gotoNextState': 'ready',
+                        'onCloudAgentConnected': 'ready',
+                        'onFailedToConnect': 'failedToConnect',
+                        'onDisconnectBtnClicked': 'disconnect',
+                        'onOpenInstallDialog': 'downloadTICloudAgent',
+                        'onError': 'error'
+                    }
+                },
+                {
+                    'name': 'ready',
+                    'statusString': ( (typeof process !== "undefined") ? "Connected." :"Connected to TI Cloud Agent."),
+                    'caption': 'Ready',
+                    'waitForUser': true,
+                    'skip': false,
+                    'events': {
+                        'gotoNextState': 'disconnect',
+                        'onFailedToConnect': 'failedToConnect',
+                        'onOpenInstallDialog': 'downloadTICloudAgent',
+                        'onDisconnectBtnClicked': 'disconnect',
+                        'onError': 'error'
+                    }
+                },
+                {
+                    'name': 'failedToConnect',
+                    'statusString': ( (typeof process !== "undefined") ? "Timeout waiting for connection to debug agent:" :"Could not connect to target:"),
+                    'caption': ( (typeof process !== "undefined") ?'Timeout waiting for connection to agent':'Download TI Cloud Agent'),
+                    'waitForUser': true,
+                    'skip': false,
+                    'events': {
+                        'gotoNextState': 'disconnect',
+                        'onInstallerDownloaded': 'disconnected',
+                        'onFailedToConnect': 'failedToConnect',
+                        'onOpenInstallDialog': 'downloadTICloudAgent',
+                        'onDisconnectBtnClicked': 'disconnect',
+                        'onConnectBtnClicked': 'connectingToCloudAgent'
+                    }
+                },
+                {
+                    'name': 'downloadTICloudAgent',
+                    'statusString': ( (typeof process !== "undefined") ? "Timeout waiting for connection to debug agent:" :"Could not connect to target:"),
+                    'caption': ( (typeof process !== "undefined") ?'Timeout waiting for connection to agent':'Download TI Cloud Agent'),
+                    'waitForUser': true,
+                    'skip': false,
+                    'events': {
+                        'gotoNextState': 'disconnect',
+                        'onInstallerDownloaded': 'disconnected',
+                        'onFailedToConnect': 'failedToConnect',
+                        'onOpenInstallDialog': 'downloadTICloudAgent',
+                        'onDisconnectBtnClicked': 'disconnect',
+                        'onConnectBtnClicked': 'connectingToCloudAgent'
+                    }
+                },
+                {
+                    'name': 'disconnect',
+                    'statusString': 'Disconnect',
+                    'caption': 'Disconnect',
+                    'waitForUser': true,
+                    'skip': false,
+                    'events': {
+                        'gotoNextState': 'disconnected',
+                        'onDisconnectBtnClicked': 'disconnected',
+                        'onFailedToConnect': 'failedToConnect',
+                        'onOpenInstallDialog': 'downloadTICloudAgent',
+                        'disconnectComplete': 'disconnected'
+                    }
+                },
+                {
+                    'name': 'error',
+                    'statusString': 'Backplane Error',
+                    'caption': 'Error',
+                    'waitForUser': true,
+                    'skip': false,
+                    'events': {
+                        'gotoNextState': 'disconnect',
+                        'onConnectBtnClicked': 'error',
+                        'onFailedToConnect': 'error',
+                        'onDisconnectBtnClicked': 'error'
+                    }
+                }
+
+            ],
+            userActions: ['onConnectBtnClicked', 'onUserSaysDevicePluggedIn', 'onInstallerDownloadBtnClicked', 'onDisconnectBtnClicked','onFailedToConnect','onOpenInstallDialog'],
+            stateIndexes: {},
+            prevState: undefined,
+
+
+            // For info on Polymer published properties, please see https://groups.google.com/forum/#!msg/polymer-dev/IX_gvSQT78Y/UtxDo-M2H6MJ
+            // and http://stackoverflow.com/questions/23861029/how-does-data-binding-in-polymer-work
+
+            /**
+             * Fired when the currentState changes.
+             *
+             * @event currentStateChanged
+             */
+            /**
+             * Fired when the status caption changes.
+             *
+             * @event statusMessageChanged
+             */
+            /**
+             * Fired when the client needs to show a 'unplug device and plug it back in' message.
+             *
+             * @event onReplugNeeded
+             */
+            /**
+             * Fired when the client needs to show the Download TI Cloud Agent button
+             *
+             * @event onShowTICloudAgentDownloadBtn
+             */
+            /**
+             * Fired when the visibility of one of the buttons in the application that is associated
+             * with ti-core-cloudagent needs to be changed
+             *
+             * @event btnVisibilityChanged
+             */
+            /**
+             * Fired when the client has timed out trying to connect with the cloud agent
+             *
+             * @event onTimeoutWaitingForCloudAgent
+             */
+            /**
+             * Fired when the backplane has either connected or disconnected.  Check the
+             * backplane's isConnectedToCloudAgent property to determine connection state
+             *
+             * @event connectionStatusChanged
+             */
+            /**
+             * Fired when dsLite has been configured and can be used to access the target device
+             *
+             * @event debugServerConfigured
+             */
+            hostAttributes: {
+            },
+            properties: {
+                /**
+                 * An object that represents the device that is being interacted with.
+                 * The object must have the following property names (property values are for example only):
+                 *  <p> {<br/>
+                         *   deviceName:    'MSP430G2553',<br/>
+                         *   connectionID:  'TIMSP430-USB', // the xmlFile used for the connection without the .xml file type<br/>
+                         *   connectionDisplayStr: 'TI MSP430 USB1', // a user-friendly string to display to select the connection type<br/>
+                         *   fileName:      'ReadTempAndSendToSerialPort.cpp.hex', // the name of the target executable file to use to program the device<br/>
+                         *   fileFolderName: '/target', // the folder name the target executable file is located in<br/>
+                         *   ccxmlString:   '<?xml version=...', //the target ccxml file serialized as a string<br/>
+                         *   ccxmlFileName: 'MSP430G2553.xml', //name to use for the ccxml file to be used by TICloudAgent<br/>
+                         *   runTargetToReadMemory: false, //use true if a monitor on the target is used to read target memory<br/>
+                         *   runFree:       false //use true if a uart_connection is used to communicate with the monitor on the target<br/>
+                         *   }<br/>
+                 *   <p>Additional properties can be added for other device-specific information.  e.g.
+                 *   {
+                         *   boardName:     'MSP-EXP430G2 v1.5',<br/>
+                         *   startBtnName:  'Name of button to press to start target running: e.g. P1.3',<br/>
+                         *   boardImage:    'Name of image file of target board to display e.g. launchpad-mspexp430g2-02.jpg',<br/>
+                         *   startBtnImage  'Name of image file showing location of start button e.g. startbutton-mspexp430g2-02.jpg'<br/>
+                         *   }<br/>
+                 * <p>
+                 *
+                 * @attribute selectedDevice
+                 * @type object
+                 * @default undefined
+                 */
+                selectedDevice: {
+                    notify: true,
+                    type: Object,
+                    value: undefined,
+                    observer: "selectedDeviceChanged"
+                },
+                /**
+                 * Controls whether the progress bar is visible or not.
+                 *
+                 * @attribute progressBarEnabled
+                 * @type boolean
+                 * @default false
+                 */
+                progressBarEnabled: {
+                    notify: true,
+                    type: Boolean,
+                    value: false,
+                    observer: "_progressBarEnabledChanged"
+                },
+                /**
+                 * A value (0-100) that represents the percentage complete to show in the progress bar.
+                 *
+                 * @attribute progress
+                 * @type number
+                 * @default 0
+                 */
+                progress: {
+                    notify: true,
+                    type: Number,
+                    value: 0
+                },
+                /**
+                 * Determines whether ti-core-backplane automatically hides the status bar upon
+                 * connection to the TICloudAgent (true) or whether it leaves this up to external code (false)
+                 *
+                 * @attribute autoHideProgressBar
+                 * @type boolean
+                 * @default true
+                 */
+                autoHideProgressBar: {
+                    notify: true,
+                    type: Boolean,
+                    value: true
+                },
+                /**
+                 * The first status string to display in the status bar text field
+                 *
+                 * @attribute statusString1
+                 * @type string
+                 * @default ""
+                 */
+                statusString1: {
+                    notify: true,
+                    type: String,
+                    value: "",
+                    observer: "statusString1Changed"
+                },
+                /**
+                 * The tooltip text for the first status string to display in the status bar text field
+                 *
+                 * @attribute tooltipStatusString1
+                 * @type string
+                 * @default ""
+                 */
+                tooltipStatusString1: {
+                    notify: true,
+                    type: String,
+                    value: ""
+                },
+                /**
+                 * The second status string to display in the status bar text field
+                 *
+                 * @attribute statusString2
+                 * @type string
+                 * @default ""
+                 */
+                statusString2: {
+                    notify: true,
+                    type: String,
+                    value: "",
+                    observer: "statusString2Changed"
+                },
+                /**
+                 * The tooltip text for the second status string to display in the status bar text field
+                 *
+                 * @attribute tooltipStatusString2
+                 * @type string
+                 * @default ""
+                 */
+                tooltipStatusString2: {
+                    notify: true,
+                    type: String,
+                    value: ""
+                },
+                /**
+                 * The third status string to display in the status bar text field
+                 *
+                 * @attribute statusString3
+                 * @type string
+                 * @default ""
+                 */
+                statusString3: {
+                    notify: true,
+                    type: String,
+                    value: "",
+                    observer: "statusString3Changed"
+                },
+                /**
+                 * The tooltip text for the third status string to display in the status bar text field
+                 *
+                 * @attribute tooltipStatusString3
+                 * @type string
+                 * @default ""
+                 */
+                tooltipStatusString3: {
+                    notify: true,
+                    type: String,
+                    value: ""
+                },
+
+                /**
+                 * The string to display as a tooltip when the mouse hovers over the icon.  empty to display nothing
+                 *
+                 * @attribute tooltipIconImage
+                 * @type string
+                 * @default ""
+                 */
+                tooltipIconImage: {
+                    notify: true,
+                    type: String,
+                    value: "",
+                    observer: "tooltipIconImageChanged"
+                },
+                /**
+                 * the current state of the backplane's state machine.
+                 *
+                 * @attribute currentState
+                 * @type object
+                 * @default undefined
+                 */
+                currentState: {
+                    notify: true,
+                    type: Object,
+                    value: undefined,
+                    observer: "_currentStateChanged"
+                },
+                /**
+                 * if true, uses wss:// secure websocket communication protocol, else uses normal ws://
+                 *
+                 * @attribute isSecureWebPage
+                 * @type boolean
+                 * @default 'false.'
+                 */
+                isSecureWebPage: {
+                    notify: true,
+                    type: Boolean,
+                    value: true
+                },
+
+                /**
+                 * a string representing the current status of the interactions with the target device.
+                 *
+                 * @attribute status
+                 * @type string
+                 * @default 'Disconnected.'
+                 */
+                status: {
+                    notify: true,
+                    type: String,
+                    value: ""
+                },
+
+                /**
+                 * isConnectedToCloudAgent is false when not connected to TI Cloud Agent.
+                 * If your application has a 'connect' button, it should show 'Connect' as the
+                 * caption when isConnectedToCloudAgent is false, and 'Disconnect' when
+                 * isConnectedToCloudAgent is true.
+                 *
+                 * @attribute isConnectedToCloudAgent
+                 * @type boolean
+                 * @default false
+                 */
+                isConnectedToCloudAgent: {
+                    notify: true,
+                    type: Boolean,
+                    value: false
+                },
+                /**
+                 * isConnectBtnVisible indicates whether a button labeled 'Connect' with an on-click handler
+                 * of onConnectBtnClicked should be displayed or not.
+                 *
+                 * @attribute isConnectBtnVisible
+                 * @type boolean
+                 * @default true
+                 */
+                isConnectBtnVisible: {
+                    notify: true,
+                    type: Boolean,
+                    value: true
+                },
+                /**
+                 * isDisonnectBtnVisible indicates whether a button labeled 'Cisconnect' with an on-click handler
+                 * of onDisconnectBtnClicked should be displayed or not.
+                 *
+                 * @attribute isDisconnectBtnVisible
+                 * @type boolean
+                 * @default false
+                 */
+                isDisconnectBtnVisible: {
+                    notify: true,
+                    type: Boolean,
+                    value: false
+                },
+                /**
+                 * isCloudAgentDownloadBtnVisible indicates whether a button labeled 'Download TI Cloud Agent' with an on-click handler
+                 * of onCloudAgentDownloadBtnClicked should be displayed or not.
+                 *
+                 * @attribute isCloudAgentDownloadBtnVisible
+                 * @type boolean
+                 * @default false
+                 */
+                isCloudAgentDownloadBtnVisible: {
+                    notify: true,
+                    type: Boolean,
+                    value: false
+                }
+            },
+            _progressBarEnabledChanged: function() {
+                console.log("ti-core-backplane: showProgressBar = "+this.progressBarEnabled);
+                if ((this.statusBar !== undefined)&&(this.statusBar !== null)) {
+                    if (!this.progressBarEnabled) {
+                        this.hideProgressBar();
+                    } else {
+                        this.statusBar.progressBarEnabled = true;
+                    }
+                }
+            },
+            progressBarEnabledChanged: undefined,
+            _hideProgressBar: function()  {
+                if (this.myTimeout) {
+                    window.clearTimeout(this.myTimeout);
+                }
+                this.progressPercent = 0.0;
+                if ((this.statusBar !== undefined)&&(this.statusBar !== null)) {
+                    this.statusBar.progress = 0;
+                    // enable firing iconclicked event when user clicks the statusbar icon
+                    this.statusBar.iconEnabled = true;
+                    this.statusBar.progressBarEnabled = false; //hide the progress bar
+                }
+                this.progressBarEnabled = false;
+            },
+            hideProgressBar: undefined,
+            _inDesigner: false,
+            tooltipIconImageChanged: function(){
+                if ((this.statusBar !== undefined)&&(this.statusBar !== null)) {
+                    this.statusBar.tooltipIconImage = this.tooltipIconImage;
+                }
+            },
+            statusString1Changed: function(){
+                if (this.statusBar && !this._inDesigner && !gc.connectionManager) {
+                    this.statusBar.statusString1 = this.statusString1;
+                }
+            },
+            statusString2Changed: function(){
+                // Filter out messages that have already been displayed in statusString1
+                // e.g. status messages that have been propagated to services
+                if (this.statusBar && !this._inDesigner && !gc.connectionManager) {
+                    if ((this.statusString2 !== this.statusString1) || (this.statusString2.length === 0)) {
+                        this.statusBar.statusString2 = this.statusString2;
+                    }
+                }
+            },
+            statusString3Changed: function(){
+                if ((this.statusBar !== undefined)&&(this.statusBar !== null) && (!this._inDesigner)) {
+                    this.statusBar.statusString3 = this.statusString3;
+                }
+            },
+            selectedDeviceChanged: function(){
+                if (this.selectedDevice) {
+                    // for backwards compatibility with older application code htat uses chipName instead of deviceName:
+                    if ((this.selectedDevice.deviceName === undefined) && (this.selectedDevice.chipName !== undefined)){
+                        this.selectedDevice.deviceName = this.selectedDevice.chipName;
+                        this.selectedDevice.xmlDeviceName = this.selectedDevice.deviceName;
+                    }
+                    if (this.selectedDevice.boardName === undefined) {
+                        this.selectedDevice.boardName = this.selectedDevice.deviceName;
+                    }
+                    if ((this.selectedDevice.deviceName) &&(this.selectedDevice.deviceName !== 0)) {
+                        this.setSelectedDevice(this.selectedDevice.deviceName);
+                    }
+                }
+            },
+            _setStatus: function (strStatus) {
+                this.status = strStatus;
+                this.fire('statusMsgUpdated');
+            },
+            setStatus: undefined,
+            _setErrorStatus: function(strErrorName, strErrorText, skipStateMachineUpdate){
+                if (this.isStatusBar()) {
+                    this.setIcon("error");
+                    this.statusString1 = strErrorName;
+                    this.statusString2 = strErrorText;
+                    this.statusString3 = "";
+                    this.tooltipIconImage = strErrorName + ', '+strErrorText;
+                    this.hideProgressBar(); // ensure icon can be clicked
+                }
+                // Ensure the state machine is put into the correct state for recovery
+                if (!skipStateMachineUpdate) {
+                    this.updateStateMachine('onError');
+                }
+            },
+            setErrorStatus: undefined,
+            /**
+             *  connect to target device via TICloudAgent
+             *
+             *  @param optional_selectedDevice: object containing the deviceName, ccxmlString, etc.  (see selectedDevice property)
+             *  @param callback_onInstallDialog: callback that is called prior to opening the install dialog.
+             *     callback must return a promise that resolves to true to continue with install, false to cancel install.
+             */
+            _connect: function(optional_selectedDevice, callback_onInstallDialog){
+                if (optional_selectedDevice){
+                    this.selectedDevice = optional_selectedDevice;
+                    console.log('ti-core-backplane.connect called.  optional_selectedDevice.deviceName = '+optional_selectedDevice.deviceName);
+                }
+                console.log('ti-core-backplane.connect called.  Current state = '+this.currentState.name);
+                if (callback_onInstallDialog) {
+                    this.oneTimeCallback_onInstallDialog = callback_onInstallDialog;
+                }
+                var onConnectedPromise = Q.defer();
+                if (this.isConnectedToCloudAgent){
+                    onConnectedPromise.resolve();
+                } else {
+                    if (!this.onConnectedCallbackHandler){
+                        this.onConnectedCallbackHandler = this._onConnectedCallbackHandler.bind(this);
+                    }
+                    if (!this._callbackPromises){
+                        this._callbackPromises = [];
+                    }
+					// TODO: Polymer does not properly remove a bound event listener.  May be a bug in Polymer.
+					// Workaround: keep an array of promises and call removeEventListener
+					// for each promise in the array
+                    this._callbackPromises.push(onConnectedPromise);
+                    this.addEventListener('connectionStatusChanged', this.onConnectedCallbackHandler);
+                    this.updateStateMachine('onConnectBtnClicked');
+                }
+                return onConnectedPromise.promise;
+            },
+            connect: undefined,
+            _callbackPromises: null,
+            _onConnectedCallbackHandler: function(event){
+                switch (this.currentState.name) {
+                    case 'disconnected':
+                        for (var i = 0; i < this._callbackPromises.length; i++) {
+                            this._callbackPromises[i].reject("btnVisiblityChanged event fired but isConnectedToCloudAgent = false");
+                        }
+                        this._callbackPromises = [];
+                        this.removeEventListener('connectionStatusChanged', this.onConnectedCallbackHandler);
+                        break;
+                    case 'ready':
+                        for (var j = 0; j < this._callbackPromises.length; j++) {
+                            this._callbackPromises[j].resolve();
+                        }
+                        this._callbackPromises = [];
+                        this.removeEventListener('connectionStatusChanged', this.onConnectedCallbackHandler);
+                        break;
+                    default: return;
+                }
+            },
+            onConnectedCallbackHandler: undefined,
+            _disconnect: function(){
+                this.updateStateMachine('onDisconnectBtnClicked');
+            },
+            disconnect: undefined,
+            //provided for testing purposes
+            /* returns true if state changed, false otherwise */
+            _updateStateMachine: function (strEventName) {
+                var result = false;
+                var origStateName = this.currentState.name;
+                var newStateName = this.currentState.events[strEventName];
+                if (newStateName) {
+                    console.log('ti-core-backplane: updateStateMachine event = ' + strEventName);
+                    if (newStateName !== origStateName) {
+                        this.prevState = this.currentState;
+                        var newIndex = this.stateIndexes[newStateName];
+                        this.currentState = this.states[newIndex];
+                        console.log('ti-core-backplane: state change from ' + origStateName + ' to ' + newStateName);
+                    }
+                    result = true;
+                } else {
+                    console.log('OUT OF SEQUENCE updateStateMachine event: ' + strEventName)
+                    console.log(this.currentState.events.length + ' valid event names for state=' + this.currentState.name + ':');
+                    for (var i = 0; i < this.currentState.events.length; i++) {
+                        console.log('event[' + i + ']=' + this.currentState.events[i].name);
+                    }
+                }
+
+                return (result);
+            },
+            updateStateMachine: undefined,
+            _updateProgress: function() {
+
+                if (this.isStatusBar()) {
+                    if (this.statusBar.progressBarEnabled) {
+                        this.statusBar.iconEnabled = false;  // set here instead of relying on _progressBarEnabledChanged to avoid delays
+                        this.progressPercent += 0.5;
+                        if (this.progressPercent > 100.0) {
+                            this.statusBar.progress = 100.0;
+                        } else {
+                            this.statusBar.progress = this.progressPercent;
+                        }
+
+                        var _self = this;
+                        if (this.progressPercent < 300) {
+                            this.myTimeout = window.setTimeout(function () {
+                                _self.updateProgress()
+                            }, 60);
+                        } else {
+                            this.hideProgressBar();
+                            this.fire('onTimeoutWaitingForCloudAgent');
+                        }
+                    }
+                }
+            },
+            updateProgress: undefined,
+
+            _currentStateChanged: function () {
+                if (this.initComplete) {
+                    console.log('onCurrentStateChanged: currentState.name=' + this.currentState.name);
+                    this.setStatus(this.currentState.statusString);
+                    console.log('onCurrentStateChanged: status=' + this.status);
+                    this.prevState = this.currentState;
+                    switch (this.currentState.name) {
+                        case 'disconnected':
+                            this.isCloudAgentDownloadBtnVisible = false;
+                            this.hideProgressBar();
+                            if (this.isConnectedToCloudAgent) {
+                                this.isConnectedToCloudAgent = false;
+                            }
+                            this.isConnectBtnVisible = true;
+                            this.isDisconnectBtnVisible = false;
+
+                            if (this.isStatusBar() && !gc.designer) {
+                                this.statusBar.iconImagePath = this.resolveUrl("./images/notconnected.gif");
+                                //this.statusBar.iconName = 'ti-core-icons:nolink';
+                                this.statusBar.iconEnabled = true;
+                                if (!this.isErrorPending) {
+                                    this.setIcon('ti-core-icons:nolink');
+                                    if (!gc.connectionManager){
+                                        this.tooltipIconImage = "Click to Connect to Hardware.";
+                                    }
+                                    this.statusString1 = "Hardware Not Connected.";
+                                    this.statusString2 = "";
+                                    this.statusString3 = "";
+                                }
+                                this.isErrorPending = false;
+                            }
+
+                            this.fire('btnVisibilityChanged');
+                            this.fire('connectionStatusChanged');
+                            break;
+
+                        case 'connectingToCloudAgent':
+                            //bcNoDevice              if ((this.selectedDevice !== undefined) && (this.selectedDevice !== null) && (this.selectedDevice.deviceName !== undefined) && (this.selectedDevice.deviceName !== 'none')) {
+
+                            this.isCloudAgentDownloadBtnVisible = false;
+                            this.isConnectBtnVisible = false;
+                            this.isDisconnectBtnVisible = true;
+                            this.statusString1 = "Connecting to TI Cloud Agent..."
+                            this.statusString2 = "";
+                            if (!gc.connectionManager){
+                                this.tooltipIconImage = "Connecting...";
+                            }
+                            this.fire('btnVisibilityChanged');
+                            this.progressPercent = 0.0;
+                            console.log("ti-core-backplane._autoConnectDisabled="+this._autoConnectDisabled);
+                            if (this._autoConnectDisabled){
+                                this.autoHideProgressBar = true;
+                            }
+                            if (this.isStatusBar() && !this.autoHideProgressBar) {
+                                this.statusBar.progress = 0;
+                                this.statusBar.progressBarEnabled = true;
+                            }
+                            var _self = this;
+                            if(!this.autoHideProgressBar) {
+                                this.myTimeout = window.setTimeout(function () {
+                                    _self.updateProgress();
+                                }, 60);
+                            }
+                            this.initAgent(function (error) {
+                                if (error) {
+                                    console.log('ti-core-backplane: "Call to initAgent returned an error."');
+                                    _self.setStatus("Could not communicate with TI Cloud Agent.");
+                                    _self.updateStateMachine('onFailedToConnect');
+
+                                } else {
+                                    console.log('ti-core-backplane: Call to initAgent succeeded. this.currentState.name=' + _self.currentState.name);
+                                    _self.updateStateMachine("onCloudAgentConnected");
+                                }
+                            });
+                            /* bcNoDevice             } else {
+                             var errMsg = "selectedDevice is undefined";
+                             try {
+                             if (this.selectedDevice) {
+                             if (this.selectedDevice.deviceName === undefined) {
+                             errMsg = "selectedDevice.deviceName is undefined";
+                             } else if (this.selectedDevice.deviceName === null) {
+                             errMsg = "selectedDevice.deviceName is null";
+                             } else {
+                             errMsg = "selectedDevice.deviceName = " + this.selectedDevice.deviceName;
+                             }
+                             }
+                             }
+                             catch(ex){
+
+                             }
+                             console.log("ti-core-backplane error: "+errMsg+".  Setting statusString1 = Project Configuration Error");
+                             this.setErrorStatus("Project Configuration Error.","Please specify a device name in your project properties.");
+                             }
+                             */
+                            break;
+                        /* ready: in this state, we have connected to the TI Cloud Agent.  The initDS function can be called at this point
+                         to connect to the debug server and target.
+                         */
+                        case 'ready':
+                            if (this.autoHideProgressBar) {
+                                this.hideProgressBar();
+                            }
+                            if (this.isStatusBar() && !gc.designer) {
+                                this.statusBar.iconImagePath = this.resolveUrl("./images/connected.gif");
+                                //this.statusBar.iconName = 'ti-core-icons:link';
+                                this.statusString1 = "Connected to TI Cloud Agent.";
+                                if (!gc.connectionManager){
+                                    this.tooltipIconImage = "Click to Disconnect.";
+                                }
+                                if (gc.connectionManager && gc.connectionManager.status !== 'disconnected') {
+                                    this.setIcon('ti-core-icons:link');
+                                }
+                            }
+                            this.isCloudAgentDownloadBtnVisible = false;
+                            this.isConnectBtnVisible = false;
+                            this.isDisconnectBtnVisible = true;
+                            this.isConnectedToCloudAgent = true;
+                            this.fire('connectionStatusChanged');
+                            this.fire('btnVisibilityChanged');
+                            break;
+                        case 'failedToConnect':
+                            if (!gc.desktop.isDesktop() && !gc.desktop.isCCS()) {
+                                this.updateStateMachine('onOpenInstallDialog');
+                            } else {
+                                // in node-webkit, so we will never have to download the TI Cloud Agent.
+                                // simply go to disconnect state.
+                                this.updateStateMachine('disconnect');
+                            }
+                            break;
+                        case 'downloadTICloudAgent':
+                            if (this.ds !== undefined) {
+                                this.ds = undefined;
+                            }
+                            this.isConnectBtnVisible = true;
+                            this.isDisconnectBtnVisible = false;
+                            this.isConnectedToCloudAgent = false;
+                            this.isCloudAgentDownloadBtnVisible = true;
+                            if (this.isStatusBar() && !gc.designer) {
+                                this.statusBar.progressBarEnabled = false;
+                                this.statusBar.iconImagePath = this.resolveUrl("./images/notconnected.gif");
+                                this.statusBar.iconEnabled = true;
+                                //this.statusBar.iconName = 'ti-core-icons:nolink';
+                                this.setIcon('ti-core-icons:nolink');
+                                if (!gc.connectionManager){
+                                   this.tooltipIconImage = "Click to Connect to Hardware.";
+                                }
+
+                                this.statusString1 = "";
+                            }
+                            this.hideProgressBar();
+                            if ((this.installDialog.errors !== undefined)&&(this.installDialog.errors !== null) && (this.installDialog.errors.length > 0)) {
+                                var promise;
+                                if (this.oneTimeCallback_onInstallDialog) {
+                                    promise = this.oneTimeCallback_onInstallDialog();
+                                } else {
+                                    promise = Q.promise.resolve(true);
+                                }
+                                promise.then(function(showInstallDialog){
+                                    if (showInstallDialog){
+                                        this.installDialog.open();
+                                        this.fire('openingCloudAgentInstallDialog');
+                                        this.fire('btnVisibilityChanged');
+                                    }
+                                    this.oneTimeCallback_onInstallDialog = null;
+                                }.bind(this));
+
+                            } else {
+                                this.fire('btnVisibilityChanged');
+                            }
+                            break;
+                        case 'error':
+                            // halt all further connection progress in order to alert user of critical error
+                            this.isErrorPending = true;
+                            this.updateStateMachine('gotoNextState');
+                            break;
+                        case 'disconnect':
+                            this.isDisconnectBtnVisible = false;
+                            this.hideProgressBar();  // this enables responding to iconclicked events on the status bar's connect icon
+                            var _self = this;
+                            if ((this.ds !== undefined) && (this.ds !== null) && ( this.isDebugServerConfigured)){
+                                console.log('ti-core-backplane.disconnect: about to deConfigure...');
+                                _self.fire('debugServerDeconfigurePending');
+                                this.ds.deConfigure().then(function() {
+                                    return _self.ds.close();
+                                }).fin(function(){
+                                    _self.fire('debugServerDeconfigured');
+                                    _self.isDebugServerConfigured = false;
+                                    _self.ds = undefined;
+                                    _self.core = undefined;
+                                    console.log("ds.deConfigure callback successful. Disconnect OK.")
+                                    _self.updateStateMachine('disconnectComplete');
+                                });
+                                /*.fail(function(error){
+                                 console.log("Failed to disconnect: error.message = "+error.message);
+                                 window.location.reload(true);
+                                 });
+                                 */
+                            } else {
+                                _self.updateStateMachine('disconnectComplete');
+                            }
+                            break;
+
+                    }
+                    if (this.currentState.waitForUser) {
+                        this.fire('currentStateUpdated');
+                    }
+                }
+            },
+            currentStateChanged: undefined,
+            _onInstallerDialogClosed: function () {
+                this.fire('closingCloudAgentInstallDialog');
+                console.log("backplane._onInstallerDialogClosed.")
+                // this.updateStateMachine('onInstallerDownloaded');
+            },
+            _downloadTICloudAgentInstaller: function () {
+                if ((this.selectedDevice !== undefined)&&(this.selectedDevice !== null)&& (this.selectedDevice.deviceName !== undefined) && (this.selectedDevice.deviceName !== 'none')) {
+                    //this.installDialog.errors = [TICloudAgent.AgentNotStarted];
+                    this.installDialog.errors = [];
+                    this.installDialog.errors.push(TICloudAgent.InvalidAgentVersion)
+                    this.updateStateMachine('onFailedToConnect');
+                } else {
+                    this.status = "Error - no device name specified.  Could not download installer.";
+                    this.statusBar.iconEnabled = true;
+                    console.log("ti-core-backplane.downloadTICloudAgentInstaller: CONFIGURATION ERROR: selectedDevice property is undefined. ");
+                }
+            },
+            downloadTICloudAgentInstaller: undefined,
+            _installBrowserExtension: function() {
+                if ((this.selectedDevice !== undefined)&&(this.selectedDevice !== null)&& (this.selectedDevice.deviceName !== undefined) && (this.selectedDevice.deviceName !== 'none')) {
+                    this.installDialog.errors = [];
+                    this.installDialog.errors.push(TICloudAgent.MissingExtension);
+                    this.updateStateMachine('onFailedToConnect');
+                } else {
+                    this.status = "Error - no device name specified.  Could not install browser extension.";
+                    console.log("ti-core-backplane._installBrowserExtension: CONFIGURATION ERROR: selectedDevice property is undefined.");
+                }
+            },
+            installBrowserExtension: undefined,
+            _initAgent: function( callback) {
+                var _self = this;
+                var ok = true;
+                var err = null;
+                console.log("ti-core-backplane: Starting TI Cloud Agent...");
+                var isDesktop = gc.desktop.isDesktop();  //pulls in the node-webkit process object if it exists but not in this window
+                // only call TICloudAgent.Init() once.
+                // Note: use Q.Promise so that .fail is supported (causes exception if you just use Promise)
+                var agentPromise = Q.Promise.resolve(this.agent);
+                if ((this.agent === undefined) || (this.agent === null)) {
+                    try {
+                        agentPromise = TICloudAgent.Init();
+                    }
+                    catch(ex){
+                        err = ex.toString();
+                        console.log("TICloudAgent.Init threw an exception: ex="+err);
+                        ok = false;
+                        this.setErrorStatus("TICloudAgent.Init Error",err);
+                    }
+                }
+                if (!ok)  {
+                    _self.hideProgressBar();
+                    if ((callback !== undefined) && (callback !== null)) {
+                        callback(err);
+                    }
+                    return;
+                }
+                agentPromise.then(function (newAgent) {
+                    if ((_self.agent === undefined) || (_self.agent === null)) {
+                        _self.agent = newAgent;
+                    }
+                    return _self.agent.getSubModule("File");
+                }).then(function (fileObj) {
+                    console.log("ti-core-backplane: agent.getSubModule(File) completed");
+                    _self.file = fileObj;
+                    if ((callback !== undefined) && (callback !== null)) {
+                        callback(null);
+                    }
+                    return Q.promise.resolve(true);
+                }).fail(function (error) {
+
+                    var msg = error;
+                    if ((error !== undefined) && (!Array.isArray(error))) {
+                        if (error.message !== undefined) {
+                            msg = error.message;
+                        } else if (error.msg !== undefined) {
+                            msg = error.msg;
+                        }
+                        console.log("Fail to initAgent. error.message=" + msg);
+                    }
+                    _self.hideProgressBar();
+                    _self.installDialog.errors = [];
+                    if ((typeof process === 'undefined') && (Array.isArray(error))) {
+                        for (var i=0; i < error.length; i++) {
+                            // Don't need to do notifyPath on installDialog.errors as it is not used in the template
+                            _self.installDialog.errors.push(error[i]);
+                            msg = _self.installDialog.errors[0].msg;
+                            if (error[i] instanceof TICloudAgent.InvalidAgentVersion) {
+                                console.log("Failed to init agent: Invalid Agent Version");
+                            } else if (error[i] instanceof TICloudAgent.MissingExtension) {
+                                console.log("Failed to init agent: Missing Extension");
+                            } else if (error[i] instanceof TICloudAgent.AgentNotStarted) {
+                                console.log("Failed to init agent: " + "Agent Not Started ");
+                            } else {
+                                console.log("Failed to init agent:  " + "Unknown Error " + msg);
+                            }
+                        }
+                    } else {
+                        if (Array.isArray(error)){
+                            msg = error[0].msg;
+                        }
+                        _self.setErrorStatus("TICloudAgent.Init Error",msg);
+                        console.log("Failed to init agent:  " + "Error = " + msg);
+                    }
+                    if ((callback !== undefined) && (callback !== null)) {
+                        callback(error);
+                    }
+
+                });
+
+
+            },
+            initAgent: undefined,
+            _setIcon: function(name){
+                if (this.isStatusBar()) {
+                    this.statusBar.setIconName(name);
+                }
+            },
+            setIcon: undefined,
+            _getIcon: function(){
+                if (this.isStatusBar()) {
+                    this.statusBar.getIconName(name);
+                }
+            },
+            getIcon: undefined,
+            _restoreIcon: function(){
+                if (this.isConnectedToCloudAgent){
+                    this.setIcon('ti-core-icons:link');
+                } else {
+                    this.setIcon('ti-core-icons:nolink');
+                }
+            },
+            restoreIcon: undefined,
+            _attachToDebugServer: function(callback, activeContextListener) {
+                var self = this;
+                if (!self.isDebugServerConfigured) {
+                    self.agent.getSubModule("DS").then(function(ds) {
+                        self.isDebugServerConfigured = true;
+                        self.ds = ds;
+
+                        if (activeContextListener) {
+                            self.agent.getSubModule("EventBroker").then(function(broker) {
+                                broker.addListener("ccs.debug.activeContextChangedEvent", activeContextListener);
+
+                                /* fire a change on first start */
+                                broker.fetchData("ccs.debug.activeContext").then(function(data) {
+                                    if (data) {
+                                        activeContextListener(data);
+                                    }
+                                });
+
+                                self.hideProgressBar();
+                                callback();
+
+                            });
+
+                        } else {
+                            self.hideProgressBar();
+                            callback();
+                        }
+                    });
+                }
+            },
+            attachToDebugServer: undefined,
+            _getDebugServerCore: function(name, callback) {
+                if (this.isDebugServerConfigured) {
+                    this.ds.getSubModule(name).then(function(core) {
+                        callback(core);
+
+                    }).fail(function(error) {
+                        callback(null);
+                    });
+                } else {
+                    callback(null);
+                }
+            },
+            getDebugServerCore: undefined,
+            /**
+             * configureDebugServer: initialize the debug server and connect to the target.
+             * @param ccxmlFileName: name to use when storing the ccxml string in the local file system (no path)
+             * @param ccxmlString: content of the ccxml file.  For UART, must contain resolved serial port to use
+             * @param autorun: if true, target will run automatically after connecting to the target
+             * @param runFree: if true and autorun is true, target will run free automatically after connecting to the target.
+             * @param callback: callback function that takes an 'error' parameter.
+             *           error===null indicates success, error.message contains error text.
+             * @param eventNotificationDisabled: if true, the debugServerConfiguredEvent will NOT be fired.  Used when called
+             *           by the ti-service-programloader when auto-program is true so that ti-service-energytrace is not
+             *           notified too early
+             */
+            _configureDebugServer: function (ccxmlFileName, ccxmlString, autorun, runFree, callback, eventNotificationDisabled) {
+                if ((this.selectedDevice !== undefined)&&(this.selectedDevice !== null) && (this.selectedDevice.deviceName !== undefined) && (this.selectedDevice.deviceName !== 'none')){
+                    var _self = this;
+                    var pathToCcxmlFile = undefined;
+
+                    // use new to ensure that the callback function is bound to the backplane object's 'this'
+                    if (this.agent === undefined){
+                        console.log('ti-core-backplane: "TI Cloud Agent not initialized"');
+                        this.setStatus("Could not communicate with TI Cloud Agent.");
+                        //    Unable to communicate with TI Cloud Agent running on your computer.
+                        // if ((_self.myTimeout !== undefined)&&(_self.myTimeout !== null)){
+                        //     window.clearTimeout(_self.myTimeout);
+                        // }
+                        this.updateStateMachine('onFailedToConnect');
+
+                    } else {
+                        var strCcxml = ccxmlString;
+                        if ((!strCcxml) && (this.selectedDeviceCcxmlString)) {
+                            strCcxml = this.selectedDeviceCcxmlString;
+                        }
+                        if ((strCcxml) && (strCcxml.indexOf('%SERIALPORT%') < 0)) {
+                            // if the debug server has previously been configured, deConfigure it to avoid throwing an error
+                            var firstPromise = Q.Promise.resolve(true);
+                            if ((this.ds !== undefined) && (this.ds !== null) && (this.isDebugServerConfigured)) {
+                                if (!eventNotificationDisabled) {
+                                    _self.fire('debugServerDeconfigurePending');
+                                }
+                                firstPromise = this.ds.deConfigure();
+                            }
+                            // .fin is the same as finally, i.e. it executes even if there is an error
+                            firstPromise.fin(function () {
+                                if (_self.isDebugServerConfigured) {
+
+                                    _self.isDebugServerConfigured = false;
+                                    if (!eventNotificationDisabled) {
+                                        _self.fire('debugServerDeconfigured');
+                                    }
+                                }
+                                /// start
+                                // At this point, it's ok to have %SERIALPORT% in the .ccxml file, as it is only used
+                                // to determine the target device/cpu name and connection type
+                                return TICloudAgent.Util.encodeAsBase64(strCcxml)
+                                    .then(function (data) {
+                                        return _self.file.write(ccxmlFileName, data)
+                                    }).then(function (filePath) {
+                                        pathToCcxmlFile = filePath.path;
+                                        return _self.agent.getSubModule("TargetSupport");
+                                    }).then(function (targetSupport1) {
+                                        console.log("ti-core-backplane: agent.getSubModule(TargetSupport) completed");
+                                        var retObj;
+                                        if (gc.desktop.isDesktop() || gc.desktop.isCCS()) {
+                                            // Don't call TargetSupport.add if working in node-webkit environment.
+                                            // This removes the need to support .ccxmlString values that reference cpus
+                                            // instead of devices.  See win32/TICLoudAgent/src/installer/installer.js and ccxml.js
+                                            // If this test is node done, then the  that is generated for cpus is
+                                            // null_uart_connection which is not found in win32/TICloudAgent/db/Targets.json
+                                            retObj = Q.Promise.resolve(true);
+                                        } else {
+                                            targetSupport1.addListener("progress",function(eventObjData){
+                                                if (eventObjData) {
+                                                    var msg = eventObjData.subActivity;
+                                                    var isComplete = eventObjData.isComplete;
+                                                    var os = _self.getOS();
+                                                    console.log("ti-core-backplane:cloudAgentProgress = "+msg);
+                                                    var statusBarWidget = _self.statusBar;
+                                                    if (!_self.isStatusBar()){
+                                                        statusBarWidget = document.querySelector('ti-widget-statusbar');
+                                                    }
+
+                                                    if (statusBarWidget) {
+                                                        if  ((os === TICloudAgent.OS.WIN) && (msg.toLowerCase().indexOf("please accept the uac dialog") >= 0)) {
+                                                            if (statusBarWidget._toastMaxHeight) {
+                                                                statusBarWidget.showToastMessage("Please click on the flashing ", +10000, " icon in the Windows task bar and accept installation of drivers to access your target device.","images/UAC.png","100px" );
+                                                            }
+                                                        }
+                                                        if (!isComplete) {
+                                                            statusBarWidget.statusString2 = msg;
+                                                        } else {
+                                                            statusBarWidget.statusString2 = "";
+                                                        }
+                                                    }
+                                                }
+
+                                            });
+                                            retObj = targetSupport1.add(pathToCcxmlFile);
+                                        }
+                                        return retObj;
+                                    }).then(function (promiseObj) {
+                                        if (!gc.desktop.isDesktop() && !gc.desktop.isCCS()) {
+                                            console.log("ti-core-backplane: TargetSupport.add(" + _self.selectedDevice.deviceName + "/" + _self.selectedDevice.xmlDeviceName + ") completed");
+                                        }
+                                        // return _self.agent.getSubModule("DS", _self.selectedDevice.deviceName);
+                                        return _self.agent.getSubModule("DS");
+                                    }).then(function (ds1) {
+                                        _self.ds = ds1;
+                                        console.log("ti-core-backplane.configureDebugServer: agent.getSubModule(DS) completed. ");
+                                        return _self.ds.configure(pathToCcxmlFile);
+                                    }).then(function (retObj) {
+                                        _self.isDebugServerConfigured = true;
+                                        _self.cores = retObj.cores;
+                                        console.log("ti-core-backplane.configureDebugServer: number of cores = "+_self.cores.length);
+                                        return _self.ds.getSubModule(_self.cores[0]);
+                                    }).then(function (core0) {
+                                        _self.core = core0;
+                                        console.log("ti-core-backplane.configureDebugServer: connecting to core 0...");
+                                        return _self.core.targetState.connect();
+                                    }).then(function (retObj) {
+                                        var promiseObj = Q.Promise.resolve(true);
+                                        if (autorun) {
+                                            promiseObj = _self.core.targetState.run(runFree); // runFree = true specifies runFree
+                                        }
+                                        return promiseObj;
+                                    }).then(function (retObj) {
+                                        _self.statusString1 = "Connected to target.";
+                                        _self.setIcon("ti-core-icons:link");
+                                        if (callback !== undefined) {
+                                            callback(null);
+                                        }
+                                        if (!eventNotificationDisabled) {
+                                            _self.fire('debugServerConfigured');
+                                        }
+                                    }).fail(function (err) {
+                                        _self.hideProgressBar();
+                                        if ((err) && (err.message !== undefined)) {
+                                            if ((err.message.indexOf("already configured") >= 0) ||
+                                                (err.message.indexOf("already connected") >= 0)) {
+                                                // When DSLite returns either the message 'Target already connected' or 'Server already configured',
+                                                // do NOT close DSLite or release the socket.  These are 'special cases' where DSLite is working
+                                                // properly and we can use the current DSLite configuration 'as-is'.
+                                                _self.updateStateMachine("onCloudAgentConnected");
+                                                self.isDebugServerConfigured = true;
+                                                callback(null); // do not return the original error message as this will cause problems in the callback code
+
+                                            } else {
+                                                _self.isDebugServerConfigured = false;
+                                                if (!eventNotificationDisabled) {
+                                                    _self.fire('debugServerDeconfigurePending');
+                                                }
+
+                                                console.log("Error configuring ds: err=" + err.message);
+                                                _self.setErrorStatus("TICloudAgent Config Error:", err.message, true);
+                                                _self.ds.deConfigure().then(function() {
+                                                    return _self.ds.close();
+                                                }).fin(function(){
+                                                    if (!eventNotificationDisabled) {
+                                                        _self.fire('debugServerDeconfigured');
+                                                    }
+                                                    _self.ds = null;
+                                                    callback(err.message)
+                                                });
+                                            }
+                                        } else {
+                                            _self.isDebugServerConfigured = false;
+                                            if (!eventNotificationDisabled) {
+                                                _self.fire('debugServerDeconfigurePending');
+                                            }
+                                            console.log("Error configuring ds: unknown error");
+                                            var eMsg = "unknown error";
+                                            if (err) {
+                                                eMsg = err;
+                                            }
+                                            _self.setErrorStatus("TICloudAgent Config Error:", eMsg, true);
+                                            _self.ds.deConfigure().then(function() {
+                                                return _self.ds.close();
+                                            }).fin(function(){
+                                                if (!eventNotificationDisabled) {
+                                                    _self.fire('debugServerDeconfigured');
+                                                }
+                                                _self.ds = null;
+                                                callback(eMsg);
+                                            });
+                                        }
+
+                                    });
+                            });
+                        } else {
+                            _self.hideProgressBar();
+                            console.log('ti-core-backplane.configureDebugServer: ERROR - ccxml string contains %SERIALPORT% - must resolve before calling.')
+                            callback('ccxml string contains %SERIALPORT% - must resolve before calling');
+
+                        }
+                    }
+                } else {
+                    this.hideProgressBar();  // this enables responding to iconclicked events on the status bar's connect icon
+                    if ((callback !== undefined) && (callback !== null)) {
+                        callback('ti-core-backplane: no device selected.');
+                    }
+                }
+            },
+            configureDebugServer: undefined,
+            getOS: function(){
+                var os = TICloudAgent.OS.LINUX;
+                if (navigator.appVersion.indexOf("Mac")!=-1) os=TICloudAgent.OS.OSX;
+                if (navigator.appVersion.indexOf("Win")!=-1) os=TICloudAgent.OS.WIN;
+                return os;
+            },
+            _onStatusBarClickHdlr: function(event){
+                console.log('ti-core-backplane: statusBar pointer up event received.');
+                if (this.isStatusBar() && !gc.designer) {
+                    if (this.statusBar.getIconName() === "error"){
+                        this.setIcon("ti-core-icons:nolink");
+                        this.statusBar.iconEnabled = true;
+                        if (!gc.connectionManager){
+                            this.tooltipIconImage = "Click to Connect to Hardware.";
+                        }
+                    }
+                    if (this.statusBar.iconEnabled) {
+                        this.statusString1 = '';
+                        this.statusString2 = '';
+                        if (gc.connectionManager) {
+                            if (gc.connectionManager.status.indexOf('dis') === 0) {
+                                gc.connectionManager.connect();
+                            }
+                            else {
+                                gc.connectionManager.disconnect();
+                            }
+                        }
+                        else if (this.currentState.name === 'disconnected') {
+                            this.updateStateMachine('onConnectBtnClicked');
+                            this.statusBar.iconEnabled = false;
+                        } else {
+                            if ((this.currentState.name === 'ready') || (this.currentState.name === 'downloadTICloudAgent')) {
+                                this.updateStateMachine('onDisconnectBtnClicked');
+                            }
+                        }
+                    }
+                }
+            },
+            onStatusBarClickHdlr: undefined,
+            isFireFox: function(){
+                return navigator.userAgent.indexOf("Firefox") !== -1;
+            },
+            initComplete: false,
+            _reset: function() {
+                this.localServerInfo = {
+                    port: null,
+                    version: "0"
+                };
+                this.portFailure = null;
+                this.portRequested = false;
+                this.ds = null;
+            },
+            reset: undefined,
+
+            pingJSONFile: function(file, callback) {
+
+                var xhr = new XMLHttpRequest();
+                xhr.open("GET",file);
+                xhr.onload = function () {
+                    if(xhr.readyState == 4 && xhr.status == 200) {
+                        /*Check if response is json string*/
+                        try {
+                            JSON.parse(xhr.response);
+                            callback(file);
+                        } catch (e) {
+                            callback(null);
+                        }
+                    } else {
+                        callback(null);
+                    }
+                };
+                xhr.onerror = function () {
+                    callback(null);
+                };
+                xhr.send();
+
+            },
+            getComponentsFolderUrl: function(){
+                var scripts = document.getElementsByTagName("script");
+                var url;
+                var i = 0;
+                var result;
+                var found = false;
+                while ((!found) && (i < scripts.length)){
+                    url = scripts[i++].src;
+                    if ( (url) && (url.indexOf("webcomponentsjs") > 0) || ((url.indexOf("/ti-") > 0) && (url.indexOf("gc") > 0))){
+                        found = true;
+                    }
+                }
+                if (!found){
+                    url = document.URL;
+                    if ((url) && (url.indexOf("/gc/") > 0)){
+                        found = true;
+                    }
+                }
+                if (found) {
+                    if (url.indexOf('webcomponentsjs') >= 0) {
+                        result = url.split('webcomponentsjs')[0];
+                    } else {
+                        // the following line does not work for webservers that contain gc in their name (e.g. https://vmtgccscloud00.toro.design.ti.com/gc
+                        // location = url.split('gc')[0]+'gc/components/'+location;
+                        var index = url.lastIndexOf('gc/');
+                        if (index > 0) {
+                            result = url.substring(0, index) + 'gc/components/';
+                        } else {
+                            found = false;
+                        }
+                    }
+                }
+                if (!found) {
+                    throw("Could not find path to components folder - scripts[0] URL = "+scripts[0]);
+                }
+                if (result && (!result.endsWith('/') && (!result.endsWith('\\')))){
+                    result = result + '/';
+                }
+                return result;
+            },
+
+            /**
+             * Set the selected target device and connection to use when communicating with TICloudAgent.
+             * This function automatically generates the ccxml file to use in order to configure DSLite.
+             * @param deviceName - string containing the name of the target device to use
+             * @param connectionId - string containing the xmlFile name of the selected communications transport to use
+             */
+            setSelectedDevice: function(deviceName, connectionId, defaultCcxmlString){
+                var deviceName_UC = deviceName.toUpperCase();
+                var jsonFilePath = '';
+                var _self = this;
+
+                // note: getCcxmlFilePlusObjects is responsible for calling this._fixConnectionId(connectionId);
+                return this.getCcxmlFilePlusObjects(deviceName, connectionId, defaultCcxmlString).then(function(resultObj){
+                    if (!resultObj){
+                        throw "invalid resultObj returned from getCcxmlFilePlusObjects";
+                    }
+                    _self.selectedDevice = _self.selectedDevice || {};
+                    if (resultObj.deviceObj) {
+                        _self.selectedDevice.deviceName = resultObj.deviceObj.id;
+                        _self.selectedDevice.xmlDeviceName = resultObj.deviceObj.xmlFile;
+                    } else {
+                        _self.selectedDevice.deviceName = deviceName;
+                        _self.selectedDevice.xmlDeviceName = deviceName;
+                    }
+                    if (resultObj.connectionObj){
+                        _self.selectedDevice.connectionID = resultObj.connectionObj.xmlFile;
+                        _self.selectedDevice.connectionDisplayStr = resultObj.connectionObj.id;
+                    } else {
+                        _self.selectedDevice.connectionID = connectionId;
+                        _self.selectedDevice.connectionDisplayStr = connectionId;
+                    }
+
+                    _self.selectedDevice.runTargetToReadMemory = true;  // if true, set autorun=true for the target
+                    //   if ((deviceName_UC.indexOf("MSP430") >= 0) || (deviceName_UC.indexOf("TMS320F28377") >= 0) || (deviceName_UC.indexOf("CC3200") >= 0)){
+                    if ((deviceName_UC.indexOf("MSP430") >= 0)  || (deviceName_UC.indexOf("CC3200") >= 0)){
+                        _self.selectedDevice.runTargetToReadMemory = false;
+                    }
+                    _self.selectedDevice.runFree = false;
+                    if (deviceName_UC === 'MSP430F2617'){
+                        _self.selectedDevice.runFree = true;  // only true for UART only connection, not programmable
+                        _self.selectedDevice.runTargetToReadMemory = true;
+                    }
+                    _self.selectedDeviceCcxmlString = resultObj.strCcxml;
+                    return Q.resolve();
+                }).fail(function(error){
+                    console.log('ti-core-backplane.setSelectedDevice: error='+error);
+
+                    var errMsg = "Error setting selectedDevice: "+error;
+                    _self.hideProgressBar();
+                    _self.updateStateMachine('onError');
+                    _self.statusString1 = errMsg;
+                    _self.statusString2 = jsonFilePath;
+                    return Q.reject(errMsg);
+                });
+            },
+            _isStatusBar: function(){
+                var statusBarFound = !this._inDesigner && this.statusBar;
+                if (!statusBarFound && !this._inDesigner) {
+                    if ((this.parentNode !== undefined) && (this.parentNode !== null)) {
+                        this.statusBar = Polymer.dom(this.parentNode).querySelector("ti-widget-statusbar");
+                    }
+                    if ((this.statusBar === undefined)||(this.statusBar === null)) {
+                        this.statusBar = Polymer.dom(window.document).querySelector("ti-widget-statusbar");
+                    }
+                    if((this.statusBar === undefined)||(this.statusBar === null)) {
+                        if ((gc)&&(gc.services)) {
+                            if (gc.services['ti-widget-statusbar']) {
+                                this.statusBar = gc.services['ti-widget-statusbar'];
+                            }
+                        }
+                    }
+                    if ((this.statusBar !== undefined)&&(this.statusBar !== null) && (this.statusBar.initialized)) {
+                        statusBarFound = true;
+                        this.statusBar.showProgressPercentString = false;
+                        if (!gc.designer) {
+                            this.statusBar.addEventListener("iconclicked", this.onStatusBarClickHdlr);
+                            this.statusBar.iconImagePath = this.resolveUrl("./images/notconnected.gif");
+                            this.setIcon('ti-core-icons:nolink');
+                            // set the default icon tooltip for the statusbar here
+                            this.tooltipIconImage = "Click to Connect to Hardware.";
+                        }
+
+                    }
+                }
+                return statusBarFound;
+            },
+            isStatusBar: undefined,
+            created: function() {
+                this.fixConnectionId = this._fixConnectionId.bind(this);
+            },
+            ready: function () {
+                console.log('ti-core-backplane ready function called');
+                // if offline, use the supported_devices.json file in the ti-core-backplane folder if it exists
+                this._getLocalTargetSetupList();
+                this._getLocalCcxmlFileLookupList();
+
+                this.enteredView();
+                // this.addEventListener("valueChanged",dialValueChangedHandler,false);
+            },
+
+            // see https://groups.google.com/forum/#!searchin/polymer-dev/binding/polymer-dev/wzfxU9vVAg0/1sFyrmnxy5EJ for info on why initialization is not
+            // considered complete until either enteredView or created is called
+            enteredView: function () {
+                this.progress = 0;
+//                this.style.position = 'static';
+                var _self = this;
+                this.target = {
+                    getName: function() {
+                        return _self.selectedDevice.deviceName;
+                    },
+                    getSizeOfInt: function() {
+                        return "2";
+                    },
+                    getCCXMLFileName: function() {
+                        return _self.selectedDevice.deviceName+".ccxml";
+                    }
+                };
+                if (!this.initComplete) {
+
+                    this.stateIndexes = {};
+                    for (var i = 0; i < this.states.length; i++) {
+                        this.stateIndexes[this.states[i].name] = i;
+                    }
+                    this.currentState = this.states[0];
+                    this.prevState = this.currentState;
+                    // Ensure that 'this' in the following functions is bound to the backplane object:
+                    this.updateProgress = this._updateProgress.bind(this);
+                    this.progressBarEnabledChanged = this._progressBarEnabledChanged.bind(this);
+                    this.hideProgressBar = this._hideProgressBar.bind(this);
+                    this.updateStateMachine = this._updateStateMachine.bind(this);
+                    this.setStatus = this._setStatus.bind(this);
+                    this.setErrorStatus = this._setErrorStatus.bind(this);
+                    this.currentStateChanged = this._currentStateChanged.bind(this);
+                    this.configureDebugServer = this._configureDebugServer.bind(this);
+                    this.attachToDebugServer = this._attachToDebugServer.bind(this);
+                    this.getDebugServerCore = this._getDebugServerCore.bind(this);
+                    this.downloadTICloudAgentInstaller = this._downloadTICloudAgentInstaller.bind(this);
+                    this.installBrowserExtension = this._installBrowserExtension.bind(this);
+                    this.initAgent = this._initAgent.bind(this);
+                    this.onStatusBarClickHdlr = this._onStatusBarClickHdlr.bind(this);
+                    this.connect = this._connect.bind(this);
+                    this.disconnect = this._disconnect.bind(this);
+                    this.reset = this._reset.bind(this);
+                    this.setIcon = this._setIcon.bind(this);
+                    this.getIcon = this._getIcon.bind(this);
+                    this.restoreIcon = this._restoreIcon.bind(this);
+                    this.isStatusBar = this._isStatusBar.bind(this);
+                    this.readProjectJson = this._readProjectJson.bind(this);
+                    this.listSerialPorts = this._listSerialPorts.bind(this);
+                    this.listUsbHidPorts = this._listUsbHidPorts.bind(this);
+                    this.initComplete = true;
+                }
+
+
+            },
+            _autoConnectDisabled: false,
+            // readProjectJson is called from elements/designer-elements when a new project has been loaded
+            _readProjectJson: function(){
+                if ((gc)&&(gc.fileCache)){
+                    var _self = this;
+                    var fileName = 'project.json';
+                    // if in the designer, then gc.fileCache.readJsonFile will prepend with the path to the project folder.
+                    gc.fileCache.readJsonFile(fileName).then(function(manifest) {
+                        if (manifest.device_name){  // handle case where tiBrandingEnabled is not defined
+                            console.log('ti-core-backplane: setting selectedDevice.deviceName = '+manifest.device_name);
+                            if (!_self.selectedDevice){
+                                _self.selectedDevice = {};
+                            }
+                            _self.setSelectedDevice(manifest.device_name);
+
+                        } else {
+                            console.log('ti-core-backplane: project.json does not contain deviceName property.')
+                        }
+                        _self._autoConnectDisabled = manifest.disableAutoConnect;
+
+                    }).fail(function(err){
+                        console.log('ti-core-backplane: error reading project.json file.  err = '+err);
+                    });
+                }
+            },
+            readProjectJson: undefined,
+            installDialog: undefined,
+            domReady: function() {
+                // get statusbar if it exists
+                if (!this.isStatusBar()) {
+                    console.log('ti-core-backplane.domReady: Could not find ti-widget-statusbar! Please add this component to your design.')
+                }
+                this.readProjectJson();
+            },
+            attached: function() {
+                // register the core backplane for others to use
+                gc.services = gc.services || {};
+                gc.services['ti-core-backplane'] = this;
+                this.async(function(){
+                    this._inDesigner = false;
+                    if ((window.parent)&&(window.parent.document) && window.parent.document.querySelector('#designer')){
+                        this._inDesigner = false;
+                        // clear out the status strings to avoid showing misleading errors when in the designer
+                        if (this._isStatusBar()) {
+                            this.statusBar.statusString1 = "";
+                            this.statusBar.statusString2 = "";
+                            this.statusBar.statusString3 = "";
+                        }
+                    }
+                    if (!this.installDialog) {
+                        this.installDialog = document.querySelector('ti-core-cloudagent-installdialog');
+                        if (!this.installDialog) {
+                            this.installDialog = document.createElement('ti-core-cloudagent-installdialog');
+                            document.body.appendChild(this.installDialog);
+                        }
+                        this.installDialog.addEventListener('cloudAgentInstallDialogFinished',this._onInstallerDialogClosed.bind(this));
+                    }
+                    //this.installDialog._backplane = this;
+                    document.dispatchEvent(new CustomEvent("ti-core-backplane-ready", { "detail": "Backplane is Ready" }));
+                    /* Post Analytics*/
+                    var params = {
+                        'action': 'backplaneLoad',
+                        'appName': 'ti-core-backplane',
+                        'appVersion':'1.2',
+                        'data': {'url': window.location.href}
+                    };
+
+                    this.postData(JSON.stringify(params), true);
+                    this.domReady();
+                }.bind(this),1)
+            },
+            detached: function() {
+                if (gc.services['ti-core-backplane'] === this) {
+                    gc.services['ti-core-backplane'] = undefined;
+                }
+                if (this.installDialog){
+                    this.installDialog.removeEventListener('cloudAgentInstallDialogFinished',this._onInstallerDialogClosed.bind(this));
+                }
+            },
+            /* TiBehaviorHttp: [... */
+            /*
+             * call this if you know the URL is not for the localhost and do not want to wait
+             * for a timeout to occur if the user is not online
+             */
+            httpGetIfOnline: function(theUrl, responseType){
+                if (!navigator.onLine) {
+                    return Q.promise.reject("httpGet: not online");
+                } else {
+                    return this.httpGet(theUrl, responseType);
+                }
+            },
+            httpGet: function(theUrl,responseType) {
+
+                var deferred = Q.defer();
+                var xmlhttp = new XMLHttpRequest();
+                xmlhttp.onreadystatechange = function () {
+                    var successStatusCode = 200;
+                    if (xmlhttp.readyState === 4) {
+
+                        switch (xmlhttp.status) {
+                            case successStatusCode:
+                                deferred.resolve(xmlhttp.responseText);
+                                break;
+                            default:
+                                if ((xmlhttp.status < 300) || (xmlhttp.status > 400)) {
+                                    var msg = xmlhttp.responseText;
+                                    if ((!msg) || (msg.length === 0)){
+                                        msg = "httpGet: readyState = 4, status = "+xmlhttp.status+ " for url="+theUrl;
+                                    }
+                                    deferred.reject(msg);
+                                } else {
+                                    console.log("httpGet: readyState=4, statusCode="+xmlhttp.status+" (treating as redirect...)");
+                                }
+                                break;
+                        }
+                    }
+                };
+
+                xmlhttp.open("GET", theUrl, true);  // async request specified by 3rd param = true
+                if (responseType) {
+                    xmlhttp.responseType = responseType;
+                } else {
+                    xmlhttp.responseType = 'text';
+                }
+                xmlhttp.send();
+
+                return deferred.promise;
+                /* old synchronous code:
+                 var xmlHttp =  new XMLHttpRequest();
+                 xmlHttp.open("GET", theUrl, false);
+                 xmlHttp.send(null);
+                 return xmlHttp.responseText;
+                 */
+            },
+            postData : function (params, async, callback) {
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', '/analytics', async);
+
+                //Send the proper header information along with the request
+                xhr.setRequestHeader("Content-Type", "application/json; charset=utf-8");
+
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState == 4 && xhr.status == 200) {
+                        if (callback) {
+                            callback(xhr.responseText);
+                        }
+                    }
+                };
+
+                xhr.send(params);
+            },
+            /* ...] end of TiBehaviorHttp */
+
+            /* TiBehaviorCcxml: [... */
+
+            localTargetSetupList: undefined,
+            localCcxmlFileLookupList: undefined,
+
+            /**
+             * helper function that can be called to generate a device object for the specified device
+             *
+             * @param deviceName - the device id to generate the object for
+             * @param supportedDevicesList - an object containing either the target_setup.json file from TICloudAgent
+             *   (if available) or the local target_setup.json file.
+             * @result object containing the following properties: id, xmlFile, connectionIndices
+             */
+            getDeviceObjForDevice: function(deviceName, supportedDevicesList){
+                var result = null;
+
+                if (!supportedDevicesList)  return result;
+
+                var deviceName_UC = "";
+                if (deviceName) {
+                    deviceName_UC = deviceName.toUpperCase();
+                }
+                var deviceObj = null;
+                var index = 0;
+                while (supportedDevicesList.devices.length > index){
+                    deviceObj = supportedDevicesList.devices[index];
+                    if (deviceObj.id.toLowerCase() === deviceName_UC.toLowerCase()) {
+                        break;
+                    }
+                    index++;
+                }
+                return deviceObj;
+            },
+            /**
+             *  helper function that can be called to generate a connection object for a
+             *  UARTConnection without having to specify a device name
+             *
+             *  @param supportedDevicesList - an object containing either the target_setup.json file from TICloudAgent
+             *   (if available) or the local target_setup.json file.
+             *  @result object containing the following properties: connectionType, id, xmlFile
+             */
+            getUartConnectionObj: function(supportedDevicesList){
+                var result = null;
+
+                if (!supportedDevicesList)  return result;
+                var index = 0;
+                var connectionIndex = 0;
+                while (supportedDevicesList.connections.length > index) {
+                    var connectionObj = supportedDevicesList.connections[index];
+                    if (connectionObj.id.toLowerCase().indexOf("uart") >= 0) {
+                        result = connectionObj;
+                        connectionIndex = index;
+                        break;
+                    } else {
+                        index++;
+                    }
+                }
+                return result;
+            },
+            /**
+             * gets the default (i.e. preferred) connection object to use for the specified device.
+             *
+             * @param deviceName: string containing the name of the device
+             * @param supportedDevicesList: the object returned by the getSupportedDevicesList method
+             * @return the default connection object to use for the specified device.
+             */
+            getDefaultConnectionObjForDevice: function(deviceName, supportedDevicesList){
+                var result = null;
+
+                if (!supportedDevicesList)  return result;
+
+
+                var keyword = 'UART';
+                var deviceName_UC = "";
+                if (deviceName) {
+                    deviceName_UC = deviceName.toUpperCase();
+                }
+                if (deviceName_UC.indexOf('MSP430') >= 0){
+                    keyword = 'MSP430 USB1';
+                } else if (deviceName_UC.indexOf('RF430') >= 0){
+                    keyword = 'MSP430 USB1';
+                } else if (deviceName_UC.indexOf('MSP432') >= 0){
+                    keyword = 'XDS110';
+                } else if (deviceName_UC.indexOf('TMS320F28') >= 0) {
+                    keyword = 'XDS100v2';
+                } else if ((deviceName_UC.indexOf('TM4C') >= 0) || (deviceName_UC.indexOf('CC3200') >= 0)) {
+                    keyword = 'Stellaris';
+                }  else if (deviceName_UC.indexOf('CC1310') >= 0) {
+                    keyword = 'XDS100v3';
+                } else if (deviceName_UC.indexOf('CC2650') >= 0) {
+                    keyword = 'XDS110';
+                }
+                // Special case: use UART for MSP430F2617 device for motor control applications as default
+                if (deviceName_UC.indexOf('MSP430F2617') >= 0) {
+                    keyword = 'UART';
+                }
+
+                var deviceObj = this.getDeviceObjForDevice(deviceName, supportedDevicesList);
+                var deviceConnectionIndices = [];
+                if (deviceObj){
+                    deviceConnectionIndices = deviceObj.connectionIndices;
+                }
+
+                if ((deviceObj) && (deviceObj.defaultConnectionIndex !== undefined)) {
+                    result = supportedDevicesList.connections[deviceObj.defaultConnectionIndex];
+                } else {
+                    var index = 0;
+                    var connectionIndex = 0;
+                    while (supportedDevicesList.connections.length > index) {
+                        var connectionObj = supportedDevicesList.connections[index];
+                        if (connectionObj.id.toLowerCase().indexOf(keyword.toLowerCase()) >= 0) {
+                            result = connectionObj;
+                            connectionIndex = index;
+                            break;
+                        } else {
+                            index++;
+                        }
+                    }
+                    if ((deviceConnectionIndices.length > 0) && (deviceConnectionIndices.indexOf(connectionIndex) < 0)) {
+                        connectionIndex = deviceConnectionIndices[0];
+                        if (connectionIndex >= 0) {
+                            result = supportedDevicesList.connections[connectionIndex];
+                        }
+                    }
+                }
+                return result;
+            },
+            /**
+             * This procedure is responsible for fixing any pending bugs in the TICloudAgent that have not yet been fixed.
+             * Currently this is fixing the following JIRAs:
+             * GC-793,  TICLD-2064, TICLD-1808
+             *
+             * @param ccxmlFileContents - the ccxml file returned from the server (or, if offline, from the supported_devices.json file
+             * @param deviceObj - the device object from the target_setup.json file for the selected device
+             * @param connectionObj - the connection object from the target_setup.json file for the selected device
+             * @return  a promise that resolves to the fixed-up ccxml file contents
+             */
+            _fixUpCcxmlFileContents: function(ccxmlFileContents,deviceObj,connectionObj,isUserCcxmlFile){
+            	if (!connectionObj) return Q.promise.reject("Invalid connection object");
+            	if (!ccxmlFileContents) return Q.promise.reject("no ccxml file contents");
+            	switch (connectionObj.xmlFile) {
+            	case 'TIXDS110_Connection':
+            		switch(deviceObj.id){
+            		// Temporary workaround for GC-1409 until GC-1405 is implemented
+            		case "TMS320F280049C":
+            			if (!isUserCcxmlFile && (ccxmlFileContents.indexOf('id="SWD Mode Settings"')) < 0){
+            				var splitIndex = ccxmlFileContents.indexOf('<platform XML_version="1.2"');
+            				var ccxmlStr_part1 = ccxmlFileContents.substring(0,splitIndex);
+            				var ccxmlStr_part2 = ccxmlFileContents.substring(splitIndex);
+            				var ccxmlStr_insert = '<property id="SWD Mode Settings" desc="JTAG / SWD / cJTAG Mode" Type="choicelist" Value="4"/>\n             ';
+            				ccxmlFileContents = ccxmlStr_part1 + ccxmlStr_insert + ccxmlStr_part2;
+            			}
+            			break;
+            		}
+            		break;
+            	case 'uart_connection':
+	                    // only fix up the ccxml file if it doesn't include a <cpu tag
+	                    if (ccxmlFileContents.indexOf("<cpu") < 0) {
+	                        // Split the ccxml file after the <instance ... tag for the device, i.e. before the </platform> tag
+	                        var splitIndex = ccxmlFileContents.indexOf("</platform>");
+	                        if (splitIndex > 0) {
+	                            var ccxmlStr_part1 = ccxmlFileContents.substring(0, splitIndex);
+	                            var ccxmlStr_part2 = ccxmlFileContents.substring(splitIndex);
+	                            var ccxmlStr_insert = "";
+	                            // the id used for the <instance tag must be used for the device tag or the ccxml file will not parse properly
+	                            var instanceId = deviceObj.xmlFile;
+	                            var instanceIdIndex = ccxmlStr_part1.lastIndexOf('id="');
+	                            if (instanceIdIndex >= 0) {
+	                                instanceId = ccxmlStr_part1.substring(instanceIdIndex + 'id="'.length);
+	                                instanceId = instanceId.substring(0, instanceId.indexOf('"'));
+	                            }
+	                            deviceName_UC = deviceObj.id.toUpperCase();
+	                            if ((deviceName_UC.indexOf('MSP430') >= 0) || (deviceName_UC.indexOf('RF430') >= 0) || (deviceName_UC.indexOf('CC43') >= 0)) {
+	                                ccxmlStr_insert = '<device HW_revision="1.0" XML_version="1.2" description="%DEVICE%" id="'+instanceId+'" partnum="%DEVICE%">\n' +
+	                                    '<cpu HW_revision="1.0" XML_version="1.2" description="MSP430 CPU" id="MSP430" isa="MSP430">\n' +
+	                                    '<property Type="stringfield" Value="%SERIALPORT%" id="COM Port"/>\n' +
+	                                    '</cpu>\n' +
+	                                    '</device>\n';
+	                            } else if ((deviceName_UC.indexOf('MSP432') >= 0) || (deviceName_UC.indexOf('TM4C') >= 0)) {
+	                                ccxmlStr_insert = '<device HW_revision="1" XML_version="1.2" description="ARM Cortex-M4F MCU" id="'+instanceId+'" partnum="%DEVICE%">\n' +
+	                                    '<router HW_revision="1.0" XML_version="1.2" description="CS_DAP Router" id="CS_DAP_0" isa="CS_DAP">\n' +
+	                                    '<subpath id="subpath_0">\n' +
+	                                    '<cpu HW_revision="1.0" XML_version="1.2" description="Cortex M4 CPU" id="CORTEX_M4_0" isa="CORTEX_M4">\n' +
+	                                    '<property Type="stringfield" Value="%SERIALPORT%" id="COM Port"/>\n' +
+	                                    '</cpu>\n' +
+	                                    '</subpath>\n' +
+	                                    '</router>\n'+
+	                                    '</device>\n';
+	                            } else if (deviceName_UC.indexOf('TMS320F28') >= 0) {
+	                                ccxmlStr_insert = '<device HW_revision="1" XML_version="1.2" description="" id="'+instanceId+'" partnum="%DEVICE%">\n' +
+	                                    '<router HW_revision="1.0" XML_version="1.2" description="ICEPick_C router" id="IcePick_C_0" isa="ICEPICK_C">\n' +
+	                                    '<subpath id="Subpath_0">\n' +
+	                                    '<cpu HW_revision="1.0" XML_version="1.2" description="C28xx CPU" id="C28xx_CPU1" isa="TMS320C28XX">\n' +
+	                                    '<property Type="stringfield" Value="%SERIALPORT%" id="COM Port"/>\n' +
+	                                    '</cpu>\n' +
+	                                    '</subpath>\n' +
+	                                    '</router>\n' +
+	                                    '</device>\n';
+	                            } else if (deviceName_UC.indexOf('TMS320C28') >= 0){
+	                                ccxmlStr_insert = '<device HW_revision="1" XML_version="1.2" description="" id="'+instanceId+'" partnum="%DEVICE%">\n' +
+	                                    '<cpu HW_revision="1.0" XML_version="1.2" description="CPU" id="C2800" isa="TMS320C28XX">\n' +
+	                                    '<property Type="stringfield" Value="%SERIALPORT%" id="COM Port"/>\n' +
+	                                    '</cpu>\n' +
+	                                    '</device>\n';
+	                            } else if ((deviceName_UC.indexOf('CC13') >= 0) || (deviceName_UC.indexOf('CC26') >= 0)) {
+	                                ccxmlStr_insert = '<device HW_revision="1" XML_version="1.2" description="SimpleLink(TM) %DEVICE% wireless MCU" id="'+instanceId+'" partnum="%DEVICE%">\n' +
+	                                    '<router HW_revision="1.0" XML_version="1.2" description="ICEPick_C Router" id="IcePick_C_0" isa="ICEPICK_C">\n' +
+	                                    '<subpath id="subpath_0">\n' +
+	                                    '<router HW_revision="1.0" XML_version="1.2" description="CS_DAP Router" id="CS_DAP_0" isa="CS_DAP">\n' +
+	                                    '<subpath id="subpath_1">\n' +
+	                                    '<cpu HW_revision="1.0" XML_version="1.2" description="Cortex_M3 CPU" id="Cortex_M3_0" isa="Cortex_M3">\n' +
+	                                    '<property Type="stringfield" Value="%SERIALPORT%" id="COM Port"/>\n' +
+	                                    '</cpu>\n' +
+	                                    '</subpath>\n' +
+	                                    '</router>\n' +
+	                                    '</subpath>\n' +
+	                                    '</router>\n' +
+	                                    '</device>\n';
+	                            } else if (deviceName_UC.indexOf('F28M') >= 0){
+	                                ccxmlStr_insert = '<device HW_revision="1" XML_version="1.2" description="" id="'+instanceId+'" partnum="%DEVICE%">\n' +
+	                                    '<router HW_revision="1.0" XML_version="1.2" description="ICEPick_C router" id="IcePick_C_0" isa="ICEPICK_C">\n' +
+	                                    '<subpath id="C28x">\n' +
+	                                    '<property Type="numericfield" Value="0x11" desc="Port Number_0" id="Port Number"/>\n' +
+	                                    '<cpu HW_revision="1.0" XML_version="1.2" description="C28xx CPU" id="C28xx_0" isa="TMS320C28XX">\n' +
+	                                    '<property Type="stringfield" Value="%SERIALPORT%" id="COM Port"/>\n' +
+	                                    '</cpu>\n' +
+	                                    '</subpath>\n' +
+	                                    '</router>\n' +
+	                                    '</device>\n';
+	                            }
+	                            if (ccxmlStr_insert.length > 0) {
+	                                ccxmlStr_insert = ccxmlStr_insert.replace(/\%DEVICE\%/g, deviceObj.xmlFile);
+	                                // NOTE: serial port still needs to be resolved by ti-service-targetaccess...
+	                                ccxmlFileContents = ccxmlStr_part1 + ccxmlStr_insert + ccxmlStr_part2;
+	                            }
+	                        }
+	
+	                    }
+	            	break;
+	            }
+                return Q.promise.resolve(ccxmlFileContents);
+
+            },
+            /**
+             * if the user has added a custom ccxml file to the target folder, this function will return it
+             *
+             * @param deviceObj - object with the following properties: id, xmlFile, connectionIndices
+             * @return promise that resolves to the contents of the ccxml file if there is one, else resolves to null
+             */
+            getUserCcxmlFile: function(deviceObj){
+                var fileName = 'target_config.ccxml';
+                var filePath = 'target/' + fileName;
+
+                if ((gc.designer) && (gc.designer.project) && (gc.designer.project.folderName))  {
+                    filePath = gc.designer.path.join(gc.designer.project.folderName,  'target', fileName);
+                }
+                return Q.promise(function (resolve, reject) {
+                    return gc.fileCache.readTextFile(filePath).then(function (contents) {
+                        console.log("ti-core-backplane.getUserCcxmlFile: found file named " + filePath);
+                        return resolve(contents);
+                    }).fail(function (error) {
+                        console.log("ti-core-backplane.getUserCcxmlFile: did not find file named " + filePath + ": error=" + error);
+                        return resolve(null);
+                    });
+                });
+            },
+            /**
+             * getDeviceCcxmlFile returns the ccxml file that corresponds to the configuration specified by the
+             * deviceObj and connectionObj parameters. These parameters are typically from the target_setup.json file
+             * provided by the TICloudAgent, but can be generated by calling other APIs in ti-behavior-ccxml
+             *
+             * @param deviceObj - object with the following properties: id, xmlFile, connectionIndices
+             * @param connectionObj - object with the following properties: connectionType, id, xmlFile
+             * @result promise that resolves to a string containing the ccxml file contents
+             */
+            getDeviceCcxmlFile: function(deviceObj,connectionObj) {
+                var _self = this;
+                var deviceName_UC = deviceObj.id.toUpperCase();
+                var spaceIndex = deviceName_UC.indexOf(' ');
+                if (spaceIndex >= 0) {
+                    //skip e.g. Tiva family name and use just the part number
+                    deviceName_UC = deviceName_UC.substring(spaceIndex).trim();
+                }
+                var ccxmlFileContents = null;
+                /* if the user has uploaded their own .ccxml file, use that file instead of the string from the model / programloader
+                  or from the cloud agent */
+
+                var fileName = deviceObj.id + '.ccxml';
+                var filePath = 'target/' + fileName;
+                if ((gc.designer) && (gc.designer.project) && (gc.designer.project.folderName))  {
+                    filePath = gc.designer.path.join(gc.designer.project.folderName,  'target', fileName);
+                }
+                var promise = this.getUserCcxmlFile(deviceObj);
+
+                return promise.then(function (userCcxmlFileContents) {
+                    if (userCcxmlFileContents) {
+                        if (userCcxmlFileContents.length === 0) {
+                            return Q.promise.reject("invalid user ccxml file returned from " + url);
+                        } else {
+                            return _self._fixUpCcxmlFileContents(userCcxmlFileContents, deviceObj, connectionObj,true).then(function (fixedCcxmlFileContents) {
+                                return Q.promise.resolve(fixedCcxmlFileContents);
+                            });
+                        }
+                    } else {
+                        return Q.promise(function (resolve, reject) {
+                            var url = "/ticloudagent/getConfig/" + _self.getOS() + '/' + connectionObj.xmlFile + '/' + deviceObj.xmlFile;
+                            if (gc.desktop.isDesktop() || gc.desktop.isCCS()) {
+                                url = window.location.protocol + "//dev.ti.com" + url;
+                            }
+                            return resolve(_self.httpGetIfOnline(url, 'text'));
+                        }).then(function (ccxmlFileContents) {
+                            if ((!ccxmlFileContents) || (ccxmlFileContents.length === 0)) {
+                                return Q.promise.reject("invalid ccxml file returned from " + url);
+                            } else {
+                                return _self._fixUpCcxmlFileContents(ccxmlFileContents, deviceObj, connectionObj,false).then(function (fixedCcxmlFileContents) {
+                                    return Q.promise.resolve(fixedCcxmlFileContents);
+                                });
+                            }
+                        }).fail(function (error) {
+                            if (error) {
+                                console.log("ti-core-backplane.getDeviceCcxmlFile: error = " + error);
+                            }
+                            return _self._getLocalCcxmlFileLookupList().then(function (localCcxmlFileLookupList) {
+                                if (localCcxmlFileLookupList.devices[deviceName_UC] !== undefined) {
+                                    var ccxmlName = localCcxmlFileLookupList.devices[deviceName_UC].ccxml;
+                                    var xmlDeviceName = localCcxmlFileLookupList.devices[deviceName_UC].xmlDeviceName;
+                                    ccxmlFileContents = localCcxmlFileLookupList[ccxmlName].join('\n');
+                                    ccxmlFileContents = ccxmlFileContents.replace(/\%DEVICE\%/g, xmlDeviceName);
+
+                                }
+                                // Note: supported_devices.json only works with default connection types.
+                                // Cannot call _fixUpCcxmlFileContents to fix up these files to support other connection types such as uart_connection.
+                                return Q.promise.resolve(ccxmlFileContents);
+                            });
+
+                        });
+                    }
+                });
+
+            },
+            /**
+             * Saves a ccxml string to a file in the target folder with the name <deviceName>.ccxml
+             *
+             * @result a promise that resolves when the file has been written or is rejected in case of an error
+             */
+            saveCcxmlFile: function(deviceName,ccxmlString) {
+                if (!gc.designer) return Q.promise.resolve();
+                var fileName = deviceName+'.ccxml';
+                var projectFolderPath = "";
+                if ((gc.designer) && (gc.designer.project) && (gc.designer.project.folderName))  {
+                    projectFolderPath = gc.designer.project.folderName
+                }
+                var filePath = gc.designer.path.join(projectFolderPath,  'target', fileName);
+                return gc.fileCache.writeTextFile(filePath, ccxmlString.split('\n'));
+            },
+            /**
+             * This function is typically only called for desktop versions of the designer or application
+             *
+             * @result a promise that resolves to the local target_setup.json file contents
+             */
+            _getLocalTargetSetupList: function(){
+                var _self = this;
+                return Q.Promise(function(resolve) {
+                    if (!_self.localTargetSetupList) {
+                        var jsonFilePath = gc.desktop.getPathToTargetSetupJson(true);
+                        if (!jsonFilePath) {
+                            jsonFilePath = gc.desktop.getPathToTargetSetupJson(false);
+                        }
+                        if (jsonFilePath) {
+                            gc.fileCache.readJsonFile(jsonFilePath).then(function(data) {
+                                _self.localTargetSetupList = data;
+                                var os = _self.getOS();
+                                // In order to avoid having to have separate OS-specific fallback files,
+                                // this local file has a special property named notSupportedOnOSX to indicate
+                                // devices in the list which are not to be listed as supported if the OS is OSX.
+                                if ((_self.localTargetSetupList) && (os === TICloudAgent.OS.OSX)) {
+                                    var i = 0;
+                                    while ( i < _self.localTargetSetupList.devices.length){
+                                        if (_self.localTargetSetupList.devices[i].notSupportedOnOSX){
+                                            _self.localTargetSetupList.devices.splice(i,1);
+                                        } else {
+                                            i++;
+                                        }
+
+                                    }
+
+                                }
+
+
+                                resolve(_self.localTargetSetupList);
+                            });
+                        }
+                    } else {
+                            resolve(_self.localTargetSetupList)
+                    }
+                });
+            },
+            /**
+             *  This function is typically only called for desktop versions of the designer or application.
+             *
+             *  @result a promise that resolves to the local supported_devices.json file contents
+             */
+            _getLocalCcxmlFileLookupList: function(){
+                var _self = this;
+                return Q.Promise(function(resolve) {
+                    var jsonFilePath = gc.desktop.getPathToSupportedDevicesJson(true);
+                    if (!jsonFilePath) {
+                        jsonFilePath = gc.desktop.getPathToSupportedDevicesJson(false);
+                    }
+                    if (jsonFilePath) {
+                        gc.fileCache.readJsonFile(jsonFilePath).then(function(data) {
+                            _self.localCcxmlFileLookupList = data;
+                            resolve(_self.localCcxmlFileLookupList)
+                        });
+                    } 
+                });
+            },
+
+            /**
+             * Legacy Gallery apps may use the connectionObj.id value (i.e. the selectedDevice.connectionDisplayStr value)
+             * as the connectionId instead of the connectionObj.xmlFile property value.
+             * This method checks for connectionId values that match any of the legacy display string
+             * values and converts them into the appropriate xmlFile string.
+             *
+             * @param connectionId value to check and fix if needed
+             * @result the fixed up connectionId value
+             */
+            _fixConnectionId: function(connectionId){
+                var result = connectionId;
+                // for legacy Gallery apps that use the connection display string as connectionId, convert
+                // connection Id into corresponding xmlFile name
+                if (connectionId) {
+                    switch (connectionId) {
+                        case "UARTConnection":
+                            result = "uart_connection";
+                            break;
+                        case "Texas Instruments XDS100v1 USB Debug Probe": // for legacy Gallery apps that use the connection display string as connectionId
+                            result = "TIXDS100usb_Connection";
+                            break;
+                        case "Texas Instruments XDS110 USB Debug Probe": // for legacy Gallery apps that use the connection display string as connectionId
+                            result = "TIXDS110_Connection";
+                            break;
+                        case "Texas Instruments XDS100v3 USB Debug Probe":
+                            result = "TIXDS100v3_Dot7_Connection";
+                            break;
+                        case "Data Snapshot Viewer":
+                            result = "DataSnapshotViewer";
+                            break;
+                        case "Texas Instruments XDS560 Debug Probe, 20-pin Rev-D Cable":
+                            result = "TIXDS560_Rev_D_Connection";
+                            break;
+                        case "Texas Instruments XDS560 Debug Probe":
+                            result = "TIXDS560_Connection";
+                            break;
+                        case "Texas Instruments XDS2xx USB Onboard Debug Probe":
+                            result = "TIXDS2XXUSB_onboard_Connection";
+                            break;
+                        case "Stellaris In-Circuit Debug Interface":
+                            result = "Stellaris_ICDI_Connection";
+                            break;
+                        case "TI MSP430 USB1":
+                            result = "TIMSP430-USB";
+                            break;
+                        case "TI MSP430 USB2":
+                            result = "TIMSP430-USB2";
+                            break;
+                        case "TI MSP430 USB3":
+                            result = "TIMSP430-USB3";
+                            break;
+                        case  "Texas Instruments XDS100v2 USB Debug Probe":
+                            result = "TIXDS100v2_Connection";
+                            break;
+                        case "Texas Instruments XDS2xx USB Debug Probe":
+                            result = "TIXDS2XXUSB_Connection";
+                            break;
+                        case "Texas Instruments XDS560 Debug Probe, 2-Pin cJTAG with External Converter":
+                            result = "TIXDS560_Rev_BD_Dot7_Connection";
+                            break;
+                    }
+                }
+                return result;
+
+            },
+            fixConnectionId: undefined,
+            /**
+             * Generates a ccxml file for a specified deviceName and connectionId, where
+             * the deviceName matches the id of a device object in the supported devices list
+             * and connectionId is the xmlFile property of a connection object in the target_setup.json file.
+             * (The supported devices list is accessed online via the dev.ti.com/ticloudagent/getConfig API)
+             *
+             * @param deviceName - name of the device (e.g. MSP432P401R)
+             * @param connectionId - name of the connection's xmlFile (e.g. TIMSP430-USB)
+             * @result a promise
+             */
+            generateCcxmlFile: function(deviceName, connectionId){
+                return this.getCcxmlFilePlusObjects(deviceName, connectionId).then(function(resultObj){
+                    var result = null;
+                    if ((resultObj) && (resultObj.strCcxml)){
+                        return Q.promise.resolve(resultObj.strCcxml);
+                    } else {
+                        return Q.promise.reject("No ccxml file generated.")
+                    }
+                }.bind(this)).fail(function(error){
+                    return Q.promise.reject(error);
+                });
+            },
+
+            /**
+             * getCcxmlFilePlusObjects takes a device name and connection Id and returns the associated objects for the specified
+             * device and connection as well as the ccxml string to use for that device and connection
+             *
+             * @param deviceName - name of the target device (e.g. MSP432P401R)
+             * @param connectionId - connection xmlFile (from the target_setup.json file - e.g. Texas Instruments XDS110 USB Debug Probe)
+             * @param defaultCcxmlString - optional, if defined, this will be used if on the desktop instead of going online to get the ccxml string.
+             * @param forceUseOfDefaultCcxmlString - optional, typically used for testing.  Use defaultCcxmlString even if online
+             * @returns  promise that resolves to an object containing deviceObj, connectionObj and strCcxml properties
+             * @private
+             */
+            getCcxmlFilePlusObjects: function(deviceName, connectionId, defaultCcxmlString, forceUseOfDefaultCcxmlString) {
+                var deviceName_UC = deviceName.toUpperCase();
+                var _connectionId = this._fixConnectionId(connectionId);
+                var connectionId_UC = null;
+                var deviceObj = null;
+                var connectionObj = null;
+                var ccxmlString = defaultCcxmlString;
+                if ( (gc.desktop.isDesktop() || gc.desktop.isCCS() || gc.desktop.isMobileDevice() || forceUseOfDefaultCcxmlString) && (defaultCcxmlString)) {
+                    // generate the DeviceObj and connectionObj from the defaultCcxmlString
+
+                    return this.getUserCcxmlFile(deviceObj).then(function(userCcxmlString){
+                        if ((userCcxmlString) && (userCcxmlString.length > 0) && (!forceUseOfDefaultCcxmlString)){
+                            ccxmlString = userCcxmlString;
+                        }
+                        var connectionTagIndex = ccxmlString.indexOf("<instance");
+                        if (connectionTagIndex > 0) {
+                            var connectionTag = ccxmlString.substring(connectionTagIndex);
+                            connectionTag = connectionTag.substring(0, connectionTag.indexOf('/>'));
+                            _connectionId = connectionTag.substring(connectionTag.indexOf('xml="') + 'xml="'.length);
+                            _connectionId = _connectionId.substring(0, _connectionId.indexOf('.xml"'));
+                        }
+                        var connectionType = "";
+                        var connectionIndex = 0;
+                        var connectionDisplayStr = "";
+                        switch(_connectionId){
+                            case "uart_connection":
+                                connectionType = "uartconnection";
+                                connectionDisplayStr = "UARTConnection";
+                                connectionIndex = 0;
+                                break;
+                            case "TIXDS100usb_Connection":
+                                connectionType = "tixds100";
+                                connectionDisplayStr = "Texas Instruments XDS100v1 USB Debug Probe";
+                                connectionIndex = 1;
+                                break;
+                            case "TIXDS110_Connection":
+                                connectionType="tixds110";
+                                connectionDisplayStr="Texas Instruments XDS110 USB Debug Probe";
+                                connectionIndex = 2;
+                                break;
+                            case "TIXDS100v3_Dot7_Connection":
+                                connectionType ="tixds100v2";
+                                connectionDisplayStr = "Texas Instruments XDS100v3 USB Debug Probe";
+                                connectionIndex = 3;
+                                break;
+                            case "DataSnapshotViewer":  // not supported, but included for ease in checking against local target_setup.json file
+                                connectionType="datasnapshotviewer";
+                                connectionDisplayStr="Data Snapshot Viewer";
+                                connectionIndex = 4;
+                                break;
+                            case "TIXDS560_Rev_D_Connection":
+                                connectionType="tixds560";
+                                connectionDisplayStr="Texas Instruments XDS560 Debug Probe, 20-pin Rev-D Cable";
+                                connectionIndex = 5;
+                                break;
+                            case "TIXDS560_Connection":
+                                connectionType="tixds560";
+                                connectionDisplayStr="Texas Instruments XDS560 Debug Probe";
+                                connectionIndex = 6;
+                                break;
+                            case "TIXDS2XXUSB_onboard_Connection":
+                                connectionType="tixds200";
+                                connectionDisplayStr="Texas Instruments XDS2xx USB Onboard Debug Probe";
+                                connectionIndex = 7;
+                                break;
+                            case "Stellaris_ICDI_Connection":
+                                connectionType="lm_icdi";
+                                connectionDisplayStr="Stellaris In-Circuit Debug Interface";
+                                connectionIndex = 8;
+                                break;
+                            case "TIMSP430-USB2":
+                                connectionType="msp430";
+                                connectionDisplayStr="TI MSP430 USB2";
+                                connectionIndex = 9;
+                                break;
+                            case "TIMSP430-USB3":
+                                connectionType="msp430";
+                                connectionDisplayStr="TI MSP430 USB3";
+                                connectionIndex = 10;
+                                break;
+                            case  "TIXDS100v2_Connection":
+                                connectionType="tixds100v2";
+                                connectionDisplayStr="Texas Instruments XDS100v2 USB Debug Probe";
+                                connectionIndex = 11;
+                                break;
+                            case "TIXDS2XXUSB_Connection":
+                                connectionType="tixds200";
+                                connectionDisplayStr="Texas Instruments XDS2xx USB Debug Probe";
+                                connectionIndex = 12;
+                                break;
+                            case "TIMSP430-USB":
+                                connectionType="msp430";
+                                connectionDisplayStr="TI MSP430 USB1";
+                                connectionIndex = 13;
+                                break;
+                            case "TIXDS560_Rev_BD_Dot7_Connection":
+                                connectionType="tixds560";
+                                connectionDisplayStr="Texas Instruments XDS560 Debug Probe, 2-Pin cJTAG with External Converter";
+                                connectionIndex = 14;
+                                break;
+                            default:
+                                var msg = "Error parsing defaultCcxmlString: connectionId="+connectionId+" does not appear to be valid!";
+                                console.error("ti-core-backplane.getCcxmlFilePlusObjects:"+msg);
+                                throw msg;
+                        }
+                        connectionObj = {
+                            connectionType: connectionType,
+                            id: connectionDisplayStr,
+                            xmlFile:connectionId
+                        };
+                        var platformTagIndex = ccxmlString.indexOf("<platform");
+                        var deviceXml = undefined;
+
+                        if (platformTagIndex > 0) {
+                            deviceXml = ccxmlString.substring(platformTagIndex);
+                            deviceXml = deviceXml.substring(deviceXml.indexOf('xml="') + 'xml="'.length);
+                            deviceXml = deviceXml.substring(0, deviceXml.indexOf('.xml"'));
+                        } else {
+                            var msg1 = "Badly formed ccxml string: "+ccxmlString;
+                            console.error("ti-core-backplane.getCcxmlFilePlusObjectsmsg:"+msg1);
+                            throw msg1;
+                        }
+
+                        deviceObj = {
+                            id: deviceName,
+                            xmlFile: deviceXml,
+                            connectionIndices: [connectionIndex]
+                        };
+
+                        return this._fixUpCcxmlFileContents(ccxmlString, deviceObj, connectionObj,true).then(function(fixedCcxmlString){
+                            var resultObj = {
+                                deviceObj: deviceObj,
+                                connectionObj: connectionObj,
+                                strCcxml: fixedCcxmlString
+                            };
+                            return resultObj;
+                        })
+
+                    }.bind(this));
+                } else {
+                    return this.getSupportedDevicesList().then(function (supportedDevicesObj) {
+                        if (!supportedDevicesObj) {
+                            throw "Could not get target_setup.json from TICloudAgent";
+                        }
+                        for (var i = 0; i < supportedDevicesObj.devices.length; i++) {
+                            var device = supportedDevicesObj.devices[i];
+                            if (device.id.toUpperCase() === deviceName_UC) {
+                                deviceObj = device;
+                                break;
+                            }
+                        }
+                        if (connectionId) {
+                            connectionId_UC = this._fixConnectionId(connectionId).toUpperCase();
+                            for (var j = 0; j < supportedDevicesObj.connections.length; j++) {
+                                var connection = supportedDevicesObj.connections[j];
+                                if ((!connectionId_UC) || (connection.xmlFile.toUpperCase() === connectionId_UC)) {
+                                    connectionObj = connection;
+                                    break;
+                                }
+                            }
+                        }
+                        if (!connectionObj) {
+                            connectionObj = this.getDefaultConnectionObjForDevice(deviceName, supportedDevicesObj);
+                            if (connectionObj) {
+                                connectionId = connectionObj.xmlFile;
+                                connectionId_UC = connectionId.toUpperCase();
+                            }
+                        }
+                        return this.getDeviceCcxmlFile(deviceObj, connectionObj);
+                    }.bind(this)).then(function (strCcxml) {
+                        var result = {
+                            deviceObj: deviceObj,
+                            connectionObj: connectionObj,
+                            strCcxml: strCcxml
+                        };
+                        return result;
+                    }.bind(this)).fail(function (error) {
+                        console.log('ti-behavior.ccxml.generateCcxmlFile: error=' + error);
+                        throw "Error generating ccxmlFile: " + error;
+                    });
+                }
+            },
+            /**
+             * returns the target_setup.json object, either from the TICloudAgent if online or from the local
+             * target_setup.json file if not.
+             */
+            getSupportedDevicesList: function(){
+                var _self = this;
+                var location = "/ticloudagent/getConfigInfo?os=" + _self.getOS();
+                if (gc.desktop.isDesktop() || gc.desktop.isCCS()){
+                    location = window.location.protocol + "//dev.ti.com" + location;
+                }
+                return Q.promise(function (resolve) {
+                    resolve(_self.httpGetIfOnline(location, 'text'));
+                }).then(function (fileContents) {
+                    var result = "";
+                    try {
+                        result = JSON.parse(fileContents);
+                    }
+                    catch (ex) {
+                        console.log("ti-behavior-ccxml.getSupportedDevicesList: exception=" + ex);
+                    }
+                    return result;
+                }).fail(function (error) {
+                    console.log("ti-behavior-ccxml.getSupportedDevicesList: failed with error = "+error);
+                    console.log("ti-behavior-ccxml.getSupportedDevicesList: falling back to local targetSetupLIst...");
+                    return _self._getLocalTargetSetupList();
+                });
+
+            },
+
+            /* ...] end of TiBehaviorCcxml */
+
+            /* Special case code to get NewProjectWizard to be able to list serial ports in Safari [... */
+            _listSerialPorts: function(deviceName, defaultBaudRate) {
+                var _self = this;
+                // Always get the user to unplug and then plug in their board in order to ensure
+                // the device's debugger is in a good / known state.
+
+                if ((this.agent === undefined) || (this.agent === null)){
+                    console.log('ti-core-backplane.listSerialPorts: Failed to get agent.');
+                    return Q.reject('Failed to get agent.');
+
+                }
+                console.log("ti-core-backplane.listSerialPorts: about to call this.agent.getSubModule(Serial). deviceName="+deviceName);
+
+                // share the same serial port list operation if multiple are requested at the same time.
+                serialPortListPromise = serialPortListPromise || this.agent.getSubModule("Serial").then(function (serial) {
+                    return serial.list();
+                }).finally(function() {
+                    serialPortListPromise = undefined;
+                });
+                    
+                return serialPortListPromise.then(function (retObj) {
+					// sequence default port selection when multiple are requested because the self modify the retObj.
+					return Q.promise(function(resolve, reject) {
+	                    sequencer = sequencer.finally(function() {
+	                        if (_self.selectedDevice) {
+	                            retObj.targetName = _self.selectedDevice.deviceName;
+	                        }
+	                        if (deviceName){
+	                            retObj.targetName = deviceName;
+	                        }
+	                        var ports = retObj.ports;
+	                        // clear port selection flag.
+	                        for (var j = 0; j < ports.length; j++) {
+	                            ports[j].selected = false;
+	                        }
+	                        return Q.all([
+	                            ports && ports.length > 0 ? TICloudAgent.Util.selectDefaultPort(retObj) : Q(false),
+	                            TICloudAgent.Util.getBaudRates()
+	                        ]).then(function(results) {
+		                    	var baudRates = results[1];
+	
+		                    	var selectedSerialPort;
+		                        var selectedBaudRate;
+		                    	
+			                    if (ports) {
+			                        // select the port and buadrate to open
+			                        for (var j = 0; j < ports.length; j++) {
+			                            var port = ports[j];
+			                            if (port.selected) {
+											// find default baud rate provided by cloud agent
+		                                    for (var i = 0; i < baudRates.length; i++) {
+		                                        var baudrateObj = baudRates[i];
+		                                        if (baudrateObj.selected) {
+		                                            selectedBaudRate = baudrateObj.rate;
+		                                            selectedSerialPort = port;
+		                                            break;
+		                                        }
+		                                    }
+											// use provided default baud rate or cloud agent default for selected baud rate.
+		                                    selectedBaudRate = defaultBaudRate || selectedBaudRate;
+			                                break;
+			                            }
+			                        }
+			                    } else {
+			                        throw ' serial.list() return object with undefined ports.';
+			                    }
+			                    resolve({
+			                        selectedSerialPort:selectedSerialPort,
+			                        selectedBaudRate:selectedBaudRate,
+			                        serialPorts: ports,
+			                        baudRates:baudRates
+			                    });
+			
+			                }).fail(function (error) {
+			                    console.error('ti-core-backplane.listSerialPorts: error=' + error);
+			                    reject(error);
+			                });
+	                    });
+					});
+
+                }).fail(function (error) {
+                    console.error('ti-core-backplane.listSerialPorts: failed: error.message='+ error.message);
+                    return Q.reject(error);
+                });
+            },
+            listSerialPorts: undefined,
+            /* Special case code to get NewProjectWizard to be able to list serial ports in Safari [... */
+            _listUsbHidPorts: function(vendorIdFilter) {
+                var _self = this;
+                var currentVendorIdFilter = vendorIdFilter || TI_HID_VENDOR_ID;
+                // Always get the user to unplug and then plug in their board in order to ensure
+                // the device's debugger is in a good / known state.
+
+                if ((this.agent === undefined) || (this.agent === null)){
+                    console.error('ti-core-backplane.listSerialPorts: Failed to get agent.');
+                    return Q.reject('Failed to get agent.');
+                }
+                console.log("ti-core-backplane.listSerialPorts: about to call this.agent.getSubModule(USB-HID).");
+
+                var promise = currentVendorIdFilter === TI_HID_VENDOR_ID ? tiHidPortListPromise : undefined; 
+                promise = promise || this.agent.getSubModule("USB-HID").then(function (usbhid) {
+                   	return usbhid.list(currentVendorIdFilter);
+               	});
+                if (currentVendorIdFilter === TI_HID_VENDOR_ID) {
+                    promise = promise.finally(function() {
+                        tiHidPortListPromise = undefined;
+                    });
+                    tiHidPortListPromise = promise;
+                }
+                
+                return promise.then(function (retObj) {
+                    var usbHidPorts = retObj.ports;
+                    var found = false;
+                    var selectedUsbHidPort;
+
+                    if ((usbHidPorts) && (usbHidPorts.length > 0)){
+                        for (var i=0; i < usbHidPorts.length; i++){
+                            if (usbHidPorts[i].displayName.indexOf("productId=") === 0) {
+                                usbHidPorts[i].displayName = usbHidPorts[i].comName;
+                            }
+                        }
+                        selectedUsbHidPort = usbHidPorts[0];
+                        found = true;
+                    }
+                    return {
+                        selectedUsbHidPort:selectedUsbHidPort,
+                        usbHidPorts: usbHidPorts,
+                        wasTIUsbHidPortFound:found,
+                        vendorIdFilter: currentVendorIdFilter
+                    };
+
+                }).fail(function (error) {
+                    console.error('ti-core-backplane.listUsbHidPorts: error=' + error);
+                    return Q.reject(error);
+                });
+            },
+            listUsbHidPorts: undefined,
+            /* ...] */
+
+        });
+
+    </script>
+</dom-module>

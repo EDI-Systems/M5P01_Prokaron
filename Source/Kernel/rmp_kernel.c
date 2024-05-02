@@ -971,8 +971,16 @@ void _RMP_Timer_Proc(void)
 /* Function:_RMP_Timer_Proc **************************************************/
 
 /* Function:_RMP_Run_High *****************************************************
-Description : Get the highest priority ready thread. The return value will be
-              written into the global variables.
+Description : Get the highest priority thread that is ready. The return value
+              will be written into the global variables. Note that providing a
+              fast path where no context operations happen when the new thread
+              equal the old thread has little value in RMP, because (1) context
+              switches are rarely idempotent because threads prefer to block
+              themselves rather than to exhaust slices, (2) such design trades
+              worst-case latency for average performance, (3) such design 
+              complicates the programmer mental model for using hooks. If such
+              saving/restoring of coprocessor context is deemed to inefficient,
+              the implementer is free to implement lazy switching.
 Input       : None.
 Output      : None.
 Return      : None.

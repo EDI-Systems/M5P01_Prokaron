@@ -1,0 +1,775 @@
+<script>
+  var rovBehaviors = rovBehaviors || {};
+
+  rovBehaviors.viewStatusBehaviors = {
+      properties: {
+          statusItems: {
+            type: Array,
+            value: []
+          },
+          compressedStatusItems: {
+            type: Array,
+            value: []
+          },
+          viewStatusPosition: {
+            type: String,
+            value: 'top'
+          }
+    },
+
+    closeViewStatusClicked : function (e) {
+        this.$.viewStatusConsole.hidden = true;
+        this.statusItems = [];
+    },
+    rovViewStatus : function (message, type) {
+        if (this.$.viewStatusConsole.hidden) {
+            this.statusItems = [];
+        }
+        if (this.statusItems.length > 0) {
+            if (this.statusItems.length > 255) {
+                while (this.statusItems.length > 255) {
+                    this.statusItems.pop();
+                }
+            }
+        }
+        this.statusItems.push(rovUtils.statusItem(message, type));
+        var statusItems = rovUtils.deepCopy(this.statusItems);
+        statusItems = rovUtils.compressStatusItems(statusItems);
+
+        var width;
+        var maxWidth = 0;
+        var fontInfo = tiRovStyles.rovContentFontSize + 'pt ' + 'Open Sans';
+        for (var i = 0; i < statusItems.length; i++) {
+            width = rovUtils.getStringWidth(statusItems[i].message, fontInfo);
+            if (width > maxWidth) {
+                maxWidth = width;
+            }
+        }
+        var countWidth = rovUtils.getStatusCountWidth(statusItems);
+        maxWidth += 41 + countWidth; /* +23 icon, +18 padding, +count */
+        if (statusItems.length > 10) {
+            if (this.$.viewStatusConsole.style.overflowY != 'auto') {
+                this.$.viewStatusConsole.style.overflowY = 'auto';
+            }
+            this.$.viewStatusConsole.style.height = this.$.viewStatusConsole.clientHeight + 'px';
+            maxWidth += 18;  /* scroll bar */
+        }
+        else if (this.$.viewStatusConsole.style.overflowY == 'auto') {
+            this.$.viewStatusConsole.style.overflowY = '';
+            this.$.viewStatusConsole.style.height = '';
+        }
+        if (maxWidth > this.offsetWidth) {
+            maxWidth = this.offsetWidth - 5;
+        }
+        this.$.viewStatusConsole.style.width = maxWidth + 'px';
+        this.set('compressedStatusItems', statusItems);
+        if (this.$.viewStatusConsole.hidden) {
+            this.$.viewStatusConsole.style.left = '0px';
+            var top = (this.viewStatusPosition == 'top') ? 30 : this.offsetHeight - 30;
+            this.$.viewStatusConsole.style.top = top + 'px';
+            this.$.viewStatusConsole.hidden = false;
+        }
+    }
+  },
+
+  rovBehaviors.localStorageBehaviors = {
+    getViewsDataStorage : function () {
+        var viewsStorage = rovUtils.getLocalStorageObject('viewsData-storage');
+        if (this._ccs7) {
+            var coreName = rovUtils.getCoreName();
+            if (coreName) {
+                var coreViewsData = rovUtils.getLocalStorageObject(coreName + '-viewsData-storage');
+                if (coreViewsData) {
+                    if (!viewsStorage) {
+                        viewsStorage = {};
+                    }
+                    if (coreViewsData.currentInst) {
+                        viewsStorage.currentInst = coreViewsData.currentInst;
+                    }
+                    if (coreViewsData.sortCol) {
+                        viewsStorage.sortCol = coreViewsData.sortCol;
+                    }
+                    if (coreViewsData.sortDir) {
+                        viewsStorage.sortDir = coreViewsData.sortDir;
+                    }
+                    if (coreViewsData.width) {
+                        viewsStorage.width = coreViewsData.width;
+                    }
+                    if (coreViewsData.height) {
+                        viewsStorage.height = coreViewsData.height;
+                    }
+                    if (coreViewsData.defaultSize) {
+                        viewsStorage.defaultSize = coreViewsData.defaultSize;
+                    }
+                    if (coreViewsData.viewArgs) {
+                        viewsStorage.viewArgs = coreViewsData.viewArgs;
+                    }
+                    if (coreViewsData.defaultViewName) {
+                        viewsStorage.defaultViewName = coreViewsData.defaultViewName;
+                    }
+                }
+            }
+        }
+        return (viewsStorage);
+    },
+
+    setViewsDataStorage : function (settings) {
+        if (settings == null) {
+            rovUtils.setLocalStorageObject('viewsData-storage', null);
+            if (this._ccs7) {
+                var coreName = rovUtils.getCoreName();
+                if (coreName) {
+                    rovUtils.setLocalStorageObject(coreName + '-viewsData-storage', null);
+                }
+            }
+        }
+        else {
+            if (this._ccs7) {
+                var coreName = rovUtils.getCoreName();
+                if (coreName) {
+                    var coreSettings = {};
+                    if (settings.currentInst) {
+                        coreSettings.currentInst = settings.currentInst;
+                    }
+                    if (settings.sortCol) {
+                        coreSettings.sortCol = settings.sortCol;
+                    }
+                    if (settings.sortDir) {
+                        coreSettings.sortDir = settings.sortDir;
+                    }
+                    if (settings.width) {
+                        coreSettings.width = settings.width;
+                    }
+                    if (settings.height) {
+                        coreSettings.height = settings.height;
+                    }
+                    if (settings.defaultSize) {
+                        coreSettings.defaultSize = settings.defaultSize;
+                    }
+                    if (settings.viewArgs) {
+                        coreSettings.viewArgs = settings.viewArgs;
+                    }
+                    if (settings.defaultViewName) {
+                        coreSettings.defaultViewName = settings.defaultViewName;
+                    }
+                    rovUtils.setLocalStorageObject(coreName + '-viewsData-storage', coreSettings);
+                }
+            }
+            rovUtils.setLocalStorageObject('viewsData-storage', settings);
+        }
+    },
+
+    getCurrentViewsStorage : function () {
+        var currentViews = [];
+        if (this._ccs7) {
+            var coreName = rovUtils.getCoreName();
+            if (coreName) {
+                var coreCurrentViews = rovUtils.getLocalStorageObject(coreName + '-currentViews-storage');
+                if (coreCurrentViews) {
+                    currentViews = coreCurrentViews;
+                }
+            }
+        }
+        else {
+            currentViews = rovUtils.getLocalStorageObject('currentViews-storage');
+        }
+        return (currentViews);
+    },
+
+    setCurrentViewsStorage : function (viewsArr) {
+        if (viewsArr == null) {
+            rovUtils.setLocalStorageObject('currentViews-storage', null);
+            if (this._ccs7) {
+                var coreName = rovUtils.getCoreName();
+                rovUtils.setLocalStorageObject(coreName + '-currentViews-storage', null);
+            }
+        }
+        else {
+            if (this._ccs7) {
+                var coreName = rovUtils.getCoreName();
+                rovUtils.setLocalStorageObject(coreName + '-currentViews-storage', viewsArr);
+            }
+            rovUtils.setLocalStorageObject('currentViews-storage', viewsArr);
+        }
+    },
+    hasRovSettingsStorage : function (coreName) {
+        var coreRovSettings = rovUtils.getLocalStorageObject(coreName + 'rovSettings-storage');
+        return (coreRovSettings);
+    },
+    getRovSettingsStorage : function () {
+        var rovSettings = rovUtils.getLocalStorageObject('rovSettings-storage');
+        if (this._ccs7) {
+            var setToDefault = true;
+            var coreName = rovUtils.getCoreName();
+            if (coreName) {
+                var coreRovSettings = rovUtils.getLocalStorageObject(coreName + '-rovSettings-storage');
+                if (coreRovSettings) {
+                    rovSettings.refreshInterval = coreRovSettings.refreshInterval;
+                    rovSettings.exeMrus = coreRovSettings.exeMrus;
+                    rovSettings.commLinkMrus = coreRovSettings.commLinkMrus;
+                    setToDefault = false;
+                }
+            }
+            if (setToDefault) {
+                /* if no core known, set to default to override anything that
+                   may have been set by another ROV */
+                rovSettings.refreshInterval = this.refreshInterval;
+                rovSettings.exeMrus = this.exeMrus;
+                rovSettings.commLinkMrus = this.commLinkMrus;
+            }
+        }
+        return (rovSettings);
+
+    },
+    setRovSettingsStorage : function (settings) {
+        if (settings == null) {
+            rovUtils.setLocalStorageObject('rovSettings-storage', null);
+            if (this._ccs7) {
+                var coreName = rovUtils.getCoreName();
+                if (coreName) {
+                    rovUtils.setLocalStorageObject(coreName + '-rovSettings-storage', null);
+                }
+            }
+        }
+        else {
+            if (this._ccs7) {
+                var coreName = rovUtils.getCoreName();
+                if (coreName) {
+                    var coreSettings = {};
+                    coreSettings.refreshInterval = settings.refreshInterval;
+                    coreSettings.exeMrus = settings.exeMrus;
+                    coreSettings.commLinkMrus = settings.commLinkMrus;
+                    rovUtils.setLocalStorageObject(coreName + '-rovSettings-storage', coreSettings);
+                }
+            }
+            rovUtils.setLocalStorageObject('rovSettings-storage', settings);
+        }
+    },
+    hasRovInitStorage : function (coreName) {
+        var coreRovInit = rovUtils.getLocalStorageObject(coreName + '-rovInit-storage');
+        return (coreRovInit);
+    },
+    getRovInitStorage : function () {
+        var rovInit = rovUtils.getLocalStorageObject('rovInit-storage');
+        if (this._ccs7) {
+            var coreName = rovUtils.getCoreName();
+            if (coreName) {
+                var coreRovInit = rovUtils.getLocalStorageObject(coreName + '-rovInit-storage');
+                if (coreRovInit) {
+                    rovInit.exe = coreRovInit.exe;
+                    rovInit.commLink = coreRovInit.commLink;
+                    rovInit.noExe = coreRovInit.noExe;
+                }
+            }
+        }
+        return (rovInit);
+    },
+    setRovInitStorage : function (settings) {
+        if (settings == null) {
+            rovUtils.setLocalStorageObject('rovInit-storage', null);
+            if (this._ccs7) {
+                var coreName = rovUtils.getCoreName();
+                if (coreName) {
+                    rovUtils.setLocalStorageObject(coreName + '-rovInit-storage', null);
+                }
+            }
+        }
+        else {
+            if (this._ccs7) {
+                var coreName = rovUtils.getCoreName();
+                if (coreName) {
+                    var coreSettings = {};
+                    coreSettings.exe = settings.exe;
+                    coreSettings.commLink = settings.commLink;
+                    coreSettings.noExe = settings.noExe;
+                    rovUtils.setLocalStorageObject(coreName + '-rovInit-storage', coreSettings);
+                }
+            }
+            rovUtils.setLocalStorageObject('rovInit-storage', settings);
+        }
+    },
+
+    getCoresStorage : function () {
+        var coreStorage = {};
+        var coresMap = rovUtils.getLocalStorageObject('coreNames-storage');
+        var cores = Object.keys(coresMap);
+        if (cores.length > 0) {
+            var storageObj;
+            for (var i = 0; i < cores.length; i++) {
+                if (cores[i] != 'lastConnectedCore') {
+                    coreStorage[cores[i]] = [];
+                    storageObj = rovUtils.getLocalStorageObject(cores[i] + '-viewsData-storage');
+                    coreStorage[cores[i]].push(storageObj);
+                    storageObj = rovUtils.getLocalStorageObject(cores[i] + '-currentViews-storage');
+                    coreStorage[cores[i]].push(storageObj);
+                    storageObj = rovUtils.getLocalStorageObject(cores[i] + 'rovSettings-storage');
+                    coreStorage[cores[i]].push(storageObj);
+                    storageObj = rovUtils.getLocalStorageObject(cores[i] + '-rovInit-storage');
+                    coreStorage[cores[i]].push(storageObj);
+                }
+            }
+        }
+        return (coreStorage);
+    },
+
+    clearAllCoresStorage : function () {
+        var coreStorage = {};
+        var coresMap = rovUtils.getLocalStorageObject('coreNames-storage');
+        var cores = Object.keys(coresMap);
+        if (cores.length > 0) {
+            for (var i = 0; i < cores.length; i++) {
+                if (cores[i] != 'lastConnectedCore') {
+                    rovUtils.setLocalStorageObject(cores[i] + '-viewsData-storage', null);
+                    rovUtils.setLocalStorageObject(cores[i] + '-currentViews-storage', null);
+                    rovUtils.setLocalStorageObject(cores[i] + 'rovSettings-storage', null);
+                    rovUtils.setLocalStorageObject(cores[i] + '-rovInit-storage', null);
+                }
+            }
+        }
+    }
+
+  };
+
+  /* rovBehaviors.logBehaviors defines common behaviors of notify logs used by custom tables and ROV graphs */
+  rovBehaviors.notifyLogBehaviors = {
+    properties: {
+        notifyLog : {
+            type: Array,
+            value: []
+        },
+
+        logViewerTitle : {
+            type: String,
+            value: ''
+        },
+
+        logMax : {
+            type : Number,
+            value : 2048
+        },
+
+        logWrap : {
+            type : Boolean,
+            value : true
+        },
+
+        notifyLogOptionsButton : {
+            type: String,
+            value: 'expand-less'
+        },
+
+        notifyLogOptionsHidden : {
+            type: Boolean,
+            value: false
+        },
+
+        notifyLogOptionsTooltip : {
+            type: String,
+            value: 'Hide log options'
+        }
+    },
+
+    applyLogSettingsClicked : function (e) {
+        this.logWrap = this.$.notifyLogWrapCheckbox.checked;
+        var logMax = this.$.notifyLogSizeInput.value;
+        if (!logMax.match(/^[1-9][0-9]*$/)) {
+            this.$.notifyLogSizeInputInvalid.hidden = false;
+            return;
+        }
+        else {
+            this.logMax = Number(this.$.notifyLogSizeInput.value);
+        }
+        this.$.applyLogOptionsButton.disabled = true;
+    },
+
+    clearLogClicked : function(e) {
+        this.$.logViewerText.value = '';
+        this.notifyLog = [];
+        this.$.exportLogButton.disabled = true;
+        this.$.clearLogButton.disabled = true;
+    },
+
+    exportLogClicked : function(e) {
+        var fileNameToSaveAs = this.logViewerTitle.replace(/ /g, '_') + '.txt';
+        var textToWrite = this.logViewerTitle + '\n' + this.notifyLog.join('\n');
+        rovUtils.downloadText(textToWrite, fileNameToSaveAs);
+    },
+
+    logDragMouseDown : function (e) {
+        if (e.target.id == 'logViewerDialogClose') {
+            this.logViewerCloseClicked();
+        }
+        else {
+            rovUtils.initRovViewDrag(e, this.$.logViewerDialog, this.rovPanel);
+        }
+    },
+
+    logViewerCloseClicked : function (e) {
+        this.$.notifyLogSizeInputInvalid.hidden = true;
+        this.$.logViewerDialog.hidden = true;
+    },
+
+    logViewerKeyPress: function (e) {
+        var keyCode = e.keyCode || e.which;
+        if (keyCode === 13) {
+            this.logViewerCloseClicked();
+        }
+    },
+
+    notifyLogSettingsClicked : function (e) {
+        var hide = e.target.icon == 'expand-less';
+        this.set('notifyLogOptionsButton', hide ? 'expand-more' : 'expand-less');
+        this.set('notifyLogOptionsHidden', hide);
+        this.set('notifyLogOptionsTooltip', hide ? 'Show log options' : 'Hide log options');
+    },
+
+    openLogViewer : function (e) {
+        this.logViewerTitle = this.viewName + ' log';
+        this.$.logViewerDialog.hidden = false;
+        this.$.logViewerDialog.style.zIndex = String(this.rovPanel.getMaxZindex() + 1);
+        this.$.logViewerText.value = this.notifyLog.join('\n');
+        this.$.exportLogButton.disabled = this.notifyLog.length == 0;
+        this.$.clearLogButton.disabled = this.notifyLog.length == 0;
+        this.$.notifyLogSizeInput.value = String(this.logMax);
+        this.$.notifyLogWrapCheckbox.checked = this.logWrap;
+        this.$.notifyLogSizeInputInvalid.hidden = true;
+    }
+  };
+
+  /* rovBehaviors.viewBehaviors defines common behaviors of ROV views */
+  rovBehaviors.viewBehaviors = {
+    properties: {
+      id : {          /* required read-only id (set by ROV) */
+        type: String,
+        value: ""
+      },
+
+      /*
+       *  The ti-rov-data element used to get ROV data
+       *  from the target. Intitialed in ready() function.
+       */
+      rovData : {
+        type: Object,
+        value: {}
+      },
+
+      /* Support for macOS workaround for drag and drop */
+      draggable : {
+        type : Boolean,
+        value : false
+      },
+
+      repeatRefreshEnabled: {
+        type : Boolean,
+        value : true
+      },
+
+      repeatDivider: {
+        type : Number,
+        value : 1
+      },
+
+      repeatCounter: {
+        type : Number,
+        value : 0
+      },
+
+      defaultSize: {
+        type : Boolean,
+        value : true
+      },
+
+      rovPanel: {
+        type: Object,
+        value: {}
+      },
+
+      resizeViewsDisabled: {
+        type : Boolean,
+        value : false
+      },
+
+      prevState:  {
+        type: Object,
+        value: null
+      }
+    },
+
+    closeViewOptions : function (e) {
+        e.currentTarget.offsetParent.close();
+    },
+
+    /*
+     *  ======== closeView ========
+     *  Called when user clicks the 'Close' button on this view,
+     *  or the 'Close all' button on the ROV toolbar
+     */
+    closeView : function(e) {
+        document.querySelector('ti-rov-panel').closeView(this.id);
+    },
+
+    /*
+     *  ======== dividerChanged ========
+     *  Repest refresh divider changed by user
+     */
+    dividerChanged : function (e) {
+        var newVal = e.currentTarget.value;
+        if (isNaN(newVal) || newVal == '') {
+            e.currentTarget.value = this.repeatDivider;
+        }
+        else {
+            newVal = Number(newVal);
+            if (newVal >= 1 && newVal <= 32) {
+                if (newVal < this.repeatDivider) {
+                    this.repeatCounter = 0;
+                }
+                this.repeatDivider = newVal;
+            }
+            else {
+                e.currentTarget.value = this.repeatDivider;
+            }
+        }
+    },
+
+    /*
+     *  ======== dividerToggleClicked ========
+     *  Toggle enabled state of repeat refresh in view
+     */
+     dividerToggleClicked : function (e) {
+        this.repeatRefreshEnabled = e.currentTarget.id == 'dividerEnableIcon';
+        if (this.repeatRefreshEnabled) {
+            this.repeatCounter = 0;
+        }
+    },
+
+    /*
+     *  ======== getProperties ========
+     *  Returns the basic properties of this view
+     *  for serialization
+     */
+    getProperties : function (elem) {
+        if (!elem) {
+            var elem = this;
+        }
+        var props = {};
+        props.elemName = elem.name;
+        props.viewName = elem.viewName;
+        if (elem.name != 'ti-rov-graph') {
+            props.elemPath = elem.path;
+        }
+        props.id = elem.id;
+        if (elem.prevState) {
+            props.prevState = elem.prevState;
+        }
+        else {
+            props.left = elem.offsetLeft;
+            props.top  = elem.offsetTop;
+            props.width = elem.$.viewPaperCard.offsetWidth + 'px';
+            props.height = elem.$.viewPaperCard.offsetHeight + 'px';
+            props.position = elem.$.viewContentDiv.style.position;
+            props.zIndex = elem.style.zIndex;
+        }
+        props.repeatDivider = elem.repeatDivider;
+        props.repeatRefreshEnabled = elem.repeatRefreshEnabled;
+        props.defaultSize = elem.defaultSize;
+        return (props);
+    },
+
+    /*
+     *  ======== hasStorableContent ========
+     *  Called by ROV to define state of global Download buttons
+     *  Override this in your base prototype to control it dynamically
+     */
+    hasStorableContent : function () {
+        /* Return true as default to enable global save notifications */
+        return (true);
+    },
+
+    /*
+     *  ======== hasViewableContent ========
+     *  Called by ROV to define state of global refresh buttons.
+     *  Override this in your base prototype to control it dynamically
+     */
+    hasViewableContent : function () {
+        /* Return true as default to enable global refresh notifications */
+        return (true);
+    },
+
+    /*
+     *  ======== isReportableError ========
+     *  Check if error should be displayed
+     */
+    isReportableError : function (error) {
+        return (error.indexOf('timeout') == -1 && error.indexOf('cancel') == -1);
+    },
+
+    /*
+     *  ======== onSave ========
+     *  Called when user clicks the 'Save data' button on this view
+     */
+     onSave : function (e, elem) {
+        if (!elem) {
+            var elem = this;
+        }
+        var viewData = elem.onSaveView();
+        var info = {};
+        if (elem.moduleName) {
+            info.module = elem.moduleName;
+        }
+        info.view = elem.viewName;
+        if (elem.argsId) {
+            var viewArgs = (elem.viewArgs && elem.viewArgs[elem.argsId]) ?
+                           elem.viewArgs[elem.argsId] :
+                           elem.getViewArgs(elem.argsId);
+            if (viewArgs) {
+                info.args = {};
+                for (var i = 0; i < viewArgs.args.length; i++) {
+                    info.args[viewArgs.args[i].name] = viewArgs.args[i].value;
+                }
+            }
+        }
+        elem.saveView(JSON.stringify([info, viewData], null, '\t'));
+    },
+
+    /*
+     *  ======== ready ========
+     *  Called by Polymer after property values are set and the local DOM
+     *  is initialized.
+     */
+    ready : function () {
+        this.rovPanel = document.querySelector('ti-rov-panel');
+
+        /*
+         *  Get the ti-rov-data element from ti-rov-panel, the global
+         *  container element for ROV. We will use only one instance
+         *  of ti-rov-data in ROV for all views that request ROV data.
+         */
+        this.rovData = this.rovPanel.getRovData();
+
+        /* Support for Linux and macOS workaround for drag and drop */
+        //this.draggable = navigator.appVersion.indexOf('Win') != -1;
+    },
+
+    /*
+     *  ======== saveView ========
+     *  Called from base prototype when user clicks the 'Download'
+     *  button on this view,or the 'Download all' button on the ROV
+     *  toolbar
+     */
+    saveView : function (textToWrite) {
+        var fileNameToSaveAs = this.moduleName ? (this.moduleName + '.') : '';
+        fileNameToSaveAs += this.viewName;
+        fileNameToSaveAs = fileNameToSaveAs.replace(/ /g,'_') + '.rod.json';
+        rovUtils.downloadText(textToWrite, fileNameToSaveAs);
+    },
+
+    /*
+     *  ======== viewClicked ========
+     *  Bring view to the top when clicked
+     */
+    viewClicked : function (event) {
+        function markdownViewLinkClick(e) {
+            var mdClicked = false;
+            if (e && e.srcElement && e.srcElement.parentElement) {
+                mdClicked = e.srcElement.className.indexOf('markdown') > 0 &&
+                            e.srcElement.parentElement.nodeName == 'A';
+            }
+            return (mdClicked);
+        }
+        if (this.isAttached && (event == null || event.srcElement.tagName != 'A')) {
+            if (!markdownViewLinkClick(event)) {
+                this.style.zIndex = String(this.rovPanel.getMaxZindex() + 1);
+                if (event && event.srcElement && event.srcElement.className
+                    && (event.srcElement.className.indexOf('rovTd') >= 0 ||
+                        event.srcElement.className.indexOf('rovTableStyleCell') >= 0)
+                    && this.$.tiRovTable.highlighted) {
+
+                    this.$.tiRovTable.clearHighlight();
+                }
+            }
+        }
+    },
+
+    /*
+     *  ======== viewDragMouseDown ========
+     *  Support for macOS workaround for drag and drop
+     */
+    viewDragMouseDown : function (e) {
+        if (!this.draggable && (e.target.id == 'dragDiv' || e.target.id == 'moduleLabel')) {
+            this.viewClicked();
+            rovUtils.initRovViewDrag(e, this, document.querySelector('ti-rov-panel'));
+        }
+    },
+
+    /*
+     *  ======== viewDragOver ========
+     *  Called when an element is being dragged over this one
+     */
+    viewDragOver : function (event) {
+        /* Prevent table column drag and drop conflict */
+        if (!rovUtils.validDragElement(event.target)) {
+            return;
+        }
+        event.preventDefault();
+    },
+
+    /*
+     *  ======== viewOptionsMenuClicked ========
+     *  Show view options menu, built dynamically
+     */
+    viewOptionsMenuClicked : function (e) {
+        var dlgPre = e.currentTarget.id.substr(0,  e.currentTarget.id.indexOf('ViewMenuButton'));
+        if (dlgPre == 'default') {
+            var dialog = this.$.rovViewOptions.defaultViewOptionsMenuDialog(this);
+        }
+        else {
+            var dialog = this.$[dlgPre + 'ViewOptionsMenuDialog'];
+        }
+        dialog.resetFit();
+        var left = e.x - 34;
+        var width = 235; /* ballpark from styling in html */
+        if ((left + width) > document.documentElement.clientWidth) {
+            left = document.documentElement.clientWidth - width;
+        }
+        dialog.style.left = left + 'px';
+        var height = 30 + 30 + 10; /* onSave button, divider input, padding */
+        if (this.localName == 'ti-rov-view') {
+            height += 33;                            /* fixed font checkbox */
+            if (this.$.viewArgsDialog.hidden == false) {
+                height += 30;
+            }
+            if (this.$.columnsTapped.hidden == false) {
+                height += 30;
+            }
+            if (this.$.refreshTapped.hidden == false) {
+                height += 30;
+            }
+        }
+        if (this.localName == 'ti-rov-view' || this.localName == 'ti-rov-customview') {
+            var viewsData = this.getViewsData();
+            this.$.fixedFontCheckbox.checked = viewsData[this.moduleName + '.' + this.viewName].fixedFont;
+        }
+        var top = e.y - this.$.closeButton.offsetHeight;
+        if (top + height > document.querySelector('ti-rov-panel').viewContainer.clientHeight) {
+          top = top - height;
+          if (top < 0) {
+              top = 0;
+          }
+        }
+        dialog.style.top = top + 'px';
+        dialog.open();
+        dialog.style.zIndex = String(document.querySelector('ti-rov-panel').getMaxZindex() + 1);
+    },
+    viewOptionsKeyPress : function (e) {
+        var keyCode = e.keyCode || e.which;
+        if (keyCode === 13) {
+            e.currentTarget.close();
+        }
+    }
+  };
+
+  /* rovBehaviors.addOnBehaviors defines common behaviors of ROV addOn views */
+  rovBehaviors.addOnBehaviors = {
+  };
+
+</script>

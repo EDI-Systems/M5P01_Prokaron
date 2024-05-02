@@ -1,0 +1,3466 @@
+<!--
+    Copyright (c) 2015, Texas Instruments Incorporated
+    All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without
+    modification, are permitted provided that the following conditions
+    are met:
+
+    *   Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
+    notice, this list of conditions and the following disclaimer in the
+    documentation and/or other materials provided with the distribution.
+    *   Neither the name of Texas Instruments Incorporated nor the names of
+    its contributors may be used to endorse or promote products derived
+    from this software without specific prior written permission.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+    AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+    THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+    PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+    CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+    EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+    PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+    OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+    WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+    OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+    EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../font-roboto/font-roboto.html">
+<link rel="import" href="../ti-core-assets/ti-core-assets.html">
+<dom-module id="ti-core-stylesheets">
+	
+<template>
+<style>
+
+    /* common.css */
+	/* styles that are common to all themes */
+
+	html .ti-theme,
+	body {
+	  margin: 0px;
+	  padding: 0px;
+	}
+
+	html * {
+	    -webkit-box-sizing : border-box;
+	    -moz-box-sizing : border-box;
+	    box-sizing : border-box;
+	}
+	html #core_drawer_panel  #edgeSwipeOverlay {
+		display: none;
+	}
+	html#designer-frame .designer-theme paper-checkbox {
+	    padding: 20px;
+	}
+	html a:hover {
+	    color: #c00;
+	    text-decoration: underline;
+	    cursor: pointer;
+	}
+	html a {
+		color: #189;
+		text-decoration: none;
+	}
+	html .iron-header a:hover {
+	    text-decoration: none;
+	}
+	html ti-widget-button[link],
+	html paper-button[link] {
+	    text-decoration: underline;
+	}
+
+
+    /* all themes standard styles */
+
+	html .ti-theme {
+		font-family: Roboto, sans-serif;
+		-ms-text-size-adjust: 100%;
+		-webkit-text-size-adjust: 100%;
+		font-weight: 400;
+		font-size: 14px;
+	}
+	html .ti-theme .font-special {
+		font-family: Roboto, sans-serif;
+	}
+	html .ti-theme iron-header-panel {
+		height: 100%;
+	}
+	html .ti-theme iron-header-panel[mode=cover] #mainContainer {
+		left: 70px;
+	}
+	html .ti-theme .iron-header {
+		height: 60px;
+		font-size: 18px;
+		/* Brian: removed: padding: 0 10px; */
+		transition: height 0.2s;
+		background-color: #222;
+		color: #fff;
+	}
+	html .ti-theme .iron-header a {
+		color: #fff;
+	}
+	html .ti-theme .iron-header paper-item {
+		font-size: 18px;
+	}
+	html .ti-theme .iron-header.tall {
+		height: 180px;
+	}
+	html .ti-theme .iron-header.medium-tall {
+		height: 120px;
+	}
+	html .ti-theme .iron-header iron-menu-button a {
+		color: #444;
+	}
+	html .ti-theme .wrapper {
+		text-align: center;
+	}
+	html .ti-theme section {
+		text-align: left;  /* Brian: padding and alignment causes problems for many non-paper components */
+		padding: 0px 0px;
+	}
+	html .ti-theme .ti-banner {
+		background-color: black;
+	}
+	html .ti-theme section[hero] {
+		background-color: #f1f1f1;
+	}
+	html .ti-theme h1,
+	html .ti-theme h2,
+	html .ti-theme h3,
+	html .ti-theme h4,
+	html .ti-theme h5,
+	html .ti-theme h6 {
+		font-weight: 400;
+		margin: 0px;
+		padding: 0px;
+	}
+	html .ti-theme h1,
+	html .ti-theme h3,
+	html .ti-theme h5 {
+		font-family: Roboto, sans-serif;
+	}
+	html .ti-theme h1 {
+		color: #333;
+		font-size: 2em;
+		margin: 5px 0px;
+	}
+	html .ti-theme h2 {
+		color: #333;
+		font-size: 1.6em;
+		margin: 3px 0px;
+	}
+	html .ti-theme h3 {
+		color: #333;
+		font-size: 1.4em;
+		margin: 2px 0px;
+	}
+	html .ti-theme h4 {
+		color: #333;
+		font-size: 1.2em;
+	}
+	html .ti-theme h5 {
+		color: #333;	
+	}
+	html .ti-theme h6 {
+		color: #333;	
+	}
+	html .ti-theme a {
+		color: #000;
+	}
+	html .ti-theme a:hover {
+	    color: #000;
+		text-decoration: underline;
+	}
+	html .ti-theme [autofocus] {
+		color: #222;
+	}
+	html .ti-theme ti-tile-title #titleDiv,
+	html .ti-theme ti-tile-title #containerDiv {
+		background-color: #cc0000 !important;
+		color: #fff !important;
+	}
+	html .ti-theme ti-widget-button:not(.idunno),
+	html .ti-theme paper-button {
+		margin: 2px;
+		color: #000;
+	}
+	html .ti-theme ti-widget-button[disabled]:not(#idunno),
+	html .ti-theme paper-button[disabled]:not(#idunno) {
+		color: #f0f0f0 !important;
+		background-color: #e0e0e0 !important;
+	}
+	html .ti-theme ti-widget-button[raised]:not(.idunno),
+	html .ti-theme paper-button[raised] {
+		background-color: #115566;
+		color: #fff;
+	}
+	html .ti-theme ti-widget-button[primary],
+	html .ti-theme paper-button[primary] {
+		color: #c00 !important;
+	}
+	html .ti-theme ti-widget-button[primary][raised],
+	html .ti-theme paper-button[primary][raised] {
+		background-color: #c00 !important;
+		color: #fff !important;
+	}
+	html .ti-theme ti-widget-button[secondary],
+	html .ti-theme paper-button[secondary] {
+		color: #000 !important;
+	}
+	html .ti-theme ti-widget-button[secondary][raised],
+	html .ti-theme paper-button[secondary][raised] {
+		background-color: #222 !important;
+		color: #fff !important;
+	}
+	html .ti-theme ti-widget-button[success],
+	html .ti-theme paper-button[success] {
+		color: #000 !important;
+	}
+	html .ti-theme ti-widget-button[success][raised],
+	html .ti-theme paper-button[success][raised] {
+		background-color: #222 !important;
+		color: #fff !important;
+	}
+	html .ti-theme ti-widget-button[info],
+	html .ti-theme paper-button[info] {
+		color: #000 !important;
+	}
+	html .ti-theme ti-widget-button[info][raised],
+	html .ti-theme paper-button[info][raised] {
+		background-color: #222 !important;
+		color: #fff !important;
+	}
+	html .ti-theme ti-widget-button[warning],
+	html .ti-theme paper-button[warning] {
+		color: #000 !important;
+	}
+	html .ti-theme ti-widget-button[warning][raised],
+	html .ti-theme paper-button[warning][raised] {
+		background-color: #222 !important;
+		color: #fff !important;
+	}
+	html .ti-theme ti-widget-button[error],
+	html .ti-theme paper-button[error] {
+		color: #000 !important;
+	}
+	html .ti-theme ti-widget-button[error][raised],
+	html .ti-theme paper-button[error][raised] {
+		background-color: #222 !important;
+		color: #fff !important;
+	}
+	html .ti-theme ti-widget-button[link],
+	html .ti-theme paper-button[link] {
+		color: #000 !important;
+	}
+	html .ti-theme ti-widget-button[link][raised],
+	html .ti-theme paper-button[link][raised] {
+		background-color: #222 !important;
+		color: #fff !important;
+	}
+	html .ti-theme ti-widget-textbox[disabled],
+	html .ti-theme ti-widget-checkbox[disabled],
+	html .ti-theme paper-checkbox[disabled] {
+		color: #aaa !important;
+	}
+	html .ti-theme iron-toolbar paper-tabs {
+		-webkit-box-shadow: none;
+		box-shadow: none;
+	}
+	:root .ti-theme {
+		--paper-tabs: {
+			background-color: #98999b;
+			color: #fff;
+			-webkit-box-shadow: 0px 1px 1px rgba(0,0,0,0.2);
+			box-shadow: 0px 1px 1px rgaba(0,0,0,0.2);
+		}
+		--paper-tab: {
+			color: #fff;
+			background-color: #115566;  /* this controls the background color of the selected tab */
+			border-bottom: 1px solid #115566;
+		}
+	}
+	html .ti-theme ti-widget-dialog #headerBackground {
+		color:  #fff !important;
+		background-color: #cc0000 !important;
+	}
+	/* TOR ADDED */
+	paper-tabs[no-bar] {
+		--paper-tabs: {
+			background-color: #98999b; /* this controls the background color of the unselected tabs */
+			color: #fff;
+			-webkit-box-shadow: 0px 1px 1px rgba(0,0,0,0.2);
+			box-shadow: 0px 1px 1px rgba(0,0,0,0.2);
+		}
+		--paper-tab: {
+			color: #fff;
+			background-color: ##98999b;  /* this controls the background color of the selected tab */
+			border-bottom: 1px solid #98999b;
+		}
+	}
+
+	paper-tabs[no-bar] paper-tab.iron-selected {
+		--paper-tabs: {
+			background-color: #98999b; /* this controls the background color of the unselected tabs */
+			color: #fff;
+			-webkit-box-shadow: 0px 1px 1px rgba(0,0,0,0.2);
+			box-shadow: 0px 1px 1px rgba(0,0,0,0.2);
+		}
+		--paper-tab: {
+			color: #fff;
+			background-color: #115566;  /* this controls the background color of the selected tab */
+			border-bottom: 1px solid #115566;
+		}
+	}
+	/* end TOR ADDED */
+	html .ti-theme paper-tabs,
+	html .ti-theme iron-toolbar {
+		background-color: #98999b; /* this controls the background color of the unselected tabs */
+		color: #fff;
+		-webkit-box-shadow: 0px 1px 1px rgba(0,0,0,0.2);
+		box-shadow: 0px 1px 1px rgba(0,0,0,0.2);
+	}
+	html .ti-theme paper-tabs.transparent-teal {
+		background-color: transparent;
+		color: #222;
+		-webkit-box-shadow: none;
+		box-shadow: none;
+	}
+	html .ti-theme paper-tabs[no-bar] paper-tab.iron-selected {
+		color: #fff;
+		background-color: #115566;  /* this controls the background color of the selected tab */
+		border-bottom: 1px solid #115566;
+	}
+	html .ti-theme paper-toast *,
+	html .ti-theme paper-tabs * {
+		-webkit-user-select: none;
+		-moz-user-select: none;
+		-ms-user-select: none;
+		user-select: none;
+		-webkit-tap-highlight-color: rgba(0,0,0,0);
+		-webkit-touch-callout: none;
+	}
+	html .ti-theme paper-toast {
+		text-align: left;
+	}
+	html .ti-theme .toolbar {
+		color: #fff;
+		background-color: #222;
+	}
+	html .ti-theme .card {
+		background-color: #fff;
+	}
+	html .ti-theme paper-item {
+		background-color: #222;
+		color: #fff;
+	}
+	html .ti-theme paper-item:hover {
+		background-color: #444;
+	}
+	html .ti-theme paper-item.iron-selected {
+		background-color: #444;
+	}
+	html .ti-theme .small {
+		font-size: 12px;
+	}
+	html .ti-theme .logo {
+		font-size: 21px;
+	}
+	html .ti-theme .logo a {
+		font-weight: 700;
+		color: #fff;
+	}
+	html .ti-theme .inverse {
+		background-color: #cc0000;
+		color: #fff;
+	}
+	html .ti-theme paper-icon-button[disabled] iron-icon {
+		color: #e0e0e0 !important;
+	}
+	html .ti-theme ti-widget-menuseparator #menuSeparator {
+		background-color: #888;
+	}
+	html .ti-theme ti-widget-menubar {
+		background-color: #cc0000;
+		color: #fff;
+	}
+	html .ti-theme ti-widget-menubar .logoImage {
+		background-color: #cc0000;
+		color: #fff;
+	}
+	html .ti-theme ti-widget-menuitem .navIcon {
+		color: #fff;
+	}
+	html .ti-theme ti-widget-menuitem .hovering .navIcon {
+		color: #000;
+	}
+	html .ti-theme ti-widget-menuitem .hoverMenu {
+		background-color: #f7f7f7;
+		color: #000;
+		border-color: #f7f7f7;
+	}
+	html .ti-theme ti-widget-menuitem .hovering {
+		background-color: #f7f7f7;
+		color: #000;
+		border-color: #f7f7f7;
+	}
+	html .ti-theme ti-widget-menuaction li {
+		color: #000;
+		background-color: #f7f7f7;
+		border-color: #f7f7f7;
+	}
+	html .ti-theme ti-widget-menuitem.subMenuItem .hovering,
+	html .ti-theme ti-widget-menuaction li:hover {
+		background-color: rgba(0, 0, 0, 0.1);
+		color: #000;
+	}
+	html .ti-theme ti-widget-menuaction .unenabled {
+		color: #888;
+		background-color: transparent;
+		border-color: #f7f7f7;
+	}
+	html .ti-theme ti-widget-menuaction .unenabled:hover {
+		color: #888;
+		background-color: #f7f7f7;
+	}
+	html .ti-theme ti-widget-statusbar .container {
+		background-color: #191919;
+		color: #fff;
+	}
+	html .ti-theme ti-widget-statusbar .icons {
+		background-color: #191919;
+		color: #fff;
+	}
+	html .ti-theme ti-widget-statusbar .statusinfo {
+		background-color: transparent;
+		color: #fff;
+		border-style: none;
+		border-width: 0;
+		border-color: transparent;
+	}
+	html .ti-theme ti-widget-statusbar .poweredby {
+		color: #fff;
+	}
+	html .ti-theme ti-widget-analoggauge .needle {
+		color: #c00;
+	}
+	html .ti-theme ti-widget-analoggauge .face {
+		background-color: #fff;
+		color: #000;
+	}
+	html .ti-theme ti-widget-analoggauge .frame {
+		color: #222;
+	}
+	html .ti-theme ti-widget-dial .pointer {
+		color: #c00;
+	}
+	html .ti-theme ti-widget-dial .knob {
+		background-color: #fff;
+	}
+	html .ti-theme ti-widget-dial .frame {
+		background-color: #222;
+		color: #fff;
+	}
+	html .ti-theme label,
+	html .ti-theme ti-widget-label,
+	html .ti-theme ti-widget-bitfield-header,
+	html .ti-theme ti-widget-droplist,
+	html .ti-theme ti-widget-numberbox,
+	html .ti-theme ti-widget-spinner, 
+	html .ti-theme ti-widget-textbox {
+		font-family: Roboto, sans-serif;
+		background-color: transparent;
+		color: #222;
+	}
+	html .ti-theme label[disabled],
+	html .ti-theme ti-widget-label[disabled],
+	html .ti-theme ti-widget-bitfield-header[disabled],
+	html .ti-theme ti-widget-droplist[disabled],
+	html .ti-theme ti-widget-numberbox[disabled],
+	html .ti-theme ti-widget-spinner[disabled], 
+	html .ti-theme ti-widget-textbox[disabled] {
+		color: #aaa !important;
+	}
+	html .ti-theme select {
+		border-radius: 0px;
+		font-family: Roboto, sans-serif;
+		border: 1px solid #ccc;
+		font-size: inherit;
+	}
+	html .ti-theme input {
+		font-family: Roboto, sans-serif;
+		font-size: inherit;
+	}
+	html .ti-analogevm-theme {
+		font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif;
+		-ms-text-size-adjust: 100%;
+		-webkit-text-size-adjust: 100%;
+		font-weight: 400;
+		font-size: 14px;
+	}
+	html .ti-analogevm-theme .font-special {
+		font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif;
+	}
+	html .ti-analogevm-theme iron-header-panel {
+		height: 100%;
+	}
+	html .ti-analogevm-theme iron-header-panel[mode=cover] #mainContainer {
+		left: 70px;
+	}
+	html .ti-analogevm-theme .iron-header {
+		height: 60px;
+		font-size: 18px;
+		/* Brian: removed: padding: 0 10px; */
+		transition: height 0.2s;
+		background-color: #222;
+		color: #fff;
+	}
+	html .ti-analogevm-theme .iron-header a {
+		color: #fff;
+	}
+	html .ti-analogevm-theme .iron-header paper-item {
+		font-size: 18px;
+	}
+	html .ti-analogevm-theme .iron-header.tall {
+		height: 180px;
+	}
+	html .ti-analogevm-theme .iron-header.medium-tall {
+		height: 120px;
+	}
+	html .ti-analogevm-theme .iron-header iron-menu-button a {
+		color: #444;
+	}
+	html .ti-analogevm-theme .wrapper {
+		text-align: center;
+	}
+	html .ti-analogevm-theme section {
+		text-align: left;  /* Brian: padding and alignment causes problems for many non-paper components */
+		padding: 0px 0px;
+	}
+	html .ti-analogevm-theme .ti-banner {
+		background-color: black;
+	}
+	html .ti-analogevm-theme section[hero] {
+		background-color: #f1f1f1;
+	}
+	html .ti-analogevm-theme h1,
+	html .ti-analogevm-theme h2,
+	html .ti-analogevm-theme h3,
+	html .ti-analogevm-theme h4,
+	html .ti-analogevm-theme h5,
+	html .ti-analogevm-theme h6 {
+		font-weight: 400;
+		margin: 0px;
+		padding: 0px;
+	}
+	html .ti-analogevm-theme h1,
+	html .ti-analogevm-theme h3,
+	html .ti-analogevm-theme h5 {
+		font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif;
+	}
+	html .ti-analogevm-theme h1 {
+		color: #333;
+		font-size: 2em;
+		margin: 5px 0px;
+	}
+	html .ti-analogevm-theme h2 {
+		color: #333;
+		font-size: 1.6em;
+		margin: 3px 0px;
+	}
+	html .ti-analogevm-theme h3 {
+		color: #333;
+		font-size: 1.4em;
+		margin: 2px 0px;
+	}
+	html .ti-analogevm-theme h4 {
+		color: #333;
+		font-size: 1.2em;
+	}
+	html .ti-analogevm-theme h5 {
+		color: #333;	
+	}
+	html .ti-analogevm-theme h6 {
+		color: #333;	
+	}
+	html .ti-analogevm-theme a {
+		color: #189;
+	}
+	html .ti-analogevm-theme a:hover {
+	    color: #c00;
+		text-decoration: underline;
+	}
+	html .ti-analogevm-theme [autofocus] {
+		color: #222;
+	}
+	html .ti-analogevm-theme ti-tile-title #titleDiv,
+	html .ti-analogevm-theme ti-tile-title #containerDiv {
+		background-color: #cc0000 !important;
+		color: #fff !important;
+	}
+	html .ti-analogevm-theme ti-widget-button:not(.idunno),
+	html .ti-analogevm-theme paper-button {
+		margin: 2px;
+		color: #000;
+	}
+	html .ti-analogevm-theme ti-widget-button[disabled]:not(#idunno),
+	html .ti-analogevm-theme paper-button[disabled]:not(#idunno) {
+		color: #f0f0f0 !important;
+		background-color: #e0e0e0 !important;
+	}
+	html .ti-analogevm-theme ti-widget-button[raised]:not(.idunno),
+	html .ti-analogevm-theme paper-button[raised] {
+		background-color: #115566;
+		color: #fff;
+	}
+	html .ti-analogevm-theme ti-widget-button[primary],
+	html .ti-analogevm-theme paper-button[primary] {
+		color: #c00 !important;
+	}
+	html .ti-analogevm-theme ti-widget-button[primary][raised],
+	html .ti-analogevm-theme paper-button[primary][raised] {
+		background-color: #c00 !important;
+		color: #fff !important;
+	}
+	html .ti-analogevm-theme ti-widget-button[secondary],
+	html .ti-analogevm-theme paper-button[secondary] {
+		color: #000 !important;
+	}
+	html .ti-analogevm-theme ti-widget-button[secondary][raised],
+	html .ti-analogevm-theme paper-button[secondary][raised] {
+		background-color: #222 !important;
+		color: #fff !important;
+	}
+	html .ti-analogevm-theme ti-widget-button[success],
+	html .ti-analogevm-theme paper-button[success] {
+		color: #000 !important;
+	}
+	html .ti-analogevm-theme ti-widget-button[success][raised],
+	html .ti-analogevm-theme paper-button[success][raised] {
+		background-color: #222 !important;
+		color: #fff !important;
+	}
+	html .ti-analogevm-theme ti-widget-button[info],
+	html .ti-analogevm-theme paper-button[info] {
+		color: #000 !important;
+	}
+	html .ti-analogevm-theme ti-widget-button[info][raised],
+	html .ti-analogevm-theme paper-button[info][raised] {
+		background-color: #222 !important;
+		color: #fff !important;
+	}
+	html .ti-analogevm-theme ti-widget-button[warning],
+	html .ti-analogevm-theme paper-button[warning] {
+		color: #000 !important;
+	}
+	html .ti-analogevm-theme ti-widget-button[warning][raised],
+	html .ti-analogevm-theme paper-button[warning][raised] {
+		background-color: #222 !important;
+		color: #fff !important;
+	}
+	html .ti-analogevm-theme ti-widget-button[error],
+	html .ti-analogevm-theme paper-button[error] {
+		color: #000 !important;
+	}
+	html .ti-analogevm-theme ti-widget-button[error][raised],
+	html .ti-analogevm-theme paper-button[error][raised] {
+		background-color: #222 !important;
+		color: #fff !important;
+	}
+	html .ti-analogevm-theme ti-widget-button[link],
+	html .ti-analogevm-theme paper-button[link] {
+		color: #000 !important;
+	}
+	html .ti-analogevm-theme ti-widget-button[link][raised],
+	html .ti-analogevm-theme paper-button[link][raised] {
+		background-color: #222 !important;
+		color: #fff !important;
+	}
+	html .ti-analogevm-theme ti-widget-textbox[disabled],
+	html .ti-analogevm-theme ti-widget-checkbox[disabled],
+	html .ti-analogevm-theme paper-checkbox[disabled] {
+		color: #aaa !important;
+	}
+	html .ti-analogevm-theme iron-toolbar paper-tabs {
+		-webkit-box-shadow: none;
+		box-shadow: none;
+	}
+	html .ti-analogevm-theme ti-widget-dialog #headerBackground {
+		color:  #fff !important;
+		background-color: #cc0000 !important;
+	}
+	html .ti-analogevm-theme paper-tabs,
+	html .ti-analogevm-theme iron-toolbar {
+		background-color: #98999b; /* this controls the background color of the unselected tabs */
+		color: #fff;
+		-webkit-box-shadow: 0px 1px 1px rgba(0,0,0,0.2);
+		box-shadow: 0px 1px 1px rgba(0,0,0,0.2);
+	}
+	html .ti-analogevm-theme paper-tabs.transparent-teal {
+		background-color: transparent;
+		color: #222;
+		-webkit-box-shadow: none;
+		box-shadow: none;
+	}
+	html .ti-analogevm-theme paper-tabs[no-bar] paper-tab.iron-selected {
+		color: #fff;
+		background-color: #115566;  /* this controls the background color of the selected tab */
+		border-bottom: 1px solid #115566;
+	}
+	html .ti-analogevm-theme paper-toast *,
+	html .ti-analogevm-theme paper-tabs * {
+		-webkit-user-select: none;
+		-moz-user-select: none;
+		-ms-user-select: none;
+		user-select: none;
+		-webkit-tap-highlight-color: rgba(0,0,0,0);
+		-webkit-touch-callout: none;
+	}
+	html .ti-analogevm-theme paper-toast {
+		text-align: left;
+	}
+	html .ti-analogevm-theme .toolbar {
+		color: #fff;
+		background-color: #222;
+	}
+	html .ti-analogevm-theme .card {
+		background-color: #fff;
+	}
+	html .ti-analogevm-theme paper-item {
+		background-color: #222;
+		color: #fff;
+	}
+	html .ti-analogevm-theme paper-item:hover {
+		background-color: #444;
+	}
+	html .ti-analogevm-theme paper-item.iron-selected {
+		background-color: #444;
+	}
+	html .ti-analogevm-theme .small {
+		font-size: 12px;
+	}
+	html .ti-analogevm-theme .logo {
+		font-size: 21px;
+	}
+	html .ti-analogevm-theme .logo a {
+		font-weight: 700;
+		color: #fff;
+	}
+	html .ti-analogevm-theme .inverse {
+		background-color: #cc0000;
+		color: #fff;
+	}
+	html .ti-analogevm-theme paper-icon-button[disabled] iron-icon {
+		color: #e0e0e0 !important;
+	}
+	html .ti-analogevm-theme ti-widget-menuseparator #menuSeparator {
+		background-color: #888;
+	}
+	html .ti-analogevm-theme ti-widget-menubar {
+		background-color: #cc0000;
+		color: #fff;
+	}
+	html .ti-analogevm-theme ti-widget-menubar .logoImage {
+		background-color: #cc0000;
+		color: #fff;
+	}
+	html .ti-analogevm-theme ti-widget-menuitem .navIcon {
+		color: #fff;
+	}
+	html .ti-analogevm-theme ti-widget-menuitem .hovering .navIcon {
+		color: #000;
+	}
+	html .ti-analogevm-theme ti-widget-menuitem .hoverMenu {
+		background-color: #f7f7f7;
+		color: #000;
+		border-color: #f7f7f7;
+	}
+	html .ti-analogevm-theme ti-widget-menuitem .hovering {
+		background-color: #f7f7f7;
+		color: #000;
+		border-color: #f7f7f7;
+	}
+	html .ti-analogevm-theme ti-widget-menuaction li {
+		color: #000;
+		background-color: #f7f7f7;
+		border-color: #f7f7f7;
+	}
+	html .ti-analogevm-theme ti-widget-menuitem.subMenuItem .hovering,
+	html .ti-analogevm-theme ti-widget-menuaction li:hover {
+		background-color: rgba(0, 0, 0, 0.1);
+		color: #000;
+	}
+	html .ti-analogevm-theme ti-widget-menuaction .unenabled {
+		color: #888;
+		background-color: transparent;
+		border-color: #f7f7f7;
+	}
+	html .ti-analogevm-theme ti-widget-menuaction .unenabled:hover {
+		color: #888;
+		background-color: #f7f7f7;
+	}
+	html .ti-analogevm-theme ti-widget-statusbar .container {
+		background-color: #5C5C5C;
+		color: #fff;
+	}
+	html .ti-analogevm-theme ti-widget-statusbar .icons {
+		background-color: #5C5C5C;
+		color: #fff;
+	}
+	html .ti-analogevm-theme ti-widget-statusbar .statusinfo {
+		background-color: transparent;
+		color: #fff;
+		border-style: none;
+		border-width: 0;
+		border-color: transparent;
+	}
+	html .ti-analogevm-theme ti-widget-statusbar .poweredby {
+		color: #fff;
+	}
+	html .ti-analogevm-theme ti-widget-analoggauge .needle {
+		color: #c00;
+	}
+	html .ti-analogevm-theme ti-widget-analoggauge .face {
+		background-color: #fff;
+		color: #000;
+	}
+	html .ti-analogevm-theme ti-widget-analoggauge .frame {
+		color: #222;
+	}
+	html .ti-analogevm-theme ti-widget-dial .pointer {
+		color: #c00;
+	}
+	html .ti-analogevm-theme ti-widget-dial .knob {
+		background-color: #fff;
+	}
+	html .ti-analogevm-theme ti-widget-dial .frame {
+		background-color: #222;
+		color: #fff;
+	}
+	html .ti-analogevm-theme label,
+	html .ti-analogevm-theme ti-widget-label,
+	html .ti-analogevm-theme ti-widget-bitfield-header,
+	html .ti-analogevm-theme ti-widget-droplist,
+	html .ti-analogevm-theme ti-widget-numberbox,
+	html .ti-analogevm-theme ti-widget-spinner, 
+	html .ti-analogevm-theme ti-widget-textbox {
+		font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif;
+		background-color: transparent;
+		color: #222;
+	}
+	html .ti-analogevm-theme label[disabled],
+	html .ti-analogevm-theme ti-widget-label[disabled],
+	html .ti-analogevm-theme ti-widget-bitfield-header[disabled],
+	html .ti-analogevm-theme ti-widget-droplist[disabled],
+	html .ti-analogevm-theme ti-widget-numberbox[disabled],
+	html .ti-analogevm-theme ti-widget-spinner[disabled], 
+	html .ti-analogevm-theme ti-widget-textbox[disabled] {
+		color: #aaa !important;
+	}
+	html .ti-analogevm-theme select {
+		border-radius: 0px;
+		font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif;
+		border: 1px solid #ccc;
+		font-size: inherit;
+	}
+	html .ti-analogevm-theme input {
+		font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif;
+		font-size: inherit;
+	}
+	html .sky {
+		font-family: 'Arimo', sans-serif;
+		-ms-text-size-adjust: 100%;
+		-webkit-text-size-adjust: 100%;
+		font-weight: 400;
+		font-size: 14px;
+	}
+	html .sky .font-special {
+		font-family: 'Arimo', sans-serif;
+	}
+	html .sky iron-header-panel {
+		height: 100%;
+	}
+	html .sky iron-header-panel[mode=cover] #mainContainer {
+		left: 70px;
+	}
+	html .sky .iron-header {
+		height: 60px;
+		font-size: 18px;
+		/* Brian: removed: padding: 0 10px; */
+		transition: height 0.2s;
+		background-color: #7ec0ee;
+		color: #fff;
+	}
+	html .sky .iron-header a {
+		color: #fff;
+	}
+	html .sky .iron-header paper-item {
+		font-size: 18px;
+	}
+	html .sky .iron-header.tall {
+		height: 180px;
+	}
+	html .sky .iron-header.medium-tall {
+		height: 120px;
+	}
+	html .sky .iron-header iron-menu-button a {
+		color: #444;
+	}
+	html .sky .wrapper {
+		text-align: center;
+	}
+	html .sky section {
+		text-align: left;  /* Brian: padding and alignment causes problems for many non-paper components */
+		padding: 0px 0px;
+	}
+	html .sky .ti-banner {
+		background-color: black;
+	}
+	html .sky section[hero] {
+		background-color: #f5fcff;
+	}
+	html .sky h1,
+	html .sky h2,
+	html .sky h3,
+	html .sky h4,
+	html .sky h5,
+	html .sky h6 {
+		font-weight: 400;
+		margin: 0px;
+		padding: 0px;
+	}
+	html .sky h1,
+	html .sky h3,
+	html .sky h5 {
+		font-family: 'Arimo', sans-serif;
+	}
+	html .sky h1 {
+		color: initial;
+		font-size: 2em;
+		margin: 5px 0px;
+	}
+	html .sky h2 {
+		color: #7e8d9d;
+		font-size: 1.6em;
+		margin: 3px 0px;
+	}
+	html .sky h3 {
+		color: initial;
+		font-size: 1.4em;
+		margin: 2px 0px;
+	}
+	html .sky h4 {
+		color: initial;
+		font-size: 1.2em;
+	}
+	html .sky h5 {
+		color: initial;	
+	}
+	html .sky h6 {
+		color: initial;	
+	}
+	html .sky a {
+		color: #5ca1d2;
+	}
+	html .sky a:hover {
+	    color: #5ca1d2;
+		text-decoration: underline;
+	}
+	html .sky [autofocus] {
+		color: #3ea1e6;
+	}
+	html .sky ti-tile-title #titleDiv,
+	html .sky ti-tile-title #containerDiv {
+		background-color: #7ec0ee !important;
+		color: #fff !important;
+	}
+	html .sky ti-widget-button:not(.idunno),
+	html .sky paper-button {
+		margin: 2px;
+		color: #424540;
+	}
+	html .sky ti-widget-button[disabled]:not(#idunno),
+	html .sky paper-button[disabled]:not(#idunno) {
+		color: #7e8d9d !important;
+		background-color: #c9c9c9 !important;
+	}
+	html .sky ti-widget-button[raised]:not(.idunno),
+	html .sky paper-button[raised] {
+		background-color: #3ea1e6;
+		color: #fff;
+	}
+	html .sky ti-widget-button[primary],
+	html .sky paper-button[primary] {
+		color: #3ea1e6 !important;
+	}
+	html .sky ti-widget-button[primary][raised],
+	html .sky paper-button[primary][raised] {
+		background-color: #3ea1e6 !important;
+		color: #fff !important;
+	}
+	html .sky ti-widget-button[secondary],
+	html .sky paper-button[secondary] {
+		color: #78bdee !important;
+	}
+	html .sky ti-widget-button[secondary][raised],
+	html .sky paper-button[secondary][raised] {
+		background-color: #78bdee !important;
+		color: #fff !important;
+	}
+	html .sky ti-widget-button[success],
+	html .sky paper-button[success] {
+		color: #76c753 !important;
+	}
+	html .sky ti-widget-button[success][raised],
+	html .sky paper-button[success][raised] {
+		background-color: #76c753 !important;
+		color: #fff !important;
+	}
+	html .sky ti-widget-button[info],
+	html .sky paper-button[info] {
+		color: #1469c8 !important;
+	}
+	html .sky ti-widget-button[info][raised],
+	html .sky paper-button[info][raised] {
+		background-color: #1469c8 !important;
+		color: #fff !important;
+	}
+	html .sky ti-widget-button[warning],
+	html .sky paper-button[warning] {
+		color: #ffa500 !important;
+	}
+	html .sky ti-widget-button[warning][raised],
+	html .sky paper-button[warning][raised] {
+		background-color: #ffa500 !important;
+		color: #fff !important;
+	}
+	html .sky ti-widget-button[error],
+	html .sky paper-button[error] {
+		color: #db5656 !important;
+	}
+	html .sky ti-widget-button[error][raised],
+	html .sky paper-button[error][raised] {
+		background-color: #db5656 !important;
+		color: #fff !important;
+	}
+	html .sky ti-widget-button[link],
+	html .sky paper-button[link] {
+		color: #000 !important;
+	}
+	html .sky ti-widget-button[link][raised],
+	html .sky paper-button[link][raised] {
+		background-color: #fff !important;
+		color: #000 !important;
+	}
+	html .sky ti-widget-textbox[disabled],
+	html .sky ti-widget-checkbox[disabled],
+	html .sky paper-checkbox[disabled] {
+		color: #aaa !important;
+	}
+	html .sky iron-toolbar paper-tabs {
+		-webkit-box-shadow: none;
+		box-shadow: none;
+	}
+	html .sky ti-widget-dialog #headerBackground {
+		color:  #fff !important;
+		background-color: #7ec0ee !important;
+	}
+	html .sky paper-tabs,
+	html .sky iron-toolbar {
+		background-color: #7ec0ee; /* this controls the background color of the unselected tabs */
+		color: #fff;
+		-webkit-box-shadow: 0px 1px 1px rgba(0,0,0,0.2);
+		box-shadow: 0px 1px 1px rgba(0,0,0,0.2);
+	}
+	html .sky paper-tabs.transparent-teal {
+		background-color: transparent;
+		color: #7ec0ee;
+		-webkit-box-shadow: none;
+		box-shadow: none;
+	}
+	html .sky paper-tabs[no-bar] paper-tab.iron-selected {
+		color: #ffff8d;
+		background-color: #7ec0ee;  /* this controls the background color of the selected tab */
+		border-bottom: 1px solid #7ec0ee;
+	}
+	html .sky paper-toast *,
+	html .sky paper-tabs * {
+		-webkit-user-select: none;
+		-moz-user-select: none;
+		-ms-user-select: none;
+		user-select: none;
+		-webkit-tap-highlight-color: rgba(0,0,0,0);
+		-webkit-touch-callout: none;
+	}
+	html .sky paper-toast {
+		text-align: left;
+	}
+	html .sky .toolbar {
+		color: #fff;
+		background-color: #7ec0ee;
+	}
+	html .sky .card {
+		background-color: #fff;
+	}
+	html .sky paper-item {
+		background-color: #fff;
+		color: #222;
+	}
+	html .sky paper-item:hover {
+		background-color: #eaf6ff;
+	}
+	html .sky paper-item.iron-selected {
+		background-color: #fff;
+	}
+	html .sky .small {
+		font-size: 12px;
+	}
+	html .sky .logo {
+		font-size: 21px;
+	}
+	html .sky .logo a {
+		font-weight: 700;
+		color: #fff;
+	}
+	html .sky .inverse {
+		background-color: #7ec0ee;
+		color: #fff;
+	}
+	html .sky paper-icon-button[disabled] iron-icon {
+		color: #c9c9c9 !important;
+	}
+	html .sky ti-widget-menuseparator #menuSeparator {
+		background-color: #fff;
+	}
+	html .sky ti-widget-menubar {
+		background-color: #7ec0ee;
+		color: #fff;
+	}
+	html .sky ti-widget-menubar .logoImage {
+		background-color: #7ec0ee;
+		color: #fff;
+	}
+	html .sky ti-widget-menuitem .navIcon {
+		color: #fff;
+	}
+	html .sky ti-widget-menuitem .hovering .navIcon {
+		color: #fff;
+	}
+	html .sky ti-widget-menuitem .hoverMenu {
+		background-color: #7ec0ee;
+		color: #fff;
+		border-color: #7ec0ee;
+	}
+	html .sky ti-widget-menuitem .hovering {
+		background-color: #3ea1e6;
+		color: #fff;
+		border-color: #7ec0ee;
+	}
+	html .sky ti-widget-menuaction li {
+		color: #fff;
+		background-color: #7ec0ee;
+		border-color: #7ec0ee;
+	}
+	html .sky ti-widget-menuitem.subMenuItem .hovering,
+	html .sky ti-widget-menuaction li:hover {
+		background-color: #3ea1e6;
+		color: #fff;
+	}
+	html .sky ti-widget-menuaction .unenabled {
+		color: #888;
+		background-color: #7ec0ee;
+		border-color: #7ec0ee;
+	}
+	html .sky ti-widget-menuaction .unenabled:hover {
+		color: #888;
+		background-color: #3ea1e6;
+	}
+	html .sky ti-widget-statusbar .container {
+		background-color: #f5fcff;
+		color: #000;
+	}
+	html .sky ti-widget-statusbar .icons {
+		background-color: #f5fcff;
+		color: #000;
+	}
+	html .sky ti-widget-statusbar .statusinfo {
+		background-color: transparent;
+		color: #000;
+		border-style: none;
+		border-width: 0;
+		border-color: transparent;
+	}
+	html .sky ti-widget-statusbar .poweredby {
+		color: #000;
+	}
+	html .sky ti-widget-analoggauge .needle {
+		color: #7ec0ee;
+	}
+	html .sky ti-widget-analoggauge .face {
+		background-color: #fff;
+		color: #000;
+	}
+	html .sky ti-widget-analoggauge .frame {
+		color: #1469c8;
+	}
+	html .sky ti-widget-dial .pointer {
+		color: #7ec0ee;
+	}
+	html .sky ti-widget-dial .knob {
+		background-color: #fff;
+	}
+	html .sky ti-widget-dial .frame {
+		background-color: #1469c8;
+		color: #fff;
+	}
+	html .sky label,
+	html .sky ti-widget-label,
+	html .sky ti-widget-bitfield-header,
+	html .sky ti-widget-droplist,
+	html .sky ti-widget-numberbox,
+	html .sky ti-widget-spinner, 
+	html .sky ti-widget-textbox {
+		font-family: 'Roboto', sans-serif;
+		background-color: transparent;
+		color: #222;
+	}
+	html .sky label[disabled],
+	html .sky ti-widget-label[disabled],
+	html .sky ti-widget-bitfield-header[disabled],
+	html .sky ti-widget-droplist[disabled],
+	html .sky ti-widget-numberbox[disabled],
+	html .sky ti-widget-spinner[disabled], 
+	html .sky ti-widget-textbox[disabled] {
+		color: #aaa !important;
+	}
+	html .sky select {
+		border-radius: 0px;
+		font-family: 'Roboto', sans-serif;
+		border: 1px solid #7e8d9d;
+		font-size: inherit;
+	}
+	html .sky input {
+		font-family: 'Roboto', sans-serif;
+		font-size: inherit;
+	}
+	html .navy-theme {
+		font-family: 'Roboto', sans-serif;
+		-ms-text-size-adjust: 100%;
+		-webkit-text-size-adjust: 100%;
+		font-weight: 400;
+		font-size: 14px;
+	}
+	html .navy-theme .font-special {
+		font-family: 'Roboto', sans-serif;
+	}
+	html .navy-theme iron-header-panel {
+		height: 100%;
+	}
+	html .navy-theme iron-header-panel[mode=cover] #mainContainer {
+		left: 70px;
+	}
+	html .navy-theme .iron-header {
+		height: 60px;
+		font-size: 18px;
+		/* Brian: removed: padding: 0 10px; */
+		transition: height 0.2s;
+		background-color: #20405A;
+		color: #fff;
+	}
+	html .navy-theme .iron-header a {
+		color: #fff;
+	}
+	html .navy-theme .iron-header paper-item {
+		font-size: 18px;
+	}
+	html .navy-theme .iron-header.tall {
+		height: 180px;
+	}
+	html .navy-theme .iron-header.medium-tall {
+		height: 120px;
+	}
+	html .navy-theme .iron-header iron-menu-button a {
+		color: #444;
+	}
+	html .navy-theme .wrapper {
+		text-align: center;
+	}
+	html .navy-theme section {
+		text-align: left;  /* Brian: padding and alignment causes problems for many non-paper components */
+		padding: 0px 0px;
+	}
+	html .navy-theme .ti-banner {
+		background-color: black;
+	}
+	html .navy-theme section[hero] {
+		background-color: #f5fcff;
+	}
+	html .navy-theme h1,
+	html .navy-theme h2,
+	html .navy-theme h3,
+	html .navy-theme h4,
+	html .navy-theme h5,
+	html .navy-theme h6 {
+		font-weight: 400;
+		margin: 0px;
+		padding: 0px;
+	}
+	html .navy-theme h1,
+	html .navy-theme h3,
+	html .navy-theme h5 {
+		font-family: 'Roboto', sans-serif;
+	}
+	html .navy-theme h1 {
+		color: #003;
+		font-size: 2em;
+		margin: 5px 0px;
+	}
+	html .navy-theme h2 {
+		color: #003;
+		font-size: 1.6em;
+		margin: 3px 0px;
+	}
+	html .navy-theme h3 {
+		color: #003;
+		font-size: 1.4em;
+		margin: 2px 0px;
+	}
+	html .navy-theme h4 {
+		color: #003;
+		font-size: 1.2em;
+	}
+	html .navy-theme h5 {
+		color: #003;	
+	}
+	html .navy-theme h6 {
+		color: #003;	
+	}
+	html .navy-theme a {
+		color: #003;
+	}
+	html .navy-theme a:hover {
+	    color: #c00;
+		text-decoration: underline;
+	}
+	html .navy-theme [autofocus] {
+		color: #20405A;
+	}
+	html .navy-theme ti-tile-title #titleDiv,
+	html .navy-theme ti-tile-title #containerDiv {
+		background-color: #20405A !important;
+		color: #fff !important;
+	}
+	html .navy-theme ti-widget-button:not(.idunno),
+	html .navy-theme paper-button {
+		margin: 2px;
+		color: #4080B4;
+	}
+	html .navy-theme ti-widget-button[disabled]:not(#idunno),
+	html .navy-theme paper-button[disabled]:not(#idunno) {
+		color: #f0f0f0 !important;
+		background-color: #e0e0e0 !important;
+	}
+	html .navy-theme ti-widget-button[raised]:not(.idunno),
+	html .navy-theme paper-button[raised] {
+		background-color: #20405A;
+		color: #fff;
+	}
+	html .navy-theme ti-widget-button[primary],
+	html .navy-theme paper-button[primary] {
+		color: #c00 !important;
+	}
+	html .navy-theme ti-widget-button[primary][raised],
+	html .navy-theme paper-button[primary][raised] {
+		background-color: #c00 !important;
+		color: #fff !important;
+	}
+	html .navy-theme ti-widget-button[secondary],
+	html .navy-theme paper-button[secondary] {
+		color: #4080B4 !important;
+	}
+	html .navy-theme ti-widget-button[secondary][raised],
+	html .navy-theme paper-button[secondary][raised] {
+		background-color: #20405A !important;
+		color: #fff !important;
+	}
+	html .navy-theme ti-widget-button[success],
+	html .navy-theme paper-button[success] {
+		color: #4080B4 !important;
+	}
+	html .navy-theme ti-widget-button[success][raised],
+	html .navy-theme paper-button[success][raised] {
+		background-color: #20405A !important;
+		color: #fff !important;
+	}
+	html .navy-theme ti-widget-button[info],
+	html .navy-theme paper-button[info] {
+		color: #4080B4 !important;
+	}
+	html .navy-theme ti-widget-button[info][raised],
+	html .navy-theme paper-button[info][raised] {
+		background-color: #20405A !important;
+		color: #fff !important;
+	}
+	html .navy-theme ti-widget-button[warning],
+	html .navy-theme paper-button[warning] {
+		color: #4080B4 !important;
+	}
+	html .navy-theme ti-widget-button[warning][raised],
+	html .navy-theme paper-button[warning][raised] {
+		background-color: #20405A !important;
+		color: #fff !important;
+	}
+	html .navy-theme ti-widget-button[error],
+	html .navy-theme paper-button[error] {
+		color: #4080B4 !important;
+	}
+	html .navy-theme ti-widget-button[error][raised],
+	html .navy-theme paper-button[error][raised] {
+		background-color: #20405A !important;
+		color: #fff !important;
+	}
+	html .navy-theme ti-widget-button[link],
+	html .navy-theme paper-button[link] {
+		color: #4080B4 !important;
+	}
+	html .navy-theme ti-widget-button[link][raised],
+	html .navy-theme paper-button[link][raised] {
+		background-color: #20405A !important;
+		color: #fff !important;
+	}
+	html .navy-theme ti-widget-textbox[disabled],
+	html .navy-theme ti-widget-checkbox[disabled],
+	html .navy-theme paper-checkbox[disabled] {
+		color: #aaa !important;
+	}
+	html .navy-theme iron-toolbar paper-tabs {
+		-webkit-box-shadow: none;
+		box-shadow: none;
+	}
+	html .navy-theme ti-widget-dialog #headerBackground {
+		color:  #fff !important;
+		background-color: #20405A !important;
+	}
+	html .navy-theme paper-tabs,
+	html .navy-theme iron-toolbar {
+		background-color: #20405A; /* this controls the background color of the unselected tabs */
+		color: #fff;
+		-webkit-box-shadow: 0px 1px 1px rgba(0,0,0,0.2);
+		box-shadow: 0px 1px 1px rgba(0,0,0,0.2);
+	}
+	html .navy-theme paper-tabs.transparent-teal {
+		background-color: transparent;
+		color: #20405A;
+		-webkit-box-shadow: none;
+		box-shadow: none;
+	}
+	html .navy-theme paper-tabs[no-bar] paper-tab.iron-selected {
+		color: #fff;
+		background-color: #20405A;  /* this controls the background color of the selected tab */
+		border-bottom: 1px solid #20405A;
+	}
+	html .navy-theme paper-toast *,
+	html .navy-theme paper-tabs * {
+		-webkit-user-select: none;
+		-moz-user-select: none;
+		-ms-user-select: none;
+		user-select: none;
+		-webkit-tap-highlight-color: rgba(0,0,64,0);
+		-webkit-touch-callout: none;
+	}
+	html .navy-theme paper-toast {
+		text-align: left;
+	}
+	html .navy-theme .toolbar {
+		color: #fff;
+		background-color: #20405A;
+	}
+	html .navy-theme .card {
+		background-color: #fff;
+	}
+	html .navy-theme paper-item {
+		background-color: #20405A;
+		color: #fff;
+	}
+	html .navy-theme paper-item:hover {
+		background-color: #306078;
+	}
+	html .navy-theme paper-item.iron-selected {
+		background-color: #306078;
+	}
+	html .navy-theme .small {
+		font-size: 12px;
+	}
+	html .navy-theme .logo {
+		font-size: 21px;
+	}
+	html .navy-theme .logo a {
+		font-weight: 700;
+		color: #fff;
+	}
+	html .navy-theme .inverse {
+		background-color: #20405A;
+		color: #fff;
+	}
+	html .navy-theme paper-icon-button[disabled] iron-icon {
+		color: #e0e0e0 !important;
+	}
+	html .navy-theme ti-widget-menuseparator #menuSeparator {
+		background-color: #888;
+	}
+	html .navy-theme ti-widget-menubar {
+		background-color: #20405A;
+		color: #fff;
+	}
+	html .navy-theme ti-widget-menubar .logoImage {
+		background-color: #20405A;
+		color: #fff;
+	}
+	html .navy-theme ti-widget-menuitem .navIcon {
+		color: #fff;
+	}
+	html .navy-theme ti-widget-menuitem .hovering .navIcon {
+		color: #fff;
+	}
+	html .navy-theme ti-widget-menuitem .hoverMenu {
+		background-color: #20405A;
+		color: #fff;
+		border-color: #20405A;
+	}
+	html .navy-theme ti-widget-menuitem .hovering {
+		background-color: #306078;
+		color: #fff;
+		border-color: #20405A;
+	}
+	html .navy-theme ti-widget-menuaction li {
+		color: #fff;
+		background-color: #20405A;
+		border-color: #20405A;
+	}
+	html .navy-theme ti-widget-menuitem.subMenuItem .hovering,
+	html .navy-theme ti-widget-menuaction li:hover {
+		background-color: #306078;
+		color: #fff;
+	}
+	html .navy-theme ti-widget-menuaction .unenabled {
+		color: #888;
+		background-color: #10202D;
+		border-color: #20405A;
+	}
+	html .navy-theme ti-widget-menuaction .unenabled:hover {
+		color: #888;
+		background-color: #182843;
+	}
+	html .navy-theme ti-widget-statusbar .container {
+		background-color: #20405A;
+		color: #fff;
+	}
+	html .navy-theme ti-widget-statusbar .icons {
+		background-color: #20405A;
+		color: #fff;
+	}
+	html .navy-theme ti-widget-statusbar .statusinfo {
+		background-color: transparent;
+		color: #fff;
+		border-style: none;
+		border-width: 0;
+		border-color: transparent;
+	}
+	html .navy-theme ti-widget-statusbar .poweredby {
+		color: #fff;
+	}
+	html .navy-theme ti-widget-analoggauge .needle {
+		color: #c00;
+	}
+	html .navy-theme ti-widget-analoggauge .face {
+		background-color: #fff;
+		color: #4080B4;
+	}
+	html .navy-theme ti-widget-analoggauge .frame {
+		color: #20405A;
+	}
+	html .navy-theme ti-widget-dial .pointer {
+		color: #c00;
+	}
+	html .navy-theme ti-widget-dial .knob {
+		background-color: #fff;
+	}
+	html .navy-theme ti-widget-dial .frame {
+		background-color: #20405A;
+		color: #fff;
+	}
+	html .navy-theme label,
+	html .navy-theme ti-widget-label,
+	html .navy-theme ti-widget-bitfield-header,
+	html .navy-theme ti-widget-droplist,
+	html .navy-theme ti-widget-numberbox,
+	html .navy-theme ti-widget-spinner, 
+	html .navy-theme ti-widget-textbox {
+		font-family: 'Roboto', sans-serif;
+		background-color: transparent;
+		color: #222;
+	}
+	html .navy-theme label[disabled],
+	html .navy-theme ti-widget-label[disabled],
+	html .navy-theme ti-widget-bitfield-header[disabled],
+	html .navy-theme ti-widget-droplist[disabled],
+	html .navy-theme ti-widget-numberbox[disabled],
+	html .navy-theme ti-widget-spinner[disabled], 
+	html .navy-theme ti-widget-textbox[disabled] {
+		color: #aaa !important;
+	}
+	html .navy-theme select {
+		border-radius: 0px;
+		font-family: 'Roboto', sans-serif;
+		border: 1px solid #ccc;
+		font-size: inherit;
+	}
+	html .navy-theme input {
+		font-family: 'Roboto', sans-serif;
+		font-size: inherit;
+	}
+	html .lightgray-theme,
+	html#designer-frame .designer-theme {
+		font-family: 'Open Sans', sans-serif;
+		-ms-text-size-adjust: 100%;
+		-webkit-text-size-adjust: 100%;
+		font-weight: 400;
+		font-size: 14px;
+	}
+	html .lightgray-theme .font-special,
+	html#designer-frame .designer-theme .font-special {
+		font-family: 'Oxygen', sans-serif;
+	}
+	html .lightgray-theme iron-header-panel,
+	html#designer-frame .designer-theme iron-header-panel {
+		height: 100%;
+	}
+	html .lightgray-theme iron-header-panel[mode=cover] #mainContainer,
+	html#designer-frame .designer-theme iron-header-panel[mode=cover] #mainContainer {
+		left: 70px;
+	}
+	html .lightgray-theme .iron-header,
+	html#designer-frame .designer-theme .iron-header {
+		height: 60px;
+		font-size: 18px;
+		/* Brian: removed: padding: 0 10px; */
+		transition: height 0.2s;
+		background-color: #f2f2f2;
+		color: #1f1f1f;
+	}
+	html .lightgray-theme .iron-header a,
+	html#designer-frame .designer-theme .iron-header a {
+		color: #1f1f1f;
+	}
+	html .lightgray-theme .iron-header paper-item,
+	html#designer-frame .designer-theme .iron-header paper-item {
+		font-size: 18px;
+	}
+	html .lightgray-theme .iron-header.tall,
+	html#designer-frame .designer-theme .iron-header.tall {
+		height: 180px;
+	}
+	html .lightgray-theme .iron-header.medium-tall,
+	html#designer-frame .designer-theme .iron-header.medium-tall {
+		height: 120px;
+	}
+	html .lightgray-theme .iron-header iron-menu-button a,
+	html#designer-frame .designer-theme .iron-header iron-menu-button a {
+		color: #191919;
+	}
+	html .lightgray-theme .wrapper,
+	html#designer-frame .designer-theme .wrapper {
+		text-align: center;
+	}
+	html .lightgray-theme section,
+	html#designer-frame .designer-theme section {
+		text-align: left;  /* Brian: padding and alignment causes problems for many non-paper components */
+		padding: 0px 0px;
+	}
+	html .lightgray-theme .ti-banner,
+	html#designer-frame .designer-theme .ti-banner {
+		background-color: black;
+	}
+	html .lightgray-theme section[hero],
+	html#designer-frame .designer-theme section[hero] {
+		background-color: #f1f1f1;
+	}
+	html .lightgray-theme h1,
+	html .lightgray-theme h2,
+	html .lightgray-theme h3,
+	html .lightgray-theme h4,
+	html .lightgray-theme h5,
+	html .lightgray-theme h6,
+	html#designer-frame .designer-theme h1,
+	html#designer-frame .designer-theme h2,
+	html#designer-frame .designer-theme h3,
+	html#designer-frame .designer-theme h4,
+	html#designer-frame .designer-theme h5,
+	html#designer-frame .designer-theme h6 {
+		font-weight: 400;
+		margin: 0px;
+		padding: 0px;
+	}
+	html .lightgray-theme h1,
+	html .lightgray-theme h3,
+	html .lightgray-theme h5,
+	html#designer-frame .designer-theme h1,
+	html#designer-frame .designer-theme h3,
+	html#designer-frame .designer-theme h5 {
+		font-family: 'Oxygen', sans-serif;
+	}
+	html .lightgray-theme h1,
+	html#designer-frame .designer-theme h1 {
+		color: initial;
+		font-size: 2em;
+		margin: 5px 0px;
+	}
+	html .lightgray-theme h2,
+	html#designer-frame .designer-theme h2 {
+		color: #191919;
+		font-size: 1.6em;
+		margin: 3px 0px;
+	}
+	html .lightgray-theme h3,
+	html#designer-frame .designer-theme h3 {
+		color: initial;
+		font-size: 1.4em;
+		margin: 2px 0px;
+	}
+	html .lightgray-theme h4,
+	html#designer-frame .designer-theme h4 {
+		color: initial;
+		font-size: 1.2em;
+	}
+	html .lightgray-theme h5,
+	html#designer-frame .designer-theme h5 {
+		color: initial;	
+	}
+	html .lightgray-theme h6,
+	html#designer-frame .designer-theme h6 {
+		color: initial;	
+	}
+	html .lightgray-theme a,
+	html#designer-frame .designer-theme a {
+		color: #00f;
+	}
+	html .lightgray-theme a:hover,
+	html#designer-frame .designer-theme a:hover {
+	    color: #00f;
+		text-decoration: underline;
+	}
+	html .lightgray-theme [autofocus],
+	html#designer-frame .designer-theme [autofocus] {
+		color: #191919;
+	}
+	html .lightgray-theme ti-tile-title #titleDiv,
+	html .lightgray-theme ti-tile-title #containerDiv,
+	html#designer-frame .designer-theme ti-tile-title #titleDiv,
+	html#designer-frame .designer-theme ti-tile-title #containerDiv {
+		background-color: #f2f2f2 !important;
+		color: #1f1f1f !important;
+	}
+	html .lightgray-theme ti-widget-button:not(.idunno),
+	html .lightgray-theme paper-button,
+	html#designer-frame .designer-theme ti-widget-button:not(.idunno),
+	html#designer-frame .designer-theme paper-button {
+		margin: 2px;
+		color: #191919;
+	}
+	html .lightgray-theme ti-widget-button[disabled]:not(#idunno),
+	html .lightgray-theme paper-button[disabled]:not(#idunno),
+	html#designer-frame .designer-theme ti-widget-button[disabled]:not(#idunno),
+	html#designer-frame .designer-theme paper-button[disabled]:not(#idunno) {
+		color: #545660 !important;
+		background-color: #afb1b9 !important;
+	}
+	html .lightgray-theme ti-widget-button[raised]:not(.idunno),
+	html .lightgray-theme paper-button[raised],
+	html#designer-frame .designer-theme ti-widget-button[raised]:not(.idunno),
+	html#designer-frame .designer-theme paper-button[raised] {
+		background-color: #f2f2f2;
+		color: #191919;
+	}
+	html .lightgray-theme ti-widget-button[primary],
+	html .lightgray-theme paper-button[primary],
+	html#designer-frame .designer-theme ti-widget-button[primary],
+	html#designer-frame .designer-theme paper-button[primary] {
+		color: #191919 !important;
+	}
+	html .lightgray-theme ti-widget-button[primary][raised],
+	html .lightgray-theme paper-button[primary][raised],
+	html#designer-frame .designer-theme ti-widget-button[primary][raised],
+	html#designer-frame .designer-theme paper-button[primary][raised] {
+		background-color: #f2f2f2 !important;
+		color: #191919 !important;
+	}
+	html .lightgray-theme ti-widget-button[secondary],
+	html .lightgray-theme paper-button[secondary],
+	html#designer-frame .designer-theme ti-widget-button[secondary],
+	html#designer-frame .designer-theme paper-button[secondary] {
+		color: #1e88e5 !important;
+	}
+	html .lightgray-theme ti-widget-button[secondary][raised],
+	html .lightgray-theme paper-button[secondary][raised],
+	html#designer-frame .designer-theme ti-widget-button[secondary][raised],
+	html#designer-frame .designer-theme paper-button[secondary][raised] {
+		background-color: #1e88e5 !important;
+		color: #191919 !important;
+	}
+	html .lightgray-theme ti-widget-button[success],
+	html .lightgray-theme paper-button[success],
+	html#designer-frame .designer-theme ti-widget-button[success],
+	html#designer-frame .designer-theme paper-button[success] {
+		color: #8bc34a !important;
+	}
+	html .lightgray-theme ti-widget-button[success][raised],
+	html .lightgray-theme paper-button[success][raised],
+	html#designer-frame .designer-theme ti-widget-button[success][raised],
+	html#designer-frame .designer-theme paper-button[success][raised] {
+		background-color: #8bc34a !important;
+		color: #3a5718 !important;
+	}
+	html .lightgray-theme ti-widget-button[info],
+	html .lightgray-theme paper-button[info],
+	html#designer-frame .designer-theme ti-widget-button[info],
+	html#designer-frame .designer-theme paper-button[info] {
+		color: #fadd60 !important;
+	}
+	html .lightgray-theme ti-widget-button[info][raised],
+	html .lightgray-theme paper-button[info][raised],
+	html#designer-frame .designer-theme ti-widget-button[info][raised],
+	html#designer-frame .designer-theme paper-button[info][raised] {
+		background-color: #fadd60 !important;
+		color: #776413 !important;
+	}
+	html .lightgray-theme ti-widget-button[warning],
+	html .lightgray-theme paper-button[warning],
+	html#designer-frame .designer-theme ti-widget-button[warning],
+	html#designer-frame .designer-theme paper-button[warning] {
+		color: #ffb74d !important;
+	}
+	html .lightgray-theme ti-widget-button[warning][raised],
+	html .lightgray-theme paper-button[warning][raised],
+	html#designer-frame .designer-theme ti-widget-button[warning][raised],
+	html#designer-frame .designer-theme paper-button[warning][raised] {
+		background-color: #ffb74d !important;
+		color: #fff !important;
+	}
+	html .lightgray-theme ti-widget-button[error],
+	html .lightgray-theme paper-button[error],
+	html#designer-frame .designer-theme ti-widget-button[error],
+	html#designer-frame .designer-theme paper-button[error] {
+		color: #ef5350 !important;
+	}
+	html .lightgray-theme ti-widget-button[error][raised],
+	html .lightgray-theme paper-button[error][raised],
+	html#designer-frame .designer-theme ti-widget-button[error][raised],
+	html#designer-frame .designer-theme paper-button[error][raised] {
+		background-color: #ef5350 !important;
+		color: #fff !important;
+	}
+	html .lightgray-theme ti-widget-button[link],
+	html .lightgray-theme paper-button[link],
+	html#designer-frame .designer-theme ti-widget-button[link],
+	html#designer-frame .designer-theme paper-button[link] {
+		color: #000 !important;
+	}
+	html .lightgray-theme ti-widget-button[link][raised],
+	html .lightgray-theme paper-button[link][raised],
+	html#designer-frame .designer-theme ti-widget-button[link][raised],
+	html#designer-frame .designer-theme paper-button[link][raised] {
+		background-color: #fff !important;
+		color: #000 !important;
+	}
+	html .lightgray-theme ti-widget-textbox[disabled],
+	html .lightgray-theme ti-widget-checkbox[disabled],
+	html .lightgray-theme paper-checkbox[disabled],
+	html#designer-frame .designer-theme ti-widget-textbox[disabled],
+	html#designer-frame .designer-theme ti-widget-checkbox[disabled],
+	html#designer-frame .designer-theme paper-checkbox[disabled] {
+		color: #aaa !important;
+	}
+	html .lightgray-theme iron-toolbar paper-tabs,
+	html#designer-frame .designer-theme iron-toolbar paper-tabs {
+		-webkit-box-shadow: none;
+		box-shadow: none;
+	}
+	html .lightgray-theme ti-widget-dialog #headerBackground,
+	html#designer-frame .designer-theme ti-widget-dialog #headerBackground {
+		color:  #fff !important;
+		background-color: #115566 !important;
+	}
+	html .lightgray-theme paper-tabs,
+	html .lightgray-theme iron-toolbar,
+	html#designer-frame .designer-theme paper-tabs,
+	html#designer-frame .designer-theme iron-toolbar {
+		background-color: #f2f2f2; /* this controls the background color of the unselected tabs */
+		color: #1f1f1f;
+		-webkit-box-shadow: 0px 1px 1px rgba(0,0,0,0.2);
+		box-shadow: 0px 1px 1px rgba(0,0,0,0.2);
+	}
+	html .lightgray-theme paper-tabs.transparent-teal,
+	html#designer-frame .designer-theme paper-tabs.transparent-teal {
+		background-color: transparent;
+		color: #191919;
+		-webkit-box-shadow: none;
+		box-shadow: none;
+	}
+	html .lightgray-theme paper-tabs[no-bar] paper-tab.iron-selected,
+	html#designer-frame .designer-theme paper-tabs[no-bar] paper-tab.iron-selected {
+		color: #191919;
+		background-color: #e5e5e5;  /* this controls the background color of the selected tab */
+		border-bottom: 1px solid #5d5d5d;
+	}
+	html .lightgray-theme paper-toast *,
+	html .lightgray-theme paper-tabs *,
+	html#designer-frame .designer-theme paper-toast *,
+	html#designer-frame .designer-theme paper-tabs * {
+		-webkit-user-select: none;
+		-moz-user-select: none;
+		-ms-user-select: none;
+		user-select: none;
+		-webkit-tap-highlight-color: rgba(0,0,0,0);
+		-webkit-touch-callout: none;
+	}
+	html .lightgray-theme paper-toast,
+	html#designer-frame .designer-theme paper-toast {
+		text-align: left;
+	}
+	:root .lightgray-theme {
+		--paper-tabs: {
+			background-color: #f2f2f2;
+			color: #1f1f1f;
+			-webkit-box-shadow: 0px 1px 1px rgba(0,0,0,0.2);
+			box-shadow: 0px 1px 1px rgaba(0,0,0,0.2);
+		}
+		--paper-tab: {
+			color: #191919;
+			background-color: #e5e5e5;  /* this controls the background color of the selected tab */
+			border-bottom: 1px solid #5d5d5d;
+		}
+	}
+	html .lightgray-theme .toolbar,
+	html#designer-frame .designer-theme .toolbar {
+		color: #1f1f1f;
+		background-color: #f2f2f2;
+	}
+	html .lightgray-theme .card,
+	html#designer-frame .designer-theme .card {
+		background-color: #fff;
+	}
+	html .lightgray-theme paper-item,
+	html#designer-frame .designer-theme paper-item {
+		background-color: #fff;
+		color: #1f1f1f;
+	}
+	html .lightgray-theme paper-item:hover,
+	html#designer-frame .designer-theme paper-item:hover {
+		background-color: #f2f2f2;
+	}
+	html .lightgray-theme paper-item.iron-selected,
+	html#designer-frame .designer-theme paper-item.iron-selected {
+		background-color: #fff;
+	}
+	html .lightgray-theme .small,
+	html#designer-frame .designer-theme .small {
+		font-size: 12px;
+	}
+	html .lightgray-theme .logo,
+	html#designer-frame .designer-theme .logo {
+		font-size: 21px;
+	}
+	html .lightgray-theme .logo a,
+	html#designer-frame .designer-theme .logo a {
+		font-weight: 700;
+		color: #1f1f1f;
+	}
+	html .lightgray-theme .inverse,
+	html#designer-frame .designer-theme .inverse {
+		background-color: #f2f2f2;
+		color: #1f1f1f;
+	}
+	html .lightgray-theme paper-icon-button[disabled] iron-icon,
+	html#designer-frame .designer-theme paper-icon-button[disabled] iron-icon {
+		color: #afb1b9 !important;
+	}
+	html .lightgray-theme ti-widget-menuseparator #menuSeparator,
+	html#designer-frame .designer-theme ti-widget-menuseparator #menuSeparator {
+		background-color: #888;
+	}
+	html .lightgray-theme ti-widget-menubar,
+	html#designer-frame .designer-theme ti-widget-menubar {
+		background-color: #f2f2f2;
+		color: #1f1f1f;
+	}
+	html .lightgray-theme ti-widget-menubar .logoImage,
+	html#designer-frame .designer-theme ti-widget-menubar .logoImage {
+		background-color: #1f1f1f;
+		color: #f2f2f2;
+	}
+	html .lightgray-theme ti-widget-menuitem .navIcon,
+	html#designer-frame .designer-theme ti-widget-menuitem .navIcon {
+		color: #1f1f1f;
+	}
+	html .lightgray-theme ti-widget-menuitem .hovering .navIcon,
+	html#designer-frame .designer-theme ti-widget-menuitem .hovering .navIcon {
+		color: #1f1f1f;
+	}
+	html .lightgray-theme ti-widget-menuitem .hoverMenu,
+	html#designer-frame .designer-theme ti-widget-menuitem .hoverMenu {
+		background-color: #e5e5e5;
+		color: #1f1f1f;
+		border-color: #f2f2f2;
+	}
+	html .lightgray-theme ti-widget-menuitem .hovering,
+	html#designer-frame .designer-theme ti-widget-menuitem .hovering {
+		background-color: #ccc;
+		color: #1f1f1f;
+		border-color: #f2f2f2;
+	}
+	html .lightgray-theme ti-widget-menuaction li,
+	html#designer-frame .designer-theme ti-widget-menuaction li {
+		color: #1f1f1f;
+		background-color: #e5e5e5;
+		border-color: #f2f2f2;
+	}
+	html .lightgray-theme ti-widget-menuitem.subMenuItem .hovering,
+	html .lightgray-theme ti-widget-menuaction li:hover,
+	html#designer-frame .designer-theme ti-widget-menuitem.subMenuItem .hovering,
+	html#designer-frame .designer-theme ti-widget-menuaction li:hover {
+		background-color: #ccc;
+		color: #1f1f1f;
+	}
+	html .lightgray-theme ti-widget-menuaction .unenabled,
+	html#designer-frame .designer-theme ti-widget-menuaction .unenabled {
+		color: #888;
+		background-color: #f2f2f2;
+		border-color: #f2f2f2;
+	}
+	html .lightgray-theme ti-widget-menuaction .unenabled:hover,
+	html#designer-frame .designer-theme ti-widget-menuaction .unenabled:hover {
+		color: #888;
+		background-color: #ccc;
+	}
+	html .lightgray-theme ti-widget-statusbar .container,
+	html#designer-frame .designer-theme ti-widget-statusbar .container {
+		background-color: #f2f2f2;
+		color: #1f1f1f;
+	}
+	html .lightgray-theme ti-widget-statusbar .icons,
+	html#designer-frame .designer-theme ti-widget-statusbar .icons {
+		background-color: #f2f2f2;
+		color: #1f1f1f;
+	}
+	html .lightgray-theme ti-widget-statusbar .statusinfo,
+	html#designer-frame .designer-theme ti-widget-statusbar .statusinfo {
+		background-color: transparent;
+		color: #1f1f1f;
+		border-style: none;
+		border-width: 0;
+		border-color: transparent;
+	}
+	html .lightgray-theme ti-widget-statusbar .poweredby,
+	html#designer-frame .designer-theme ti-widget-statusbar .poweredby {
+		color: #1f1f1f;
+	}
+	html .lightgray-theme ti-widget-analoggauge .needle,
+	html#designer-frame .designer-theme ti-widget-analoggauge .needle {
+		color: #c00;
+	}
+	html .lightgray-theme ti-widget-analoggauge .face,
+	html#designer-frame .designer-theme ti-widget-analoggauge .face {
+		background-color: #fff;
+		color: #000;
+	}
+	html .lightgray-theme ti-widget-analoggauge .frame,
+	html#designer-frame .designer-theme ti-widget-analoggauge .frame {
+		color: #222;
+	}
+	html .lightgray-theme ti-widget-dial .pointer,
+	html#designer-frame .designer-theme ti-widget-dial .pointer {
+		color: #c00;
+	}
+	html .lightgray-theme ti-widget-dial .knob,
+	html#designer-frame .designer-theme ti-widget-dial .knob {
+		background-color: #fff;
+	}
+	html .lightgray-theme ti-widget-dial .frame,
+	html#designer-frame .designer-theme ti-widget-dial .frame {
+		background-color: #222;
+		color: #fff;
+	}
+	html .lightgray-theme label,
+	html .lightgray-theme ti-widget-label,
+	html .lightgray-theme ti-widget-bitfield-header,
+	html .lightgray-theme ti-widget-droplist,
+	html .lightgray-theme ti-widget-numberbox,
+	html .lightgray-theme ti-widget-spinner, 
+	html .lightgray-theme ti-widget-textbox,
+	html#designer-frame .designer-theme label,
+	html#designer-frame .designer-theme ti-widget-label,
+	html#designer-frame .designer-theme ti-widget-bitfield-header,
+	html#designer-frame .designer-theme ti-widget-droplist,
+	html#designer-frame .designer-theme ti-widget-numberbox,
+	html#designer-frame .designer-theme ti-widget-spinner, 
+	html#designer-frame .designer-theme ti-widget-textbox {
+		font-family: 'Open Sans', sans-serif;
+		background-color: transparent;
+		color: #222;
+	}
+	html .lightgray-theme label[disabled],
+	html .lightgray-theme ti-widget-label[disabled],
+	html .lightgray-theme ti-widget-bitfield-header[disabled],
+	html .lightgray-theme ti-widget-droplist[disabled],
+	html .lightgray-theme ti-widget-numberbox[disabled],
+	html .lightgray-theme ti-widget-spinner[disabled], 
+	html .lightgray-theme ti-widget-textbox[disabled],
+	html#designer-frame .designer-theme label[disabled],
+	html#designer-frame .designer-theme ti-widget-label[disabled],
+	html#designer-frame .designer-theme ti-widget-bitfield-header[disabled],
+	html#designer-frame .designer-theme ti-widget-droplist[disabled],
+	html#designer-frame .designer-theme ti-widget-numberbox[disabled],
+	html#designer-frame .designer-theme ti-widget-spinner[disabled], 
+	html#designer-frame .designer-theme ti-widget-textbox[disabled] {
+		color: #aaa !important;
+	}
+	html .lightgray-theme select,
+	html#designer-frame .designer-theme select {
+		border-radius: 0px;
+		font-family: 'Open Sans', sans-serif;
+		border: 1px solid #ccc;
+		font-size: inherit;
+	}
+	html .lightgray-theme input,
+	html#designer-frame .designer-theme input {
+		font-family: 'Open Sans', sans-serif;
+		font-size: inherit;
+	}
+	html .black-theme {
+		font-family: 'Roboto', sans-serif;
+		-ms-text-size-adjust: 100%;
+		-webkit-text-size-adjust: 100%;
+		font-weight: 400;
+		font-size: 14px;
+	}
+	html .black-theme .font-special {
+		font-family: 'Oxygen', sans-serif;
+	}
+	html .black-theme iron-header-panel {
+		height: 100%;
+	}
+	html .black-theme iron-header-panel[mode=cover] #mainContainer {
+		left: 70px;
+	}
+	html .black-theme .iron-header {
+		height: 60px;
+		font-size: 18px;
+		/* Brian: removed: padding: 0 10px; */
+		transition: height 0.2s;
+		background-color: #191919;
+		color: #fff;
+	}
+	html .black-theme .iron-header a {
+		color: #fff;
+	}
+	html .black-theme .iron-header paper-item {
+		font-size: 18px;
+	}
+	html .black-theme .iron-header.tall {
+		height: 180px;
+	}
+	html .black-theme .iron-header.medium-tall {
+		height: 120px;
+	}
+	html .black-theme .iron-header iron-menu-button a {
+		color: #444;
+	}
+	html .black-theme .wrapper {
+		text-align: center;
+	}
+	html .black-theme section {
+		text-align: left;  /* Brian: padding and alignment causes problems for many non-paper components */
+		padding: 0px 0px;
+	}
+	html .black-theme .ti-banner {
+		background-color: black;
+	}
+	html .black-theme section[hero] {
+		background-color: #f1f1f1;
+	}
+	html .black-theme h1,
+	html .black-theme h2,
+	html .black-theme h3,
+	html .black-theme h4,
+	html .black-theme h5,
+	html .black-theme h6 {
+		font-weight: 400;
+		margin: 0px;
+		padding: 0px;
+	}
+	html .black-theme h1,
+	html .black-theme h3,
+	html .black-theme h5 {
+		font-family: 'Oxygen', sans-serif;
+	}
+	html .black-theme h1 {
+		color: #333;
+		font-size: 2em;
+		margin: 5px 0px;
+	}
+	html .black-theme h2 {
+		color: #191919;
+		font-size: 1.6em;
+		margin: 3px 0px;
+	}
+	html .black-theme h3 {
+		color: #333;
+		font-size: 1.4em;
+		margin: 2px 0px;
+	}
+	html .black-theme h4 {
+		color: #333;
+		font-size: 1.2em;
+	}
+	html .black-theme h5 {
+		color: #333;	
+	}
+	html .black-theme h6 {
+		color: #333;	
+	}
+	html .black-theme a {
+		color: #191919;
+	}
+	html .black-theme a:hover {
+	    color: #191919;
+		text-decoration: underline;
+	}
+	html .black-theme [autofocus] {
+		color: #191919;
+	}
+	html .black-theme ti-tile-title #titleDiv,
+	html .black-theme ti-tile-title #containerDiv {
+		background-color: #191919 !important;
+		color: #fff !important;
+	}
+	html .black-theme ti-widget-button:not(.idunno),
+	html .black-theme paper-button {
+		margin: 2px;
+		color: #191919;
+	}
+	html .black-theme ti-widget-button[disabled]:not(#idunno),
+	html .black-theme paper-button[disabled]:not(#idunno) {
+		color: #545660 !important;
+		background-color: #afb1b9 !important;
+	}
+	html .black-theme ti-widget-button[raised]:not(.idunno),
+	html .black-theme paper-button[raised] {
+		background-color: #1e88e5;
+		color: #fff;
+	}
+	html .black-theme ti-widget-button[primary],
+	html .black-theme paper-button[primary] {
+		color: #191919 !important;
+	}
+	html .black-theme ti-widget-button[primary][raised],
+	html .black-theme paper-button[primary][raised] {
+		background-color: #191919 !important;
+		color: #fff !important;
+	}
+	html .black-theme ti-widget-button[secondary],
+	html .black-theme paper-button[secondary] {
+		color: #1e88e5 !important;
+	}
+	html .black-theme ti-widget-button[secondary][raised],
+	html .black-theme paper-button[secondary][raised] {
+		background-color: #1e88e5 !important;
+		color: #fff !important;
+	}
+	html .black-theme ti-widget-button[success],
+	html .black-theme paper-button[success] {
+		color: #8bc34a !important;
+	}
+	html .black-theme ti-widget-button[success][raised],
+	html .black-theme paper-button[success][raised] {
+		background-color: #8bc34a !important;
+		color: #3a5718 !important;
+	}
+	html .black-theme ti-widget-button[info],
+	html .black-theme paper-button[info] {
+		color: #fadd60 !important;
+	}
+	html .black-theme ti-widget-button[info][raised],
+	html .black-theme paper-button[info][raised] {
+		background-color: #fadd60 !important;
+		color: #776413 !important;
+	}
+	html .black-theme ti-widget-button[warning],
+	html .black-theme paper-button[warning] {
+		color: #ffb74d !important;
+	}
+	html .black-theme ti-widget-button[warning][raised],
+	html .black-theme paper-button[warning][raised] {
+		background-color: #ffb74d !important;
+		color: #fff !important;
+	}
+	html .black-theme ti-widget-button[error],
+	html .black-theme paper-button[error] {
+		color: #ef5350 !important;
+	}
+	html .black-theme ti-widget-button[error][raised],
+	html .black-theme paper-button[error][raised] {
+		background-color: #ef5350 !important;
+		color: #fff !important;
+	}
+	html .black-theme ti-widget-button[link],
+	html .black-theme paper-button[link] {
+		color: #000 !important;
+	}
+	html .black-theme ti-widget-button[link][raised],
+	html .black-theme paper-button[link][raised] {
+		background-color: #fff !important;
+		color: #000 !important;
+	}
+	html .black-theme ti-widget-textbox[disabled],
+	html .black-theme ti-widget-checkbox[disabled],
+	html .black-theme paper-checkbox[disabled] {
+		color: #aaa !important;
+	}
+	html .black-theme iron-toolbar paper-tabs {
+		-webkit-box-shadow: none;
+		box-shadow: none;
+	}
+	html .black-theme ti-widget-dialog #headerBackground {
+		color:  #fff !important;
+		background-color: #000 !important;
+	}
+	html .black-theme paper-tabs,
+	html .black-theme iron-toolbar {
+		background-color: #191919; /* this controls the background color of the unselected tabs */
+		color: #fff;
+		-webkit-box-shadow: 0px 1px 1px rgba(0,0,0,0.2);
+		box-shadow: 0px 1px 1px rgba(0,0,0,0.2);
+	}
+	html .black-theme paper-tabs.transparent-teal {
+		background-color: transparent;
+		color: #191919;
+		-webkit-box-shadow: none;
+		box-shadow: none;
+	}
+	html .black-theme paper-tabs[no-bar] paper-tab.iron-selected {
+		color: #80cbc4;
+		background-color: #191919;  /* this controls the background color of the selected tab */
+		border-bottom: 1px solid #191919;
+	}
+	html .black-theme paper-toast *,
+	html .black-theme paper-tabs * {
+		-webkit-user-select: none;
+		-moz-user-select: none;
+		-ms-user-select: none;
+		user-select: none;
+		-webkit-tap-highlight-color: rgba(0,0,0,0);
+		-webkit-touch-callout: none;
+	}
+	html .black-theme paper-toast {
+		text-align: left;
+	}
+	html .black-theme .toolbar {
+		color: #fff;
+		background-color: #191919;
+	}
+	html .black-theme .card {
+		background-color: #fff;
+	}
+	html .black-theme paper-item {
+		background-color: #3b3b3b;
+		color: #fff;
+	}
+	html .black-theme paper-item:hover {
+		background-color: #191919;
+	}
+	html .black-theme paper-item.iron-selected {
+		background-color: #626262;
+	}
+	html .black-theme .small {
+		font-size: 12px;
+	}
+	html .black-theme .logo {
+		font-size: 21px;
+	}
+	html .black-theme .logo a {
+		font-weight: 700;
+		color: #fff;
+	}
+	html .black-theme .inverse {
+		background-color: #191919;
+		color: #fff;
+	}
+	html .black-theme paper-icon-button[disabled] iron-icon {
+		color: #afb1b9 !important;
+	}
+	html .black-theme ti-widget-menuseparator #menuSeparator {
+		background-color: #888;
+	}
+	html .black-theme ti-widget-menubar {
+		background-color: #191919;
+		color: #fff;
+	}
+	html .black-theme ti-widget-menubar .logoImage {
+		background-color: #191919;
+		color: #fff;
+	}
+	html .black-theme ti-widget-menuitem .navIcon {
+		color: #fff;
+	}
+	html .black-theme ti-widget-menuitem .hovering .navIcon {
+		color: #fff;
+	}
+	html .black-theme ti-widget-menuitem .hoverMenu {
+		background-color: #3b3b3b;
+		color: #fff;
+		border-color: #3b3b3b;
+	}
+	html .black-theme ti-widget-menuitem .hovering {
+		background-color: #3b3b3b;
+		color: #fff;
+		border-color: #3b3b3b;
+	}
+	html .black-theme ti-widget-menuaction li {
+		color: #fff;
+		background-color: #3b3b3b;
+		border-color: #3b3b3b;
+	}
+	html .black-theme ti-widget-menuitem.subMenuItem .hovering,
+	html .black-theme ti-widget-menuaction li:hover {
+		background-color: black;
+		color: #fff;
+	}
+	html .black-theme ti-widget-menuaction .unenabled {
+		color: #888;
+		background-color: #3b3b3b;
+		border-color: #3b3b3b;
+	}
+	html .black-theme ti-widget-menuaction .unenabled:hover {
+		color: #888;
+		background-color: black;
+	}
+	html .black-theme ti-widget-statusbar .container {
+		background-color: #191919;
+		color: #fff;
+	}
+	html .black-theme ti-widget-statusbar .icons {
+		background-color: #191919;
+		color: #fff;
+	}
+	html .black-theme ti-widget-statusbar .statusinfo {
+		background-color: transparent;
+		color: #fff;
+		border-style: none;
+		border-width: 0;
+		border-color: transparent;
+	}
+	html .black-theme ti-widget-statusbar .poweredby {
+		color: #fff;
+	}
+	html .black-theme ti-widget-analoggauge .needle {
+		color: #1E88E5;
+	}
+	html .black-theme ti-widget-analoggauge .face {
+		background-color: #fff;
+		color: #000;
+	}
+	html .black-theme ti-widget-analoggauge .frame {
+		color: #191919;
+	}
+	html .black-theme ti-widget-dial .pointer {
+		color: #1E88E5;
+	}
+	html .black-theme ti-widget-dial .knob {
+		background-color: #fff;
+	}
+	html .black-theme ti-widget-dial .frame {
+		background-color: #191919;
+		color: #fff;
+	}
+	html .black-theme label,
+	html .black-theme ti-widget-label,
+	html .black-theme ti-widget-bitfield-header,
+	html .black-theme ti-widget-droplist,
+	html .black-theme ti-widget-numberbox,
+	html .black-theme ti-widget-spinner, 
+	html .black-theme ti-widget-textbox {
+		font-family: 'Roboto', sans-serif;
+		background-color: transparent;
+		color: #222;
+	}
+	html .black-theme label[disabled],
+	html .black-theme ti-widget-label[disabled],
+	html .black-theme ti-widget-bitfield-header[disabled],
+	html .black-theme ti-widget-droplist[disabled],
+	html .black-theme ti-widget-numberbox[disabled],
+	html .black-theme ti-widget-spinner[disabled], 
+	html .black-theme ti-widget-textbox[disabled] {
+		color: #aaa !important;
+	}
+	html .black-theme select {
+		border-radius: 0px;
+		font-family: 'Roboto', sans-serif;
+		border: 1px solid #ccc;
+		font-size: inherit;
+	}
+	html .black-theme input {
+		font-family: 'Roboto', sans-serif;
+		font-size: inherit;
+	}
+
+    </style>
+    
+    <style is="custom-style">
+    
+    /* all themes custom styles */
+
+	html .ti-theme design-frame,
+	html .ti-theme ti-widget-checkbox,
+	html .ti-theme paper-checkbox {
+		--paper-checkbox-checked-color: #115566;
+		--paper-checkbox-checked-ink-color: #115566;
+		--paper-checkbox-unchecked-color: #115566;
+		--paper-checkbox-unchecked-ink-color: #115566;
+		--paper-checkbox-label-color: #222;
+	}
+	html .ti-theme design-frame,
+	html .ti-theme paper-menu,
+	html .ti-theme paper-fab {
+		--iron-icon-fill-color: currentColor;	
+		--paper-fab-background: #c00;
+		--paper-fab-iron-icon: {
+			fill: #fff;
+		}
+	}
+	html .ti-theme design-frame,
+	html .ti-theme ti-widget-floating-action-button {
+		--ti-widget-floating-action-button-background: #c00;
+		--ti-widget-floating-action-button-color: #fff;
+	}
+	html .ti-theme design-frame,
+	html .ti-theme ti-widget-icon-button {
+		--ti-widget-icon-button-color: #c00;
+	}
+	html .ti-theme design-frame,
+	html .ti-theme ti-widget-tabcontainer,
+	html .ti-theme paper-tabs {
+		--paper-tabs-selection-bar-color: transparent;
+	}
+	html .ti-theme design-frame,
+	html .ti-theme ti-widget-tabcontainer,
+	html .ti-theme paper-tab {
+		--paper-tab-ink: transparent;
+	}
+	html .ti-theme paper-tabs.transparent-teal {
+		--paper-tabs-selection-bar-color: #98999b; 
+	}
+	html .ti-theme design-frame,
+	html .ti-theme paper-toast {
+		--paper-toast-background-color: #222;
+		--paper-toast-color: #e0e0e0;
+	}
+	html .ti-theme design-frame,
+	html .ti-theme ti-widget-toast {
+		--ti-widget-toast-background-color: #222;
+		--ti-widget-toast-color: #e0e0e0;
+	} 
+	html .ti-theme design-frame,
+	html .ti-theme paper-dropdown-menu,
+	html .ti-theme ti-widget-input,
+	html .ti-theme paper-input {
+		--paper-input-container-color: #757575;
+		--paper-input-container-focus-color: #222;
+		--paper-input-container-invalid-color: #f60;
+		--paper-input-container-input-color: #222;
+	}
+	html .ti-theme design-frame,
+	html .ti-theme paper-progress {
+		--paper-progress-active-color: #c00;
+		--paper-progress-secondary-color: #222;
+	}
+	html .ti-theme design-frame,
+	html .ti-theme ti-widget-radio-button,
+	html .ti-theme paper-radio-button {
+		--paper-radio-button-unchecked-background-color: #fff; 
+		--paper-radio-button-checked-color: #000;
+		--paper-radio-button-unchecked-ink-color: #222;
+		--paper-radio-button-checked-ink-color: #222;
+	}
+	html .ti-theme design-frame,
+	html .ti-theme ti-tile-toggleswitch,
+	html .ti-theme ti-widget-toggle-button,
+	html .ti-theme paper-toggle-button {
+		--paper-toggle-button-unchecked-bar-color: #222;
+		--paper-toggle-button-checked-bar-color: #222;
+		--paper-toggle-button-unchecked-button-color: #fff;
+		--paper-toggle-button-checked-button-color: #000;
+		--paper-toggle-button-unchecked-ink-color: #a3a3a3;
+		--paper-toggle-button-checked-ink-color: #a3a3a3;
+	}
+	html .ti-theme design-frame,
+	html .ti-theme paper-slider {
+		--paper-slider-active-color: #c00;
+		--paper-slider-secondary-color: #222;
+		--paper-slider-knob-color: #c00;
+		--paper-slider-pin-color: #c00;
+	}
+	html .ti-theme design-frame,
+	html .ti-theme ti-tile-slider,
+	html .ti-theme ti-tile-verticalslider,
+	html .ti-theme ti-widget-slider {
+		--ti-widget-slider-progress-color: #c00;
+		--ti-widget-slider-tick-color: #c00;
+		--ti-widget-ruler-font-color: #222;
+	}
+	html .ti-theme design-frame,
+	html .ti-theme paper-spinner:not([default-spinner]) {
+		--paper-spinner-layer-1-color: #222;
+		--paper-spinner-layer-2-color: #222;
+		--paper-spinner-layer-3-color: #222;
+		--paper-spinner-layer-4-color: #222;
+	}
+	html .ti-theme design-frame,
+	html .ti-theme ti-widget-statusbar {
+		--paper-progress-active-color: #c00;
+		--paper-progress-secondary-color: #222;
+	}
+	html .ti-theme design-frame,
+	html .ti-theme ti-widget-progressbar {
+		--ti-widget-progressbar-color: #c00;
+	}
+	html .ti-analogevm-theme design-frame,
+	html .ti-analogevm-theme ti-widget-checkbox,
+	html .ti-analogevm-theme paper-checkbox {
+		--paper-checkbox-checked-color: #115566;
+		--paper-checkbox-checked-ink-color: #115566;
+		--paper-checkbox-unchecked-color: #115566;
+		--paper-checkbox-unchecked-ink-color: #115566;
+		--paper-checkbox-label-color: #222;
+	}
+	html .ti-analogevm-theme design-frame,
+	html .ti-analogevm-theme paper-menu,
+	html .ti-analogevm-theme paper-fab {
+		--iron-icon-fill-color: currentColor;	
+		--paper-fab-background: #c00;
+		--paper-fab-iron-icon: {
+			fill: #fff;
+		}
+	}
+	html .ti-analogevm-theme design-frame,
+	html .ti-analogevm-theme ti-widget-floating-action-button {
+		--ti-widget-floating-action-button-background: #c00;
+		--ti-widget-floating-action-button-color: #fff;
+	}
+	html .ti-analogevm-theme design-frame,
+	html .ti-analogevm-theme ti-widget-icon-button {
+		--ti-widget-icon-button-color: #c00;
+	}
+	html .ti-analogevm-theme design-frame,
+	html .ti-analogevm-theme ti-widget-tabcontainer,
+	html .ti-analogevm-theme paper-tabs {
+		--paper-tabs-selection-bar-color: transparent;
+	}
+	html .ti-analogevm-theme design-frame,
+	html .ti-analogevm-theme ti-widget-tabcontainer,
+	html .ti-analogevm-theme paper-tab {
+		--paper-tab-ink: transparent;
+	}
+	html .ti-analogevm-theme paper-tabs.transparent-teal {
+		--paper-tabs-selection-bar-color: #98999b; 
+	}
+	html .ti-analogevm-theme design-frame,
+	html .ti-analogevm-theme paper-toast {
+		--paper-toast-background-color: #222;
+		--paper-toast-color: #e0e0e0;
+	}
+	html .ti-analogevm-theme design-frame,
+	html .ti-analogevm-theme ti-widget-toast {
+		--ti-widget-toast-background-color: #222;
+		--ti-widget-toast-color: #e0e0e0;
+	} 
+	html .ti-analogevm-theme design-frame,
+	html .ti-analogevm-theme paper-dropdown-menu,
+	html .ti-analogevm-theme ti-widget-input,
+	html .ti-analogevm-theme paper-input {
+		--paper-input-container-color: #757575;
+		--paper-input-container-focus-color: #222;
+		--paper-input-container-invalid-color: #f60;
+		--paper-input-container-input-color: #222;
+	}
+	html .ti-analogevm-theme design-frame,
+	html .ti-analogevm-theme paper-progress {
+		--paper-progress-active-color: #c00;
+		--paper-progress-secondary-color: #222;
+	}
+	html .ti-analogevm-theme design-frame,
+	html .ti-analogevm-theme ti-widget-radio-button,
+	html .ti-analogevm-theme paper-radio-button {
+		--paper-radio-button-unchecked-background-color: #fff; 
+		--paper-radio-button-checked-color: #000;
+		--paper-radio-button-unchecked-ink-color: #222;
+		--paper-radio-button-checked-ink-color: #222;
+	}
+	html .ti-analogevm-theme design-frame,
+	html .ti-analogevm-theme ti-tile-toggleswitch,
+	html .ti-analogevm-theme ti-widget-toggle-button,
+	html .ti-analogevm-theme paper-toggle-button {
+		--paper-toggle-button-unchecked-bar-color: #222;
+		--paper-toggle-button-checked-bar-color: #222;
+		--paper-toggle-button-unchecked-button-color: #fff;
+		--paper-toggle-button-checked-button-color: #000;
+		--paper-toggle-button-unchecked-ink-color: #a3a3a3;
+		--paper-toggle-button-checked-ink-color: #a3a3a3;
+	}
+	html .ti-analogevm-theme design-frame,
+	html .ti-analogevm-theme paper-slider {
+		--paper-slider-active-color: #c00;
+		--paper-slider-secondary-color: #222;
+		--paper-slider-knob-color: #c00;
+		--paper-slider-pin-color: #c00;
+	}
+	html .ti-analogevm-theme design-frame,
+	html .ti-analogevm-theme ti-tile-slider,
+	html .ti-analogevm-theme ti-tile-verticalslider,
+	html .ti-analogevm-theme ti-widget-slider {
+		--ti-widget-slider-progress-color: #c00;
+		--ti-widget-slider-tick-color: #c00;
+		--ti-widget-ruler-font-color: #222;
+	}
+	html .ti-analogevm-theme design-frame,
+	html .ti-analogevm-theme paper-spinner:not([default-spinner]) {
+		--paper-spinner-layer-1-color: #222;
+		--paper-spinner-layer-2-color: #222;
+		--paper-spinner-layer-3-color: #222;
+		--paper-spinner-layer-4-color: #222;
+	}
+	html .ti-analogevm-theme design-frame,
+	html .ti-analogevm-theme ti-widget-statusbar {
+		--paper-progress-active-color: #c00;
+		--paper-progress-secondary-color: #222;
+	}
+	html .ti-analogevm-theme design-frame,
+	html .ti-analogevm-theme ti-widget-progressbar {
+		--ti-widget-progressbar-color: #c00;
+	}
+	html .sky design-frame,
+	html .sky ti-widget-checkbox,
+	html .sky paper-checkbox {
+		--paper-checkbox-checked-color: #3ea1e6;
+		--paper-checkbox-checked-ink-color: #3ea1e6;
+		--paper-checkbox-unchecked-color: #7e8d9d;
+		--paper-checkbox-unchecked-ink-color: #7e8d9d;
+		--paper-checkbox-label-color: #222;
+	}
+	html .sky design-frame,
+	html .sky paper-menu,
+	html .sky paper-fab {
+		--iron-icon-fill-color: currentColor;	
+		--paper-fab-background: #3ea1e6;
+		--paper-fab-iron-icon: {
+			fill: #fff;
+		}
+	}
+	html .sky design-frame,
+	html .sky ti-widget-floating-action-button {
+		--ti-widget-floating-action-button-background: #3ea1e6;
+		--ti-widget-floating-action-button-color: #fff;
+	}
+	html .sky design-frame,
+	html .sky ti-widget-icon-button {
+		--ti-widget-icon-button-color: #3ea1e6;
+	}
+	html .sky design-frame,
+	html .sky ti-widget-tabcontainer,
+	html .sky paper-tabs {
+		--paper-tabs-selection-bar-color: #ffff8d;
+	}
+	html .sky design-frame,
+	html .sky ti-widget-tabcontainer,
+	html .sky paper-tab {
+		--paper-tab-ink: #ffff8d;
+	}
+	html .sky paper-tabs.transparent-teal {
+		--paper-tabs-selection-bar-color: #7ec0ee; 
+	}
+	html .sky design-frame,
+	html .sky paper-toast {
+		--paper-toast-background-color: #323232;
+		--paper-toast-color: #f1f1f1;
+	}
+	html .sky design-frame,
+	html .sky ti-widget-toast {
+		--ti-widget-toast-background-color: #323232;
+		--ti-widget-toast-color: #f1f1f1;
+	} 
+	html .sky design-frame,
+	html .sky paper-dropdown-menu,
+	html .sky ti-widget-input,
+	html .sky paper-input {
+		--paper-input-container-color: #8d928a;
+		--paper-input-container-focus-color: #3ea1e6;
+		--paper-input-container-invalid-color: #db5656;
+		--paper-input-container-input-color: #222;
+	}
+	html .sky design-frame,
+	html .sky paper-progress {
+		--paper-progress-active-color: #3ea1e6;
+		--paper-progress-secondary-color: #78bdee;
+	}
+	html .sky design-frame,
+	html .sky ti-widget-radio-button,
+	html .sky paper-radio-button {
+		--paper-radio-button-unchecked-background-color: #fff; 
+		--paper-radio-button-checked-color: #3ea1e6;
+		--paper-radio-button-unchecked-ink-color: #b2d9f5;
+		--paper-radio-button-checked-ink-color: #b2d9f5;
+	}
+	html .sky design-frame,
+	html .sky ti-tile-toggleswitch,
+	html .sky ti-widget-toggle-button,
+	html .sky paper-toggle-button {
+		--paper-toggle-button-unchecked-bar-color: #7e8d9d;
+		--paper-toggle-button-checked-bar-color: #7e8d9d;
+		--paper-toggle-button-unchecked-button-color: #fff;
+		--paper-toggle-button-checked-button-color: #3ea1e6;
+		--paper-toggle-button-unchecked-ink-color: #b2d9f5;
+		--paper-toggle-button-checked-ink-color: #b2d9f5;
+	}
+	html .sky design-frame,
+	html .sky paper-slider {
+		--paper-slider-active-color: #3ea1e6;
+		--paper-slider-secondary-color: #78bdee;
+		--paper-slider-knob-color: #3ea1e6;
+		--paper-slider-pin-color: #3ea1e6;
+	}
+	html .sky design-frame,
+	html .sky ti-tile-slider,
+	html .sky ti-tile-verticalslider,
+	html .sky ti-widget-slider {
+		--ti-widget-slider-progress-color: #3ea1e6;
+		--ti-widget-slider-tick-color: #3ea1e6;
+		--ti-widget-ruler-font-color: #222;
+	}
+	html .sky design-frame,
+	html .sky paper-spinner:not([default-spinner]) {
+		--paper-spinner-layer-1-color: #3ea1e6;
+		--paper-spinner-layer-2-color: #3ea1e6;
+		--paper-spinner-layer-3-color: #3ea1e6;
+		--paper-spinner-layer-4-color: #3ea1e6;
+	}
+	html .sky design-frame,
+	html .sky ti-widget-statusbar {
+		--paper-progress-active-color: #3ea1e6;
+		--paper-progress-secondary-color: #78bdee;
+	}
+	html .sky design-frame,
+	html .sky ti-widget-progressbar {
+		--ti-widget-progressbar-color: #3ea1e6;
+	}
+	html .navy-theme design-frame,
+	html .navy-theme ti-widget-checkbox,
+	html .navy-theme paper-checkbox {
+		--paper-checkbox-checked-color: #4080B4;
+		--paper-checkbox-checked-ink-color: #4080B4;
+		--paper-checkbox-unchecked-color: #ccc;
+		--paper-checkbox-unchecked-ink-color: #ccc;
+		--paper-checkbox-label-color: #191919;
+	}
+	html .navy-theme design-frame,
+	html .navy-theme paper-menu,
+	html .navy-theme paper-fab {
+		--iron-icon-fill-color: currentColor;	
+		--paper-fab-background: #c00;
+		--paper-fab-iron-icon: {
+			fill: #fff;
+		}
+	}
+	html .navy-theme design-frame,
+	html .navy-theme ti-widget-floating-action-button {
+		--ti-widget-floating-action-button-background: #c00;
+		--ti-widget-floating-action-button-color: #fff;
+	}
+	html .navy-theme design-frame,
+	html .navy-theme ti-widget-icon-button {
+		--ti-widget-icon-button-color: #c00;
+	}
+	html .navy-theme design-frame,
+	html .navy-theme ti-widget-tabcontainer,
+	html .navy-theme paper-tabs {
+		--paper-tabs-selection-bar-color: #fff;
+	}
+	html .navy-theme design-frame,
+	html .navy-theme ti-widget-tabcontainer,
+	html .navy-theme paper-tab {
+		--paper-tab-ink: #fff;
+	}
+	html .navy-theme paper-tabs.transparent-teal {
+		--paper-tabs-selection-bar-color: #20405A; 
+	}
+	html .navy-theme design-frame,
+	html .navy-theme paper-toast {
+		--paper-toast-background-color: #20405A;
+		--paper-toast-color: #e0e0e0;
+	}
+	html .navy-theme design-frame,
+	html .navy-theme ti-widget-toast {
+		--ti-widget-toast-background-color: #20405A;
+		--ti-widget-toast-color: #e0e0e0;
+	} 
+	html .navy-theme design-frame,
+	html .navy-theme paper-dropdown-menu,
+	html .navy-theme ti-widget-input,
+	html .navy-theme paper-input {
+		--paper-input-container-color: #757575;
+		--paper-input-container-focus-color: #20405A;
+		--paper-input-container-invalid-color: #f60;
+		--paper-input-container-input-color: #191919;
+	}
+	html .navy-theme design-frame,
+	html .navy-theme paper-progress {
+		--paper-progress-active-color: #c00;
+		--paper-progress-secondary-color: #20405A;
+	}
+	html .navy-theme design-frame,
+	html .navy-theme ti-widget-radio-button,
+	html .navy-theme paper-radio-button {
+		--paper-radio-button-unchecked-background-color: #fff; 
+		--paper-radio-button-checked-color: #4080B4;
+		--paper-radio-button-unchecked-ink-color: #20405A;
+		--paper-radio-button-checked-ink-color: #20405A;
+	}
+	html .navy-theme design-frame,
+	html .navy-theme ti-tile-toggleswitch,
+	html .navy-theme ti-widget-toggle-button,
+	html .navy-theme paper-toggle-button {
+		--paper-toggle-button-unchecked-bar-color: #20405A;
+		--paper-toggle-button-checked-bar-color: #20405A;
+		--paper-toggle-button-unchecked-button-color: #fff;
+		--paper-toggle-button-checked-button-color: #4080B4;
+		--paper-toggle-button-unchecked-ink-color: #a3a3a3;
+		--paper-toggle-button-checked-ink-color: #a3a3a3;
+	}
+	html .navy-theme design-frame,
+	html .navy-theme paper-slider {
+		--paper-slider-active-color: #c00;
+		--paper-slider-secondary-color: #20405A;
+		--paper-slider-knob-color: #c00;
+		--paper-slider-pin-color: #c00;
+	}
+	html .navy-theme design-frame,
+	html .navy-theme ti-tile-slider,
+	html .navy-theme ti-tile-verticalslider,
+	html .navy-theme ti-widget-slider {
+		--ti-widget-slider-progress-color: #c00;
+		--ti-widget-slider-tick-color: #c00;
+		--ti-widget-ruler-font-color: #20405A;
+	}
+	html .navy-theme design-frame,
+	html .navy-theme paper-spinner:not([default-spinner]) {
+		--paper-spinner-layer-1-color: #20405A;
+		--paper-spinner-layer-2-color: #20405A;
+		--paper-spinner-layer-3-color: #20405A;
+		--paper-spinner-layer-4-color: #20405A;
+	}
+	html .navy-theme design-frame,
+	html .navy-theme ti-widget-statusbar {
+		--paper-progress-active-color: #c00;
+		--paper-progress-secondary-color: #20405A;
+	}
+	html .navy-theme design-frame,
+	html .navy-theme ti-widget-progressbar {
+		--ti-widget-progressbar-color: #c00;
+	}
+	html .lightgray-theme design-frame,
+	html .lightgray-theme ti-widget-checkbox,
+	html .lightgray-theme paper-checkbox,
+	html#designer-frame .designer-theme design-frame,
+	html#designer-frame .designer-theme ti-widget-checkbox,
+	html#designer-frame .designer-theme paper-checkbox {
+		--paper-checkbox-checked-color: #191919;
+		--paper-checkbox-checked-ink-color: #191919;
+		--paper-checkbox-unchecked-color: #ccc;
+		--paper-checkbox-unchecked-ink-color: #ccc;
+		--paper-checkbox-label-color: #222;
+	}
+	html .lightgray-theme design-frame,
+	html .lightgray-theme paper-menu,
+	html .lightgray-theme paper-fab,
+	html#designer-frame .designer-theme design-frame,
+	html#designer-frame .designer-theme paper-menu,
+	html#designer-frame .designer-theme paper-fab {
+		--iron-icon-fill-color: currentColor;	
+		--paper-fab-background: #f2f2f2;
+		--paper-fab-iron-icon: {
+			fill: #191919;
+		}
+	}
+	html .lightgray-theme design-frame,
+	html .lightgray-theme ti-widget-floating-action-button,
+	html#designer-frame .designer-theme design-frame,
+	html#designer-frame .designer-theme ti-widget-floating-action-button {
+		--ti-widget-floating-action-button-background: #f2f2f2;
+		--ti-widget-floating-action-button-color: #191919;
+	}
+	html .lightgray-theme design-frame,
+	html .lightgray-theme ti-widget-icon-button,
+	html#designer-frame .designer-theme design-frame,
+	html#designer-frame .designer-theme ti-widget-icon-button {
+		--ti-widget-icon-button-color: #191919;
+	}
+	html .lightgray-theme design-frame,
+	html .lightgray-theme ti-widget-tabcontainer,
+	html .lightgray-theme paper-tabs,
+	html#designer-frame .designer-theme design-frame,
+	html#designer-frame .designer-theme ti-widget-tabcontainer,
+	html#designer-frame .designer-theme paper-tabs {
+		--paper-tabs-selection-bar-color: #80cbc4;
+	}
+	html .lightgray-theme design-frame,
+	html .lightgray-theme ti-widget-tabcontainer,
+	html .lightgray-theme paper-tab,
+	html#designer-frame .designer-theme design-frame,
+	html#designer-frame .designer-theme ti-widget-tabcontainer,
+	html#designer-frame .designer-theme paper-tab {
+		--paper-tab-ink: #80cbc4;
+	}
+	html .lightgray-theme paper-tabs.transparent-teal,
+	html#designer-frame .designer-theme paper-tabs.transparent-teal {
+		--paper-tabs-selection-bar-color: #f2f2f2; 
+	}
+	html .lightgray-theme design-frame,
+	html .lightgray-theme paper-toast,
+	html#designer-frame .designer-theme design-frame,
+	html#designer-frame .designer-theme paper-toast {
+		--paper-toast-background-color: #323232;
+		--paper-toast-color: #f1f1f1;
+	}
+	html .lightgray-theme design-frame,
+	html .lightgray-theme ti-widget-toast,
+	html#designer-frame .designer-theme design-frame,
+	html#designer-frame .designer-theme ti-widget-toast {
+		--ti-widget-toast-background-color: #323232;
+		--ti-widget-toast-color: #f1f1f1;
+	} 
+	html .lightgray-theme design-frame,
+	html .lightgray-theme paper-dropdown-menu,
+	html .lightgray-theme ti-widget-input,
+	html .lightgray-theme paper-input, 
+	html#designer-frame .designer-theme design-frame,
+	html#designer-frame .designer-theme paper-dropdown-menu,
+	html#designer-frame .designer-theme ti-widget-input,
+	html#designer-frame .designer-theme paper-input {
+		--paper-input-container-color: #757575;
+		--paper-input-container-focus-color: #222;
+		--paper-input-container-invalid-color: #ef5350;
+		--paper-input-container-input-color: #222;
+	}
+	html .lightgray-theme design-frame,
+	html .lightgray-theme paper-progress,
+	html#designer-frame .designer-theme design-frame,
+	html#designer-frame .designer-theme paper-progress {
+		--paper-progress-active-color: #00cc00;
+		--paper-progress-secondary-color: #1e88e5;
+	}
+	html .lightgray-theme design-frame,
+	html .lightgray-theme ti-widget-radio-button,
+	html .lightgray-theme paper-radio-button,
+	html#designer-frame .designer-theme design-frame,
+	html#designer-frame .designer-theme ti-widget-radio-button,
+	html#designer-frame .designer-theme paper-radio-button {
+		--paper-radio-button-unchecked-background-color: #fff; 
+		--paper-radio-button-checked-color: #009688;
+		--paper-radio-button-unchecked-ink-color: #5a5a5a;
+		--paper-radio-button-checked-ink-color: #5a5a5a;
+	}
+	html .lightgray-theme design-frame,
+	html .lightgray-theme ti-tile-toggleswitch,
+	html .lightgray-theme ti-widget-toggle-button,
+	html .lightgray-theme paper-toggle-button,
+	html#designer-frame .designer-theme design-frame,
+	html#designer-frame .designer-theme ti-tile-toggleswitch,
+	html#designer-frame .designer-theme ti-widget-toggle-button,
+	html#designer-frame .designer-theme paper-toggle-button {
+		--paper-toggle-button-unchecked-bar-color: #f2f2f2;
+		--paper-toggle-button-checked-bar-color: #f2f2f2;
+		--paper-toggle-button-unchecked-button-color: #fff;
+		--paper-toggle-button-checked-button-color: #009688;
+		--paper-toggle-button-unchecked-ink-color: #a3a3a3;
+		--paper-toggle-button-checked-ink-color: #a3a3a3;
+	}
+	html .lightgray-theme design-frame,
+	html .lightgray-theme paper-slider,
+	html#designer-frame .designer-theme design-frame,
+	html#designer-frame .designer-theme paper-slider {
+		--paper-slider-active-color: #1f1f1f;
+		--paper-slider-secondary-color: #1e88e5;
+		--paper-slider-knob-color: #1f1f1f;
+		--paper-slider-pin-color: #1f1f1f;
+	}
+	html .lightgray-theme design-frame,
+	html .lightgray-theme ti-tile-slider,
+	html .lightgray-theme ti-tile-verticalslider,
+	html .lightgray-theme ti-widget-slider,
+	html#designer-frame .designer-theme design-frame,
+	html#designer-frame .designer-theme ti-tile-slider,
+	html#designer-frame .designer-theme ti-tile-verticalslider,
+	html#designer-frame .designer-theme ti-widget-slider {
+		--ti-widget-slider-progress-color: #1f1f1f;
+		--ti-widget-slider-tick-color: #1f1f1f;
+		--ti-widget-ruler-font-color: #222;
+	}
+	html .lightgray-theme design-frame,
+	html .lightgray-theme paper-spinner:not([default-spinner]),
+	html#designer-frame .designer-theme design-frame,
+	html#designer-frame .designer-theme paper-spinner:not([default-spinner]) {
+		--paper-spinner-layer-1-color: #f2f2f2;
+		--paper-spinner-layer-2-color: #f2f2f2;
+		--paper-spinner-layer-3-color: #f2f2f2;
+		--paper-spinner-layer-4-color: #f2f2f2;
+	}
+	html .lightgray-theme design-frame,
+	html .lightgray-theme ti-widget-statusbar,
+	html#designer-frame .designer-theme design-frame,
+	html#designer-frame .designer-theme ti-widget-statusbar {
+		--paper-progress-active-color: #00cc00;
+		--paper-progress-secondary-color: #1e88e5;
+	}
+	html .lightgray-theme design-frame,
+	html .lightgray-theme ti-widget-progressbar,
+	html#designer-frame .designer-theme design-frame,
+	html#designer-frame .designer-theme ti-widget-progressbar {
+		--ti-widget-progressbar-color: #00cc00;
+	}
+	html .black-theme design-frame,
+	html .black-theme ti-widget-checkbox,
+	html .black-theme paper-checkbox {
+		--paper-checkbox-checked-color: #191919;
+		--paper-checkbox-checked-ink-color: #191919;
+		--paper-checkbox-unchecked-color: #ccc;
+		--paper-checkbox-unchecked-ink-color: #ccc;
+		--paper-checkbox-label-color: #222;
+	}
+	html .black-theme design-frame,
+	html .black-theme paper-menu,
+	html .black-theme paper-fab {
+		--iron-icon-fill-color: currentColor;	
+		--paper-fab-background: #191919;
+		--paper-fab-iron-icon: {
+			fill: #fff;
+		}
+	}
+	html .black-theme design-frame,
+	html .black-theme ti-widget-floating-action-button {
+		--ti-widget-floating-action-button-background: #191919;
+		--ti-widget-floating-action-button-color: #fff;
+	}
+	html .black-theme design-frame,
+	html .black-theme ti-widget-icon-button {
+		--ti-widget-icon-button-color: #191919;
+	}
+	html .black-theme design-frame,
+	html .black-theme ti-widget-tabcontainer,
+	html .black-theme paper-tabs {
+		--paper-tabs-selection-bar-color: #80cbc4;
+	}
+	html .black-theme design-frame,
+	html .black-theme ti-widget-tabcontainer,
+	html .black-theme paper-tab {
+		--paper-tab-ink: #80cbc4;
+	}
+	html .black-theme paper-tabs.transparent-teal {
+		--paper-tabs-selection-bar-color: #191919; 
+	}
+	html .black-theme design-frame,
+	html .black-theme paper-toast {
+		--paper-toast-background-color: #323232;
+		--paper-toast-color: #f1f1f1;
+	}
+	html .black-theme design-frame,
+	html .black-theme ti-widget-toast {
+		--ti-widget-toast-background-color: #323232;
+		--ti-widget-toast-color: #f1f1f1;
+	} 
+	html .black-theme design-frame,
+	html .black-theme paper-dropdown-menu,
+	html .black-theme ti-widget-input,
+	html .black-theme paper-input {
+		--paper-input-container-color: #757575;
+		--paper-input-container-focus-color: #191919;
+		--paper-input-container-invalid-color: #ef5350;
+		--paper-input-container-input-color: #191919;
+	}
+	html .black-theme design-frame,
+	html .black-theme paper-progress {
+		--paper-progress-active-color: #1E88E5;
+		--paper-progress-secondary-color: #191919;
+	}
+	html .black-theme design-frame,
+	html .black-theme ti-widget-radio-button,
+	html .black-theme paper-radio-button {
+		--paper-radio-button-unchecked-background-color: #fff; 
+		--paper-radio-button-checked-color: #191919;
+		--paper-radio-button-unchecked-ink-color: #a3a3a3;
+		--paper-radio-button-checked-ink-color: #a3a3a3;
+	}
+	html .black-theme design-frame,
+	html .black-theme ti-tile-toggleswitch,
+	html .black-theme ti-widget-toggle-button,
+	html .black-theme paper-toggle-button {
+		--paper-toggle-button-unchecked-bar-color: #191919;
+		--paper-toggle-button-checked-bar-color: #191919;
+		--paper-toggle-button-unchecked-button-color: #fff;
+		--paper-toggle-button-checked-button-color: #191919;
+		--paper-toggle-button-unchecked-ink-color: #a3a3a3;
+		--paper-toggle-button-checked-ink-color: #a3a3a3;
+	}
+	html .black-theme design-frame,
+	html .black-theme paper-slider {
+		--paper-slider-active-color: #1E88E5;
+		--paper-slider-secondary-color: #191919;
+		--paper-slider-knob-color: #1E88E5;
+		--paper-slider-pin-color: #1E88E5;
+	}
+	html .black-theme design-frame,
+	html .black-theme ti-tile-slider,
+	html .black-theme ti-tile-verticalslider,
+	html .black-theme ti-widget-slider {
+		--ti-widget-slider-progress-color: #1E88E5;
+		--ti-widget-slider-tick-color: #1E88E5;
+		--ti-widget-ruler-font-color: #222;
+	}
+	html .black-theme design-frame,
+	html .black-theme paper-spinner:not([default-spinner]) {
+		--paper-spinner-layer-1-color: #191919;
+		--paper-spinner-layer-2-color: #191919;
+		--paper-spinner-layer-3-color: #191919;
+		--paper-spinner-layer-4-color: #191919;
+	}
+	html .black-theme design-frame,
+	html .black-theme ti-widget-statusbar {
+		--paper-progress-active-color: #1E88E5;
+		--paper-progress-secondary-color: #191919;
+	}
+	html .black-theme design-frame,
+	html .black-theme ti-widget-progressbar {
+		--ti-widget-progressbar-color: #1E88E5;
+	}
+
+
+    /* flex layout attribute definitions supported by the designer */
+    [layout][horizontal] {
+    	@apply(--layout-horizontal);
+    }
+    [layout][vertical] {
+    	@apply(--layout-vertical);
+    }
+    [flex],
+    [flex][one] {
+    	@apply(--layout-flex);
+	}	    
+    [flex][two] {
+    	@apply(--layout-flex-2);
+	}	    
+    [flex][three] {
+    	@apply(--layout-flex-3);
+	}	    
+    [flex][four] {
+    	@apply(--layout-flex-4);
+	}	    
+    [flex][five] {
+    	@apply(--layout-flex-5);
+	}	    
+    [flex][six] {
+    	@apply(--layout-flex-6);
+	}	    
+    [flex][seven] {
+    	@apply(--layout-flex-7);
+	}	    
+    [flex][eight] {
+    	@apply(--layout-flex-8);
+	}	    
+    [flex][nine] {
+    	@apply(--layout-flex-9);
+	}	    
+    [flex][ten] {
+    	@apply(--layout-flex-10);
+	}	    
+    [flex][eleven] {
+    	@apply(--layout-flex-11);
+	}	    
+    [flex][twelve] {
+    	@apply(--layout-flex-12);
+	}
+	[layout][start-justified] {
+		@apply(--layout-start-justified);
+	}	    
+	[layout][center-justified] {
+		@apply(--layout-center-justified);
+	}	    
+	[layout][end-justified] {
+		@apply(--layout-end-justified);
+	}	    
+	[layout][around-justified] {
+		@apply(--layout-around-justified);
+	}	    
+	[layout][justified] {
+		@apply(--layout-justified);
+	}	    
+	[layout][start] {
+		@apply(--layout-start);
+	}
+	[layout][center] {
+		@apply(--layout-center);
+	}
+	[layout][end] {
+		@apply(--layout-end);
+	}
+	[wrap] {
+		@apply(--layout-wrap);
+	}
+	[wrap-reverse] {
+		@apply(--layout-wrap-reverse);
+	}
+	[layout] > * {
+		flex-shrink: 0;  
+	}
+    </style>
+<!--
+`ti-core-stylesheets` pulls in the selected css stylesheet in order to 'theme' the widgets.
+ To use the selected stylesheet, simply use this component in your design or link to this
+ component's html file in your index.html:
+
+Example:
+
+   &lt;link rel="import" src="../designer/components/ti-core-stylesheets.html"&gt;
+
+See demo.html to select the theme to use and to see a working example of the widgets styled using the selected theme.
+
+@group TI Core
+@demo demo.html
+@element ti-core-stylesheets
+@homepage ../ti-guicomposer-helpindex/demo.html
+-->
+
+<!-- <script>
+    var gc = gc || {};
+    if (window.parent.gc)
+    {
+        // take the designer from the parent iframe, if available.
+        gc.designer = gc.designer || window.parent.gc.designer;
+    }
+    if (window.global && global.document && global.document.gc)
+    {
+        // take the designer from the global node-webkit document if available
+        gc.designer = gc.designer || global.document.gc.designer;
+    }
+
+    (function() {
+		var rightMargin  			= 5;
+		var bottomMargin 			= 0;
+		var poweredBy 				= document.createElement("div");
+		poweredBy.innerHTML 		= "Powered By GUI Composer&trade;";
+		poweredBy.style.position 	= "absolute";
+		poweredBy.style.color 		= "#000";
+		poweredBy.style.fontStyle	= "italic";
+		poweredBy.style.fontSize	= "x-small";
+		poweredBy.style.zIndex		= 9999;
+		poweredBy.style.position	= "fixed";
+		poweredBy.style.right		= rightMargin + "px";
+		poweredBy.style.bottom		= bottomMargin + "px";
+        poweredBy.setAttribute("class", "poweredby-gc");
+
+        var onDocumentLoaded = function() 
+        {
+            if (gc.localStorage && window.location.pathname.indexOf('/components/') >= 0 && window.location.pathname.indexOf('demo.html') > 0)
+            {
+	            document.querySelector('body').className = gc.localStorage.getItem('gc.designer.defaultTheme') || 'ti-theme';
+	            setTimeout(function() {
+		            Polymer.updateStyles();
+	            }, 10);
+            }
+            
+            if (!gc.designer) 
+            {
+	     		document.body.appendChild(poweredBy);
+            }
+        };
+        
+        if (document.querySelector('body'))
+        {
+            onDocumentLoaded();
+        }
+        else
+        {
+            document.addEventListener( "DOMContentLoaded", onDocumentLoaded);
+        }
+
+        function updatePoweredByPosition() {
+            if (poweredBy) {
+                try {
+                    var container = Polymer.dom(document).querySelector('ti-widget-container');
+                    var scrollerWidth = container && (container.scrollHeight > container.clientHeight) ? 15 : 0;
+                    var scrollerHeight = container && (container.scrollWidth > container.clientWidth) ? 15 : 0;
+                    
+					poweredBy.style.right  = rightMargin + scrollerWidth + "px";
+					poweredBy.style.bottom = bottomMargin + scrollerHeight + "px"
+					
+                } catch (e) {
+                    console.log(e);
+                }
+            }
+        }
+
+        addEventListener("ti-widget-statusbar-attached", function(event) {
+            if (!gc.designer && !gc.desktop.isCCS()) {
+                bottomMargin = event.detail.footer.getClientRects()[0].height + 3;
+                updatePoweredByPosition();
+            }
+        }.bind(this));
+
+        addEventListener("resize", function() {
+            updatePoweredByPosition();
+        });
+
+		var firstTime = true;
+        addEventListener('WebComponentsReady', function () {
+            setTimeout(function() {
+                updatePoweredByPosition();
+            }, 200);
+            if (firstTime)
+            {
+                firstTime = false;
+                var counter = 10;
+                var masterChromeHack = setInterval(function() 
+                {
+                    try 
+                    {
+                        if (counter-- <= 0)
+                        {
+                            clearInterval(masterChromeHack);
+                        }
+                        var a = document.styleSheets[0].cssRules.item(0);
+                        a.style.fontWeight = "normal";
+                    } 
+                    catch(e) 
+                    {
+                    }
+                }, 1000);
+            }
+        });
+    }());
+</script> -->
+<!-- <dom-module> -->
+</template>
+	<!-- <script>
+      	Polymer ({
+        	is: 'ti-core-stylesheets'
+    	});
+	</script> -->
+</dom-module>

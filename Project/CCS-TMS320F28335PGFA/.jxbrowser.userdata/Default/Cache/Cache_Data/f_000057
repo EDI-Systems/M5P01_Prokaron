@@ -1,0 +1,485 @@
+
+<!--
+Copyright (c) 2014 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<!--
+    Copyright (c) 2015, Texas Instruments Incorporated
+    All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without
+    modification, are permitted provided that the following conditions
+    are met:
+
+    *   Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
+    notice, this list of conditions and the following disclaimer in the
+    documentation and/or other materials provided with the distribution.
+    *   Neither the name of Texas Instruments Incorporated nor the names of
+    its contributors may be used to endorse or promote products derived
+    from this software without specific prior written permission.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+    AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+    THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+    PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+    CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+    EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+    PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+    OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+    WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+    OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+    EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<!-- Polymer 1.2 - see http://stackoverflow.com/questions/30608194/polymer-1-0-default-icon-set-in-iron-icons-not-working-using-blaze-meteor-temp/30713035#30713035
+ for info on why NOT to import the following before definint the ti-core-icons!
+<link rel="import" href="../iron-icon/iron-icon.html">
+<link rel="import" href="../iron-iconset-svg/iron-iconset-svg.html">
+-->
+
+<!--
+`ti-core-icons` is a utility import that provides a set of icons that are commonly used in TI applications.
+
+Example loading icon set:
+
+    <link rel="import" href="../ti-core-icons/ti-core-icons.html">
+
+To use an icon from the set, first prefix your `iron-icon` with the icon set name (ti-core-icons), followed by a colon, ":", and then the icon id.
+
+Example using the ti-logo icon from the TI core icon set:
+
+    <iron-icon icon="ti-core-icons:ti-logo"></iron-icon>
+
+
+See [iron-icon](#iron-icon) for more information about working with icons.
+
+See [iron-iconset](#iron-iconset) and [iron-iconset-svg](#iron-iconset-svg) for more information about how to create a custom iconset.
+
+For more information on how to use and create icons, please see the following tutorial videos:
+<list>
+<li><a href="https://www.youtube.com/watch?v=jrt7sMq9lO0" target="_blank">Core Iconset -- Polycasts #01</a></li>
+<li><a href="https://www.youtube.com/watch?v=xfiOJP8vuX4" target="_blank">Core Iconset -- Polycasts #02</a></li>
+</list>
+
+<a href="https://inkscape.org/en/" target="_blank">Inkscape</a> is a useful free open-source SVG editor.
+
+@group Ti Elements
+@pseudoElement ti-core-icons
+@homepage ../ti-guicomposer-helpindex/demo.html
+@hero hero.svg
+@demo demo/index.html
+-->
+<link rel="import" href="../iron-icon/iron-icon.html">
+<link rel="import" href="../iron-iconset-svg/iron-iconset-svg.html">
+<link rel="import" href="../paper-styles/typography.html">
+
+<iron-iconset-svg name="ti-core-icons" size="24">
+  <svg><defs>
+    <g id="link"><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></g>
+    <g id="link-off"><path d="M 3.9,12 C 3.9,10.29 5.29,8.9 7,8.9 l 4,0 L 11,7 7,7 c -2.76,0 -5,2.24 -5,5 0,2.76 2.24,5 5,5 l 4,0 0,-1.9 -4,0 C 5.29,15.1 3.9,13.71 3.9,12 Z m 3.2792511,-5.502857 1.0276213,1.5349583 2.0062066,2.8292167 -2.4132107,0.01973 0.071865,1.951252 3.6389702,-0.03749 3.794813,5.918862 1.704633,-1.179251 -3.546797,-4.86925 2.112192,-0.01776 -0.192219,-1.880226 -2.90982,0.02762 L 9.0101525,5.2547574 Z M 17,7 l -4,0 0,1.9 4,0 c 1.71,0 3.1,1.39 3.1,3.1 0,1.71 -1.39,3.1 -3.1,3.1 l -4,0 L 13.06314,17 17,17 c 2.76,0 5,-2.24 5,-5 0,-2.76 -2.24,-5 -5,-5 z" /></g>
+    <g id="nolink"><path d="M 1.9,12 C 1.9,10.29 3.290139,8.9218015 5,8.9 L 7.9515501,8.8368655 6.8706034,7 5,7 c -2.76,0 -5,2.24 -5,5 0,2.76 2.2400952,4.977079 5,5 L 8.375,17.04464 7.2832213,15.1 5,15.1 C 3.29,15.1 1.9,13.71 1.9,12 Z M 17,7 13.54786,7.0631345 14.691942,8.9 17,8.9 c 1.71,0 3.1,1.39 3.1,3.1 0,1.71 -1.39,3.1 -3.1,3.1 L 14.205357,15.189286 15.36027,17 17,17 c 2.76,0 5,-2.24 5,-5 0,-2.76 -2.24,-5 -5,-5 z"/></g>
+
+    <g id="ti-logo"
+       transform="translate(-287.09823,-6.2506888)">
+      <g
+              transform="matrix(0.44731107,0,0,-0.44731107,275.99918,37.260049)"
+              style="fill-opacity:1;stroke:#000000;stroke-opacity:0.9881657">
+        <g
+                transform="scale(0.1,0.1)"
+                style="fill-opacity:1;stroke:#000000;stroke-opacity:0.9881657">
+          <g
+                  style="fill-opacity:1;stroke:#000000;stroke-opacity:0.9881657">
+            <g
+                    clip-path="url(#clipPath18)"
+                    style="fill-opacity:1;stroke:#000000;stroke-opacity:0.9881657">
+              <path
+                      d="m 586.66,668.449 -43.316,0 -8.285,-41.808 43.308,0 8.293,41.808 z m -49.211,-249.347 37.578,189.464 -43.308,0 -37.571,-189.464 43.301,0 z m 145.809,133.71 0,55.754 -89.395,0 -11.265,-56.25 32.16,0 -10.309,-51.695 -32.168,0 -11.148,-56.031 c -0.86,-3.809 -1.488,-6.543 -1.903,-9.18 -2.625,-17.148 4.868,-16.308 28.934,-16.308 l -11,-55.086 -42.086,0 c -39.785,0 -72.148,0.398 -63.734,41.074 1.316,6.355 2.918,12.508 4.07,18.582 l 15.031,76.949 -30.918,0 10.332,51.695 30.907,0 11.277,56.25 -28.938,0 0,84.774 -107.035,0 0,-172.488 -128.05,0 c 3.164,-44.727 42.757,-51.235 57.171,-83.008 9.93,-21.895 18.625,-60.383 47.657,-60.735 22.234,-0.273 22.234,28.75 50.843,28.75 28.59,0 41.289,-54.297 66.707,-99.023 19.067,-35.125 50.723,-58.672 79.422,-60.664 23.543,-1.629 34.942,6.367 34.942,6.367 -6.348,12.793 -9.532,25.559 -9.532,44.707 0,28.77 22.243,57.473 47.657,76.641 34.941,25.597 73.07,35.195 85.781,38.34 l 0,89.445 c 0,0 -25.41,13.605 -25.41,51.14"
+                      style="fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-opacity:0.9881657" />
+            </g>
+          </g>
+        </g>
+      </g>
+    </g>
+    <g id="ti-horizontal"
+       transform="translate(-287.09823,-6.2506888)">
+      <g
+              transform="matrix(0.53742545,0,0,-0.53742545,281.769,45.512545)"
+              style="stroke:#000000;stroke-opacity:0.98816568;fill-opacity:1">
+        <g
+                transform="scale(0.1,0.1)"
+                style="stroke:#000000;stroke-opacity:0.98816568;fill-opacity:1">
+          <g
+                  style="stroke:#000000;stroke-opacity:0.98816568;fill-opacity:1">
+            <g
+                    clip-path="url(#clipPath18)"
+                    style="stroke:#000000;stroke-opacity:0.98816568;fill-opacity:1">
+              <path
+                      d="m 1615.45,364.004 c 0,2.922 2.92,9.101 6.55,9.101 8.37,-3.992 22.58,-12.371 48.8,-12.371 44.06,0 75.02,21.844 75.02,58.993 0,34.953 -19.32,49.16 -56.45,57.535 l -33.87,7.644 c -19.3,4.371 -25.49,9.836 -25.49,21.848 0,13.848 10.92,22.945 34.96,22.945 26.94,0 48.07,-12.754 63.36,-30.226 l 4.74,3.277 -13.85,48.07 -8.73,0 c 0,-4.004 -1.81,-8.379 -5.46,-8.379 -8.02,4.375 -20.4,11.286 -41.51,11.286 -37.88,0 -67.37,-19.665 -67.37,-55.348 0,-27.313 16.38,-44.426 52.07,-52.43 l 32.05,-7.297 c 21.48,-4.726 29.11,-12.363 29.11,-25.847 0,-18.567 -14.91,-28.41 -39.31,-28.41 -34.24,0 -56.08,17.851 -73.92,38.605 l -4.74,-3.273 14.92,-55.723 9.12,0 z m -129.63,154.414 29.91,-81.57 -61,0 31.09,81.57 z m -243.95,4.727 46.62,-65.926 -44.09,-62.629 c -13.46,-18.926 -21.48,-21.485 -33.86,-24.395 l 0,-6.191 70.65,0 0,6.191 c -13.48,2.559 -19.31,7.657 -10.19,21.856 l 30.87,48.261 32.49,-46.804 c 12.01,-17.121 -0.74,-21.848 -11.66,-23.313 l 0,-6.191 127.8,0 0,6.191 c -12.75,2.188 -18.58,6.563 -12.02,24.043 l 8.33,21.848 76.52,0 8.01,-21.848 c 5.1,-14.199 3.27,-21.855 -11.66,-24.043 l 0,-6.191 78.66,0 0,6.191 c -9.1,2.91 -17.48,10.567 -21.48,21.125 l -60.82,159.5 -41.51,0 -58.27,-148.574 c -6.21,-15.43 -11.86,-22.695 -18.02,-26.894 -4.82,3.046 -9.24,7.683 -15.1,15.968 l -51.22,72.606 41.4,58.484 c 10.92,15.656 20.02,18.938 30.94,22.215 l 0,6.195 -66.63,0 0,-6.195 c 13.83,-1.09 17.84,-8.734 9.83,-20.758 l -28.89,-42.797 -26.09,39.164 c -10.93,16.02 -2.92,22.578 9.1,24.391 l 0,6.195 -88.48,0 0,-6.195 c 12.36,-3.277 18.56,-6.914 28.77,-21.48 z m -196.27,21.48 c 12,-3.277 18.2,-6.184 18.2,-24.391 l 0,-125.644 c 0,-18.563 -6.2,-21.485 -18.2,-24.395 l 0,-6.191 152.57,0 17.48,43.699 -4.75,3.274 c -15.29,-20.02 -31.31,-24.766 -52.43,-24.766 l -39.33,0 c -12.38,0 -15.29,0.383 -15.29,12.402 l 0,52.434 47.7,0 c 18.58,0 21.48,-4.375 24.41,-15.293 l 7.27,0 0,52.43 -7.27,0 c -2.93,-10.922 -5.83,-15.661 -24.41,-15.661 l -47.7,0 0,44.059 c 0,9.102 2.91,12.027 15.29,12.027 0,0 30.6,0 33.51,0 21.48,0 32.77,-5.464 49.16,-22.949 l 4.73,3.281 -15.29,41.879 -145.65,0 0,-6.195 z m -92.139,25.125 0,-175.16 c 0,-18.563 -9.453,-21.485 -18.566,-24.395 l 0,-6.191 80.845,0 0,6.191 c -9.1,2.91 -18.584,5.832 -18.584,24.395 l 0,175.16 c 0,10.562 3.284,13.113 17.124,13.113 37.87,0 56.44,-0.722 69.91,-21.847 l 4.73,2.906 -15.28,44.789 -197.015,0 -15.293,-44.789 4.738,-2.906 c 16.391,20.746 29.129,21.847 70.278,21.847 13.832,0 17.113,-2.551 17.113,-13.113"
+                      style="fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-opacity:0.98816568;" />
+              <path
+                      d="m 3791.57,477.227 -33.86,7.652 c -19.3,4.371 -25.49,9.824 -25.49,21.84 0,13.847 10.91,22.949 34.94,22.949 26.94,0 48.07,-12.742 63.38,-30.223 l 4.73,3.274 -13.84,48.074 -8.74,0 c 0,-4.008 -1.84,-8.383 -5.47,-8.383 -8.01,4.375 -20.38,11.289 -41.53,11.289 -37.85,0 -67.33,-19.66 -67.33,-55.344 0,-27.316 16.38,-44.429 52.06,-52.437 l 32.05,-7.293 c 21.47,-4.738 29.13,-12.375 29.13,-25.859 0,-18.567 -14.92,-28.391 -39.34,-28.391 -34.24,0 -56.08,17.832 -73.9,38.594 l -4.76,-3.27 14.93,-55.722 9.11,0 c 0,2.918 2.92,9.109 6.54,9.109 8.39,-4.004 22.59,-12.391 48.8,-12.391 44.06,0 75.04,21.864 75.04,59.004 0,34.949 -19.32,49.153 -56.45,57.528 z m -266.56,73.566 -14.94,-48.074 4.72,-3.274 c 20.02,26.582 25.51,29.133 52.09,29.133 9.11,0 12.02,-0.73 12.02,-12.019 l 0,-122.008 c 0,-18.563 -5.47,-21.465 -20.39,-24.383 l 0,-6.191 80.13,0 0,6.191 c -14.59,2.918 -20.41,5.82 -20.41,24.383 l 0,122.008 c 0,11.289 2.91,12.019 12.01,12.019 26.59,0 33.52,-2.551 53.54,-29.133 l 4.73,3.274 -14.93,48.074 -148.57,0 z m -75.37,-6.191 c 10.92,-3.274 17.11,-6.196 17.11,-24.395 l 0,-76.477 -1.1,0 -93.96,107.063 -54.99,0 0,-6.191 c 10.93,-4.727 18.23,-8.375 18.23,-24.395 l 0,-125.656 c 0,-17.473 -6.2,-21.465 -18.23,-24.383 l 0,-6.191 62.27,0 0,6.191 c -9.84,2.918 -19.3,6.91 -19.3,24.383 l 0,108.535 1.08,0 124.18,-141.66 6.57,0 0,158.781 c 0,18.199 9.12,21.121 16.4,24.395 l 0,6.191 -58.26,0 0,-6.191 z m -194.47,-158.411 -39.32,0 c -12.4,0 -15.31,0.364 -15.31,12.375 l 0,52.43 47.7,0 c 18.59,0 21.49,-4.355 24.41,-15.293 l 7.28,0 0,52.453 -7.28,0 c -2.92,-10.929 -5.82,-15.656 -24.41,-15.656 l -47.7,0 0,44.059 c 0,9.101 2.91,12.019 15.31,12.019 0,0 30.58,0 33.5,0 21.46,0 32.75,-5.469 49.16,-22.949 l 4.72,3.281 -15.3,41.883 -145.65,0 0,-6.191 c 12.01,-3.274 18.22,-6.196 18.22,-24.395 l 0,-125.656 c 0,-18.563 -6.21,-21.465 -18.22,-24.383 l 0,-6.191 152.57,0 17.48,43.699 -4.72,3.281 c -15.31,-20.039 -31.33,-24.766 -52.44,-24.766 z m -245.45,43.332 -53.9,121.27 -66.99,0 0,-6.191 c 12.01,-3.274 18.19,-6.196 18.19,-24.395 l 0,-125.656 c 0,-16.375 -6.91,-20.742 -18.19,-24.383 l 0,-6.191 59.34,0 0,6.191 c -12.37,3.27 -17.83,8.008 -17.83,24.383 l 0,117.281 67.37,-150.777 5.1,0 65.55,150.777 0,-117.281 c 0,-18.563 -8.02,-21.836 -17.12,-24.383 l 0,-6.191 76.47,0 0,6.191 c -12.02,2.918 -18.21,5.82 -18.21,24.383 l 0,125.656 c 0,18.199 6.19,21.121 18.21,24.395 l 0,6.191 -65.91,0 -52.08,-121.27 z M 2816,544.602 c 9.45,-2.192 18.56,-6.196 18.56,-24.395 l 0,-92.141 c 0,-30.566 -11.65,-44.062 -46.25,-44.062 -36.78,0 -49.89,13.496 -49.89,44.062 l 0,92.141 c 0,18.199 6.92,22.203 18.2,24.395 l 0,6.191 -76.45,0 0,-6.191 c 11.29,-1.821 18.56,-6.196 18.56,-24.395 l 0,-95.059 c 0,-49.882 43.33,-64.453 84.12,-64.453 45.52,0 77.94,15.293 77.94,67.371 l 0,92.141 c 0,18.199 5.47,21.844 16.76,24.395 l 0,6.191 -61.55,0 0,-6.191 z m -232.33,-81.575 -32.06,0 0,49.524 c 0,12.019 2.93,15.297 12.03,15.297 l 20.76,0 c 22.57,0 35.68,-8.735 35.68,-30.59 0,-22.942 -14.92,-34.231 -36.41,-34.231 z m 66.64,-43.711 c -11.3,18.223 -22.95,26.231 -36.41,29.512 l 0,1.094 c 32.04,5.098 50.24,21.851 50.24,49.164 0,36.414 -29.13,51.707 -76.11,51.707 l -95.75,0 0,-6.191 c 12.01,-3.274 18.2,-6.196 18.2,-24.395 l 0,-125.656 c 0,-18.563 -6.19,-21.465 -18.2,-24.383 l 0,-6.191 78.28,0 0,6.191 c -11.29,2.918 -18.95,5.82 -18.95,24.383 l 0,46.621 19.32,0 c 22.57,0 25.86,-9.094 40.42,-39.688 12.01,-25.125 28.04,-40.789 58.26,-40.789 15.3,0 21.49,2.918 27.68,6.2 l 0,5.097 c -24.41,3.633 -32.43,23.653 -46.98,47.324 z m -324.46,131.477 -14.94,-48.074 4.73,-3.274 c 20.03,26.582 25.51,29.133 52.08,29.133 9.11,0 12.02,-0.73 12.02,-12.019 l 0,-122.008 c 0,-18.563 -5.45,-21.465 -20.39,-24.383 l 0,-6.191 80.12,0 0,6.191 c -14.58,2.918 -20.41,5.82 -20.41,24.383 l 0,122.008 c 0,11.289 2.92,12.019 12.02,12.019 26.59,0 33.51,-2.551 53.53,-29.133 l 4.75,3.274 -14.94,48.074 -148.57,0 z m -67.38,-73.566 -33.85,7.652 c -19.32,4.371 -25.51,9.824 -25.51,21.84 0,13.847 10.93,22.949 34.96,22.949 26.96,0 48.07,-12.742 63.38,-30.223 l 4.73,3.274 -13.83,48.074 -8.75,0 c 0,-4.008 -1.82,-8.383 -5.46,-8.383 -8.02,4.375 -20.38,11.289 -41.51,11.289 -37.87,0 -67.39,-19.66 -67.39,-55.344 0,-27.316 16.41,-44.429 52.09,-52.437 l 32.04,-7.293 c 21.5,-4.738 29.14,-12.375 29.14,-25.859 0,-18.567 -14.93,-28.391 -39.33,-28.391 -34.23,0 -56.08,17.832 -73.94,38.594 l -4.72,-3.27 14.93,-55.722 9.11,0 c 0,2.918 2.9,9.109 6.54,9.109 8.38,-4.004 22.58,-12.391 48.81,-12.391 44.06,0 75.02,21.864 75.02,59.004 0,34.949 -19.3,49.153 -56.46,57.528 z m -162.77,67.375 c 10.92,-3.274 17.12,-6.196 17.12,-24.395 l 0,-76.477 -1.09,0 -93.96,107.063 -54.99,0 0,-6.191 c 10.93,-4.727 18.21,-8.375 18.21,-24.395 l 0,-125.656 c 0,-17.473 -6.2,-21.465 -18.21,-24.383 l 0,-6.191 62.29,0 0,6.191 c -9.85,2.918 -19.31,6.91 -19.31,24.383 l 0,108.535 1.1,0 124.17,-141.66 6.54,0 0,158.781 c 0,18.199 9.11,21.121 16.4,24.395 l 0,6.191 -58.27,0 0,-6.191 z M 1863.74,602.5 c 11.29,-3.281 20.38,-6.191 20.38,-24.395 l 0,-183.554 c 0,-18.563 -9.09,-21.465 -20.38,-24.383 l 0,-6.191 84.49,0 0,6.191 c -11.29,2.918 -20.4,5.82 -20.4,24.383 l 0,183.554 c 0,18.204 9.11,21.114 20.4,24.395 l 0,6.191 -84.49,0 0,-6.191"
+                      style="fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-opacity:0.98816568;" />
+              <path
+                      d="m 586.66,668.449 -43.316,0 -8.285,-41.808 43.308,0 8.293,41.808 z m -49.211,-249.347 37.578,189.464 -43.308,0 -37.571,-189.464 43.301,0 z m 145.809,133.71 0,55.754 -89.395,0 -11.265,-56.25 32.16,0 -10.309,-51.695 -32.168,0 -11.148,-56.031 c -0.86,-3.809 -1.488,-6.543 -1.903,-9.18 -2.625,-17.148 4.868,-16.308 28.934,-16.308 l -11,-55.086 -42.086,0 c -39.785,0 -72.148,0.398 -63.734,41.074 1.316,6.355 2.918,12.508 4.07,18.582 l 15.031,76.949 -30.918,0 10.332,51.695 30.907,0 11.277,56.25 -28.938,0 0,84.774 -107.035,0 0,-172.488 -128.05,0 c 3.164,-44.727 42.757,-51.235 57.171,-83.008 9.93,-21.895 18.625,-60.383 47.657,-60.735 22.234,-0.273 22.234,28.75 50.843,28.75 28.59,0 41.289,-54.297 66.707,-99.023 19.067,-35.125 50.723,-58.672 79.422,-60.664 23.543,-1.629 34.942,6.367 34.942,6.367 -6.348,12.793 -9.532,25.559 -9.532,44.707 0,28.77 22.243,57.473 47.657,76.641 34.941,25.597 73.07,35.195 85.781,38.34 l 0,89.445 c 0,0 -25.41,13.605 -25.41,51.14"
+                      style="fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-opacity:0.98816568;" />
+            </g>
+          </g>
+        </g>
+      </g>
+    </g>
+    <g id="mqtt-send-receive"><path d="M7.77 6.76L6.23 5.48.82 12l5.41 6.52 1.54-1.28L3.42 12l4.35-5.24zM7 13h2v-2H7v2zm10-2h-2v2h2v-2zm-6 2h2v-2h-2v2zm6.77-7.52l-1.54 1.28L20.58 12l-4.35 5.24 1.54 1.28L23.18 12l-5.41-6.52z"/></g>
+    <g id="mqtt-send"><path d="M7 13h2v-2H7v2zm10-2h-2v2h2v-2zm-6 2h2v-2h-2v2zm6.77-7.52l-1.54 1.28L20.58 12l-4.35 5.24 1.54 1.28L23.18 12l-5.41-6.52z"/></g>
+    <g id="mqtt-receive"><path d="M7.77 6.76L6.23 5.48.82 12l5.41 6.52 1.54-1.28L3.42 12l4.35-5.24zM7 13h2v-2H7v2zm10-2h-2v2h2v-2zm-6 2h2v-2h-2v2z"/></g>
+    <g id="mqtt-device-active"><path d="M6 3H3v3c1.66 0 3-1.34 3-3zm8 0h-2c0 4.97-4.03 9-9 9v2c6.08 0 11-4.93 11-11zm-4 0H8c0 2.76-2.24 5-5 5v2c3.87 0 7-3.13 7-7zm0 18h2c0-4.97 4.03-9 9-9v-2c-6.07 0-11 4.93-11 11zm8 0h3v-3c-1.66 0-3 1.34-3 3zm-4 0h2c0-2.76 2.24-5 5-5v-2c-3.87 0-7 3.13-7 7z"/></g>
+    <g id="mqtt-device-inactive"><path d="M10 3H8c0 .37-.04.72-.12 1.06l1.59 1.59C9.81 4.84 10 3.94 10 3zM3 4.27l2.84 2.84C5.03 7.67 4.06 8 3 8v2c1.61 0 3.09-.55 4.27-1.46L8.7 9.97C7.14 11.24 5.16 12 3 12v2c2.71 0 5.19-.99 7.11-2.62l2.5 2.5C10.99 15.81 10 18.29 10 21h2c0-2.16.76-4.14 2.03-5.69l1.43 1.43C14.55 17.91 14 19.39 14 21h2c0-1.06.33-2.03.89-2.84L19.73 21 21 19.73 4.27 3 3 4.27zM14 3h-2c0 1.5-.37 2.91-1.02 4.16l1.46 1.46C13.42 6.98 14 5.06 14 3zm5.94 13.12c.34-.08.69-.12 1.06-.12v-2c-.94 0-1.84.19-2.66.52l1.6 1.6zm-4.56-4.56l1.46 1.46C18.09 12.37 19.5 12 21 12v-2c-2.06 0-3.98.58-5.62 1.56z"/></g>
+    <g id="drop-down-arrow-chrome">
+      <g transform="translate(9,9)">
+        <path d="M 0.055,0.04906 H 6.633 L 3.546,7.003 Z"
+              style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.25694963px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+      </g>
+    </g>
+    <g id="drop-down-arrow-firefox">
+      <g transform="translate(4,9)">
+        <g transform="scale(0.6,0.6)">
+          <path d="m 6,2 6,7 6,-7"
+                style="fill:none;stroke:#222222;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+        </g>
+      </g>
+    </g>
+    <g id="drop-down-arrow-safari">
+      <g transform="translate(2.5,-22)">
+        <g transform="scale(0.45,0.45)">
+          <path
+                  style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-opacity:0"
+                  d="M 11.942374,71.907079 H 28.611735 L 20.235124,56.816239 Z" />
+          <path
+                  style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-opacity:0"
+                  d="m 11.942374,77.934911 h 16.669361 l -8.376611,15.09084 z" />
+        </g>
+      </g>
+    </g>
+    <g id="keypad-0"><text x="4" y="21"; style="font-size:24px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">0</text></g>
+    <g id="keypad-1"><text x="4" y="21"; style="font-size:24px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">1</text></g>
+    <g id="keypad-2"><text x="4" y="21"; style="font-size:24px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">2</text></g>
+    <g id="keypad-3"><text x="4" y="21"; style="font-size:24px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">3</text></g>
+    <g id="keypad-4"><text x="4" y="21"; style="font-size:24px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">4</text></g>
+    <g id="keypad-5"><text x="4" y="21"; style="font-size:24px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">5</text></g>
+    <g id="keypad-6"><text x="4" y="21"; style="font-size:24px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">6</text></g>
+    <g id="keypad-7"><text x="4" y="21"; style="font-size:24px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">7</text></g>
+    <g id="keypad-8"><text x="4" y="21"; style="font-size:24px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">8</text></g>
+    <g id="keypad-9"><text x="4" y="21"; style="font-size:24px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">9</text></g>
+    <g id="keypad-a"><text x="3" y="21"; style="font-size:24px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">A</text></g>
+    <g id="keypad-b"><text x="3" y="21"; style="font-size:24px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">B</text></g>
+    <g id="keypad-c"><text x="3" y="21"; style="font-size:24px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">C</text></g>
+    <g id="keypad-d"><text x="3" y="21"; style="font-size:24px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">D</text></g>
+    <g id="keypad-e"><text x="3" y="21"; style="font-size:24px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">E</text></g>
+    <g id="keypad-f"><text x="3" y="21"; style="font-size:24px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">F</text></g>
+    <g id="keypad-g"><text x="1" y="21"; style="font-size:24px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">G</text></g>
+    <g id="keypad-h"><text x="2" y="21"; style="font-size:24px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">H</text></g>
+    <g id="keypad-i"><text x="7" y="21"; style="font-size:24px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">I</text></g>
+    <g id="keypad-j"><text x="3" y="21"; style="font-size:24px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">J</text></g>
+    <g id="keypad-k"><text x="2" y="21"; style="font-size:24px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">K</text></g>
+    <g id="keypad-l"><text x="3" y="21"; style="font-size:24px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">L</text></g>
+    <g id="keypad-m"><text x="1" y="21"; style="font-size:24px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">M</text></g>
+    <g id="keypad-n"><text x="2" y="21"; style="font-size:24px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">N</text></g>
+    <g id="keypad-o"><text x="2" y="21"; style="font-size:24px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">O</text></g>
+    <g id="keypad-p"><text x="3" y="21"; style="font-size:24px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">P</text></g>
+    <g id="keypad-q"><text x="1" y="21"; style="font-size:24px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">Q</text></g>
+    <g id="keypad-r"><text x="3" y="21"; style="font-size:24px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">R</text></g>
+    <g id="keypad-s"><text x="3" y="21"; style="font-size:24px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">S</text></g>
+    <g id="keypad-t"><text x="3" y="21"; style="font-size:24px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">T</text></g>
+    <g id="keypad-u"><text x="2" y="21"; style="font-size:24px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">U</text></g>
+    <g id="keypad-v"><text x="3" y="21"; style="font-size:24px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">V</text></g>
+    <g id="keypad-w"><text x="0" y="21"; style="font-size:24px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">W</text></g>
+    <g id="keypad-x"><text x="3" y="21"; style="font-size:24px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">X</text></g>
+    <g id="keypad-y"><text x="3" y="21"; style="font-size:24px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">Y</text></g>
+    <g id="keypad-z"><text x="3" y="21"; style="font-size:24px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">Z</text></g>
+    <g id="keypad-question-mark"><text x="4" y="21"; style="font-size:24px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">?</text></g>
+    <g id="keypad-exclamation-mark"><text x="8" y="21"; style="font-size:24px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">!</text></g>
+    <g id="keypad-decimal"><text x="9" y="21" style="font-size:24px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">.</text></g>
+    <g id="keypad-equals"><text x="5" y="21" style="font-size:24px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">=</text></g>
+    <g id="keypad-notequals"><text x="5" y="21" style="font-size:24px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">&ne;</text></g>
+    <g id="keypad-aproxequals"><text x="5" y="21" style="font-size:24px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">&asymp;</text></g>
+    <g id="keypad-star"><text x="2" y="32" style="font-size:36px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">*</text></g>
+    <g id="keypad-pound"><text x="4" y="21" style="font-size:24px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">#</text></g>
+    <g id="keypad-multiply"><text x="5" y="21" style="font-size:24px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">x</text></g>
+    <g id="keypad-divide"><text x="4" y="21" style="font-size:24px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">&divide;</text></g>
+    <g id="keypad-percent"><text x="2" y="19" style="font-size:20px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">&percnt;</text></g>
+    <g id="keypad-plus"><text x="4" y="21" style="font-size:24px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">&plus;</text></g>
+    <g id="keypad-minus"><text x="3" y="20" style="font-size:24px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">&ndash;</text></g>
+    <g id="keypad-shiftleft"><text x="4" y="16" style="font-size:12px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"><<</text></g>
+    <g id="keypad-shiftright"><text x="4" y="16" style="font-size:12px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">&gt;&gt;</text></g>
+    <g id="keypad-and"><text x="1" y="16" style="font-size:9px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">AND</text></g>
+    <g id="keypad-xor"><text x="1" y="16" style="font-size:9px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">XOR</text></g>
+    <g id="keypad-or"><text x="5" y="16" style="font-size:9px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">OR</text></g>
+    <g id="keypad-not"><text x="1" y="16" style="font-size:9px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">NOT</text></g>
+    <g id="keypad-infinity"><text x="3" y="20" style="font-size:28px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">&infin;</text></g>
+    <g id="keypad-mem-plus"><text x="0" y="17" style="font-size:14px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">M+</text></g>
+    <g id="keypad-mem-minus"><text x="0" y="17" style="font-size:14px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">M-</text></g>
+    <g id="keypad-mem-recall"><text x="0" y="17" style="font-size:14px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">MR</text></g>
+    <g id="keypad-mem-clear"><text x="0" y="17" style="font-size:14px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">MC</text></g>
+    <g id="keypad-clear"><text x="6" y="18" style="font-size:16px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">C</text></g>
+    <g id="keypad-clear-entry"><text x="0" y="18" style="font-size:16px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">CE</text></g>
+    <g id="keypad-all-clear"><text x="0" y="18" style="font-size:16px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">AC</text></g>
+    <g id="keypad-change-sign"><text x="1" y="18" style="font-size:18px;font-weight:900;line-height:125%;font-family:serif;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">+/&minus;</text></g>
+    <g id="keypad-sin"><text x="2" y="15" style="font-size:16px;font-weight:900;line-height:125%;font-style:italic;font-family:serif;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;">sin</text></g>
+    <g id="keypad-cos"><text x="2" y="15" style="font-size:16px;font-weight:900;line-height:125%;font-style:italic;font-family:serif;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;">cos</text></g>
+    <g id="keypad-tan"><text x="2" y="15" style="font-size:16px;font-weight:900;line-height:125%;font-style:italic;font-family:serif;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;">tan</text></g>
+    <g id="keypad-inverse-sin"><text x="0" y="15" style="font-size:14px;font-weight:900;line-height:125%;font-style:italic;font-family:serif;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;">sin</text>
+      <text x="15" y="7" style="vertical-align:super;font-size:8px;font-weight:900;line-height:125%;font-style:italic;font-family:serif;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;">&minus;1</text></g>
+    <g id="keypad-inverse-cos"><text x="0" y="15" style="font-size:14px;font-weight:900;line-height:125%;font-style:italic;font-family:serif;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;">cos</text>
+      <text x="15" y="7" style="vertical-align:super;font-size:8px;font-weight:900;line-height:125%;font-style:italic;font-family:serif;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;">&minus;1</text></g>
+    <g id="keypad-inverse-tan"><text x="0" y="15" style="font-size:14px;font-weight:900;line-height:125%;font-style:italic;font-family:serif;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;">tan</text>
+      <text x="15" y="7" style="vertical-align:super;font-size:8px;font-weight:900;line-height:125%;font-style:italic;font-family:serif;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;">&minus;1</text></g>
+    <g id="keypad-integral"><text x="9" y="19" style="font-size:20px;font-weight:900;line-height:125%;font-family:serif;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;">&int;</text></g>
+    <g id="keypad-alpha"><text x="5" y="18" style="font-size:24px;font-weight:900;font-style:italic;font-family:serif;line-height:125%;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;">&alpha;</text></g>
+    <g id="keypad-beta"><text x="6" y="18" style="font-size:24px;font-weight:900;font-style:italic;font-family:serif;line-height:125%;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;">&beta;</text></g>
+    <g id="keypad-delta"><text x="5" y="18" style="font-size:24px;font-weight:900;font-style:italic;font-family:serif;line-height:125%;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;">&delta;</text></g>
+    <g id="keypad-epsilon"><text x="6" y="18" style="font-size:24px;font-weight:900;font-style:italic;font-family:serif;line-height:125%;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;">&epsilon;</text></g>
+    <g id="keypad-gamma"><text x="7" y="14" style="font-size:24px;font-weight:900;font-style:italic;font-family:serif;line-height:125%;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;">&gamma;</text></g>
+    <g id="keypad-lambda"><text x="7" y="19" style="font-size:24px;font-weight:900;font-style:italic;font-family:serif;line-height:125%;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;">&lambda;</text></g>
+    <g id="keypad-omega"><text x="3" y="19" style="font-size:24px;font-weight:900;font-style:italic;font-family:serif;line-height:125%;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;">&Omega;</text></g>
+    <g id="keypad-pi"><text x="5" y="18" style="font-size:24px;font-weight:900;font-style:italic;font-family:serif;line-height:125%;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;">&pi;</text></g>
+    <g id="keypad-phi"><text x="5" y="18" style="font-size:24px;font-weight:900;font-style:italic;font-family:serif;line-height:125%;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;">&phi;</text></g>
+    <g id="keypad-sigma"><text x="5" y="18" style="font-size:24px;font-weight:900;font-style:italic;font-family:serif;line-height:125%;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;">&Sigma;</text></g>
+    <g id="keypad-tau"><text x="5" y="19" style="font-size:24px;font-weight:900;font-style:italic;font-family:serif;line-height:125%;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;">&tau;</text></g>
+    <g id="keypad-theta"><text x="3" y="19" style="font-size:24px;font-weight:900;font-style:italic;font-family:serif;line-height:125%;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;">&Theta;</text></g>
+    <g id="keypad-micro"><text x="5" y="17" style="font-size:24px;font-weight:900;font-style:italic;font-family:serif;line-height:125%;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;">&mu;</text></g>
+    <g id="keypad-nano"><text x="6" y="17" style="font-size:24px;font-weight:900;font-style:italic;font-family:serif;line-height:125%;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;">&eta;</text></g>
+    <g id="keypad-pico"><text x="6" y="17" style="font-size:24px;font-weight:900;font-style:italic;font-family:serif;line-height:125%;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;">&rho;</text></g>
+    <g id="keypad-log"><text x="2" y="18" style="font-size:16px;font-weight:900;font-style:italic;font-family:serif;line-height:125%;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;">log</text></g>
+    <g id="keypad-ln"><text x="5" y="18" style="font-size:16px;font-weight:900;font-style:italic;font-family:serif;line-height:125%;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;">ln</text></g>
+    <g id="keypad-base-e"><text x="6" y="17" style="font-size:24px;font-weight:900;font-style:italic;font-family:serif;line-height:125%;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;">e</text></g>
+    <g  id="keypad-sqrt">
+      <g transform="translate(-8,0)">
+        <g transform="scale(1.5,1.5)">
+          <path
+                  style="fill-opacity:1;stroke:none;"
+                  d="m 19.985543,4.44338 -8.911941,-0.0138 -2.080582,5.38124 -0.9918444,-2.95446 -1.9717566,0.0179 0.00116,0.62459 1.647965,-0.0236 1.2944989,4.07889 2.4322131,-6.46324 8.590044,0.0115" />
+          <path d="m 11.856227,9.66033 c 0,0 1.217166,-1.57205 1.874744,-2.4649 0.07926,-0.10762 0.334598,-0.11603 0.400905,0 0.492167,0.86123 0.672487,1.14514 0.969523,1.70655 0.06574,0.12425 0.05011,0.13363 -0.743406,1.14846 -0.826428,1.05693 -1.309606,0.002 -1.309606,0.002 -0.728064,0.8094 -0.728064,0.8094 -0.728064,0.8094 0,0 0.37041,0.46887 0.508614,0.57699 0,0 0.340507,0.17449 1.048788,-0.24513 0.610092,-0.36145 1.237086,-1.37501 1.521471,-1.76216 0.718025,1.06828 0.860613,1.81874 1.822983,1.94048 1.013064,0.12816 1.593176,-1.05311 2.274633,-1.91864 l -0.36222,-0.26205 c 0,0 -0.524944,0.67983 -0.960265,1.0782 0,0 -0.328427,0.20137 -0.50113,0.16705 -0.21681,-0.0431 -0.357186,-0.26656 -0.50113,-0.43432 -0.431958,-0.50342 -1.059751,-1.68438 -1.059751,-1.68438 0,0 0.316423,-0.6358 0.55862,-0.88809 0.149744,-0.15598 0.31844,-0.37487 0.534539,-0.36749 0.228262,0.008 0.536833,0.42578 0.536833,0.42578 l 0.713121,-1.00448 c 0,0 -0.401995,-0.34834 -0.648597,-0.35675 -0.343585,-0.0117 -0.644247,0.12711 -0.91874,0.33409 -0.437668,0.33002 -1.092719,1.34378 -1.092719,1.34378 0,0 -0.38332,-1.1299 -0.82828,-1.47741 -0.20014,-0.15631 -0.487638,-0.25795 -0.734991,-0.20046 -0.245921,0.0572 -0.567948,0.50113 -0.567948,0.50113 l -2.158827,2.7599 z"
+                style="fill-opacity:1;stroke:none;" />
+        </g>
+      </g>
+    </g>
+    <g  id="keypad-ytox">
+
+      <g transform="translate(-1,-3)">
+        <g transform="scale(1.018201,0.98212435)" style="fill-opacity:1;stroke:none;">
+          <path
+                  d="m 13.605465,11.66001 -3.212201,9.11976 c -0.359678,1.03871 -0.8078916,1.76411 -1.3446417,2.17621 -0.4426806,0.34436 -0.998798,0.51654 -1.6683524,0.51654 -0.8260072,-0.26657 -0.7266554,-0.99833 -0.2939762,-1.19103 0.5201497,0 1.2374392,0.11283 1.5639161,-0.23152 0.2932758,-0.2992 0.5616509,-0.78468 0.8051252,-1.45645 l 0.3536891,-1.3218 c 0,0 -2.1071643,-5.78337 -2.7887793,-6.79112 -0.2376428,-0.35134 -1.3432264,0.0604 -1.3432264,0.0604 0,0 1.590436,-1.49383 2.0435622,-0.88096 1.1366594,1.53738 1.6206911,3.59654 1.8916539,4.2932 0.3556502,0.91438 0.4490725,1.28191 0.8474325,2.07455 v 0 c 0.083,-0.24274 -0.121738,0.40081 0,0 0.12727,-0.4008 0.21304,-0.6746 0.257308,-0.82137 l 1.801156,-5.54638 z"
+                  style="stroke:none;fill-opacity:1" />
+        </g>
+      </g>
+      <g transform="translate(2,-3)">
+        <g transform="scale(1.1,1.1)">
+          <path d="m 11.856227,9.66033 c 0,0 1.217166,-1.57205 1.874744,-2.4649 0.07926,-0.10762 0.334598,-0.11603 0.400905,0 0.492167,0.86123 0.672487,1.14514 0.969523,1.70655 0.06574,0.12425 0.05011,0.13363 -0.743406,1.14846 -0.826428,1.05693 -1.309606,0.002 -1.309606,0.002 -0.728064,0.8094 -0.728064,0.8094 -0.728064,0.8094 0,0 0.37041,0.46887 0.508614,0.57699 0,0 0.340507,0.17449 1.048788,-0.24513 0.610092,-0.36145 1.237086,-1.37501 1.521471,-1.76216 0.718025,1.06828 0.860613,1.81874 1.822983,1.94048 1.013064,0.12816 1.593176,-1.05311 2.274633,-1.91864 l -0.36222,-0.26205 c 0,0 -0.524944,0.67983 -0.960265,1.0782 0,0 -0.328427,0.20137 -0.50113,0.16705 -0.21681,-0.0431 -0.357186,-0.26656 -0.50113,-0.43432 -0.431958,-0.50342 -1.059751,-1.68438 -1.059751,-1.68438 0,0 0.316423,-0.6358 0.55862,-0.88809 0.149744,-0.15598 0.31844,-0.37487 0.534539,-0.36749 0.228262,0.008 0.536833,0.42578 0.536833,0.42578 l 0.713121,-1.00448 c 0,0 -0.401995,-0.34834 -0.648597,-0.35675 -0.343585,-0.0117 -0.644247,0.12711 -0.91874,0.33409 -0.437668,0.33002 -1.092719,1.34378 -1.092719,1.34378 0,0 -0.38332,-1.1299 -0.82828,-1.47741 -0.20014,-0.15631 -0.487638,-0.25795 -0.734991,-0.20046 -0.245921,0.0572 -0.567948,0.50113 -0.567948,0.50113 l -2.158827,2.7599 z"
+                style="fill-opacity:1;stroke:none;" />
+        </g>
+      </g>
+
+    </g>
+    <g  id="keypad-inverse">
+      <g transform="translate(3,-6)">
+        <text x="0" y="18" style="font-size:9px;font-weight:700;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">1</text>
+      </g>
+      <g transform="translate(1,-275)">
+        <g transform="matrix(1.0492025,0,0,0.95310484,-0.05494403,-0.14240574)" style="fill-opacity:1;stroke:none;">
+          <path d="m 10.977514,296.45295 -2.0616797,5.34829 -2.0616797,5.34829 h -0.994897 l 2.0999627,-5.36613 2.0999627,-5.36614 z"  style="stroke:none;fill-opacity:1" />
+        </g>
+      </g>
+      <g transform="translate(-4,3)">
+        <g transform="scale(1.33,1.33)">
+          <path d="m 11.856227,9.66033 c 0,0 1.217166,-1.57205 1.874744,-2.4649 0.07926,-0.10762 0.334598,-0.11603 0.400905,0 0.492167,0.86123 0.672487,1.14514 0.969523,1.70655 0.06574,0.12425 0.05011,0.13363 -0.743406,1.14846 -0.826428,1.05693 -1.309606,0.002 -1.309606,0.002 -0.728064,0.8094 -0.728064,0.8094 -0.728064,0.8094 0,0 0.37041,0.46887 0.508614,0.57699 0,0 0.340507,0.17449 1.048788,-0.24513 0.610092,-0.36145 1.237086,-1.37501 1.521471,-1.76216 0.718025,1.06828 0.860613,1.81874 1.822983,1.94048 1.013064,0.12816 1.593176,-1.05311 2.274633,-1.91864 l -0.36222,-0.26205 c 0,0 -0.524944,0.67983 -0.960265,1.0782 0,0 -0.328427,0.20137 -0.50113,0.16705 -0.21681,-0.0431 -0.357186,-0.26656 -0.50113,-0.43432 -0.431958,-0.50342 -1.059751,-1.68438 -1.059751,-1.68438 0,0 0.316423,-0.6358 0.55862,-0.88809 0.149744,-0.15598 0.31844,-0.37487 0.534539,-0.36749 0.228262,0.008 0.536833,0.42578 0.536833,0.42578 l 0.713121,-1.00448 c 0,0 -0.401995,-0.34834 -0.648597,-0.35675 -0.343585,-0.0117 -0.644247,0.12711 -0.91874,0.33409 -0.437668,0.33002 -1.092719,1.34378 -1.092719,1.34378 0,0 -0.38332,-1.1299 -0.82828,-1.47741 -0.20014,-0.15631 -0.487638,-0.25795 -0.734991,-0.20046 -0.245921,0.0572 -0.567948,0.50113 -0.567948,0.50113 l -2.158827,2.7599 z"
+                style="fill-opacity:1;stroke:none;" />
+        </g>
+      </g>
+    </g>
+    <g id="keypad-hex"><text x="-1" y="15" style="font-size:10px;font-weight:900;font-style:italic;line-height:110%;font-family:sans-serif;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;">HEX</text></g>
+    <g id="keypad-dec"><text x="0" y="15" style="font-size:10px;font-weight:900;font-style:italic;line-height:110%;font-family:sans-serif;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;">DEC</text></g>
+    <g id="keypad-sci"><text x="1" y="15" style="font-size:10px;font-weight:900;font-style:italic;line-height:110%;font-family:sans-serif;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;">SCI</text></g>
+    <g id="keypad-oct"><text x="-1" y="15" style="font-size:10px;font-weight:900;font-style:italic;line-height:110%;font-family:sans-serif;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;">OCT</text></g>
+    <g id="keypad-bin"><text x="1" y="15" style="font-size:10px;font-weight:900;font-style:italic;line-height:110%;font-family:sans-serif;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;">BIN</text></g>
+    <g id="keypad-rad"><text x="1" y="15" style="font-size:10px;font-weight:900;font-style:italic;line-height:110%;font-family:sans-serif;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;">rad.</text></g>
+    <g id="keypad-deg"><text x="0" y="15" style="font-size:10px;font-weight:900;font-style:italic;line-height:110%;font-family:sans-serif;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;">deg.</text></g>
+    <g id="degrees-C"><text x="0" y="15" style="font-size:20px;font-weight:700;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">&deg;C</text></g>
+    <g id="degrees-F"><text x="0" y="15" style="font-size:20px;font-weight:700;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">&deg;F</text></g>
+    <g id="degrees-K"><text x="0" y="15" style="font-size:20px;font-weight:700;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">&deg;K</text></g>
+    <g id="letter-A"><text x="3" y="21" style="font-size:24px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">A</text></g>
+    <g id="letter-B"><text x="3" y="21" style="font-size:24px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">B</text></g>
+    <g id="letter-C"><text x="3" y="21" style="font-size:24px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">C</text></g>
+    <g id="letter-D"><text x="3" y="21" style="font-size:24px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">D</text></g>
+    <g id="letter-E"><text x="3" y="21" style="font-size:24px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">E</text></g>
+    <g id="letter-F"><text x="3" y="21" style="font-size:24px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">F</text></g>
+    <g id="letter-G"><text x="2" y="21" style="font-size:24px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">G</text></g>
+    <g id="letter-H"><text x="2" y="21" style="font-size:24px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">H</text></g>
+    <g id="letter-I"><text x="7" y="21" style="font-size:24px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">I</text></g>
+    <g id="letter-I-serif"><text x="7" y="21" style="font-size:24px;font-weight:900;line-height:125%;font-family:serif;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">I</text></g>
+    <g id="letter-J"><text x="3" y="21" style="font-size:24px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">J</text></g>
+    <g id="letter-K"><text x="3" y="21" style="font-size:24px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">K</text></g>
+    <g id="letter-L"><text x="3" y="21" style="font-size:24px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">L</text></g>
+    <g id="letter-M"><text x="3" y="21" style="font-size:24px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">M</text></g>
+    <g id="letter-N"><text x="3" y="21" style="font-size:24px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">N</text></g>
+    <g id="letter-O"><text x="3" y="21" style="font-size:24px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">O</text></g>
+    <g id="letter-P"><text x="3" y="21" style="font-size:24px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">P</text></g>
+    <g id="letter-Q"><text x="3" y="21" style="font-size:24px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">Q</text></g>
+    <g id="letter-R"><text x="3" y="21" style="font-size:24px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">R</text></g>
+    <g id="letter-S"><text x="3" y="21" style="font-size:24px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">S</text></g>
+    <g id="letter-T"><text x="3" y="21" style="font-size:24px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">T</text></g>
+    <g id="letter-U"><text x="3" y="21" style="font-size:24px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">U</text></g>
+    <g id="letter-V"><text x="3" y="21" style="font-size:24px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">V</text></g>
+    <g id="letter-X"><text x="3" y="21" style="font-size:24px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">X</text></g>
+    <g id="letter-Y"><text x="3" y="21" style="font-size:24px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">Y</text></g>
+    <g id="letter-Z"><text x="3" y="21" style="font-size:24px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">Z</text></g>
+    <g id="letter-Delta"><text x="3" y="21" style="font-size:24px;font-weight:600;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">&Delta;</text></g>
+    <g id="letter-Sigma"><text x="3" y="21" style="font-size:24px;font-weight:600;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">&Sigma;</text></g>
+    <g id="letter-Omega"><text x="3" y="21" style="font-size:24px;font-weight:600;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">&Omega;</text></g>
+    <g id="cards-hearts"><text x="4" y="20" style="font-size:26px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">&hearts;</text></g>
+    <g id="cards-spades"><text x="5" y="20" style="font-size:26px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">&spades;</text></g>
+    <g id="cards-clubs"><text x="4" y="20" style="font-size:26px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">&clubs;</text></g>
+    <g id="cards-diamonds"><text x="6" y="20" style="font-size:26px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">&diams;</text></g>
+    <g id="editor-js"><text y="20" x="12" style="font-size:8px;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;">JS</text></g>
+    <g id="editor-html"><text y="20" x="2" style="font-size:8px;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;">HTML</text></g>
+    <g id="editor-css"><text x="6" y="20" style="font-size:8px;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;">CSS</text></g>
+    <g id="editor-json"><text x="2" y="20" style="font-size:8px;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;">JSON</text></g>
+    <g id="editor-text"><text x="2" y="20" style="font-size:8px;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;">TEXT</text></g>
+
+    <g id="electrical-POut"><text x="1" y="14" style="font-size:8px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">POut</text></g>
+    <g id="electrical-IOut"><text x="2" y="14" style="font-size:8px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">IOut</text></g>
+    <g id="electrical-VOut"><text x="1" y="14" style="font-size:8px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">VOut</text></g>
+    <g id="electrical-Volts"><text x="0" y="14" style="font-size:8px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">Volts</text></g>
+    <g id="electrical-Amps"><text x="0" y="14" style="font-size:8px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">Amps</text></g>
+    <g id="electrical-Watts"><text x="0" y="14" style="font-size:7px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">Watts</text></g>
+    <g id="electrical-Pwr"><text x="3" y="14" style="font-size:8px;font-weight:900;line-height:125%;font-family:inherit;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">Pwr</text></g>
+    <g id="maximize-window">
+        <path d="M 4 18 H 20 v 2 H 4 V 4 h 2 v 16 h -2 M 4 4 H 20 v 2 H 6 V 8 M 20 4 v 16 h -2 V 6 H 20 z"
+              style="fill-opacity:1;fill-rule:nonzero;stroke:none;" />
+    </g>
+    <g id="minimize-window">
+        <path d="M 4 18 H 20 v 2 H 4 z"
+              style="fill-opacity:1;fill-rule:nonzero;stroke:none;" />
+    </g>
+    </g>
+    <g id="restore-window">
+        <path d="M 2 20 H 18 v 2 H 2 V 6 h 2 v 16 h -2 M 2 6 H 18 v 2 H 2 V 8 M 18 6 v 16 h -2 V 6 H 18   M 6 6 v -4 h 16 v 16 h -4 v -2 h 2 v -12 h -12 v 2 h -4  z"
+              style="fill-opacity:1;fill-rule:nonzero;stroke:none;" />
+    </g>
+
+    <g id="book">
+      <g transform="scale(0.58,0.58)">
+        <g transform="translate(-3,-1)">
+          <path  d="m 14.432554,9.77594 c 0,0 -7.9298825,17.83621 -8.4189898,19.71112 -0.7501352,2.59444 -1.353031,3.88852 -0.2004523,6.61492 0.4645207,1.03441 2.2049737,1.80407 2.2049737,1.80407 0,0 15.6719654,0.20624 22.9851784,2e-5 1.137842,-0.0321 3.340869,-1.87089 3.340869,-1.87089 l 6.882191,-20.51294 c 0,0 0.442426,-1.26071 0.133636,-1.73725 -0.273254,-0.42169 -1.002263,-0.93545 -1.002263,-0.93545 l -7.483546,21.31475 -1.737252,1.20271 -1.670433,0.20046 -21.0474761,-0.0668 c 0,0 -1.1670809,-0.6104 -1.2027127,-1.80406 -0.044545,-1.49226 1.7372518,-2.13816 1.7372518,-2.13816 0,0 15.134005,0.23767 20.446116,0.0668 0.521591,-0.0168 1.135898,-0.86862 1.135898,-0.86862 l 8.218539,-22.78474 c 0.01056,0.0317 0.464667,-1.12251 -0.06682,-1.9377 -0.277384,-0.42545 -1.603617,-0.53455 -1.603617,-0.53455 l -19.243407,0.13365 2.071339,4.47677 h 13.096207 c 0,0 1.735198,0.031 1.202712,1.60362 -0.460903,1.73259 -2.204973,1.40316 -2.204973,1.40316 l -12.895754,0.0668 c 0,0 -1.498548,-0.47299 -1.002261,-1.87089 0.454608,-1.28049 1.670435,-1.20271 1.670435,-1.20271 h 0.133634 l -0.668173,-4.00904 -5.144939,7.55036 3.140417,2.07134 13.296659,-0.13363 c 0,0 2.301519,-0.3187 1.469982,1.67043 -0.775649,1.85544 -2.672696,1.40317 -2.672696,1.40317 l -13.029388,-0.0668 c 0,0 -0.979988,-0.53454 -0.334087,-1.73726 0.669991,-1.24757 1.26953,-1.13589 1.26953,-1.13589 l -1.26953,-4.67721 c 7.423327,-6.53973 0.334087,-5.94675 0.06682,-4.34313 z"
+                 style="fill-opacity:1;fill-rule:nonzero;stroke:none;" />
+        </g>
+      </g>
+    </g>
+    <g id="cogs">
+      <g transform="scale(0.6,0.6)">
+        <g transform="translate(2,8)">
+          <path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/>
+        </g>
+      </g>
+      <g transform="translate(13,4)">
+        <g transform="scale(0.3,0.3)">
+          <path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/>
+        </g>
+      </g>
+      <g transform="translate(13,13)">
+        <g transform="scale(0.3,0.3)">
+          <path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/>
+        </g>
+      </g>
+    </g>
+    <g id="line-chart">
+      <path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/>
+      <path d="M 1 2 V 23 H 23 V24 H0 V2 z"/>
+    </g>
+    <g id="area-chart">
+      <path d="M 3 12 V 19 H 22 L 19 8 L 14 11 L 8 4 L 3 12 z"/>
+      <path d="M 1 4 V 21 H 23 V20 H2 V4 z"/>
+    </g>
+    <g id="filter">
+      <g transform="translate(3,-216)">
+        <g transform="scale(0.8,0.8)">
+          <path
+                  d="M 1.6704345,274.61618 H 22.45064 l -8.485808,11.62623 -0.133637,8.95352 -3.674956,-2.00452 -0.06681,-6.94901 z"
+                  style="fill-opacity:1;fill-rule:nonzero;stroke:none;" />
+        </g>
+      </g>
+    </g>
+    <g id="circle">
+       <circle cx="12" cy="12" r="10" stroke="none"  />
+    </g>
+    <g id="sliders">
+      <g transform="scale(1,1)">
+          <rect
+                  style="fill-opacity:1;fill-rule:nonzero;stroke:none;"
+                  width="3"
+                  height="1"
+                  x="1"
+                  y="5.17206" />
+          <rect
+                  style="fill-opacity:1;fill-rule:nonzero;stroke:none;"
+                  width="4"
+                  height="4"
+                  x="5"
+                  y="3.66016" />
+          <rect
+                  style="fill-opacity:1;fill-rule:nonzero;stroke:none;"
+                  width="13"
+                  height="1"
+                  x="10"
+                  y="5.17206" />
+          <rect
+                  y="11.17242"
+                  x="1"
+                  height="1"
+                  width="13"
+                  style="fill-opacity:1;fill-rule:nonzero;stroke:none;"
+                   />
+          <rect
+                  y="9.66052"
+                  x="15"
+                  height="4"
+                  width="4"
+                  style="fill-opacity:1;fill-rule:nonzero;stroke:none;"
+                   />
+          <rect
+                  y="11.17242"
+                  x="20"
+                  height="1"
+                  width="3"
+                  style="fill-opacity:1;fill-rule:nonzero;stroke:none;"
+                   />
+          <rect
+                  style="fill-opacity:1;fill-rule:nonzero;stroke:none;"
+                  width="3"
+                  height="1"
+                  x="1"
+                  y="17.59802" />
+          <rect
+                  style="fill-opacity:1;fill-rule:nonzero;stroke:none;"
+                  width="4"
+                  height="4"
+                  x="5"
+                  y="16.08612" />
+          <rect
+                  style="fill-opacity:1;fill-rule:nonzero;stroke:none;"
+                  width="13"
+                  height="1"
+                  x="10"
+                  y="17.59802" />
+      </g>
+    </g>
+    <g id="no-icon">
+      <text x="6" y="10" style="font-size:8px;font-weight:900;font-style:italic;line-height:110%;font-family:sans-serif;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;">no</text>
+      <text x="0" y="18" style="font-size:8px;font-weight:900;font-style:italic;line-height:110%;font-family:sans-serif;text-align:center;letter-spacing:0;word-spacing:0;writing-mode:lr-tb;text-anchor:start;">icon!</text>
+    </g>
+
+  </defs></svg>
+</iron-iconset-svg>
+

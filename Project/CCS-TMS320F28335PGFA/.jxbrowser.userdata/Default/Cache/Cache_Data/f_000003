@@ -1,0 +1,430 @@
+import { h } from './core-800e68f4.js';
+import { TiUtils } from '../ti-core-assets/lib/TiUtils';
+import '../ti-core-assets/lib/TiFiles';
+import { TiConsole } from '../ti-core-assets/lib/TiConsole';
+import { TiLocalStorage } from '../ti-core-assets/lib/TiLocalStorage';
+
+const style = document.createElement('style');
+style.innerHTML = `
+    @font-face {
+        font-family: 'Roboto';
+        font-style: normal;
+        font-weight: 300;
+        src: local('Roboto Light'), local('Roboto-Light'), url(components/assets/fonts/font-roboto/Roboto_300_normal.woff) format('woff');
+    }
+    @font-face {
+        font-family: 'Roboto';
+        font-style: normal;
+        font-weight: 400;
+        src: local('Roboto'), local('Roboto-Regular'), url(components/assets/fonts/font-roboto/Roboto_400_normal.woff) format('woff');
+    }
+    @font-face {
+        font-family: 'Roboto';
+        font-style: normal;
+        font-weight: 500;
+        src: local('Roboto Medium'), local('Roboto-Medium'), url(components/assets/fonts/font-roboto/Roboto_500_normal.woff) format('woff');
+    }
+    @font-face {
+        font-family: 'Roboto';
+        font-style: normal;
+        font-weight: 700;
+        src: local('Roboto Bold'), local('Roboto-Bold'), url(components/assets/fonts/font-roboto/Roboto_700_normal.woff) format('woff');
+    }
+    @font-face {
+        font-family: 'Roboto';
+        font-style: italic;
+        font-weight: 300;
+        src: local('Roboto Light Italic'), local('Roboto-LightItalic'), url(components/assets/fonts/font-roboto/Roboto_300_italic.woff) format('woff');
+    }
+    @font-face {
+        font-family: 'Roboto';
+        font-style: italic;
+        font-weight: 400;
+        src: local('Roboto Italic'), local('Roboto-Italic'), url(components/assets/fonts/font-roboto/Roboto_400_italic.woff) format('woff');
+    }
+    @font-face {
+        font-family: 'Roboto';
+        font-style: italic;
+        font-weight: 500;
+        src: local('Roboto Medium Italic'), local('Roboto-MediumItalic'), url(components/assets/fonts/font-roboto/Roboto_500_italic.woff) format('woff');
+    }
+    @font-face {
+        font-family: 'Roboto';
+        font-style: italic;
+        font-weight: 700;
+        src: local('Roboto Bold Italic'), local('Roboto-BoldItalic'), url(components/assets/fonts/font-roboto/Roboto_700_italic.woff) format('woff');
+    }
+`;
+document.head.appendChild(style);
+
+/**
+ *  Copyright (c) 2019, Texas Instruments Incorporated
+ *  All rights reserved.
+ *
+ *  Redistribution and use in source and binary forms, with or without
+ *  modification, are permitted provided that the following conditions
+ *  are met:
+ *
+ *  *   Redistributions of source code must retain the above copyright
+ *  notice, this list of conditions and the following disclaimer.
+ *  notice, this list of conditions and the following disclaimer in the
+ *  documentation and/or other materials provided with the distribution.
+ *  *   Neither the name of Texas Instruments Incorporated nor the names of
+ *  its contributors may be used to endorse or promote products derived
+ *  from this software without specific prior written permission.
+ *
+ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ *  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ *  THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *  PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+ *  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ *  EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ *  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ *  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ *  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ *  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+ *  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+/**
+* Theme css switching using MutationObserver to the body attribute change.
+* Only loaded once when added to the dom.
+*/
+//create ti-widget-theme-stylesheet on load, append to document
+const style$1 = document.createElement('style'); 
+style$1.setAttribute('title', 'ti-widget-theme-stylesheet'); 
+const element = document.head || document.body; 
+element.appendChild(style$1); 
+style$1.sheet.insertRule('html {}', 0); 
+const styleSheet = style$1.sheet.cssRules[0].style; 
+// modify stylesheet/css variables on theme attribute change in body
+const observer = new MutationObserver((mutations) => {
+    mutations.forEach(function (mutation) {
+        switch (document.body.getAttribute('theme')) { 
+            case 'ti-theme': 
+                styleSheet.setProperty('--theme-primary-color', '#cc0000'); 
+                styleSheet.setProperty('--theme-secondary-color', '#115566'); 
+                styleSheet.setProperty('--theme-alternative-color', '#990000'); 
+                styleSheet.setProperty('--theme-background-color', '#fff'); 
+                styleSheet.setProperty('--theme-font-color', '#231F20'); 
+                styleSheet.setProperty('--theme-header-font-color', '#231F20'); 
+                break; 
+            case 'ti-dark': 
+                styleSheet.setProperty('--theme-primary-color', '#990000'); 
+                styleSheet.setProperty('--theme-secondary-color', '#115566'); 
+                styleSheet.setProperty('--theme-alternative-color', '#990000'); 
+                styleSheet.setProperty('--theme-background-color', '#2f2f2f'); 
+                styleSheet.setProperty('--theme-font-color', '#f2f2f2'); 
+                styleSheet.setProperty('--theme-header-font-color', '#f2f2f2'); 
+                break; 
+        } 
+    }); 
+}); 
+observer.observe(document.body, {
+    attributes: true,
+    attributeFilter: ['theme'] 
+}); 
+
+/**
+ *  Copyright (c) 2019-2020, Texas Instruments Incorporated
+ *  All rights reserved.
+ *
+ *  Redistribution and use in source and binary forms, with or without
+ *  modification, are permitted provided that the following conditions
+ *  are met:
+ *
+ *  *   Redistributions of source code must retain the above copyright
+ *  notice, this list of conditions and the following disclaimer.
+ *  notice, this list of conditions and the following disclaimer in the
+ *  documentation and/or other materials provided with the distribution.
+ *  *   Neither the name of Texas Instruments Incorporated nor the names of
+ *  its contributors may be used to endorse or promote products derived
+ *  from this software without specific prior written permission.
+ *
+ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ *  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ *  THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *  PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+ *  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ *  EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ *  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ *  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ *  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ *  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+ *  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+/**
+ * `TiElementBase` provides the base implementation for TI elements.
+ *
+ * @customElement
+ * @isHidden
+ */
+class TiElementBase {
+    constructor(parent) {
+        this.parent = parent;
+    } 
+    /**
+     * Returns true if the element is hosted in the designer, otherwise false.
+     *
+     * @return {boolean}
+     */
+    isDesignerHosted() {
+        return !!TiUtils.rootWin.TIDesigner; 
+    } 
+    /**
+     * Parse the delimited string into an array.
+     *
+     * @param {undefined|string|Array<string>} text the input text
+     * @param delimiter the delimiter character
+     * @return {Array<string>} the array
+     */
+    parseArray(text, delimiter) {
+        text = text || ''; 
+        // support arrays as well
+        if (text instanceof Array) { 
+            return text; 
+        } 
+        // support using terminating character as a delimiter if one of [,;|].
+        // this means that if you want a blank element at the end of the list, you have to use a double terminator; for example, A|B|C||
+        if (!delimiter && text.length > 1) { 
+            const lastCharacter = text.charAt(text.length - 1); 
+            if (lastCharacter === '|' || lastCharacter === ',' || lastCharacter === ';') { 
+                delimiter = lastCharacter; 
+                text = text.substring(0, text.length - 1); 
+            } 
+        } 
+        // support comma-separated values, semi-colon separated, or | separated fields.
+        let fields = text.split(delimiter || '|'); 
+        if (!delimiter) { 
+            let altFields = text.split(';'); 
+            if (altFields.length > fields.length) { 
+                fields = altFields; 
+            } 
+            altFields = text.split(','); 
+            if (altFields.length > fields.length && (altFields.length !== fields.length + 1 || fields.length === 1)) { 
+                fields = altFields; 
+            } 
+        } 
+        for (let i = fields.length; i-- > 0;) { 
+            fields[i] = fields[i].trim(); 
+        } 
+        if (fields.length === 1 && fields[0].length === 0) { 
+            return []; 
+        } 
+        return fields; 
+    } 
+    /**
+     * Returns the cookie value.
+     *
+     * @param {string} name the name of the cookie
+     * @return {string} the cookie value
+     */
+    static getCookie(name) {
+        const value = '; ' + document.cookie; 
+        const parts = value.split('; ' + name + '='); 
+        if (parts.length === 2) { 
+            const item = parts.pop(); 
+            if (item !== null) { 
+                return item.split(';').shift() || ''; 
+            } 
+        } 
+        return ''; 
+    } 
+    /**
+     * Helper method to log trace message to the console.
+     *
+     * @param {string} logtype trace type, can be log|info|warn|debug
+     * @param {function|string} message the message to log
+     */
+    trace(logType, message) {
+        const output = typeof message === 'object' ? JSON.stringify(message) : message; 
+        const id = this.element.id ? this.element.id : 'no-id'; 
+        switch (logType) { 
+            case 'error': 
+                TiConsole.error('[' + this.element.localName + ': ' + id + ']', output); 
+                break; 
+            case 'warning': 
+                TiConsole.warning('[' + this.element.localName + ': ' + id + ']', output); 
+                break; 
+            case 'info': 
+                TiConsole.info('[' + this.element.localName + ': ' + id + ']', output); 
+                break; 
+            case 'log': 
+                TiConsole.log('[' + this.element.localName + ': ' + id + ']', output); 
+                break; 
+            case 'debug': 
+                TiConsole.debug('[' + this.element.localName + ': ' + id + ']', output); 
+                break; 
+        } 
+    } 
+    /**
+     * Saves the setting to local storage.
+     *
+     * @param {string} name the setting name
+     * @param {string} value the value
+     */
+    saveSetting(name, value) {
+        const id = this.element.tagName.toLowerCase(); 
+        const root = JSON.parse(TiLocalStorage.getItem(TiElementBase.STORAGE_ROOT) || '{}'); 
+        if (!root[id]) { 
+            root[id] = {}; 
+        } 
+        root[id][name] = value; 
+        TiLocalStorage.setItem(TiElementBase.STORAGE_ROOT, JSON.stringify(root)); 
+    } 
+    /**
+     * Loads the setting from local storage.
+     *
+     * @param {string} name the setting name
+     * @return {object} the setting JSON object
+     */
+    loadSetting(name) {
+        const id = this.element.tagName.toLowerCase(); 
+        const root = JSON.parse(TiLocalStorage.getItem(TiElementBase.STORAGE_ROOT) || '{}'); 
+        const element = root[id] || {}; 
+        return element[name]; 
+    } 
+} 
+TiElementBase.STORAGE_ROOT = 'GC-SETTINGS'; 
+
+/**
+ *  Copyright (c) 2019-2020, Texas Instruments Incorporated
+ *  All rights reserved.
+ *
+ *  Redistribution and use in source and binary forms, with or without
+ *  modification, are permitted provided that the following conditions
+ *  are met:
+ *
+ *  *   Redistributions of source code must retain the above copyright
+ *  notice, this list of conditions and the following disclaimer.
+ *  notice, this list of conditions and the following disclaimer in the
+ *  documentation and/or other materials provided with the distribution.
+ *  *   Neither the name of Texas Instruments Incorporated nor the names of
+ *  its contributors may be used to endorse or promote products derived
+ *  from this software without specific prior written permission.
+ *
+ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ *  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ *  THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *  PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+ *  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ *  EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ *  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ *  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ *  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ *  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+ *  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+/**
+ * `TiWidgetBase` provides the base implementation for TI widgets.
+ */
+class TiWidgetBase extends TiElementBase {
+    constructor(parent) {
+        super(parent); 
+        this.parent = parent;
+    } 
+    /* Widget that response to CSS property change should override this method to re-render */
+    onCSSPropertyChanged(name, value) { }
+    ; 
+    renderInfoText(infoText) {
+        if (infoText) { 
+            // JSXON
+            return (h("div", { class: "help-text icon" },
+                h("ti-widget-tooltip", { text: infoText },
+                    h("ti-widget-icon", { appearance: "secondary", icon: "help", size: "s" }))));
+            // JSXOFF
+        }
+        else { 
+            return null; 
+        } 
+    } 
+    render(element, options) {
+        if (options && (options.caption || options.infoText)) { 
+            // JSXON
+            return (h("div", { class: "root-container", onClick: (e) => this.onClickHandler(e, e.target) },
+                (options === null || options === void 0 ? void 0 : options.caption) ? h("div", { class: "header-container top" },
+                    (options === null || options === void 0 ? void 0 : options.caption) ? h("div", { class: "caption" }, options.caption) : null,
+                    this.renderInfoText(options === null || options === void 0 ? void 0 : options.infoText)) : null,
+                this.parent.tooltip ? (h("div", { id: "elementWrapper" },
+                    element,
+                    h("ti-widget-tooltip", { class: "tooltip", text: this.parent.tooltip, anchorId: "elementWrapper" }))) : h("div", { id: "elementWrapper" }, element),
+                (options === null || options === void 0 ? void 0 : options.infoText) && !(options === null || options === void 0 ? void 0 : options.caption) ? h("div", { class: "header-container side" }, this.renderInfoText(options === null || options === void 0 ? void 0 : options.infoText)) : null));
+            // JSXOFF
+        }
+        else { 
+            // JSXON
+            return (h("div", { id: "elementWrapper" },
+                element,
+                this.parent.tooltip ? h("ti-widget-tooltip", { class: "tooltip", text: this.parent.tooltip, anchorId: "elementWrapper" }) : null));
+            // JSXOFF
+        } 
+    } 
+    onClickHandler(event, element) {
+        if (element) { 
+            const parent = element.parentElement; 
+            if (parent && parent.id === 'elementWrapper') { 
+                return; 
+            }
+            else if (!element.classList.contains('root-container')) { 
+                this.onClickHandler(event, element.parentElement); 
+            }
+            else { 
+                event.stopPropagation(); 
+            } 
+        } 
+    } 
+    fire(eventName, detail) {
+        const obj = this.parent; 
+        for (const x in obj) { 
+            if (TiUtils.camelToDashCase(x) === eventName) { 
+                return obj[x].emit(detail); 
+            } 
+        } 
+    } 
+    setCSSProperty(name, value) {
+        value = value.replace(/^[ ]+|[ ]+$/g, ''); 
+        this.element.style.setProperty(name, value); 
+        this.parent.cssPropertyChanged.emit({ name: name, value: value }); 
+    } 
+    getCSSProperty(name) {
+        return getComputedStyle(this.element).getPropertyValue(name); 
+    } 
+    refresh() {
+        return this.element['forceUpdate'](); 
+    } 
+    /**
+     * Add the class name to the element.
+     *
+     * @param {string} name the class name
+     * @param {HTMLElement} element the element
+     * @protected
+     */
+    addClassName(name, element) {
+        this.modifyClassName(true, name, element); 
+    } 
+    /**
+     * Remove the class name from the element.
+     *
+     * @param {string} name the class name
+     * @param {HTMLElement} element the element
+     * @protected
+     */
+    removeClassName(name, element) {
+        this.modifyClassName(false, name, element); 
+    } 
+    modifyClassName(isAdd, name, element = this.element) {
+        if (element.className.indexOf(name) < 0) { 
+            if (isAdd) { 
+                // add because it doesn't exist yet and should
+                element.className = (element.className + ' ' + name).trim(); 
+            } 
+        }
+        else if (!isAdd) { 
+            // remove because it does exist and shouldn't
+            element.className = element.className.replace(name, '').trim(); 
+        } 
+    } 
+} 
+
+export { TiWidgetBase as T };
+
+//# sourceMappingURL=ti-widget-base-fe722328.js.map
