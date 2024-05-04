@@ -314,7 +314,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>1</Optim>
+            <Optim>4</Optim>
             <oTime>1</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>1</OneElfS>
@@ -333,7 +333,7 @@
             <v6LangP>5</v6LangP>
             <vShortEn>0</vShortEn>
             <vShortWch>0</vShortWch>
-            <v6Lto>0</v6Lto>
+            <v6Lto>1</v6Lto>
             <v6WtE>0</v6WtE>
             <v6Rtti>0</v6Rtti>
             <VariousControls>
@@ -475,9 +475,9 @@
           <GroupName>Test</GroupName>
           <Files>
             <File>
-              <FileName>rmp_benchmark.c</FileName>
+              <FileName>rmp_coverage.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\Source\Test\rmp_benchmark.c</FilePath>
+              <FilePath>..\..\Source\Test\rmp_coverage.c</FilePath>
             </File>
           </Files>
         </Group>

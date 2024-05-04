@@ -452,28 +452,41 @@ rmp_ptr_t RMP_RBT_Generic(rmp_ptr_t Value)
 }
 /* End Function:RMP_RBT_Generic **********************************************/
 
-/* Function:RMP_Print_Coverage ************************************************
+/* Function:RMP_Coverage_Print ************************************************
 Description : The coverage data printer. Should always be disabled for all cases
               except where a kernel coverage test is needed. This should never
-              be called ny any user application; for EDI coverage testing only.
+              be called any any user application; for coverage testing only.
 Input       : None.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-#ifdef RMP_COVERAGE
-void RMP_Print_Coverage(void)
+#ifdef RMP_COVERAGE_LINE_NUM
+void RMP_Coverage_Print(void)
 {
     rmp_ptr_t Count;
+    rmp_ptr_t Next;
     
-    for(Count=1U;Count<RMP_COVERAGE_LINES;Count++)
+    Next=0U;
+    for(Count=0U;Count<RMP_COVERAGE_LINE_NUM;Count++)
     {
-        if(RMP_Coverage[Count]!=0U)
+        if((RMP_Coverage[Count>>RMP_WORD_ORDER]&RMP_POW2(Count&RMP_WORD_MASK))!=0U)
         {
             RMP_COVERAGE_MARKER();
             RMP_DBG_I(Count);
-            RMP_DBG_S(":");
-            RMP_DBG_I(RMP_Coverage[Count]);
-            RMP_DBG_S("\r\n");
+            RMP_DBG_S(",");
+            /* We put 12 markers on a single line */
+            Next++;
+            if(Next>11U)
+            {
+                RMP_COVERAGE_MARKER();
+                Next=0U;
+                RMP_DBG_S("\r\n");
+            }
+            else
+            {
+                RMP_COVERAGE_MARKER();
+                /* No action needed */
+            }
         }
         else
         {
@@ -483,7 +496,7 @@ void RMP_Print_Coverage(void)
     }
 }
 #endif
-/* End Function:RMP_Print_Coverage *******************************************/
+/* End Function:RMP_Coverage_Print *******************************************/
 
 /* Function:RMP_Clear *********************************************************
 Description : Memset a memory area to zero.
@@ -3110,9 +3123,9 @@ int main(void)
 {
     rmp_ptr_t Count;
 
-#ifdef RMP_COVERAGE
+#ifdef RMP_COVERAGE_LINE_NUM
     /* Initialize coverage markers if coverage enabled */
-    for(Count=0U;Count<RMP_COVERAGE_LINES;Count++)
+    for(Count=0U;Count<RMP_COVERAGE_WORD_NUM;Count++)
     {
         RMP_Coverage[Count]=0U;
     }

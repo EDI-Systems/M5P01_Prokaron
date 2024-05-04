@@ -185,8 +185,11 @@ do \
 while(0)
 #endif
     
-/* Coverage switch detection */
-#ifndef RMP_COVERAGE_MARKER
+/* Coverage marker enabling */
+#ifdef RMP_COVERAGE_LINE_NUM
+#define RMP_COVERAGE_WORD_NUM       (RMP_ROUND_UP(RMP_COVERAGE_LINE_NUM,RMP_WORD_ORDER)>>RMP_WORD_ORDER)
+#define RMP_COVERAGE_MARKER()       (RMP_Coverage[__LINE__>>RMP_WORD_ORDER]|=RMP_POW2(__LINE__&RMP_WORD_MASK))
+#else
 #define RMP_COVERAGE_MARKER()
 #endif
 /*****************************************************************************/
@@ -339,9 +342,9 @@ struct RMP_Mem
 /* If the header is not used in the public mode */
 #ifndef __HDR_PUBLIC__
 /*****************************************************************************/
-#ifdef RMP_COVERAGE
+#ifdef RMP_COVERAGE_LINE_NUM
 /* For coverage use only */
-static volatile rmp_ptr_t RMP_Coverage[RMP_COVERAGE_LINES];
+static volatile rmp_ptr_t RMP_Coverage[RMP_COVERAGE_WORD_NUM];
 #endif
 /* The scheduler bitmap */
 static volatile rmp_ptr_t RMP_Bitmap[RMP_PRIO_WORD_NUM];
@@ -691,8 +694,8 @@ EXTERN void RMP_Init_Hook(void);
 EXTERN void RMP_Init_Idle(void);
 
 /* Coverage test */
-#ifdef RMP_COVERAGE
-__EXTERN__ void RMP_Print_Coverage(void);
+#ifdef RMP_COVERAGE_LINE_NUM
+__EXTERN__ void RMP_Coverage_Print(void);
 #endif
 /*****************************************************************************/
 /* Undefine "__EXTERN__" to avoid redefinition */
