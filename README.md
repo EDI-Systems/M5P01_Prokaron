@@ -1,44 +1,53 @@
 <h1 align="center">
-	<img width="300" src="https://raw.githubusercontent.com/EDI-Systems/M5P1_MuProkaron/master/Documents/Demo/logo.png" alt="logo">
+	<img width="300" src="/Document/Public/Demo/logo.png" alt="logo">
 </h1>
 
-# One RTOS (RMP)
-[![Github release](https://img.shields.io/github/release/EDI-Systems/M5P1_MuProkaron.svg)](https://github.com/EDI-Systems/M5P1_MuProkaron/releases/latest)
-[![Github commits](https://img.shields.io/github/commits-since/EDI-Systems/M5P1_MuProkaron/master@{30day}.svg)](https://github.com/EDI-Systems/M5P1_MuProkaron/compare/master@{30day}...master)
+# RMP Real-time kernel
+<div align="center">
+
+[![Github release](https://img.shields.io/github/release/EDI-Systems/M5P01_Prokaron.svg)](https://github.com/EDI-Systems/M5P01_Prokaron/releases/latest)
+[![Github commits](https://img.shields.io/github/commits-since/EDI-Systems/M5P01_Prokaron/main@{30day}.svg)](https://github.com/EDI-Systems/M5P01_Prokaron/compare/main@{30day}...main)
+[![Discord](https://img.shields.io/badge/chat-Discord-purple)](https://discord.gg/VxCFSFC6bW)
+
+</div>
+<div align="center">
+
 ![language](https://img.shields.io/badge/language-C-orange.svg)
-[![Build](https://travis-ci.org/EDI-Systems/M5P1_MuProkaron.svg?branch=master)](https://travis-ci.org/EDI-Systems/M5P1_MuProkaron) 
-[![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/1684/badge)](https://bestpractices.coreinfrastructure.org/projects/1684) 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/be656c1e1f014a6abf038b4455b03bba)](https://www.codacy.com/app/EDI-Systems/M5P1_MuProkaron?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=EDI-Systems/M5P1_MuProkaron&amp;utm_campaign=Badge_Grade) 
-[![Join the chat at https://gitter.im/M5P1_MuProkaron/Lobby](https://badges.gitter.im/M5P1_MuProkaron/Lobby.svg)](https://gitter.im/M5P1_MuProkaron/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Build](https://dl.circleci.com/status-badge/img/circleci/NY2jeZsLjp6awG9G8CrUsi/Cusv1XhXjvcKuDsRnRrmZC/tree/main.svg?style=shield)](https://dl.circleci.com/status-badge/redirect/circleci/NY2jeZsLjp6awG9G8CrUsi/Cusv1XhXjvcKuDsRnRrmZC/tree/main)
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/1684/badge)](https://www.bestpractices.dev/projects/1684)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/69a95540047e47d08670fe3ea85dcaaa)](https://app.codacy.com/gh/EDI-Systems/M5P01_Prokaron/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
+
+</div>
 
 点击 **[这里](README_CN.md)** 查看中文版。
 
-&ensp;&ensp;&ensp;&ensp;**RMP** is a small real-time operating system which focuses on formal reliability and simplicity. It achieves reliability by deployment of formal techniques(not completed yet; only whitebox testing with 100% branch coverage done. The kernel can be regarded as pre-certified IEC 61508 SIL2, or EAL 4). All the basic functionalities that are necessary for RTOSes are provided, but nothing more. This guarantees that the system is the minimum possible kernel and is also suitable to be used as a guest operating system when hosted on virtual machine monitors.  
+&ensp;&ensp;**RMP** is a small real-time operating system which focuses on formal reliability and simplicity. It achieves reliability by deployment of formal techniques(not completed yet; only whitebox testing with 100% branch coverage done. The kernel can be regarded as pre-certified IEC 61508 SIL2, or EAL 4). All the basic functionalities that are necessary for RTOSes are provided, but nothing more. This guarantees that the system is the minimum possible kernel and is also suitable to be used as a guest operating system when hosted on virtual machine monitors.  
 
-&ensp;&ensp;&ensp;&ensp;This operating system is much **leaner** than any other RTOSes, especially when compared to _FreeRTOS_ or _RT-Thread_, and understanding it should be simple enough. Yet it provides a complete set of functions that you may need during resource-constrained microcontroller development, such as **efficient memory management**, **anti-aliasing graphics**, and **various helper functions**. All these features come in a **single .C** file, and are **without any extra RAM consumption**!
+&ensp;&ensp;This operating system is much **leaner** than any other RTOSes, especially when compared to _FreeRTOS_ or _RT-Thread_, and understanding it should be simple enough. Yet it provides a complete set of functions that you may need during resource-constrained microcontroller development, such as **efficient memory management**, **anti-aliasing graphics**, and **various helper functions**. All these features come in a **single .C** file, and are **without any extra RAM consumption**!
 
-&ensp;&ensp;&ensp;&ensp;The manual of the operating system can be found **[here](https://github.com/EDI-Systems/M5P1_MuProkaron/blob/master/Documents/M5P1_Light-Weight-RTOS-User-Manual.pdf)**.
+&ensp;&ensp;The manual of the operating system can be found **[here](/Document/Public)**.
 
-&ensp;&ensp;&ensp;&ensp;Read **[Contributing](CONTRIBUTING.md)** and **[Code of Conduct](CODE_OF_CONDUCT.md)** if you want to contribute, and **[Pull Request Template](PULL_REQUEST_TEMPLATE.md)** when you make pull requests.
+&ensp;&ensp;Read **[Contributing](CONTRIBUTING.md)** and **[Code of Conduct](CODE_OF_CONDUCT.md)** if you want to contribute, and **[Pull Request Template](PULL_REQUEST_TEMPLATE.md)** when you make pull requests.
 This software is an official work of EDI, and thus belongs to the **public domain**. All copyrights reserved by EDI are granted to all entities under all applicable laws to the maximum extent.
 
-&ensp;&ensp;&ensp;&ensp;For vendor-supplied packages and hardware abstraction libraries, please refer to the **[M0A00_Library](https://github.com/EDI-Systems/M0A00_Library)** repo to download and use them properly.
+&ensp;&ensp;For vendor-supplied packages and hardware abstraction libraries, please refer to the **[M0A00_Library](https://github.com/EDI-Systems/M0A00_Library)** repo to download and use them properly.
 
 ## Quick Demo
 ### Linux minimal runnable binary
-&ensp;&ensp;&ensp;&ensp;Download the precompiled 32-bit linux binary **[here](Project/ECLIPSE-GCC-LINUX/RMP/Debug/RMP)** and watch benchmark results!
+&ensp;&ensp;Compile the 32-bit linux binary **[here](/Project/GCCMF-X86-LINUX)** and watch benchmark results!
 
 ### Built-in graphics : widgets, example and FXAA anti-aliasing
-![Controls](https://raw.githubusercontent.com/EDI-Systems/M5P1_MuProkaron/master/Documents/Demo/Controls.png)
-![Calculator](https://raw.githubusercontent.com/EDI-Systems/M5P1_MuProkaron/master/Documents/Demo/Calc.png)
-![FXAA](https://raw.githubusercontent.com/EDI-Systems/M5P1_MuProkaron/master/Documents/Demo/FXAA.png)
+![Controls](/Document/Public/Demo/Controls.png)
+![Calculator](/Document/Public/Demo/Calc.png)
+![FXAA](/Document/Public/Demo/FXAA.png)
 
 ### Basic thread operations
 **Create a thread**
 ```C
     RMP_Thd_Crt(&Thd_1            /* Thread control block */, 
                 Func_1            /* Thread entry */,
-                &Stack_1[238]     /* Stack address */,
+                &Stack_1          /* Stack address */,
+                sizeof(Stack_1),  /* Stack size */,
                 (void*)0x12345678 /* Parameter */,
                 1                 /* Priority */, 
                 5                 /* Timeslices */);
@@ -57,7 +66,7 @@ This software is an official work of EDI, and thus belongs to the **public domai
 ```
 
 ### Delaying a thread
-![Delay](https://raw.githubusercontent.com/EDI-Systems/M5P1_MuProkaron/master/Documents/Demo/Delay.gif)
+![Delay](/Document/Public/Demo/Delay.gif)
 ```C
     void Func_1(void* Param)
     {
@@ -73,11 +82,11 @@ This software is an official work of EDI, and thus belongs to the **public domai
 
     void RMP_Init_Hook(void)
     {
-        RMP_Thd_Crt(&Thd_1, Func_1, &Stack_1[238], (void*)0x12345678, 1, 5);
+        RMP_Thd_Crt(&Thd_1, Func_1, &Stack_1, sizeof(Stack_1), (void*)0x12345678, 1, 5);
     }
 ```
 ### Send from one thread to another
-![Send](https://raw.githubusercontent.com/EDI-Systems/M5P1_MuProkaron/master/Documents/Demo/Send.gif)
+![Send](/Document/Public/Demo/Send.gif)
 ```C
     void Func_1(void* Param)
     {
@@ -104,13 +113,13 @@ This software is an official work of EDI, and thus belongs to the **public domai
 
     void RMP_Init_Hook(void)
     {
-        RMP_Thd_Crt(&Thd_1, Func_1, &Stack_1[238], (void*)0x12345678, 1, 5);
-        RMP_Thd_Crt(&Thd_2, Func_2, &Stack_2[238], (void*)0x87654321, 1, 5);
+        RMP_Thd_Crt(&Thd_1, Func_1, &Stack_1, sizeof(Stack_1), (void*)0x12345678, 1, 5);
+        RMP_Thd_Crt(&Thd_2, Func_2, &Stack_2, sizeof(Stack_2), (void*)0x87654321, 1, 5);
     }
 ```
 
 ### Counting semaphores
-![Semaphore](https://raw.githubusercontent.com/EDI-Systems/M5P1_MuProkaron/master/Documents/Demo/Semaphore.gif)
+![Semaphore](/Document/Public/Demo/Semaphore.gif)
 ```C
     void Func_1(void* Param)
     {
@@ -134,8 +143,8 @@ This software is an official work of EDI, and thus belongs to the **public domai
     void RMP_Init_Hook(void)
     {
         RMP_Sem_Crt(&Sem_1,0);
-        RMP_Thd_Crt(&Thd_1, Func_1, &Stack_1[238], (void*)0x12345678, 1, 5);
-        RMP_Thd_Crt(&Thd_2, Func_2, &Stack_2[238], (void*)0x87654321, 1, 5);
+        RMP_Thd_Crt(&Thd_1, Func_1, &Stack_1, sizeof(Stack_1), (void*)0x12345678, 1, 5);
+        RMP_Thd_Crt(&Thd_2, Func_2, &Stack_2, sizeof(Stack_2), (void*)0x87654321, 1, 5);
     }
 ```
 
@@ -153,104 +162,99 @@ This software is an official work of EDI, and thus belongs to the **public domai
 
 ### Typical performance figures for all supported architectures
 
-&ensp;&ensp;&ensp;&ensp;Flash and SRAM consumption is calculated in kB, while the other figures are calculated in CPU clock cycles. All values listed in the table below are **typical** (useful system) values, not **minimum** values, because minimum values on system size seldom make any real sense. HAL library are also included in the size numbers.  
+&ensp;&ensp;The **absolute minimum** value for RMP is about **1.6k ROM and 432 byte RAM**, which is reached on the STM32F030F4 (Cortex-M0) port, and this number even included the 60-byte thread control block and 256-byte stack of the first thread, and a 64-byte kernel interrupt response stack. The OS kernel and the stripped down HAL only consumes **52 bytes** of memory combined. If you are willing to push this limit even further, then the **manufacturer HAL is a rip-off for you** and you can roll your own.
 
-&ensp;&ensp;&ensp;&ensp;The **absolute minimum** value for RMP is about **1.6k ROM and 432 byte RAM**, which is reached on the HC32L136K8TA (Cortex-M0+) port, and this number even included the 60-byte thread control block and 256-byte stack of the first thread, and a 64-byte kernel interrupt response stack. The OS kernel and the stripped down HAL only consumes **52 bytes** of memory combined. If you are willing to push this limit even further, then the **manufacturer HAL is a rip-off for you** and you can roll your own.  
+&ensp;&ensp;The timing performance of the kernel is shown as follows. All compiler options are the highest optimization (usually -O3 with LTO when available) and optimized for time, and all values are average in CPU cycles. 
+- Yield    : Yield from one thread to another.
+- Mail     : Mailbox communication from one thread to another.
+- Sem      : Semaphore communication from one thread to another.
+- FIFO     : FIFO read/write pair within a single thread.
+- Msgq     : Message queue communication from one thread to another.
+- Bmq      : Blocking message queue communication from one thread to another.
+- Mail/I   : Send to a mailbox from interrupt.
+- Sem/I    : Post to a semaphore from interrupt.
+- Msgq/I   : Send to a message queue from interrupt.
+- Bmq/I    : Send to a blocking message queue from interrupt.
+- Mem      : A pair of memory pool malloc/free.
 
-|Machine      |Toolchain     |Flash|SRAM|Yield|Mail |Sem  |Mail/Int|Sem/Int|Mem  |
-|:-----------:|:------------:|:---:|:--:|:---:|:---:|:---:|:------:|:-----:|:---:|
-|DSPIC33E     |XC16-GCC      |4.46 |1.15|526  |828  |750  |914     |884    |579  |
-|MSP430       |TI CCS7       |2.90 |0.64|495  |906  |786  |830     |736    |1575 |
-|Cortex-M0    |Keil uVision 5|4.94 |1.65|374  |663  |616  |659     |617    |N/A  |
-|Cortex-M0+   |Keil uVision 5|6.25 |1.65|334  |607  |544  |588     |552    |N/A  |
-|Cortex-M3    |Keil uVision 5|5.31 |1.65|252  |513  |448  |465     |418    |311  |
-|Cortex-M4    |Keil uVision 5|5.46 |1.66|188  |386  |353  |361     |329    |233  |
-|Cortex-M7    |Keil uVision 5|6.66 |1.65|196  |288  |277  |296     |296    |183  |
-|Cortex-M7    |GCC           |7.71 |1.98|176  |313  |276  |290     |268    |193  |
-|Cortex-M7-RVM|Keil uVision 5|2.09 |2.29|1068 |1256 |1195 |884     |866    |176  |
-|Cortex-M7-RVM|GCC           |2.15 |2.10|1103 |1277 |1225 |907     |866    |177  |
-|Cortex-R4    |TI CCS7       |15.1 |1.42|281  |458  |406  |424     |368    |274  |
-|Cortex-R5    |TI CCS7       |18.2 |3.72|305  |471  |426  |472     |432    |267  |
-|MIPS M14k    |XC32-GCC      |17.2 |2.46|263  |378  |358  |430     |420    |211  |
-|RV32IMAC     |GCC           |2.24 |2.89|261  |585  |506  |~800**  |~800** |N/A  |
-|X86-LINUX    |GCC           |N/A  |N/A |33000|35000|33000|35000   |33000  |136  |
+&ensp;&ensp;The difference from `Msgq` and `Bmq` is, in `Msgq`, only the receiver may block, whereas in `Bmq` both may block.
 
-*As a comparison, RT-Linux 4.12's best context switch time on Cortex-M7 is bigger than 25000 cycles. This is measured with futex; if other forms of IPC such as pipes are used, this time is even longer.  
+|Chipname     |Platform    |Build |Yield|Mail |Sem  |FIFO |Msgq |Bmq  |Mail/I|Sem/I|Msgq/I |Bmq/I |Mem  |
+|:-----------:|:----------:|:----:|:---:|:---:|:---:|:---:|:---:|:---:|:----:|:---:|:-----:|:----:|:---:|
+|STM32F030F4  |Cortex-M0   |Keil  |362  |763  |666  |379  |1196 |1609 |689   |616  |950    |1211  |N/A  |
+|...          |...         |GCC   |366  |802  |690  |396  |1246 |1685 |705   |622  |954    |1200  |N/A  |
+|STM32L071CB  |Cortex-M0+  |Keil  |335  |581  |532  |253  |892  |1167 |554   |524  |756    |945   |N/A  |
+|...          |...         |GCC   |337  |656  |600  |284  |947  |1260 |578   |602  |794    |1003  |N/A  |
+|STM32F103RE  |Cortex-M3   |Keil  |203  |438  |385  |226  |684  |930  |392   |354  |542    |707   |518  |
+|...          |...         |GCC   |TBD  |TBD  |TBD  |TBD  |TBD  |TBD  |TBD   |TBD  |TBD    |TBD   |TBD  |
+|STM32F405RG  |Cortex-M4   |Keil  |180  |345  |321  |180  |667  |886  |309   |302  |498    |626   |455  |
+|...          |...         |GCC   |196  |388  |345  |192  |677  |953  |381   |349  |566    |743   |411  |
+|STM32F767IG  |Cortex-M7   |Keil  |176  |329  |277  |174  |510  |694  |328   |259  |413    |516   |334  |
+|...          |...         |GCC   |TBD  |TBD  |TBD  |TBD  |TBD  |TBD  |TBD   |TBD  |TBD    |TBD   |TBD  |
+|TMS570LS0432 |Cortex-R4   |CCS   |306  |493  |460  |193  |686  |897  |480   |464  |592    |736   |533  |
+|TMS570LC4357 |Cortex-R5   |CCS   |275  |479  |467  |216  |746  |998  |440   |435  |595    |763   |482  |
+|DSPIC33EP512 |DSPIC33E    |XC16  |540  |844  |784  |344  |1148 |1573 |435   |930  |1182   |1428  |889  |
+|MSP430F149   |MSP430      |CCS   |312  |641  |573  |312  |985  |1278 |528   |487  |739    |898   |N/A  |
+|MSP430FR5994 |MSP430X     |CCS   |468  |1054 |891  |492  |1573 |2072 |891   |784  |1176   |1464  |3291 |
+|PIC32MZ2048  |MIPS M14k   |XC32  |260  |392  |370  |146  |540  |672  |440   |420  |530    |620   |364  |
+|TMS320F28335 |C28x        |CCS   |246  |513  |440  |235  |751  |1001 |440   |413  |622    |770   |946  |
+|CH32V307     |RV32IMAC    |GCC   |246  |426  |386  |179  |605  |767  |359   |321  |466    |593   |TBD  |
+|CH32V307     |RV32IMAFC   |GCC   |318  |495  |457  |182  |674  |836  |405   |366  |500    |624   |TBD  |
+|i9-7980XE    |X86-LINUX   |GCC   |TBD  |TBD  |TBD  |TBD  |TBD  |TBD  |TBD   |TBD  |TBD    |TBD   |TBD  |
 
-**This is for reference only; the part used for evaluation relies on SPI Flash interface and can sometimes have a response time of 45000 cycles on a single instruction cache miss. Conventionally external SPI-Flash based device need large internal memory to run their code from to make these measurements, however this part simply does not have that much memory.
-<!-- |MSP430       |GCC           |     |    |     |     |     |        |       |     | -->
-<!-- |RL78         |GCC           |     |    |     |     |     |        |       |     | -->
-<!-- |Cortex-M3    |GCC           |     |    |     |     |     |        |       |     | -->
-<!-- |Cortex-M4    |GCC           |     |    |     |     |     |        |       |     | -->
-<!-- |Cortex-M7    |GCC           |     |    |     |     |     |        |       |     | -->
-<!-- |Cortex-R4    |GCC           |     |    |     |     |     |        |       |     | -->
-<!-- |Cortex-R5    |GCC           |     |    |     |     |     |        |       |     | -->
+&ensp;&ensp;The **[RVM](https://github.com/EDI-Systems/M7M02_Ammonite)** embedded hypervisor virtualized versions:
 
-- DSPIC33E is evaluated with DSPIC33EP512MU810.
-- MSP430 is evaluated with MSP430FR5994.
-- Cortex-M0 is evaluated with STM32F030F4P6.
-- Cortex-M0+ is evaluated with STM32L053C8T6.
-- Cortex-M3 is evaluated with STM32F103RET6.
-- Cortex-M4 is evaluated with STM32F405RGT6.
-- Cortex-M7 is evaluated with STM32F767IGT6.
-- Cortex-M7-RVM is evaluated with STM32F767IGT6, and the RMP runs as a guest OS in the **[RVM](https://github.com/EDI-Systems/M7M2_MuAmmonite)** embedded hypervisor.
-- Cortex-R4 is evaluated with TMS570LS0432.
-- Cortex-R5 is evaluated with TMS570LC4357.
-- MIPS M14k is evaluated with PIC32MZ2048EFM100.
-- RV32IMAC is evaluated with FE310-G000.
-- X86 Linux is evaluated with Ubuntu 16.04 on i7-4820k @ 3.7GHz.
+|Chipname     |Platform    |Build |Yield|Mail |Sem  |FIFO |Msgq |Bmq  |Mail/I|Sem/I|Msgq/I |Bmq/I |Mem  |
+|:-----------:|:----------:|:----:|:---:|:---:|:---:|:---:|:---:|:---:|:----:|:---:|:-----:|:----:|:---:|
+|STM32L071CB  |Cortex-M0+  |Keil  |469  |841  |717  |391  |1143 |1529 |1484  |1376 |1646   |1867  |N/A  |
+|...          |...         |GCC   |TBD  |TBD  |TBD  |TBD  |TBD  |TBD  |TBD   |TBD  |TBD    |TBD   |TBD  |
+|STM32F405RG  |Cortex-M4   |Keil  |TBD  |TBD  |TBD  |TBD  |TBD  |TBD  |TBD   |TBD  |TBD    |TBD   |TBD  |
+|...          |...         |GCC   |TBD  |TBD  |TBD  |TBD  |TBD  |TBD  |TBD   |TBD  |TBD    |TBD   |TBD  |
+|STM32F767IG  |Cortex-M7   |Keil  |221  |403  |348  |150  |589  |765  |942   |962  |1134   |1227  |334  |
+|...          |...         |GCC   |TBD  |TBD  |TBD  |TBD  |TBD  |TBD  |TBD   |TBD  |TBD    |TBD   |TBD  |
 
-&ensp;&ensp;&ensp;&ensp;All compiler options are the highest optimization (usually -O3) and optimized for time. 
-- Yield    : The time to yield between different threads.  
-- Mail     : The mailbox communication time between two threads.  
-- Sem      : The semaphore communication time between two threads.  
-- Mail/Int : The time to send to a mailbox from interrupt.  
-- Sem/Int  : The time to post to a semaphore from interrupt.  
-- Mem      : The time to do an operation on memory, e.g. allocation/free.  
+In contrast, RT-Linux 4.12's best context switch time on Cortex-M7 is bigger than 25000 cycles (have to run from FMC SDRAM). This is measured with futex; if other forms of IPC such as pipes are used, this time is even longer.
 
-### Possible New Architecture Supports
-|Architecture   |Reason                 |Priority                      |
-|:-------------:|:---------------------:|:----------------------------:|
-|RL78           |Largely used 16-bit MCU|:star::star::star::star::star:|
-|TI C2000       |Largely used DSP       |:star::star::star::star:      |
-|MicroBlaze     |Largely used soft core |:star::star:                  |
-|NIOS II        |Largely used soft core |:star:                        |
+### Possible New Platform Supports
+|Platform   |Reason                 |Priority            |
+|:---------:|:---------------------:|:------------------:|
+|RL78       |Largely used 16-bit MCU|:star: :star: :star:|
 
 ### Architectures NOT Supported
 |Architecture   |Reason                |Workaround                                                                     |
 |:-------------:|:--------------------:|:-----------------------------------------------------------------------------:|
-|PIC18          |Hardware stack        |Use [RMS State-machine based OS](https://github.com/EDI-Systems/M2A1_MuSimpron)|
-|AVR32          |In decline            |Use more popular Cortex-M and Cortex-Rs                                        |
-|ARMv5          |New versions available|Use newer Cortex-M and Cortex-Rs                                               |
-|x86-64         |Advanced system       |Use [RME Microkernel-based OS](https://github.com/EDI-Systems/M7M1_MuEukaron)  |
-|Cortex-A       |Advanced system       |Use [RME Microkernel-based OS](https://github.com/EDI-Systems/M7M1_MuEukaron)  |
-|Coldfire       |In decline            |Use more popular Cortex-M and Cortex-Rs                                        |
-|PowerPC        |In decline            |Use more popular Cortex-M and Cortex-Rs                                        |
-|RX100/600/600S |Rarely used           |Use more popular Cortex-M and Cortex-Rs                                        |
-|Tricore        |Rarely used           |Use more popular Cortex-M and Cortex-Rs                                        |
-|MB91460        |Rarely used           |Use more popular Cortex-M and Cortex-Rs                                        |
+|PIC18          |Hardware stack        |Use [RMS State-machine based OS](https://github.com/EDI-Systems/M2A01_Simpron)|
+|AVR32          |In decline            |Use more popular Cortex-M and RISC-Vs                                        |
+|ARMv5          |New versions available|Use newer Cortex-M and RISC-Vs                                               |
+|x86-64         |Advanced system       |Use [RME Microkernel-based OS](https://github.com/EDI-Systems/M7M01_Eukaron)  |
+|Cortex-A       |Advanced system       |Use [RME Microkernel-based OS](https://github.com/EDI-Systems/M7M01_Eukaron)  |
+|Coldfire       |In decline            |Use more popular Cortex-M and RISC-Vs                                        |
+|PowerPC        |In decline            |Use more popular Cortex-M and RISC-Vs                                        |
+|RX100/600/600S |Rarely used           |Use more popular Cortex-M and RISC-Vs                                        |
+|Tricore        |Rarely used           |Use more popular Cortex-M and RISC-Vs                                        |
+|MB91460        |Rarely used           |Use more popular Cortex-M and RISC-Vs                                        |
 
 ## Getting Started
 
-&ensp;&ensp;&ensp;&ensp;These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+&ensp;&ensp;These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
 
 ### Prerequisites
 
-&ensp;&ensp;&ensp;&ensp;You need **_Cortex-M or Cortex-R or MIPS or MSP430_** microcontroller development kits to run the tests. This RTOS focuses on value-line MCUs and do not concentrate on high-end MCUs or MPUs. Do not use QEMU simulator to test the projects because they do not behave correctly in many scenarios.  
+&ensp;&ensp;You need **_Cortex-M or RISC-V or MIPS or MSP430_** microcontroller development kits to run the tests. This RTOS focuses on value-line MCUs and do not concentrate on high-end MCUs or MPUs. Do not use QEMU simulator to test the projects because they do not behave correctly in many scenarios.  
 
-&ensp;&ensp;&ensp;&ensp;If you don't have a development board, a **_x86-based Linux port_** of RMP is also available. However, running RMP on top of linux uses the [ptrace](https://en.wikipedia.org/wiki/Ptrace) system call and [signal](https://en.wikipedia.org/wiki/Signal_(IPC)) system, thus it is not particularly fast. Just run the example and observe benchmark output.  
+&ensp;&ensp;If you don't have a development board, a **_x86-based Linux port_** of RMP is also available. However, running RMP on top of linux uses the [ptrace](https://en.wikipedia.org/wiki/Ptrace) system call and [signal](https://en.wikipedia.org/wiki/Signal_(IPC)) system, thus it is not particularly fast. Just run the example and observe benchmark output.  
 
-&ensp;&ensp;&ensp;&ensp;Other platform supports should be simple to implement, however they are not scheduled yet. For Cortex-A and other CPUs with a memory management unit ([MMU](https://en.wikipedia.org/wiki/Memory_management_unit)), go [M7M1_MuEukaron](https://github.com/EDI-Systems/M7M1_MuEukaron) _Real-Time Multi-Core Microkernel_ instead; M7M1 supports some Cortex-Ms and Cortex-Rs as well.
+&ensp;&ensp;Other platform supports should be simple to implement, however they are not scheduled yet. For Cortex-A and other CPUs with a memory management unit ([MMU](https://en.wikipedia.org/wiki/Memory_management_unit)), go [M7M01_Eukaron](https://github.com/EDI-Systems/M7M01_Eukaron) _Real-Time Multi-Core Microkernel_ instead; M7M01 supports some microcontrollers as well.
 
 ### Compilation
 
-&ensp;&ensp;&ensp;&ensp;The **Vendor Toolchain** or **Eclipse** projects for various microcontrollers are available in the **_Project_** folder. Refer to the readme files in each folder for specific instructions about how to run them. However, keep in mind that some examples may need vendor-specific libraries such as the STMicroelectronics HAL. Some additional drivers may be required too. These can be found in **[M0A00_Library](https://github.com/EDI-Systems/M0A00_Library)** repo.
+&ensp;&ensp;The **Vendor Toolchain** or **Eclipse** projects for various microcontrollers are available in the **_Project_** folder. Refer to the readme files in each folder for specific instructions about how to run them. However, keep in mind that some examples may need vendor-specific libraries such as the STMicroelectronics HAL. Some additional drivers may be required too. These can be found in **[M0A00_Library](https://github.com/EDI-Systems/M0A00_Library)** repo.
 
 ## Running the tests
 
-&ensp;&ensp;&ensp;&ensp;To run the sample programs, simply download them into the development board and start step-by-step debugging. Some examples will use one or two LEDs to indicate the system status. In that case, it is necessary to fill the LED blinking wrapper functions.  
+&ensp;&ensp;To run the sample programs, simply download them into the development board and start step-by-step debugging. Some examples will use one or two LEDs to indicate the system status. In that case, it is necessary to fill the LED blinking wrapper functions.  
 
-&ensp;&ensp;&ensp;&ensp;To use the graphics library and other advanced features, please refer to the user manual.
+&ensp;&ensp;To use the graphics library and other advanced features, please refer to the user manual.
 
 ## Deployment
 
@@ -258,19 +262,23 @@ This software is an official work of EDI, and thus belongs to the **public domai
 
 ## Built With
 
-- Keil uVision 5 (armcc)
-- Code composer studio
-- MPLAB X XC32
+- Keil uVision (ARMCC/ARMCLANG)
+- Code Composer Studio
+- MPLAB X XC16/XC32
 - GCC/Clang-LLVM
 
-&ensp;&ensp;&ensp;&ensp;Other toolchains are not recommended nor supported at this point, though it might be possible to support them later on.
+&ensp;&ensp;Other toolchains are not recommended nor supported at this point, though it might be possible to support them later on.
 
 ## Contributing
 
-&ensp;&ensp;&ensp;&ensp;Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
+&ensp;&ensp;Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
 
 ## EDI Project Information
-&ensp;&ensp;&ensp;&ensp;Mutate - Protero - Prokaron (M5P1 R4T1)
+- M5P01 R5T2
 
 ## Starring Contributors
-&ensp;&ensp;&ensp;&ensp;Leifeng Song - ARM Cortex-M3/4/7 assembly port.
+- Leifeng Song - ARM Cortex-M3/4/7 assembly port.
+- Runsheng Hou - ARM Cortex-M4/7 RVM port and lwIP demo.
+- Yihe Wang - Stable x86/linux/ptrace port.
+- Ran Zhang - C28x DSP port.
+- Kai Zhang - White-box testing.
