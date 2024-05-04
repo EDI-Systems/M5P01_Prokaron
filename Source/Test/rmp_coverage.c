@@ -1,5 +1,5 @@
 /******************************************************************************
-Filename    : rmp_test.c
+Filename    : rmp_coverage.c
 Author      : pry 
 Date        : 22/07/2017
 Licence     : The Unlicense; see LICENSE for details.
