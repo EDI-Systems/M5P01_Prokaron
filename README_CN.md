@@ -1,15 +1,23 @@
 ﻿<h1 align="center">
-	<img width="300" src="Document/Public/Demo/logo.png" alt="logo">
+	<img width="300" src="/Document/Public/Demo/logo.png" alt="logo">
 </h1>
 
-# One RTOS (RMP)
+# RMP Real-time kernel
+<div align="center">
+
 [![Github release](https://img.shields.io/github/release/EDI-Systems/M5P01_Prokaron.svg)](https://github.com/EDI-Systems/M5P01_Prokaron/releases/latest)
 [![Github commits](https://img.shields.io/github/commits-since/EDI-Systems/M5P01_Prokaron/main@{30day}.svg)](https://github.com/EDI-Systems/M5P01_Prokaron/compare/main@{30day}...main)
+[![Discord](https://img.shields.io/badge/chat-Discord-purple)](https://discord.gg/VxCFSFC6bW)
+
+</div>
+<div align="center">
+
 ![language](https://img.shields.io/badge/language-C-orange.svg)
 [![Build](https://dl.circleci.com/status-badge/img/circleci/NY2jeZsLjp6awG9G8CrUsi/Cusv1XhXjvcKuDsRnRrmZC/tree/main.svg?style=shield)](https://dl.circleci.com/status-badge/redirect/circleci/NY2jeZsLjp6awG9G8CrUsi/Cusv1XhXjvcKuDsRnRrmZC/tree/main)
-[![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/1684/badge)](https://bestpractices.coreinfrastructure.org/projects/1684) 
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/1684/badge)](https://www.bestpractices.dev/projects/1684)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/69a95540047e47d08670fe3ea85dcaaa)](https://app.codacy.com/gh/EDI-Systems/M5P01_Prokaron/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
-[![Join the chat at https://gitter.im/M5P01_Prokaron/Lobby](https://badges.gitter.im/M5P01_Prokaron/Lobby.svg)](https://gitter.im/M5P01_Prokaron/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
+</div>
 
 Click **[HERE](README.md)** for English version.
 
@@ -17,7 +25,7 @@ Click **[HERE](README.md)** for English version.
 
 &emsp;&emsp;本系统比以 _FreeRTOS_ 和 _RT-Thread_ 为代表的全功能系统相比要**小**得多，而且理解起来应该也相对容易得多。即便本系统仅仅包含了**一个.C**文件，它仍然提供了**高效的内存管理**，**抗锯齿图形界面库**和**其他实用函数**，并且这些功能的实现都**不消耗任何额外的RAM**！
 
-&emsp;&emsp;本系统的手册可以在 **[这里](https://github.com/EDI-Systems/M5P01_Prokaron/blob/main/Documents/M5P1_%E8%BD%BB%E9%87%8F%E7%BA%A7%E5%AE%9E%E6%97%B6%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E%E4%B9%A6.pdf)** 找到。
+&emsp;&emsp;本系统的手册可以在 **[这里](/Document/Public)** 找到。
 
 &emsp;&emsp;如果想要参与开发，请阅读 **[参与](CONTRIBUTING.md)** 和 **[规范](CODE_OF_CONDUCT.md)** 两个指导文档。如果要提交拉取请求，请使用 **[拉取请求模板](PULL_REQUEST_TEMPLATE.md)** 。
 本软件是EDI的官方作品，因此属于 **公有领域** 。 所有由EDI保留的版权在所有适用的法律条款下尽最大可能地授权给所有实体。
@@ -26,12 +34,12 @@ Click **[HERE](README.md)** for English version.
 
 ## 快速演示
 ### 可在Linux上直接运行的Demo
-&emsp;&emsp;从 **[这里](Project/ECLIPSE-GCC-LINUX/RMP/Debug/RMP)** 下载预编译的x86-32位Linux系统上可运行的二进制，观察性能测试的运行结果！
+&emsp;&emsp;从 **[这里](/Project/GCCMF-X86-LINUX)** 下载预编译的x86-32位Linux系统上可运行的二进制，观察性能测试的运行结果！
 
 ### 内建图形库：控件，界面样例和FXAA抗锯齿细节
 ![Controls](/Document/Public/Demo/Controls.png)
 ![Calculator](/Document/Public/Demo/Calc.png)
-![FXAA](Document/Public/Demo/FXAA.png)
+![FXAA](/Document/Public/Demo/FXAA.png)
 
 ### 基础线程操作
 **创建一个线程**
@@ -142,88 +150,90 @@ Click **[HERE](README.md)** for English version.
 
 ### 内存池操作
 ```C
-    /* Initialize memory pool */
+    /* 初始化内存池 */
     RMP_Mem_Init(Pool, Pool_Size);
 
-    /* Allocate from the pool */
+    /* 从内存池分配内存 */
     Mem=RMP_Malloc(Pool, Alloc_Size);
 
-    /* Free allocated memory */
+    /* 向内存池归还内存 */
     RMP_Free(Pool, Mem);
 ```
 
-### 所有被支持架构上的典型性能数据
+### 所有支持架构上的典型性能数据
 
-&emsp;&emsp;Flash和SRAM消耗以kB计，其他数据以CPU指令周期计。下表列出的所有值都是**典型（有意义的系统配置）值**而非绝对意义上的**最小值**，因为纯技术层面的最小配置在实际工程中很少是真正有用的。HAL库所造成的额外存储器消耗也被计算在内。  
+&emsp;&emsp;本系统的**绝对最小值**在**1.6k ROM和432Byte RAM**左右，这个大小是在STM32F030F4（Cortex-M0+）的移植上达到的，并包括了第一个线程的60Byte的线程控制块和256Byte的线程栈，以及64Byte的内核中断响应用栈。操作系统内核和最精简的HAL库一共仅占用了**52Byte**存储。如果你对这个数字仍不满意，那么可以**不使用厂商提供的HAL库**而自己写一个版本。
 
-&emsp;&emsp;本系统的**绝对最小值**在**1.6k ROM和432Byte RAM**左右，这个大小是在HC32L136K8TA（Cortex-M0+）的移植上达到的，并包括了第一个线程的60Byte的线程控制块和256Byte的线程栈，以及64Byte的内核中断响应用栈。操作系统内核和最精简的HAL库一共仅占用了**52Byte**存储。如果你对这个数字还有不满意，那么可以**不使用厂商提供的HAL库**而自己写一个版本。  
+&emsp;&emsp;内核的时间性能如下所示。所有的编译器优化选项都被设为最高（通常是-O3），而且时间优化选项也被打开。所有值均为 CPU 周期的平均值。
 
-|架构          |工具链        |Flash|SRAM|Yield|Mail |Sem  |Mail/Int|Sem/Int|Mem  |
-|:-----------:|:------------:|:---:|:--:|:---:|:---:|:---:|:------:|:-----:|:---:|
-|DSPIC33E     |XC16-GCC      |4.46 |1.15|526  |828  |750  |914     |884    |579  |
-|MSP430       |TI CCS7       |2.90 |0.64|495  |906  |786  |830     |736    |1575 |
-|Cortex-M0    |Keil uVision 5|4.94 |1.65|374  |663  |616  |659     |617    |N/A  |
-|Cortex-M0+   |Keil uVision 5|6.25 |1.65|334  |607  |544  |588     |552    |N/A  |
-|Cortex-M3    |Keil uVision 5|5.31 |1.65|252  |513  |448  |465     |418    |311  |
-|Cortex-M4    |Keil uVision 5|5.46 |1.66|188  |386  |353  |361     |329    |233  |
-|Cortex-M7    |Keil uVision 5|6.66 |1.65|196  |288  |277  |296     |296    |183  |
-|Cortex-M7    |GCC           |7.71 |1.98|176  |313  |276  |290     |268    |193  |
-|Cortex-M7-RVM|Keil uVision 5|2.09 |2.29|1068 |1256 |1195 |884     |866    |176  |
-|Cortex-M7-RVM|GCC           |2.15 |2.10|1103 |1277 |1225 |907     |866    |177  |
-|Cortex-R4    |TI CCS7       |15.1 |1.42|281  |458  |406  |424     |368    |274  |
-|Cortex-R5    |TI CCS7       |18.2 |3.72|305  |471  |426  |472     |432    |267  |
-|MIPS M14k    |XC32-GCC      |17.2 |2.46|263  |378  |358  |430     |420    |211  |
-|RV32IMAC     |GCC           |2.24 |2.89|261  |585  |506  |~800**  |~800** |N/A  |
-|X86-LINUX    |GCC           |N/A  |N/A |33000|35000|33000|35000   |33000  |136  |
+- Yield    : 两线程间进行切换所用的时间。
+- Mail     : 两线程间使用邮箱进行发送-接收操作的耗时。
+- Sem      : 两线程间使用计数信号量进行发布-获取操作的耗时。
+- FIFO     : 在单个线程内进行 FIFO 读/写的耗时。
+- Msgq     : 两线程间的消息队列通信的耗时。
+- Bmq      : 两线程间的阻塞消息队列通信的耗时。
+- Mail/I   : 从中断发送到某线程邮箱的耗时。
+- Sem/I    : 从中断发布信号量的耗时。
+- Msgq/I   : 从中断发送到消息队列的耗时。
+- Bmq/I    : 从中断发送到阻塞消息队列的耗时。
+- Mem      : 进行一次内存操作（比如分配或释放）的用时。
 
-*作为对比，RT-Linux 4.12在Cortex-M7上的最好线程切换时间是25000时钟周期。这是使用futex测得的；如使用其他IPC如管道等，则结果更差。  
+&ensp;&ensp;`Msgq`和`Bmq`的区别在于前者只有接收方可以阻塞，后者双方都可以阻塞。
 
-**该值仅供参考；评估所使用的器件依赖于SPI Flash来运行代码，有时候一个指令缓存落空就会导致45000周期的延迟。传统上，依赖于外部SPI Flash的器件在做测量时需要很大的内部内存来运行这些代码，但是该器件没有如此多的内存可供使用。
+|芯片           |架构        |工具链  | Yield | Mail | Sem  | FIFO | Msgq | Bmq  | Mail/I | Sem/I | Msgq/I | Bmq/I | Mem  |
+| :----------: | :--------: | :---: | :---: | :--: | :--: | :--: | :--: | :--: | :----: | :---: | :----: | :---: | :--: |
+| STM32F030F4  | Cortex-M0  | Keil  |  362  | 763  | 666  | 379  | 1196 | 1609 |  689   |  616  |  950   | 1211  | N/A  |
+|     ...      |    ...     |  GCC  |  366  | 802  | 690  | 396  | 1246 | 1685 |  705   |  622  |  954   | 1200  | N/A  |
+| STM32L071CB  | Cortex-M0+ | Keil  |  335  | 581  | 532  | 253  | 892  | 1167 |  554   |  524  |  756   |  945  | N/A  |
+|     ...      |    ...     |  GCC  |  337  | 656  | 600  | 284  | 947  | 1260 |  578   |  602  |  794   | 1003  | N/A  |
+| STM32F103RE  | Cortex-M3  | Keil  |  203  | 438  | 385  | 226  | 684  | 930  |  392   |  354  |  542   |  707  | 518  |
+|     ...      |    ...     |  GCC  |  TBD  | TBD  | TBD  | TBD  | TBD  | TBD  |  TBD   |  TBD  |  TBD   |  TBD  | TBD  |
+| STM32F405RG  | Cortex-M4  | Keil  |  180  | 345  | 321  | 180  | 667  | 886  |  309   |  302  |  498   |  626  | 455  |
+|     ...      |    ...     |  GCC  |  196  | 388  | 345  | 192  | 677  | 953  |  381   |  349  |  566   |  743  | 411  |
+| STM32F767IG  | Cortex-M7  | Keil  |  176  | 329  | 277  | 174  | 510  | 694  |  328   |  259  |  413   |  516  | 334  |
+|     ...      |    ...     |  GCC  |  TBD  | TBD  | TBD  | TBD  | TBD  | TBD  |  TBD   |  TBD  |  TBD   |  TBD  | TBD  |
+| TMS570LS0432 | Cortex-R4  |  CCS  |  306  | 493  | 460  | 193  | 686  | 897  |  480   |  464  |  592   |  736  | 533  |
+| TMS570LC4357 | Cortex-R5  |  CCS  |  275  | 479  | 467  | 216  | 746  | 998  |  440   |  435  |  595   |  763  | 482  |
+| DSPIC33EP512 |  DSPIC33E  | XC16  |  540  | 844  | 784  | 344  | 1148 | 1573 |  435   |  930  |  1182  | 1428  | 889  |
+|  MSP430F149  |   MSP430   |  CCS  |  312  | 641  | 573  | 312  | 985  | 1278 |  528   |  487  |  739   |  898  | N/A  |
+| MSP430FR5994 |  MSP430X   |  CCS  |  468  | 1054 | 891  | 492  | 1573 | 2072 |  891   |  784  |  1176  | 1464  | 3291 |
+| PIC32MZ2048  | MIPS M14k  | XC32  |  260  | 392  | 370  | 146  | 540  | 672  |  440   |  420  |  530   |  620  | 364  |
+| TMS320F28335 |    C28x    |  CCS  |  246  | 513  | 440  | 235  | 751  | 1001 |  440   |  413  |  622   |  770  | 946  |
+|   CH32V307   |  RV32IMAC  |  GCC  |  246  | 426  | 386  | 179  | 605  | 767  |  359   |  321  |  466   |  593  | TBD  |
+|   CH32V307   | RV32IMAFC  |  GCC  |  318  | 495  | 457  | 182  | 674  | 836  |  405   |  366  |  500   |  624  | TBD  |
+|  i9-7980XE   | X86-LINUX  |  GCC  |  TBD  | TBD  | TBD  | TBD  | TBD  | TBD  |  TBD   |  TBD  |  TBD   |  TBD  | TBD  |
 
+&ensp;&ensp;**[RVM](https://github.com/EDI-Systems/M7M02_Ammonite)** 嵌入式虚拟机监视器虚拟化版本：
 
-- DSPIC33E平台使用DSPIC33EP512MU810进行评估。
-- MSP430平台使用MSP430FR5994进行评估。
-- Cortex-M0平台使用STM32F030F4P6进行评估。
-- Cortex-M0+平台使用STM32L053C8T6进行评估。
-- Cortex-M3平台使用STM32F103RET6进行评估。
-- Cortex-M4平台使用STM32F405RGT6进行评估。
-- Cortex-M7平台使用STM32F767IGT6进行评估。
-- Cortex-M7-RVM平台使用STM32F767IGT6进行评估，而且RMP此时是作为客户机运行在 **[RVM](https://github.com/EDI-Systems/M7M2_MuAmmonite)** 嵌入式虚拟机监视器上。
-- Cortex-R4平台使用TMS570LS0432进行评估。
-- Cortex-R5平台使用TMS570LC4357进行评估。
-- MIPS M14k平台使用PIC32MZ2048EFM100进行评估。
-- RV32IMAC平台使用FE310-G000进行评估。
-- X86 Linux平台使用Ubuntu 16.04和i7-4820k @ 3.7GHz进行评估。
+|芯片          |架构        |工具链  | Yield | Mail | Sem  | FIFO | Msgq | Bmq  | Mail/I | Sem/I | Msgq/I | Bmq/I | Mem  |
+| :---------: | :--------: | :---: | :---: | :--: | :--: | :--: | :--: | :--: | :----: | :---: | :----: | :---: | :--: |
+| STM32L071CB | Cortex-M0+ | Keil  |  469  | 841  | 717  | 391  | 1143 | 1529 |  1484  | 1376  |  1646  | 1867  | N/A  |
+|     ...     |    ...     |  GCC  |  TBD  | TBD  | TBD  | TBD  | TBD  | TBD  |  TBD   |  TBD  |  TBD   |  TBD  | TBD  |
+| STM32F405RG | Cortex-M4  | Keil  |  TBD  | TBD  | TBD  | TBD  | TBD  | TBD  |  TBD   |  TBD  |  TBD   |  TBD  | TBD  |
+|     ...     |    ...     |  GCC  |  TBD  | TBD  | TBD  | TBD  | TBD  | TBD  |  TBD   |  TBD  |  TBD   |  TBD  | TBD  |
+| STM32F767IG | Cortex-M7  | Keil  |  221  | 403  | 348  | 150  | 589  | 765  |  942   |  962  |  1134  | 1227  | 334  |
+|     ...     |    ...     |  GCC  |  TBD  | TBD  | TBD  | TBD  | TBD  | TBD  |  TBD   |  TBD  |  TBD   |  TBD  | TBD  |
 
-&emsp;&emsp;所有的编译器优化选项都被设为最高（通常是-O3），而且时间优化选项也被打开。 
-- Yield   ：两线程间进行切换所用的时间。  
-- Mail    ：两线程间使用邮箱进行发送-接收操作的耗时。  
-- Sem     ：两线程间使用计数信号量进行发布-获取操作的耗时。  
-- Mail/Int：从中断发送到某线程邮箱的耗时。 
-- Sem/Int ：从中断发布信号量的耗时。 
-- Mem     ：进行一次内存操作（比如分配或释放）的用时。 
+作为对比，RT-Linux 4.12在Cortex-M7上的最好线程切换时间是25000时钟周期。这是使用futex测得的；如使用其他IPC如管道等，则结果更差。  
 
 ### 将来可能支持的新架构
-|架构           |原因           |支持优先度                     |
-|:-------------:|:------------:|:----------------------------:|
-|RL78           |常用16位单片机 |:star::star::star::star::star:|
-|TI C2000       |常用DSP架构   |:star::star::star::star:      |
-|MicroBlaze     |常用软核      |:star::star:                  |
-|NIOS II        |常用软核      |:star:                        |
+|架构           |原因           |支持优先度         |
+|:-------------:|:------------:|:----------------:|
+|RL78           |常用16位单片机 |:star::star::star:|
 
 ### 明确不考虑支持的架构
 |架构           |原因           |替代方案                                                             |
 |:-------------:|:------------:|:------------------------------------------------------------------:|
-|PIC18          |硬件堆栈       |使用[RMS状态机操作系统](https://github.com/EDI-Systems/M2A1_MuSimpron)|
-|AVR32          |正在消亡       |使用大众化的Cortex-M和Cortex-R                                        |
-|ARMv5          |被替代        |使用更新的Cortex-M和Cortex-R                                          |
-|x86-64         |高级系统       |使用[RME微内核操作系统](https://github.com/EDI-Systems/M7M1_MuEukaron)|
-|Cortex-A       |高级系统       |使用[RME微内核操作系统](https://github.com/EDI-Systems/M7M1_MuEukaron)|
-|Coldfire       |正在消亡      |使用大众化的Cortex-M和Cortex-R                                        |
-|PowerPC        |正在消亡      |使用大众化的Cortex-M和Cortex-R                                        |
-|RX100/600/600S |小众架构      |使用大众化的Cortex-M和Cortex-R                                        |
-|Tricore        |小众架构      |使用大众化的Cortex-M和Cortex-R                                        |
-|MB91460        |小众架构      |使用大众化的Cortex-M和Cortex-R                                        |
+|PIC18          |硬件堆栈       |使用[RMS状态机操作系统](https://github.com/EDI-Systems/M2A01_Simpron) |
+|AVR32          |正在消亡       |使用大众化的Cortex-M和Cortex-R                                       |
+|ARMv5          |被替代         |使用更新的Cortex-M和Cortex-R                                         |
+|x86-64         |高级系统       |使用[RME微内核操作系统](https://github.com/EDI-Systems/M7M01_Eukaron) |
+|Cortex-A       |高级系统       |使用[RME微内核操作系统](https://github.com/EDI-Systems/M7M01_Eukaron) |
+|Coldfire       |正在消亡       |使用大众化的Cortex-M和Cortex-R                                        |
+|PowerPC        |正在消亡       |使用大众化的Cortex-M和Cortex-R                                        |
+|RX100/600/600S |小众架构       |使用大众化的Cortex-M和Cortex-R                                        |
+|Tricore        |小众架构       |使用大众化的Cortex-M和Cortex-R                                        |
+|MB91460        |小众架构       |使用大众化的Cortex-M和Cortex-R                                        |
 
 ## 新手上路
 
@@ -231,7 +241,7 @@ Click **[HERE](README.md)** for English version.
 
 ### 准备工作
 
-&emsp;&emsp;要运行测试，你需要一块基于 **_Cortex-M或Cortex-R或MIPS或MSP430_** 的开发板。本RTOS主要面向资源受限的MCU，不提供对高端MCU，MPU和CPU的特别支持。不要使用QEMU模拟器来测试本系统，因为QEMU有很多不完善之处，与真正的硬件行为并不一致。
+&emsp;&emsp;要运行测试，你需要一块基于 **_Cortex-M或RISC-V或MIPS或MSP430_** 的开发板。本RTOS主要面向资源受限的MCU，不提供对高端MCU，MPU和CPU的特别支持。不要使用QEMU模拟器来测试本系统，因为QEMU有很多不完善之处，与真正的硬件行为并不一致。
 
 &emsp;&emsp;如果你没有开发板，那么RMP也有一个 **_基于x86处理器的Linux移植_** 。然而，该移植使用了[ptrace](https://en.wikipedia.org/wiki/Ptrace)系统调用和[信号](https://en.wikipedia.org/wiki/Signal_(IPC))系统，因此并不很快，这一点可以从性能测试的数据看出。
 
@@ -253,9 +263,9 @@ Click **[HERE](README.md)** for English version.
 
 ## 支持的工具链
 
-- Keil uVision 5 (armcc)
-- Code composer studio
-- MPLAB X XC32
+- Keil uVision (ARMCC/ARMCLANG)
+- Code Composer Studio
+- MPLAB X XC16/XC32
 - GCC/Clang-LLVM
 
 &emsp;&emsp;其他的工具链现在不推荐或者当前不受支持，虽然要增加新的支持应该也很简单。
@@ -268,8 +278,8 @@ Click **[HERE](README.md)** for English version.
 - M5P01 R5T2
 
 ## 杰出贡献者
-- 宋磊锋 - ARM Cortex M3/4/7的GCC汇编支持.
-- 侯润生 - ARM Cortex-M4/7 的RVM支持，以及lwIP示例.
-- 王逸鹤 - 稳定的x86/linux/ptrace移植.
-- 张然 - C28x数字信号处理器移植.
+- 宋磊锋 - ARM Cortex-M3/4/7 的GCC汇编支持。
+- 侯润升 - ARM Cortex-M4/7 的RVM支持，以及lwIP示例。
+- 王逸鹤 - 稳定的x86/linux/ptrace移植。
+- 张然 - C28x数字信号处理器移植。
 - 张凯 - 白盒测试用例。
