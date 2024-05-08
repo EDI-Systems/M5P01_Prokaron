@@ -876,14 +876,17 @@ void RMP_Sched_Unlock(void)
             /* No action required */
         }
         
-        /* Calling _RMP_Yield before truely unmasking interrupts is allowed:
+        /* Calling _RMP_Yield before truly unmasking interrupts is allowed:
          * (1) We're using a dedicated interrupt handler to switch context.
          *     In this case, the software interrupt will be pending until we 
-         *     unmask the kernel-aware interrupts.
+         *     unmask the kernel-aware interrupts here.
          * (2) We're using a routine to do context switch.
          *     In this case, the routine will unmask interrupts at its end 
-         *     anyway, and will not leave the interrupt disabled when it is 
-         *     exiting. */
+         *     anyway, and will not leave the interrupt masked when it is 
+         *     exiting, and unmasking it again here does no harm. 
+         * We don't want to absorb RMP_INT_UNMASK into _RMP_Yield due to 
+         * possible complications of the programming mental model, and
+         * we want to keep all invariants as simple as possible. */
         RMP_INT_UNMASK();
     }
     else if(RMP_Sched_Lock_Cnt>1U)
@@ -911,8 +914,8 @@ void RMP_Yield(void)
     if(RMP_Sched_Locked==0U)
     {
         RMP_COVERAGE_MARKER();
-        /* Now see if the scheduler scheduling action is pended in the lock-unlock 
-         * period. If yes, perform a schedule now */
+        /* Now see if the scheduler scheduling action is pended in the 
+         * lock-unlock period. If yes, perform a schedule immediately */
         _RMP_Yield();
     }
     else
@@ -4756,7 +4759,19 @@ rmp_ret_t RMP_Msgq_Cnt(volatile struct RMP_Msgq* Queue)
 /* End Function:RMP_Msgq_Cnt *************************************************/
 
 /* Function:RMP_Bmq_Crt *******************************************************
-Description : Create a blocking message queue.
+Description : Create a blocking message queue. A blocking message queue is a
+              queue that may block senders in addition to receivers.
+              It must be pointed out that providing a core-level semaphore
+              variant that will block senders if it reaches limit does NOT help
+              implementation of this type of queue. A race between (1) mounting
+              the actual info block and (2) notifying the receiver will race no
+              matter how they are arranged relative to each other. If (1) is 
+              before (2), the actual number of messages on the queue may exceed
+              limit when multiple senders are present. If (2) is before (1),
+              the receiver may be notified before the actual block is mounted.
+              Using normal semaphores do not have this issue because a mounting
+              permission is always granted before the actual mounting, and the
+              notification of the receiver will follow the actual mounting.
 Input       : volatile struct RMP_Bmq* Queue - The pointer to the queue.
               rmp_ptr_t Limit - The message number limit.
 Output      : None.
@@ -5058,7 +5073,7 @@ rmp_ret_t RMP_Bmq_Rcv(volatile struct RMP_Bmq* Queue,
     }
     
     /* Check if the queue is in use - no lock needed because we have 
-     * deletion race protection below: assuming the operations can fail. */
+     * deletion race protection below: assuming the operations can fail */
     if(Queue->State!=RMP_BMQ_USED)
     {
         RMP_COVERAGE_MARKER();
