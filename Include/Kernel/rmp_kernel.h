@@ -91,7 +91,7 @@ Description : The header file for the kernel.
 #define RMP_ROUND_DOWN(NUM,POW)     (((NUM)>>(POW))<<(POW))
 #define RMP_ROUND_UP(NUM,POW)       RMP_ROUND_DOWN((NUM)+RMP_POW2(POW)-1U,POW)
 
-/* Word sizes settings - only assume 8 bits for char, even if it exceeds 8 bits */
+/* Word size - only assume 8 bits for char, even if it exceeds 8 bits */
 #define RMP_ALLBITS                 (~((rmp_ptr_t)0U))
 #define RMP_WORD_SIZE               RMP_POW2(RMP_WORD_ORDER)
 #define RMP_WORD_MASK               (~(RMP_ALLBITS<<RMP_WORD_ORDER))
@@ -105,8 +105,10 @@ Description : The header file for the kernel.
 #define RMP_INIT_STACK_ASCEND(X)    RMP_ROUND_UP(RMP_INIT_STACK_START+sizeof(rmp_ptr_t),X)
 #define RMP_INIT_STACK_DESCEND(X)   RMP_ROUND_DOWN(RMP_INIT_STACK_END-sizeof(rmp_ptr_t),X)
 
-/* Get the thread from delay list */
-#define RMP_DLY2THD(X)              ((volatile struct RMP_Thd*)(((rmp_ptr_t)(X))-sizeof(struct RMP_List)))
+/* Get the thread from delay list - avoid possible interference
+ * from struct packing at the head, though this is unlikely */
+#define RMP_OFFSET(T,M)             ((rmp_ptr_t)&(((T*)RMP_NULL)->M))
+#define RMP_DLY2THD(X)              ((volatile struct RMP_Thd*)(((rmp_ptr_t)(X))-RMP_OFFSET(struct RMP_Thd,Dly_Head)))
 /* Detect timer overflow */
 #define RMP_DLY_DIFF(X)             ((X)-RMP_Timestamp)
 #define RMP_DIFF_OVF(X)             (((X)>(RMP_ALLBITS>>1U))||((X)==0U))
