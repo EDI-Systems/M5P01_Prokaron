@@ -487,7 +487,6 @@ ethernetif_input(void* netif)
 {
     struct netif* Netif;
     struct pbuf* Tmp_Buf;
-    rmp_cnt_t Fail_Flag;
     
     Netif=(struct netif*)netif;
     LWIP_DEBUGF(NETIF_DEBUG,("ethernetif_input: IP input error\n"));

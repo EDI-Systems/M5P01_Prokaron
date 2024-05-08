@@ -320,7 +320,6 @@ u32_t sys_arch_mbox_fetch(sys_mbox_t* mbox,
                           void** msg,
                           u32_t timeout_ms)
 {
-    u32_t Timeout;
     rmp_ret_t Ret;
     volatile struct RMP_List* Head;
 
@@ -333,10 +332,9 @@ u32_t sys_arch_mbox_fetch(sys_mbox_t* mbox,
         *msg=((sys_mbox_msg_t*)Head)->msg;
         ((sys_mbox_msg_t*)Head)->msg=RMP_NULL;
         RMP_List_Ins(Head,&Msg_List,Msg_List.Next);
-        return Timeout;
     }
     else if(timeout_ms!=RMP_SLICE_MAX)
-        return SYS_ARCH_TIMEOUT;
+        Ret=SYS_ARCH_TIMEOUT;
     
     return Ret;
 }
