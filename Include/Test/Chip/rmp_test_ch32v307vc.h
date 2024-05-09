@@ -4,6 +4,18 @@ Author      : pry
 Date        : 22/07/2017
 Licence     : The Unlicense; see LICENSE for details.
 Description : The testbench for CH32V307VC.
+              This chip is esoteric in the sense that it integrates an SPI
+              flash with the main core that only have 320k SRAM. To imitate a
+              product with real embedded flash, the part copies a portion of
+              the flash onto the 320k SRAM and use it as code memory. Possible
+              configurations include:
+              192k Flash + 128k RAM
+              224k Flash + 96k RAM
+              256k Flash + 64k RAM
+              288k Flash + 32k RAM
+              Therefore, all testing on the chip is done assuming that only
+              32k RAM/192k Flash is present to maintain compatibility with
+              any of the configurations above.
 
 GCC 12.2.0 -O3 (FPU disabled)
     ___   __  ___ ___

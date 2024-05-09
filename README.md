@@ -177,7 +177,7 @@ This software is an official work of EDI, and thus belongs to the **public domai
 - Bmq/I    : Send to a blocking message queue from interrupt.
 - Mem      : A pair of memory pool malloc/free.
 
-&ensp;&ensp;The difference from `Msgq` and `Bmq` is, in `Msgq`, only the receiver may block, whereas in `Bmq` both may block.
+&ensp;&ensp;The difference between `Msgq` and `Bmq` is, in `Msgq`, only the receiver may block, whereas in `Bmq` both may block.
 
 |Chipname     |Platform    |Build |Yield|Mail |Sem  |FIFO |Msgq |Bmq  |Mail/I|Sem/I|Msgq/I |Bmq/I |Mem  |
 |:-----------:|:----------:|:----:|:---:|:---:|:---:|:---:|:---:|:---:|:----:|:---:|:-----:|:----:|:---:|

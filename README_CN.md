@@ -82,7 +82,7 @@ Click **[HERE](README.md)** for English version.
 
     void RMP_Init_Hook(void)
     {
-        RMP_Thd_Crt(&Thd_1, Func_1, &Stack_1[238], (void*)0x12345678, 1, 5);
+        RMP_Thd_Crt(&Thd_1, Func_1, &Stack_1, sizeof(Stack_1), (void*)0x12345678, 1, 5);
     }
 ```
 ### 从一个线程向另一个线程的邮箱发送
@@ -113,8 +113,8 @@ Click **[HERE](README.md)** for English version.
 
     void RMP_Init_Hook(void)
     {
-        RMP_Thd_Crt(&Thd_1, Func_1, &Stack_1[238], (void*)0x12345678, 1, 5);
-        RMP_Thd_Crt(&Thd_2, Func_2, &Stack_2[238], (void*)0x87654321, 1, 5);
+        RMP_Thd_Crt(&Thd_1, Func_1, &Stack_1, sizeof(Stack_1), (void*)0x12345678, 1, 5);
+        RMP_Thd_Crt(&Thd_2, Func_2, &Stack_2, sizeof(Stack_2), (void*)0x87654321, 1, 5);
     }
 ```
 
@@ -143,8 +143,8 @@ Click **[HERE](README.md)** for English version.
     void RMP_Init_Hook(void)
     {
         RMP_Sem_Crt(&Sem_1,0);
-        RMP_Thd_Crt(&Thd_1, Func_1, &Stack_1[238], (void*)0x12345678, 1, 5);
-        RMP_Thd_Crt(&Thd_2, Func_2, &Stack_2[238], (void*)0x87654321, 1, 5);
+        RMP_Thd_Crt(&Thd_1, Func_1, &Stack_1, sizeof(Stack_1), (void*)0x12345678, 1, 5);
+        RMP_Thd_Crt(&Thd_2, Func_2, &Stack_2, sizeof(Stack_2), (void*)0x87654321, 1, 5);
     }
 ```
 
@@ -176,7 +176,7 @@ Click **[HERE](README.md)** for English version.
 - Sem/I    : 从中断发布信号量。
 - Msgq/I   : 从中断发送到消息队列。
 - Bmq/I    : 从中断发送到阻塞消息队列。
-- Mem      : 进行一次内存操作（比如分配或释放）。
+- Mem      : 进行一对内存分配/释放操作。
 
 &ensp;&ensp;`Msgq`和`Bmq`的区别在于前者只有接收方可以阻塞，后者双方都可以阻塞。
 
