@@ -842,7 +842,6 @@ Return      : None.
 void RMP_Sched_Lock(void)
 {
     RMP_INT_MASK();
-    RMP_Sched_Locked=1U;
     RMP_Sched_Lock_Cnt++;
 }
 /* End Function:RMP_Sched_Lock ***********************************************/
@@ -860,14 +859,11 @@ void RMP_Sched_Unlock(void)
         RMP_COVERAGE_MARKER();
         /* Clear the count before enabling */
         RMP_Sched_Lock_Cnt=0U;
-        RMP_Sched_Locked=0U;
-        /* Now see if the scheduler scheduling action is pended in the lock-unlock 
-         * period. If yes, perform a schedule now */
+        /* Deal with pending scheduler activations */
         if(RMP_Sched_Pend!=0U)
         {
             RMP_COVERAGE_MARKER();
-            /* Reset the count and trigger the context switch */
-            RMP_Sched_Pend=0U;
+             /* Context switch will clear the pend flag */
             _RMP_Yield();
         }
         else
@@ -911,7 +907,7 @@ Return      : None.
 ******************************************************************************/
 void RMP_Yield(void)
 {
-    if(RMP_Sched_Locked==0U)
+    if(RMP_Sched_Lock_Cnt==0U)
     {
         RMP_COVERAGE_MARKER();
         /* Now see if the scheduler scheduling action is pended in the 
@@ -1014,8 +1010,9 @@ void _RMP_Run_High(void)
     /* Write the SP value to thread structure */
     RMP_Thd_Cur->Stack=RMP_SP_Cur;
     
-    /* No need to detect scheduler locks - if this interrupt
-     * can be entered, the scheduler can't be locked */
+    /* No need to detect scheduler locks - if this function can be called, the
+     * scheduler can't be locked, and after we choose the highest priority
+     * thread the scheduler pending flag should be cleared */
     RMP_Sched_Pend=0U;
     /* See which one is ready, and pick it */
     Prio=RMP_PRIO_WORD_NUM-1U;
@@ -1084,7 +1081,7 @@ void _RMP_Tim_Handler(rmp_ptr_t Slice)
     /* Increase the timestamp as always */
     RMP_Timestamp+=Slice;
     
-    /* See if the current thread expired. If yes, trigger a scheduler event */
+    /* See if the current thread expired; if yes, trigger a scheduler event */
     if(Slice>=RMP_Thd_Cur->Slice_Left)
     {
         RMP_COVERAGE_MARKER();
@@ -1122,10 +1119,11 @@ void _RMP_Tim_Handler(rmp_ptr_t Slice)
         /* No action required */
     }
     
+    /* Trigger a context switch if required */
     if(RMP_Sched_Pend!=0U)
     {
         RMP_COVERAGE_MARKER();
-        RMP_Sched_Pend=0U;
+        /* Context switch will clear the pend flag */
         _RMP_Yield();
     }
     else
@@ -1280,9 +1278,9 @@ rmp_ret_t _RMP_Tim_Idle(void)
 /* End Function:_RMP_Tim_Idle ************************************************/
 
 /* Function:_RMP_Run_Ins ******************************************************
-Description : Set the thread as ready to schedule. That means, put the thread into
-              the runqueue. When this is called, please make sure that the scheduler
-              is locked.
+Description : Set the thread as ready to schedule. That means, put the thread
+              into the runqueue. When this is called, please make sure that
+              the scheduler is locked.
               This function will also try to identify if this thread is currently 
               suspended. If yes, it will not be placed into the queue.
 Input       : volatile struct RMP_Thd* Thread - The thread to put into the runqueue.
@@ -1290,14 +1288,14 @@ Output      : None.
 Return      : None.
 ******************************************************************************/
 void _RMP_Run_Ins(volatile struct RMP_Thd* Thread)
-{        
-    /* Is it suspended? If yes, we can't directly set it running */
+{
+    /* No need to operate on suspended threads */
     if((Thread->State&RMP_THD_SUSPENDED)==0U)
     {
         RMP_COVERAGE_MARKER();
         /* Insert this into the corresponding runqueue's back */
         RMP_List_Ins(&(Thread->Run_Head),RMP_Run[Thread->Prio].Prev,&(RMP_Run[Thread->Prio]));
-        /* Set this runlevel as active */
+        /* Set this priority level as active */
         RMP_Bitmap[Thread->Prio>>RMP_WORD_ORDER]|=RMP_POW2(Thread->Prio&RMP_WORD_MASK);
         
         /* Compare this with the current one to see if we need a context switch */
@@ -1330,7 +1328,7 @@ Return      : None.
 ******************************************************************************/
 void _RMP_Run_Del(volatile struct RMP_Thd* Thread)
 {
-    /* Is it suspended? If yes, no need to delete again */
+    /* No need to operate on suspended threads */
     if((Thread->State&RMP_THD_SUSPENDED)==0U)
     {
         RMP_COVERAGE_MARKER();
@@ -1338,6 +1336,7 @@ void _RMP_Run_Del(volatile struct RMP_Thd* Thread)
         if(Thread->Run_Head.Prev==Thread->Run_Head.Next)
         {
             RMP_COVERAGE_MARKER();
+            /* If yes, set the priority level as inactive */
             RMP_Bitmap[Thread->Prio>>RMP_WORD_ORDER]&=~RMP_POW2(Thread->Prio&RMP_WORD_MASK);
         }
         else
@@ -1611,21 +1610,13 @@ rmp_ret_t RMP_Thd_Del(volatile struct RMP_Thd* Thread)
     /* Set return value to failure anyway */
     Thread->Retval=RMP_ERR_OPER;
     Thread->State=RMP_THD_FREE;
-    /* If we are deleting ourself, pend a yield */
-    if(Thread==RMP_Thd_Cur)
-    {
-        RMP_COVERAGE_MARKER();
-        RMP_Sched_Pend=1U;
-    }
-    else
-    {
-        RMP_COVERAGE_MARKER();
-        /* No action required */
-    }
+    
+    /* If we are deleting ourself, a schedule must be pending at this point */
+    RMP_ASSERT((Thread!=RMP_Thd_Cur)||(RMP_Sched_Pend!=0U));
     
     RMP_Sched_Unlock();
     
-    /* If we are deleting ourself, just stop the execution here */
+    /* Can't reach here if we're deleting ourself */
     if(Thread==RMP_Thd_Cur)
     {
         RMP_COVERAGE_MARKER();
@@ -1815,8 +1806,8 @@ rmp_ret_t RMP_Thd_Suspend(volatile struct RMP_Thd* Thread)
         /* No action required */
     }
     
-    /* Only when it is running do we clear this. If we are clearing this, it is not
-     * suspended, so the running queue removal is guaranteed to succceed */
+    /* Only when it is running do we clear this. If we are clearing this, it is
+     * not suspended, thus the running queue removal is guaranteed to succeed */
     if(RMP_THD_STATE(Thread->State)==RMP_THD_RUNNING)
     {
         RMP_COVERAGE_MARKER();
@@ -1831,17 +1822,8 @@ rmp_ret_t RMP_Thd_Suspend(volatile struct RMP_Thd* Thread)
     /* Mark this as suspended */
     Thread->State|=RMP_THD_SUSPENDED;
     
-    /* If we are suspending ourself, pend a yield */
-    if(Thread==RMP_Thd_Cur)
-    {
-        RMP_COVERAGE_MARKER();
-        RMP_Sched_Pend=1U;
-    }
-    else
-    {
-        RMP_COVERAGE_MARKER();
-        /* No action required */
-    }
+    /* If we are suspending ourself, a schedule must be pending at this point */
+    RMP_ASSERT((Thread!=RMP_Thd_Cur)||(RMP_Sched_Pend!=0U));
     
     RMP_Sched_Unlock();
     return 0;
@@ -2125,11 +2107,11 @@ rmp_ret_t RMP_Thd_Snd_ISR(volatile struct RMP_Thd* Thread,
             /* Set to running if not suspended */
             _RMP_Run_Ins(Thread);
 
-            /* If schedule pending, trigger it now because we are in ISR */
+            /* Trigger a context switch if required */
             if(RMP_Sched_Pend!=0U)
             {
                 RMP_COVERAGE_MARKER();
-                RMP_Sched_Pend=0U;
+                /* Context switch will clear the pend flag */
                 _RMP_Yield();
             }
             else
@@ -2914,11 +2896,11 @@ rmp_ret_t RMP_Sem_Post_ISR(volatile struct RMP_Sem* Semaphore,
         Semaphore->Cur_Num--;
     }
     
-    /* If schedule pending, trigger it now because we are in ISR */
+    /* Trigger a context switch if required */
     if(RMP_Sched_Pend!=0U)
     {
         RMP_COVERAGE_MARKER();
-        RMP_Sched_Pend=0U;
+        /* Context switch will clear the pend flag */
         _RMP_Yield();   
     }
     else
@@ -3028,12 +3010,12 @@ rmp_ret_t RMP_Sem_Bcst_ISR(volatile struct RMP_Sem* Semaphore)
         Number++;
     }
     
-    /* If schedule pending, trigger it now because we are in ISR */
+    /* Trigger a context switch if required */
     if(RMP_Sched_Pend!=0U)
     {
         RMP_COVERAGE_MARKER();
-        RMP_Sched_Pend=0U;
-        _RMP_Yield();   
+        /* Context switch will clear the pend flag */
+        _RMP_Yield();
     }
     else
     {
@@ -3144,7 +3126,6 @@ int main(void)
     RMP_Timestamp=0U;
     /* Now initialize the kernel data structures */
     RMP_Sched_Lock_Cnt=0U;
-    RMP_Sched_Locked=0U;
     RMP_Sched_Pend=0U;
     RMP_Timer_Pend=0U;
 
@@ -4623,7 +4604,7 @@ rmp_ret_t RMP_Msgq_Snd_ISR(volatile struct RMP_Msgq* Queue,
         /* No action required */
     }
     
-    /* Then insert node */
+    /* Then insert node - must be successful */
     RMP_ASSERT(RMP_Fifo_Write_ISR(&(Queue->Fifo), Node)==0);
 
     return 0;

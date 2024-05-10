@@ -410,9 +410,8 @@ static void RMP_Progbar_Prog(rmp_cnt_t Coord_X,
 /*****************************************************************************/
 /* The current tick counter value */
 __EXTERN__ volatile rmp_ptr_t RMP_Timestamp;
-/* Scheduler lock */
+/* Scheduler lock count */
 __EXTERN__ volatile rmp_ptr_t RMP_Sched_Lock_Cnt;
-__EXTERN__ volatile rmp_ptr_t RMP_Sched_Locked;
 /* Scheduler pending */
 __EXTERN__ volatile rmp_ptr_t RMP_Sched_Pend;
 /* Timer events pending */
