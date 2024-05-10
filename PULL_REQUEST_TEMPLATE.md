@@ -51,3 +51,4 @@ Describe the actions you performed (e.g., buttons you clicked, text you typed, c
 - [ ] All redundant code is removed, or properly commented for future use in a well manner
 - [ ] Tricky code are well commented
 - [ ] Code in this pull request is thoroughly tested
+- [ ] Pull requests are squashed and commit messages are well written
