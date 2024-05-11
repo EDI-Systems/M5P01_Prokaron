@@ -76,7 +76,7 @@ do \
     MTIMECMP=MTIME+RMP_RV32P_OSTIM_VAL; \
     PLIC_enable_interrupt(&RMP_Global_PLIC,INT_RTCCMP); \
     PLIC_set_priority(&RMP_Global_PLIC,INT_RTCCMP,1); \
-	PLIC_complete_interrupt(&RMP_Global_PLIC, PLIC_claim_interrupt(&RMP_Global_PLIC)); \
+    PLIC_complete_interrupt(&RMP_Global_PLIC, PLIC_claim_interrupt(&RMP_Global_PLIC)); \
 } \
 while(0)
 
@@ -84,7 +84,7 @@ while(0)
 #define RMP_RV32P_TIM_CLR() \
 do \
 { \
-	plic_instance_t RMP_Global_PLIC; \
+    plic_instance_t RMP_Global_PLIC; \
     \
     MTIMECMP=MTIME+RMP_RV32P_OSTIM_VAL; \
     RMP_Global_PLIC.base_addr=PLIC_CTRL_ADDR; \
