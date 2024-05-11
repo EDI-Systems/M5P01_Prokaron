@@ -50,7 +50,7 @@ do \
     RMP_Int_Disable(); \
     SysTick->CMP=RMP_RV32P_OSTIM_VAL; \
     SysTick->CTLR=0x3FU; \
-    NVIC_EnableIRQ(Software_IRQn); \
+    NVIC_EnableIRQ(SysTicK_IRQn); \
 } \
 while(0)
 
