@@ -178,7 +178,7 @@ a lot of data that needs to be copied, this should be set high. */
 */
 
 /* 
-The STM32F4x7 allows computing and verifying the IP, UDP, TCP and ICMP checksums by hardware:
+The STM32F107, 407, 767 and 743 series have hardware IP, UDP, TCP and ICMP checksums on TX/RX:
  - To use this feature let the following define uncommented.
  - To disable it and process by CPU comment the  the checksum.
 */
