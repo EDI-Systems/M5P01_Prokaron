@@ -907,13 +907,13 @@ Return      : None.
 ******************************************************************************/
 void RMP_Yield(void)
 {
-    / Scheduler not locked, perform a schedule immediately */
+    /* Scheduler not locked, perform a schedule immediately */
     if(RMP_Sched_Lock_Cnt==0U)
     {
         RMP_COVERAGE_MARKER();
         _RMP_Yield();
     }
-    /* Scheduler locked, have to pend the flag */
+    /* Scheduler locked, have to pend the flag to schedule later */
     else
     {
         RMP_COVERAGE_MARKER();
