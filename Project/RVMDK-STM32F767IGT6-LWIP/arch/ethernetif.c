@@ -409,7 +409,7 @@ low_level_input(struct netif* netif)
             Payload_Ptr=0;
             
             /* Copy the data from the Rx Buffer to pbuf */
-            while((Bytes_Left+Buffer_Ptr)>ETH_RX_BUF_SIZE )
+            while((Bytes_Left+Buffer_Ptr)>ETH_RX_BUF_SIZE)
             {
                 /* Copy data to pbuf */
                 memcpy(&Payload[Payload_Ptr],&Buffer[Buffer_Ptr],(ETH_RX_BUF_SIZE-Buffer_Ptr));
