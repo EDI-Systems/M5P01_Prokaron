@@ -3,14 +3,14 @@ Filename    : rmp_test_msp430g2553.h
 Author      : pry 
 Date        : 22/07/2017
 Licence     : The Unlicense; see LICENSE for details.
-Description : The testbench for MSP430G2553.
-              This test header is only used with the tickless benchmark to show
-              how RMP perfectly fits battery-powered devices. Best used with
-              MSP-EXP430G2ET for ease of real-time power minitoring.
+Description : The battery-powered testbench for MSP430G2553. This test header 
+              is only used in junction with the tickless benchmark to show
+              how RMP tickless mode fits the battery-powered devices. Best used
+              with MSP-EXP430G2ET for ease of real-time power minitoring.
               Possible execution paths for the hooks:
               1. Tim - Tim
               2. Tim - Ctx
-              2. Tim - Dly
+              2. Tim - Dly - Ctx
               3. Dly - Ctx
               5. Ctx - Ctx
 
@@ -55,8 +55,8 @@ Return      : None.
 void RMP_MSP430_Tim_Off(void)
 {
     /* Just clear everything */
-    TA0CCTL0=0U;
     TA0CTL=0U;
+    TA0CCTL0=0U;
     TA0R=0U;
     Slice_Last=0U;
 }
@@ -64,7 +64,9 @@ void RMP_MSP430_Tim_Off(void)
 
 /* Function:RMP_MSP430_Tim_Set ************************************************
 Description : Reprogram the timer for MSP430 series.
-              TA0 clock = LFXT1/64 = 512Hz.
+              TA0 clock = LFXT1/64 = 512Hz, which allows the MSP430 to hold up 
+              ticks for more than two minutes. More aggressive configurations
+              however, can stretch this to hours or even days.
 Input       : rmp_ptr_t Slice - The tick value to set.
 Output      : None.
 Return      : None.
@@ -72,21 +74,21 @@ Return      : None.
 void RMP_MSP430_Tim_Set(rmp_ptr_t Slice)
 {
     /* Stop the timer first, and clear all pending interrupts */
-    TA0CCTL0=0U;
     TA0CTL=0U;
+    TA0CCTL0=0U;
 
     /* Clear timer */
     Slice_Last=Slice;
     TA0R=0U;
 
-    /* Program and reenable timer if we do have counts */
+    /* Program and reenable timer if we do have slices */
     if(Slice!=0U)
     {
         TA0CCR0=Slice;
         TA0CTL=TASSEL_1|ID_3|MC_1;
         TA0CCTL0=CCIE;
     }
-    /* Trigger an pending interrupt immediately if we don't have counts */
+    /* Trigger an timer interrupt immediately if we don't have slices */
     else
     {
         TA0CCTL0=CCIE|CCIFG;
@@ -96,24 +98,25 @@ void RMP_MSP430_Tim_Set(rmp_ptr_t Slice)
 
 /* Function:RMP_MSP430_Tim_Get ************************************************
 Description : Get the elapsed time. The difficulty with MSP430 is that
-              1. it lacks one-shot mode, 2. it lacks countdown mode.
+              1. it lacks one-shot mode, and 2. it lacks countdown mode, so
+              we need some tricks here.
 Input       : None.
 Output      : None.
 Return      : rmp_ptr_t - The current counter value.
 ******************************************************************************/
 rmp_ptr_t RMP_MSP430_Tim_Get(void)
 {
-    rmp_ptr_t Elapse;
+    /* Stop the timer then read - this is okay because the timer will always
+     * be reprogrammed in the scheduler hook eventually when this gets called,
+     * so there's no need to run the timer after this read has been done. */
+    TA0CTL=0U;
 
-    Elapse=TAR;
-
-    /* An interrupt pending, all time must be expended */
+    /* An interrupt pending, all time must have been expended */
     if((TA0CCTL0&CCIFG)!=0U)
         return Slice_Last;
 
-    Slice_Last-=Elapse;
-
-    return Elapse;
+    /* Only expended partially, return whatever that has passed */
+    return TA0R;
 }
 /* End Function:RMP_MSP430_Tim_Get *******************************************/
 
@@ -127,7 +130,7 @@ void _RMP_MSP430_Tickless_Handler(void)
 {
     RMP_MSP430_TIM_CLR();
 
-    /* All time must have been expended for this to be triggered */
+    /* All slices must have been expended for timer interrupt to be triggered */
     _RMP_Tim_Handler(Slice_Last);
 }
 /* End Function:_RMP_MSP430_Tickless_Handler *********************************/
@@ -140,19 +143,21 @@ Return      : None.
 ******************************************************************************/
 void RMP_Tim_Hook(rmp_ptr_t Slice)
 {
-    /* If we have a pending context switch, turn off timer and don't do anything */
+    /* If we have a pending context switch, just turn off timer because the
+     * context switch hook will help us to turn it back on very soon. */
     if(RMP_Sched_Pend!=0U)
     {
         RMP_MSP430_Tim_Off();
         return;
     }
 
-    /* Reprogram the timer otherwise */
+    /* Program a shot into the future - the MSP430 timer can do RMP_SLICE_MAX in 
+     * a single delay so we just directly pass the slices until future to it.*/
     RMP_MSP430_Tim_Set(_RMP_Tim_Future());
 }
 /* End Function:RMP_Tim_Hook *************************************************/
 
-/* Function:RMP_Sched_Hook *****************************************************
+/* Function:RMP_Sched_Hook ****************************************************
 Description : RMP scheduler hook.
 Input       : None.
 Output      : None.
@@ -160,10 +165,11 @@ Return      : None.
 ******************************************************************************/
 void RMP_Sched_Hook(void)
 {
-    /* See how much time is left, and register whatever has passed */
+    /* See how many slices is left, and register whatever has passed */
     _RMP_Tim_Elapse(RMP_MSP430_Tim_Get());
 
-    /* Program a new future shot */
+    /* Program a shot into the future - the MSP430 timer can do RMP_SLICE_MAX in 
+     * a single delay so we just directly pass the slices until future to it.*/
     RMP_MSP430_Tim_Set(_RMP_Tim_Future());
 }
 /* End Function:RMP_Sched_Hook ***********************************************/
@@ -178,6 +184,9 @@ void RMP_Dly_Hook(rmp_ptr_t Slice)
 {
     /* Just update the interval, this is always followed by a context switch */
     _RMP_Tim_Elapse(RMP_MSP430_Tim_Get());
+    
+    /* The context switch hook will help us to turn it back on very soon */
+    RMP_MSP430_Tim_Off();
 }
 /* End Function:RMP_Dly_Hook *************************************************/
 

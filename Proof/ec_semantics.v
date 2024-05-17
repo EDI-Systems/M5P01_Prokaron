@@ -23,6 +23,67 @@ Local Open Scope nat_scope.
  
 Module EC.
 
+Lemma S_inj : forall (n m : nat),
+  S n = S m ->
+  n = m.
+Proof.
+  intros n m H1.
+  assert (H2: n = pred (S n)).
+  reflexivity.
+  rewrite H2.
+  rewrite H1.
+  reflexivity.
+Qed.
+
+
+Lemma S_same : forall (n : nat),
+  (n =? n) = true.
+Proof.
+  intros n.
+  induction n.
+  reflexivity.
+  inversion IHn.
+  simpl.
+  reflexivity.
+Qed.
+  
+Lemma S_inj_p : forall (n m : nat),
+  (n =? m) = true -> n = m.
+Proof.
+  intros n.
+  induction n.
+  intros m.
+  destruct m.
+  trivial.
+  simpl.
+  discriminate.
+  intros m IHm.
+  destruct m.
+  discriminate.
+  apply f_equal.
+  apply IHn.
+  simpl in IHm.
+  exact IHm.
+Qed.
+
+Check @eq_refl.
+Check eq_refl 3.
+Check eq_ind.
+
+Print S_inj_p.
+  
+Theorem S_inj2 : forall (n m : nat) (b : bool),
+  ((S n) =? (S m)) = b ->
+  (n =? m) = b.
+Proof.
+  intros n m b H. 
+  destruct b.
+  simpl in H.
+  apply H.
+  simpl in H.
+  apply H.
+Qed.
+
 (* Bit definition - a single bit is either true or false *)
 Inductive Bit:Type:=
   | True
