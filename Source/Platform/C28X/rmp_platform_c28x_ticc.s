@@ -124,6 +124,8 @@ __RMP_Start:                .asmfunc
 ;*****************************************************************************/
 ;/* Save all GP regs *********************************************************/
 RMP_C28X_SAVE               .macro LABEL
+    ;Disable interrupt upon entry
+    DINT
     ;Meant to increase SP by 1, simulating "interrupt" behavior
     PUSH                    ST0
     ;Main push sequence simulating an interrupt entry
@@ -193,7 +195,6 @@ RMP_C28X_RESTORE            .macro
     .sect                   ".text:_RMP_C28X_Yield_NONE"
     .align                  1
 __RMP_C28X_Yield_NONE:      .asmfunc
-    DINT
     RMP_C28X_SAVE           __RMP_C28X_Yield_NONE_Skip
     RMP_C28X_SWITCH
     RMP_C28X_RESTORE
@@ -205,7 +206,6 @@ __RMP_C28X_Yield_NONE_Skip:
     .sect                   ".text:__RMP_C28X_Yield_FPU32"
     .align                  1
 __RMP_C28X_Yield_FPU32:     .asmfunc
-    DINT
     RMP_C28X_SAVE           __RMP_C28X_Yield_FPU32_Skip
     ;Push FPU registers
     .word                   0xE200      ;MOV32   *SP++, STF
@@ -257,7 +257,6 @@ __RMP_C28X_Yield_FPU32_Skip:
     .sect                   ".text:__RMP_C28X_Yield_FPU64"
     .align                  1
 __RMP_C28X_Yield_FPU64:     .asmfunc
-    DINT
     RMP_C28X_SAVE           __RMP_C28X_Yield_FPU64_Skip
     ;Push FPU registers
     .word                   0xE200      ;MOV32   *SP++, STF

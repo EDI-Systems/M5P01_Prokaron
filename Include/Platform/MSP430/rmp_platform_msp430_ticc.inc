@@ -1,5 +1,5 @@
 ;/*****************************************************************************
-;Filename    : rmp_platform_msp430_ticc.s
+;Filename    : rmp_platform_msp430_ticc.inc
 ;Author      : pry
 ;Date        : 25/02/2018
 ;Description : The assembly part of the RMP RTOS. This is for MSP430, and

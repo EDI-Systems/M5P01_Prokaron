@@ -1,7 +1,7 @@
 /******************************************************************************
 Filename    : rmp_platform_rv32p_gcc.inc
 Author      : pry
-Date        : 10/04/2012
+Date        : 10/04/2022
 Description : The assembly part of the RMP RTOS. This is for RV32P, and
               contains macros to be included in all interrupt assembly code
               as needed.
