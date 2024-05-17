@@ -16,7 +16,24 @@ Description : The testbench for CH32V307VC.
               Therefore, all testing on the chip is done assuming that only
               32k RAM/192k Flash is present to maintain compatibility with
               any of the configurations above.
-
+              This chip is also nonstandard in terms of interrupt entry 
+              behavior. Upon interrupt entry, it will NOT disable interrupts,
+              to allow so-called preemption.
+              However, such preemption will NOT work at all unless the processor
+              guarantees to execute at least one instruction between interrupts.
+              To see why this is the case, consider a situation where a low-
+              priority interrupt is immediately followed by a high-priority one.
+              The low-priority interrupt will never get a chance to save its mepc
+              even if its first instructions are to do so or disable interrupts,
+              because the high-priority interrupt WILL preempt it before it can
+              even execute one instruction.
+              The remedy here is to (1) disable interrupt preemption altogether,
+              or (2) believe that somehow WCH allows low-level interrupt to at
+              least execute one instruction before it gets preempted, so we can
+              disable interrupts when we enter interrupts, save mepc, and reenable
+              interrupts. The (2) will require some modifications to the standard
+              context switch code, and we refrain from doing so.
+              
 GCC 12.2.0 -O3 (FPU disabled)
     ___   __  ___ ___
    / _ \ /  |/  // _ \       Simple real-time kernel

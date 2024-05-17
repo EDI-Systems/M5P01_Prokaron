@@ -13,7 +13,7 @@ Description : The assembly part of the RMP RTOS. This is for RV32 with
               2. The linker script must export the _RMP_Stack, which is
                  useful for kernel execution in a context switch.
               3. The startup assembly file takes care of global variable and
-                 chip clock initialization.
+                 chip clock initialization, as well as interrupt vectoring.
               To avoid changing these files directly, it is recommended to
               supply extra files in place of, or in addition to certain
               vendor-supplied files.
@@ -216,13 +216,14 @@ Return      : None.
 ******************************************************************************/
 /* Save all GP regs **********************************************************/
     .macro              RMP_RV32P_SAVE LABEL
-    /* RISC-V does not support interrupt nesting, as the current specification says.
-     * Its interrupt controller does not accept new ones before the old one gets
-     * done; and to make things worse, unlike MIPS, it doesn't have IPL field,
-     * thus the interrupt nesting must be implemented with different machine modes
-     * (harts). This is a restriction that likely can't be overcome with software.
-     * From a programming perspective, this is not too bad; it simplifies the
-     * mental model. */
+    /* RISC-V does not support interrupt level masking by itself and we refrain
+     * from implementing complex interrupt nesting in this generic port here.
+     * The syscalls disable interrupts anyway thus implementing interrupt nesting
+     * will not improve worst-case interrupt latency. When your chip is equipped
+     * with interrupt masking features (or you want to go lengths to disable all
+     * OS-aware interrupts one by one when "masking interrupts"), interrupt can
+     * be enabled at all times, and you'll probably have to rewrite this port. */
+    CSRCI               mstatus,8           /* Disable interrupts */
     ADDI                sp,sp,-31*4         /* Save registers */
     SW                  x31,30*4(sp)
     SW                  x30,29*4(sp)
@@ -322,11 +323,10 @@ Return      : None.
     .section            .text._rmp_rv32p_yield_none
     .align              3
 
-_RMP_RV32P_Yield_NONE:
-    CSRCI               mstatus,8           /* Disable interrupt and save registers */
+_RMP_RV32P_Yield_NONE:                      /* Disable interrupts and save registers */
     RMP_RV32P_SAVE      _RMP_RV32P_Yield_NONE_Exit
     RMP_RV32P_SWITCH                        /* Do context switch */
-    RMP_RV32P_RESTORE                       /* Enable interrupt and restore registers */
+    RMP_RV32P_RESTORE                       /* Enable interrupts and restore registers */
 _RMP_RV32P_Yield_NONE_Exit:
     RET
 
@@ -334,8 +334,7 @@ _RMP_RV32P_Yield_NONE_Exit:
     .section            .text._rmp_rv32p_yield_rvf
     .align              3
 
-_RMP_RV32P_Yield_RVF:
-    CSRCI               mstatus,8           /* Disable interrupt and save registers */
+_RMP_RV32P_Yield_RVF:                       /* Disable interrupt and save registers */
     RMP_RV32P_SAVE      _RMP_RV32P_Yield_RVF_Exit
     LUI                 a1,4                /* See if FPU is used (mstatus.fs[1]==1) */
     AND                 a1,a1,a0
@@ -418,7 +417,7 @@ _RMP_RV32P_Yield_RVF_Save_Skip:
     .hword              0x0035
     ADDI                sp,sp,33*4
 _RMP_RV32P_Yield_RVF_Restore_Skip:
-    RMP_RV32P_RESTORE                       /* Enable interrupt and restore registers */
+    RMP_RV32P_RESTORE                       /* Enable interrupts and restore registers */
 _RMP_RV32P_Yield_RVF_Exit:
     RET
 
@@ -426,8 +425,7 @@ _RMP_RV32P_Yield_RVF_Exit:
     .section            .text._rmp_rv32p_yield_rvd
     .align              3
 
-_RMP_RV32P_Yield_RVD:
-    CSRCI               mstatus,8           /* Disable interrupt and save registers */
+_RMP_RV32P_Yield_RVD:                       /* Disable interrupts and save registers */
     RMP_RV32P_SAVE      _RMP_RV32P_Yield_RVD_Exit
     LUI                 a1,4                /* See if FPU is used (mstatus.fs[1]==1) */
     AND                 a1,a1,a0
@@ -574,7 +572,7 @@ _RMP_RV32P_Yield_RVD_Save_Skip:
     .hword              0x0035
     ADDI                sp,sp,65*4
 _RMP_RV32P_Yield_RVD_Restore_Skip:
-    RMP_RV32P_RESTORE                       /* Enable interrupt and restore registers */
+    RMP_RV32P_RESTORE                       /* Enable interrupts and restore registers */
 _RMP_RV32P_Yield_RVD_Exit:
     RET
 /* End Function:_RMP_RV32P_Yield *********************************************/
