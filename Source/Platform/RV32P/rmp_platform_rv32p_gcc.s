@@ -334,7 +334,7 @@ _RMP_RV32P_Yield_NONE_Exit:
     .section            .text._rmp_rv32p_yield_rvf
     .align              3
 
-_RMP_RV32P_Yield_RVF:                       /* Disable interrupt and save registers */
+_RMP_RV32P_Yield_RVF:                       /* Disable interrupts and save registers */
     RMP_RV32P_SAVE      _RMP_RV32P_Yield_RVF_Exit
     LUI                 a1,4                /* See if FPU is used (mstatus.fs[1]==1) */
     AND                 a1,a1,a0

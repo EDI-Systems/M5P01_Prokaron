@@ -3160,7 +3160,8 @@ int main(void)
     RMP_Thd_Cur=(volatile struct RMP_Thd*)&RMP_Init_Thd;
     RMP_SP_Cur=RMP_Init_Thd.Stack;
     
-    /* Now jump to the user function and will never return. Initialization of stack is not needed */
+    /* Now jump to the init thread and will never return; stack
+     * initialization is unnecessary for the first thread */
     _RMP_Start((rmp_ptr_t)RMP_Init, (rmp_ptr_t)RMP_Init_Thd.Stack);
     
     return 0;
