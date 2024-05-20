@@ -54,9 +54,13 @@ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
 
     /* This is where PC is saved */
     Ptr->PC=Entry;
-    /* We always initialize the mstatus register to initialize
-     * the FPU, but whether it is present depends on the processor */
+    /* We always initialize the mstatus register for FPU when it has one */
+#if((RMP_RV32P_COP_RVF!=0U)||(RMP_RV32P_COP_RVD!=0U))
     Ptr->MSTATUS=0x1880U|0x2000U;
+#else
+    Ptr->MSTATUS=0x1880U;
+#endif
+
     /* We always initialize GP to a known value.
      * If a thread modifies this later (by itself), it is fine */
     Ptr->X3_GP=(rmp_ptr_t)(&_RMP_Global);

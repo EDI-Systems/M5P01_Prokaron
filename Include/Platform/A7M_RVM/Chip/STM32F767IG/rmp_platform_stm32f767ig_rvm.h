@@ -25,6 +25,10 @@ Description: The configuration file for STM32F767IG, on RVM.
 #define RMP_INT_MASK()              RMP_Int_Mask()
 #define RMP_INT_UNMASK()            RMP_Int_Unmask()
 
+/* What is the FPU type? */
+#define RMP_A7M_RVM_COP_FPV4_SP     (1U)
+#define RMP_A7M_RVM_COP_FPV5_SP     (1U)
+#define RMP_A7M_RVM_COP_FPV5_DP     (1U)
 /* Whether to use fast yield routine */
 #define RMP_A7M_RVM_FAST_YIELD      (1U)
 /* End Define ****************************************************************/

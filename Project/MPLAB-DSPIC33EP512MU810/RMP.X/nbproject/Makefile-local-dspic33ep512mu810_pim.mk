@@ -15,23 +15,23 @@
 # $ makeMP_CC="/opt/microchip/mplabc30/v3.30c/bin/pic30-gcc" ...  
 #
 SHELL=cmd.exe
-PATH_TO_IDE_BIN=C:/Microchip/MPLABX/v6.15/mplab_platform/platform/../mplab_ide/modules/../../bin/
+PATH_TO_IDE_BIN=C:/Program Files/Microchip/MPLABX/v6.15/mplab_platform/platform/../mplab_ide/modules/../../bin/
 # Adding MPLAB X bin directory to path.
-PATH:=C:/Microchip/MPLABX/v6.15/mplab_platform/platform/../mplab_ide/modules/../../bin/:$(PATH)
+PATH:=C:/Program Files/Microchip/MPLABX/v6.15/mplab_platform/platform/../mplab_ide/modules/../../bin/:$(PATH)
 # Path to java used to run MPLAB X when this makefile was created
-MP_JAVA_PATH="C:\Microchip\MPLABX\v6.15\sys\java\zulu8.64.0.19-ca-fx-jre8.0.345-win_x64/bin/"
+MP_JAVA_PATH="C:\Program Files\Microchip\MPLABX\v6.15\sys\java\zulu8.64.0.19-ca-fx-jre8.0.345-win_x64/bin/"
 OS_CURRENT="$(shell uname -s)"
-MP_CC="C:\Microchip\xc16\v2.10\bin\xc16-gcc.exe"
+MP_CC="C:\Program Files\Microchip\xc16\v2.10\bin\xc16-gcc.exe"
 # MP_CPPC is not defined
 # MP_BC is not defined
-MP_AS="C:\Microchip\xc16\v2.10\bin\xc16-as.exe"
-MP_LD="C:\Microchip\xc16\v2.10\bin\xc16-ld.exe"
-MP_AR="C:\Microchip\xc16\v2.10\bin\xc16-ar.exe"
-DEP_GEN=${MP_JAVA_PATH}java -jar "C:/Microchip/MPLABX/v6.15/mplab_platform/platform/../mplab_ide/modules/../../bin/extractobjectdependencies.jar"
-MP_CC_DIR="C:\Microchip\xc16\v2.10\bin"
+MP_AS="C:\Program Files\Microchip\xc16\v2.10\bin\xc16-as.exe"
+MP_LD="C:\Program Files\Microchip\xc16\v2.10\bin\xc16-ld.exe"
+MP_AR="C:\Program Files\Microchip\xc16\v2.10\bin\xc16-ar.exe"
+DEP_GEN=${MP_JAVA_PATH}java -jar "C:/Program Files/Microchip/MPLABX/v6.15/mplab_platform/platform/../mplab_ide/modules/../../bin/extractobjectdependencies.jar"
+MP_CC_DIR="C:\Program Files\Microchip\xc16\v2.10\bin"
 # MP_CPPC_DIR is not defined
 # MP_BC_DIR is not defined
-MP_AS_DIR="C:\Microchip\xc16\v2.10\bin"
-MP_LD_DIR="C:\Microchip\xc16\v2.10\bin"
-MP_AR_DIR="C:\Microchip\xc16\v2.10\bin"
-DFP_DIR=C:/Microchip/MPLABX/v6.15/packs/Microchip/dsPIC33E-GM-GP-MC-GU-MU_DFP/1.4.139
+MP_AS_DIR="C:\Program Files\Microchip\xc16\v2.10\bin"
+MP_LD_DIR="C:\Program Files\Microchip\xc16\v2.10\bin"
+MP_AR_DIR="C:\Program Files\Microchip\xc16\v2.10\bin"
+DFP_DIR=C:/Program Files/Microchip/MPLABX/v6.15/packs/Microchip/dsPIC33E-GM-GP-MC-GU-MU_DFP/1.4.139

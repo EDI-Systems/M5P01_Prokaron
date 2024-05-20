@@ -33,6 +33,10 @@ Description: The configuration file for STM32F405RG.
 #define RMP_A7M_NVIC_GROUPING       RMP_A7M_NVIC_GROUPING_P2S6
 /* What is the Systick value? */
 #define RMP_A7M_SYSTICK_VAL         (16800U)
+/* What is the FPU type? */
+#define RMP_A7M_COP_FPV4_SP         (1U)
+#define RMP_A7M_COP_FPV5_SP         (0U)
+#define RMP_A7M_COP_FPV5_DP         (0U)
 
 /* Other low-level initialization stuff - clock and serial
  * STM32F405 APB1<42MHz, APB2<84MHz. 

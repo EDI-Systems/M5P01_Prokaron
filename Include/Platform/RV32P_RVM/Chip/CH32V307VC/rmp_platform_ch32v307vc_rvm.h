@@ -24,6 +24,10 @@ Description : The configuration file for CH32V307VC, on RVM.
 #define RMP_INT_MASK()                  RMP_Int_Mask()
 #define RMP_INT_UNMASK()                RMP_Int_Unmask()
 
+/* What is the FPU type? */
+#define RMP_RV32P_RVM_COP_RVF           (1U)
+#define RMP_RV32P_RVM_COP_RVD           (0U)
+
 /* Whether to use fast yield routine */
 #define RMP_RV32P_RVM_FAST_YIELD        (1U)
 /* End Define ****************************************************************/
