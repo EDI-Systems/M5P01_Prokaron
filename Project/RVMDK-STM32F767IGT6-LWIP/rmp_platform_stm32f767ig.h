@@ -33,6 +33,10 @@ Description: The configuration file for STM32F767IG.
 #define RMP_A7M_NVIC_GROUPING       RMP_A7M_NVIC_GROUPING_P2S6
 /* What is the Systick value? */
 #define RMP_A7M_SYSTICK_VAL         (216000U)
+/* What is the FPU type? */
+#define RMP_A7M_COP_FPV4_SP         (1U)
+#define RMP_A7M_COP_FPV5_SP         (1U)
+#define RMP_A7M_COP_FPV5_DP         (1U)
 
 /* Other low-level initialization stuff - clock and serial
  * STM32F7xx APB1<45MHz, APB2<90MHz. When running at 216MHz,

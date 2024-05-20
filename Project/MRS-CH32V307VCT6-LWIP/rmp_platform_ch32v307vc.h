@@ -3,7 +3,10 @@ Filename    : rmp_platform_ch32v307vc.h
 Author      : pry
 Date        : 24/06/2017
 Licence     : The Unlicense; see LICENSE for details.
-Description : The configuration file for CH32V307VC RISC-V chip.
+Description : The configuration file for CH32V307VC RISC-V chip.  This chip 
+              carries multiple esoteric features; see the standard configuration
+              header for details. This test assumes 128k RAM/192k Flash to be
+              able to accomodate the lwIP stack.
 ******************************************************************************/
 
 /* Define ********************************************************************/
