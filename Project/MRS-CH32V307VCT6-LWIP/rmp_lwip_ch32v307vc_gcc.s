@@ -11,12 +11,12 @@ Description : The test specific assembly vectors for CH32V307.
 /* End Header ****************************************************************/
 
 /* Import ********************************************************************/
-    .extern             _TIM4_IRQHandler
+    .extern             _ETH_IRQHandler
 /* End Import ****************************************************************/
 
 /* Export ********************************************************************/
     .global             SysTick_Handler
-    .global             TIM4_IRQHandler
+    .global             ETH_IRQHandler
 /* End Export ****************************************************************/
 
 /* Function:SysTick_Handler ***************************************************
@@ -27,25 +27,25 @@ Return      : None.
 ******************************************************************************/
     .align              3
 SysTick_Handler:
-    CSRCI            	mstatus,8
+    CSRCI               mstatus,8
     RMP_RV32P_INT_SAVE_RVF
     CALL                _RMP_RV32P_Tim_Handler
     RMP_RV32P_INT_RESTORE_RVF
 /* End Function:SysTick_Handler **********************************************/
 
-/* Function:TIM4_IRQHandler ***************************************************
-Description : Timer 4 handler routine.
+/* Function:ETH_IRQHandler ****************************************************
+Description : Ethernet handler routine.
 Input       : None.
 Output      : None.
 Return      : None.
 ******************************************************************************/
     .align              3
-TIM4_IRQHandler:
-    CSRCI            	mstatus,8
+ETH_IRQHandler:
+    CSRCI               mstatus,8
     RMP_RV32P_INT_SAVE_RVF
-    CALL                _TIM4_IRQHandler
+    CALL                _ETH_IRQHandler
     RMP_RV32P_INT_RESTORE_RVF
-/* End Function:TIM4_IRQHandler **********************************************/
+/* End Function:ETH_IRQHandler ***********************************************/
 
 /* End Of File ***************************************************************/
 
