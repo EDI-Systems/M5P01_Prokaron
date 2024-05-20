@@ -155,7 +155,7 @@ low_level_init(struct netif* netif)
     GPIO_Init_Struct.Mode=GPIO_MODE_OUTPUT_PP;
     GPIO_Init_Struct.Pull=GPIO_PULLUP;
     GPIO_Init_Struct.Speed=GPIO_SPEED_FREQ_VERY_HIGH;
-    HAL_GPIO_Init(GPIOH, &GPIO_Init_Struct);
+    HAL_GPIO_Init(GPIOH,&GPIO_Init_Struct);
     
     GPIO_Init_Struct.Pin=GPIO_PIN_5;
     GPIO_Init_Struct.Mode=GPIO_MODE_OUTPUT_OD;
@@ -471,8 +471,8 @@ void ETH_IRQHandler(void)
 {
     /* If we receive a complete non-zero length frame, inform the stack */
     if(((ETH_Handler.RxDesc->Status&ETH_DMARXDESC_OWN)==(rmp_u32_t)RESET)&&
-        ((ETH_Handler.RxDesc->Status&ETH_DMARXDESC_ES)==(rmp_u32_t)RESET) &&
-        ((ETH_Handler.RxDesc->Status&ETH_DMARXDESC_LS)!=(rmp_u32_t)RESET))
+       ((ETH_Handler.RxDesc->Status&ETH_DMARXDESC_ES)==(rmp_u32_t)RESET)&&
+       ((ETH_Handler.RxDesc->Status&ETH_DMARXDESC_LS)!=(rmp_u32_t)RESET))
     {
         if(((ETH_Handler.RxDesc->Status&ETH_DMARXDESC_FL)>>ETH_DMARXDESC_FRAME_LENGTHSHIFT)!=0)
             RMP_Sem_Post_ISR(&ETH_Rx_Semaphore,1);
