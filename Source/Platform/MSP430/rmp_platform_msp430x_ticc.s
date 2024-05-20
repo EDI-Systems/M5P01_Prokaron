@@ -37,7 +37,7 @@
     .def                RMP_Int_Enable
     ;Start the first thread
     .def                _RMP_Start
-    ;Start the first thread
+    ;Yield to another thread
     .def                _RMP_MSP430_Yield
 ;/* End Export ***************************************************************/
 

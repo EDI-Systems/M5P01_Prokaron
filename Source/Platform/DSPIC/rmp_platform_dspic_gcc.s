@@ -2,16 +2,7 @@
 Filename    : rmp_platform_dspic_gcc.s
 Author      : pry
 Date        : 10/04/2012
-Description : The assembly part of the RMP RTOS. Different from most architectures,
-              this architecture have an empty ascending stack(grows to high address,
-              and where the SP points to is always empty).
-              In this port, we save all the registers to stack and then enable
-              interrupt. This is because the CPU can push memory efficiently only
-              with SP.
-              Limitations of this port:
-              Enabling & Disabling of interrupts only disables interrupt level 0-6.
-              Enabling & Disabling of interrupts can only persist 16383 cycles.
-              Stack limit feature is never enabled.
+Description : The assembly part of the RMP RTOS, for DSPIC architectures.
 ******************************************************************************/
     
 /* The DSPIC 33E Architecture *************************************************
@@ -25,7 +16,7 @@ ACCA        40          Accumulator A.
 ACCB        40          Accumulator B.
 PC          24          Program counter.
 TBLPAG      8           Data table page address.
-DSRPAG      10          Data space read page address.
+DSRPAG      10          Data space read page address. (DSP24 parts have PSVPAG)
 DSWPAG      9           Data space write page address.
 RCOUNT      16          Repeat loop counter.
 DCOUNT      16          DO loop counter and stack.(DSP33EPxx806/810/814 only)
@@ -44,173 +35,53 @@ STATUS      16          Status register.
     .extern             _RMP_Thd_Cur
     /* The stack address of current thread */
     .extern             _RMP_SP_Cur
-    /* The place where we store the kernel sp value */
-    .extern             _RMP_SP_Val
-    /* Kernel constant pool global pointers */
-    .extern             _RMP_TBLPAG_Val;
-    .extern             _RMP_DSRPAG_Val;
-    .extern             _RMP_DSWPAG_Val;
-    /* The interrupt nesting value */
-    .extern             _RMP_Int_Nest
-    /* Clear timer & software interrupt flags */
-    .extern             __RMP_Clear_Soft_Flag
-    .extern             __RMP_Clear_Timer_Flag
+    /* Kernel values */
+    .extern             __RMP_DSPIC_SP_Kern
+    .extern             __RMP_DSPIC_TBLPAG_Kern
+    .extern             __RMP_DSPIC_DSRPAG_Kern
+    .extern             __RMP_DSPIC_DSWPAG_Kern
 /* End Import ****************************************************************/
 
 /* Export ********************************************************************/
     /* The DSPIC toolchain mangles all symbols with an extra '_' */
     /* Disable all interrupts */
     .global             _RMP_Int_Disable      
-    /* Enable all interrupts */        
-    .global             _RMP_Int_Enable   
+    /* Enable all interrupts */
+    .global             _RMP_Int_Enable
+    /* Mask interrupts */
+    .global             _RMP_Int_Mask   
     /* Get the MSB/LSB */
     .global             _RMP_DSPIC_MSB_Get
     .global             _RMP_DSPIC_LSB_Get
     /* Start the first thread */
     .global             __RMP_Start
-    /* The system pending service routine */
-    .global             __INT0Interrupt 
-    /* The systick timer routine */
-    .global             __T1Interrupt
+    /* Yield to another thread */
+    .global             __RMP_DSPIC_Yield
 /* End Export ****************************************************************/
-
-/* Macro *********************************************************************/
-    /* Context saving - not all registers are present in all series. */
-.macro SAVE_CONTEXT
-    /* Push everything to stack */
-    PUSH                SR
-    /* Disable all interrupts */
-    DISI                #16383
-    PUSH.D              W0
-    PUSH.D              W2
-    PUSH.D              W4
-    PUSH.D              W6
-    PUSH.D              W8
-    PUSH.D              W10
-    PUSH.D              W12
-    PUSH                W14
-    /* We don't use SPLIM with OS, it is always untouched */
-    PUSH                ACCAL
-    PUSH                ACCAH
-    PUSH                ACCAU
-    PUSH                ACCBL
-    PUSH                ACCBH
-    PUSH                ACCBU
-    PUSH                DSRPAG
-    PUSH                DSWPAG
-    PUSH                RCOUNT
-    PUSH                DCOUNT
-    PUSH                DOSTARTL
-    PUSH                DOSTARTH
-    PUSH                DOENDL
-    PUSH                DOENDH
-    PUSH                CORCON
-    PUSH                MODCON
-    PUSH                XMODSRT
-    PUSH                XMODEND
-    PUSH                YMODSRT
-    PUSH                YMODEND
-    PUSH                XBREV
-    PUSH                TBLPAG
-    PUSH                MSTRPR
-    /* Not present in PIC33 */
-    /* PUSH                PSVPAG */
-    /* See if we need to switch to kernel stack */
-    MOV                 _RMP_Int_Nest,W1
-    MOV                 #1,W2
-    ADD                 W1,W2,W1
-    MOV                 W1,_RMP_Int_Nest
-    CPBNE               W1,W2,1f
-    /* We have confirmed that we need to switch to kernel stack */
-    MOV                 W15,_RMP_SP_Cur
-    MOV                 _RMP_SP_Val,W15
-    /* Enable interrupt */
-1:  DISI                #0
-    /* Load kernel global pointers */
-    MOV                 _RMP_TBLPAG_Val,W2
-    MOV                 W2,TBLPAG
-    MOV                 _RMP_DSRPAG_Val,W2
-    MOV                 W2,DSRPAG
-    MOV                 _RMP_DSWPAG_Val,W2
-    MOV                 W2,DSWPAG
-.endm
-    
-    /* Context restoring */
-.macro LOAD_CONTEXT
-    /* Disable all interrupts and see if we need to switch back to user stack */
-    DISI                #16383
-    MOV                 _RMP_Int_Nest,W1
-    MOV                 #1,W2
-    CPBNE               W1,W2,1f
-    /* We need to switch back to our user stack */
-    MOV                 _RMP_SP_Cur,W15
-1:  SUB                 W1,W2,W1
-    MOV                 W1,_RMP_Int_Nest
-    /* Pop everything from stack */
-    /* POP                 PSVPAG */
-    POP                 MSTRPR
-    POP                 TBLPAG
-    POP                 XBREV
-    POP                 YMODEND
-    POP                 YMODSRT
-    POP                 XMODEND
-    POP                 XMODSRT
-    POP                 MODCON
-    POP                 CORCON
-    POP                 DOENDH
-    POP                 DOENDL
-    POP                 DOSTARTH
-    POP                 DOSTARTL
-    POP                 DCOUNT
-    POP                 RCOUNT
-    POP                 DSWPAG
-    POP                 DSRPAG
-    POP                 ACCBU
-    POP                 ACCBH
-    POP                 ACCBL
-    POP                 ACCAU
-    POP                 ACCAH
-    POP                 ACCAL
-    /* We don't use SPLIM with OS, it is always untouched */
-    POP                 W14
-    POP.D               W12
-    POP.D               W10
-    POP.D               W8
-    POP.D               W6
-    POP.D               W4
-    POP.D               W2
-    POP.D               W0
-    /* Enable interrupt then pop SR */
-    DISI                #0
-    POP                 SR
-    RETFIE
-.endm
-/* End Macro *****************************************************************/
 
 /* Header ********************************************************************/
     .text
-    .align 2
+    .align              4
 /* End Header ****************************************************************/
 
 /* Function:RMP_Int_Disable ***************************************************
-Description    : The function for disabling all interrupts. Does not allow nesting.
-                 This macro only disables interrupt for a short time; this is a 
-                 limitation of DSPIC33 architecture. Considering the common usage
-                 pattern of this function, 16383 cycles should be far more than 
-                 sufficient for the operations we perform.
+Description    : The function for disabling all interrupts. This does not allow
+                 nesting, and only disables interrupt for limited time; this is
+                 a limitation of the DSPIC architecture. Considering the common
+                 usage pattern of this function, this should be sufficient.
 Input          : None.
 Output         : None.    
 Register Usage : None.                                  
 ******************************************************************************/
 _RMP_Int_Disable:
-    /* Reliably disable all interrupts */
+    /* Disable all interrupts (for limited time) */
     DISI                #16383
     RETURN
 /* End Function:RMP_Int_Disable **********************************************/
 
 /* Function:RMP_Int_Enable ****************************************************
-Description    : The function for enabling all interrupts. Does not allow nesting.
-                 Can't directly operate on DISICNT; see errata. Have to use DISI #0.
+Description    : The function for enabling all interrupts. Can't directly 
+                 operate on DISICNT; see errata. Have to use DISI #0.
 Input          : None.
 Output         : None.    
 Register Usage : None.                                  
@@ -220,6 +91,23 @@ _RMP_Int_Enable:
     DISI                #0
     RETURN
 /* End Function:RMP_Int_Enable ***********************************************/
+    
+/* Function:RMP_Int_Mask ******************************************************
+Description    : Mask interrupts to a priority level.
+Input          : [W0] - The priority level, 0 to 7.
+Output         : None.    
+Register Usage : None.                                  
+******************************************************************************/
+_RMP_Int_Mask:
+    /* Mask interrupts below a certain IPL */
+    MOV                 SR,W1
+    SL			W0,#5,W0
+    MOV                 #0xFF1F,W2
+    AND                 W1,W2,W1
+    IOR                 W1,W0,W1
+    MOV                 W1,SR
+    RETURN
+/* End Function:RMP_Int_Mask *************************************************/
 
 /* Function:_RMP_DSPIC_MSB_Get ************************************************
 Description    : Get the MSB of the word.
@@ -242,7 +130,7 @@ Return         : ptr_t - The LSB position.
 Register Usage : None. 
 ******************************************************************************/
 _RMP_DSPIC_LSB_Get:
-    /* This word is non-zero, we need to find MSB */
+    /* This word is non-zero, we need to find LSB */
     FF1R                W0,W0
     SUB                 #1,W0
     RETURN
@@ -253,68 +141,143 @@ Description : Jump to the user function and will never return from it.
 Input       : [W0]: Entry of the thread.
               [W1]: Stack of the thread.
 Output      : None.
+Return      : None.
 ******************************************************************************/
 __RMP_Start:
     MOV                 TBLPAG,W2
-    MOV                 W2,_RMP_TBLPAG_Val
+    MOV                 W2,__RMP_DSPIC_TBLPAG_Kern
     MOV                 DSRPAG,W2
-    MOV                 W2,_RMP_DSRPAG_Val
+    MOV                 W2,__RMP_DSPIC_DSRPAG_Kern
     MOV                 DSWPAG,W2
-    MOV                 W2,_RMP_DSWPAG_Val
+    MOV                 W2,__RMP_DSPIC_DSWPAG_Kern
     /* Save this SP for kernel use */
-    MOV                 W15,_RMP_SP_Val
+    MOV                 W15,__RMP_DSPIC_SP_Kern
     MOV                 W1,W15
     GOTO                W0
     /* Should not reach here */
-    RETURN
 /* End Function:_RMP_Start ***************************************************/
 
-/* Function:__INT0Interrupt ***************************************************
-Description : The switch interrupt routine. In fact, it will call a C function
-              directly. The reason why the interrupt routine must be an assembly
-              function is that the compiler may deal with the stack in a different 
-              way when different optimization level is chosen. An assembly function
-              can make way around this problem.
-              However, if your compiler support inline assembly functions, this
-              can also be written in C.
+/* Function:_RMP_DSPIC_Yield **************************************************
+Description : Yield from one thread to another without an interrupt.
 Input       : None.
-Output      : None.                                      
+Output      : None.
+Return      : None.
 ******************************************************************************/
-__INT0Interrupt:
-    SAVE_CONTEXT
-
+__RMP_DSPIC_Yield:
+    /* Mask IPL up to 1 which is the default */
+    PUSH.D              W0
+    MOV                 SR,W0
+    MOV                 #0xFF1F,W1
+    AND                 W0,W1,W0
+    BSET                W0,#5
+    MOV                 W0,SR
+    /* Push SR with IPL=1 */
+    PUSH                W0
+    /* Restore W0/W1 but keep the hole for PC/SRL */
+    MOV                 [W15-3*2],W0
+    MOV                 [W15-2*2],W1
+    /* Push GP regs to stack */
+    PUSH.D              W0
+    PUSH.D              W2
+    PUSH.D              W4
+    PUSH.D              W6
+    PUSH.D              W8
+    PUSH.D              W10
+    PUSH.D              W12
+    PUSH                W14
+    /* Hack in the PC/SRL double word mimicking an interrupt entry */
+    MOV                 #handle(__RMP_DSPIC_Skip),W0
+    MOV                 [W15-16*2],W1
+    SL                  W1,#11,W1
+    LSR                 W1,#3,W1
+    MOV                 CORCON,W2
+    /* PCL:SFA */
+    CLR                 W3
+    BTST.C              W2,#2
+    BSW.C               W0,W3
+    MOV                 W0,[W15-18*2]
+    /* SRL:IPL3:PCH, where IPL=0 in the SRL */
+    MOV                 #7,W3
+    BTST.C              W2,#3
+    BSW.C               W1,W3
+    MOV                 W1,[W15-17*2]
+    /* Push extended regs */
+    PUSH                ACCAL
+    PUSH                ACCAH
+    PUSH                ACCAU
+    PUSH                ACCBL
+    PUSH                ACCBH
+    PUSH                ACCBU
+    PUSH                DSRPAG      /* Was PSVPAG on PIC24 parts */
+    PUSH                DSWPAG
+    PUSH                RCOUNT
+    PUSH                DCOUNT
+    PUSH                DOSTARTL
+    PUSH                DOSTARTH
+    PUSH                DOENDL
+    PUSH                DOENDH
+    PUSH                CORCON
+    PUSH                MODCON
+    PUSH                XMODSRT
+    PUSH                XMODEND
+    PUSH                YMODSRT
+    PUSH                YMODEND
+    PUSH                XBREV
+    PUSH                TBLPAG
+    
+    /* Switch to kernel stack */
+    MOV                 W15,_RMP_SP_Cur
+    MOV                 __RMP_DSPIC_SP_Kern,W15
+    /* Load kernel global pointers */
+    MOV                 __RMP_DSPIC_TBLPAG_Kern,W2
+    MOV                 W2,TBLPAG
+    MOV                 __RMP_DSPIC_DSRPAG_Kern,W2
+    MOV                 W2,DSRPAG
+    MOV                 __RMP_DSPIC_DSWPAG_Kern,W2
+    MOV                 W2,DSWPAG
     /* Get the highest priority ready task */
     CALL                __RMP_Run_High
-    /* Clear software interrupt flag */
-    CALL                __RMP_Clear_Soft_Flag
-
-    LOAD_CONTEXT
-/* End Function:__INT0Interrupt **********************************************/
-
-/* Function:__T1Interrupt *****************************************************
-Description : The timer 1 interrupt routine. In fact, it will call a C function
-              directly. The reason why the interrupt routine must be an assembly
-              function is that the compiler may deal with the stack in a different 
-              way when different optimization level is chosen. An assembly function
-              can make way around this problem.
-              However, if your compiler support inline assembly functions, this
-              can also be written in C.
-Input       : None.
-Output      : None.                                      
-******************************************************************************/
-__T1Interrupt:
-    SAVE_CONTEXT
+    /* Switch back to user stack */
+    MOV                 _RMP_SP_Cur,W15
     
-    /* We are not using tickless */
-    CLR                 W1
-    MOV                 #1,W0
-    CALL                __RMP_Tim_Handler
-    CALL                __RMP_Clear_Timer_Flag
-    
-    LOAD_CONTEXT
-    .end
-/* End Function:__T1Interrupt ************************************************/
-                
+    /* Pop extended regs */
+    POP                 TBLPAG
+    POP                 XBREV
+    POP                 YMODEND
+    POP                 YMODSRT
+    POP                 XMODEND
+    POP                 XMODSRT
+    POP                 MODCON
+    POP                 CORCON
+    POP                 DOENDH
+    POP                 DOENDL
+    POP                 DOSTARTH
+    POP                 DOSTARTL
+    POP                 DCOUNT
+    POP                 RCOUNT
+    POP                 DSWPAG
+    POP                 DSRPAG
+    POP                 ACCBU
+    POP                 ACCBH
+    POP                 ACCBL
+    POP                 ACCAU
+    POP                 ACCAH
+    POP                 ACCAL
+    /* Pop GP regs */
+    POP                 W14
+    POP.D               W12
+    POP.D               W10
+    POP.D               W8
+    POP.D               W6
+    POP.D               W4
+    POP.D               W2
+    POP.D               W0
+    POP                 SR
+    RETFIE
+__RMP_DSPIC_Skip:
+    RETURN
+/* End Function:_RMP_DSPIC_Yield *********************************************/
+
 /* End Of File ***************************************************************/
 
 /* Copyright (C) Evo-Devo Instrum. All rights reserved ***********************/

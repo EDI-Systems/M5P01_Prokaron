@@ -84,10 +84,10 @@ Output      : None.
 Return      : None.
 ******************************************************************************/
 void _RMP_Lowlvl_Init(void)
-{    
-    RMP_A7M_LOWLVL_INIT();
-  
+{
     RMP_Int_Disable();
+    
+    RMP_A7M_LOWLVL_INIT();
 }
 /* End Function:_RMP_Lowlvl_Init *********************************************/
 
@@ -99,6 +99,7 @@ Return      : None.
 ******************************************************************************/
 void _RMP_Plat_Hook(void)
 {
+    /* Scheduler lock implemented with interrupt masking */
     RMP_Int_Enable();
 }
 /* End Function:_RMP_Plat_Hook ***********************************************/

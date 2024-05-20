@@ -4,6 +4,14 @@ Author      : pry
 Date        : 23/02/2018
 Licence     : The Unlicense; see LICENSE for details.
 Description : The header of "rmp_platform_dspic.c".
+              This port assumes that all pointers are 16-bit. Hence, all function
+              pointers and kernel data structures shall be in the first 64k.
+              This port makes use of the IPL and does not disable interrupts all
+              the time. However, this assumes the IPL of all kernel-aware ISRs
+              is 1, which must be adhered to when initializing them,
+              DSPIC have many variants where many of them would have more or less
+              registers. This port currently only supports DSPIC33e, however
+              adding other variants should be very simple.
 ******************************************************************************/
 
 /* Define ********************************************************************/
@@ -103,7 +111,7 @@ struct RMP_DSPIC_Stack
 {
     /* Common registers */
     rmp_ptr_t PCL;
-    rmp_ptr_t PCH;
+    rmp_ptr_t PCHSRL;
     rmp_ptr_t SR;
     rmp_ptr_t W0;
     rmp_ptr_t W1;
@@ -142,7 +150,6 @@ struct RMP_DSPIC_Stack
     rmp_ptr_t YMODEND;
     rmp_ptr_t XBREV;
     rmp_ptr_t TBLPAG;
-    rmp_ptr_t MSTRPR;
 };
 /*****************************************************************************/
 /* __RMP_PLATFORM_DSPIC_STRUCT__ */
@@ -187,11 +194,13 @@ struct RMP_DSPIC_Stack
 #endif
 
 /*****************************************************************************/
-__EXTERN__ volatile rmp_ptr_t RMP_SP_Val;
-__EXTERN__ volatile rmp_ptr_t RMP_Int_Nest;
-__EXTERN__ volatile rmp_ptr_t RMP_TBLPAG_Val;
-__EXTERN__ volatile rmp_ptr_t RMP_DSRPAG_Val;
-__EXTERN__ volatile rmp_ptr_t RMP_DSWPAG_Val;
+__EXTERN__ rmp_ptr_t _RMP_DSPIC_SP_Kern;
+__EXTERN__ rmp_ptr_t _RMP_DSPIC_TBLPAG_Kern;
+__EXTERN__ rmp_ptr_t _RMP_DSPIC_DSRPAG_Kern;
+__EXTERN__ rmp_ptr_t _RMP_DSPIC_DSWPAG_Kern;
+
+__EXTERN__ volatile rmp_ptr_t RMP_DSPIC_Int_Act;
+__EXTERN__ volatile rmp_ptr_t _RMP_DSPIC_Yield_Pend;
 /*****************************************************************************/
 
 /* End Public Variable *******************************************************/
@@ -201,10 +210,12 @@ __EXTERN__ volatile rmp_ptr_t RMP_DSWPAG_Val;
 /* Interrupts */
 EXTERN void RMP_Int_Disable(void);
 EXTERN void RMP_Int_Enable(void);
+EXTERN void RMP_Int_Mask(rmp_ptr_t Level);
 
 EXTERN rmp_ptr_t RMP_DSPIC_MSB_Get(rmp_ptr_t Value);
 EXTERN rmp_ptr_t RMP_DSPIC_LSB_Get(rmp_ptr_t Value);
 EXTERN void _RMP_Start(rmp_ptr_t Entry, rmp_ptr_t Stack);
+EXTERN void _RMP_DSPIC_Yield(void);
 __EXTERN__ void _RMP_Yield(void);
 __EXTERN__ void _RMP_Set_Timer(rmp_ptr_t Ticks);
 

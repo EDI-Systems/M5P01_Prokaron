@@ -85,9 +85,9 @@ Return      : None.
 ******************************************************************************/
 void _RMP_Lowlvl_Init(void)
 {
-    RMP_A6M_LOWLVL_INIT();
-  
     RMP_Int_Disable();
+    
+    RMP_A6M_LOWLVL_INIT();
 }
 /* End Function:_RMP_Lowlvl_Init *********************************************/
 
@@ -99,7 +99,7 @@ Return      : None.
 ******************************************************************************/
 void _RMP_Plat_Hook(void)
 {
-    RMP_Int_Enable();
+    /* Scheduler lock implemented with interrupt disabling */
 }
 /* End Function:_RMP_Plat_Hook ***********************************************/
 

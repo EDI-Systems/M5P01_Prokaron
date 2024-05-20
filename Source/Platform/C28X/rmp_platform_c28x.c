@@ -134,9 +134,9 @@ Return      : None.
 ******************************************************************************/
 void _RMP_Lowlvl_Init(void)
 {
-    RMP_C28X_LOWLVL_INIT();
-
     RMP_Int_Disable();
+    
+    RMP_C28X_LOWLVL_INIT();
 
     /* Clear flags */
     RMP_C28X_Int_Act=0U;
@@ -152,7 +152,7 @@ Return      : None.
 ******************************************************************************/
 void _RMP_Plat_Hook(void)
 {
-    RMP_Int_Enable();
+    /* Scheduler lock implemented with interrupt disabling */
 }
 /* End Function:_RMP_Plat_Hook ***********************************************/
 

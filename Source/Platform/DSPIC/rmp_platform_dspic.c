@@ -29,6 +29,20 @@ Description : The platform specific file for DSPIC 33E. This also works for PIC2
 #undef __HDR_PUBLIC__
 /* End Include ***************************************************************/
 
+/* Function:_RMP_Yield ********************************************************
+Description : Trigger a yield to another thread.
+Input       : None.
+Output      : None.                                      
+******************************************************************************/
+void _RMP_Yield(void)
+{
+    if(RMP_DSPIC_Int_Act!=0U)
+        _RMP_DSPIC_Yield_Pend=1U;
+    else
+        _RMP_DSPIC_Yield();
+}                                 
+/* End Function:_RMP_Yield ***************************************************/
+
 /* Function:_RMP_Stack_Init ***************************************************
 Description : Initiate the process stack when trying to start a process. Never
               call this function in user application.
@@ -44,19 +58,17 @@ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
                           rmp_ptr_t Entry,
                           rmp_ptr_t Param)
 {
-    rmp_ptr_t Start;
     struct RMP_DSPIC_Stack* Ptr;
     
     /* Compute & align stack */
-    Start=RMP_ROUND_UP(Stack, 2U);
-    Ptr=(struct RMP_DSPIC_Stack*)Start;
+    Ptr=(struct RMP_DSPIC_Stack*)RMP_ROUND_UP(Stack, 2U);
 
     /* The entry - SFA bit not set */
     Ptr->PCL=Entry;
-    /* Last 8 bits of status register, IPL3, PC residue - all zero*/
-    Ptr->PCH=0U;
-    /* Initial SR - all zero except for IPL, set to 2, because lowest actual level is 1 */
-    Ptr->SR=((rmp_ptr_t)2U)<<5;
+    /* Last 8 bits of status register, SRL/IPL3/PCH zero */
+    Ptr->PCHSRL=0U;
+    /* Initial SR - IPL=1 to avoid premature interrupt enabling */
+    Ptr->SR=0x0020U;
     /* W0-W14 */
     Ptr->W0=Param;
     Ptr->W1=0x0101U;
@@ -81,9 +93,9 @@ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
     Ptr->ACCBL=0U;
     Ptr->ACCBH=0U;
     Ptr->ACCBU=0U;
-    /* DSRPAG,DSWPAG - reset to what the toolkit initialized it to be */
-    Ptr->DSRPAG=RMP_DSRPAG_Val;
-    Ptr->DSWPAG=RMP_DSWPAG_Val;
+    /* DSRPAG,DSWPAG - reset to whatever the toolchain initialized them to be */
+    Ptr->DSRPAG=_RMP_DSPIC_DSRPAG_Kern;
+    Ptr->DSWPAG=_RMP_DSPIC_DSWPAG_Kern;
     /* RCOUNT,DCOUNT,DOSTARTL,DOSTARTH,DOENDL,DOENDH */
     Ptr->RCOUNT=0U;
     Ptr->DCOUNT=0U;
@@ -103,37 +115,11 @@ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
     /* XBREV */
     Ptr->XBREV=0x0000U;
     /* TBLPAG */
-    Ptr->TBLPAG=RMP_TBLPAG_Val;
-    /* MSTRPR */
-    Ptr->MSTRPR=0x0000U;
+    Ptr->TBLPAG=_RMP_DSPIC_TBLPAG_Kern;
 
-    return (rmp_ptr_t)Ptr;
+    return ((rmp_ptr_t)Ptr)+sizeof(struct RMP_DSPIC_Stack);
 }
 /* End Function:_RMP_Stack_Init **********************************************/
-
-/* Function:_RMP_Clear_Soft_Flag **********************************************
-Description : Clear the software interrupt flag in the interrupt controller.
-Input       : None.
-Output      : None.
-Return      : None.
-******************************************************************************/
-void _RMP_Clear_Soft_Flag(void)
-{
-    RMP_DSPIC_CLEAR_SOFT_FLAG();
-}
-/* End Function:_RMP_Clear_Soft_Flag *****************************************/
-
-/* Function:_RMP_Clear_Timer_Flag *********************************************
-Description : Clear the timer interrupt flag in the interrupt controller.
-Input       : None.
-Output      : None.
-Return      : None.
-******************************************************************************/
-void _RMP_Clear_Timer_Flag(void)
-{
-    RMP_DSPIC_CLEAR_TIMER_FLAG();
-}
-/* End Function:_RMP_Clear_Timer_Flag ****************************************/
 
 /* Function:_RMP_Lowlvl_Init **************************************************
 Description : Initialize the low level hardware of the system.
@@ -143,32 +129,15 @@ Return      : None.
 ******************************************************************************/
 void _RMP_Lowlvl_Init(void)
 {
+    RMP_Int_Disable();
+    
     RMP_DSPIC_LOWLVL_INIT();
+
+    /* Clear flags */
+    RMP_DSPIC_Int_Act=0U;
+    _RMP_DSPIC_Yield_Pend=0U;
 }
 /* End Function:_RMP_Lowlvl_Init *********************************************/
-
-/* Function:_RMP_Set_Timer ****************************************************
-Description    : The function for setting the timer.
-Input          : rmp_ptr_t Ticks - Timer overflow value.
-Output         : None.    
-Register Usage : None.                                  
-******************************************************************************/
-void _RMP_Set_Timer(rmp_ptr_t Ticks)
-{
-    RMP_DSPIC_SET_TIMER(Ticks);
-}
-/* End Function:_RMP_Set_Timer ***********************************************/
-
-/* Function:_RMP_Yield ********************************************************
-Description : Trigger a yield to another thread.
-Input       : None.
-Output      : None.                                      
-******************************************************************************/
-void _RMP_Yield(void)
-{
-    RMP_DSPIC_YIELD();
-}                                 
-/* End Function:_RMP_Yield ***************************************************/
 
 /* Function:_RMP_Plat_Hook ****************************************************
 Description : Platform-specific hook for system initialization.
@@ -178,6 +147,7 @@ Return      : None.
 ******************************************************************************/
 void _RMP_Plat_Hook(void)
 {
+    /* Scheduler lock implemented with interrupt masking */
     RMP_Int_Enable();
 }
 /* End Function:_RMP_Plat_Hook ***********************************************/
@@ -193,6 +163,20 @@ void RMP_Putchar(char Char)
     RMP_DSPIC_PUTCHAR(Char);
 }
 /* End Function:RMP_Putchar **************************************************/
+
+/* Function:_RMP_DSPIC_Tim_Handler ********************************************
+Description : Timer interrupt routine for DSPIC.
+Input       : None
+Output      : None.
+Return      : None.
+******************************************************************************/
+void _RMP_DSPIC_Tim_Handler(void)
+{
+    RMP_DSPIC_TIM_CLR();
+
+    _RMP_Tim_Handler(1U);
+}
+/* End Function:_RMP_DSPIC_Tim_Handler ***************************************/
 
 /* End Of File ***************************************************************/
 
