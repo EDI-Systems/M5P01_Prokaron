@@ -3082,12 +3082,10 @@ Return      : int - This function never returns.
 void RMP_Init(void)
 {
     RMP_Sched_Lock();
-    
-    /* Platform will use this hook to do something */
+    /* Perform per-platform initialization */
     _RMP_Plat_Hook();
-    /* Start the second thread here */
+    /* Create all other kernel objects here */
     RMP_Init_Hook();
-    
     RMP_Sched_Unlock();
     
     while(1)

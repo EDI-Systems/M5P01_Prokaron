@@ -4,25 +4,7 @@ Author      : pry
 Date        : 22/07/2017
 Licence     : The Unlicense; see LICENSE for details.
 Description : The testbench for DSPIC33EP512MU810.
-
-XC16 2.10 (--spec hack disabled)
-    ___   __  ___ ___
-   / _ \ /  |/  // _ \       Simple real-time kernel
-  / , _// /|_/ // ___/       Standard benchmark test
- /_/|_|/_/  /_//_/
-====================================================
-Test (number in CPU cycles)        : AVG / MAX / MIN
-Yield                              : 524 / 866 / 524
-Mailbox                            : 894 / 1242 / 894
-Semaphore                          : 824 / 1172 / 824
-FIFO                               : 386 / 734 / 386
-Message queue                      : 1364 / 1710 / 1364
-Blocking message queue             : 1843 / 2190 / 1842
-Memory allocation/free pair        : 1267 / 1312 / 1249
-ISR Mailbox                        : 946 / 946 / 946
-ISR Semaphore                      : 898 / 898 / 898
-ISR Message queue                  : 1218 / 1564 / 1216
-ISR Blocking message queue         : 1498 / 1498 / 1498
+              This test is NOT particularly fast and can take up to one minute.
 
 XC16 2.10 (--spec hack enabled)
     ___   __  ___ ___
@@ -31,17 +13,17 @@ XC16 2.10 (--spec hack enabled)
  /_/|_|/_/  /_//_/
 ====================================================
 Test (number in CPU cycles)        : AVG / MAX / MIN
-Yield                              : 540 / 892 / 540
-Mailbox                            : 844 / 1190 / 844
-Semaphore                          : 784 / 1136 / 784
-FIFO                               : 344 / 686 / 344
-Message queue                      : 1148 / 1498 / 1148
-Blocking message queue             : 1573 / 1924 / 1572
-Memory allocation/free pair        : 889 / 935 / 869
-ISR Mailbox                        : 435 / 1230 / 430
-ISR Semaphore                      : 930 / 930 / 930
-ISR Message queue                  : 1182 / 1182 / 1182
-ISR Blocking message queue         : 1428 / 1428 / 1428
+Yield                              : 470 / 794 / 470
+Mailbox                            : 886 / 1208 / 886
+Semaphore                          : 766 / 1090 / 766
+FIFO                               : 440 / 764 / 440
+Message queue                      : 1266 / 1590 / 1266
+Blocking message queue             : 1777 / 2100 / 1776
+Memory allocation/free pair        : 893 / 936 / 872
+ISR Mailbox                        : 709 / 1032 / 708
+ISR Semaphore                      : 614 / 614 / 614
+ISR Message queue                  : 958 / 958 / 958
+ISR Blocking message queue         : 1254 / 1576 / 1252
 ******************************************************************************/
 
 /* Include *******************************************************************/
@@ -121,8 +103,8 @@ void Timer_Init(void)
     T2CON=0;
     /* Clear counter */
     TMR2=0;
-    PR2=0xFFFFUL;
-    T2CON=RMP_DSPIC_TIMER_ON;
+    PR2=0xFFFFU;
+    T2CON=RMP_DSPIC_TIM_ON|RMP_DSPIC_TIM_PRESC1;
 }
 /* End Function:Timer_Init ***************************************************/
 
@@ -136,24 +118,24 @@ Return      : None.
 void Int_Init(void)
 {
     /* TIM3 clock = 1/2 CPU clock */
-    T3CON=0;
+    T3CON=0U;
     /* Clear interrupt flag and set priority to lowest */
-    IPC2bits.T3IP=1;
-    IFS0bits.T3IF=0;
+    IPC2bits.T3IP=1U;
+    IFS0bits.T3IF=0U;
     /* Clear counter, period 25000 - 1ms per interrupt */
-    TMR3=0;
-    PR3=25000;
-    T3CON=RMP_DSPIC_TIMER_ON;
+    TMR3=0U;
+    PR3=25000U;
+    T3CON=RMP_DSPIC_TIM_ON|RMP_DSPIC_TIM_PRESC1;
     /* Enable interrupt */
     IEC0bits.T3IE=1;
 }
 
-/* The interrupt handler with shadow register sets */
+/* Timer 3 interrupt handler */
 void Tim3_Interrupt(void)
 {
+    /* Clear flag */
+    IFS0bits.T3IF=0U;
     Int_Handler();
-    /* Clear flags */
-    IFS0bits.T3IF=0;
 }
 /* End Function:Int_Init *****************************************************/
 

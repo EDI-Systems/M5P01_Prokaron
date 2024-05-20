@@ -109,9 +109,9 @@ Return      : None.
 ******************************************************************************/
 void _RMP_Lowlvl_Init(void)
 {
-    RMP_MSP430_LOWLVL_INIT();
-
     RMP_Int_Disable();
+    
+    RMP_MSP430_LOWLVL_INIT();
 
     /* Clear flags */
     RMP_MSP430_Int_Act=0U;
@@ -127,7 +127,7 @@ Return      : None.
 ******************************************************************************/
 void _RMP_Plat_Hook(void)
 {
-    RMP_Int_Enable();
+    /* Scheduler lock implemented with interrupt disabling */
 }
 /* End Function:_RMP_Plat_Hook ***********************************************/
 

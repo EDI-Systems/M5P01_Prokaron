@@ -4,6 +4,9 @@ Author      : pry
 Date        : 01/04/2017
 Licence     : The Unlicense; see LICENSE for details.
 Description : The header of "rmp_platform_msp430.c".
+              This port assumes that all pointers are 16-bit for MSP430 and 32-
+              bit for MSP430X. Hence, for MSP430, all function pointers and
+              kernel data structures shall be in the first 64k.
 ******************************************************************************/
 
 /* Define ********************************************************************/
@@ -222,6 +225,9 @@ __EXTERN__ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
 __EXTERN__ void _RMP_Lowlvl_Init(void);
 __EXTERN__ void RMP_Putchar(char Char);
 __EXTERN__ void _RMP_Plat_Hook(void);
+
+/* Timer handler */
+__EXTERN__ void _RMP_MSP430_Tim_Handler(void);
 /*****************************************************************************/
 /* Undefine "__EXTERN__" to avoid redefinition */
 #undef __EXTERN__

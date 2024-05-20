@@ -33,7 +33,7 @@ Register Usage : None.
 ******************************************************************************/
 void _RMP_Lowlvl_Init(void)
 {
-
+    /* Nothing really to init for Linux */
 }
 /* End Function:_RMP_Lowlvl_Init **********************************************/
 
@@ -45,7 +45,7 @@ Register Usage : None.
 ******************************************************************************/
 void RMP_Int_Disable(void)
 {
-    RMP_Int_Disabled=1;
+    RMP_Int_Disabled=1U;
 }
 /* End Function:RMP_Int_Disable **********************************************/
 
@@ -57,7 +57,7 @@ Register Usage : None.
 ******************************************************************************/
 void RMP_Int_Enable(void)
 {
-    RMP_Int_Disabled=0;
+    RMP_Int_Disabled=0U;
 }
 /* End Function:RMP_Int_Enable ***********************************************/
 
@@ -69,9 +69,9 @@ Return      : None.
 ******************************************************************************/
 void _RMP_Yield(void)
 {
-    RMP_PendSV_Flag=1;
+    RMP_PendSV_Flag=1U;
 
-    if(RMP_Int_Disabled==0)
+    if(RMP_Int_Disabled==0U)
         RMP_ASSERT(kill(RMP_User_PID,SIGUSR1)>=0);
 }
 /* End Function:_RMP_Yield ***************************************************/
@@ -80,14 +80,14 @@ void _RMP_Yield(void)
 Description : Jump to the user function and will never return from it.
 Input       : None.
 Output      : None.
-Return       : None.
+Return      : None.
 ******************************************************************************/
 /* The timer interrupt signal processing - this will happen every second */
 void SigAlrm_Handler(int Param)
 {
-    RMP_SysTick_Flag=1;
+    RMP_SysTick_Flag=1U;
 
-    if(RMP_Int_Disabled==0)
+    if(RMP_Int_Disabled==0U)
         kill(RMP_User_PID,SIGUSR1);
 }
 
@@ -97,13 +97,13 @@ void _RMP_Start(rmp_ptr_t Entry, rmp_ptr_t Stack)
     struct itimerval Tick;
 
     /* Set up the timer */
-    memset(&Tick,0,sizeof(Tick));
+    memset(&Tick,0U,sizeof(Tick));
     /* First timeout */
-    Tick.it_value.tv_sec=1;
-    Tick.it_value.tv_usec=0;
+    Tick.it_value.tv_sec=1U;
+    Tick.it_value.tv_usec=0U;
     /* Interval time to run function */
-    Tick.it_interval.tv_sec=1;
-    Tick.it_interval.tv_usec=0;
+    Tick.it_interval.tv_sec=1U;
+    Tick.it_interval.tv_usec=0U;
     RMP_ASSERT(signal(SIGALRM,SigAlrm_Handler)>=0);
     RMP_ASSERT(setitimer(ITIMER_REAL,&Tick,NULL)>=0);
 
@@ -114,7 +114,7 @@ void _RMP_Start(rmp_ptr_t Entry, rmp_ptr_t Stack)
            "after the system thread have finished its signal handling. If another\n"
            "signal comes again before the user thread gets a chance to run, then\n"
            "it fails because the mailbox, etc. is not empty yet. Should this\n"
-           "happen on your computer(due toperformance or virtualization issues),\n"
+           "happen on your computer(due to performance or virtualization issues),\n"
            "increase the value of TEST_INT_INTERVAL macro(in test_x86_linux.h).\n"
            "However, interrupt latency test runtime scales linearly with this.\n");
 
@@ -123,7 +123,7 @@ void _RMP_Start(rmp_ptr_t Entry, rmp_ptr_t Stack)
     RMP_User_PID=clone((int (*)(void*))(Entry),(void*)Stack,CLONE_VM|SIGCHLD,0);
     printf("\nSys PID is %d, User PID is %d.\n",RMP_Sys_PID,RMP_User_PID);
 
-    /* If needed, set priority - may work in some cases
+    /* If needed, set priority - may help you in some cases
      * struct sched_param Param;
      * Param.sched_priority=sched_get_priority_max(SCHED_FIFO);
      * RMP_ASSERT(Param.sched_priority>=0);
@@ -136,20 +136,20 @@ void _RMP_Start(rmp_ptr_t Entry, rmp_ptr_t Stack)
         RMP_ASSERT(wait(&Status)>0);
         
         /* Handle system interrupts */
-        if(RMP_SysTick_Flag!=0)
+        if(RMP_SysTick_Flag!=0U)
         {
-            RMP_SysTick_Flag=0;
+            RMP_SysTick_Flag=0U;
             SysTick_Handler();
         }
-        else if(RMP_PendSV_Flag!=0)
+        else if(RMP_PendSV_Flag!=0U)
         {
-            RMP_PendSV_Flag=0;
+            RMP_PendSV_Flag=0U;
             PendSV_Handler();
         }
         /* Must be an external interrupt */
         else
         {
-            if(RMP_Eint_Handler!=0)
+            if(RMP_Eint_Handler!=0U)
                 RMP_Eint_Handler();
         }
         
@@ -264,27 +264,27 @@ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
     struct RMP_X86_LINUX_Stack* Ptr;
     
     /* Compute & align stack */
-    End=RMP_ROUND_DOWN(Stack+Size, 4U);
+    End=RMP_ROUND_DOWN(Stack+Size,4U);
     Ptr=(struct RMP_X86_LINUX_Stack*)(End-sizeof(struct RMP_X86_LINUX_Stack));
 
-    Ptr->REG_EBX=0x0B0B0B0B;
-    Ptr->REG_ECX=0x0C0C0C0C;
-    Ptr->REG_EDX=0x0D0D0D0D;
-    Ptr->REG_ESI=0x51515151;
-    Ptr->REG_EDI=0xD1D1D1D1;
-    Ptr->REG_EBP=0x69696969;
+    Ptr->REG_EBX=0x0B0B0B0BU;
+    Ptr->REG_ECX=0x0C0C0C0CU;
+    Ptr->REG_EDX=0x0D0D0D0DU;
+    Ptr->REG_ESI=0x51515151U;
+    Ptr->REG_EDI=0xD1D1D1D1U;
+    Ptr->REG_EBP=0x69696969U;
     Ptr->REG_EAX=Param;
     /* ptrace requires the last 2 bits of segment registers to be 1; see kernel source */
-    Ptr->REG_XDS=0x2B;
-    Ptr->REG_XES=0x2B;
-    Ptr->REG_XFS=0x2B;
-    Ptr->REG_XGS=0x63;
+    Ptr->REG_XDS=0x2BU;
+    Ptr->REG_XES=0x2BU;
+    Ptr->REG_XFS=0x2BU;
+    Ptr->REG_XGS=0x63U;
     Ptr->REG_ORIG_EAX=Param;
     /* Always need to +2, kernel bug */
     Ptr->REG_EIP=Entry;
-    Ptr->REG_ECS=0x23;
-    Ptr->REG_EFLAGS=0x202;
-    Ptr->REG_XSS=0x2B;
+    Ptr->REG_ECS=0x23U;
+    Ptr->REG_EFLAGS=0x202U;
+    Ptr->REG_XSS=0x2BU;
     Ptr->REG_Param=Param;
 
     return (rmp_ptr_t)Ptr;
@@ -299,9 +299,9 @@ Return      : None.
 ******************************************************************************/
 void _RMP_Low_Level_Init(void)
 {
-    RMP_SysTick_Flag=0;
-    RMP_PendSV_Flag=0;
-    RMP_Int_Disabled=1;
+    RMP_SysTick_Flag=0U;
+    RMP_PendSV_Flag=0U;
+    RMP_Int_Disabled=1U;
 
     RMP_Int_Disable();
 }
@@ -317,8 +317,8 @@ void _RMP_Plat_Hook(void)
 {
     /* Let the parent trace me */
     RMP_ASSERT(ptrace(PTRACE_TRACEME)>=0);
-
-    RMP_Int_Enable();
+    
+    /* Scheduler lock implemented with interrupt disabling */
 }
 /* End Function:_RMP_Plat_Hook ***********************************************/
 
