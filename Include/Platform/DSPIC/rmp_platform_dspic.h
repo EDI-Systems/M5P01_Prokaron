@@ -4,14 +4,27 @@ Author      : pry
 Date        : 23/02/2018
 Licence     : The Unlicense; see LICENSE for details.
 Description : The header of "rmp_platform_dspic.c".
-              This port assumes that all pointers are 16-bit. Hence, all function
-              pointers and kernel data structures shall be in the first 64k.
-              This port makes use of the IPL and does not disable interrupts all
-              the time. However, this assumes the IPL of all kernel-aware ISRs
-              is 1, which must be adhered to when initializing them,
-              DSPIC have many variants where many of them would have more or less
-              registers. This port currently only supports DSPIC33e, however
-              adding other variants should be very simple.
+              1. This port assumes that all pointers are 16-bit. Hence, all
+                 function pointers and kernel data structures shall be in the 
+                 first 64KiB.
+              2. This port makes use of the IPL and does not disable interrupts
+                 all the time. However, this assumes the IPL of all kernel-aware
+                 ISRs is 1, which must be adhered to when initializing them,
+              3. The DSPIC architecture does not allow context switching of the
+                 internal DO stack, and this cannot be worked around, Possible
+                 mitigations are to make sure (1) no DO instructions are used,
+                 and this is easy because compiler does not emit them, (2) only
+                 one of the threads will ever make of the DO instruction, and
+                 this is easy too because that thread usually carries all the
+                 DSP workload.
+              4. On 30F and 33F devices, the SR overflow bits are read-only and
+                 this must be accounted for when context switching the DSP tasks.
+                 Still, it is recommended that only one thread makes use of the
+                 DSP features,
+              5. For address modulo features involving MODCON, it is the user's
+                 responsibility to ensure that kernel data structures are out
+                 of such modulo regions (i.e. the modulo only applies to 
+                 certain user-defined data structures).
 ******************************************************************************/
 
 /* Define ********************************************************************/
@@ -86,6 +99,14 @@ typedef rmp_s16_t rmp_ret_t;
 
 /* The CPU and application specific macros are here */
 #include "rmp_platform_dspic_conf.h"
+/* Detect wrong configurations here */
+#define RMP_DSPIC_COP_NUM       (RMP_DSPIC_COP_24F_24H+ \
+                                 RMP_DSPIC_COP_24E+ \
+                                 RMP_DSPIC_COP_30F_33F+ \
+                                 RMP_DSPIC_COP_33E_33C)
+#if(RMP_DSPIC_COP_NUM!=1U)
+#error RMP DSPIC port: must choose a single CPU type.
+#endif
 /* End System macros *********************************************************/
 
 /* DSPIC33 class specific macros *********************************************/
@@ -113,6 +134,7 @@ struct RMP_DSPIC_Stack
     rmp_ptr_t PCL;
     rmp_ptr_t PCHSRL;
     rmp_ptr_t SR;
+    rmp_ptr_t CORCON;
     rmp_ptr_t W0;
     rmp_ptr_t W1;
     rmp_ptr_t W2;
@@ -128,28 +150,30 @@ struct RMP_DSPIC_Stack
     rmp_ptr_t W12;
     rmp_ptr_t W13;
     rmp_ptr_t W14;
+    rmp_ptr_t RCOUNT;
+    rmp_ptr_t TBLPAG;
+    /* Specific visibility registers */
+#if((RMP_DSPIC_COP_24F_24H!=0U)||(RMP_DSPIC_COP_30F_33F!=0U))
+    rmp_ptr_t PSVPAG;
+#elif((RMP_DSPIC_COP_24E!=0U)||(RMP_DSPIC_COP_33E_33C!=0U))
+    rmp_ptr_t DSRPAG;
+    rmp_ptr_t DSWPAG;
+#endif
+    /* Specific DSP/addressing registers */
+#if((RMP_DSPIC_COP_30F_33F!=0U)||(RMP_DSPIC_COP_33E_33C!=0U))
     rmp_ptr_t ACCAL;
     rmp_ptr_t ACCAH;
     rmp_ptr_t ACCAU;
     rmp_ptr_t ACCBL;
     rmp_ptr_t ACCBH;
     rmp_ptr_t ACCBU;
-    rmp_ptr_t DSRPAG;
-    rmp_ptr_t DSWPAG;
-    rmp_ptr_t RCOUNT;
-    rmp_ptr_t DCOUNT;
-    rmp_ptr_t DOSTARTL;
-    rmp_ptr_t DOSTARTH;
-    rmp_ptr_t DOENDL;
-    rmp_ptr_t DOENDH;
-    rmp_ptr_t CORCON;
     rmp_ptr_t MODCON;
     rmp_ptr_t XMODSRT;
     rmp_ptr_t XMODEND;
     rmp_ptr_t YMODSRT;
     rmp_ptr_t YMODEND;
     rmp_ptr_t XBREV;
-    rmp_ptr_t TBLPAG;
+#endif
 };
 /*****************************************************************************/
 /* __RMP_PLATFORM_DSPIC_STRUCT__ */
@@ -195,9 +219,10 @@ struct RMP_DSPIC_Stack
 
 /*****************************************************************************/
 __EXTERN__ rmp_ptr_t _RMP_DSPIC_SP_Kern;
+__EXTERN__ rmp_ptr_t _RMP_DSPIC_CORCON_Kern;
 __EXTERN__ rmp_ptr_t _RMP_DSPIC_TBLPAG_Kern;
 __EXTERN__ rmp_ptr_t _RMP_DSPIC_DSRPAG_Kern;
-__EXTERN__ rmp_ptr_t _RMP_DSPIC_DSWPAG_Kern;
+__EXTERN__ rmp_ptr_t _RMP_DSPIC_PSVDSWPAG_Kern;
 
 __EXTERN__ volatile rmp_ptr_t RMP_DSPIC_Int_Act;
 __EXTERN__ volatile rmp_ptr_t _RMP_DSPIC_Yield_Pend;
@@ -215,7 +240,10 @@ EXTERN void RMP_Int_Mask(rmp_ptr_t Level);
 EXTERN rmp_ptr_t RMP_DSPIC_MSB_Get(rmp_ptr_t Value);
 EXTERN rmp_ptr_t RMP_DSPIC_LSB_Get(rmp_ptr_t Value);
 EXTERN void _RMP_Start(rmp_ptr_t Entry, rmp_ptr_t Stack);
-EXTERN void _RMP_DSPIC_Yield(void);
+EXTERN void _RMP_DSPIC_Yield_24F_24H(void);
+EXTERN void _RMP_DSPIC_Yield_24E(void);
+EXTERN void _RMP_DSPIC_Yield_30F_33F(void);
+EXTERN void _RMP_DSPIC_Yield_33E_33C(void);
 __EXTERN__ void _RMP_Yield(void);
 __EXTERN__ void _RMP_Set_Timer(rmp_ptr_t Ticks);
 

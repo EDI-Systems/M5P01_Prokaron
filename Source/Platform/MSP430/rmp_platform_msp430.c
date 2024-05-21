@@ -62,7 +62,7 @@ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
     End=RMP_ROUND_DOWN(Stack+Size, 2U);
     Ptr=(struct RMP_MSP430_Stack*)(End-sizeof(struct RMP_MSP430_Stack));
 
-#if(RMP_MSP430_X!=0U)
+#if(RMP_MSP430_COP_430X!=0U)
     Ptr->R12=Param;
     Ptr->PCSR=RMP_MSP430X_PCSR(Entry, RMP_MSP430_SR_GIE);
 

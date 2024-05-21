@@ -28,10 +28,10 @@ Description: The configuration file for MSP430FR5994.
 #define RMP_INT_MASK()              RMP_Int_Disable()
 #define RMP_INT_UNMASK()            RMP_Int_Enable()
 
-/* We are using MSP430X or not */
-#define RMP_MSP430_X                (1U)
 /* The tick timer value */
 #define RMP_MSP430_TICK_VAL         (10000U)
+/* We are using MSP430X or not */
+#define RMP_MSP430_COP_430X         (1U)
 
 /* Other low-level initialization stuff - clock and serial. 
  * This is the default initialization sequence. If you wish to supply
