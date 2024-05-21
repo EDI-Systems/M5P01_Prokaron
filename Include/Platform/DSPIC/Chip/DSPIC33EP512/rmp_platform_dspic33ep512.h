@@ -30,6 +30,11 @@ Description: The configuration file for DSPIC33EP512MU810.
 
 /* What is the tick timer tick value? */
 #define RMP_DSPIC_TICK_VAL          (60000U)
+/* The exact CPU type */
+#define RMP_DSPIC_COP_24F_24H       (0U)
+#define RMP_DSPIC_COP_24E           (0U)
+#define RMP_DSPIC_COP_30F_33F       (0U)
+#define RMP_DSPIC_COP_33E_33C       (1U)
 
 /* Timer constants */
 #define RMP_DSPIC_TIM_ON            (0x8000U)

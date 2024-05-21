@@ -13,17 +13,17 @@ XC16 2.10 (--spec hack enabled)
  /_/|_|/_/  /_//_/
 ====================================================
 Test (number in CPU cycles)        : AVG / MAX / MIN
-Yield                              : 470 / 794 / 470
-Mailbox                            : 886 / 1208 / 886
-Semaphore                          : 766 / 1090 / 766
-FIFO                               : 440 / 764 / 440
-Message queue                      : 1266 / 1590 / 1266
-Blocking message queue             : 1777 / 2100 / 1776
-Memory allocation/free pair        : 893 / 936 / 872
-ISR Mailbox                        : 709 / 1032 / 708
-ISR Semaphore                      : 614 / 614 / 614
-ISR Message queue                  : 958 / 958 / 958
-ISR Blocking message queue         : 1254 / 1576 / 1252
+Yield                              : 454 / 772 / 454
+Mailbox                            : 870 / 1188 / 870
+Semaphore                          : 750 / 1068 / 750
+FIFO                               : 440 / 758 / 440
+Message queue                      : 1250 / 1568 / 1250
+Blocking message queue             : 1761 / 2078 / 1760
+Memory allocation/free pair        : 893 / 935 / 872
+ISR Mailbox                        : 699 / 1016 / 698
+ISR Semaphore                      : 604 / 604 / 604
+ISR Message queue                  : 948 / 948 / 948
+ISR Blocking message queue         : 1244 / 1560 / 1242
 ******************************************************************************/
 
 /* Include *******************************************************************/

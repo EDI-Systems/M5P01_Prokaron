@@ -14,4 +14,5 @@
 	<templateProperties value="id=com.ti.common.project.core.emptyProjectWithMainTemplate_msp430,"/>
 	<filesToOpen value="main.c,"/>
 	<isTargetManual value="false"/>
+	<sourceLookupPath value=""/>
 </projectOptions>

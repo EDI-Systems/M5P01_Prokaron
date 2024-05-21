@@ -19,7 +19,7 @@
       </logicalFolder>
       <logicalFolder name="f5" displayName="Platform" projectFiles="true">
         <itemPath>../../../Source/Platform/DSPIC/rmp_platform_dspic.c</itemPath>
-        <itemPath>../../../Source/Platform/DSPIC/rmp_platform_dspic_gcc.s</itemPath>
+        <itemPath>../../../Source/Platform/DSPIC/rmp_platform_dspic_xc16.s</itemPath>
       </logicalFolder>
       <logicalFolder name="f2" displayName="Test" projectFiles="true">
         <itemPath>../../../Source/Test/rmp_benchmark.c</itemPath>
@@ -100,7 +100,7 @@
         <property key="expand-pragma-config" value="false"/>
         <property key="extra-include-directories"
                   value="bsp/exp16/dspic33ep512mu810_pim;system_config/exp16/dspic33ep512mu810_pim;.;.."/>
-        <property key="isolate-each-function" value="false"/>
+        <property key="isolate-each-function" value="true"/>
         <property key="keep-inline" value="false"/>
         <property key="oXC16gcc-align-arr" value="false"/>
         <property key="oXC16gcc-cnsts-mauxflash" value="false"/>
@@ -123,6 +123,7 @@
         <property key="scalar-model" value="default"/>
         <property key="use-cci" value="false"/>
         <property key="use-iar" value="false"/>
+        <appendMe value="-specs=specs.txt"/>
       </C30>
       <C30-AR>
         <property key="additional-options-chop-files" value="false"/>

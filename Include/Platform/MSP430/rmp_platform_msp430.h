@@ -53,7 +53,7 @@ typedef unsigned char rmp_u8_t;
 #ifndef __RMP_PTR_T__
 #define __RMP_PTR_T__
 /* The typedef for the pointers - This is the raw style. Pointers must be unsigned */
-#if(RMP_MSP430_X!=0U)
+#if(RMP_MSP430_COP_430X!=0U)
 typedef rmp_u32_t rmp_ptr_t;
 #else
 typedef rmp_u16_t rmp_ptr_t;
@@ -69,7 +69,7 @@ typedef rmp_s16_t rmp_cnt_t;
 #ifndef __RMP_RET_T__
 #define __RMP_RET_T__
 /* The type for return value */
-#if(RMP_MSP430_X!=0U)
+#if(RMP_MSP430_COP_430X!=0U)
 typedef rmp_s32_t rmp_ret_t;
 #else
 typedef rmp_s16_t rmp_ret_t;
@@ -81,7 +81,7 @@ typedef rmp_s16_t rmp_ret_t;
 /* Compiler "extern" keyword setting */
 #define EXTERN                          extern
 /* The order of bits in one CPU machine word */
-#if(RMP_MSP430_X==1U)
+#if(RMP_MSP430_COP_430X!=0U)
 #define RMP_WORD_ORDER                  (5U)
 #else
 #define RMP_WORD_ORDER                  (4U)
@@ -120,7 +120,6 @@ typedef rmp_s16_t rmp_ret_t;
 #define __HDR_DEF__
 #undef __HDR_DEF__
 /*****************************************************************************/
-#if(RMP_MSP430_X!=0U)
 struct RMP_MSP430_Stack
 {
     rmp_ptr_t R4;
@@ -135,27 +134,13 @@ struct RMP_MSP430_Stack
     rmp_ptr_t R13;
     rmp_ptr_t R14;
     rmp_ptr_t R15;
+#if(RMP_MSP430_COP_430X!=0U)
     rmp_ptr_t PCSR;
-};
 #else
-struct RMP_MSP430_Stack
-{
-    rmp_ptr_t R4;
-    rmp_ptr_t R5;
-    rmp_ptr_t R6;
-    rmp_ptr_t R7;
-    rmp_ptr_t R8;
-    rmp_ptr_t R9;
-    rmp_ptr_t R10;
-    rmp_ptr_t R11;
-    rmp_ptr_t R12;
-    rmp_ptr_t R13;
-    rmp_ptr_t R14;
-    rmp_ptr_t R15;
     rmp_ptr_t SR;
     rmp_ptr_t PC;
-};
 #endif
+};
 /*****************************************************************************/
 /* __RMP_PLATFORM_MSP430_STRUCT__ */
 #endif

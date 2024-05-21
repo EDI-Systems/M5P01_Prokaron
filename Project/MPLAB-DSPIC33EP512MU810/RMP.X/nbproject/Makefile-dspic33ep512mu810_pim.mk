@@ -51,17 +51,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=../../../Source/Kernel/rmp_kernel.c ../../../Source/Platform/DSPIC/rmp_platform_dspic.c ../../../Source/Platform/DSPIC/rmp_platform_dspic_gcc.s ../../../Source/Test/rmp_benchmark.c rmp_test_dspic33ep512mu810.s
+SOURCEFILES_QUOTED_IF_SPACED=../../../Source/Kernel/rmp_kernel.c ../../../Source/Platform/DSPIC/rmp_platform_dspic.c ../../../Source/Test/rmp_benchmark.c rmp_test_dspic33ep512mu810.s ../../../Source/Platform/DSPIC/rmp_platform_dspic_xc16.s
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/_ext/1067945026/rmp_kernel.o ${OBJECTDIR}/_ext/100099300/rmp_platform_dspic.o ${OBJECTDIR}/_ext/100099300/rmp_platform_dspic_gcc.o ${OBJECTDIR}/_ext/1730986455/rmp_benchmark.o ${OBJECTDIR}/rmp_test_dspic33ep512mu810.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/_ext/1067945026/rmp_kernel.o.d ${OBJECTDIR}/_ext/100099300/rmp_platform_dspic.o.d ${OBJECTDIR}/_ext/100099300/rmp_platform_dspic_gcc.o.d ${OBJECTDIR}/_ext/1730986455/rmp_benchmark.o.d ${OBJECTDIR}/rmp_test_dspic33ep512mu810.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/_ext/1067945026/rmp_kernel.o ${OBJECTDIR}/_ext/100099300/rmp_platform_dspic.o ${OBJECTDIR}/_ext/1730986455/rmp_benchmark.o ${OBJECTDIR}/rmp_test_dspic33ep512mu810.o ${OBJECTDIR}/_ext/100099300/rmp_platform_dspic_xc16.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/_ext/1067945026/rmp_kernel.o.d ${OBJECTDIR}/_ext/100099300/rmp_platform_dspic.o.d ${OBJECTDIR}/_ext/1730986455/rmp_benchmark.o.d ${OBJECTDIR}/rmp_test_dspic33ep512mu810.o.d ${OBJECTDIR}/_ext/100099300/rmp_platform_dspic_xc16.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/_ext/1067945026/rmp_kernel.o ${OBJECTDIR}/_ext/100099300/rmp_platform_dspic.o ${OBJECTDIR}/_ext/100099300/rmp_platform_dspic_gcc.o ${OBJECTDIR}/_ext/1730986455/rmp_benchmark.o ${OBJECTDIR}/rmp_test_dspic33ep512mu810.o
+OBJECTFILES=${OBJECTDIR}/_ext/1067945026/rmp_kernel.o ${OBJECTDIR}/_ext/100099300/rmp_platform_dspic.o ${OBJECTDIR}/_ext/1730986455/rmp_benchmark.o ${OBJECTDIR}/rmp_test_dspic33ep512mu810.o ${OBJECTDIR}/_ext/100099300/rmp_platform_dspic_xc16.o
 
 # Source Files
-SOURCEFILES=../../../Source/Kernel/rmp_kernel.c ../../../Source/Platform/DSPIC/rmp_platform_dspic.c ../../../Source/Platform/DSPIC/rmp_platform_dspic_gcc.s ../../../Source/Test/rmp_benchmark.c rmp_test_dspic33ep512mu810.s
+SOURCEFILES=../../../Source/Kernel/rmp_kernel.c ../../../Source/Platform/DSPIC/rmp_platform_dspic.c ../../../Source/Test/rmp_benchmark.c rmp_test_dspic33ep512mu810.s ../../../Source/Platform/DSPIC/rmp_platform_dspic_xc16.s
 
 
 
@@ -89,72 +89,72 @@ MP_LINKER_FILE_OPTION=,--script=p33EP512MU810.gld
 # ------------------------------------------------------------------------------------
 # Rules for buildStep: compile
 ifeq ($(TYPE_IMAGE), DEBUG_RUN)
-${OBJECTDIR}/_ext/1067945026/rmp_kernel.o: ../../../Source/Kernel/rmp_kernel.c  .generated_files/flags/dspic33ep512mu810_pim/157bd1918a8b6faa03250cd2d1d94f199ac2423d .generated_files/flags/dspic33ep512mu810_pim/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/_ext/1067945026/rmp_kernel.o: ../../../Source/Kernel/rmp_kernel.c  .generated_files/flags/dspic33ep512mu810_pim/e5403f8e58fbbc145b50e35023ba64df46a9e6b0 .generated_files/flags/dspic33ep512mu810_pim/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}/_ext/1067945026" 
 	@${RM} ${OBJECTDIR}/_ext/1067945026/rmp_kernel.o.d 
 	@${RM} ${OBJECTDIR}/_ext/1067945026/rmp_kernel.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../Source/Kernel/rmp_kernel.c  -o ${OBJECTDIR}/_ext/1067945026/rmp_kernel.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/1067945026/rmp_kernel.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1  -mno-eds-warn  -omf=elf -DXPRJ_dspic33ep512mu810_pim=$(CND_CONF)    $(COMPARISON_BUILD)  -specs=specs.txt -I"../../../Include" -I"." -O3 -I"bsp/exp16/dspic33ep512mu810_pim" -I"system_config/exp16/dspic33ep512mu810_pim" -I"." -I".." -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../Source/Kernel/rmp_kernel.c  -o ${OBJECTDIR}/_ext/1067945026/rmp_kernel.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/1067945026/rmp_kernel.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1  -mno-eds-warn  -omf=elf -DXPRJ_dspic33ep512mu810_pim=$(CND_CONF)    $(COMPARISON_BUILD)  -specs=specs.txt -I"../../../Include" -I"." -ffunction-sections -O3 -I"bsp/exp16/dspic33ep512mu810_pim" -I"system_config/exp16/dspic33ep512mu810_pim" -I"." -I".." -msmart-io=1 -Wall -msfr-warn=off   -specs=specs.txt  -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/_ext/100099300/rmp_platform_dspic.o: ../../../Source/Platform/DSPIC/rmp_platform_dspic.c  .generated_files/flags/dspic33ep512mu810_pim/3c5190e527b7d5bc0be660cf824c79709dbc111e .generated_files/flags/dspic33ep512mu810_pim/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/_ext/100099300/rmp_platform_dspic.o: ../../../Source/Platform/DSPIC/rmp_platform_dspic.c  .generated_files/flags/dspic33ep512mu810_pim/27526c410fcc4c749dd6f9ae11f9a6c52139f048 .generated_files/flags/dspic33ep512mu810_pim/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}/_ext/100099300" 
 	@${RM} ${OBJECTDIR}/_ext/100099300/rmp_platform_dspic.o.d 
 	@${RM} ${OBJECTDIR}/_ext/100099300/rmp_platform_dspic.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../Source/Platform/DSPIC/rmp_platform_dspic.c  -o ${OBJECTDIR}/_ext/100099300/rmp_platform_dspic.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/100099300/rmp_platform_dspic.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1  -mno-eds-warn  -omf=elf -DXPRJ_dspic33ep512mu810_pim=$(CND_CONF)    $(COMPARISON_BUILD)  -specs=specs.txt -I"../../../Include" -I"." -O3 -I"bsp/exp16/dspic33ep512mu810_pim" -I"system_config/exp16/dspic33ep512mu810_pim" -I"." -I".." -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../Source/Platform/DSPIC/rmp_platform_dspic.c  -o ${OBJECTDIR}/_ext/100099300/rmp_platform_dspic.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/100099300/rmp_platform_dspic.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1  -mno-eds-warn  -omf=elf -DXPRJ_dspic33ep512mu810_pim=$(CND_CONF)    $(COMPARISON_BUILD)  -specs=specs.txt -I"../../../Include" -I"." -ffunction-sections -O3 -I"bsp/exp16/dspic33ep512mu810_pim" -I"system_config/exp16/dspic33ep512mu810_pim" -I"." -I".." -msmart-io=1 -Wall -msfr-warn=off   -specs=specs.txt  -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/_ext/1730986455/rmp_benchmark.o: ../../../Source/Test/rmp_benchmark.c  .generated_files/flags/dspic33ep512mu810_pim/3300029863f45388ff96a42e690129f01629bef1 .generated_files/flags/dspic33ep512mu810_pim/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/_ext/1730986455/rmp_benchmark.o: ../../../Source/Test/rmp_benchmark.c  .generated_files/flags/dspic33ep512mu810_pim/a1dce2c0c8a89756c3119d6d166a1b23e8cfdd81 .generated_files/flags/dspic33ep512mu810_pim/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}/_ext/1730986455" 
 	@${RM} ${OBJECTDIR}/_ext/1730986455/rmp_benchmark.o.d 
 	@${RM} ${OBJECTDIR}/_ext/1730986455/rmp_benchmark.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../Source/Test/rmp_benchmark.c  -o ${OBJECTDIR}/_ext/1730986455/rmp_benchmark.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/1730986455/rmp_benchmark.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1  -mno-eds-warn  -omf=elf -DXPRJ_dspic33ep512mu810_pim=$(CND_CONF)    $(COMPARISON_BUILD)  -specs=specs.txt -I"../../../Include" -I"." -O3 -I"bsp/exp16/dspic33ep512mu810_pim" -I"system_config/exp16/dspic33ep512mu810_pim" -I"." -I".." -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../Source/Test/rmp_benchmark.c  -o ${OBJECTDIR}/_ext/1730986455/rmp_benchmark.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/1730986455/rmp_benchmark.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1  -mno-eds-warn  -omf=elf -DXPRJ_dspic33ep512mu810_pim=$(CND_CONF)    $(COMPARISON_BUILD)  -specs=specs.txt -I"../../../Include" -I"." -ffunction-sections -O3 -I"bsp/exp16/dspic33ep512mu810_pim" -I"system_config/exp16/dspic33ep512mu810_pim" -I"." -I".." -msmart-io=1 -Wall -msfr-warn=off   -specs=specs.txt  -mdfp="${DFP_DIR}/xc16"
 	
 else
-${OBJECTDIR}/_ext/1067945026/rmp_kernel.o: ../../../Source/Kernel/rmp_kernel.c  .generated_files/flags/dspic33ep512mu810_pim/db18f94d2170ef512ebbead252315880d8d0d009 .generated_files/flags/dspic33ep512mu810_pim/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/_ext/1067945026/rmp_kernel.o: ../../../Source/Kernel/rmp_kernel.c  .generated_files/flags/dspic33ep512mu810_pim/b4aeeea8acd3ac43cceb253e948f19df0351064a .generated_files/flags/dspic33ep512mu810_pim/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}/_ext/1067945026" 
 	@${RM} ${OBJECTDIR}/_ext/1067945026/rmp_kernel.o.d 
 	@${RM} ${OBJECTDIR}/_ext/1067945026/rmp_kernel.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../Source/Kernel/rmp_kernel.c  -o ${OBJECTDIR}/_ext/1067945026/rmp_kernel.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/1067945026/rmp_kernel.o.d"      -mno-eds-warn  -g -omf=elf -DXPRJ_dspic33ep512mu810_pim=$(CND_CONF)    $(COMPARISON_BUILD)  -specs=specs.txt -I"../../../Include" -I"." -O3 -I"bsp/exp16/dspic33ep512mu810_pim" -I"system_config/exp16/dspic33ep512mu810_pim" -I"." -I".." -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../Source/Kernel/rmp_kernel.c  -o ${OBJECTDIR}/_ext/1067945026/rmp_kernel.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/1067945026/rmp_kernel.o.d"      -mno-eds-warn  -g -omf=elf -DXPRJ_dspic33ep512mu810_pim=$(CND_CONF)    $(COMPARISON_BUILD)  -specs=specs.txt -I"../../../Include" -I"." -ffunction-sections -O3 -I"bsp/exp16/dspic33ep512mu810_pim" -I"system_config/exp16/dspic33ep512mu810_pim" -I"." -I".." -msmart-io=1 -Wall -msfr-warn=off   -specs=specs.txt  -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/_ext/100099300/rmp_platform_dspic.o: ../../../Source/Platform/DSPIC/rmp_platform_dspic.c  .generated_files/flags/dspic33ep512mu810_pim/2fb6adf6402fcc4809b4d156ab5cd871d7ab5e06 .generated_files/flags/dspic33ep512mu810_pim/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/_ext/100099300/rmp_platform_dspic.o: ../../../Source/Platform/DSPIC/rmp_platform_dspic.c  .generated_files/flags/dspic33ep512mu810_pim/6e888db5259197a732f4dc01f350031aa67e1180 .generated_files/flags/dspic33ep512mu810_pim/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}/_ext/100099300" 
 	@${RM} ${OBJECTDIR}/_ext/100099300/rmp_platform_dspic.o.d 
 	@${RM} ${OBJECTDIR}/_ext/100099300/rmp_platform_dspic.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../Source/Platform/DSPIC/rmp_platform_dspic.c  -o ${OBJECTDIR}/_ext/100099300/rmp_platform_dspic.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/100099300/rmp_platform_dspic.o.d"      -mno-eds-warn  -g -omf=elf -DXPRJ_dspic33ep512mu810_pim=$(CND_CONF)    $(COMPARISON_BUILD)  -specs=specs.txt -I"../../../Include" -I"." -O3 -I"bsp/exp16/dspic33ep512mu810_pim" -I"system_config/exp16/dspic33ep512mu810_pim" -I"." -I".." -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../Source/Platform/DSPIC/rmp_platform_dspic.c  -o ${OBJECTDIR}/_ext/100099300/rmp_platform_dspic.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/100099300/rmp_platform_dspic.o.d"      -mno-eds-warn  -g -omf=elf -DXPRJ_dspic33ep512mu810_pim=$(CND_CONF)    $(COMPARISON_BUILD)  -specs=specs.txt -I"../../../Include" -I"." -ffunction-sections -O3 -I"bsp/exp16/dspic33ep512mu810_pim" -I"system_config/exp16/dspic33ep512mu810_pim" -I"." -I".." -msmart-io=1 -Wall -msfr-warn=off   -specs=specs.txt  -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/_ext/1730986455/rmp_benchmark.o: ../../../Source/Test/rmp_benchmark.c  .generated_files/flags/dspic33ep512mu810_pim/fa8b5c3f4fee6dd918612dd622a372f9a74badf9 .generated_files/flags/dspic33ep512mu810_pim/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/_ext/1730986455/rmp_benchmark.o: ../../../Source/Test/rmp_benchmark.c  .generated_files/flags/dspic33ep512mu810_pim/b991c44352ac67d69179f3e544dc21919c0a7b0c .generated_files/flags/dspic33ep512mu810_pim/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}/_ext/1730986455" 
 	@${RM} ${OBJECTDIR}/_ext/1730986455/rmp_benchmark.o.d 
 	@${RM} ${OBJECTDIR}/_ext/1730986455/rmp_benchmark.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../Source/Test/rmp_benchmark.c  -o ${OBJECTDIR}/_ext/1730986455/rmp_benchmark.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/1730986455/rmp_benchmark.o.d"      -mno-eds-warn  -g -omf=elf -DXPRJ_dspic33ep512mu810_pim=$(CND_CONF)    $(COMPARISON_BUILD)  -specs=specs.txt -I"../../../Include" -I"." -O3 -I"bsp/exp16/dspic33ep512mu810_pim" -I"system_config/exp16/dspic33ep512mu810_pim" -I"." -I".." -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../Source/Test/rmp_benchmark.c  -o ${OBJECTDIR}/_ext/1730986455/rmp_benchmark.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/1730986455/rmp_benchmark.o.d"      -mno-eds-warn  -g -omf=elf -DXPRJ_dspic33ep512mu810_pim=$(CND_CONF)    $(COMPARISON_BUILD)  -specs=specs.txt -I"../../../Include" -I"." -ffunction-sections -O3 -I"bsp/exp16/dspic33ep512mu810_pim" -I"system_config/exp16/dspic33ep512mu810_pim" -I"." -I".." -msmart-io=1 -Wall -msfr-warn=off   -specs=specs.txt  -mdfp="${DFP_DIR}/xc16"
 	
 endif
 
 # ------------------------------------------------------------------------------------
 # Rules for buildStep: assemble
 ifeq ($(TYPE_IMAGE), DEBUG_RUN)
-${OBJECTDIR}/_ext/100099300/rmp_platform_dspic_gcc.o: ../../../Source/Platform/DSPIC/rmp_platform_dspic_gcc.s  .generated_files/flags/dspic33ep512mu810_pim/e45cec1fa636df526ca4dcfeb84d57bf7d32d80b .generated_files/flags/dspic33ep512mu810_pim/da39a3ee5e6b4b0d3255bfef95601890afd80709
-	@${MKDIR} "${OBJECTDIR}/_ext/100099300" 
-	@${RM} ${OBJECTDIR}/_ext/100099300/rmp_platform_dspic_gcc.o.d 
-	@${RM} ${OBJECTDIR}/_ext/100099300/rmp_platform_dspic_gcc.o 
-	${MP_CC} $(MP_EXTRA_AS_PRE)  ../../../Source/Platform/DSPIC/rmp_platform_dspic_gcc.s  -o ${OBJECTDIR}/_ext/100099300/rmp_platform_dspic_gcc.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1  -omf=elf -DXPRJ_dspic33ep512mu810_pim=$(CND_CONF)    -specs=specs.txt -I"../../../Include" -I"." -I"../../../Include" -I"." -Wa,-MD,"${OBJECTDIR}/_ext/100099300/rmp_platform_dspic_gcc.o.d",--defsym=__MPLAB_BUILD=1,--defsym=__ICD2RAM=1,--defsym=__MPLAB_DEBUG=1,--defsym=__DEBUG=1,--defsym=__MPLAB_DEBUGGER_PK3=1,-g,--no-relax$(MP_EXTRA_AS_POST)  -mdfp="${DFP_DIR}/xc16"
-	
 ${OBJECTDIR}/rmp_test_dspic33ep512mu810.o: rmp_test_dspic33ep512mu810.s  .generated_files/flags/dspic33ep512mu810_pim/143acadc36651ab923d44736b564578d3472390f .generated_files/flags/dspic33ep512mu810_pim/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/rmp_test_dspic33ep512mu810.o.d 
 	@${RM} ${OBJECTDIR}/rmp_test_dspic33ep512mu810.o 
 	${MP_CC} $(MP_EXTRA_AS_PRE)  rmp_test_dspic33ep512mu810.s  -o ${OBJECTDIR}/rmp_test_dspic33ep512mu810.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1  -omf=elf -DXPRJ_dspic33ep512mu810_pim=$(CND_CONF)    -specs=specs.txt -I"../../../Include" -I"." -I"../../../Include" -I"." -Wa,-MD,"${OBJECTDIR}/rmp_test_dspic33ep512mu810.o.d",--defsym=__MPLAB_BUILD=1,--defsym=__ICD2RAM=1,--defsym=__MPLAB_DEBUG=1,--defsym=__DEBUG=1,--defsym=__MPLAB_DEBUGGER_PK3=1,-g,--no-relax$(MP_EXTRA_AS_POST)  -mdfp="${DFP_DIR}/xc16"
 	
-else
-${OBJECTDIR}/_ext/100099300/rmp_platform_dspic_gcc.o: ../../../Source/Platform/DSPIC/rmp_platform_dspic_gcc.s  .generated_files/flags/dspic33ep512mu810_pim/b2aa0479e56b56bbb79b3e15b4554288c35447b2 .generated_files/flags/dspic33ep512mu810_pim/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/_ext/100099300/rmp_platform_dspic_xc16.o: ../../../Source/Platform/DSPIC/rmp_platform_dspic_xc16.s  .generated_files/flags/dspic33ep512mu810_pim/9832c43a09ca4bb40403206cd007f0f75f3e3b55 .generated_files/flags/dspic33ep512mu810_pim/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}/_ext/100099300" 
-	@${RM} ${OBJECTDIR}/_ext/100099300/rmp_platform_dspic_gcc.o.d 
-	@${RM} ${OBJECTDIR}/_ext/100099300/rmp_platform_dspic_gcc.o 
-	${MP_CC} $(MP_EXTRA_AS_PRE)  ../../../Source/Platform/DSPIC/rmp_platform_dspic_gcc.s  -o ${OBJECTDIR}/_ext/100099300/rmp_platform_dspic_gcc.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -omf=elf -DXPRJ_dspic33ep512mu810_pim=$(CND_CONF)    -specs=specs.txt -I"../../../Include" -I"." -I"../../../Include" -I"." -Wa,-MD,"${OBJECTDIR}/_ext/100099300/rmp_platform_dspic_gcc.o.d",--defsym=__MPLAB_BUILD=1,-g,--no-relax$(MP_EXTRA_AS_POST)  -mdfp="${DFP_DIR}/xc16"
+	@${RM} ${OBJECTDIR}/_ext/100099300/rmp_platform_dspic_xc16.o.d 
+	@${RM} ${OBJECTDIR}/_ext/100099300/rmp_platform_dspic_xc16.o 
+	${MP_CC} $(MP_EXTRA_AS_PRE)  ../../../Source/Platform/DSPIC/rmp_platform_dspic_xc16.s  -o ${OBJECTDIR}/_ext/100099300/rmp_platform_dspic_xc16.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1  -omf=elf -DXPRJ_dspic33ep512mu810_pim=$(CND_CONF)    -specs=specs.txt -I"../../../Include" -I"." -I"../../../Include" -I"." -Wa,-MD,"${OBJECTDIR}/_ext/100099300/rmp_platform_dspic_xc16.o.d",--defsym=__MPLAB_BUILD=1,--defsym=__ICD2RAM=1,--defsym=__MPLAB_DEBUG=1,--defsym=__DEBUG=1,--defsym=__MPLAB_DEBUGGER_PK3=1,-g,--no-relax$(MP_EXTRA_AS_POST)  -mdfp="${DFP_DIR}/xc16"
 	
+else
 ${OBJECTDIR}/rmp_test_dspic33ep512mu810.o: rmp_test_dspic33ep512mu810.s  .generated_files/flags/dspic33ep512mu810_pim/d31216cb4027f3772de17afce689663e9b431705 .generated_files/flags/dspic33ep512mu810_pim/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/rmp_test_dspic33ep512mu810.o.d 
 	@${RM} ${OBJECTDIR}/rmp_test_dspic33ep512mu810.o 
 	${MP_CC} $(MP_EXTRA_AS_PRE)  rmp_test_dspic33ep512mu810.s  -o ${OBJECTDIR}/rmp_test_dspic33ep512mu810.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -omf=elf -DXPRJ_dspic33ep512mu810_pim=$(CND_CONF)    -specs=specs.txt -I"../../../Include" -I"." -I"../../../Include" -I"." -Wa,-MD,"${OBJECTDIR}/rmp_test_dspic33ep512mu810.o.d",--defsym=__MPLAB_BUILD=1,-g,--no-relax$(MP_EXTRA_AS_POST)  -mdfp="${DFP_DIR}/xc16"
+	
+${OBJECTDIR}/_ext/100099300/rmp_platform_dspic_xc16.o: ../../../Source/Platform/DSPIC/rmp_platform_dspic_xc16.s  .generated_files/flags/dspic33ep512mu810_pim/b725ae9d0715de88747d71b5ae174e47eb07bea1 .generated_files/flags/dspic33ep512mu810_pim/da39a3ee5e6b4b0d3255bfef95601890afd80709
+	@${MKDIR} "${OBJECTDIR}/_ext/100099300" 
+	@${RM} ${OBJECTDIR}/_ext/100099300/rmp_platform_dspic_xc16.o.d 
+	@${RM} ${OBJECTDIR}/_ext/100099300/rmp_platform_dspic_xc16.o 
+	${MP_CC} $(MP_EXTRA_AS_PRE)  ../../../Source/Platform/DSPIC/rmp_platform_dspic_xc16.s  -o ${OBJECTDIR}/_ext/100099300/rmp_platform_dspic_xc16.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -omf=elf -DXPRJ_dspic33ep512mu810_pim=$(CND_CONF)    -specs=specs.txt -I"../../../Include" -I"." -I"../../../Include" -I"." -Wa,-MD,"${OBJECTDIR}/_ext/100099300/rmp_platform_dspic_xc16.o.d",--defsym=__MPLAB_BUILD=1,-g,--no-relax$(MP_EXTRA_AS_POST)  -mdfp="${DFP_DIR}/xc16"
 	
 endif
 

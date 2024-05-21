@@ -1,29 +1,41 @@
 /******************************************************************************
-Filename    : rmp_platform_dspic_gcc.s
+Filename    : rmp_platform_dspic_xc16.s
 Author      : pry
 Date        : 10/04/2012
 Description : The assembly part of the RMP RTOS, for DSPIC architectures.
+              The DSPIC toolchain mangles all symbols with an extra '_'.
 ******************************************************************************/
     
-/* The DSPIC 33E Architecture *************************************************
+/* The DSPIC Architecture *****************************************************
+Common registers:
 No.         Bits        Name & Explanation
+PC          24          Program counter.
+SR          16          Status register.
+CORCON      16          Core control register.
 W0          16          Working register.
 W1-W13      16          General purpose registers.
 W14         16          Frame pointer.
 W15         16          Stack pointer. Always word aligned.
-SPLIM       16          Stack limit register.
+SPLIM       16          Stack limit register (global - unswitched).
+RCOUNT      16          Repeat loop counter.
+TBLPAG      8           Data table page address.
+
+Model-specific registers:
+No.         Bits        Name & Explanation
 ACCA        40          Accumulator A.
 ACCB        40          Accumulator B.
-PC          24          Program counter.
-TBLPAG      8           Data table page address.
-DSRPAG      10          Data space read page address. (DSP24 parts have PSVPAG)
-DSWPAG      9           Data space write page address.
-RCOUNT      16          Repeat loop counter.
-DCOUNT      16          DO loop counter and stack.(DSP33EPxx806/810/814 only)
-DOSTART     24          DO loop start address and stack.(DSP33EPxx806/810/814 only)
-DOEND       24          DO loop end address and stack.(DSP33EPxx806/810/814 only)
-CORCON      16          Core control register.
-STATUS      16          Status register.
+PSVPAG      10          Program space read page address (older models).
+DSRPAG      10          Data space read page address (newer models).
+DSWPAG      9           Data space write page address (newer models).
+DCOUNT      16          DO loop counter and stack (hardware - unswitched).
+DOSTART     24          DO loop start address and stack (hardware - unswitched).
+DOEND       24          DO loop end address and stack (hardware - unswitched).
+
+Difference between CPUs: (all have PC, WREG, SR, SPLIM, RCOUNT, TBLPAG, CORCON)
+24F_24H               PSVPAG
+24E                          DSRPAG DSWPAG
+30F_33F     ACCA ACCB PSVPAG               DCOUNT DOSTART DOEND
+33E_33C     ACCA ACCB        DSRPAG DSWPAG DCOUNT DOSTART DOEND
 ******************************************************************************/
 
 /* Import ********************************************************************/
@@ -35,15 +47,15 @@ STATUS      16          Status register.
     .extern             _RMP_Thd_Cur
     /* The stack address of current thread */
     .extern             _RMP_SP_Cur
-    /* Kernel values */
+    /* Kernel stack and table */
     .extern             __RMP_DSPIC_SP_Kern
+    .extern             __RMP_DSPIC_CORCON_Kern
     .extern             __RMP_DSPIC_TBLPAG_Kern
     .extern             __RMP_DSPIC_DSRPAG_Kern
-    .extern             __RMP_DSPIC_DSWPAG_Kern
+    .extern             __RMP_DSPIC_PSVDSWPAG_Kern
 /* End Import ****************************************************************/
 
 /* Export ********************************************************************/
-    /* The DSPIC toolchain mangles all symbols with an extra '_' */
     /* Disable all interrupts */
     .global             _RMP_Int_Disable      
     /* Enable all interrupts */
@@ -56,7 +68,10 @@ STATUS      16          Status register.
     /* Start the first thread */
     .global             __RMP_Start
     /* Yield to another thread */
-    .global             __RMP_DSPIC_Yield
+    .global             __RMP_DSPIC_Yield_24F_24H
+    .global             __RMP_DSPIC_Yield_24E
+    .global             __RMP_DSPIC_Yield_30F_33F
+    .global             __RMP_DSPIC_Yield_33E_33C
 /* End Export ****************************************************************/
 
 /* Header ********************************************************************/
@@ -137,20 +152,26 @@ _RMP_DSPIC_LSB_Get:
 /* End Function:_RMP_DSPIC_LSB_Get *******************************************/
 
 /* Function:_RMP_Start ********************************************************
-Description : Jump to the user function and will never return from it.
+Description : Jump to the user function and will never return from it. This is
+              compatible with both PSV and EDS, taking advantage of the fact
+              that PSVPAG and DSWPAG are at the same address.
 Input       : [W0]: Entry of the thread.
               [W1]: Stack of the thread.
 Output      : None.
 Return      : None.
 ******************************************************************************/
 __RMP_Start:
+    /* Save startup kernel states */
+    MOV                 CORCON,W2
+    MOV                 W2,__RMP_DSPIC_CORCON_Kern
     MOV                 TBLPAG,W2
     MOV                 W2,__RMP_DSPIC_TBLPAG_Kern
-    MOV                 DSRPAG,W2
+    /* Save startup page registers */
+    MOV                 0x0032,W2   /* DSRPAG */
     MOV                 W2,__RMP_DSPIC_DSRPAG_Kern
-    MOV                 DSWPAG,W2
-    MOV                 W2,__RMP_DSPIC_DSWPAG_Kern
-    /* Save this SP for kernel use */
+    MOV                 0x0034,W2   /* PSVPAG or DSWPAG */
+    MOV                 W2,__RMP_DSPIC_PSVDSWPAG_Kern
+    /* Save startup kernel SP */
     MOV                 W15,__RMP_DSPIC_SP_Kern
     MOV                 W1,W15
     GOTO                W0
@@ -163,7 +184,8 @@ Input       : None.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-__RMP_DSPIC_Yield:
+/* Save all GP regs **********************************************************/
+    .macro              RMP_DSPIC_SAVE LABEL
     /* Mask IPL up to 1 which is the default */
     PUSH.D              W0
     MOV                 SR,W0
@@ -177,6 +199,7 @@ __RMP_DSPIC_Yield:
     MOV                 [W15-3*2],W0
     MOV                 [W15-2*2],W1
     /* Push GP regs to stack */
+    PUSH                CORCON
     PUSH.D              W0
     PUSH.D              W2
     PUSH.D              W4
@@ -185,9 +208,11 @@ __RMP_DSPIC_Yield:
     PUSH.D              W10
     PUSH.D              W12
     PUSH                W14
+    PUSH                RCOUNT
+    PUSH                TBLPAG
     /* Hack in the PC/SRL double word mimicking an interrupt entry */
-    MOV                 #handle(__RMP_DSPIC_Skip),W0
-    MOV                 [W15-16*2],W1
+    MOV                 #handle(\LABEL),W0
+    MOV                 [W15-(18+1)*2],W1
     SL                  W1,#11,W1
     LSR                 W1,#3,W1
     MOV                 CORCON,W2
@@ -195,75 +220,30 @@ __RMP_DSPIC_Yield:
     CLR                 W3
     BTST.C              W2,#2
     BSW.C               W0,W3
-    MOV                 W0,[W15-18*2]
+    MOV                 W0,[W15-(2+18+1)*2]
     /* SRL:IPL3:PCH, where IPL=0 in the SRL */
     MOV                 #7,W3
     BTST.C              W2,#3
     BSW.C               W1,W3
-    MOV                 W1,[W15-17*2]
-    /* Push extended regs */
-    PUSH                ACCAL
-    PUSH                ACCAH
-    PUSH                ACCAU
-    PUSH                ACCBL
-    PUSH                ACCBH
-    PUSH                ACCBU
-    PUSH                DSRPAG      /* Was PSVPAG on PIC24 parts */
-    PUSH                DSWPAG
-    PUSH                RCOUNT
-    PUSH                DCOUNT
-    PUSH                DOSTARTL
-    PUSH                DOSTARTH
-    PUSH                DOENDL
-    PUSH                DOENDH
-    PUSH                CORCON
-    PUSH                MODCON
-    PUSH                XMODSRT
-    PUSH                XMODEND
-    PUSH                YMODSRT
-    PUSH                YMODEND
-    PUSH                XBREV
-    PUSH                TBLPAG
-    
+    MOV                 W1,[W15-(1+18+1)*2]
+    .endm
+
+/* Actual context switch *****************************************************/
+    .macro              RMP_DSPIC_SWITCH
     /* Switch to kernel stack */
     MOV                 W15,_RMP_SP_Cur
     MOV                 __RMP_DSPIC_SP_Kern,W15
-    /* Load kernel global pointers */
-    MOV                 __RMP_DSPIC_TBLPAG_Kern,W2
-    MOV                 W2,TBLPAG
-    MOV                 __RMP_DSPIC_DSRPAG_Kern,W2
-    MOV                 W2,DSRPAG
-    MOV                 __RMP_DSPIC_DSWPAG_Kern,W2
-    MOV                 W2,DSWPAG
     /* Get the highest priority ready task */
     CALL                __RMP_Run_High
     /* Switch back to user stack */
     MOV                 _RMP_SP_Cur,W15
+    .endm
     
-    /* Pop extended regs */
-    POP                 TBLPAG
-    POP                 XBREV
-    POP                 YMODEND
-    POP                 YMODSRT
-    POP                 XMODEND
-    POP                 XMODSRT
-    POP                 MODCON
-    POP                 CORCON
-    POP                 DOENDH
-    POP                 DOENDL
-    POP                 DOSTARTH
-    POP                 DOSTARTL
-    POP                 DCOUNT
-    POP                 RCOUNT
-    POP                 DSWPAG
-    POP                 DSRPAG
-    POP                 ACCBU
-    POP                 ACCBH
-    POP                 ACCBL
-    POP                 ACCAU
-    POP                 ACCAH
-    POP                 ACCAL
+/* Restore all GP regs and simulate a RETFIE *********************************/
+    .macro              RMP_DSPIC_RESTORE
     /* Pop GP regs */
+    POP                 TBLPAG
+    POP                 RCOUNT
     POP                 W14
     POP.D               W12
     POP.D               W10
@@ -272,9 +252,119 @@ __RMP_DSPIC_Yield:
     POP.D               W4
     POP.D               W2
     POP.D               W0
+    POP                 CORCON
     POP                 SR
     RETFIE
-__RMP_DSPIC_Skip:
+    .endm
+
+/* Kernel table loading for PSV **********************************************/
+    .macro              RMP_DSPIC_KERN_PSV
+    MOV                 __RMP_DSPIC_CORCON_Kern,W2
+    MOV                 W2,CORCON
+    MOV                 __RMP_DSPIC_TBLPAG_Kern,W2
+    MOV                 W2,TBLPAG
+    MOV                 __RMP_DSPIC_PSVDSWPAG_Kern,W2
+    MOV                 W2,0x0034   /* PSVPAG */
+    .endm
+    
+/* Kernel table loading for EDS **********************************************/
+    .macro              RMP_DSPIC_KERN_EDS
+    MOV                 __RMP_DSPIC_CORCON_Kern,W2
+    MOV                 W2,CORCON
+    MOV                 __RMP_DSPIC_TBLPAG_Kern,W2
+    MOV                 W2,TBLPAG
+    MOV                 __RMP_DSPIC_DSRPAG_Kern,W2
+    MOV                 W2,0x0032   /* DSRPAG */
+    MOV                 __RMP_DSPIC_PSVDSWPAG_Kern,W2
+    MOV                 W2,0x0034   /* DSWPAG */
+    .endm
+
+/* DSP context save **********************************************************/
+    .macro              RMP_DSPIC_DSP_SAVE
+    PUSH                0x0022      /* ACCAL */
+    PUSH                0x0024      /* ACCAH */
+    PUSH                0x0026      /* ACCAU */
+    PUSH                0x0028      /* ACCBL */
+    PUSH                0x002A      /* ACCBH */
+    PUSH                0x002C      /* ACCBU */
+    PUSH                0x0046      /* MODCON */
+    PUSH                0x0048      /* XMODSRT */
+    PUSH                0x004A      /* XMODEND */
+    PUSH                0x004C      /* YMODSRT */
+    PUSH                0x004E      /* YMODEND */
+    PUSH                0x0050      /* XBREV */
+    .endm
+    
+/* DSP context restore *******************************************************/
+    .macro              RMP_DSPIC_DSP_RESTORE
+    POP                 0x0050      /* XBREV */
+    POP                 0x004E      /* YMODEND */
+    POP                 0x004C      /* YMODSRT */
+    POP                 0x004A      /* XMODEND */
+    POP                 0x0048      /* XMODSRT */
+    POP                 0x0046      /* MODCON */
+    POP                 0x002C      /* ACCBU */
+    POP                 0x002A      /* ACCBH */
+    POP                 0x0028      /* ACCBL */
+    POP                 0x0026      /* ACCAU */
+    POP                 0x0024      /* ACCAH */
+    POP                 0x0022      /* ACCAL */
+    .endm
+
+/* 24F & 24H *****************************************************************/
+    .section            .text.__rmp_dspic_yield_24f_24h,code
+__RMP_DSPIC_Yield_24F_24H:
+    RMP_DSPIC_SAVE      __RMP_DSPIC_Yield_24F_24H_Skip
+    PUSH                0x0034      /* PSVPAG */
+    RMP_DSPIC_KERN_PSV
+    RMP_DSPIC_SWITCH
+    POP                 0x0034      /* PSVPAG */
+    RMP_DSPIC_RESTORE
+__RMP_DSPIC_Yield_24F_24H_Skip:
+    RETURN
+    
+/* 24E ***********************************************************************/
+    .section            .text.__rmp_dspic_yield_24e,code
+__RMP_DSPIC_Yield_24E:
+    RMP_DSPIC_SAVE      __RMP_DSPIC_Yield_24E_Skip
+    PUSH                0x0032      /* DSRPAG */
+    PUSH                0x0034      /* DSWPAG */
+    RMP_DSPIC_KERN_EDS
+    RMP_DSPIC_SWITCH
+    POP                 0x0034      /* DSWPAG */
+    POP                 0x0032      /* DSRPAG */
+    RMP_DSPIC_RESTORE
+__RMP_DSPIC_Yield_24E_Skip:
+    RETURN
+
+/* 30F & 33F *****************************************************************/
+    .section            .text.__rmp_dspic_yield_30f_33f,code
+__RMP_DSPIC_Yield_30F_33F:
+    RMP_DSPIC_SAVE      __RMP_DSPIC_Yield_30F_33F_Skip
+    PUSH                0x0034      /* PSVPAG */
+    RMP_DSPIC_DSP_SAVE
+    RMP_DSPIC_KERN_PSV
+    RMP_DSPIC_SWITCH
+    RMP_DSPIC_DSP_RESTORE
+    POP                 0x0034      /* PSVPAG */
+    RMP_DSPIC_RESTORE
+__RMP_DSPIC_Yield_30F_33F_Skip:
+    RETURN
+    
+/* 33E & 33C *****************************************************************/
+    .section            .text.__rmp_dspic_yield_33e_33c,code
+__RMP_DSPIC_Yield_33E_33C:
+    RMP_DSPIC_SAVE      __RMP_DSPIC_Yield_33E_33C_Skip
+    PUSH                0x0032      /* DSRPAG */
+    PUSH                0x0034      /* DSWPAG */
+    RMP_DSPIC_DSP_SAVE
+    RMP_DSPIC_KERN_EDS
+    RMP_DSPIC_SWITCH
+    RMP_DSPIC_DSP_RESTORE
+    POP                 0x0034      /* DSWPAG */
+    POP                 0x0032      /* DSRPAG */
+    RMP_DSPIC_RESTORE
+__RMP_DSPIC_Yield_33E_33C_Skip:
     RETURN
 /* End Function:_RMP_DSPIC_Yield *********************************************/
 

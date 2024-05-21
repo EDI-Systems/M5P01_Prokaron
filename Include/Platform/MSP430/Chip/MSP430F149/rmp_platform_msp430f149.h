@@ -29,10 +29,10 @@ Description: The configuration file for MSP430F149.
 #define RMP_INT_MASK()              RMP_Int_Disable()
 #define RMP_INT_UNMASK()            RMP_Int_Enable()
 
-/* We are using MSP430X or not */
-#define RMP_MSP430_X                (0U)
 /* The tick timer value */
 #define RMP_MSP430_TICK_VAL         (8000U)
+/* We are using MSP430X or not */
+#define RMP_MSP430_COP_430X         (0U)
 
 /* Other low-level initialization stuff - clock and serial. 
  * This is the default initialization sequence. If you wish to supply
