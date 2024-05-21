@@ -20,7 +20,7 @@
  *    derived from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
- * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRaNTIES OF
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
  * SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
  * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
@@ -89,214 +89,160 @@ low_level_init(struct netif* netif)
 {
     /* Define all variables */
     GPIO_InitTypeDef GPIO={0};
-    static u32_t timeout;
-    static ETH_InitTypeDef* ETH_InitStructure;
-    u32_t Reg_Tmp;
-    static uint16_t Reg_Value;
+    ETH_InitTypeDef* ETH_Init_Struct;
+    u32_t Timeout;
+    u16_t Reg_Value_U16;
+    u32_t Reg_Value_U32;
 
     /* Initialize variables */
-    Reg_Tmp=0;
-    Reg_Value=0;
+    Timeout=10;
+    Reg_Value_U16=0;
+    Reg_Value_U32=0;
 
+    /* Clock initialization */
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA,ENABLE);
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO,ENABLE);
+    RCC_AHBPeriphClockCmd(RCC_AHBPeriph_ETH_MAC|RCC_AHBPeriph_ETH_MAC_Tx|RCC_AHBPeriph_ETH_MAC_Rx,ENABLE);
+    /* Reset ETHERNET on AHB Bus */
+    ETH_DeInit();
+    ETH_SoftwareReset();
+
+    /* GPIO initialization */
     GPIO.GPIO_Pin=GPIO_Pin_8;
     GPIO.GPIO_Mode=GPIO_Mode_AF_PP;
     GPIO.GPIO_Speed=GPIO_Speed_50MHz;
     GPIO_Init(GPIOA,&GPIO);
+    GPIO_ResetBits(GPIOB,GPIO_Pin_8);
 
+    /* PLL3 initialization */
     RCC_PLL3Cmd(DISABLE);
     RCC_PREDIV2Config(RCC_PREDIV2_Div2);
     RCC_PLL3Config(RCC_PLL3Mul_15);
     RCC_MCOConfig(RCC_MCO_PLL3CLK);
     RCC_PLL3Cmd(ENABLE);
     RMP_Thd_Delay(100);
-
     if(RCC_GetFlagStatus(RCC_FLAG_PLL3RDY)==RESET)
-    {
-        RMP_DBG_S("Wait for PLL3 ready.\n");
         RMP_Thd_Delay(100);
-    }
 
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO,ENABLE);
-
-    /* Ethernet LED Configuration */
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB,ENABLE);
-    GPIO.GPIO_Pin=GPIO_Pin_8|GPIO_Pin_9;
-    GPIO.GPIO_Mode=GPIO_Mode_Out_PP;
-    GPIO.GPIO_Speed=GPIO_Speed_50MHz;
-    GPIO_Init(GPIOB,&GPIO);
-    GPIO_SetBits(GPIOB,GPIO_Pin_8);
-    GPIO_SetBits(GPIOB,GPIO_Pin_9);
-
-    /* Ethernet_Configuration */
-    ETH_InitStructure=mem_malloc(sizeof(ETH_InitTypeDef));
-    memset(ETH_InitStructure,0,sizeof(ETH_InitTypeDef));
-    /* Enable Ethernet MAC clock */
-    RCC_AHBPeriphClockCmd(RCC_AHBPeriph_ETH_MAC|RCC_AHBPeriph_ETH_MAC_Tx|RCC_AHBPeriph_ETH_MAC_Rx,ENABLE);
-
+    /* ETH initialization */
     EXTEN->EXTEN_CTR|=EXTEN_ETH_10M_EN;
-    /* Reset ETHERNET on AHB Bus */
-    ETH_DeInit();
-    /* Software reset */
-    ETH_SoftwareReset();
-
-    /* Wait for software reset */
-    timeout=10;
-    if(ETH->DMABMR&ETH_DMABMR_SR)
+    while(ETH->DMABMR&ETH_DMABMR_SR)
     {
-        timeout--;
-        /* Error:Eth soft-reset timeout! */
-        /* Please check RGMII TX & RX clock line. */
-        RMP_ASSERT(timeout);
+        /* Error:Eth soft-reset timeout! Please check RGMII TX & RX clock line. */
+        RMP_ASSERT(Timeout--);
         RMP_Thd_Delay(100);
     }
 
-    /* Ethernet Configuration */
-    ETH_StructInit(ETH_InitStructure);
-
-    /* Fill ETH_InitStructure parameters */
-    /*------------------------   MAC   -----------------------------------*/
-    ETH_InitStructure->ETH_Mode=ETH_Mode_FullDuplex;
-    ETH_InitStructure->ETH_Speed=ETH_Speed_1000M;
-    ETH_InitStructure->ETH_AutoNegotiation=ETH_AutoNegotiation_Enable  ;
-    ETH_InitStructure->ETH_LoopbackMode=ETH_LoopbackMode_Disable;
-    ETH_InitStructure->ETH_RetryTransmission=ETH_RetryTransmission_Disable;
-    ETH_InitStructure->ETH_AutomaticPadCRCStrip=ETH_AutomaticPadCRCStrip_Disable;
-    ETH_InitStructure->ETH_ReceiveAll=ETH_ReceiveAll_Enable;
-    ETH_InitStructure->ETH_BroadcastFramesReception=ETH_BroadcastFramesReception_Enable;
-    ETH_InitStructure->ETH_PromiscuousMode=ETH_PromiscuousMode_Enable;
-    ETH_InitStructure->ETH_MulticastFramesFilter=ETH_MulticastFramesFilter_Perfect;
-    ETH_InitStructure->ETH_UnicastFramesFilter=ETH_UnicastFramesFilter_Perfect;
-    ETH_InitStructure->ETH_ChecksumOffload=ETH_ChecksumOffload_Enable;
-
-    /*------------------------   DMA   -----------------------------------*/
-    ETH_InitStructure->ETH_DropTCPIPChecksumErrorFrame=ETH_DropTCPIPChecksumErrorFrame_Enable;
-    ETH_InitStructure->ETH_ReceiveStoreForward=ETH_ReceiveStoreForward_Enable;
-    ETH_InitStructure->ETH_TransmitStoreForward=ETH_TransmitStoreForward_Enable;
-    ETH_InitStructure->ETH_ForwardErrorFrames=ETH_ForwardErrorFrames_Enable;
-    ETH_InitStructure->ETH_ForwardUndersizedGoodFrames=ETH_ForwardUndersizedGoodFrames_Enable;
-    ETH_InitStructure->ETH_SecondFrameOperate=ETH_SecondFrameOperate_Disable;
-    ETH_InitStructure->ETH_AddressAlignedBeats=ETH_AddressAlignedBeats_Enable;
-    ETH_InitStructure->ETH_FixedBurst=ETH_FixedBurst_Enable;
-    ETH_InitStructure->ETH_RxDMABurstLength=ETH_RxDMABurstLength_32Beat;
-    ETH_InitStructure->ETH_TxDMABurstLength=ETH_TxDMABurstLength_32Beat;
-    ETH_InitStructure->ETH_DMAArbitration=ETH_DMAArbitration_RoundRobin_RxTx_2_1;
+    /* Fill ETH_Init_Struct parameters */
+    ETH_Init_Struct=mem_malloc(sizeof(ETH_InitTypeDef));
+    memset(ETH_Init_Struct,0,sizeof(ETH_InitTypeDef));
+    ETH_StructInit(ETH_Init_Struct);
+    ETH_Init_Struct->ETH_Mode=ETH_Mode_FullDuplex;
+    ETH_Init_Struct->ETH_Speed=ETH_Speed_10M;
+    ETH_Init_Struct->ETH_AutoNegotiation=ETH_AutoNegotiation_Enable;
+    ETH_Init_Struct->ETH_LoopbackMode=ETH_LoopbackMode_Disable;
+    ETH_Init_Struct->ETH_RetryTransmission=ETH_RetryTransmission_Disable;
+    ETH_Init_Struct->ETH_AutomaticPadCRCStrip=ETH_AutomaticPadCRCStrip_Disable;
+    ETH_Init_Struct->ETH_ReceiveAll=ETH_ReceiveAll_Enable;
+    ETH_Init_Struct->ETH_BroadcastFramesReception=ETH_BroadcastFramesReception_Enable;
+    ETH_Init_Struct->ETH_PromiscuousMode=ETH_PromiscuousMode_Enable;
+    ETH_Init_Struct->ETH_MulticastFramesFilter=ETH_MulticastFramesFilter_Perfect;
+    ETH_Init_Struct->ETH_UnicastFramesFilter=ETH_UnicastFramesFilter_Perfect;
+    ETH_Init_Struct->ETH_ChecksumOffload=ETH_ChecksumOffload_Enable;
+    ETH_Init_Struct->ETH_DropTCPIPChecksumErrorFrame=ETH_DropTCPIPChecksumErrorFrame_Enable;
+    ETH_Init_Struct->ETH_ReceiveStoreForward=ETH_ReceiveStoreForward_Enable;
+    ETH_Init_Struct->ETH_TransmitStoreForward=ETH_TransmitStoreForward_Enable;
+    ETH_Init_Struct->ETH_ForwardErrorFrames=ETH_ForwardErrorFrames_Enable;
+    ETH_Init_Struct->ETH_ForwardUndersizedGoodFrames=ETH_ForwardUndersizedGoodFrames_Enable;
+    ETH_Init_Struct->ETH_SecondFrameOperate=ETH_SecondFrameOperate_Disable;
+    ETH_Init_Struct->ETH_AddressAlignedBeats=ETH_AddressAlignedBeats_Enable;
+    ETH_Init_Struct->ETH_FixedBurst=ETH_FixedBurst_Enable;
+    ETH_Init_Struct->ETH_RxDMABurstLength=ETH_RxDMABurstLength_32Beat;
+    ETH_Init_Struct->ETH_TxDMABurstLength=ETH_TxDMABurstLength_32Beat;
+    ETH_Init_Struct->ETH_DMAArbitration=ETH_DMAArbitration_RoundRobin_RxTx_2_1;
+    /* Manually populating MAC registers, because relevant api is not provided by WCH. */
+    Reg_Value_U32=ETH->MACCR;
+    Reg_Value_U32&=MACCR_CLEAR_MASK;
+    Reg_Value_U32|=(uint32_t)(ETH_Init_Struct->ETH_Watchdog|
+                              ETH_Init_Struct->ETH_Jabber|
+                              ETH_Init_Struct->ETH_InterFrameGap|
+                              ETH_Init_Struct->ETH_CarrierSense|
+                              ETH_Init_Struct->ETH_Speed|
+                              ETH_Init_Struct->ETH_ReceiveOwn|
+                              ETH_Init_Struct->ETH_LoopbackMode|
+                              ETH_Init_Struct->ETH_Mode|
+                              ETH_Init_Struct->ETH_ChecksumOffload|
+                              ETH_Init_Struct->ETH_RetryTransmission|
+                              ETH_Init_Struct->ETH_AutomaticPadCRCStrip|
+                              ETH_Init_Struct->ETH_BackOffLimit|
+                              ETH_Init_Struct->ETH_DeferralCheck);
+    ETH->MACCR=(uint32_t)Reg_Value_U32;
+    ETH->MACCR|=ETH_Internal_Pull_Up_Res_Enable;
+    ETH->MACFFR=(uint32_t)(ETH_Init_Struct->ETH_ReceiveAll|
+                           ETH_Init_Struct->ETH_SourceAddrFilter|
+                           ETH_Init_Struct->ETH_PassControlFrames|
+                           ETH_Init_Struct->ETH_BroadcastFramesReception|
+                           ETH_Init_Struct->ETH_DestinationAddrFilter|
+                           ETH_Init_Struct->ETH_PromiscuousMode|
+                           ETH_Init_Struct->ETH_MulticastFramesFilter|
+                           ETH_Init_Struct->ETH_UnicastFramesFilter);
+    /* ETHERNET MACHTHR and MACHTLR Configuration */
+    ETH->MACHTHR=(uint32_t)ETH_Init_Struct->ETH_HashTableHigh;
+    ETH->MACHTLR=(uint32_t)ETH_Init_Struct->ETH_HashTableLow;
+    /* ETHERNET MACFCR Configuration */
+    Reg_Value_U32=ETH->MACFCR;
+    Reg_Value_U32&=MACFCR_CLEAR_MASK;
+    Reg_Value_U32|=(uint32_t)((ETH_Init_Struct->ETH_PauseTime<<16)|
+                               ETH_Init_Struct->ETH_ZeroQuantaPause|
+                               ETH_Init_Struct->ETH_PauseLowThreshold|
+                               ETH_Init_Struct->ETH_UnicastPauseFrameDetect|
+                               ETH_Init_Struct->ETH_ReceiveFlowControl|
+                               ETH_Init_Struct->ETH_TransmitFlowControl);
+    ETH->MACFCR=(uint32_t)Reg_Value_U32;
+    ETH->MACVLANTR=(uint32_t)(ETH_Init_Struct->ETH_VLANTagComparison|
+                              ETH_Init_Struct->ETH_VLANTagIdentifier);
+    /* Manually populating DMA registers, because relevant api is not provided by WCH. */
+    Reg_Value_U32=ETH->DMAOMR;
+    Reg_Value_U32&=DMAOMR_CLEAR_MASK;
+    Reg_Value_U32|=(uint32_t)(ETH_Init_Struct->ETH_DropTCPIPChecksumErrorFrame|
+                              ETH_Init_Struct->ETH_ReceiveStoreForward|
+                              ETH_Init_Struct->ETH_FlushReceivedFrame|
+                              ETH_Init_Struct->ETH_TransmitStoreForward|
+                              ETH_Init_Struct->ETH_TransmitThresholdControl|
+                              ETH_Init_Struct->ETH_ForwardErrorFrames|
+                              ETH_Init_Struct->ETH_ForwardUndersizedGoodFrames|
+                              ETH_Init_Struct->ETH_ReceiveThresholdControl|
+                              ETH_Init_Struct->ETH_SecondFrameOperate);
+    ETH->DMAOMR=(uint32_t)Reg_Value_U32;
+    ETH->DMABMR=(uint32_t)(ETH_Init_Struct->ETH_AddressAlignedBeats|
+                           ETH_Init_Struct->ETH_FixedBurst|
+                           ETH_Init_Struct->ETH_RxDMABurstLength|
+                           ETH_Init_Struct->ETH_TxDMABurstLength|
+                          (ETH_Init_Struct->ETH_DescriptorSkipLength<<2)|
+                           ETH_Init_Struct->ETH_DMAArbitration|
+                           ETH_DMABMR_USP);
+    mem_free(ETH_Init_Struct);
 
     /* PHY layer configuration */
-    Reg_Tmp=ETH->MACMIIAR;
-    Reg_Tmp&=MACMIIAR_CR_MASK;
-    Reg_Tmp|=(uint32_t)ETH_MACMIIAR_CR_Div42;
-    ETH->MACMIIAR=(uint32_t)Reg_Tmp;
-
+    Reg_Value_U32=ETH->MACMIIAR;
+    Reg_Value_U32&=MACMIIAR_CR_MASK;
+    Reg_Value_U32|=(uint32_t)ETH_MACMIIAR_CR_Div42;
+    ETH->MACMIIAR=(uint32_t)Reg_Value_U32;
     /* Reset PHY layer */
     ETH_WritePHYRegister(PHY_ADDRESS,PHY_BCR,PHY_Reset);
     RMP_Thd_Delay(100);
 
-    timeout=10000;
-    Reg_Value=ETH_ReadPHYRegister(PHY_ADDRESS,PHY_BCR);
-    if((Reg_Value&(PHY_Reset)))
+    Timeout=10000;
+    Reg_Value_U16=ETH_ReadPHYRegister(PHY_ADDRESS,PHY_BCR);
+    if((Reg_Value_U16&(PHY_Reset))||(Reg_Value_U16&(PHY_Linked_Status))==0||(Reg_Value_U16&PHY_AutoNego_Complete)==0)
     {
-        timeout--;
-        /* Error: Wait PHY software timeout! Please check PHY/MID. */
-        while(timeout<=0) ;
+        /* Error1: Wait PHY software timeout! Please check PHY/MID. */
+        /* Error2: Wait PHY linking timeout! */
+        /* Error3: Wait PHY auto-negotiation complete timeout! */
+        RMP_ASSERT(Timeout--);
         RMP_Thd_Delay(100);
     }
 
-    timeout=10000;
-    Reg_Value=ETH_ReadPHYRegister(PHY_ADDRESS,PHY_BSR);
-    if((Reg_Value&(PHY_Linked_Status))==0)
-    {
-        timeout--;
-        /* Error: Wait PHY linking timeout! */
-        while(timeout<=0) ;
-        RMP_Thd_Delay(100);
-    }
-
-    timeout=10000;
-    Reg_Value=ETH_ReadPHYRegister(PHY_ADDRESS,PHY_BSR);
-    if((Reg_Value&PHY_AutoNego_Complete)==0)
-    {
-        timeout--;
-        /* Error: Wait PHY auto-negotiation complete timeout! */
-        while(timeout<=0) ;
-        RMP_Thd_Delay(100);
-    }
-
-    /* print some info */
-    Reg_Value=ETH_ReadPHYRegister(PHY_ADDRESS,0x10);
-
-    ETH_InitStructure->ETH_Mode=Reg_Value&(1<<2)?ETH_Mode_FullDuplex:ETH_Mode_HalfDuplex;
-    ETH_InitStructure->ETH_Speed=ETH_Speed_10M;
-    RMP_Thd_Delay(100);
-    GPIO_ResetBits(GPIOB,GPIO_Pin_8);
-
-    /* MAC Register Configuration */
-    Reg_Tmp=ETH->MACCR;
-    Reg_Tmp&=MACCR_CLEAR_MASK;
-    Reg_Tmp|=(uint32_t)(ETH_InitStructure->ETH_Watchdog|
-                        ETH_InitStructure->ETH_Jabber|
-                        ETH_InitStructure->ETH_InterFrameGap|
-                        ETH_InitStructure->ETH_CarrierSense|
-                        ETH_InitStructure->ETH_Speed|
-                        ETH_InitStructure->ETH_ReceiveOwn|
-                        ETH_InitStructure->ETH_LoopbackMode|
-                        ETH_InitStructure->ETH_Mode|
-                        ETH_InitStructure->ETH_ChecksumOffload|
-                        ETH_InitStructure->ETH_RetryTransmission|
-                        ETH_InitStructure->ETH_AutomaticPadCRCStrip|
-                        ETH_InitStructure->ETH_BackOffLimit|
-                        ETH_InitStructure->ETH_DeferralCheck);
-    ETH->MACCR=(uint32_t)Reg_Tmp;
-    ETH->MACCR|=ETH_Internal_Pull_Up_Res_Enable;
-    ETH->MACFFR=(uint32_t)(ETH_InitStructure->ETH_ReceiveAll|
-                           ETH_InitStructure->ETH_SourceAddrFilter|
-                           ETH_InitStructure->ETH_PassControlFrames|
-                           ETH_InitStructure->ETH_BroadcastFramesReception|
-                           ETH_InitStructure->ETH_DestinationAddrFilter|
-                           ETH_InitStructure->ETH_PromiscuousMode|
-                           ETH_InitStructure->ETH_MulticastFramesFilter|
-                           ETH_InitStructure->ETH_UnicastFramesFilter);
-
-    /*--------------- ETHERNET MACHTHR and MACHTLR Configuration ---------------*/
-    /* Write to ETHERNET MACHTHR */
-    ETH->MACHTHR=(uint32_t)ETH_InitStructure->ETH_HashTableHigh;
-    /* Write to ETHERNET MACHTLR */
-    ETH->MACHTLR=(uint32_t)ETH_InitStructure->ETH_HashTableLow;
-
-    /*----------------------- ETHERNET MACFCR Configuration --------------------*/
-    /* Get the ETHERNET MACFCR value */
-    Reg_Tmp=ETH->MACFCR;
-    /* Clear xx bits */
-    Reg_Tmp&=MACFCR_CLEAR_MASK;
-    Reg_Tmp|=(uint32_t)((ETH_InitStructure->ETH_PauseTime<<16)|
-                         ETH_InitStructure->ETH_ZeroQuantaPause|
-                         ETH_InitStructure->ETH_PauseLowThreshold|
-                         ETH_InitStructure->ETH_UnicastPauseFrameDetect|
-                         ETH_InitStructure->ETH_ReceiveFlowControl|
-                         ETH_InitStructure->ETH_TransmitFlowControl);
-    ETH->MACFCR=(uint32_t)Reg_Tmp;
-    ETH->MACVLANTR=(uint32_t)(ETH_InitStructure->ETH_VLANTagComparison|
-                              ETH_InitStructure->ETH_VLANTagIdentifier);
-    Reg_Tmp=ETH->DMAOMR;
-    Reg_Tmp&=DMAOMR_CLEAR_MASK;
-    Reg_Tmp|=(uint32_t)(ETH_InitStructure->ETH_DropTCPIPChecksumErrorFrame|
-                        ETH_InitStructure->ETH_ReceiveStoreForward|
-                        ETH_InitStructure->ETH_FlushReceivedFrame|
-                        ETH_InitStructure->ETH_TransmitStoreForward|
-                        ETH_InitStructure->ETH_TransmitThresholdControl|
-                        ETH_InitStructure->ETH_ForwardErrorFrames|
-                        ETH_InitStructure->ETH_ForwardUndersizedGoodFrames|
-                        ETH_InitStructure->ETH_ReceiveThresholdControl|
-                        ETH_InitStructure->ETH_SecondFrameOperate);
-    ETH->DMAOMR=(uint32_t)Reg_Tmp;
-    ETH->DMABMR=(uint32_t)(ETH_InitStructure->ETH_AddressAlignedBeats|
-                           ETH_InitStructure->ETH_FixedBurst|
-                           ETH_InitStructure->ETH_RxDMABurstLength|
-                           ETH_InitStructure->ETH_TxDMABurstLength|
-                          (ETH_InitStructure->ETH_DescriptorSkipLength<<2)|
-                           ETH_InitStructure->ETH_DMAArbitration|
-                           ETH_DMABMR_USP);
-    mem_free(ETH_InitStructure);
     /* Enable the Ethernet Rx Interrupt */
     ETH_DMAITConfig(ETH_DMA_IT_NIS|ETH_DMA_IT_R|ETH_DMA_IT_T,ENABLE);
     NVIC_SetPriority(ETH_IRQn,0xff);
@@ -413,12 +359,9 @@ low_level_input(struct netif* netif)
     u8_t* Buffer_Ptr;
 
     /* Relevant struct associated with data frame. */
-    void* Frame_Next;
     u32_t Frame_Buffer;
     u32_t Frame_Length;
     ETH_DMADESCTypeDef* Frame_Desc;
-
-    Frame_Next=RMP_NULL;
 
     if((DMARxDescToGet->Status&ETH_DMARxDesc_OWN)!=(u32)RESET)
     {
