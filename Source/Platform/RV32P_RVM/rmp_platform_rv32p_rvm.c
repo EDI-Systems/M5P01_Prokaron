@@ -51,7 +51,7 @@ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
     rmp_ptr_t End;
     struct RMP_RV32P_RVM_Stack* Ptr;
 
-    /* Compute & align stack */
+    /* Compute & align stack - full descending */
     End=RMP_ROUND_DOWN(Stack+Size, 4U);
     Ptr=(struct RMP_RV32P_RVM_Stack*)(End-sizeof(struct RMP_RV32P_RVM_Stack));
 
@@ -532,7 +532,7 @@ void RMP_Ctx_Handler(void)
 #if((RMP_RV32P_RVM_COP_RVD!=0U)||(RMP_RV32P_RVM_COP_RVF!=0U))
     /* LUI      a1,4                See if FPU is used (mstatus.fs[1]==1)
      * AND      a1,a1,a0
-     * BEQZ     a1,_RMP_RV32P_Yield_Restore_Skip */
+     * BEQZ     a1,_RMP_RV32P_Yield_Load_Skip */
     if(MSTATUS)
     {
 #endif

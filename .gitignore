@@ -80,3 +80,6 @@ Project/**/RemoteSystemsTempFiles/
 Project/MPLAB-*/RMP.X/.generated_files
 Project/MPLAB-*/RMP.X/disassembly
 Project/MPLAB-*/RMP.X/dist
+
+#ATMEL Studio specific
+Project/ATS-*/.vs/

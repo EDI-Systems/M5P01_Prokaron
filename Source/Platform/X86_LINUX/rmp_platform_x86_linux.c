@@ -33,7 +33,11 @@ Register Usage : None.
 ******************************************************************************/
 void _RMP_Lowlvl_Init(void)
 {
-    /* Nothing really to init for Linux */
+    RMP_SysTick_Flag=0U;
+    RMP_PendSV_Flag=0U;
+    RMP_Int_Disabled=1U;
+
+    RMP_Int_Disable();
 }
 /* End Function:_RMP_Lowlvl_Init **********************************************/
 
@@ -263,7 +267,7 @@ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
     rmp_ptr_t End;
     struct RMP_X86_LINUX_Stack* Ptr;
     
-    /* Compute & align stack */
+    /* Compute & align stack - full descending */
     End=RMP_ROUND_DOWN(Stack+Size,4U);
     Ptr=(struct RMP_X86_LINUX_Stack*)(End-sizeof(struct RMP_X86_LINUX_Stack));
 
@@ -290,22 +294,6 @@ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
     return (rmp_ptr_t)Ptr;
 }
 /* End Function:_RMP_Stack_Init **********************************************/
-
-/* Function:_RMP_Low_Level_Init ***********************************************
-Description : Initialize the low level hardware of the system.
-Input       : None
-Output      : None.
-Return      : None.
-******************************************************************************/
-void _RMP_Low_Level_Init(void)
-{
-    RMP_SysTick_Flag=0U;
-    RMP_PendSV_Flag=0U;
-    RMP_Int_Disabled=1U;
-
-    RMP_Int_Disable();
-}
-/* End Function:_RMP_Low_Level_Init ******************************************/
 
 /* Function:_RMP_Plat_Hook ****************************************************
 Description : Platform-specific hook for system initialization.

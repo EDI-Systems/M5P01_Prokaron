@@ -2,7 +2,7 @@
 	<img width="300" src="/Document/Public/Demo/logo.png" alt="logo">
 </h1>
 
-# RMP Real-time kernel
+# RMP Real-time Kernel
 <div align="center">
 
 [![Github release](https://img.shields.io/github/release/EDI-Systems/M5P01_Prokaron.svg)](https://github.com/EDI-Systems/M5P01_Prokaron/releases/latest)
@@ -215,7 +215,7 @@ This software is an official work of EDI, and thus belongs to the **public domai
 
 In contrast, RT-Linux 4.12's best context switch time on Cortex-M7 is bigger than 25000 cycles (have to run from FMC SDRAM). This is measured with futex; if other forms of IPC such as pipes are used, this time is even longer.
 
-### Possible New Platform Supports
+### Possible new platform supports
 |Platform   |Reason                 |Priority            |
 |:---------:|:---------------------:|:------------------:|
 |RL78       |Largely used 16-bit MCU|:star: :star: :star:|
@@ -228,7 +228,6 @@ In contrast, RT-Linux 4.12's best context switch time on Cortex-M7 is bigger tha
 |ARMv5          |New versions available|Use newer Cortex-M and RISC-Vs                                               |
 |x86-64         |Advanced system       |Use [RME Microkernel-based OS](https://github.com/EDI-Systems/M7M01_Eukaron)  |
 |Cortex-A       |Advanced system       |Use [RME Microkernel-based OS](https://github.com/EDI-Systems/M7M01_Eukaron)  |
-|Coldfire       |In decline            |Use more popular Cortex-M and RISC-Vs                                        |
 |PowerPC        |In decline            |Use more popular Cortex-M and RISC-Vs                                        |
 |RX100/600/600S |Rarely used           |Use more popular Cortex-M and RISC-Vs                                        |
 |Tricore        |Rarely used           |Use more popular Cortex-M and RISC-Vs                                        |
@@ -250,7 +249,7 @@ In contrast, RT-Linux 4.12's best context switch time on Cortex-M7 is bigger tha
 
 &ensp;&ensp;The **Vendor Toolchain** or **Eclipse** projects for various microcontrollers are available in the **_Project_** folder. Refer to the readme files in each folder for specific instructions about how to run them. However, keep in mind that some examples may need vendor-specific libraries such as the STMicroelectronics HAL. Some additional drivers may be required too. These can be found in **[M0A00_Library](https://github.com/EDI-Systems/M0A00_Library)** repo.
 
-## Running the tests
+## Running the Tests
 
 &ensp;&ensp;To run the sample programs, simply download them into the development board and start step-by-step debugging. Some examples will use one or two LEDs to indicate the system status. In that case, it is necessary to fill the LED blinking wrapper functions.  
 

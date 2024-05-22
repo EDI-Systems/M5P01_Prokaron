@@ -92,7 +92,7 @@ Description : The assembly part of the RMP RTOS. This is for RV32P, and
     .endm
 
 /* Restore all GP regs *******************************************************/
-    .macro              RMP_RV32P_RESTORE
+    .macro              RMP_RV32P_LOAD
     LI                  a1,0x1880
     OR                  a0,a0,a1
     CSRW                mstatus,a0
@@ -139,9 +139,9 @@ Description : The assembly part of the RMP RTOS. This is for RV32P, and
     .endm
 
 /* Load macro for no coprocessor case ****************************************/
-    .macro              RMP_RV32P_INT_RESTORE_NONE
+    .macro              RMP_RV32P_INT_LOAD_NONE
     RMP_RV32P_SWITCH_POST
-    RMP_RV32P_RESTORE
+    RMP_RV32P_LOAD
     .endm
 
 /* Save macro for RVF case ***************************************************/
@@ -191,7 +191,7 @@ Description : The assembly part of the RMP RTOS. This is for RV32P, and
     .endm
 
 /* Load macro for RVF case ***************************************************/
-    .macro              RMP_RV32P_INT_RESTORE_RVF
+    .macro              RMP_RV32P_INT_LOAD_RVF
     RMP_RV32P_SWITCH_POST
     LUI                 a1,4
     AND                 a1,a1,a0
@@ -233,7 +233,7 @@ Description : The assembly part of the RMP RTOS. This is for RV32P, and
     .hword              0x0035
     ADDI                sp,sp,33*4
 1:
-    RMP_RV32P_RESTORE
+    RMP_RV32P_LOAD
     .endm
 
 /* Save macro for RVD case ***************************************************/
@@ -315,7 +315,7 @@ Description : The assembly part of the RMP RTOS. This is for RV32P, and
     .endm
 
 /* Load macro for RVD case ***************************************************/
-    .macro              RMP_RV32P_INT_RESTORE_RVD
+    .macro              RMP_RV32P_INT_LOAD_RVD
     RMP_RV32P_SWITCH_POST
     LUI                 a1,4
     AND                 a1,a1,a0
@@ -389,7 +389,7 @@ Description : The assembly part of the RMP RTOS. This is for RV32P, and
     .hword              0x0035
     ADDI                sp,sp,65*4
 1:
-    RMP_RV32P_RESTORE
+    RMP_RV32P_LOAD
     .endm
 /* End Macro *****************************************************************/
 

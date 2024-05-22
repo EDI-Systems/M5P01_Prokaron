@@ -29,7 +29,7 @@ Return      : None.
 SysTick_Handler:
     RMP_RV32P_INT_SAVE_RVF
     CALL                _RMP_RV32P_Tim_Handler
-    RMP_RV32P_INT_RESTORE_RVF
+    RMP_RV32P_INT_LOAD_RVF
 /* End Function:SysTick_Handler **********************************************/
 
 /* Function:TIM4_IRQHandler ***************************************************
@@ -42,7 +42,7 @@ Return      : None.
 TIM4_IRQHandler:
     RMP_RV32P_INT_SAVE_RVF
     CALL                _TIM4_IRQHandler
-    RMP_RV32P_INT_RESTORE_RVF
+    RMP_RV32P_INT_LOAD_RVF
 /* End Function:TIM4_IRQHandler **********************************************/
 
 /* End Of File ***************************************************************/

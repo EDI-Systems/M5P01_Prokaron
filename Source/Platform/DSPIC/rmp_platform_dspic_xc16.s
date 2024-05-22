@@ -240,7 +240,7 @@ Return      : None.
     .endm
     
 /* Restore all GP regs and simulate a RETFIE *********************************/
-    .macro              RMP_DSPIC_RESTORE
+    .macro              RMP_DSPIC_LOAD
     /* Pop GP regs */
     POP                 TBLPAG
     POP                 RCOUNT
@@ -296,7 +296,7 @@ Return      : None.
     .endm
     
 /* DSP context restore *******************************************************/
-    .macro              RMP_DSPIC_DSP_RESTORE
+    .macro              RMP_DSPIC_DSP_LOAD
     POP                 0x0050      /* XBREV */
     POP                 0x004E      /* YMODEND */
     POP                 0x004C      /* YMODSRT */
@@ -319,7 +319,7 @@ __RMP_DSPIC_Yield_24F_24H:
     RMP_DSPIC_KERN_PSV
     RMP_DSPIC_SWITCH
     POP                 0x0034      /* PSVPAG */
-    RMP_DSPIC_RESTORE
+    RMP_DSPIC_LOAD
 __RMP_DSPIC_Yield_24F_24H_Skip:
     RETURN
     
@@ -333,7 +333,7 @@ __RMP_DSPIC_Yield_24E:
     RMP_DSPIC_SWITCH
     POP                 0x0034      /* DSWPAG */
     POP                 0x0032      /* DSRPAG */
-    RMP_DSPIC_RESTORE
+    RMP_DSPIC_LOAD
 __RMP_DSPIC_Yield_24E_Skip:
     RETURN
 
@@ -345,9 +345,9 @@ __RMP_DSPIC_Yield_30F_33F:
     RMP_DSPIC_DSP_SAVE
     RMP_DSPIC_KERN_PSV
     RMP_DSPIC_SWITCH
-    RMP_DSPIC_DSP_RESTORE
+    RMP_DSPIC_DSP_LOAD
     POP                 0x0034      /* PSVPAG */
-    RMP_DSPIC_RESTORE
+    RMP_DSPIC_LOAD
 __RMP_DSPIC_Yield_30F_33F_Skip:
     RETURN
     
@@ -360,10 +360,10 @@ __RMP_DSPIC_Yield_33E_33C:
     RMP_DSPIC_DSP_SAVE
     RMP_DSPIC_KERN_EDS
     RMP_DSPIC_SWITCH
-    RMP_DSPIC_DSP_RESTORE
+    RMP_DSPIC_DSP_LOAD
     POP                 0x0034      /* DSWPAG */
     POP                 0x0032      /* DSRPAG */
-    RMP_DSPIC_RESTORE
+    RMP_DSPIC_LOAD
 __RMP_DSPIC_Yield_33E_33C_Skip:
     RETURN
 /* End Function:_RMP_DSPIC_Yield *********************************************/

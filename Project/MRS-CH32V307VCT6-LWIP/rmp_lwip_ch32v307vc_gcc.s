@@ -30,7 +30,7 @@ SysTick_Handler:
     CSRCI               mstatus,8
     RMP_RV32P_INT_SAVE_RVF
     CALL                _RMP_RV32P_Tim_Handler
-    RMP_RV32P_INT_RESTORE_RVF
+    RMP_RV32P_INT_LOAD_RVF
 /* End Function:SysTick_Handler **********************************************/
 
 /* Function:ETH_IRQHandler ****************************************************
@@ -44,7 +44,7 @@ ETH_IRQHandler:
     CSRCI               mstatus,8
     RMP_RV32P_INT_SAVE_RVF
     CALL                _ETH_IRQHandler
-    RMP_RV32P_INT_RESTORE_RVF
+    RMP_RV32P_INT_LOAD_RVF
 /* End Function:ETH_IRQHandler ***********************************************/
 
 /* End Of File ***************************************************************/

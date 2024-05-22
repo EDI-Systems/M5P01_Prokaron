@@ -28,7 +28,7 @@ Return      : None.
 _RMP_RV32P_Handler:
     RMP_RV32P_INT_SAVE_NONE
     CALL                __RMP_RV32P_Handler
-    RMP_RV32P_INT_RESTORE_NONE
+    RMP_RV32P_INT_LOAD_NONE
 /* End Function:_RMP_RV32P_Handler *******************************************/
 
 /* End Of File ***************************************************************/
