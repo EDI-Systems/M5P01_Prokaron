@@ -1,5 +1,5 @@
 ;/*****************************************************************************
-;Filename    : rmp_platform_msp430x_ticc.s
+;Filename    : rmp_platform_msp430_430x_ticc.s
 ;Author      : pry
 ;Date        : 25/02/2018
 ;Description : The assembly part of the RMP RTOS. This is for MSP430X.
@@ -38,7 +38,7 @@
     ;Start the first thread
     .def                _RMP_Start
     ;Yield to another thread
-    .def                _RMP_MSP430_Yield
+    .def                _RMP_MSP430_Yield_430X
 ;/* End Export ***************************************************************/
 
 ;/* Header *******************************************************************/
@@ -109,7 +109,7 @@ _RMP_Start:             .asmfunc
 ;Output      : None.
 ;Return      : None.
 ;*****************************************************************************/
-_RMP_MSP430_Yield:      .asmfunc
+_RMP_MSP430_Yield_430X: .asmfunc
     ;Disable all interrupts
     NOP
     DINT

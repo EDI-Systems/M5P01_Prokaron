@@ -9,7 +9,7 @@
     .text
     .sect               ".text:_isr"
     .align              2
-    .include            "Platform/MSP430/rmp_platform_msp430_ticc.inc"
+    .include            "Platform/MSP430/rmp_platform_msp430_none_ticc.inc"
 ;/* End Header ***************************************************************/
 
 ;/* Import *******************************************************************/
@@ -29,10 +29,10 @@
 ;Return      : None.
 ;*****************************************************************************/
 TIMER0_A0_VECTOR:       .asmfunc
-    RMP_MSP430_INT_SAVE
+    RMP_MSP430_INT_SAVE_NONE
     ;Get the highest ready task.
     CALL                #_RMP_MSP430_Tickless_Handler
-    RMP_MSP430_INT_RESTORE
+    RMP_MSP430_INT_RESTORE_NONE
     .endasmfunc
 ;/* End Function:TIMERA0_VECTOR **********************************************/
 
