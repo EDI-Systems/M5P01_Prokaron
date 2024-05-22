@@ -48,7 +48,7 @@ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
     rmp_ptr_t End;
     struct RMP_RV32P_Stack* Ptr;
 
-    /* Compute & align stack */
+    /* Compute & align stack - full descending */
     End=RMP_ROUND_DOWN(Stack+Size, 4U);
     Ptr=(struct RMP_RV32P_Stack*)(End-sizeof(struct RMP_RV32P_Stack));
 
@@ -145,8 +145,7 @@ void RMP_Putchar(char Char)
 /* End Function:RMP_Putchar **************************************************/
 
 /* Function:_RMP_Yield ********************************************************
-Description : Trigger a yield to another thread. This will trigger the software
-              interrupt in RISC-V.
+Description : Trigger a yield to another thread.
 Input       : None.
 Output      : None.
 Return      : None.

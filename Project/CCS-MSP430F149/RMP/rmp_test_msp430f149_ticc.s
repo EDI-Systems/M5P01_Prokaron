@@ -34,7 +34,7 @@ TIMERA0_VECTOR:         .asmfunc
     RMP_MSP430_INT_SAVE_NONE
     ;Get the highest ready task.
     CALL                #_RMP_MSP430_Tim_Handler
-    RMP_MSP430_INT_RESTORE_NONE
+    RMP_MSP430_INT_LOAD_NONE
     .endasmfunc
 ;/* End Function:TIMERA0_VECTOR **********************************************/
 
@@ -48,7 +48,7 @@ TIMERB0_VECTOR:         .asmfunc
     RMP_MSP430_INT_SAVE_NONE
     ;Get the highest ready task.
     CALL                #TIM1_IRQHandler
-    RMP_MSP430_INT_RESTORE_NONE
+    RMP_MSP430_INT_LOAD_NONE
     .endasmfunc
 ;/* End Function:TIMERB0_VECTOR **********************************************/
 

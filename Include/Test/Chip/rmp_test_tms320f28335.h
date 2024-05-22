@@ -96,7 +96,7 @@ ISR Blocking message queue         : 1416 / 1643 / 1414
 /* The C28X timers are all 16 bits, so */
 typedef rmp_u16_t rmp_tim_t;
 /* The pointer is also 16-bit, resort to 32-bit accumulators */
-#define PTR_32_BIT
+/* #define PTR_16_BIT */
 /* End Define ****************************************************************/
 
 /* Global ********************************************************************/

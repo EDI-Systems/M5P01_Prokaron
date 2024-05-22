@@ -27,7 +27,7 @@ Output      : None.
 __T1Interrupt:
     RMP_DSPIC_INT_SAVE_33E_33C
     CALL                __RMP_DSPIC_Tim_Handler
-    RMP_DSPIC_INT_RESTORE_33E_33C
+    RMP_DSPIC_INT_LOAD_33E_33C
 /* End Function:__T1Interrupt ************************************************/
 
 /* Function:__T3Interrupt *****************************************************
@@ -38,7 +38,7 @@ Output      : None.
 __T3Interrupt:
     RMP_DSPIC_INT_SAVE_33E_33C
     CALL                _Tim3_Interrupt
-    RMP_DSPIC_INT_RESTORE_33E_33C
+    RMP_DSPIC_INT_LOAD_33E_33C
 /* End Function:__T3Interrupt ************************************************/
 
 /* End Of File ***************************************************************/

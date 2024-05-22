@@ -1,5 +1,5 @@
 /******************************************************************************
-Filename    : rmp_platform_a6m.c
+Filename    : rmp_platform_avr.c
 Author      : pry
 Date        : 04/02/2018
 Licence     : The Unlicense; see LICENSE for details.
@@ -8,17 +8,17 @@ Description : The platform specific file for ARMv6-M.
 
 /* Include *******************************************************************/
 #define __HDR_DEF__
-#include "Platform/A6M/rmp_platform_a6m.h"
+#include "Platform/AVR/rmp_platform_avr.h"
 #include "Kernel/rmp_kernel.h"
 #undef __HDR_DEF__
 
 #define __HDR_STRUCT__
-#include "Platform/A6M/rmp_platform_a6m.h"
+#include "Platform/AVR/rmp_platform_avr.h"
 #include "Kernel/rmp_kernel.h"
 #undef __HDR_STRUCT__
 
 /* Private include */
-#include "Platform/A6M/rmp_platform_a6m.h"
+#include "Platform/AVR/rmp_platform_avr.h"
 
 #define __HDR_PUBLIC__
 #include "Kernel/rmp_kernel.h"
@@ -43,37 +43,71 @@ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
                           rmp_ptr_t Entry,
                           rmp_ptr_t Param)
 {
-    rmp_ptr_t End;
-    struct RMP_A6M_Stack* Ptr;
+    struct RMP_AVR_Stack* Ptr;
     
-    /* Compute & align stack - full descending */
-    End=RMP_ROUND_DOWN(Stack+Size, 3U);
-    Ptr=(struct RMP_A6M_Stack*)(End-sizeof(struct RMP_A6M_Stack));
+    /* Compute stack - empty descending, no alignment requirement */
+    Ptr=(struct RMP_AVR_Stack*)(Stack+Size-sizeof(struct RMP_AVR_Stack)-1U);
     
-    /* Set LR_EXC and xPSR accordingly to avoid INVSTATE */
-    Ptr->LR_EXC=0xFFFFFFFDU;
-    Ptr->XPSR=0x01000000U;
+    /* Set SREG to all zero; AVR MEGA RETI will enable interrupts, while 
+     * XMEGA RETI does nothing and we will have to SEI before RETI anyway.
+     * That is to say we won't be able to have nonpreemptive priorities
+     * between kernel-aware interrupts on XMEGA. */
+    Ptr->SREG_SR=0x00U;
     
-    /* Pass entry and parameter */
-    Ptr->PC=Entry;
-    Ptr->R0=Param;
+    /* Pass entry and parameter - program space is in words instead of bytes */
+    Ptr->PCH=Entry>>8;
+    Ptr->PCL=Entry&0xFFU;
+    Ptr->R25=Param>>8;
+    Ptr->R24=Param&0xFFU;
     
     /* Fill the rest for ease of identification */
-    Ptr->R1=0x01010101U;
-    Ptr->R2=0x02020202U;
-    Ptr->R3=0x03030303U;
-    Ptr->R4=0x04040404U;
-    Ptr->R5=0x05050505U;
-    Ptr->R6=0x06060606U;
-    Ptr->R7=0x07070707U;
-    Ptr->R8=0x08080808U;
-    Ptr->R9=0x09090909U;
-    Ptr->R10=0x10101010U;
-    Ptr->R11=0x11111111U;
-    Ptr->R12=0x12121212U;
-    Ptr->LR=0x14141414U;
+    Ptr->R0=0x00U;
+    Ptr->R1=0x01U;
+    Ptr->R2=0x02U;
+    Ptr->R3=0x03U;
+    Ptr->R4=0x04U;
+    Ptr->R5=0x05U;
+    Ptr->R6=0x06U;
+    Ptr->R7=0x07U;
+    Ptr->R8=0x08U;
+    Ptr->R9=0x09U;
+    Ptr->R10=0x10U;
+    Ptr->R11=0x11U;
+    Ptr->R12=0x12U;
+    Ptr->R13=0x13U;
+    Ptr->R14=0x14U;
+    Ptr->R15=0x15U;
+    Ptr->R16=0x16U;
+    Ptr->R17=0x17U;
+    Ptr->R18=0x18U;
+    Ptr->R19=0x19U;
+    Ptr->R20=0x20U;
+    Ptr->R21=0x21U;
+    Ptr->R22=0x22U;
+    Ptr->R23=0x23U;
+    Ptr->R26_XL=0x00U;
+    Ptr->R27_XH=0x00U;
+    Ptr->R28_YL=0x00U;
+    Ptr->R29_YH=0x00U;
+    Ptr->R30_ZL=0x00U;
+    Ptr->R31_ZH=0x00U;
+
+#if(RMP_AVR_COP_XMEGA!=0U)
+    Ptr->RAMPD_ZU=0x00U;
+    Ptr->RAMPX_XU=0x00U;
+    Ptr->RAMPY_YU=0x00U;
+    Ptr->RAMPZ_ZU=0x00U;
+    Ptr->EIND_ZU=0x00U;
+#elif(RMP_AVR_COP_RAMPZ!=0U)
+    Ptr->RAMPZ_ZU=0x00U;
+#endif
+
+#if(RMP_AVR_COP_256K!=0U)
+    Ptr->PCU=0x00U;
+#endif
     
-    return (rmp_ptr_t)Ptr;
+    /* Empty descending */
+    return ((rmp_ptr_t)Ptr)-1U;
 }
 /* End Function:_RMP_Stack_Init **********************************************/
 
@@ -87,7 +121,7 @@ void _RMP_Lowlvl_Init(void)
 {
     RMP_Int_Disable();
     
-    RMP_A6M_LOWLVL_INIT();
+    RMP_AVR_LOWLVL_INIT();
 }
 /* End Function:_RMP_Lowlvl_Init *********************************************/
 
@@ -111,9 +145,31 @@ Return      : None.
 ******************************************************************************/
 void RMP_Putchar(char Char)
 {
-    RMP_A6M_PUTCHAR(Char);
+    RMP_AVR_PUTCHAR(Char);
 }
 /* End Function:RMP_Putchar **************************************************/
+
+/* Function:_RMP_Yield ********************************************************
+Description : Trigger a yield to another thread.
+Input       : None.
+Output      : None.
+Return      : None.
+******************************************************************************/
+void _RMP_Yield(void)
+{
+    if(RMP_AVR_Int_Act!=0U)
+        _RMP_AVR_Yield_Pend=1U;
+    else
+        /* XMEGA implies RAMP */
+#if(RMP_AVR_COP_XMEGA!=0U)
+        _RMP_AVR_Yield_XMEGA();
+#elif(RMP_AVR_COP_RAMPZ!=0U)
+        _RMP_AVR_Yield_RAMPZ();
+#else
+        _RMP_AVR_Yield_NONE();
+#endif
+}
+/* End Function:_RMP_Yield ***************************************************/
 
 /* End Of File ***************************************************************/
 

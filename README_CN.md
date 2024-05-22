@@ -229,7 +229,6 @@ Click **[HERE](README.md)** for English version.
 |ARMv5          |被替代         |使用更新的Cortex-M和Cortex-R                                         |
 |x86-64         |高级系统       |使用[RME微内核操作系统](https://github.com/EDI-Systems/M7M01_Eukaron) |
 |Cortex-A       |高级系统       |使用[RME微内核操作系统](https://github.com/EDI-Systems/M7M01_Eukaron) |
-|Coldfire       |正在消亡       |使用大众化的Cortex-M和Cortex-R                                        |
 |PowerPC        |正在消亡       |使用大众化的Cortex-M和Cortex-R                                        |
 |RX100/600/600S |小众架构       |使用大众化的Cortex-M和Cortex-R                                        |
 |Tricore        |小众架构       |使用大众化的Cortex-M和Cortex-R                                        |

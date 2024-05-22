@@ -65,7 +65,7 @@ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
 {
     struct RMP_C28X_Stack* Ptr;
 
-    /* Word addressing, must be aligned when passed in */
+    /* Word addressing, must be aligned when passed in - empty ascending */
     Ptr=(struct RMP_C28X_Stack*)RMP_ROUND_UP(Stack,1U);
 
     /* Pass entry and parameter */

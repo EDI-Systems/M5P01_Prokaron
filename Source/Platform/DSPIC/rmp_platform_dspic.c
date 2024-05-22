@@ -64,7 +64,7 @@ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
 {
     struct RMP_DSPIC_Stack* Ptr;
 
-    /* Compute & align stack */
+    /* Compute & align stack - empty ascending */
     Ptr=(struct RMP_DSPIC_Stack*)RMP_ROUND_UP(Stack, 2U);
 
     /* The entry - SFA bit not set */

@@ -49,7 +49,7 @@ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
     rmp_ptr_t End;
     struct RMP_MP32P_Stack* Ptr;
     
-    /* Compute & align stack */
+    /* Compute & align stack - full descending */
     End=RMP_ROUND_DOWN(Stack+Size, 3U);
     Ptr=(struct RMP_MP32P_Stack*)(End-sizeof(struct RMP_MP32P_Stack));
     

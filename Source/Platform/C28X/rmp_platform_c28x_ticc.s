@@ -176,7 +176,7 @@ RMP_C28X_SWITCH             .macro
     .endm
 
 ;/* Restore all GP regs and simulate an IRET *********************************/
-RMP_C28X_RESTORE            .macro
+RMP_C28X_LOAD            .macro
     ;Pop regular registers
     POP                     XT
     POP                     XAR7
@@ -197,7 +197,7 @@ RMP_C28X_RESTORE            .macro
 __RMP_C28X_Yield_NONE:      .asmfunc
     RMP_C28X_SAVE           __RMP_C28X_Yield_NONE_Skip
     RMP_C28X_SWITCH
-    RMP_C28X_RESTORE
+    RMP_C28X_LOAD
 __RMP_C28X_Yield_NONE_Skip:
     LRETR
     .endasmfunc
@@ -248,7 +248,7 @@ __RMP_C28X_Yield_FPU32:     .asmfunc
     .word                   0xFFF1      ;POP     RB
     .word                   0xE280      ;MOV32   STF,*--SP
     .word                   0x00BE
-    RMP_C28X_RESTORE
+    RMP_C28X_LOAD
 __RMP_C28X_Yield_FPU32_Skip:
     LRETR
     .endasmfunc
@@ -331,7 +331,7 @@ __RMP_C28X_Yield_FPU64:     .asmfunc
     .word                   0xFFF1      ;POP     RB
     .word                   0xE280      ;MOV32   STF,*--SP
     .word                   0x00BE
-    RMP_C28X_RESTORE
+    RMP_C28X_LOAD
 __RMP_C28X_Yield_FPU64_Skip:
     LRETR
     .endasmfunc

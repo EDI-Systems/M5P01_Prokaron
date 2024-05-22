@@ -42,7 +42,7 @@ _INT14_ISR:                 .asmfunc
     RMP_C28X_INT_SAVE_FPU32
     ;Get the highest ready task.
     LCR                     __RMP_C28X_Tim_Handler
-    RMP_C28X_INT_RESTORE_FPU32
+    RMP_C28X_INT_LOAD_FPU32
     .endasmfunc
 ;/* End Function:_INT14_ISR **************************************************/
 
@@ -56,7 +56,7 @@ _INT13_ISR:                 .asmfunc
     RMP_C28X_INT_SAVE_FPU32
     ;Get the highest ready task.
     LCR                     _TIM1_IRQHandler
-    RMP_C28X_INT_RESTORE_FPU32
+    RMP_C28X_INT_LOAD_FPU32
     .endasmfunc
 ;/* End Function:_INT13_ISR **************************************************/
 

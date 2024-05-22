@@ -77,7 +77,7 @@ RMP_C28X_YIELD_SKIP?
     .endm
 
 ;/* Restore all GP regs ******************************************************/
-RMP_C28X_RESTORE            .macro
+RMP_C28X_LOAD            .macro
     POP                     XT
     POP                     XAR7
     POP                     XAR6
@@ -98,9 +98,9 @@ RMP_C28X_INT_SAVE_NONE      .macro
     .endm
 
 ;/* Load macro for no coprocessor case ***************************************/
-RMP_C28X_INT_RESTORE_NONE   .macro
+RMP_C28X_INT_LOAD_NONE   .macro
     RMP_C28X_SWITCH_POST
-    RMP_C28X_RESTORE
+    RMP_C28X_LOAD
     .endm
 
 ;/* Save macro for FPU32 case ************************************************/
@@ -130,7 +130,7 @@ RMP_C28X_INT_SAVE_FPU32     .macro
     .endm
 
 ;/* Load macro for FPU32 case ************************************************/
-RMP_C28X_INT_RESTORE_FPU32  .macro
+RMP_C28X_INT_LOAD_FPU32  .macro
     RMP_C28X_SWITCH_POST
     ;Pop FPU registers
     .word                   0xE2AF      ;MOV32   R7H,*--SP
@@ -152,7 +152,7 @@ RMP_C28X_INT_RESTORE_FPU32  .macro
     .word                   0xFFF1      ;POP     RB
     .word                   0xE280      ;MOV32   STF,*--SP
     .word                   0x00BE
-    RMP_C28X_RESTORE
+    RMP_C28X_LOAD
     .endm
 
 ;/* Save macro for FPU64 case ************************************************/
@@ -198,7 +198,7 @@ RMP_C28X_INT_SAVE_FPU64     .macro
     .endm
 
 ;/* Load macro for FPU64 case ************************************************/
-RMP_C28X_INT_RESTORE_FPU64  .macro
+RMP_C28X_INT_LOAD_FPU64  .macro
     RMP_C28X_SWITCH_POST
     ;Pop FPU registers
     .word                   0xE2AF      ;MOV32   R7H,*--SP
@@ -236,7 +236,7 @@ RMP_C28X_INT_RESTORE_FPU64  .macro
     .word                   0xFFF1      ;POP     RB
     .word                   0xE280      ;MOV32   STF,*--SP
     .word                   0x00BE
-    RMP_C28X_RESTORE
+    RMP_C28X_LOAD
     .endm
 ;/* End Macro ****************************************************************/
 

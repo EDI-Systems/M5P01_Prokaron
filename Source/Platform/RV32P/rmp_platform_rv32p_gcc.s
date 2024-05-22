@@ -279,7 +279,7 @@ Return      : None.
     .endm
 
 /* Restore all GP regs and simulate a MRET ***********************************/
-    .macro              RMP_RV32P_RESTORE
+    .macro              RMP_RV32P_LOAD
     LI                  a1,0x1880           /* Load mstatus - force M mode with enabled interrupt */
     OR                  a0,a0,a1
     CSRW                mstatus,a0
@@ -326,7 +326,7 @@ Return      : None.
 _RMP_RV32P_Yield_NONE:                      /* Disable interrupts and save registers */
     RMP_RV32P_SAVE      _RMP_RV32P_Yield_NONE_Exit
     RMP_RV32P_SWITCH                        /* Do context switch */
-    RMP_RV32P_RESTORE                       /* Enable interrupts and restore registers */
+    RMP_RV32P_LOAD                          /* Enable interrupts and restore registers */
 _RMP_RV32P_Yield_NONE_Exit:
     RET
 
@@ -379,7 +379,7 @@ _RMP_RV32P_Yield_RVF_Save_Skip:
     RMP_RV32P_SWITCH                        /* Do context switch */
     LUI                 a1,4                /* See if FPU is used (mstatus.fs[1]==1) */
     AND                 a1,a1,a0            /* FPU active, saving context - .hword for compatibility */
-    BEQZ                a1,_RMP_RV32P_Yield_RVF_Restore_Skip
+    BEQZ                a1,_RMP_RV32P_Yield_RVF_Load_Skip
     .hword              0x6002              /* FLW     f0, 0*4(sp) */
     .hword              0x6092              /* FLW     f1, 1*4(sp) */
     .hword              0x6122              /* FLW     f2, 2*4(sp) */
@@ -416,8 +416,8 @@ _RMP_RV32P_Yield_RVF_Save_Skip:
     .hword              0x9073              /* FSCSR   a1 */
     .hword              0x0035
     ADDI                sp,sp,33*4
-_RMP_RV32P_Yield_RVF_Restore_Skip:
-    RMP_RV32P_RESTORE                       /* Enable interrupts and restore registers */
+_RMP_RV32P_Yield_RVF_Load_Skip:
+    RMP_RV32P_LOAD                          /* Enable interrupts and restore registers */
 _RMP_RV32P_Yield_RVF_Exit:
     RET
 
@@ -502,7 +502,7 @@ _RMP_RV32P_Yield_RVD_Save_Skip:
     RMP_RV32P_SWITCH                        /* Do context switch */
     LUI                 a1,4                /* See if this task uses FPU */
     AND                 a1,a1,a0            /* FPU active, saving context - .hword for compatibility */
-    BEQZ                a1,_RMP_RV32P_Yield_RVD_Restore_Skip
+    BEQZ                a1,_RMP_RV32P_Yield_RVD_Load_Skip
     .hword              0x3007              /* FLD     f0,0*8(sp) */
     .hword              0x0001
     .hword              0x3087              /* FLD     f1,1*8(sp) */
@@ -571,8 +571,8 @@ _RMP_RV32P_Yield_RVD_Save_Skip:
     .hword              0x9073              /* FSCSR   a1 */
     .hword              0x0035
     ADDI                sp,sp,65*4
-_RMP_RV32P_Yield_RVD_Restore_Skip:
-    RMP_RV32P_RESTORE                       /* Enable interrupts and restore registers */
+_RMP_RV32P_Yield_RVD_Load_Skip:
+    RMP_RV32P_LOAD                          /* Enable interrupts and restore registers */
 _RMP_RV32P_Yield_RVD_Exit:
     RET
 /* End Function:_RMP_RV32P_Yield *********************************************/

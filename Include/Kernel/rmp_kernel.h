@@ -99,9 +99,9 @@ Description : The header file for the kernel.
 /* Scheduler bitmap */
 #define RMP_PRIO_WORD_NUM           (RMP_ROUND_UP(RMP_PREEMPT_PRIO_NUM,RMP_WORD_ORDER)>>RMP_WORD_ORDER)
 
-/* Initial stack helpers */
+/* Initial stack helpers - end address -1 to avoid empty descending stack issues */
 #define RMP_INIT_STACK_START        ((rmp_ptr_t)RMP_Init_Stack)
-#define RMP_INIT_STACK_END          (RMP_INIT_STACK_START+RMP_INIT_STACK_SIZE)
+#define RMP_INIT_STACK_END          (RMP_INIT_STACK_START+RMP_INIT_STACK_SIZE-1U)
 #define RMP_INIT_STACK_ASCEND(X)    RMP_ROUND_UP(RMP_INIT_STACK_START+sizeof(rmp_ptr_t),X)
 #define RMP_INIT_STACK_DESCEND(X)   RMP_ROUND_DOWN(RMP_INIT_STACK_END-sizeof(rmp_ptr_t),X)
 

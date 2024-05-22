@@ -75,7 +75,7 @@ Description : The assembly part of the RMP RTOS. This is for DSPIC, and
     .endm
     
 /* Restore all GP regs *******************************************************/
-    .macro              RMP_DSPIC_RESTORE
+    .macro              RMP_DSPIC_LOAD
     /* Pop GP regs */
     POP                 TBLPAG
     POP                 RCOUNT
@@ -131,7 +131,7 @@ Description : The assembly part of the RMP RTOS. This is for DSPIC, and
     .endm
     
 /* DSP context restore *******************************************************/
-    .macro              RMP_DSPIC_DSP_RESTORE
+    .macro              RMP_DSPIC_DSP_LOAD
     POP                 0x0050      /* XBREV */
     POP                 0x004E      /* YMODEND */
     POP                 0x004C      /* YMODSRT */
@@ -155,10 +155,10 @@ Description : The assembly part of the RMP RTOS. This is for DSPIC, and
     .endm
 
 /* Load macro for 24F & 24H case *********************************************/
-    .macro              RMP_DSPIC_INT_RESTORE_24F_24H
+    .macro              RMP_DSPIC_INT_LOAD_24F_24H
     RMP_DSPIC_SWITCH_POST
     POP                 0x0034      /* PSVPAG */
-    RMP_DSPIC_RESTORE
+    RMP_DSPIC_LOAD
     .endm
 
 /* Load macro for 24E case ***************************************************/
@@ -171,11 +171,11 @@ Description : The assembly part of the RMP RTOS. This is for DSPIC, and
     .endm
 
 /* Load macro for 24E case ***************************************************/
-    .macro              RMP_DSPIC_INT_RESTORE_24E
+    .macro              RMP_DSPIC_INT_LOAD_24E
     RMP_DSPIC_SWITCH_POST
     POP                 0x0034      /* DSWPAG */
     POP                 0x0032      /* DSRPAG */
-    RMP_DSPIC_RESTORE
+    RMP_DSPIC_LOAD
     .endm
 
 /* Save macro for 30F & 33F case *********************************************/
@@ -188,11 +188,11 @@ Description : The assembly part of the RMP RTOS. This is for DSPIC, and
     .endm
 
 /* Load macro for 30F & 33F case *********************************************/
-    .macro              RMP_DSPIC_INT_RESTORE_30F_33F
+    .macro              RMP_DSPIC_INT_LOAD_30F_33F
     RMP_DSPIC_SWITCH_POST
-    RMP_DSPIC_DSP_RESTORE
+    RMP_DSPIC_DSP_LOAD
     POP                 0x0034      /* PSVPAG */
-    RMP_DSPIC_RESTORE
+    RMP_DSPIC_LOAD
     .endm
 
 /* Save macro for 33E & 33C case *********************************************/
@@ -206,12 +206,12 @@ Description : The assembly part of the RMP RTOS. This is for DSPIC, and
     .endm
 
 /* Load macro for 33E & 33C case *********************************************/
-    .macro              RMP_DSPIC_INT_RESTORE_33E_33C
+    .macro              RMP_DSPIC_INT_LOAD_33E_33C
     RMP_DSPIC_SWITCH_POST
-    RMP_DSPIC_DSP_RESTORE
+    RMP_DSPIC_DSP_LOAD
     POP                 0x0034      /* DSWPAG */
     POP                 0x0032      /* DSRPAG */
-    RMP_DSPIC_RESTORE
+    RMP_DSPIC_LOAD
     .endm
 /* End Macro *****************************************************************/
 
