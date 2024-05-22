@@ -199,7 +199,11 @@ EXTERN void RMP_Int_Disable(void);
 EXTERN void RMP_Int_Enable(void);
 
 EXTERN void _RMP_Start(rmp_ptr_t Entry, rmp_ptr_t Stack);
-EXTERN void _RMP_MSP430_Yield(void);
+#if(RMP_MSP430_COP_430X!=0U)
+EXTERN void _RMP_MSP430_Yield_430X(void);
+#else
+EXTERN void _RMP_MSP430_Yield_NONE(void);
+#endif
 __EXTERN__ void _RMP_Yield(void);
 
 /* Initialization */

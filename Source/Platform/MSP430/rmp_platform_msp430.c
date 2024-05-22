@@ -36,7 +36,11 @@ void _RMP_Yield(void)
     if(RMP_MSP430_Int_Act!=0U)
         _RMP_MSP430_Yield_Pend=1U;
     else
-        _RMP_MSP430_Yield();
+#if(RMP_MSP430_COP_430X!=0U)
+        _RMP_MSP430_Yield_430X();
+#else
+        _RMP_MSP430_Yield_NONE();
+#endif
 }
 /* End Function:_RMP_Yield ***************************************************/
 

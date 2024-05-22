@@ -9,7 +9,7 @@
     .text
     .sect               ".text:_isr"
     .align              2
-    .include            "Platform/MSP430/rmp_platform_msp430x_ticc.inc"
+    .include            "Platform/MSP430/rmp_platform_msp430_430x_ticc.inc"
 ;/* End Header ***************************************************************/
 
 ;/* Export *******************************************************************/
@@ -31,10 +31,10 @@
 ;Return      : None.
 ;*****************************************************************************/
 TIMER0_A0_VECTOR:       .asmfunc
-    RMP_MSP430_INT_SAVE
+    RMP_MSP430_INT_SAVE_430X
     ;Get the highest ready task.
     CALLA               #_RMP_MSP430_Tim_Handler
-    RMP_MSP430_INT_RESTORE
+    RMP_MSP430_INT_RESTORE_430X
     .endasmfunc
 ;/* End Function:TIMER0_A0_VECTOR ********************************************/
 
@@ -45,10 +45,10 @@ TIMER0_A0_VECTOR:       .asmfunc
 ;Return      : None.
 ;*****************************************************************************/
 TIMER1_A0_VECTOR:       .asmfunc
-    RMP_MSP430_INT_SAVE
+    RMP_MSP430_INT_SAVE_430X
     ;Get the highest ready task.
     CALLA               #TIM1_IRQHandler
-    RMP_MSP430_INT_RESTORE
+    RMP_MSP430_INT_RESTORE_430X
     .endasmfunc
 ;/* End Function:TIMER0_A0_VECTOR ********************************************/
 
