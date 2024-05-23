@@ -12,12 +12,12 @@ Description : The testbench for ATMEGA1284P.
 
 /* Define ********************************************************************/
 /* How to read counter */
-#define RMP_CNT_READ()      ((rmp_tim_t)(0))
+#define RMP_CNT_READ()      ((rmp_tim_t)(TCNT1))
 /* Are we testing the memory pool? */
 #define TEST_MEM_POOL       (2048U)
 /* Are we doing minimal measurements? */
 /* #define MINIMAL_SIZE */
-/* The AVR timers are all 16 bits, so */
+/* The AVR timers we use is 16 bits, so */
 typedef rmp_u16_t rmp_tim_t;
 /* The pointer is also 16-bit, resort to 32-bit accumulators */
 #define PTR_16_BIT
@@ -43,7 +43,7 @@ Return      : None.
 ******************************************************************************/
 void Timer_Init(void)
 {
-    /* TIM2 clock = CPU clock */
+    /* TIM1 clock = CPU clock */
 }
 /* End Function:Timer_Init ***************************************************/
 
@@ -56,11 +56,11 @@ Return      : None.
 ******************************************************************************/
 void Int_Init(void)
 {
-    /* TIM21 clock = CPU clock */
+    /* TIM2 clock = 1/256 CPU clock */
 }
 
 /* The interrupt handler */
-void TIM21_IRQHandler(void)
+void TIM2_Handler(void)
 {
     Int_Handler();
 }

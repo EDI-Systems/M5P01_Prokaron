@@ -43,7 +43,7 @@ RMP_MSP430_INT_SAVE_NONE    .macro
     .endm
 
 ;/* Load everything from stack, and deal with pending yields if there is *****/
-RMP_MSP430_INT_LOAD_NONE .macro
+RMP_MSP430_INT_LOAD_NONE    .macro
     CMP                 #0,&_RMP_MSP430_Yield_Pend
     JEQ                 RMP_MSP430_YIELD_SKIP?
     MOV                 #0,&_RMP_MSP430_Yield_Pend

@@ -7,14 +7,14 @@ Description: The configuration file for ATMEGA1284P.
 ******************************************************************************/
 
 /* Define ********************************************************************/
-/* The HAL library */
+/* The AVR I/O library */
 #include "avr/io.h"
 
 /* Debugging */
 #define RMP_ASSERT_CORRECT          (0U)
 /* The maximum number of preemption priority levels in the system.
- * This parameter must be divisible by the word length - 32 is usually sufficient */
-#define RMP_PREEMPT_PRIO_NUM        (32U)
+ * This parameter must be divisible by the word length - 16 is usually sufficient */
+#define RMP_PREEMPT_PRIO_NUM        (16U)
 /* The maximum number of slices allowed */
 #define RMP_SLICE_MAX               (10000U)
 /* The maximum number of semaphore counts allowed */
@@ -28,9 +28,10 @@ Description: The configuration file for ATMEGA1284P.
 #define RMP_INT_UNMASK()            RMP_Int_Enable()
 
 /* What is the Systick value? */
-#define RMP_AVR_TICK_VAL            (2000U)
-#define RMP_AVR_COP_256K            (0U)
-#define RMP_AVR_COP_RAMPZ           (1U)
+#define RMP_AVR_TICK_VAL            (50U)
+/* Does the chip have RAMP, EIND, and is it XMEGA? */
+#define RMP_AVR_COP_RAMP            (1U)
+#define RMP_AVR_COP_EIND            (0U)
 #define RMP_AVR_COP_XMEGA           (0U)
 
 /* Other low-level initialization stuff - clock and serial.
@@ -40,8 +41,13 @@ Description: The configuration file for ATMEGA1284P.
 #define RMP_AVR_LOWLVL_INIT() \
 do \
 { \
+    /* No need to set clock because we have fuse bits */ \
+    \
+    /* Initialize serial */ \
 } \
 while(0)
+
+#define RMP_AVR_TIM_CLR()           
 
 /* This is for debugging output */
 #define RMP_AVR_PUTCHAR(CHAR) \

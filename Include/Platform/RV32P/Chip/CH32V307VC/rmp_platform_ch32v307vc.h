@@ -50,7 +50,7 @@ Description : The configuration file for CH32V307VC RISC-V chip.
               interrupt context save/restore assembly macros without adaptation,
               the mstatus pushed by the interrupt handlers will have the MIE bit
               set. This will lead to premature interrupt enabling in _RMP_Yield,
-              which causes potentially interrupts to preempt it before it finishes
+              which enables potential interrupts to preempt it before it finishes
               the context switch. This breaks the kernel critical section invariant
               and can lead to cryptic crashes that are very hard to track down.
               The remedy here is to (1) configure the interrupts so no interrupt

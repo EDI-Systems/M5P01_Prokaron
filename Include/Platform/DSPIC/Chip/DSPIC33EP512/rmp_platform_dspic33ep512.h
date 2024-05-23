@@ -64,7 +64,7 @@ do \
 } \
 while(0)
 
-#define RMP_DSPIC_TIM_CLR()         (IFS0bits.T1IF=0)
+#define RMP_DSPIC_TIM_CLR()         (IFS0bits.T1IF=0U)
 
 /* This is for debugging output */
 #define RMP_DSPIC_PUTCHAR(CHAR) \
