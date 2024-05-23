@@ -77,7 +77,7 @@ RMP_C28X_YIELD_SKIP?
     .endm
 
 ;/* Restore all GP regs ******************************************************/
-RMP_C28X_LOAD            .macro
+RMP_C28X_LOAD               .macro
     POP                     XT
     POP                     XAR7
     POP                     XAR6
@@ -98,7 +98,7 @@ RMP_C28X_INT_SAVE_NONE      .macro
     .endm
 
 ;/* Load macro for no coprocessor case ***************************************/
-RMP_C28X_INT_LOAD_NONE   .macro
+RMP_C28X_INT_LOAD_NONE      .macro
     RMP_C28X_SWITCH_POST
     RMP_C28X_LOAD
     .endm
@@ -130,7 +130,7 @@ RMP_C28X_INT_SAVE_FPU32     .macro
     .endm
 
 ;/* Load macro for FPU32 case ************************************************/
-RMP_C28X_INT_LOAD_FPU32  .macro
+RMP_C28X_INT_LOAD_FPU32     .macro
     RMP_C28X_SWITCH_POST
     ;Pop FPU registers
     .word                   0xE2AF      ;MOV32   R7H,*--SP
@@ -198,7 +198,7 @@ RMP_C28X_INT_SAVE_FPU64     .macro
     .endm
 
 ;/* Load macro for FPU64 case ************************************************/
-RMP_C28X_INT_LOAD_FPU64  .macro
+RMP_C28X_INT_LOAD_FPU64     .macro
     RMP_C28X_SWITCH_POST
     ;Pop FPU registers
     .word                   0xE2AF      ;MOV32   R7H,*--SP

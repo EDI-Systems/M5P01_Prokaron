@@ -2,18 +2,23 @@
 Filename    : rmp_platform_avr_gcc.s
 Author      : pry
 Date        : 10/04/2012
-Description : The assembly part of the RMP RTOS. This is for Cortex-M0/0+/1.
+Description : The assembly part of the RMP RTOS. This is for AVR.
 ******************************************************************************/
 
-/* The Atmel (Microchip) AVR Architecture *************************************
-R0-R31  : General purpose registers that are accessible. 
-RAMPD   : D address upper register.
-RAMPX   : X address upper register.
-RAMPY   : Y address upper register.
-RAMPZ   : Z address upper register.
-SP      : Stack pointer
-PC      : Program counter.
-SREG    : Status Register.
+/* The Atmel (Now Microchip) AVR Architecture *********************************
+R0-R31      : General purpose registers, where
+              R0 is the temporary register,
+              R1 is the zero register (cleared by GCC after pollution),
+              [R29:R28] is the frame pointer.
+EIND        : Code address upper register used with Z for >128KiB code.
+RAMPD       : Data address upper register used with Z for >64KiB data.
+RAMPX       : Code & data address upper register used with X for >64KiB code/data.
+RAMPY       : Code & data address upper register used with Y for >64KiB code/data.
+RAMPZ       : Code & data address upper register used with Z for >64KiB code/data.
+SP          : Stack pointer.
+PC          : Program counter.
+SREG        : Status Register.
+PMIC_CTRL   : Only present in XMega series for interrupt masking.
 ******************************************************************************/
 
 /* Import ********************************************************************/
@@ -38,10 +43,13 @@ SREG    : Status Register.
     .global             RMP_Int_Mask
     /* Start the first thread */
     .global             _RMP_Start
-    /* The PendSV trigger */
-    .global             _RMP_AVR_Yield_NONE
-    .global             _RMP_AVR_Yield_RAMPZ
+    /* Trigger a context switch */
+    .global             _RMP_AVR_Yield_MEGA
+    .global             _RMP_AVR_Yield_MEGA_RAMP
+    .global             _RMP_AVR_Yield_MEGA_EIND
     .global             _RMP_AVR_Yield_XMEGA
+    .global             _RMP_AVR_Yield_XMEGA_RAMP
+    .global             _RMP_AVR_Yield_XMEGA_EIND
 /* End Export ****************************************************************/
 
 /* Header ********************************************************************/
@@ -49,15 +57,15 @@ SREG    : Status Register.
     .align              2
 
     /* CPU register definitions */
-    .equ                RAMPD,0x38
-    .equ                RAMPX,0x39
-    .equ                RAMPY,0x3A
-    .equ                RAMPZ,0x3B
-    .equ                EIND,0x3C
-    .equ                SPL,0x3D
-    .equ                SPH,0x3E
-    .equ                SREG,0x3F
-    .equ                PMIC_CTRL,0xA2
+    .equ                RMP_RAMPD,0x38
+    .equ                RMP_RAMPX,0x39
+    .equ                RMP_RAMPY,0x3A
+    .equ                RMP_RAMPZ,0x3B
+    .equ                RMP_EIND,0x3C
+    .equ                RMP_SPL,0x3D
+    .equ                RMP_SPH,0x3E
+    .equ                RMP_SREG,0x3F
+    .equ                RMP_PMIC_CTRL,0xA2
 /* End Header ****************************************************************/
 
 /* Function:RMP_Int_Disable ***************************************************
@@ -89,8 +97,8 @@ Output      : None.
 Return      : None.
 ******************************************************************************/
 RMP_Int_Mask:
-    LDI                 R30,hi8(PMIC_CTRL)
-    LDI                 R31,lo8(PMIC_CTRL)
+    LDI                 R30,lo8(RMP_PMIC_CTRL)
+    LDI                 R31,hi8(RMP_PMIC_CTRL)
     LD                  R18,Z
     ANDI                R18,0xF8
     OR                  R18,R24
@@ -100,11 +108,27 @@ RMP_Int_Mask:
 
 /* Function:_RMP_Start ********************************************************
 Description : Jump to the user function and will never return from it.
-Input       : None.
+Input       : [R25:R24] - The entry of the first task.
+              [R23:R22] - The stack of the first task.
 Output      : None.
 Return      : None.
 ******************************************************************************/
 _RMP_Start:
+    /* Save the current kernel SP address */
+    LDI                 R30,hi8(_RMP_AVR_SP_Kern)
+    LDI                 R31,lo8(_RMP_AVR_SP_Kern)
+    IN                  R18,RMP_SPL
+    IN                  R19,RMP_SPH
+    ST                  Z,R18
+    STD                 Z+1,R19
+    /* Load SP for the first task */
+    OUT                 RMP_SPL,R22
+    OUT                 RMP_SPH,R23
+    /* Jump to the entry */
+    MOV                 R30,R24
+    MOV                 R31,R25
+    ICALL
+    /* Should not reach here */
 /* End Function:_RMP_Start ***************************************************/
 
 /* Function:_RMP_Yield ********************************************************
@@ -156,37 +180,33 @@ Return      : None.
     PUSH                R2
     PUSH                R1
     PUSH                R0
-    IN                  R18,SREG
-    PUSH                R18
     .endm
 
 /* Actual context switch *****************************************************/
     .macro              RMP_AVR_SWITCH
-    IN                  R18,SPL             /* Save the sp to control block */
-    IN                  R19,SPH
-    LDI                 R28,lo8(RMP_SP_Cur) /* Y[29:28] is Callee-save */
+    IN                  R18,RMP_SPL                 /* Save the SP to control block */
+    IN                  R19,RMP_SPH
+    LDI                 R28,lo8(RMP_SP_Cur)         /* Y[29:28] is Callee-save */
     LDI                 R29,hi8(RMP_SP_Cur)
-    ST                  Y,R0
-    STD                 Y+1,R1
-    LDI                 R30,lo8(_RMP_AVR_SP_Kern)   /* Load sp for kernel  */
+    ST                  Y,R18
+    STD                 Y+1,R19
+    LDI                 R30,lo8(_RMP_AVR_SP_Kern)   /* Load SP for kernel  */
     LDI                 R31,hi8(_RMP_AVR_SP_Kern)
     LD                  R18,Z
     LDD                 R19,Z+1
-    OUT                 SPL,R18
-    OUT                 SPH,R19
-    LDI                 R30,lo8(_RMP_Run_High)  /* Get the highest ready task */
+    OUT                 RMP_SPL,R18
+    OUT                 RMP_SPH,R19
+    LDI                 R30,lo8(_RMP_Run_High)      /* Get the highest ready task */
     LDI                 R31,hi8(_RMP_Run_High)
-    ICALL                                   /* Use ICALL to remain compatible */
-    LD                  R18,Y               /* Y[29:28] is Callee-save */
-    LDD                 R19,Y+1
-    OUT                 SPL,R18
-    OUT                 SPH,R19
+    ICALL                                           /* Use ICALL to remain compatible */
+    LD                  R18,Y                       /* Load the SP from control block */
+    LDD                 R19,Y+1                     /* Y[29:28] is Callee-save */
+    OUT                 RMP_SPL,R18
+    OUT                 RMP_SPH,R19
     .endm
 
 /* Restore all GP regs *******************************************************/
     .macro              RMP_AVR_LOAD
-    POP                 R18
-    OUT                 SREG,R18
     POP                 R0
     POP                 R1
     POP                 R2
@@ -218,89 +238,178 @@ Return      : None.
     POP                 R28
     .endm
 
-/* Normal MegaAVR ************************************************************/
-    .section            .text._rmp_avr_yield_none
-    .align              2
-_RMP_AVR_Yield_NONE:
-    CLI
-    PUSH                R31
-    PUSH                R30
-    PUSH                R29
-    RMP_AVR_SAVE
-    RMP_AVR_SWITCH
-    RMP_AVR_LOAD
-    POP                 R29
-    POP                 R30
-    POP                 R31
-    RETI
-
-/* MegaAVR that have RAMPZ register  ****************************************/
-    .section            .text._rmp_avr_yield_rampz
-    .align              2
-_RMP_AVR_Yield_RAMPZ:
-    CLI
-    PUSH                R31
-    PUSH                R30
-    PUSH                R29
-    RMP_AVR_SAVE
-    IN                  R18,RAMPZ
-    PUSH                R18
-    RMP_AVR_SWITCH
-    POP                 R18
-    OUT                 RAMPZ,R18
-    RMP_AVR_LOAD
-    POP                 R29
-    POP                 R30
-    POP                 R31
-    RETI
-    
-/* XMegaAVR that have PMIC and loads of RAMP registers  **********************/
-    .section            .text._rmp_avr_yield_xmega
-    .align              2
-_RMP_AVR_Yield_XMEGA:
+/* Save temporaries **********************************************************/
+    .macro              RMP_AVR_TEMP_SAVE
     /* Push temporaries */
     PUSH                R31
     PUSH                R30
     PUSH                R29
-    /* Mask all low-level interrupts */
-    LDI                 R30,hi8(PMIC_CTRL)
-    LDI                 R31,lo8(PMIC_CTRL)
-    LD                  R29,Z
-    ANDI                R29,0xFE
-    ST                  Z,R29
-    RMP_AVR_SAVE
-    IN                  R22,EIND
-    IN                  R21,RAMPZ
-    IN                  R20,RAMPY
-    IN                  R19,RAMPX
-    IN                  R18,RAMPD
-    PUSH                R22
-    PUSH                R21
-    PUSH                R20
-    PUSH                R19
-    PUSH                R18
-    RMP_AVR_SWITCH
+    /* Save SR early */
+    IN                  R29,RMP_SREG
+    PUSH                R29
+    .endm
+
+/* Restore temporaries *******************************************************/
+    .macro              RMP_AVR_TEMP_LOAD
+    /* Load SR late */
     POP                 R18
-    POP                 R19
-    POP                 R20
-    POP                 R21
-    POP                 R22
-    OUT                 RAMPD,R18
-    OUT                 RAMPX,R19
-    OUT                 RAMPY,R20
-    OUT                 RAMPZ,R21
-    OUT                 EIND,R22
-    RMP_AVR_LOAD
-    /* Unmask all low-level interrupts */
-    LDI                 R30,hi8(PMIC_CTRL)
-    LDI                 R31,lo8(PMIC_CTRL)
-    LD                  R29,Z
-    ORI                 R29,0x01
-    ST                  Z,R29
+    OUT                 RMP_SREG,R18
     /* Pop temporaries */
     POP                 R29
     POP                 R30
     POP                 R31
+    .endm
+
+/* Save all RAMPs ************************************************************/
+    .macro              RMP_AVR_RAMP_SAVE
+    IN                  R21,RMP_RAMPZ
+    IN                  R20,RMP_RAMPY
+    IN                  R19,RMP_RAMPX
+    IN                  R18,RMP_RAMPD
+    PUSH                R21
+    PUSH                R20
+    PUSH                R19
+    PUSH                R18
+    LDI                 R18,0x00
+    OUT                 RMP_RAMPD,R18
+    OUT                 RMP_RAMPX,R18
+    OUT                 RMP_RAMPY,R18
+    OUT                 RMP_RAMPZ,R18
+    .endm
+
+/* Restore all RAMPs *********************************************************/
+    .macro              RMP_AVR_RAMP_LOAD
+    POP                 R18
+    POP                 R19
+    POP                 R20
+    POP                 R21
+    OUT                 RMP_RAMPD,R18
+    OUT                 RMP_RAMPX,R19
+    OUT                 RMP_RAMPY,R20
+    OUT                 RMP_RAMPZ,R21
+    .endm
+
+/* Save EIND *****************************************************************/
+    .macro              RMP_AVR_EIND_SAVE
+    IN                  R18,RMP_EIND
+    PUSH                R18
+    LDI                 R18,0x00
+    OUT                 RMP_EIND,R18
+    .endm
+
+/* Restore EIND **************************************************************/
+    .macro              RMP_AVR_EIND_LOAD
+    POP                 R18
+    OUT                 RMP_EIND,R18
+    .endm
+
+/* Mask interrupts ***********************************************************/
+    .macro              RMP_AVR_INT_MASK
+    /* Mask all low-level interrupts */
+    LDI                 R30,lo8(RMP_PMIC_CTRL)
+    LDI                 R31,hi8(RMP_PMIC_CTRL)
+    LD                  R29,Z
+    ANDI                R29,0xFE
+    ST                  Z,R29
+    .endm
+
+/* Unmask interrupts *********************************************************/
+    .macro              RMP_AVR_INT_UNMASK
+    /* Unmask all low-level interrupts */
+    LDI                 R30,hi8(RMP_PMIC_CTRL)
+    LDI                 R31,lo8(RMP_PMIC_CTRL)
+    LD                  R29,Z
+    ORI                 R29,0x01
+    ST                  Z,R29
+    .endm
+
+/* MegaAVR *******************************************************************/
+    .section            .text._rmp_avr_yield_mega
+    .align              2
+_RMP_AVR_Yield_MEGA:
+    CLI
+    RMP_AVR_TEMP_SAVE
+    RMP_AVR_SAVE
+    RMP_AVR_SWITCH
+    RMP_AVR_LOAD
+    RMP_AVR_TEMP_LOAD
+    RETI
+
+/* MegaAVR with RAMP *********************************************************/
+    .section            .text._rmp_avr_yield_mega_ramp
+    .align              2
+_RMP_AVR_Yield_MEGA_RAMP:
+    CLI
+    RMP_AVR_TEMP_SAVE
+    RMP_AVR_SAVE
+    RMP_AVR_RAMP_SAVE
+    RMP_AVR_SWITCH
+    RMP_AVR_RAMP_LOAD
+    RMP_AVR_LOAD
+    RMP_AVR_TEMP_LOAD
+    RETI
+
+/* MegaAVR with RAMP and EIND ************************************************/
+    .section            .text._rmp_avr_yield_mega_eind
+    .align              2
+_RMP_AVR_Yield_MEGA_EIND:
+    CLI
+    RMP_AVR_TEMP_SAVE
+    RMP_AVR_SAVE
+    RMP_AVR_RAMP_SAVE
+    RMP_AVR_EIND_SAVE
+    RMP_AVR_SWITCH
+    RMP_AVR_EIND_LOAD
+    RMP_AVR_RAMP_LOAD
+    RMP_AVR_LOAD
+    RMP_AVR_TEMP_LOAD
+    RETI
+    
+/* XMegaAVR ******************************************************************/
+    .section            .text._rmp_avr_yield_xmega
+    .align              2
+_RMP_AVR_Yield_XMEGA:
+    RMP_AVR_TEMP_SAVE
+    RMP_AVR_INT_MASK
+    RMP_AVR_SAVE
+    RMP_AVR_SWITCH
+    RMP_AVR_LOAD
+    RMP_AVR_INT_UNMASK
+    RMP_AVR_TEMP_LOAD
+    /* Use RET instead because we don't want to mess with PMIC */
+    RET
+
+/* XMegaAVR with RAMP ********************************************************/
+    .section            .text._rmp_avr_yield_xmega_ramp
+    .align              2
+_RMP_AVR_Yield_XMEGA_RAMP:
+    RMP_AVR_TEMP_SAVE
+    RMP_AVR_INT_MASK
+    RMP_AVR_SAVE
+    RMP_AVR_RAMP_SAVE
+    RMP_AVR_SWITCH
+    RMP_AVR_RAMP_LOAD
+    RMP_AVR_LOAD
+    RMP_AVR_INT_UNMASK
+    RMP_AVR_TEMP_LOAD
+    /* Use RET instead because we don't want to mess with PMIC */
+    RET
+
+/* XMegaAVR with RAMP and EIND ***********************************************/
+    .section            .text._rmp_avr_yield_xmega_eind
+    .align              2
+_RMP_AVR_Yield_XMEGA_EIND:
+    RMP_AVR_TEMP_SAVE
+    RMP_AVR_INT_MASK
+    RMP_AVR_SAVE
+    RMP_AVR_RAMP_SAVE
+    RMP_AVR_EIND_SAVE
+    RMP_AVR_SWITCH
+    RMP_AVR_EIND_LOAD
+    RMP_AVR_RAMP_LOAD
+    RMP_AVR_LOAD
+    RMP_AVR_INT_UNMASK
+    RMP_AVR_TEMP_LOAD
     /* Use RET instead because we don't want to mess with PMIC */
     RET
 /* End Function:_RMP_Yield ***************************************************/

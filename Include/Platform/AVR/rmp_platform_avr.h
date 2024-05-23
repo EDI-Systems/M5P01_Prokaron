@@ -5,6 +5,14 @@ Date        : 01/04/2017
 Licence     : The Unlicense; see LICENSE for details.
 Description : The header of "rmp_platform_avr.c".
               This port supports both MegaAVR and XMegaAVR but not TinyAVR.
+              Please refrain from trying to use this port on chips that has
+              less than 32kB of Flash, because the kernel uses about 16kB.
+              In contrast, the IAR compiler is expected to generate less code
+              through the extensive use of static overlay (rather than the GCC
+              software stack as most 8-bitters lack SP-relative addressing),
+              however this scheme precludes the porting of the kernel.
+              This port is supplied as a proof of existence of RMP on even
+              8-bit devices rather than to be used in a production setting.
 ******************************************************************************/
 
 /* Define ********************************************************************/
@@ -71,7 +79,7 @@ typedef rmp_s16_t rmp_ret_t;
 #define RMP_WORD_ORDER                  (4U)
 /* The maximum length of char printing - no need to change this in most cases */
 #define RMP_DEBUG_PRINT_MAX             (255U)
-/* Descending stack, 8-byte alignment */
+/* Descending stack, no alignment */
 #define RMP_INIT_STACK                  RMP_INIT_STACK_DESCEND(0U)
 /* MSB/LSB extraction */
 #define RMP_MSB_GET(VAL)                RMP_MSB_Generic(VAL)
@@ -99,16 +107,17 @@ typedef rmp_s16_t rmp_ret_t;
 /*****************************************************************************/
 struct RMP_AVR_Stack
 {
-#if(RMP_AVR_COP_XMEGA!=0U)
+#if(RMP_AVR_COP_EIND!=0U)
+    rmp_u8_t EIND_ZU;
+#endif
+    
+#if((RMP_AVR_COP_RAMP!=0U)||(RMP_AVR_COP_EIND!=0U))
     rmp_u8_t RAMPD_ZU;
     rmp_u8_t RAMPX_XU;
     rmp_u8_t RAMPY_YU;
     rmp_u8_t RAMPZ_ZU;
-    rmp_u8_t EIND_ZU;
-#elif(RMP_AVR_COP_RAMPZ!=0U)
-    rmp_u8_t RAMPZ_ZU;
 #endif
-    rmp_u8_t SREG_SR;
+
     rmp_u8_t R0;
     rmp_u8_t R1;
     rmp_u8_t R2;
@@ -138,12 +147,13 @@ struct RMP_AVR_Stack
     rmp_u8_t R26_XL;
     rmp_u8_t R27_XH;
     rmp_u8_t R28_YL;
+    rmp_u8_t SREG_SR;
     rmp_u8_t R29_YH;
     rmp_u8_t R30_ZL;
     rmp_u8_t R31_ZH;
     rmp_u8_t PCL;
     rmp_u8_t PCH;
-#if(RMP_AVR_COP_256K!=0U)
+#if(RMP_AVR_COP_EIND!=0U)
     rmp_u8_t PCU;
 #endif
 };
@@ -209,9 +219,12 @@ EXTERN void _RMP_Start(rmp_ptr_t Entry, rmp_ptr_t Stack);
 __EXTERN__ void _RMP_Yield(void);
 
 /* Platform specific */
-EXTERN void _RMP_AVR_Yield_NONE(void);
-EXTERN void _RMP_AVR_Yield_RAMPZ(void);
+EXTERN void _RMP_AVR_Yield_MEGA(void);
+EXTERN void _RMP_AVR_Yield_MEGA_RAMP(void);
+EXTERN void _RMP_AVR_Yield_MEGA_EIND(void);
 EXTERN void _RMP_AVR_Yield_XMEGA(void);
+EXTERN void _RMP_AVR_Yield_XMEGA_RAMP(void);
+EXTERN void _RMP_AVR_Yield_XMEGA_EIND(void);
 
 /* Initialization */
 __EXTERN__ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,

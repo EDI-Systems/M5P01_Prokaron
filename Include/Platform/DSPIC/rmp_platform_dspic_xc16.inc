@@ -56,7 +56,6 @@ Description : The assembly part of the RMP RTOS. This is for DSPIC, and
     MOV                 __RMP_DSPIC_SP_Kern,W15
     MOV                 __RMP_DSPIC_TBLPAG_Kern,W2
     MOV                 W2,TBLPAG
-    /* Clear wra
     /* Indicate interrupt active */
     MOV                 #1,W0
     MOV                 W0,_RMP_DSPIC_Int_Act

@@ -176,7 +176,7 @@ RMP_C28X_SWITCH             .macro
     .endm
 
 ;/* Restore all GP regs and simulate an IRET *********************************/
-RMP_C28X_LOAD            .macro
+RMP_C28X_LOAD               .macro
     ;Pop regular registers
     POP                     XT
     POP                     XAR7

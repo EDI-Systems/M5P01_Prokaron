@@ -3,7 +3,7 @@ Filename    : rmp_platform_avr.c
 Author      : pry
 Date        : 04/02/2018
 Licence     : The Unlicense; see LICENSE for details.
-Description : The platform specific file for ARMv6-M.
+Description : The platform specific file for AVR.
 ******************************************************************************/
 
 /* Include *******************************************************************/
@@ -28,9 +28,6 @@ Description : The platform specific file for ARMv6-M.
 /* Function:_RMP_Stack_Init ***************************************************
 Description : Initiate the process stack when trying to start a process. Never
               call this function in user application.
-              Need to pretend that we're returning from a context switch:
-                  16  15  14    13  12-9  8  7-0 
-              H> XPSR PC LR(1) R12 R3-R0 LR R11-R4 >L 
 Input       : rmp_ptr_t Stack - The stack address of the thread.
               rmp_ptr_t Size - The stack size of the thread.
               rmp_ptr_t Entry - The entry address of the thread.
@@ -48,11 +45,13 @@ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
     /* Compute stack - empty descending, no alignment requirement */
     Ptr=(struct RMP_AVR_Stack*)(Stack+Size-sizeof(struct RMP_AVR_Stack)-1U);
     
-    /* Set SREG to all zero; AVR MEGA RETI will enable interrupts, while 
-     * XMEGA RETI does nothing and we will have to SEI before RETI anyway.
-     * That is to say we won't be able to have nonpreemptive priorities
-     * between kernel-aware interrupts on XMEGA. */
-    Ptr->SREG_SR=0x00U;
+    /* Set SREG to all zero for MegaAVR which uses RETI to set GIE, but set
+     * GIE on XMegaAVR which uses PMIC to take care of interrupt nesting */
+#if(RMP_AVR_COP_XMEGA!=0U)
+    Ptr->SREG_SR=0x80U;
+#else
+    Ptr->SREG_SR=0x80U;
+#endif
     
     /* Pass entry and parameter - program space is in words instead of bytes */
     Ptr->PCH=Entry>>8;
@@ -92,17 +91,16 @@ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
     Ptr->R30_ZL=0x00U;
     Ptr->R31_ZH=0x00U;
 
-#if(RMP_AVR_COP_XMEGA!=0U)
+    /* EIND implies RAMP */
+#if((RMP_AVR_COP_RAMP!=0U)||(RMP_AVR_COP_EIND!=0U))
     Ptr->RAMPD_ZU=0x00U;
     Ptr->RAMPX_XU=0x00U;
     Ptr->RAMPY_YU=0x00U;
     Ptr->RAMPZ_ZU=0x00U;
-    Ptr->EIND_ZU=0x00U;
-#elif(RMP_AVR_COP_RAMPZ!=0U)
-    Ptr->RAMPZ_ZU=0x00U;
 #endif
 
-#if(RMP_AVR_COP_256K!=0U)
+#if(RMP_AVR_COP_EIND!=0U)
+    Ptr->EIND_ZU=0x00U;
     Ptr->PCU=0x00U;
 #endif
     
@@ -160,16 +158,40 @@ void _RMP_Yield(void)
     if(RMP_AVR_Int_Act!=0U)
         _RMP_AVR_Yield_Pend=1U;
     else
-        /* XMEGA implies RAMP */
-#if(RMP_AVR_COP_XMEGA!=0U)
-        _RMP_AVR_Yield_XMEGA();
-#elif(RMP_AVR_COP_RAMPZ!=0U)
-        _RMP_AVR_Yield_RAMPZ();
+        /* EIND implies RAMP */
+#if(RMP_AVR_COP_XMEGA==0U)
+#if(RMP_AVR_COP_EIND!=0U)
+        _RMP_AVR_Yield_MEGA_EIND();
+#elif(RMP_AVR_COP_RAMP!=0U)
+        _RMP_AVR_Yield_MEGA_RAMP();
 #else
-        _RMP_AVR_Yield_NONE();
+        _RMP_AVR_Yield_MEGA();
+#endif
+#else
+#if(RMP_AVR_COP_EIND!=0U)
+        _RMP_AVR_Yield_XMEGA_EIND();
+#elif(RMP_AVR_COP_RAMP!=0U)
+        _RMP_AVR_Yield_XMEGA_RAMP();
+#else
+        _RMP_AVR_Yield_XMEGA();
+#endif
 #endif
 }
 /* End Function:_RMP_Yield ***************************************************/
+
+/* Function:_RMP_AVR_Tim_Handler **********************************************
+Description : Timer interrupt routine for DSPIC.
+Input       : None
+Output      : None.
+Return      : None.
+******************************************************************************/
+void _RMP_AVR_Tim_Handler(void)
+{
+    RMP_AVR_TIM_CLR();
+
+    _RMP_Tim_Handler(1U);
+}
+/* End Function:_RMP_AVR_Tim_Handler *****************************************/
 
 /* End Of File ***************************************************************/
 

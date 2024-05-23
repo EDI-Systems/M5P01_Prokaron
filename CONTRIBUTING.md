@@ -109,6 +109,7 @@ Enhancement suggestions are tracked as [GitHub issues](https://guides.github.com
 * Limit the first line to 80 characters or less
 * Reference issues and pull requests liberally after the first line
 * Consider starting the commit message with an applicable emoji:
+    * :rocket: `:rocket:` when adding new ports or features
     * :art: `:art:` when improving the format/structure of the code
     * :racehorse: `:racehorse:` when improving performance
     * :non-potable_water: `:non-potable_water:` when plugging memory leaks
@@ -130,9 +131,9 @@ Enhancement suggestions are tracked as [GitHub issues](https://guides.github.com
 * DO NOT place spaces around the binary operators, especially "=" and "==". Leave them as they are.
     * `a=b` instead of `a = b`
 * Feel free to use spaces after commas. If no space is used, it is also fine.
-    * both `foo(a, b, c)` and `foo(a,b,c)` is okay.
+    * either `foo(a, b, c)` or `foo(a,b,c)` is okay.
 * Always use (sometimes even excessive) parentheses in bool expressions.
-    * `(a==b)||(c==d)` instead of `a==b||c==d`.
+    * `((a==b)||(c==d))` instead of `a==b||c==d`.
 * Add headers and enders fo functions, files and code blocks. Refer to the snippets shown below.
 * Naming convention must adhere to the current convention.
 * For other info, please relate to the source code itself.
