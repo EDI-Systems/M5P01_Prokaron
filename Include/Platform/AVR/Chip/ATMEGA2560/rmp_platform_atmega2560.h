@@ -58,7 +58,8 @@ do \
 } \
 while(0)
 
-#define RMP_AVR_TIM_CLR()           (TIFR0=0x00U)
+/* Flag is auto cleared upon entry so this is not really needed */
+#define RMP_AVR_TIM_CLR()           (TIFR0=0xFFU)
 
 /* This is for debugging output */
 #define RMP_AVR_PUTCHAR(CHAR) \

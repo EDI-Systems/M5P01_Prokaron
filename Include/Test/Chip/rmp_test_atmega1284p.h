@@ -101,17 +101,18 @@ void Int_Init(void)
 {
     /* TIM2 clock = 1/256 CPU clock */
     TCNT2=0x00U;
-    OCR2A=100U;
+    OCR2A=64U;
     TIFR2=0x00U;
     TCCR2A=0x02U;
-    TCCR2B=0x04U;
+    TCCR2B=0x06U;
     TIMSK2=0x02U;
 }
 
 /* The interrupt handler */
 void TIM2_Handler(void)
 {
-    TIFR2=0x00U;
+    /* Flag is auto cleared upon entry so this is not really needed */
+    TIFR2=0xFFU;
     Int_Handler();
 }
 /* End Function:Int_Init *****************************************************/

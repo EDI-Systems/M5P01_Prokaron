@@ -1,10 +1,18 @@
 /******************************************************************************
-Filename    : rmp_test_atmega2560.h
+Filename    : rmp_test_atmega328p.h
 Author      : pry 
 Date        : 22/07/2017
 Licence     : The Unlicense; see LICENSE for details.
-Description : The testbench for ATMEGA2560.
+Description : The testbench for ATMEGA328P.
               This test takes 1 min @16 MHz. Just observe how slow the AVR is.
+              This part is particularly meager with just 32KiB flash and 2 KiB
+              SRAM. Should your compilation fail altogether or encounters weird
+              bugs that fail asserts, check the compiler or runtime use more
+              RAM than the version that was used to run the figures below.
+              Also, if you're using Arduino and want to debugWIRE the board,
+              make sure to remove the 100nF capacitor between the nRESET pin
+              and the USB-Serial or the debugWIRE will refuse to connect.
+              Please refer to the schematic for more details.
 
 GCC 4.7.4 (Atmel Studio GNU 5.4.0) -O3
    ___   __  ___ ___
@@ -13,17 +21,16 @@ GCC 4.7.4 (Atmel Studio GNU 5.4.0) -O3
 /_/|_|/_/  /_//_/
 ====================================================
 Test (number in CPU cycles)        : AVG / MAX / MIN
-Yield                              : 449 / 763 / 449
-Mailbox                            : 774 / 1070 / 756
-Semaphore                          : 736 / 1033 / 719
-FIFO                               : 326 / 633 / 319
-Message queue                      : 1131 / 1418 / 1104
-Blocking message queue             : 1396 / 1677 / 1363
-Memory allocation/free pair        : 1686 / 1809 / 1565
-ISR Mailbox                        : 656 / 952 / 638
-ISR Semaphore                      : 654 / 950 / 636
-ISR Message queue                  : 942 / 1230 / 916
-ISR Blocking message queue         : 1117 / 1401 / 1087
+Yield                              : 408 / 682 / 408
+Mailbox                            : 719 / 979 / 705
+Semaphore                          : 686 / 946 / 672
+FIFO                               : 313 / 581 / 307
+Message queue                      : 1065 / 1317 / 1043
+Blocking message queue             : 1318 / 1565 / 1291
+ISR Mailbox                        : 624 / 882 / 608
+ISR Semaphore                      : 626 / 884 / 610
+ISR Message queue                  : 905 / 1158 / 884
+ISR Blocking message queue         : 1073 / 1321 / 1047
 
 GCC 4.7.4 (Atmel Studio GNU 5.4.0) -Os -mcall-prologues
    ___   __  ___ ___
@@ -32,17 +39,16 @@ GCC 4.7.4 (Atmel Studio GNU 5.4.0) -Os -mcall-prologues
 /_/|_|/_/  /_//_/
 ====================================================
 Test (number in CPU cycles)        : AVG / MAX / MIN
-Yield                              : 442 / 731 / 442
-Mailbox                            : 825 / 1096 / 807
-Semaphore                          : 768 / 1041 / 752
-FIFO                               : 331 / 613 / 324
-Message queue                      : 1246 / 1508 / 1219
-Blocking message queue             : 1596 / 1850 / 1561
-Memory allocation/free pair        : 2253 / 2395 / 2128
-ISR Mailbox                        : 694 / 966 / 677
-ISR Semaphore                      : 655 / 927 / 638
-ISR Message queue                  : 977 / 1242 / 953
-ISR Blocking message queue         : 1176 / 1437 / 1148
+Yield                              : 399 / 647 / 399
+Mailbox                            : 761 / 995 / 747
+Semaphore                          : 709 / 944 / 696
+FIFO                               : 309 / 552 / 304
+Message queue                      : 1154 / 1381 / 1133
+Blocking message queue             : 1483 / 1703 / 1455
+ISR Mailbox                        : 656 / 890 / 642
+ISR Semaphore                      : 620 / 854 / 606
+ISR Message queue                  : 926 / 1155 / 907
+ISR Blocking message queue         : 1110 / 1339 / 1091
 ******************************************************************************/
 
 /* Include *******************************************************************/
@@ -53,7 +59,7 @@ ISR Blocking message queue         : 1176 / 1437 / 1148
 /* How to read counter */
 #define RMP_CNT_READ()      ((rmp_tim_t)(TCNT1))
 /* Are we testing the memory pool? */
-#define TEST_MEM_POOL       (2048U)
+/* #define TEST_MEM_POOL */
 /* Are we doing minimal measurements? */
 /* #define MINIMAL_SIZE */
 /* The AVR timers we use is 16 bits, so */
@@ -65,8 +71,8 @@ typedef rmp_u16_t rmp_tim_t;
 /* Global ********************************************************************/
 #ifndef MINIMAL_SIZE
 void Int_Handler(void);
-rmp_ptr_t Stack_1[256];
-rmp_ptr_t Stack_2[256];
+rmp_ptr_t Stack_1[80];
+rmp_ptr_t Stack_2[80];
 
 void Timer_Init(void);
 void Int_Init(void);

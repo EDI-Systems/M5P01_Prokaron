@@ -1,9 +1,14 @@
 /******************************************************************************
-Filename   : rmp_platform_atmega1284p.h
+Filename   : rmp_platform_atmega328p.h
 Author     : pry
-Date       : 24/06/2017
+Date       : 23/05/2024
 Licence    : The Unlicense; see LICENSE for details.
-Description: The configuration file for ATMEGA1284P.
+Description: The configuration file for ATMEGA328P.
+             This is by far the minimal device that can run RMP benchmark
+             (though without TLSF allocator tests); the chip only has a meager
+             32KiB flash and 2KiB SRAM. This is a proof of concept rather than
+             a useful port, because even the simple benchmark takes up 74%
+             Flash and 97% SRAM. 
 ******************************************************************************/
 
 /* Define ********************************************************************/
@@ -22,7 +27,7 @@ Description: The configuration file for ATMEGA1284P.
 /* Are we using custom hooks? */
 #define RMP_HOOK_EXTRA              (0U)
 /* The stack size of the init thread */
-#define RMP_INIT_STACK_SIZE         (256U)
+#define RMP_INIT_STACK_SIZE         (96U)
 /* The mask/unmask interrupt operations */
 #define RMP_INT_MASK()              RMP_Int_Disable()
 #define RMP_INT_UNMASK()            RMP_Int_Enable()
@@ -30,7 +35,7 @@ Description: The configuration file for ATMEGA1284P.
 /* What is the Systick value? 50U = 12800 cycles = 0.8ms */
 #define RMP_AVR_TICK_VAL            (50U)
 /* Does the chip have RAMP, EIND, and is it XMEGA? */
-#define RMP_AVR_COP_RAMP            (1U)
+#define RMP_AVR_COP_RAMP            (0U)
 #define RMP_AVR_COP_EIND            (0U)
 #define RMP_AVR_COP_XMEGA           (0U)
 
