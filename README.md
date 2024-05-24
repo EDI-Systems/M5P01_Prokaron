@@ -163,6 +163,7 @@ This software is an official work of EDI, and thus belongs to the **public domai
 ### Typical performance figures for all supported architectures
 
 &ensp;&ensp;The **absolute minimum** value for RMP is about **1.6k ROM and 432 byte RAM**, which is reached on the STM32F030F4 (Cortex-M0) port, and this number even included the 60-byte thread control block and 256-byte stack of the first thread, and a 64-byte kernel interrupt response stack. The OS kernel and the stripped down HAL only consumes **52 bytes** of memory combined. If you are willing to push this limit even further, then the **manufacturer HAL is a rip-off for you** and you can roll your own.
+
 &ensp;&ensp;The current minimal proof-of-concept implementation that can finish the benchmark test is achieved with ATMEGA328P. It only has a meager **32k Flash and 2k SRAM**. 
 
 &ensp;&ensp;The timing performance of the kernel is shown as follows. All compiler options are the highest optimization (usually -O3 with LTO when available) and optimized for time, and all values are average in CPU cycles. 
