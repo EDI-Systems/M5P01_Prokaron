@@ -5,6 +5,7 @@ Date        : 01/04/2017
 Licence     : The Unlicense; see LICENSE for details.
 Description : The header of "rmp_platform_avr.c".
               This port supports both MegaAVR and XMegaAVR but not TinyAVR.
+              Supported cores include AVRe, AVRe+, AVRxm and AVRxt.
               Please refrain from trying to use this port on chips that has
               less than 32kB of Flash, because the kernel uses about 16kB.
               In contrast, the IAR compiler is expected to generate less code
@@ -12,7 +13,15 @@ Description : The header of "rmp_platform_avr.c".
               software stack as most 8-bitters lack SP-relative addressing),
               however this scheme precludes the porting of the kernel.
               This port is supplied as a proof of existence of RMP on even
-              8-bit devices rather than to be used in a production setting.
+              8-bit devices rather than to be used in a production setting;
+              AVR is not particularly great in term of code density when
+              compared with other 8-bitters such as PIC, STM8, and even 8051.
+              All kernel functions assume zero for all RAMP/EIND segment 
+              registers; still, they are saved and restored as a part of the
+              context switch, and are cleared before calling any ISR written
+              in C. This is in accordance with the GCC's use of these registers,
+              and the user is responsible for clearing them when they are
+              changed before calling the kernel APIs.
 ******************************************************************************/
 
 /* Define ********************************************************************/
@@ -151,11 +160,12 @@ struct RMP_AVR_Stack
     rmp_u8_t R29_YH;
     rmp_u8_t R30_ZL;
     rmp_u8_t R31_ZH;
-    rmp_u8_t PCL;
-    rmp_u8_t PCH;
+    /* Big-endian for CALL and interrupt entry PC */
 #if(RMP_AVR_COP_EIND!=0U)
     rmp_u8_t PCU;
 #endif
+    rmp_u8_t PCH;
+    rmp_u8_t PCL;
 };
 /*****************************************************************************/
 /* __RMP_PLATFORM_AVR_STRUCT__ */

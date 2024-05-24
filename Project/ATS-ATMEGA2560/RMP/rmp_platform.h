@@ -1,14 +1,14 @@
 /******************************************************************************
-Filename    : rmp_platform_avr_conf.h
-Author      : pry
-Date        : 24/05/2024
+Filename    : rmp_platform.h
+Author      : pry 
+Date        : 22/07/2017
 Licence     : LGPL v3+; see COPYING for details.
-Description : The configuration file for AVR HAL.
+Description : The platform specific types for RMP.
 ******************************************************************************/
 
-/* Config Includes ***********************************************************/
-#include "Platform/AVR/Chip/ATMEGA1284P/rmp_platform_atmega1284p.h"
-/* End Config Includes *******************************************************/
+/* Platform Includes *********************************************************/
+#include "Platform/AVR/rmp_platform_avr.h"
+/* End Platform Includes *****************************************************/
 
 /* End Of File ***************************************************************/
 

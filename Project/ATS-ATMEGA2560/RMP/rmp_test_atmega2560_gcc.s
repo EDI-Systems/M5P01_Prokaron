@@ -1,5 +1,5 @@
 /******************************************************************************
-Filename    : rmp_test_atmega1284p_gcc.s
+Filename    : rmp_test_atmega2560_gcc.s
 Author      : pry
 Date        : 10/04/2012
 Description : The extra testing file for this chip.
@@ -27,9 +27,9 @@ Input       : None.
 Output      : None.                                      
 ******************************************************************************/
 TIMER0_COMPA_vect:
-    RMP_AVR_INT_SAVE_MEGA_RAMP
+    RMP_AVR_INT_SAVE_MEGA_EIND
     CALL                _RMP_AVR_Tim_Handler
-    RMP_AVR_INT_LOAD_MEGA_RAMP
+    RMP_AVR_INT_LOAD_MEGA_EIND
 /* End Function:TIMER0_COMPA_vect ********************************************/
 
 /* Function:TIMER2_COMPA_vect *************************************************
@@ -38,9 +38,9 @@ Input       : None.
 Output      : None.                                      
 ******************************************************************************/
 TIMER2_COMPA_vect:
-    RMP_AVR_INT_SAVE_MEGA_RAMP
+    RMP_AVR_INT_SAVE_MEGA_EIND
     CALL                TIM2_Handler
-    RMP_AVR_INT_LOAD_MEGA_RAMP
+    RMP_AVR_INT_LOAD_MEGA_EIND
 /* End Function:TIMER2_COMPA_vect ********************************************/
 
 /* End Of File ***************************************************************/

@@ -7,7 +7,7 @@ Description : The configuration file for AVR HAL.
 ******************************************************************************/
 
 /* Config Includes ***********************************************************/
-#include "Platform/AVR/Chip/ATMEGA1284P/rmp_platform_atmega1284p.h"
+#include "Platform/AVR/Chip/ATMEGA2560/rmp_platform_atmega2560.h"
 /* End Config Includes *******************************************************/
 
 /* End Of File ***************************************************************/

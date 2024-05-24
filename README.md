@@ -181,6 +181,11 @@ This software is an official work of EDI, and thus belongs to the **public domai
 
 |Chipname     |Platform    |Build |Yield|Mail |Sem  |FIFO |Msgq |Bmq  |Mail/I|Sem/I|Msgq/I |Bmq/I |Mem  |
 |:-----------:|:----------:|:----:|:---:|:---:|:---:|:---:|:---:|:---:|:----:|:---:|:-----:|:----:|:---:|
+|ATMEGA1284P  |AVR         |GCC   |437  |751  |717  |314  |1098 |1352 |637   |639  |921    |1087  |1680 |
+|ATMEGA2560   |...         |...   |449  |774  |736  |326  |1131 |1396 |656   |654  |942    |1117  |1686 |
+|DSPIC33EP512 |DSPIC33E    |XC16  |470  |886  |766  |440  |1266 |1777 |709   |614  |958    |1254  |893  |
+|MSP430F149   |MSP430      |CCS   |312  |641  |573  |312  |985  |1278 |528   |487  |739    |898   |N/A  |
+|MSP430FR5994 |MSP430X     |CCS   |468  |1054 |891  |492  |1573 |2072 |891   |784  |1176   |1464  |3291 |
 |STM32F030F4  |Cortex-M0   |Keil  |362  |763  |666  |379  |1196 |1609 |689   |616  |950    |1211  |N/A  |
 |...          |...         |GCC   |366  |802  |690  |396  |1246 |1685 |705   |622  |954    |1200  |N/A  |
 |STM32L071CB  |Cortex-M0+  |Keil  |335  |581  |532  |253  |892  |1167 |554   |524  |756    |945   |N/A  |
@@ -193,13 +198,10 @@ This software is an official work of EDI, and thus belongs to the **public domai
 |...          |...         |GCC   |182  |335  |288  |156  |473  |643  |313   |264  |375    |514   |332  |
 |TMS570LS0432 |Cortex-R4   |CCS   |306  |493  |460  |193  |686  |897  |480   |464  |592    |736   |533  |
 |TMS570LC4357 |Cortex-R5   |CCS   |275  |479  |467  |216  |746  |998  |440   |435  |595    |763   |482  |
-|DSPIC33EP512 |DSPIC33E    |XC16  |470  |886  |766  |440  |1266 |1777 |709   |614  |958    |1254  |893  |
-|MSP430F149   |MSP430      |CCS   |312  |641  |573  |312  |985  |1278 |528   |487  |739    |898   |N/A  |
-|MSP430FR5994 |MSP430X     |CCS   |468  |1054 |891  |492  |1573 |2072 |891   |784  |1176   |1464  |3291 |
 |PIC32MZ2048  |MIPS M14k   |XC32  |260  |392  |370  |146  |540  |672  |440   |420  |530    |620   |364  |
 |TMS320F28335 |C28x        |CCS   |246  |513  |440  |235  |751  |1001 |440   |413  |622    |770   |946  |
 |CH32V307     |RV32IMAC    |GCC   |246  |426  |386  |179  |605  |767  |359   |321  |466    |593   |TBD  |
-|CH32V307     |RV32IMAFC   |GCC   |318  |495  |457  |182  |674  |836  |405   |366  |500    |624   |TBD  |
+|...          |RV32IMAFC   |GCC   |318  |495  |457  |182  |674  |836  |405   |366  |500    |624   |TBD  |
 |i9-7980XE    |X86-LINUX   |GCC   |TBD  |TBD  |TBD  |TBD  |TBD  |TBD  |TBD   |TBD  |TBD    |TBD   |TBD  |
 
 &ensp;&ensp;The **[RVM](https://github.com/EDI-Systems/M7M02_Ammonite)** embedded hypervisor virtualized versions:
@@ -212,6 +214,7 @@ This software is an official work of EDI, and thus belongs to the **public domai
 |...          |...         |GCC   |TBD  |TBD  |TBD  |TBD  |TBD  |TBD  |TBD   |TBD  |TBD    |TBD   |TBD  |
 |STM32F767IG  |Cortex-M7   |Keil  |221  |403  |348  |150  |589  |765  |942   |962  |1134   |1227  |334  |
 |...          |...         |GCC   |TBD  |TBD  |TBD  |TBD  |TBD  |TBD  |TBD   |TBD  |TBD    |TBD   |TBD  |
+|CH32V307     |RV32IMAFC   |GCC   |TBD  |TBD  |TBD  |TBD  |TBD  |TBD  |TBD   |TBD  |TBD    |TBD   |TBD  |
 
 In contrast, RT-Linux 4.12's best context switch time on Cortex-M7 is bigger than 25000 cycles (have to run from FMC SDRAM). This is measured with futex; if other forms of IPC such as pipes are used, this time is even longer.
 

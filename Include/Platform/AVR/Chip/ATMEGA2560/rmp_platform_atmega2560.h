@@ -7,7 +7,7 @@ Description: The configuration file for ATMEGA2560.
 ******************************************************************************/
 
 /* Define ********************************************************************/
-/* The HAL library */
+/* The AVR I/O library */
 #include "avr/io.h"
 
 /* Debugging */
@@ -27,8 +27,8 @@ Description: The configuration file for ATMEGA2560.
 #define RMP_INT_MASK()              RMP_Int_Disable()
 #define RMP_INT_UNMASK()            RMP_Int_Enable()
 
-/* What is the Systick value? */
-#define RMP_AVR_TICK_VAL            (2000U)
+/* What is the Systick value? 50U = 12800 cycles = 0.8ms */
+#define RMP_AVR_TICK_VAL            (50U)
 /* Does the chip have RAMP, EIND, and is it XMEGA? */
 #define RMP_AVR_COP_RAMP            (1U)
 #define RMP_AVR_COP_EIND            (1U)
@@ -41,15 +41,32 @@ Description: The configuration file for ATMEGA2560.
 #define RMP_AVR_LOWLVL_INIT() \
 do \
 { \
+    /* USART0 TX pin - PE1 */ \
+    DDRE=0x02U; \
+    /* USART0 - double speed, TX only, 115200-8-N-1 */ \
+    UCSR0A=0x02U; \
+    UCSR0B=0x08U; \
+    UCSR0C=0x06U; \
+    UBRR0=16U; \
+    /* Timer 0 - CTC mode, UP counter, prescaler 256 */ \
+    TCNT0=0x00U; \
+    OCR0A=RMP_AVR_TICK_VAL; \
+    TIFR0=0x00U; \
+    TCCR0A=0x02U; \
+    TCCR0B=0x04U; \
+    TIMSK0=0x02U; \
 } \
 while(0)
 
-#define RMP_AVR_TIM_CLR()           
+#define RMP_AVR_TIM_CLR()           (TIFR0=0x00U)
 
 /* This is for debugging output */
 #define RMP_AVR_PUTCHAR(CHAR) \
 do \
 { \
+    /* Wait for transmit buffer to be empty */ \
+    while((UCSR0A&0x20U)==0U); \
+    UDR0=(CHAR); \
 } \
 while(0)
 /* End Define ****************************************************************/

@@ -5,7 +5,7 @@
     <ProjectVersion>7.0</ProjectVersion>
     <ToolchainName>com.Atmel.AVRGCC8.C</ToolchainName>
     <ProjectGuid>dce6c7e3-ee26-4d79-826b-08594b9ad897</ProjectGuid>
-    <avrdevice>ATmega1284P</avrdevice>
+    <avrdevice>ATmega2560</avrdevice>
     <avrdeviceseries>none</avrdeviceseries>
     <OutputType>Executable</OutputType>
     <Language>C</Language>
@@ -16,7 +16,7 @@
     <Name>RMP</Name>
     <RootNamespace>RMP</RootNamespace>
     <ToolchainFlavour>Native</ToolchainFlavour>
-    <KeepTimersRunning>true</KeepTimersRunning>
+    <KeepTimersRunning>false</KeepTimersRunning>
     <OverrideVtor>false</OverrideVtor>
     <CacheFlash>true</CacheFlash>
     <ProgFlashFromRam>true</ProgFlashFromRam>
@@ -40,8 +40,9 @@
         </dependencies>
       </framework-data>
     </AsfFrameworkConfig>
-    <avrtool>com.atmel.avrdbg.tool.simulator</avrtool>
-    <avrtoolserialnumber />
+    <avrtool>
+    </avrtool>
+    <avrtoolserialnumber>J30200009582</avrtoolserialnumber>
     <avrdeviceexpectedsignature>0x1E9705</avrdeviceexpectedsignature>
     <custom>
       <ToolOptions>
@@ -55,7 +56,7 @@
       </ToolNumber>
       <ToolName>Custom Programming Tool</ToolName>
     </custom>
-    <avrtoolinterface />
+    <avrtoolinterface>JTAG</avrtoolinterface>
     <com_atmel_avrdbg_tool_simulator>
       <ToolOptions xmlns="">
         <InterfaceProperties>
@@ -68,11 +69,23 @@
       </ToolNumber>
       <ToolName xmlns="">Simulator</ToolName>
     </com_atmel_avrdbg_tool_simulator>
+    <com_atmel_avrdbg_tool_jtagice3plus>
+      <ToolOptions>
+        <InterfaceProperties>
+          <JtagDbgClock>200000</JtagDbgClock>
+        </InterfaceProperties>
+        <InterfaceName>JTAG</InterfaceName>
+      </ToolOptions>
+      <ToolType>com.atmel.avrdbg.tool.jtagice3plus</ToolType>
+      <ToolNumber>J30200009582</ToolNumber>
+      <ToolName>JTAGICE3</ToolName>
+    </com_atmel_avrdbg_tool_jtagice3plus>
+    <avrtoolinterfaceclock>200000</avrtoolinterfaceclock>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <ToolchainSettings>
       <AvrGcc>
-        <avrgcc.common.Device>-mmcu=atmega1284p -B "%24(PackRepoDir)\atmel\ATmega_DFP\1.7.374\gcc\dev\atmega1284p"</avrgcc.common.Device>
+        <avrgcc.common.Device>-mmcu=atmega2560 -B "%24(PackRepoDir)\atmel\ATmega_DFP\1.7.374\gcc\dev\atmega2560"</avrgcc.common.Device>
         <avrgcc.common.optimization.RelaxBranches>True</avrgcc.common.optimization.RelaxBranches>
         <avrgcc.common.outputfiles.hex>True</avrgcc.common.outputfiles.hex>
         <avrgcc.common.outputfiles.lss>True</avrgcc.common.outputfiles.lss>
@@ -111,46 +124,46 @@
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <ToolchainSettings>
       <AvrGcc>
-  <avrgcc.common.Device>-mmcu=atmega1284p -B "%24(PackRepoDir)\atmel\ATmega_DFP\1.7.374\gcc\dev\atmega1284p"</avrgcc.common.Device>
-  <avrgcc.common.optimization.RelaxBranches>True</avrgcc.common.optimization.RelaxBranches>
-  <avrgcc.common.outputfiles.hex>True</avrgcc.common.outputfiles.hex>
-  <avrgcc.common.outputfiles.lss>True</avrgcc.common.outputfiles.lss>
-  <avrgcc.common.outputfiles.eep>True</avrgcc.common.outputfiles.eep>
-  <avrgcc.common.outputfiles.srec>True</avrgcc.common.outputfiles.srec>
-  <avrgcc.common.outputfiles.usersignatures>False</avrgcc.common.outputfiles.usersignatures>
-  <avrgcc.compiler.general.SubroutinesFunctionPrologues>True</avrgcc.compiler.general.SubroutinesFunctionPrologues>
-  <avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>
-  <avrgcc.compiler.symbols.DefSymbols>
-    <ListValues>
-      <Value>DEBUG</Value>
-    </ListValues>
-  </avrgcc.compiler.symbols.DefSymbols>
-  <avrgcc.compiler.directories.IncludePaths>
-    <ListValues>
-      <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.7.374\include\</Value>
-      <Value>../../../../Include</Value>
-      <Value>..</Value>
-    </ListValues>
-  </avrgcc.compiler.directories.IncludePaths>
-  <avrgcc.compiler.optimization.level>Optimize for size (-Os)</avrgcc.compiler.optimization.level>
-  <avrgcc.compiler.optimization.PackStructureMembers>True</avrgcc.compiler.optimization.PackStructureMembers>
-  <avrgcc.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcc.compiler.optimization.AllocateBytesNeededForEnum>
-  <avrgcc.compiler.optimization.DebugLevel>Default (-g2)</avrgcc.compiler.optimization.DebugLevel>
-  <avrgcc.compiler.warnings.AllWarnings>True</avrgcc.compiler.warnings.AllWarnings>
-  <avrgcc.linker.libraries.Libraries>
-    <ListValues>
-      <Value>libm</Value>
-    </ListValues>
-  </avrgcc.linker.libraries.Libraries>
-  <avrgcc.assembler.general.IncludePaths>
-    <ListValues>
-      <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.7.374\include\</Value>
-      <Value>../../../../Include</Value>
-      <Value>..</Value>
-    </ListValues>
-  </avrgcc.assembler.general.IncludePaths>
-  <avrgcc.assembler.debugging.DebugLevel>Default (-Wa,-g)</avrgcc.assembler.debugging.DebugLevel>
-</AvrGcc>
+        <avrgcc.common.Device>-mmcu=atmega2560 -B "%24(PackRepoDir)\atmel\ATmega_DFP\1.7.374\gcc\dev\atmega2560"</avrgcc.common.Device>
+        <avrgcc.common.optimization.RelaxBranches>True</avrgcc.common.optimization.RelaxBranches>
+        <avrgcc.common.outputfiles.hex>True</avrgcc.common.outputfiles.hex>
+        <avrgcc.common.outputfiles.lss>True</avrgcc.common.outputfiles.lss>
+        <avrgcc.common.outputfiles.eep>True</avrgcc.common.outputfiles.eep>
+        <avrgcc.common.outputfiles.srec>True</avrgcc.common.outputfiles.srec>
+        <avrgcc.common.outputfiles.usersignatures>False</avrgcc.common.outputfiles.usersignatures>
+        <avrgcc.compiler.general.SubroutinesFunctionPrologues>True</avrgcc.compiler.general.SubroutinesFunctionPrologues>
+        <avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>
+        <avrgcc.compiler.symbols.DefSymbols>
+          <ListValues>
+            <Value>DEBUG</Value>
+          </ListValues>
+        </avrgcc.compiler.symbols.DefSymbols>
+        <avrgcc.compiler.directories.IncludePaths>
+          <ListValues>
+            <Value>../../../../Include</Value>
+            <Value>..</Value>
+            <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.7.374\include\</Value>
+          </ListValues>
+        </avrgcc.compiler.directories.IncludePaths>
+        <avrgcc.compiler.optimization.level>Optimize for size (-Os)</avrgcc.compiler.optimization.level>
+        <avrgcc.compiler.optimization.PackStructureMembers>True</avrgcc.compiler.optimization.PackStructureMembers>
+        <avrgcc.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcc.compiler.optimization.AllocateBytesNeededForEnum>
+        <avrgcc.compiler.optimization.DebugLevel>Default (-g2)</avrgcc.compiler.optimization.DebugLevel>
+        <avrgcc.compiler.warnings.AllWarnings>True</avrgcc.compiler.warnings.AllWarnings>
+        <avrgcc.linker.libraries.Libraries>
+          <ListValues>
+            <Value>libm</Value>
+          </ListValues>
+        </avrgcc.linker.libraries.Libraries>
+        <avrgcc.assembler.general.IncludePaths>
+          <ListValues>
+            <Value>../../../../Include</Value>
+            <Value>..</Value>
+            <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.7.374\include\</Value>
+          </ListValues>
+        </avrgcc.assembler.general.IncludePaths>
+        <avrgcc.assembler.debugging.DebugLevel>Default (-Wa,-g)</avrgcc.assembler.debugging.DebugLevel>
+      </AvrGcc>
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
