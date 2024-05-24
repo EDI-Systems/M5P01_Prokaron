@@ -257,7 +257,7 @@ Return      : None.
     PUSH                R20
     PUSH                R19
     PUSH                R18
-    EOR                 R18,R18
+    CLR                 R18
     OUT                 RMP_RAMPD,R18
     OUT                 RMP_RAMPX,R18
     OUT                 RMP_RAMPY,R18
@@ -280,7 +280,7 @@ Return      : None.
     .macro              RMP_AVR_EIND_SAVE
     IN                  R18,RMP_EIND
     PUSH                R18
-    EOR                 R18,R18
+    CLR                 R18
     OUT                 RMP_EIND,R18
     .endm
 

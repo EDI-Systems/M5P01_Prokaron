@@ -89,7 +89,7 @@ Description : The assembly part of the RMP RTOS. This is for AVR, and
     OUT                 RMP_SPL,R18
     LDI                 R18,1                       /* Indicate interrupt active */
     STS                 RMP_AVR_Int_Act,R18
-    EOR                 R1,R1                       /* Clear implicit zero register */
+    CLR                 R1                          /* Clear implicit zero register */
     .endm
 
 /* Actual context switch *****************************************************/
@@ -97,11 +97,11 @@ Description : The assembly part of the RMP RTOS. This is for AVR, and
     LDS                 R18,_RMP_AVR_Yield_Pend
     CPI                 R18,0
     BREQ                1f
-    EOR                 R18,R18
+    CLR                 R18
     STS                 _RMP_AVR_Yield_Pend,R18
     CALL                _RMP_Run_High               /* No need to clean R1 again */
 1:
-    EOR                 R18,R18
+    CLR                 R18
     STS                 RMP_AVR_Int_Act,R18
     LDS                 R19,RMP_SP_Cur+1            /* Load the SP from control block */
     LDS                 R18,RMP_SP_Cur
@@ -158,7 +158,7 @@ Description : The assembly part of the RMP RTOS. This is for AVR, and
     PUSH                R20
     PUSH                R19
     PUSH                R18
-    EOR                 R18,R18
+    CLR                 R18
     OUT                 RMP_RAMPD,R18
     OUT                 RMP_RAMPX,R18
     OUT                 RMP_RAMPY,R18
@@ -181,7 +181,7 @@ Description : The assembly part of the RMP RTOS. This is for AVR, and
     .macro              RMP_AVR_EIND_SAVE
     IN                  R18,RMP_EIND
     PUSH                R18
-    EOR                 R18,R18
+    CLR                 R18
     OUT                 RMP_EIND,R18
     .endm
 
