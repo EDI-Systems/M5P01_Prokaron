@@ -467,15 +467,23 @@ void Test_Mem_Pool(void)
         }
         
         Start=RMP_CNT_READ();
-        /* Allocation tests */
+        /* Allocation tests - should not fail anyway */
         Mem[Alloc[0]]=RMP_Malloc(Pool, Amount[Size[0]]);
+        RMP_ASSERT(Mem[Alloc[0]]!=RMP_NULL);
         Mem[Alloc[1]]=RMP_Malloc(Pool, Amount[Size[1]]);
+        RMP_ASSERT(Mem[Alloc[1]]!=RMP_NULL);
         Mem[Alloc[2]]=RMP_Malloc(Pool, Amount[Size[2]]);
+        RMP_ASSERT(Mem[Alloc[2]]!=RMP_NULL);
         Mem[Alloc[3]]=RMP_Malloc(Pool, Amount[Size[3]]);
+        RMP_ASSERT(Mem[Alloc[3]]!=RMP_NULL);
         Mem[Alloc[4]]=RMP_Malloc(Pool, Amount[Size[4]]);
+        RMP_ASSERT(Mem[Alloc[4]]!=RMP_NULL);
         Mem[Alloc[5]]=RMP_Malloc(Pool, Amount[Size[5]]);
+        RMP_ASSERT(Mem[Alloc[5]]!=RMP_NULL);
         Mem[Alloc[6]]=RMP_Malloc(Pool, Amount[Size[6]]);
+        RMP_ASSERT(Mem[Alloc[6]]!=RMP_NULL);
         Mem[Alloc[7]]=RMP_Malloc(Pool, Amount[Size[7]]);
+        RMP_ASSERT(Mem[Alloc[7]]!=RMP_NULL);
 
         /* Deallocation tests */
         RMP_Free(Pool,Mem[Free[0]]);
@@ -491,7 +499,7 @@ void Test_Mem_Pool(void)
         
         /* This should always be successful because we deallocated everything else */
         Mem[0]=RMP_Malloc(Pool, (TEST_MEM_POOL>>7)*127);
-        if(Mem[0]==0)
+        if(Mem[0]==RMP_NULL)
         {
             RMP_DBG_S("Memory test failure: ");
             RMP_DBG_I(Test_Count);

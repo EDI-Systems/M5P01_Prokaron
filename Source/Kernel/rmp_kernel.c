@@ -1052,7 +1052,7 @@ void _RMP_Run_High(void)
         /* No action required */
     }
     
-    /* Replenish timeslices */
+    /* Replenish timeslices for the old thread and switch to the new one */
     RMP_Thd_Cur->Slice_Left=RMP_Thd_Cur->Slice;
     RMP_Thd_Cur=(volatile struct RMP_Thd*)(RMP_Run[Prio].Next);
 

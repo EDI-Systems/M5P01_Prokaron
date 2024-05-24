@@ -28,13 +28,13 @@ Description : The assembly part of the RMP RTOS. This is for AVR, and
     .extern             _RMP_AVR_SP_Kern
     /* The current thread stack */
     .extern             RMP_SP_Cur
-    ;The interrupt active flag
+    /* The interrupt active flag */
     .extern             RMP_AVR_Int_Act
-    ;The yield pending flag
+    /* The yield pending flag */
     .extern             _RMP_AVR_Yield_Pend
-    ;Extract highest priority running thread
+    /* Extract highest priority running thread */
     .extern             _RMP_Run_High
-    ;Handler for DSPIC timer interrupt
+    /* Handler for DSPIC timer interrupt */
     .extern             _RMP_AVR_Tim_Handler
 /* End Import ****************************************************************/
 
@@ -79,45 +79,34 @@ Description : The assembly part of the RMP RTOS. This is for AVR, and
 
 /* Actual context switch *****************************************************/
     .macro              RMP_AVR_SWITCH_PRE
-    IN                  R18,RMP_SPL                 /* Save the SP to control block */
-    IN                  R19,RMP_SPH
-    LDI                 R28,lo8(RMP_SP_Cur)         /* Y[29:28] is Callee-save */
-    LDI                 R29,hi8(RMP_SP_Cur)
-    ST                  Y,R18
-    STD                 Y+1,R19
-    LDI                 R30,lo8(_RMP_AVR_SP_Kern)   /* Load SP for kernel  */
-    LDI                 R31,hi8(_RMP_AVR_SP_Kern)
-    LD                  R18,Z
-    LDD                 R19,Z+1
-    OUT                 RMP_SPL,R18
+    IN                  R19,RMP_SPH                 /* Save the SP to control block */
+    IN                  R18,RMP_SPL
+    STS                 RMP_SP_Cur+1,R19
+    STS                 RMP_SP_Cur,R18
+    LDS                 R19,_RMP_AVR_SP_Kern+1      /* Load SP for kernel  */
+    LDS                 R18,_RMP_AVR_SP_Kern
     OUT                 RMP_SPH,R19
-    LDI                 R30,lo8(RMP_AVR_Int_Act)   /* Indicate interrupt active */
-    LDI                 R31,hi8(RMP_AVR_Int_Act)
-    LDI                 R18,1
-    ST                  Z,R18
+    OUT                 RMP_SPL,R18
+    LDI                 R18,1                       /* Indicate interrupt active */
+    STS                 RMP_AVR_Int_Act,R18
+    EOR                 R1,R1                       /* Clear implicit zero register */
     .endm
 
 /* Actual context switch *****************************************************/
     .macro              RMP_AVR_SWITCH_POST
-    LDI                 R30,lo8(_RMP_AVR_Yield_Pend)
-    LDI                 R31,hi8(_RMP_AVR_Yield_Pend)
-    LD                  R18,Z
+    LDS                 R18,_RMP_AVR_Yield_Pend
     CPI                 R18,0
     BREQ                1f
-    LDI                 R18,0
-    ST                  Z,R18
-    LDI                 R30,lo8(_RMP_Run_High)
-    LDI                 R31,hi8(_RMP_Run_High)
-    ICALL
+    EOR                 R18,R18
+    STS                 _RMP_AVR_Yield_Pend,R18
+    CALL                _RMP_Run_High               /* No need to clean R1 again */
 1:
-    LDI                 R30,lo8(RMP_AVR_Int_Act)
-    LDI                 R31,hi8(RMP_AVR_Int_Act)
-    LDI                 R18,0
-    ST                  Z,R18
-    LD                  R18,Y                       /* Load the SP from control block */
-    LDD                 R19,Y+1                     /* Y[29:28] is Callee-save */
-    OUT                 RMP_SPL,R18
+    EOR                 R18,R18
+    STS                 RMP_AVR_Int_Act,R18
+    LDS                 R19,RMP_SP_Cur+1            /* Load the SP from control block */
+    LDS                 R18,RMP_SP_Cur
     OUT                 RMP_SPH,R19
+    OUT                 RMP_SPL,R18
     .endm
 
 /* Restore all GP regs *******************************************************/
@@ -169,7 +158,7 @@ Description : The assembly part of the RMP RTOS. This is for AVR, and
     PUSH                R20
     PUSH                R19
     PUSH                R18
-    LDI                 R18,0x00
+    EOR                 R18,R18
     OUT                 RMP_RAMPD,R18
     OUT                 RMP_RAMPX,R18
     OUT                 RMP_RAMPY,R18
@@ -192,7 +181,7 @@ Description : The assembly part of the RMP RTOS. This is for AVR, and
     .macro              RMP_AVR_EIND_SAVE
     IN                  R18,RMP_EIND
     PUSH                R18
-    LDI                 R18,0x00
+    EOR                 R18,R18
     OUT                 RMP_EIND,R18
     .endm
 

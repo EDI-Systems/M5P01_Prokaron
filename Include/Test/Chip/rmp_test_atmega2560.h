@@ -1,5 +1,5 @@
 /******************************************************************************
-Filename    : rmp_test_atmega1284p.h
+Filename    : rmp_test_atmega2560.h
 Author      : pry 
 Date        : 22/07/2017
 Licence     : The Unlicense; see LICENSE for details.
@@ -13,17 +13,17 @@ GCC 4.7.4 (Atmel Studio GNU 5.4.0) -O3
 /_/|_|/_/  /_//_/
 ====================================================
 Test (number in CPU cycles)        : AVG / MAX / MIN
-Yield                              : 437 / 739 / 437
-Mailbox                            : 751 / 1036 / 734
-Semaphore                          : 717 / 1003 / 701
-FIFO                               : 314 / 609 / 307
-Message queue                      : 1098 / 1375 / 1073
-Blocking message queue             : 1352 / 1623 / 1321
-Memory allocation/free pair        : 1680 / 1809 / 1558
-ISR Mailbox                        : 637 / 922 / 620
-ISR Semaphore                      : 639 / 924 / 622
-ISR Message queue                  : 921 / 1198 / 896
-ISR Blocking message queue         : 1087 / 1361 / 1059
+Yield                              : 449 / 763 / 449
+Mailbox                            : 774 / 1070 / 756
+Semaphore                          : 736 / 1033 / 719
+FIFO                               : 326 / 633 / 319
+Message queue                      : 1131 / 1418 / 1104
+Blocking message queue             : 1396 / 1677 / 1363
+Memory allocation/free pair        : 1686 / 1809 / 1565
+ISR Mailbox                        : 656 / 952 / 638
+ISR Semaphore                      : 654 / 950 / 636
+ISR Message queue                  : 942 / 1230 / 916
+ISR Blocking message queue         : 1117 / 1401 / 1087
 
 GCC 4.7.4 (Atmel Studio GNU 5.4.0) -Os -mcall-prologues
    ___   __  ___ ___
@@ -32,17 +32,17 @@ GCC 4.7.4 (Atmel Studio GNU 5.4.0) -Os -mcall-prologues
 /_/|_|/_/  /_//_/
 ====================================================
 Test (number in CPU cycles)        : AVG / MAX / MIN
-Yield                              : 428 / 705 / 428
-Mailbox                            : 793 / 1054 / 777
-Semaphore                          : 740 / 1002 / 725
-FIFO                               : 314 / 585 / 308
-Message queue                      : 1193 / 1445 / 1168
-Blocking message queue             : 1522 / 1767 / 1490
-Memory allocation/free pair        : 2220 / 2354 / 2097
-ISR Mailbox                        : 671 / 931 / 654
-ISR Semaphore                      : 634 / 895 / 618
-ISR Message queue                  : 944 / 1198 / 921
-ISR Blocking message queue         : 1132 / 1382 / 1105
+Yield                              : 442 / 731 / 442
+Mailbox                            : 825 / 1096 / 807
+Semaphore                          : 768 / 1041 / 752
+FIFO                               : 331 / 613 / 324
+Message queue                      : 1246 / 1508 / 1219
+Blocking message queue             : 1596 / 1850 / 1561
+Memory allocation/free pair        : 2253 / 2395 / 2128
+ISR Mailbox                        : 694 / 966 / 677
+ISR Semaphore                      : 655 / 927 / 638
+ISR Message queue                  : 977 / 1242 / 953
+ISR Blocking message queue         : 1176 / 1437 / 1148
 ******************************************************************************/
 
 /* Include *******************************************************************/

@@ -50,7 +50,7 @@ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
 #if(RMP_AVR_COP_XMEGA!=0U)
     Ptr->SREG_SR=0x80U;
 #else
-    Ptr->SREG_SR=0x80U;
+    Ptr->SREG_SR=0x00U;
 #endif
     
     /* Pass entry and parameter - program space is in words instead of bytes */
@@ -59,9 +59,10 @@ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
     Ptr->R25=Param>>8;
     Ptr->R24=Param&0xFFU;
     
-    /* Fill the rest for ease of identification */
+    /* Fill the rest for ease of identification - R1 is implicitly zero as required 
+     * by GCC, but we still save/restore it in case the program includes assembly */
     Ptr->R0=0x00U;
-    Ptr->R1=0x01U;
+    Ptr->R1=0x00U;
     Ptr->R2=0x02U;
     Ptr->R3=0x03U;
     Ptr->R4=0x04U;

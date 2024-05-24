@@ -97,12 +97,10 @@ Output      : None.
 Return      : None.
 ******************************************************************************/
 RMP_Int_Mask:
-    LDI                 R30,lo8(RMP_PMIC_CTRL)
-    LDI                 R31,hi8(RMP_PMIC_CTRL)
-    LD                  R18,Z
+    LDS                 R18,RMP_PMIC_CTRL
     ANDI                R18,0xF8
     OR                  R18,R24
-    ST                  Z,R18
+    STS                 RMP_PMIC_CTRL,R18
     RET
 /* End Function:RMP_Int_Enable ***********************************************/
 
@@ -115,19 +113,16 @@ Return      : None.
 ******************************************************************************/
 _RMP_Start:
     /* Save the current kernel SP address */
-    LDI                 R30,hi8(_RMP_AVR_SP_Kern)
-    LDI                 R31,lo8(_RMP_AVR_SP_Kern)
-    IN                  R18,RMP_SPL
     IN                  R19,RMP_SPH
-    ST                  Z,R18
-    STD                 Z+1,R19
+    IN                  R18,RMP_SPL
+    STS                 _RMP_AVR_SP_Kern+1,R19
+    STS                 _RMP_AVR_SP_Kern,R18
     /* Load SP for the first task */
-    OUT                 RMP_SPL,R22
     OUT                 RMP_SPH,R23
+    OUT                 RMP_SPL,R22
     /* Jump to the entry */
-    MOV                 R30,R24
-    MOV                 R31,R25
-    ICALL
+    MOVW                R30,R24
+    IJMP
     /* Should not reach here */
 /* End Function:_RMP_Start ***************************************************/
 
@@ -150,8 +145,7 @@ Return      : None.
      * its PMIC masking features, and we assume all kernel-aware interrupts
      * are low-level interrupts in XMEGA. */
     .macro              RMP_AVR_SAVE
-    /* R31-R29 are handled elsewhere because we need some temporaries */
-    PUSH                R28
+    PUSH                R28                         /* R31-R29 are temporaries */
     PUSH                R27
     PUSH                R26
     PUSH                R25
@@ -183,26 +177,23 @@ Return      : None.
     .endm
 
 /* Actual context switch *****************************************************/
+    /* No need to clean R1 here because _RMP_Yield is a function, and R1 is
+     * guaranteed to be zero when it is called; this is different from the
+     * interrupt case where R1 has to be cleaned up before calling C ISR. */
     .macro              RMP_AVR_SWITCH
-    IN                  R18,RMP_SPL                 /* Save the SP to control block */
-    IN                  R19,RMP_SPH
-    LDI                 R28,lo8(RMP_SP_Cur)         /* Y[29:28] is Callee-save */
-    LDI                 R29,hi8(RMP_SP_Cur)
-    ST                  Y,R18
-    STD                 Y+1,R19
-    LDI                 R30,lo8(_RMP_AVR_SP_Kern)   /* Load SP for kernel  */
-    LDI                 R31,hi8(_RMP_AVR_SP_Kern)
-    LD                  R18,Z
-    LDD                 R19,Z+1
+    IN                  R19,RMP_SPH                 /* Save the SP to control block */
+    IN                  R18,RMP_SPL
+    STS                 RMP_SP_Cur+1,R19
+    STS                 RMP_SP_Cur,R18
+    LDS                 R19,_RMP_AVR_SP_Kern+1      /* Load SP for kernel  */
+    LDS                 R18,_RMP_AVR_SP_Kern
     OUT                 RMP_SPL,R18
     OUT                 RMP_SPH,R19
-    LDI                 R30,lo8(_RMP_Run_High)      /* Get the highest ready task */
-    LDI                 R31,hi8(_RMP_Run_High)
-    ICALL                                           /* Use ICALL to remain compatible */
-    LD                  R18,Y                       /* Load the SP from control block */
-    LDD                 R19,Y+1                     /* Y[29:28] is Callee-save */
-    OUT                 RMP_SPL,R18
+    CALL                _RMP_Run_High               /* Get the highest ready task */
+    LDS                 R19,RMP_SP_Cur+1
+    LDS                 R18,RMP_SP_Cur              /* Load the SP from control block */
     OUT                 RMP_SPH,R19
+    OUT                 RMP_SPL,R18
     .endm
 
 /* Restore all GP regs *******************************************************/
@@ -240,21 +231,17 @@ Return      : None.
 
 /* Save temporaries **********************************************************/
     .macro              RMP_AVR_TEMP_SAVE
-    /* Push temporaries */
     PUSH                R31
     PUSH                R30
     PUSH                R29
-    /* Save SR early */
-    IN                  R29,RMP_SREG
+    IN                  R29,RMP_SREG                /* Save SR early */
     PUSH                R29
     .endm
 
 /* Restore temporaries *******************************************************/
     .macro              RMP_AVR_TEMP_LOAD
-    /* Load SR late */
-    POP                 R18
-    OUT                 RMP_SREG,R18
-    /* Pop temporaries */
+    POP                 R29                         /* Load SR late */
+    OUT                 RMP_SREG,R29
     POP                 R29
     POP                 R30
     POP                 R31
@@ -270,7 +257,7 @@ Return      : None.
     PUSH                R20
     PUSH                R19
     PUSH                R18
-    LDI                 R18,0x00
+    EOR                 R18,R18
     OUT                 RMP_RAMPD,R18
     OUT                 RMP_RAMPX,R18
     OUT                 RMP_RAMPY,R18
@@ -293,7 +280,7 @@ Return      : None.
     .macro              RMP_AVR_EIND_SAVE
     IN                  R18,RMP_EIND
     PUSH                R18
-    LDI                 R18,0x00
+    EOR                 R18,R18
     OUT                 RMP_EIND,R18
     .endm
 
@@ -305,22 +292,16 @@ Return      : None.
 
 /* Mask interrupts ***********************************************************/
     .macro              RMP_AVR_INT_MASK
-    /* Mask all low-level interrupts */
-    LDI                 R30,lo8(RMP_PMIC_CTRL)
-    LDI                 R31,hi8(RMP_PMIC_CTRL)
-    LD                  R29,Z
+    LDS                 R29,RMP_PMIC_CTRL           /* Mask low-level only */
     ANDI                R29,0xFE
-    ST                  Z,R29
+    STS                 RMP_PMIC_CTRL,R29
     .endm
 
 /* Unmask interrupts *********************************************************/
     .macro              RMP_AVR_INT_UNMASK
-    /* Unmask all low-level interrupts */
-    LDI                 R30,hi8(RMP_PMIC_CTRL)
-    LDI                 R31,lo8(RMP_PMIC_CTRL)
-    LD                  R29,Z
+    LDS                 R29,RMP_PMIC_CTRL           /* Unmask low-level only */
     ORI                 R29,0x01
-    ST                  Z,R29
+    STS                 RMP_PMIC_CTRL,R29
     .endm
 
 /* MegaAVR *******************************************************************/
@@ -376,8 +357,7 @@ _RMP_AVR_Yield_XMEGA:
     RMP_AVR_LOAD
     RMP_AVR_INT_UNMASK
     RMP_AVR_TEMP_LOAD
-    /* Use RET instead because we don't want to mess with PMIC */
-    RET
+    RET                                             /* RET to avoid messing PMIC up */
 
 /* XMegaAVR with RAMP ********************************************************/
     .section            .text._rmp_avr_yield_xmega_ramp
@@ -392,8 +372,7 @@ _RMP_AVR_Yield_XMEGA_RAMP:
     RMP_AVR_LOAD
     RMP_AVR_INT_UNMASK
     RMP_AVR_TEMP_LOAD
-    /* Use RET instead because we don't want to mess with PMIC */
-    RET
+    RET                                             /* RET to avoid messing PMIC up */
 
 /* XMegaAVR with RAMP and EIND ***********************************************/
     .section            .text._rmp_avr_yield_xmega_eind
@@ -410,8 +389,7 @@ _RMP_AVR_Yield_XMEGA_EIND:
     RMP_AVR_LOAD
     RMP_AVR_INT_UNMASK
     RMP_AVR_TEMP_LOAD
-    /* Use RET instead because we don't want to mess with PMIC */
-    RET
+    RET                                             /* RET to avoid messing PMIC up */
 /* End Function:_RMP_Yield ***************************************************/
     .end
 /* End Of File ***************************************************************/
