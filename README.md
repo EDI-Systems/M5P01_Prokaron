@@ -163,6 +163,7 @@ This software is an official work of EDI, and thus belongs to the **public domai
 ### Typical performance figures for all supported architectures
 
 &ensp;&ensp;The **absolute minimum** value for RMP is about **1.6k ROM and 432 byte RAM**, which is reached on the STM32F030F4 (Cortex-M0) port, and this number even included the 60-byte thread control block and 256-byte stack of the first thread, and a 64-byte kernel interrupt response stack. The OS kernel and the stripped down HAL only consumes **52 bytes** of memory combined. If you are willing to push this limit even further, then the **manufacturer HAL is a rip-off for you** and you can roll your own.
+&ensp;&ensp;The current minimal proof-of-concept implementation that can finish the benchmark test is achieved with ATMEGA328P. It only has a meager **32k Flash and 2k SRAM**. 
 
 &ensp;&ensp;The timing performance of the kernel is shown as follows. All compiler options are the highest optimization (usually -O3 with LTO when available) and optimized for time, and all values are average in CPU cycles. 
 - Yield    : Yield from one thread to another.
@@ -181,7 +182,8 @@ This software is an official work of EDI, and thus belongs to the **public domai
 
 |Chipname     |Platform    |Build |Yield|Mail |Sem  |FIFO |Msgq |Bmq  |Mail/I|Sem/I|Msgq/I |Bmq/I |Mem  |
 |:-----------:|:----------:|:----:|:---:|:---:|:---:|:---:|:---:|:---:|:----:|:---:|:-----:|:----:|:---:|
-|ATMEGA1284P  |AVR         |GCC   |437  |751  |717  |314  |1098 |1352 |637   |639  |921    |1087  |1680 |
+|ATMEGA328P   |AVR         |GCC   |408  |719  |686  |313  |1065 |1318 |624   |626  |905    |1073  |N/A  |
+|ATMEGA1284P  |...         |...   |437  |751  |717  |314  |1098 |1352 |637   |639  |921    |1087  |1680 |
 |ATMEGA2560   |...         |...   |449  |774  |736  |326  |1131 |1396 |656   |654  |942    |1117  |1686 |
 |DSPIC33EP512 |DSPIC33E    |XC16  |470  |886  |766  |440  |1266 |1777 |709   |614  |958    |1254  |893  |
 |MSP430F149   |MSP430      |CCS   |312  |641  |573  |312  |985  |1278 |528   |487  |739    |898   |N/A  |
@@ -216,7 +218,7 @@ This software is an official work of EDI, and thus belongs to the **public domai
 |...          |...         |GCC   |TBD  |TBD  |TBD  |TBD  |TBD  |TBD  |TBD   |TBD  |TBD    |TBD   |TBD  |
 |CH32V307     |RV32IMAFC   |GCC   |TBD  |TBD  |TBD  |TBD  |TBD  |TBD  |TBD   |TBD  |TBD    |TBD   |TBD  |
 
-In contrast, RT-Linux 4.12's best context switch time on Cortex-M7 is bigger than 25000 cycles (have to run from FMC SDRAM). This is measured with futex; if other forms of IPC such as pipes are used, this time is even longer.
+In contrast, RT-Linux 4.12's best context switch time on Cortex-M7 is bigger than 25000 cycles (has to run from FMC SDRAM due to its sheer size). This is measured with futex; if other forms of IPC such as pipes are used, this time is even longer.
 
 ### Possible new platform supports
 |Platform   |Reason                 |Priority            |
