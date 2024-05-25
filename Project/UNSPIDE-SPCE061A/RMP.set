@@ -1,0 +1,42 @@
+[General]
+Version=1.0
+Config=0
+ReleaseIntermediate=.\Release
+ReleaseOutput=.\Release
+DebudIntermediate=.\Debug
+DebugOutput=.\Debug
+BodyName=SPCE061A
+
+[SetLink]
+ExeFile=1
+Output=RMP.S37
+INTVEC=1
+STARTUP=1
+ALIGNRES=0
+ALIGNNUM=0
+INITTABLE=1
+
+[LIBRARY]
+Count=1
+LIB0=CMacro.lib
+
+[SYMBOL]
+Count=0
+
+[Option]
+CC_LOC=$(APPDIR)\gcc
+CC_FLAG_D=-S -gstabs
+CC_FLAG_R=-S -O2
+AS_LOC=$(APPDIR)\xasm16
+AS_FLAG_D=-t2 -d
+AS_FLAG_R=-t2
+LD_LOC=$(APPDIR)\xlink16
+LD_FLAG_D=
+LD_FLAG_R=
+DebugOpt=0
+ReleaseOpt=1
+IsGenMakefile=1
+IsGenAryfile=1
+IsGenList=1
+CurIsa=ISA11
+
