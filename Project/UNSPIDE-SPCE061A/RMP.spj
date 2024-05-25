@@ -1,0 +1,202 @@
+#Sunplus Debeloper Project File - Name = SunplusIDE
+#Sunplus Developer Generated Build File Format Version V1.00
+#**DO NOT EDIT**
+#TARTYPE (SPCE061A)Application
+CFG=Debug
+
+# Begin Project
+#Name Begin SPCE061A-Debug
+# Begin SubItem "UNSPIDE-SPCE061A  files"
+# Begin Group "Source Files"
+#PROP Default_Filter=;c;cxx;rc;def;r;odl;idl;hpj;bat
+USEPARAM=FALSE
+PARAM=
+EXPORT=3
+# Begin Source File
+SOURCE=Resource.asm
+USEPARAM=FALSE
+PARAM=
+ID=
+EXPORT=3
+# End Source File
+# Begin Group "Kernel"
+#PROP Default_Filter=
+USEPARAM=FALSE
+PARAM=
+EXPORT=3
+# Begin Source File
+SOURCE=..\..\Source\Kernel\rmp_kernel.c
+USEPARAM=FALSE
+PARAM=
+ID=
+EXPORT=3
+# End Source File
+# End Group
+# Begin Group "Platform"
+#PROP Default_Filter=
+USEPARAM=FALSE
+PARAM=
+EXPORT=3
+# Begin Source File
+SOURCE=..\..\Source\Platform\UNSP\rmp_platform_unsp.c
+USEPARAM=FALSE
+PARAM=
+ID=
+EXPORT=3
+# End Source File
+# Begin Source File
+SOURCE=..\..\Source\Platform\UNSP\rmp_platform_unsp_gcc.asm
+USEPARAM=FALSE
+PARAM=
+ID=
+EXPORT=3
+# End Source File
+# End Group
+# Begin Group "Test"
+#PROP Default_Filter=
+USEPARAM=FALSE
+PARAM=
+EXPORT=0
+# Begin Source File
+SOURCE=..\..\Source\Test\rmp_benchmark.c
+USEPARAM=FALSE
+PARAM=
+ID=
+EXPORT=3
+# End Source File
+# Begin Source File
+SOURCE=rmp_test_spce061a_gcc.asm
+USEPARAM=FALSE
+PARAM=
+ID=
+EXPORT=3
+# End Source File
+# End Group
+# End Group
+# Begin Group "Head Files"
+#PROP Default_Filter=pp;hxx;hm;inl
+USEPARAM=FALSE
+PARAM=
+EXPORT=3
+# Begin Source File
+SOURCE=Resource.inc
+USEPARAM=FALSE
+PARAM=
+ID=
+EXPORT=3
+# End Source File
+# End Group
+# Begin Group "External Dependencies"
+#PROP Default_Filter=;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe
+USEPARAM=FALSE
+PARAM=
+EXPORT=3
+# Begin Source File
+SOURCE=Makefile
+USEPARAM=FALSE
+PARAM=
+ID=
+EXPORT=0
+# End Source File
+# End Group
+# End SubItem
+#Name End SPCE061A-Debug
+#Name Begin SPCE061A-Release
+# Begin SubItem "UNSPIDE-SPCE061A  files"
+# Begin Group "Source Files"
+#PROP Default_Filter=;c;cxx;rc;def;r;odl;idl;hpj;bat
+USEPARAM=FALSE
+PARAM=
+EXPORT=3
+# Begin Source File
+SOURCE=Resource.asm
+USEPARAM=FALSE
+PARAM=
+ID=
+EXPORT=3
+# End Source File
+# Begin Group "Kernel"
+#PROP Default_Filter=
+USEPARAM=FALSE
+PARAM=
+EXPORT=3
+# Begin Source File
+SOURCE=..\..\Source\Kernel\rmp_kernel.c
+USEPARAM=FALSE
+PARAM=
+ID=
+EXPORT=3
+# End Source File
+# End Group
+# Begin Group "Platform"
+#PROP Default_Filter=
+USEPARAM=FALSE
+PARAM=
+EXPORT=3
+# Begin Source File
+SOURCE=..\..\Source\Platform\UNSP\rmp_platform_unsp.c
+USEPARAM=FALSE
+PARAM=
+ID=
+EXPORT=3
+# End Source File
+# Begin Source File
+SOURCE=..\..\Source\Platform\UNSP\rmp_platform_unsp_gcc.asm
+USEPARAM=FALSE
+PARAM=
+ID=
+EXPORT=3
+# End Source File
+# End Group
+# Begin Group "Test"
+#PROP Default_Filter=
+USEPARAM=FALSE
+PARAM=
+EXPORT=0
+# Begin Source File
+SOURCE=..\..\Source\Test\rmp_benchmark.c
+USEPARAM=FALSE
+PARAM=
+ID=
+EXPORT=3
+# End Source File
+# Begin Source File
+SOURCE=rmp_test_spce061a_gcc.asm
+USEPARAM=FALSE
+PARAM=
+ID=
+EXPORT=3
+# End Source File
+# End Group
+# End Group
+# Begin Group "Head Files"
+#PROP Default_Filter=pp;hxx;hm;inl
+USEPARAM=FALSE
+PARAM=
+EXPORT=3
+# Begin Source File
+SOURCE=Resource.inc
+USEPARAM=FALSE
+PARAM=
+ID=
+EXPORT=3
+# End Source File
+# End Group
+# Begin Group "External Dependencies"
+#PROP Default_Filter=;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe
+USEPARAM=FALSE
+PARAM=
+EXPORT=3
+# Begin Source File
+SOURCE=Makefile
+USEPARAM=FALSE
+PARAM=
+ID=
+EXPORT=0
+# End Source File
+# End Group
+# End SubItem
+#Name End SPCE061A-Release
+# End Project
+#Sunplus Debeloper Project File - Name = SunplusIDE
+#Sunplus Developer Generated Build File Format Version V1.00
