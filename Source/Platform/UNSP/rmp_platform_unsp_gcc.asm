@@ -12,9 +12,19 @@
 //R1-R3       : General purpose registers.
 //R5          : Base pointer.
 //R8-R15      : General purpose register (only present in unSP V2).
+//SR1-SR4     : Secondary register bank (only present in unSP V2).
 //SR          : Status register (includes CS and DS).
 //SP          : Stack pointer.
 //PC          : Program counter.
+//FR          : Function control register, where
+//              [13]   - BNK - this port will NOT switch register banks
+//              [12]   - FRA
+//              [11]   - FIR_MOVE
+//              [10:7] - SB
+//              [6]    - ENA_FIQ
+//              [5]    - ENQ_IRQ
+//              [4]    - INE
+//              [3:0]  - PRI
 //*****************************************************************************
 
 // Import *********************************************************************
@@ -35,6 +45,8 @@
     .public             _RMP_Int_Disable
     // Enable all interrupts
     .public             _RMP_Int_Enable
+    // Mask/unmask interrupt
+    .public             _RMP_Int_Mask
     // Start the first thread
     .public             __RMP_Start
     // Trigger a context switch
@@ -43,7 +55,7 @@
 // End Export *****************************************************************
 
 // Header *********************************************************************
-    .code
+    .text
 // End Header *****************************************************************
 
 // Function:RMP_Int_Disable ***************************************************
@@ -54,7 +66,7 @@
 //Return      : None.
 //*****************************************************************************
 _RMP_Int_Disable:
-    INT                 FIQ
+    INT                 FIQ,IRQ
     RETF
 // End Function:RMP_Int_Disable ***********************************************
 
@@ -69,6 +81,24 @@ _RMP_Int_Enable:
     RETF
 // End Function:RMP_Int_Enable ************************************************
 
+// Function:RMP_Int_Mask ******************************************************
+//Description : Disable/enable IRQ but leave FIQ alone.
+//Input       : [BP] - Whether to mask IRQ.
+//Output      : None.
+//Return      : None.
+//*****************************************************************************
+_RMP_Int_Mask:
+    BP                  =SP+3
+    R1                  =[BP]
+    CMP                 R1,0
+    JZ                  _RMP_Int_Mask_Enable
+    INT                 FIQ
+    RETF
+_RMP_Int_Mask_Enable:
+    INT                 FIQ,IRQ
+    RETF
+// End Function:RMP_Int_Mask **************************************************
+
 // Function:_RMP_Start ********************************************************
 //Description : Jump to the user function and will never return from it.
 //Input       : [BP+0] - The entry of the first task.
@@ -77,8 +107,8 @@ _RMP_Int_Enable:
 //Return      : None.
 //*****************************************************************************
 __RMP_Start:
-    // Save the current kernel SP address - use BP to gain more space
     BP                  =SP+3
+    // Save the current kernel SP address - use BP to gain more space
     R1                  =BP+2
     [__RMP_UNSP_SP_Kern]=R1
     // Load SP for the first task
@@ -94,8 +124,8 @@ __RMP_Start:
     BP                  =[BP+0]
     R1                  =[BP]
     R2                  =[BP+1]
-    PUSH                R1,R2 to [SP]
-    POP                 SR,PC from [SP]
+    PUSH                R1,R2 TO [SP]
+    POP                 SR,PC FROM [SP]
     // Should not reach here
 // End Function:_RMP_Start ****************************************************
 
@@ -112,7 +142,7 @@ __RMP_Start:
     // cater kernel agnostic interrupts.
 RMP_UNSP_SAVE:          .macro
     INT                 FIQ
-    PUSH                R1,R5 to [SP]
+    PUSH                R1,R5 TO [SP]
     .endm
 
 // Actual context switch ******************************************************
@@ -127,7 +157,7 @@ RMP_UNSP_SWITCH:        .macro
 
 // Restore all GP regs ********************************************************
 RMP_UNSP_LOAD:          .macro
-    POP                 R1,R5 from [SP]
+    POP                 R1,R5 FROM [SP]
     INT                 FIQ,IRQ
     RETI
     .endm
@@ -142,7 +172,11 @@ __RMP_UNSP_Yield_SPV1:  .proc
 // unSP V2.x ******************************************************************
 __RMP_UNSP_Yield_SPV2:  .proc
     RMP_UNSP_SAVE
+    .dw                 0xFF80      // PUSH R8,R15 TO [SP]
+    .dw                 0x8E20
     RMP_UNSP_SWITCH
+    .dw                 0xFF80      // POP R8,R15 FROM [SP]
+    .dw                 0x0E20
     RMP_UNSP_LOAD
     .endp
 // End Function:_RMP_Yield ****************************************************

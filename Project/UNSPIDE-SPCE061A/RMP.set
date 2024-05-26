@@ -25,15 +25,15 @@ Count=0
 
 [Option]
 CC_LOC=$(APPDIR)\gcc
-CC_FLAG_D=-S -gstabs
+CC_FLAG_D=-S -Os
 CC_FLAG_R=-S -O2
 AS_LOC=$(APPDIR)\xasm16
-AS_FLAG_D=-t2 -d
+AS_FLAG_D= -t2
 AS_FLAG_R=-t2
 LD_LOC=$(APPDIR)\xlink16
 LD_FLAG_D=
 LD_FLAG_R=
-DebugOpt=0
+DebugOpt=4
 ReleaseOpt=1
 IsGenMakefile=1
 IsGenAryfile=1

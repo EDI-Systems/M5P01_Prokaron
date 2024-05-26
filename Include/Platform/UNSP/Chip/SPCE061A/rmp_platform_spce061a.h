@@ -24,13 +24,13 @@ Description: The configuration file for SPCE061A.
 /* The stack size of the init thread */
 #define RMP_INIT_STACK_SIZE         (96U)
 /* The mask/unmask interrupt operations */
-#define RMP_INT_MASK()              RMP_Int_Disable()
-#define RMP_INT_UNMASK()            RMP_Int_Enable()
+#define RMP_INT_MASK()              RMP_Int_Mask(0x01U)
+#define RMP_INT_UNMASK()            RMP_Int_Mask(0x00U)
 
 /* Tick timer value decided in IRQ - 1/1024s */
-#define RMP_UNSP_TICK_VAL         	(C_IRQ4_1KHz)
+#define RMP_UNSP_TICK_VAL           (C_IRQ4_1KHz)
 /* Is this unSP V2? */
-#define RMP_UNSP_COP_SPV2          	(0U)
+#define RMP_UNSP_COP_SPV2           (0U)
 
 /* Other low-level initialization stuff - clock and serial.
  * This is the default initialization sequence. If you wish to supply
@@ -40,15 +40,15 @@ Description: The configuration file for SPCE061A.
 do \
 { \
     /* System clock: Fosc=Fcpu=49.152MHz */ \
-   	*P_SystemClock=C_Fosc_49M|C_Fosc; \
+    *P_SystemClock=C_Fosc_49M|C_Fosc; \
     /* UART TX on IOB10, configured as output */ \
-	*P_IOB_Dir=0x0400U; \
-	/* UART reset then TX enable, 115200-8-N-1 */ \
-	*P_UART_Command1=C_UART_Reset; \
-	*P_UART_Command1=0x00U; \
-	*P_UART_BaudScalarHigh=0x00U; \
-	*P_UART_BaudScalarLow=0x6BU; \
-	*P_UART_Command2=C_UART_Tx_Pin_ENB; \
+    *P_IOB_Dir=0x0400U; \
+    /* UART reset then TX enable, 115200-8-N-1 */ \
+    *P_UART_Command1=C_UART_Reset; \
+    *P_UART_Command1=0x00U; \
+    *P_UART_BaudScalarHigh=0x00U; \
+    *P_UART_BaudScalarLow=0x6BU; \
+    *P_UART_Command2=C_UART_Tx_Pin_ENB; \
     /* Configure 1/1024s tick timer on IRQ4 */ \
     *P_INT_Clear=0xFFFFU; \
     *P_INT_Ctrl=RMP_UNSP_TICK_VAL; \
