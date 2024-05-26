@@ -89,7 +89,7 @@ Return      : None.
 ******************************************************************************/
 void _RMP_Plat_Hook(void)
 {
-    /* Scheduler lock implemented with interrupt disabling */
+    /* Scheduler lock is coupled but not implemented with interrupt disabling */
 }
 /* End Function:_RMP_Plat_Hook ***********************************************/
 

@@ -1,6 +1,6 @@
 #####################################################################
 #																	 
-#	Created by u'nSP IDE		01:29:26	05/26/24
+#	Created by u'nSP IDE		18:29:24	05/26/24
 #
 #####################################################################
 
@@ -33,11 +33,11 @@ ARYFILE	= "$(OUTDIR)\RMP.ary"
 
 SBMFILE	= "$(OUTDIR)\RMP.sbm"
 
-OPT	= -S -gstabs
+OPT	= -S -Os
 
-ASFLAGS	= -t2 -d
+ASFLAGS	=  -t2
 
-CASFLAGS	= -t2 
+CASFLAGS	=  -t2
 
 CFLAGS	= $(OPT) -B$(APPDIR)\ $(INCLUDES) 
 
@@ -52,8 +52,8 @@ OBJFILES	= \
 	"$(OUTDIR)\Resource.obj" \
 	"$(OUTDIR)\rmp_kernel.obj" \
 	"$(OUTDIR)\rmp_platform_unsp.obj" \
-	"$(OUTDIR)\rmp_benchmark.obj" \
 	"$(OUTDIR)\rmp_platform_unsp_gcc.obj" \
+	"$(OUTDIR)\rmp_benchmark.obj" \
 	"$(OUTDIR)\rmp_test_spce061a_gcc.obj" 
 
 "$(OUTDIR)\Resource.obj": "C:\Code_Library\M5P01_Prokaron\Project\UNSPIDE-SPCE061A\Resource.asm" 
@@ -67,12 +67,12 @@ OBJFILES	= \
 	$(CC) $(CFLAGS) -o "$(OUTDIR)/rmp_platform_unsp.asm" "C:/Code_Library/M5P01_Prokaron/Source/Platform/UNSP/rmp_platform_unsp.c" 
 	$(AS) $(CASFLAGS) $(INCLUDES) -l "$(OUTDIR)\rmp_platform_unsp.lst" -o "$(OUTDIR)\rmp_platform_unsp.obj" "$(OUTDIR)\rmp_platform_unsp.asm" 
 
+"$(OUTDIR)\rmp_platform_unsp_gcc.obj": "C:\Code_Library\M5P01_Prokaron\Source\Platform\UNSP\rmp_platform_unsp_gcc.asm" 
+	$(AS) $(ASFLAGS) $(INCLUDES) -l "$(OUTDIR)\rmp_platform_unsp_gcc.lst" -o "$(OUTDIR)\rmp_platform_unsp_gcc.obj" "C:\Code_Library\M5P01_Prokaron\Source\Platform\UNSP\rmp_platform_unsp_gcc.asm" 
+
 "$(OUTDIR)\rmp_benchmark.obj": "C:\Code_Library\M5P01_Prokaron\Source\Test\rmp_benchmark.c" "rmp_test.h" 
 	$(CC) $(CFLAGS) -o "$(OUTDIR)/rmp_benchmark.asm" "C:/Code_Library/M5P01_Prokaron/Source/Test/rmp_benchmark.c" 
 	$(AS) $(CASFLAGS) $(INCLUDES) -l "$(OUTDIR)\rmp_benchmark.lst" -o "$(OUTDIR)\rmp_benchmark.obj" "$(OUTDIR)\rmp_benchmark.asm" 
-
-"$(OUTDIR)\rmp_platform_unsp_gcc.obj": "C:\Code_Library\M5P01_Prokaron\Source\Platform\UNSP\rmp_platform_unsp_gcc.asm" 
-	$(AS) $(ASFLAGS) $(INCLUDES) -l "$(OUTDIR)\rmp_platform_unsp_gcc.lst" -o "$(OUTDIR)\rmp_platform_unsp_gcc.obj" "C:\Code_Library\M5P01_Prokaron\Source\Platform\UNSP\rmp_platform_unsp_gcc.asm" 
 
 "$(OUTDIR)\rmp_test_spce061a_gcc.obj": "C:\Code_Library\M5P01_Prokaron\Project\UNSPIDE-SPCE061A\rmp_test_spce061a_gcc.asm" "..\..\Include\Platform\UNSP\rmp_platform_unsp_gcc.inc" 
 	$(AS) $(ASFLAGS) $(INCLUDES) -l "$(OUTDIR)\rmp_test_spce061a_gcc.lst" -o "$(OUTDIR)\rmp_test_spce061a_gcc.obj" "C:\Code_Library\M5P01_Prokaron\Project\UNSPIDE-SPCE061A\rmp_test_spce061a_gcc.asm" 
@@ -99,11 +99,11 @@ clean :
 	$(RM) "$(OUTDIR)\rmp_platform_unsp.obj" 
 	$(RM) "$(OUTDIR)\rmp_platform_unsp.lst" 
 	$(RM) "$(OUTDIR)\rmp_platform_unsp.asm" 
+	$(RM) "$(OUTDIR)\rmp_platform_unsp_gcc.obj" 
+	$(RM) "$(OUTDIR)\rmp_platform_unsp_gcc.lst" 
 	$(RM) "$(OUTDIR)\rmp_benchmark.obj" 
 	$(RM) "$(OUTDIR)\rmp_benchmark.lst" 
 	$(RM) "$(OUTDIR)\rmp_benchmark.asm" 
-	$(RM) "$(OUTDIR)\rmp_platform_unsp_gcc.obj" 
-	$(RM) "$(OUTDIR)\rmp_platform_unsp_gcc.lst" 
 	$(RM) "$(OUTDIR)\rmp_test_spce061a_gcc.obj" 
 	$(RM) "$(OUTDIR)\rmp_test_spce061a_gcc.lst" 
 	$(RM) $(BINFILE) $(SBMFILE) 

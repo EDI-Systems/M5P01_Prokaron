@@ -4,36 +4,43 @@ Author      : pry
 Date        : 25/05/2024
 Licence     : The Unlicense; see LICENSE for details.
 Description : The header of "rmp_platform_unsp.c".
-              This port supports both unSP 1.x and 2.0 (2.0 have extra regs).
+              This port supports both unSP 1.2 and 2.0 (2.0 have 8 extra regs).
               The only chip that this port plans to test is the SPCE061A, an
-              obsolete microcontroller at the heart of Sunplus University
+              obsolete microcontroller at the heart of the Sunplus University
               Program that vanished decades ago. The chip never had a RTOS port,
               at least not a pronounced one, during its entire product lifetime.
               This port is provided as a monument for the golden age of MCU
               innovation circa 1980-2005, at which time multiple architectures
               rapidly emerged and strived to become popular on the market. Their
               efforts included university programs, competition sponsors, free
-              training sessions and free hardware giveouts. Yet, few were
+              training sessions and free hardware giveouts. Yet, very few were
               successful (and lucky) enough to survive more than two decades.
               As a retro port, this targets the unSPIDE V1.8.4 with GCC 1.0.10,
               (based on vanilla GCC 2.95.2, source released nearly a decade after
-              the binary release)released 31/10/2003. It is extracted from the
-              "61 board" (version A, self hand soldering required) accessory disk,
+              the binary release) released 31/10/2003. It is extracted from the
+              "61 board" (version A, self hand soldering required) accessory CD,
               and is the exact one that Sunplus used for its university program.
               Sunplus was a company that focused on MCUs & MPUs, and already had
-              streaks of successes in gaming consoles and talking toys circa 2k.
-              Many famous games were powered with their devices and you can find
-              such simulations even in the MAME. The company then went through a
-              series of organizational changes, and its departments were detached
-              subsequently to operate as subsidiaries or even independently.
-              The result was a Sunplus that concentrated on car HMIs & silicon
-              IPs and a list of smaller companies that focused on their dedicated
-              niche markets. Today, the MCU department of the original Sunplus
-              lives under the name of Generalplus with moderate financial success, 
-              and are still producing legacy unSP (and unSP 2.0) MCUs that this
+              streaks of successes in arcade consoles, talking toys and electronic
+              dictionaries circa 2k. Many arcade consoles were powered by their
+              devices and you can find corresponding simulators even in the MAME;
+              they even had an in-house S+ core that could boot the Linux kernel.
+              The company then went through a series of organizational changes,
+              and its departments were detached subsequently circa 2010 to operate
+              as subsidiaries or even independently. The result was a Sunplus that
+              concentrated on silicon IP licensing & car HMI and a list of smaller
+              companies that focused on their dedicated niche markets. Today, the
+              MCU department of the original Sunplus lives under the name of
+              Generalplus with moderate financial success in consumer electronics,
+              and is still producing legacy unSP (and unSP 2.0) MCUs that this
               port can theoretically support.
               Like C28x, char is 16 bits on this machine. This port is somewhat
-              usable as the benchmark occupies ~35% of ROM.
+              usable as the benchmark occupies under ~35% of ROM. As the chip was
+              intended for audio applications, the benchmark will terminate with
+              an endless original Sunplus University Program CD BGM playback. You
+              will be able to hear the sound from decades ago if you happen to
+              have a intact "61 board", a parallel programmer, and a parallel
+              port-capable vintage computer running WinXP at hand.
 ******************************************************************************/
 
 /* Define ********************************************************************/
@@ -133,8 +140,22 @@ struct RMP_UNSP_Stack
     rmp_ptr_t R3_MRL;
     rmp_ptr_t R4_MRH;
     rmp_ptr_t R5_BP;
+#if(RMP_UNSP_COP_SPV2!=0U)
+    rmp_ptr_t R8;
+    rmp_ptr_t R9;
+    rmp_ptr_t R10;
+    rmp_ptr_t R11;
+    rmp_ptr_t R12;
+    rmp_ptr_t R13;
+    rmp_ptr_t R14;
+    rmp_ptr_t R15;
+#endif
     rmp_ptr_t SR_CSDS;
     rmp_ptr_t PC;
+    /* The Sunplus compiler always use R1 to push parameters to stack in a
+     * last-to-first order, hence it could be said that the first parameter
+     * of a function is always passed in R1. However, the canonical calling
+     * convention says that it shall be passed on stack, which we abide by. */
     rmp_ptr_t Param;
 };
 /*****************************************************************************/
@@ -195,7 +216,8 @@ EXTERN void RMP_Int_Disable(void);
 EXTERN void RMP_Int_Enable(void);
 EXTERN void RMP_Int_Mask(rmp_u8_t Level);
 
-EXTERN void _RMP_Start(rmp_ptr_t Entry, rmp_ptr_t Stack);
+EXTERN void _RMP_Start(rmp_ptr_t Entry,
+                       rmp_ptr_t Stack);
 __EXTERN__ void _RMP_Yield(void);
 
 /* Platform specific */
