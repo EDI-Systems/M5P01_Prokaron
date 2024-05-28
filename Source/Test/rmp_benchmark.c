@@ -467,23 +467,19 @@ void Test_Mem_Pool(void)
         }
         
         Start=RMP_CNT_READ();
-        /* Allocation tests - should not fail anyway */
+        /* Allocation tests - some malloc may fail if sizeof(rmp_ptr_t)==1; this is
+         * normal (could happen on some 16-bitters that have word addressing, because
+         * the pool is not big enough). However, the first two must be successful. */
         Mem[Alloc[0]]=RMP_Malloc(Pool, Amount[Size[0]]);
         RMP_ASSERT(Mem[Alloc[0]]!=RMP_NULL);
         Mem[Alloc[1]]=RMP_Malloc(Pool, Amount[Size[1]]);
         RMP_ASSERT(Mem[Alloc[1]]!=RMP_NULL);
         Mem[Alloc[2]]=RMP_Malloc(Pool, Amount[Size[2]]);
-        RMP_ASSERT(Mem[Alloc[2]]!=RMP_NULL);
         Mem[Alloc[3]]=RMP_Malloc(Pool, Amount[Size[3]]);
-        RMP_ASSERT(Mem[Alloc[3]]!=RMP_NULL);
         Mem[Alloc[4]]=RMP_Malloc(Pool, Amount[Size[4]]);
-        RMP_ASSERT(Mem[Alloc[4]]!=RMP_NULL);
         Mem[Alloc[5]]=RMP_Malloc(Pool, Amount[Size[5]]);
-        RMP_ASSERT(Mem[Alloc[5]]!=RMP_NULL);
         Mem[Alloc[6]]=RMP_Malloc(Pool, Amount[Size[6]]);
-        RMP_ASSERT(Mem[Alloc[6]]!=RMP_NULL);
         Mem[Alloc[7]]=RMP_Malloc(Pool, Amount[Size[7]]);
-        RMP_ASSERT(Mem[Alloc[7]]!=RMP_NULL);
 
         /* Deallocation tests */
         RMP_Free(Pool,Mem[Free[0]]);
@@ -496,9 +492,10 @@ void Test_Mem_Pool(void)
         RMP_Free(Pool,Mem[Free[7]]);
         End=RMP_CNT_READ();
         RMP_DATA();
-        
-        /* This should always be successful because we deallocated everything else */
-        Mem[0]=RMP_Malloc(Pool, (TEST_MEM_POOL>>7)*127U);
+
+        /* This should always be successful because we deallocated everything else.
+         * Using 112 here to back off a little bit in case sizeof(rmp_ptr_t)==1. */
+        Mem[0]=RMP_Malloc(Pool, (TEST_MEM_POOL>>7)*112);
         if(Mem[0]==RMP_NULL)
         {
             RMP_DBG_S("Memory test failure: ");

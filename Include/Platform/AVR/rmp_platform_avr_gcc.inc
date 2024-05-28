@@ -34,7 +34,7 @@ Description : The assembly part of the RMP RTOS. This is for AVR, and
     .extern             _RMP_AVR_Yield_Pend
     /* Extract highest priority running thread */
     .extern             _RMP_Run_High
-    /* Handler for DSPIC timer interrupt */
+    /* Handler for AVR timer interrupt */
     .extern             _RMP_AVR_Tim_Handler
 /* End Import ****************************************************************/
 
