@@ -44,7 +44,7 @@ This software is an official work of EDI, and thus belongs to the **public domai
 ### Basic thread operations
 **Create a thread**
 ```C
-    RMP_Thd_Crt(&Thd_1            /* Thread control block */, 
+    RMP_Thd_Crt(&Thd_1            /* Thread control block */,
                 Func_1            /* Thread entry */,
                 &Stack_1          /* Stack address */,
                 sizeof(Stack_1),  /* Stack size */,
@@ -166,7 +166,7 @@ This software is an official work of EDI, and thus belongs to the **public domai
 
 &ensp;&ensp;The current minimal proof-of-concept implementation that can finish the benchmark test is achieved with ATMEGA328P. It only has a meager **32k Flash and 2k SRAM**. 
 
-&ensp;&ensp;The timing performance of the kernel is shown as follows. All compiler options are the highest optimization (usually -O3 with LTO when available) and optimized for time, and all values are average in CPU cycles. 
+&ensp;&ensp;The timing performance of the kernel in __real action__ is shown as follows. All compiler options are the highest optimization (usually -O3 with LTO when available) and optimized for time, and all values are __average case__ in CPU cycles; the __WCET__ registered in [test header files](Include/Test/Chip) is roughly equivalent to this value plus the tick timer interrupt interference.
 - Yield    : Yield from one thread to another.
 - Mail     : Mailbox communication from one thread to another.
 - Sem      : Semaphore communication from one thread to another.
@@ -219,7 +219,9 @@ This software is an official work of EDI, and thus belongs to the **public domai
 |...          |...         |GCC   |TBD  |TBD  |TBD  |TBD  |TBD  |TBD  |TBD   |TBD  |TBD    |TBD   |TBD  |
 |CH32V307     |RV32IMAFC   |GCC   |TBD  |TBD  |TBD  |TBD  |TBD  |TBD  |TBD   |TBD  |TBD    |TBD   |TBD  |
 
-In contrast, RT-Linux 4.12's best context switch time on Cortex-M7 is bigger than 25000 cycles (has to run from FMC SDRAM due to its sheer size). This is measured with futex; if other forms of IPC such as pipes are used, this time is even longer.
+&ensp;&ensp;In contrast, RT-Linux 4.12's best context switch time on Cortex-M7 is bigger than 25000 cycles (note that has to run from FMC SDRAM due to its sheer size, so this is not fair comparison). This is measured with futex; if other forms of IPC such as pipes are used, this time is even longer.
+
+&ensp;&ensp;__No cheating methods__ (such as toolchain-specific peephole optimizations that harm portability, cooperative switches that don't invoke the scheduler, scheduler designs that are fast in average case but have unbounded WCET, or even RMS-style stackless coroutine switches) are used in the experiments, and the reported WCETs in test headers are real. Despite the fact that we list the average case values for generic comparisons, it is important to realize that __only WCETs matter__ in a RTOS; optimizations that help the average case but hurt the worst-case are never suitable for such kernels. If maximum speed is your utmost goal, __no system is faster than RMS or DOS__; the theoretical context switch time of the RMS is zero (when all tasks have a single state and are inlined), while DOS does not need context switches altogether because it only allows one execution flow.
 
 ### Possible new platform supports
 |Platform   |Reason                 |Priority            |
