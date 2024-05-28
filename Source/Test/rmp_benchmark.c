@@ -495,7 +495,7 @@ void Test_Mem_Pool(void)
         
         /* This should always be successful because we deallocated everything else.
          * Using 112 here to back off a little bit in case sizeof(rmp_ptr_t)==1. */
-        Mem[0]=RMP_Malloc(Pool, (TEST_MEM_POOL>>7)*112);
+        Mem[0]=RMP_Malloc(Pool, (TEST_MEM_POOL>>7)*112U);
         if(Mem[0]==RMP_NULL)
         {
             RMP_DBG_S("Memory test failure: ");
