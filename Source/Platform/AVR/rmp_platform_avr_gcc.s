@@ -39,7 +39,7 @@ PMIC_CTRL   : Only present in XMega series for interrupt masking.
     .global             RMP_Int_Disable
     /* Enable all interrupts */
     .global             RMP_Int_Enable
-    /* Mask/unmask interrupt dummy */
+    /* Mask/unmask interrupt (XMegaAVR only) */
     .global             RMP_Int_Mask
     /* Start the first thread */
     .global             _RMP_Start
