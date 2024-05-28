@@ -50,16 +50,16 @@ ISR Blocking message queue         : 1176 / 1437 / 1148
 /* End Include ***************************************************************/
 
 /* Define ********************************************************************/
-/* How to read counter */
+/* Counter read wrapper */
 #define RMP_CNT_READ()      ((rmp_tim_t)(TCNT1))
-/* Are we testing the memory pool? */
+/* Memory pool test switch */
 #define TEST_MEM_POOL       (2048U)
-/* Are we doing minimal measurements? */
+/* Minimal build switch */
 /* #define MINIMAL_SIZE */
-/* The AVR timers we use is 16 bits, so */
-typedef rmp_u16_t rmp_tim_t;
-/* The pointer is also 16-bit, resort to 32-bit accumulators */
+/* Pointer size switch */
 #define PTR_16_BIT
+/* Timestamp data type */
+typedef rmp_u16_t rmp_tim_t;
 /* End Define ****************************************************************/
 
 /* Global ********************************************************************/

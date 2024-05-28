@@ -87,16 +87,14 @@ ISR Blocking message queue         : 1416 / 1643 / 1414
 /* End Include ***************************************************************/
 
 /* Define ********************************************************************/
-/* How to read counter */
+/* Counter read wrapper */
 #define RMP_CNT_READ()          (~CpuTimer1Regs.TIM.all)
-/* Are we testing the memory pool? */
+/* Memory pool test switch */
 #define TEST_MEM_POOL           (2048U)
-/* Are we doing minimal measurements? */
+/* Minimal build switch */
 /* #define MINIMAL_SIZE */
-/* The C28X timers are all 16 bits, so */
+/* Timestamp data type */
 typedef rmp_u16_t rmp_tim_t;
-/* The pointer is also 16-bit, resort to 32-bit accumulators */
-/* #define PTR_16_BIT */
 /* End Define ****************************************************************/
 
 /* Global ********************************************************************/

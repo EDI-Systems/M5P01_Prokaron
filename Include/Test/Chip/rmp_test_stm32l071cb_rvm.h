@@ -88,13 +88,13 @@ ISR Blocking message queue         : 1867 / 4979 / 1859
 /* End Include ***************************************************************/
 
 /* Define ********************************************************************/
-/* How to read counter */
+/* Counter read wrapper */
 #define RMP_CNT_READ()          ((rmp_tim_t)(TIM2_CNT))
-/* Are we testing the memory pool? */
-/* #define TEST_MEM_POOL     8192 */
-/* Are we doing minimal measurements? */
+/* Memory pool test switch */
+/* #define TEST_MEM_POOL */
+/* Minimal build switch */
 /* #define MINIMAL_SIZE */
-/* The STM32L0 timers are mixed and we treat them as 16-bits */
+/* Timestamp data type - STM32L0 timers are mixed, we treat them as 16-bits */
 typedef rmp_u16_t rmp_tim_t;
 
 /* Hardware definitions so we don't rely on STM32 HAL */

@@ -40,13 +40,13 @@ ISR Blocking message queue         : 47856 / 47922 / 480
 /* End Include ***************************************************************/
 
 /* Define ********************************************************************/
-/* How to read counter */
+/* Counter read wrapper */
 #define RMP_CNT_READ()      ((rmp_tim_t)RMP_RV32P_MCYCLE_Get())
-/* Are we testing the memory pool? */
-/* #define TEST_MEM_POOL       8192 */
-/* Are we doing minimal measurements? */
+/* Memory pool test switch */
+/* #define TEST_MEM_POOL */
+/* Minimal build switch */
 /* #define MINIMAL_SIZE */
-/* The FE310 timers are all 64 bits, however we only need last 16 bits */
+/* Timestamp data type - MCYCLE is 64 bits, but we only need 16 bits */
 typedef rmp_u16_t rmp_tim_t;
 /* End Define ****************************************************************/
 

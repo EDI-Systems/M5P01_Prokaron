@@ -49,13 +49,13 @@ ISR Blocking message queue         : 514 / 616 / 484
 /* End Include ***************************************************************/
 
 /* Define ********************************************************************/
-/* How to read counter */
+/* Counter read wrapper */
 #define RMP_CNT_READ()    ((TIM2->CNT)<<1)
-/* Are we testing the memory pool? */
-#define TEST_MEM_POOL     8192
-/* Are we doing minimal measurements? */
+/* Memory pool test switch */
+#define TEST_MEM_POOL     (8192U)
+/* Minimal build switch */
 /* #define MINIMAL_SIZE */
-/* The STM32F7 timers are all 32 bits, so */
+/* Timestamp data type */
 typedef rmp_ptr_t rmp_tim_t;
 /* End Define ****************************************************************/
 

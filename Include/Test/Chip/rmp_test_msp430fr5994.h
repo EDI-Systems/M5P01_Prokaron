@@ -50,14 +50,14 @@ ISR Blocking message queue         : 1464 / 1687 / 1462
 /* End Include ***************************************************************/
 
 /* Define ********************************************************************/
-/* How to read counter */
+/* Counter read wrapper */
 #define RMP_CNT_READ()      (TA1R)
-/* Are we testing the memory pool? */
+/* Memory pool test switch */
 #define TEST_MEM_POOL       (8192U)
 #pragma PERSISTENT(Pool)
-/* Are we doing minimal measurements? */
+/* Minimal build switch */
 /* #define MINIMAL_SIZE */
-/* The MSP430 timers are all 16 bits, so */
+/* Timestamp data type */
 typedef rmp_u16_t rmp_tim_t;
 /* End Define ****************************************************************/
 

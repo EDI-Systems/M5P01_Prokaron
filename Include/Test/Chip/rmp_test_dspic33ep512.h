@@ -31,15 +31,15 @@ ISR Blocking message queue         : 1244 / 1560 / 1242
 /* End Include ***************************************************************/
 
 /* Define ********************************************************************/
-/* How to read counter */
+/* Counter read wrapper */
 #define RMP_CNT_READ()          ((TMR2)<<1)
-/* Are we testing the memory pool? */
-#define TEST_MEM_POOL           8192
-/* Are we doing minimal measurements? */
+/* Memory pool test switch */
+#define TEST_MEM_POOL           (8192U)
+/* Minimal build switch */
 /* #define MINIMAL_SIZE */
-/* Because on this platform, a pointer is 16-bit, thus we need to define this */
+/* Pointer size switch */
 #define PTR_16_BIT
-/* The PIC33 timers 2-x are all 16 bits, so */
+/* Timestamp data type */
 typedef rmp_u16_t rmp_tim_t;
 
 /* The pragmas for PIC16 fuse */
