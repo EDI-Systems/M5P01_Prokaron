@@ -62,69 +62,70 @@ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
                           rmp_ptr_t Entry,
                           rmp_ptr_t Param)
 {
-    struct RMP_DSPIC_Stack* Ptr;
-
-    /* Compute & align stack - empty ascending */
-    Ptr=(struct RMP_DSPIC_Stack*)RMP_ROUND_UP(Stack, 2U);
+    rmp_ptr_t Ptr;
+    struct RMP_DSPIC_Stack* Ctx;
+    
+    Ptr=RMP_STACK_PTR(Stack,Size);
+    Ctx=RMP_STACK_CTX(Ptr);
 
     /* The entry - SFA bit not set */
-    Ptr->PCL=Entry;
+    Ctx->PCL=Entry;
     /* Last 8 bits of status register, SRL/IPL3/PCH zero */
-    Ptr->PCHSRL=0U;
+    Ctx->PCHSRL=0U;
     /* Initial SR - IPL=1 to avoid premature interrupt enabling */
-    Ptr->SR=0x0020U;
+    Ctx->SR=0x0020U;
     /* CORCON - set to whatever the boot code gives us */
-    Ptr->CORCON=_RMP_DSPIC_CORCON_Kern;
+    Ctx->CORCON=_RMP_DSPIC_CORCON_Kern;
     /* W0-W14 */
-    Ptr->W0=Param;
-    Ptr->W1=0x0101U;
-    Ptr->W2=0x0202U;
-    Ptr->W3=0x0303U;
-    Ptr->W4=0x0404U;
-    Ptr->W5=0x0505U;
-    Ptr->W6=0x0606U;
-    Ptr->W7=0x0707U;
-    Ptr->W8=0x0808U;
-    Ptr->W9=0x0909U;
-    Ptr->W10=0x1010U;
-    Ptr->W11=0x1111U;
-    Ptr->W12=0x1212U;
-    Ptr->W13=0x1313U;
-    Ptr->W14=0x1414U;
+    Ctx->W0=Param;
+    Ctx->W1=0x0101U;
+    Ctx->W2=0x0202U;
+    Ctx->W3=0x0303U;
+    Ctx->W4=0x0404U;
+    Ctx->W5=0x0505U;
+    Ctx->W6=0x0606U;
+    Ctx->W7=0x0707U;
+    Ctx->W8=0x0808U;
+    Ctx->W9=0x0909U;
+    Ctx->W10=0x1010U;
+    Ctx->W11=0x1111U;
+    Ctx->W12=0x1212U;
+    Ctx->W13=0x1313U;
+    Ctx->W14=0x1414U;
     /* RCOUNT */
-    Ptr->RCOUNT=0x0000U;
+    Ctx->RCOUNT=0x0000U;
     /* TBLPAG - set to whatever the boot code gives us */
-    Ptr->TBLPAG=_RMP_DSPIC_TBLPAG_Kern;
+    Ctx->TBLPAG=_RMP_DSPIC_TBLPAG_Kern;
 
     /* Specific visibility registers - set to whatever the boot code gives us */
 #if((RMP_DSPIC_COP_24F_24H!=0U)||(RMP_DSPIC_COP_30F_33F!=0U))
-    Ptr->PSVPAG=_RMP_DSPIC_PSVDSWPAG_Kern;
+    Ctx->PSVPAG=_RMP_DSPIC_PSVDSWPAG_Kern;
 #elif((RMP_DSPIC_COP_24E!=0U)||(RMP_DSPIC_COP_33E_33C!=0U))
-    Ptr->DSRPAG=_RMP_DSPIC_DSRPAG_Kern;
-    Ptr->DSWPAG=_RMP_DSPIC_PSVDSWPAG_Kern;
+    Ctx->DSRPAG=_RMP_DSPIC_DSRPAG_Kern;
+    Ctx->DSWPAG=_RMP_DSPIC_PSVDSWPAG_Kern;
 #endif
     
     /* Specific DSP/addressing registers */
 #if((RMP_DSPIC_COP_30F_33F!=0U)||(RMP_DSPIC_COP_33E_33C!=0U))
     /* ACCAL,ACCAH,ACCAU,ACCBL,ACCBH,ACCBU */
-    Ptr->ACCAL=0xAAAAU;
-    Ptr->ACCAH=0x0A0AU;
-    Ptr->ACCAU=0x000AU;
-    Ptr->ACCBL=0xBBBBU;
-    Ptr->ACCBH=0x0B0BU;
-    Ptr->ACCBU=0x000BU;
+    Ctx->ACCAL=0xAAAAU;
+    Ctx->ACCAH=0x0A0AU;
+    Ctx->ACCAU=0x000AU;
+    Ctx->ACCBL=0xBBBBU;
+    Ctx->ACCBH=0x0B0BU;
+    Ctx->ACCBU=0x000BU;
     /* MODCON */
-    Ptr->MODCON=0x0000U;
+    Ctx->MODCON=0x0000U;
     /* XMODSRT,XMODEND,YMODSRT,YMODEND */
-    Ptr->XMODSRT=0x0000U;
-    Ptr->XMODEND=0x0001U;
-    Ptr->YMODSRT=0x0000U;
-    Ptr->YMODEND=0x0001U;
+    Ctx->XMODSRT=0x0000U;
+    Ctx->XMODEND=0x0001U;
+    Ctx->YMODSRT=0x0000U;
+    Ctx->YMODEND=0x0001U;
     /* XBREV */
-    Ptr->XBREV=0x0000U;
+    Ctx->XBREV=0x0000U;
 #endif
     
-    return ((rmp_ptr_t)Ptr)+sizeof(struct RMP_DSPIC_Stack);
+    return Ptr;
 }
 /* End Function:_RMP_Stack_Init **********************************************/
 

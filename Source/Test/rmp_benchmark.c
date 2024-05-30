@@ -23,7 +23,7 @@ Description : The performance benchmark for RMP. Do not modify this file; what
 /* Define ********************************************************************/
 /* Number of rounds to test - default to 10000 */
 #ifndef ROUND_NUM
-#define ROUND_NUM       10000U
+#define ROUND_NUM       10000
 #endif
 /* Recommended interval of timer overflow reports: 
  * ~ 3MHz               1000

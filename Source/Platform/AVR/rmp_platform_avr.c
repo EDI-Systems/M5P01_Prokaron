@@ -40,73 +40,73 @@ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
                           rmp_ptr_t Entry,
                           rmp_ptr_t Param)
 {
-    struct RMP_AVR_Stack* Ptr;
+    rmp_ptr_t Ptr;
+    struct RMP_AVR_Stack* Ctx;
     
-    /* Compute stack - empty descending, no alignment requirement */
-    Ptr=(struct RMP_AVR_Stack*)(Stack+Size-sizeof(struct RMP_AVR_Stack)-1U);
+    Ptr=RMP_STACK_PTR(Stack,Size);
+    Ctx=RMP_STACK_CTX(Ptr);
     
     /* Set SREG to all zero for MegaAVR which uses RETI to set GIE, but set
      * GIE on XMegaAVR which uses PMIC to take care of interrupt nesting */
 #if(RMP_AVR_COP_XMEGA!=0U)
-    Ptr->SREG_SR=0x80U;
+    Ctx->SREG_SR=0x80U;
 #else
-    Ptr->SREG_SR=0x00U;
+    Ctx->SREG_SR=0x00U;
 #endif
     
     /* Pass entry and parameter - program space is in words instead of bytes */
-    Ptr->PCH=Entry>>8;
-    Ptr->PCL=Entry&0xFFU;
-    Ptr->R25=Param>>8;
-    Ptr->R24=Param&0xFFU;
+    Ctx->PCH=Entry>>8;
+    Ctx->PCL=Entry&0xFFU;
+    Ctx->R25=Param>>8;
+    Ctx->R24=Param&0xFFU;
     
     /* Fill the rest for ease of identification - R1 is implicitly zero as required 
      * by GCC, but we still save/restore it in case the program includes assembly */
-    Ptr->R0=0x00U;
-    Ptr->R1=0x00U;
-    Ptr->R2=0x02U;
-    Ptr->R3=0x03U;
-    Ptr->R4=0x04U;
-    Ptr->R5=0x05U;
-    Ptr->R6=0x06U;
-    Ptr->R7=0x07U;
-    Ptr->R8=0x08U;
-    Ptr->R9=0x09U;
-    Ptr->R10=0x10U;
-    Ptr->R11=0x11U;
-    Ptr->R12=0x12U;
-    Ptr->R13=0x13U;
-    Ptr->R14=0x14U;
-    Ptr->R15=0x15U;
-    Ptr->R16=0x16U;
-    Ptr->R17=0x17U;
-    Ptr->R18=0x18U;
-    Ptr->R19=0x19U;
-    Ptr->R20=0x20U;
-    Ptr->R21=0x21U;
-    Ptr->R22=0x22U;
-    Ptr->R23=0x23U;
-    Ptr->R26_XL=0x00U;
-    Ptr->R27_XH=0x00U;
-    Ptr->R28_YL=0x00U;
-    Ptr->R29_YH=0x00U;
-    Ptr->R30_ZL=0x00U;
-    Ptr->R31_ZH=0x00U;
+    Ctx->R0=0x00U;
+    Ctx->R1=0x00U;
+    Ctx->R2=0x02U;
+    Ctx->R3=0x03U;
+    Ctx->R4=0x04U;
+    Ctx->R5=0x05U;
+    Ctx->R6=0x06U;
+    Ctx->R7=0x07U;
+    Ctx->R8=0x08U;
+    Ctx->R9=0x09U;
+    Ctx->R10=0x10U;
+    Ctx->R11=0x11U;
+    Ctx->R12=0x12U;
+    Ctx->R13=0x13U;
+    Ctx->R14=0x14U;
+    Ctx->R15=0x15U;
+    Ctx->R16=0x16U;
+    Ctx->R17=0x17U;
+    Ctx->R18=0x18U;
+    Ctx->R19=0x19U;
+    Ctx->R20=0x20U;
+    Ctx->R21=0x21U;
+    Ctx->R22=0x22U;
+    Ctx->R23=0x23U;
+    Ctx->R26_XL=0x00U;
+    Ctx->R27_XH=0x00U;
+    Ctx->R28_YL=0x00U;
+    Ctx->R29_YH=0x00U;
+    Ctx->R30_ZL=0x00U;
+    Ctx->R31_ZH=0x00U;
 
     /* EIND implies RAMP */
 #if((RMP_AVR_COP_RAMP!=0U)||(RMP_AVR_COP_EIND!=0U))
-    Ptr->RAMPD_ZU=0x00U;
-    Ptr->RAMPX_XU=0x00U;
-    Ptr->RAMPY_YU=0x00U;
-    Ptr->RAMPZ_ZU=0x00U;
+    Ctx->RAMPD_ZU=0x00U;
+    Ctx->RAMPX_XU=0x00U;
+    Ctx->RAMPY_YU=0x00U;
+    Ctx->RAMPZ_ZU=0x00U;
 #endif
 
 #if(RMP_AVR_COP_EIND!=0U)
-    Ptr->EIND_ZU=0x00U;
-    Ptr->PCU=0x00U;
+    Ctx->EIND_ZU=0x00U;
+    Ctx->PCU=0x00U;
 #endif
     
-    /* Empty descending */
-    return ((rmp_ptr_t)Ptr)-1U;
+    return Ptr;
 }
 /* End Function:_RMP_Stack_Init **********************************************/
 
