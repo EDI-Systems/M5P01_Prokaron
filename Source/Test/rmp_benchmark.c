@@ -120,7 +120,7 @@ volatile struct RMP_Msgq Msgq_1;
 volatile struct RMP_Bmq Bmq_1;
 /* Memory pool */
 #ifdef TEST_MEM_POOL
-volatile rmp_ptr_t Pool[TEST_MEM_POOL]={0};
+volatile rmp_ptr_t Pool[TEST_MEM_POOL];
 #endif
 /* Floating point context */
 #ifdef FLOAT_CONTEXT
