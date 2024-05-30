@@ -203,8 +203,8 @@ Click **[HERE](README.md)** for English version.
 |TMS570LC4357 |Cortex-R5   |CCS   |275  |479  |467  |216  |746  |998  |440   |435  |595    |763   |482  |
 |PIC32MZ2048  |MIPS M14k   |XC32  |260  |392  |370  |146  |540  |672  |440   |420  |530    |620   |364  |
 |TMS320F28335 |C28x        |CCS   |246  |513  |440  |235  |751  |1001 |440   |413  |622    |770   |946  |
-|CH32V307     |RV32IMAC    |GCC   |246  |426  |386  |179  |605  |767  |359   |321  |466    |593   |TBD  |
-|...          |RV32IMAFC   |GCC   |318  |495  |457  |182  |674  |836  |405   |366  |500    |624   |TBD  |
+|CH32V307     |RV32IMAC    |GCC   |232  |407  |372  |172  |578  |725  |369   |327  |468    |582   |432  |
+|...          |RV32IMAFC   |GCC   |305  |484  |445  |176  |650  |804  |403   |374  |508    |626   |429  |
 |i9-7980XE    |X86-LINUX   |GCC   |TBD  |TBD  |TBD  |TBD  |TBD  |TBD  |TBD   |TBD  |TBD    |TBD   |TBD  |
 
 &ensp;&ensp;**[RVM](https://github.com/EDI-Systems/M7M02_Ammonite)** 嵌入式虚拟机监视器虚拟化版本：

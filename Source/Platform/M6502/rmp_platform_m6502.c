@@ -1,24 +1,24 @@
 /******************************************************************************
-Filename    : rmp_platform_a6m.c
+Filename    : rmp_platform_m6502.c
 Author      : pry
 Date        : 04/02/2018
 Licence     : The Unlicense; see LICENSE for details.
-Description : The platform specific file for ARMv6-M.
+Description : The platform specific file for M6502.
 ******************************************************************************/
 
 /* Include *******************************************************************/
 #define __HDR_DEF__
-#include "Platform/A6M/rmp_platform_a6m.h"
+#include "Platform/M6502/rmp_platform_m6502.h"
 #include "Kernel/rmp_kernel.h"
 #undef __HDR_DEF__
 
 #define __HDR_STRUCT__
-#include "Platform/A6M/rmp_platform_a6m.h"
+#include "Platform/M6502/rmp_platform_m6502.h"
 #include "Kernel/rmp_kernel.h"
 #undef __HDR_STRUCT__
 
 /* Private include */
-#include "Platform/A6M/rmp_platform_a6m.h"
+#include "Platform/M6502/rmp_platform_m6502.h"
 
 #define __HDR_PUBLIC__
 #include "Kernel/rmp_kernel.h"
@@ -28,9 +28,6 @@ Description : The platform specific file for ARMv6-M.
 /* Function:_RMP_Stack_Init ***************************************************
 Description : Initiate the process stack when trying to start a process. Never
               call this function in user application.
-              Need to pretend that we're returning from a context switch:
-                  16  15  14    13  12-9  8  7-0 
-              H> XPSR PC LR(1) R12 R3-R0 LR R11-R4 >L 
 Input       : rmp_ptr_t Stack - The stack address of the thread.
               rmp_ptr_t Size - The stack size of the thread.
               rmp_ptr_t Entry - The entry address of the thread.
@@ -43,36 +40,20 @@ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
                           rmp_ptr_t Entry,
                           rmp_ptr_t Param)
 {
-    rmp_ptr_t Ptr;
-    struct RMP_A6M_Stack* Ctx;
+    struct RMP_M6502_Stack* Ptr;
     
-    Ptr=RMP_STACK_PTR(Stack,Size);
-    Ctx=RMP_STACK_CTX(Ptr);
+    /* Compute stack - empty descending, no alignment requirement */
+    Ptr=(struct RMP_M6502_Stack*)(Stack+Size-sizeof(struct RMP_M6502_Stack)-1U);
     
-    /* Set LR_EXC and xPSR accordingly to avoid INVSTATE */
-    Ctx->LR_EXC=0xFFFFFFFDU;
-    Ctx->XPSR=0x01000000U;
+    /* Pass entry and parameter - program space is in words instead of bytes */
+
     
-    /* Pass entry and parameter */
-    Ctx->PC=Entry;
-    Ctx->R0=Param;
+    /* Fill the rest for ease of identification - R1 is implicitly zero as required 
+     * by GCC, but we still save/restore it in case the program includes assembly */
+ 
     
-    /* Fill the rest for ease of identification */
-    Ctx->R1=0x01010101U;
-    Ctx->R2=0x02020202U;
-    Ctx->R3=0x03030303U;
-    Ctx->R4=0x04040404U;
-    Ctx->R5=0x05050505U;
-    Ctx->R6=0x06060606U;
-    Ctx->R7=0x07070707U;
-    Ctx->R8=0x08080808U;
-    Ctx->R9=0x09090909U;
-    Ctx->R10=0x10101010U;
-    Ctx->R11=0x11111111U;
-    Ctx->R12=0x12121212U;
-    Ctx->LR=0x14141414U;
-    
-    return Ptr;
+    /* Empty descending */
+    return ((rmp_ptr_t)Ptr)-1U;
 }
 /* End Function:_RMP_Stack_Init **********************************************/
 
@@ -86,7 +67,7 @@ void _RMP_Lowlvl_Init(void)
 {
     RMP_Int_Disable();
     
-    RMP_A6M_LOWLVL_INIT();
+    RMP_M6502_LOWLVL_INIT();
 }
 /* End Function:_RMP_Lowlvl_Init *********************************************/
 
@@ -110,9 +91,38 @@ Return      : None.
 ******************************************************************************/
 void RMP_Putchar(char Char)
 {
-    RMP_A6M_PUTCHAR(Char);
+    RMP_M6502_PUTCHAR(Char);
 }
 /* End Function:RMP_Putchar **************************************************/
+
+/* Function:_RMP_Yield ********************************************************
+Description : Trigger a yield to another thread.
+Input       : None.
+Output      : None.
+Return      : None.
+******************************************************************************/
+void _RMP_Yield(void)
+{
+    if(RMP_M6502_Int_Act!=0U)
+        _RMP_M6502_Yield_Pend=1U;
+    else
+        _RMP_M6502_Yield();
+}
+/* End Function:_RMP_Yield ***************************************************/
+
+/* Function:_RMP_M6502_Tim_Handler **********************************************
+Description : Timer interrupt routine for DSPIC.
+Input       : None
+Output      : None.
+Return      : None.
+******************************************************************************/
+void _RMP_M6502_Tim_Handler(void)
+{
+    RMP_M6502_TIM_CLR();
+
+    _RMP_Tim_Handler(1U);
+}
+/* End Function:_RMP_M6502_Tim_Handler *****************************************/
 
 /* End Of File ***************************************************************/
 

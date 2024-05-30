@@ -91,8 +91,15 @@ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
                           rmp_ptr_t Entry,
                           rmp_ptr_t Param)
 {
+    rmp_ptr_t Ptr;
+    struct RMP_LINT_Stack* Ctx;
 
-    return 0U;
+    Ptr=RMP_STACK_PTR(Stack,Size);
+    Ctx=RMP_STACK_CTX(Ptr);
+    
+    Ctx->Dummy=Entry+Param;
+    
+    return Ptr;
 }
 /* End Function:_RMP_Stack_Init **********************************************/
 

@@ -69,6 +69,9 @@ Project/RVMDK-*/RMP.BAT/
 JLinkLog.txt
 JLinkSettings.ini
 
+# Makefile
+Project/*MF-*/Object*/
+
 # CCS/Eclipse specific
 Project/**/.jxbrowser-data/
 Project/**/.metadata/
