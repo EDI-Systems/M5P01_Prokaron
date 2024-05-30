@@ -203,6 +203,7 @@ Click **[HERE](README.md)** for English version.
 |TMS570LC4357 |Cortex-R5   |CCS   |275  |479  |467  |216  |746  |998  |440   |435  |595    |763   |482  |
 |PIC32MZ2048  |MIPS M14k   |XC32  |260  |392  |370  |146  |540  |672  |440   |420  |530    |620   |364  |
 |TMS320F28335 |C28x        |CCS   |246  |513  |440  |235  |751  |1001 |440   |413  |622    |770   |946  |
+|R5F104PJ     |RL78        |CCRL  |322  |631  |647  |368  |1149 |1515 |600   |636  |1034   |1262  |N/A  |
 |CH32V307     |RV32IMAC    |GCC   |246  |426  |386  |179  |605  |767  |359   |321  |466    |593   |TBD  |
 |...          |RV32IMAFC   |GCC   |318  |495  |457  |182  |674  |836  |405   |366  |500    |624   |TBD  |
 |i9-7980XE    |X86-LINUX   |GCC   |TBD  |TBD  |TBD  |TBD  |TBD  |TBD  |TBD   |TBD  |TBD    |TBD   |TBD  |
@@ -287,3 +288,4 @@ Click **[HERE](README.md)** for English version.
 - 王逸鹤 - 稳定的x86/linux/ptrace移植。
 - 张然 - C28x数字信号处理器移植。
 - 张凯 - 白盒测试用例。
+- 刘皓天 - RL78的移植。
