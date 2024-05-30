@@ -11,13 +11,13 @@ Description : The testbench for STM32F103ZE.
 /* End Include ***************************************************************/
 
 /* Define ********************************************************************/
-/* How to read counter */
+/* Counter read wrapper */
 #define RMP_CNT_READ()    (TIM2->CNT)
-/* Are we testing the memory pool? */
-#define TEST_MEM_POOL     8192
-/* Are we doing minimal measurements? */
+/* Memory pool test switch */
+#define TEST_MEM_POOL     (8192U)
+/* Minimal build switch */
 /* #define MINIMAL_SIZE */
-/* The STM32F1 timers are all 16 bits, so */
+/* Timestamp data type */
 typedef rmp_u16_t rmp_tim_t;
 /* End Define ****************************************************************/
 

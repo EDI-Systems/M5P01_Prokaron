@@ -68,10 +68,13 @@ typedef rmp_s32_t rmp_ret_t;
 #define EXTERN                          extern
 /* The order of bits in one CPU machine word */
 #define RMP_WORD_ORDER                  (5U)
-/* Descending stack, 8-byte alignment */
-#define RMP_INIT_STACK                  RMP_INIT_STACK_DESCEND(3U)
-/* The maximum length of char printing - no need to change this in most cases */
-#define RMP_DEBUG_PRINT_MAX             (128U)
+/* The maximum length of char printing */
+#define RMP_DEBUG_PRINT_MAX             (255U)
+/* Full descending stack of rmp_ptr_t, 8-byte alignment */
+#define RMP_STACK_TYPE                  RMP_STACK_FULL_DESCEND
+#define RMP_STACK_ALIGN                 (3U)
+#define RMP_STACK_ELEM                  rmp_ptr_t
+#define RMP_STACK_STRUCT                struct RMP_A6M_RVM_Stack
 /* MSB/LSB extraction */
 #define RMP_MSB_GET(VAL)                RMP_MSB_Generic(VAL)
 #define RMP_LSB_GET(VAL)                RMP_LSB_Generic(VAL)

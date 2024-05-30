@@ -40,30 +40,29 @@ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
                           rmp_ptr_t Entry,
                           rmp_ptr_t Param)
 {
-    rmp_ptr_t* Entry_Vector;
-    struct RMP_UNSP_Stack* Ptr;
-    
-    /* Compute stack - empty descending, no alignment requirement */
-    Ptr=(struct RMP_UNSP_Stack*)(Stack+Size-sizeof(struct RMP_UNSP_Stack)-1U);
+    rmp_ptr_t Ptr;
+    struct RMP_UNSP_Stack* Ctx;
+
+    Ptr=RMP_STACK_PTR(Stack,Size);
+    Ctx=RMP_STACK_CTX(Ptr);
     
     /* Pass entry/SR - the long entry is stored in face value at this address
      * rather than being at the address; this chip lacks true long jumps. */
     Entry_Vector=(rmp_ptr_t*)Entry;
-    Ptr->SR_CSDS=Entry_Vector[0];
-    Ptr->PC=Entry_Vector[1];
+    Ctx->SR_CSDS=Entry_Vector[0];
+    Ctx->PC=Entry_Vector[1];
     
     /* Pass parameter - on stack */
-    Ptr->Param=Param;
+    Ctx->Param=Param;
     
     /* Fill the rest for ease of identification */
-    Ptr->R1=0x0001U;
-    Ptr->R2=0x0002U;
-    Ptr->R3_MRL=0x0003U;
-    Ptr->R4_MRH=0x0004U;
-    Ptr->R5_BP=0x0005U;
+    Ctx->R1=0x0001U;
+    Ctx->R2=0x0002U;
+    Ctx->R3_MRL=0x0003U;
+    Ctx->R4_MRH=0x0004U;
+    Ctx->R5_BP=0x0005U;
     
-    /* Empty descending */
-    return ((rmp_ptr_t)Ptr)-1U;
+    return Ptr;
 }
 /* End Function:_RMP_Stack_Init **********************************************/
 

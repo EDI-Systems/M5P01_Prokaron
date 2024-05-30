@@ -783,7 +783,7 @@ rmp_ptr_t RMP_CRC16(const rmp_u8_t* Data,
         0x01U, 0xC0U, 0x80U, 0x41U, 0x00U, 0xC1U, 0x81U, 0x40U
     };
 
-    const rmp_u8_t CRC16_Low[256]=
+    static const rmp_u8_t CRC16_Low[256]=
     {
         0x00U, 0xC0U, 0xC1U, 0x01U, 0xC3U, 0x03U, 0x02U, 0xC2U,
         0xC6U, 0x06U, 0x07U, 0xC7U, 0x05U, 0xC5U, 0xC4U, 0x04U,
@@ -928,7 +928,7 @@ Input       : None.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void _RMP_Timer_Proc(void)
+static void _RMP_Timer_Proc(void)
 {
     rmp_ptr_t State;
     rmp_ptr_t Diff;
@@ -1287,7 +1287,7 @@ Input       : volatile struct RMP_Thd* Thread - The thread to put into the runqu
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void _RMP_Run_Ins(volatile struct RMP_Thd* Thread)
+static void _RMP_Run_Ins(volatile struct RMP_Thd* Thread)
 {
     /* No need to operate on suspended threads */
     if((Thread->State&RMP_THD_SUSPENDED)==0U)
@@ -1326,7 +1326,7 @@ Input       : volatile struct RMP_Thd* Thread - The thread to clear from the run
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void _RMP_Run_Del(volatile struct RMP_Thd* Thread)
+static void _RMP_Run_Del(volatile struct RMP_Thd* Thread)
 {
     /* No need to operate on suspended threads */
     if((Thread->State&RMP_THD_SUSPENDED)==0U)
@@ -1377,7 +1377,7 @@ Input       : volatile struct RMP_Thd* Thread - The thread to put into the delay
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void _RMP_Dly_Ins(volatile struct RMP_Thd* Thread,
+static void _RMP_Dly_Ins(volatile struct RMP_Thd* Thread,
                   rmp_ptr_t Slice)
 {
     rmp_ptr_t Diff;
@@ -2508,8 +2508,8 @@ Input       : volatile struct RMP_Sem* Semaphore - The pointer to the semaphore.
 Output      : None.
 Return      : rmp_ret_t - If successful, the current semaphore number; or an error code.
 ******************************************************************************/
-rmp_ret_t _RMP_Sem_Pend_Core(volatile struct RMP_Sem* Semaphore,
-                             rmp_ptr_t Slice)
+static rmp_ret_t _RMP_Sem_Pend_Core(volatile struct RMP_Sem* Semaphore,
+                                    rmp_ptr_t Slice)
 {
     /* Check if the semaphore is in use */
     if(Semaphore->State!=RMP_SEM_USED)
@@ -2722,7 +2722,7 @@ Input       : volatile struct RMP_Sem* Semaphore - The pointer to the semaphore.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void _RMP_Sem_Unblock(volatile struct RMP_Sem* Semaphore)
+static void _RMP_Sem_Unblock(volatile struct RMP_Sem* Semaphore)
 {
     volatile struct RMP_Thd* Thread;
     
@@ -3290,8 +3290,8 @@ Input       : volatile struct RMP_Mem_Head* Addr - The start address of the
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void _RMP_Mem_Block(volatile struct RMP_Mem_Head* Addr,
-                    rmp_ptr_t Size)
+static void _RMP_Mem_Block(volatile struct RMP_Mem_Head* Addr,
+                           rmp_ptr_t Size)
 {
     volatile struct RMP_Mem_Head* Mem_Head;
     
@@ -3313,8 +3313,8 @@ Input       : volatile void* Pool - The memory pool.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void _RMP_Mem_Ins(volatile void* Pool,
-                  volatile struct RMP_Mem_Head* Mem_Head)
+static void _RMP_Mem_Ins(volatile void* Pool,
+                         volatile struct RMP_Mem_Head* Mem_Head)
 {
     rmp_ptr_t FLI_Level;
     rmp_ptr_t SLI_Level;
@@ -3362,8 +3362,8 @@ Input       : volatile void* Pool - The memory pool.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void _RMP_Mem_Del(volatile void* Pool,
-                  volatile struct RMP_Mem_Head* Mem_Head)
+static void _RMP_Mem_Del(volatile void* Pool,
+                         volatile struct RMP_Mem_Head* Mem_Head)
 {
     rmp_ptr_t FLI_Level;
     rmp_ptr_t SLI_Level;
@@ -3414,10 +3414,10 @@ Output      : rmp_ptr_t* FLI_Level - The FLI level found.
               rmp_ptr_t* SLI_Level - The SLI level found.
 Return      : rmp_ret_t - If successful, 0; else -1 for failure.
 ******************************************************************************/
-rmp_ret_t _RMP_Mem_Search(volatile void* Pool,
-                          rmp_ptr_t Size,
-                          rmp_ptr_t* FLI_Level,
-                          rmp_ptr_t* SLI_Level)
+static rmp_ret_t _RMP_Mem_Search(volatile void* Pool,
+                                 rmp_ptr_t Size,
+                                 rmp_ptr_t* FLI_Level,
+                                 rmp_ptr_t* SLI_Level)
 {
     rmp_ptr_t Level;
     rmp_ptr_t Word;

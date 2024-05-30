@@ -11,16 +11,16 @@ Description : The testbench for linting. Never intended to be run.
 /* End Include ***************************************************************/
 
 /* Define ********************************************************************/
-/* How to read counter */
+/* Counter read wrapper */
 #define RMP_CNT_READ()          (0U)
-/* Are we testing the memory pool? */
+/* Memory pool test switch */
 /* #define TEST_MEM_POOL */
-/* Are we doing minimal measurements? */
+/* Minimal build switch */
 /* #define MINIMAL_SIZE */
-/* The timers are all 16 bits, so */
-typedef rmp_u16_t rmp_tim_t;
-/* The pointer is also 16-bit, resort to 32-bit accumulators */
+/* Pointer size switch */
 #define PTR_16_BIT
+/* Timestamp data type */
+typedef rmp_u16_t rmp_tim_t;
 /* End Define ****************************************************************/
 
 /* Global ********************************************************************/

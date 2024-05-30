@@ -48,55 +48,54 @@ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
                           rmp_ptr_t Entry,
                           rmp_ptr_t Param)
 {
-    rmp_ptr_t End;
-    struct RMP_RV32P_RVM_Stack* Ptr;
+    rmp_ptr_t Ptr;
+    struct RMP_RV32P_RVM_Stack* Ctx;
 
-    /* Compute & align stack - full descending */
-    End=RMP_ROUND_DOWN(Stack+Size, 4U);
-    Ptr=(struct RMP_RV32P_RVM_Stack*)(End-sizeof(struct RMP_RV32P_RVM_Stack));
+    Ptr=RMP_STACK_PTR(Stack,Size);
+    Ctx=RMP_STACK_CTX(Ptr);
 
     /* This is where PC is saved */
-    Ptr->PC=Entry;
+    Ctx->PC=Entry;
     /* We always initialize the mstatus register to initialize
      * the FPU, but whether it is present depends on the processor */
-    Ptr->MSTATUS=0x1880U|0x2000U;
+    Ctx->MSTATUS=0x1880U|0x2000U;
     /* We always initialize GP to a known value.
      * If a thread modifies this later (by itself), it is fine */
-    Ptr->X3_GP=(rmp_ptr_t)(&_RMP_Global);
+    Ctx->X3_GP=(rmp_ptr_t)(&_RMP_Global);
     /* x10 for arguments */
-    Ptr->X10_A0=Param;
+    Ctx->X10_A0=Param;
 
     /* Fill the rest for ease of identification */
-    Ptr->X1_RA=0x01010101U;
-    Ptr->X4_TP=0x04040404U;
-    Ptr->X5_T0=0x05050505U;
-    Ptr->X6_T1=0x06060606U;
-    Ptr->X7_T2=0x07070707U;
-    Ptr->X8_S0_FP=0x08080808U;
-    Ptr->X9_S1=0x09090909U;
-    Ptr->X11_A1=0x11111111U;
-    Ptr->X12_A2=0x12121212U;
-    Ptr->X13_A3=0x13131313U;
-    Ptr->X14_A4=0x14141414U;
-    Ptr->X15_A5=0x15151515U;
-    Ptr->X16_A6=0x16161616U;
-    Ptr->X17_A7=0x17171717U;
-    Ptr->X18_S2=0x18181818U;
-    Ptr->X19_S3=0x19191919U;
-    Ptr->X20_S4=0x20202020U;
-    Ptr->X21_S5=0x21212121U;
-    Ptr->X22_S6=0x22222222U;
-    Ptr->X23_S7=0x23232323U;
-    Ptr->X24_S8=0x24242424U;
-    Ptr->X25_S9=0x25252525U;
-    Ptr->X26_S10=0x26262626U;
-    Ptr->X27_S11=0x27272727U;
-    Ptr->X28_T3=0x28282828U;
-    Ptr->X29_T4=0x29292929U;
-    Ptr->X30_T5=0x30303030U;
-    Ptr->X31_T6=0x31313131U;
+    Ctx->X1_RA=0x01010101U;
+    Ctx->X4_TP=0x04040404U;
+    Ctx->X5_T0=0x05050505U;
+    Ctx->X6_T1=0x06060606U;
+    Ctx->X7_T2=0x07070707U;
+    Ctx->X8_S0_FP=0x08080808U;
+    Ctx->X9_S1=0x09090909U;
+    Ctx->X11_A1=0x11111111U;
+    Ctx->X12_A2=0x12121212U;
+    Ctx->X13_A3=0x13131313U;
+    Ctx->X14_A4=0x14141414U;
+    Ctx->X15_A5=0x15151515U;
+    Ctx->X16_A6=0x16161616U;
+    Ctx->X17_A7=0x17171717U;
+    Ctx->X18_S2=0x18181818U;
+    Ctx->X19_S3=0x19191919U;
+    Ctx->X20_S4=0x20202020U;
+    Ctx->X21_S5=0x21212121U;
+    Ctx->X22_S6=0x22222222U;
+    Ctx->X23_S7=0x23232323U;
+    Ctx->X24_S8=0x24242424U;
+    Ctx->X25_S9=0x25252525U;
+    Ctx->X26_S10=0x26262626U;
+    Ctx->X27_S11=0x27272727U;
+    Ctx->X28_T3=0x28282828U;
+    Ctx->X29_T4=0x29292929U;
+    Ctx->X30_T5=0x30303030U;
+    Ctx->X31_T6=0x31313131U;
 
-    return (rmp_ptr_t)Ptr;
+    return Ptr;
 }
 /* End Function:_RMP_Stack_Init **********************************************/
 

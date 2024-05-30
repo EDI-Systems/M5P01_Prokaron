@@ -68,10 +68,13 @@ typedef rmp_s32_t rmp_ret_t;
 #define EXTERN                          extern
 /* The order of bits in one CPU machine word */
 #define RMP_WORD_ORDER                  (5U)
-/* Descending stack, 16-byte alignment */
-#define RMP_INIT_STACK                  RMP_INIT_STACK_DESCEND(4U)
-/* The maximum length of char printing - no need to change this in most cases */
+/* The maximum length of char printing */
 #define RMP_DEBUG_PRINT_MAX             (255U)
+/* Full descending stack of rmp_ptr_t, 16-byte alignment */
+#define RMP_STACK_TYPE                  RMP_STACK_FULL_DESCEND
+#define RMP_STACK_ALIGN                 (4U)
+#define RMP_STACK_ELEM                  rmp_ptr_t
+#define RMP_STACK_STRUCT                struct RMP_X86_LINUX_Stack
 /* MSB/LSB extraction */
 #define RMP_MSB_GET(VAL)                RMP_MSB_Generic(VAL)
 #define RMP_LSB_GET(VAL)                RMP_LSB_Generic(VAL)
@@ -99,7 +102,7 @@ typedef rmp_s32_t rmp_ret_t;
 /*****************************************************************************/
 struct RMP_X86_LINUX_Stack
 {
-    /* To avoid conflict with linux header, we use REG_ prefix */
+    /* To avoid conflict with Linux headers, we use REG_ prefix */
     rmp_ptr_t REG_EBX;
     rmp_ptr_t REG_ECX;
     rmp_ptr_t REG_EDX;

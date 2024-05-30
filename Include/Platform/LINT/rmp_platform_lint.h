@@ -67,8 +67,11 @@ typedef rmp_s32_t rmp_ret_t;
 #define RMP_WORD_ORDER                  (4U)
 /* The maximum length of char printing - no need to change this in most cases */
 #define RMP_DEBUG_PRINT_MAX             (128U)
-/* Descending stack, 4-byte alignment */
-#define RMP_INIT_STACK                  RMP_INIT_STACK_DESCEND(2U)
+/* Full descending stack of rmp_ptr_t, 4-byte alignment */
+#define RMP_STACK_TYPE                  RMP_STACK_FULL_DESCEND
+#define RMP_STACK_ALIGN                 (2U)
+#define RMP_STACK_ELEM                  rmp_ptr_t
+#define RMP_STACK_STRUCT                struct RMP_LINT_Stack
 /* MSB/LSB extraction */
 #define RMP_MSB_GET(VAL)                RMP_MSB_Generic(VAL)
 #define RMP_LSB_GET(VAL)                RMP_LSB_Generic(VAL)
@@ -116,7 +119,10 @@ typedef rmp_s32_t rmp_ret_t;
 #define __HDR_DEF__
 #undef __HDR_DEF__
 /*****************************************************************************/
-
+struct RMP_LINT_Stack
+{
+    rmp_ptr_t Dummy;
+};
 /*****************************************************************************/
 /* __RMP_PLATFORM_LINT_STRUCT__ */
 #endif

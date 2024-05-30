@@ -111,13 +111,13 @@ ISR Blocking message queue         : 1227 / 2444 / 1128
 /* End Include ***************************************************************/
 
 /* Define ********************************************************************/
-/* How to read counter */
+/* Counter read wrapper */
 #define RMP_CNT_READ()          ((TIM2_CNT)<<1)
-/* Are we testing the memory pool? */
+/* Memory pool test switch */
 #define TEST_MEM_POOL           (8192U)
-/* Are we doing minimal measurements? */
+/* Minimal build switch */
 /* #define MINIMAL_SIZE */
-/* The STM32F7 timers are all 32 bits, so */
+/* Timestamp data type */
 typedef rmp_ptr_t rmp_tim_t;
 
 /* Hardware definitions so we don't rely on STM32 HAL */

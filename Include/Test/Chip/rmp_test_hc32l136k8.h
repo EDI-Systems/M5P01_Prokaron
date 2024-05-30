@@ -11,12 +11,12 @@ Description : The testbench for HC32L136K8.
 /* End Include ***************************************************************/
 
 /* Define ********************************************************************/
-/* How to read counter */
+/* Counter read wrapper */
 /* 你需要把这个宏给改成读取计时定时器的计时寄存器，并且还要将定时器给换算成机器周期 */
 #define RMP_CNT_READ()    (0)
-/* Are we doing minimal measurements? */
+/* Minimal build switch */
 /* #define MINIMAL_SIZE */
-/* The HC32L136K8 timers are all 16 bits, so */
+/* Timestamp data type */
 typedef rmp_u16_t rmp_tim_t;
 /* End Define ****************************************************************/
 

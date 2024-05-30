@@ -59,49 +59,48 @@ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
                           rmp_ptr_t Entry,
                           rmp_ptr_t Param)
 {
-    rmp_ptr_t End;
-    struct RMP_MSP430_Stack* Ptr;
+    rmp_ptr_t Ptr;
+    struct RMP_MSP430_Stack* Ctx;
 
-    /* Compute & align stack - full descending */
-    End=RMP_ROUND_DOWN(Stack+Size, 2U);
-    Ptr=(struct RMP_MSP430_Stack*)(End-sizeof(struct RMP_MSP430_Stack));
+    Ptr=RMP_STACK_PTR(Stack,Size);
+    Ctx=RMP_STACK_CTX(Ptr);
 
 #if(RMP_MSP430_COP_430X!=0U)
-    Ptr->R12=Param;
-    Ptr->PCSR=RMP_MSP430X_PCSR(Entry, RMP_MSP430_SR_GIE);
+    Ctx->R12=Param;
+    Ctx->PCSR=RMP_MSP430X_PCSR(Entry, RMP_MSP430_SR_GIE);
 
     /* Fill the rest for ease of identification */
-    Ptr->R4=0x040404UL;
-    Ptr->R5=0x050505UL;
-    Ptr->R6=0x060606UL;
-    Ptr->R7=0x070707UL;
-    Ptr->R8=0x080808UL;
-    Ptr->R9=0x090909UL;
-    Ptr->R10=0x101010UL;
-    Ptr->R11=0x111111UL;
-    Ptr->R13=0x131313UL;
-    Ptr->R14=0x141414UL;
-    Ptr->R15=0x151515UL;
+    Ctx->R4=0x040404UL;
+    Ctx->R5=0x050505UL;
+    Ctx->R6=0x060606UL;
+    Ctx->R7=0x070707UL;
+    Ctx->R8=0x080808UL;
+    Ctx->R9=0x090909UL;
+    Ctx->R10=0x101010UL;
+    Ctx->R11=0x111111UL;
+    Ctx->R13=0x131313UL;
+    Ctx->R14=0x141414UL;
+    Ctx->R15=0x151515UL;
 #else
-    Ptr->R12=Param;
-    Ptr->SR=RMP_MSP430_SR_GIE;
-    Ptr->PC=Entry;
+    Ctx->R12=Param;
+    Ctx->SR=RMP_MSP430_SR_GIE;
+    Ctx->PC=Entry;
 
     /* Fill the rest for ease of identification */
-    Ptr->R4=0x0404U;
-    Ptr->R5=0x0505U;
-    Ptr->R6=0x0606U;
-    Ptr->R7=0x0707U;
-    Ptr->R8=0x0808U;
-    Ptr->R9=0x0909U;
-    Ptr->R10=0x1010U;
-    Ptr->R11=0x1111U;
-    Ptr->R13=0x1313U;
-    Ptr->R14=0x1414U;
-    Ptr->R15=0x1515U;
+    Ctx->R4=0x0404U;
+    Ctx->R5=0x0505U;
+    Ctx->R6=0x0606U;
+    Ctx->R7=0x0707U;
+    Ctx->R8=0x0808U;
+    Ctx->R9=0x0909U;
+    Ctx->R10=0x1010U;
+    Ctx->R11=0x1111U;
+    Ctx->R13=0x1313U;
+    Ctx->R14=0x1414U;
+    Ctx->R15=0x1515U;
 #endif
 
-    return (rmp_ptr_t)Ptr;
+    return Ptr;
 }
 /* End Function:_RMP_Stack_Init **********************************************/
 

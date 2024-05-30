@@ -264,34 +264,33 @@ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
                           rmp_ptr_t Entry,
                           rmp_ptr_t Param)
 {
-    rmp_ptr_t End;
-    struct RMP_X86_LINUX_Stack* Ptr;
-    
-    /* Compute & align stack - full descending */
-    End=RMP_ROUND_DOWN(Stack+Size,4U);
-    Ptr=(struct RMP_X86_LINUX_Stack*)(End-sizeof(struct RMP_X86_LINUX_Stack));
+    rmp_ptr_t Ptr;
+    struct RMP_X86_LINUX_Stack* Ctx;
 
-    Ptr->REG_EBX=0x0B0B0B0BU;
-    Ptr->REG_ECX=0x0C0C0C0CU;
-    Ptr->REG_EDX=0x0D0D0D0DU;
-    Ptr->REG_ESI=0x51515151U;
-    Ptr->REG_EDI=0xD1D1D1D1U;
-    Ptr->REG_EBP=0x69696969U;
-    Ptr->REG_EAX=Param;
+    Ptr=RMP_STACK_PTR(Stack,Size);
+    Ctx=RMP_STACK_CTX(Ptr);
+
+    Ctx->REG_EBX=0x0B0B0B0BU;
+    Ctx->REG_ECX=0x0C0C0C0CU;
+    Ctx->REG_EDX=0x0D0D0D0DU;
+    Ctx->REG_ESI=0x51515151U;
+    Ctx->REG_EDI=0xD1D1D1D1U;
+    Ctx->REG_EBP=0x69696969U;
+    Ctx->REG_EAX=Param;
     /* ptrace requires the last 2 bits of segment registers to be 1; see kernel source */
-    Ptr->REG_XDS=0x2BU;
-    Ptr->REG_XES=0x2BU;
-    Ptr->REG_XFS=0x2BU;
-    Ptr->REG_XGS=0x63U;
-    Ptr->REG_ORIG_EAX=Param;
+    Ctx->REG_XDS=0x2BU;
+    Ctx->REG_XES=0x2BU;
+    Ctx->REG_XFS=0x2BU;
+    Ctx->REG_XGS=0x63U;
+    Ctx->REG_ORIG_EAX=Param;
     /* Always need to +2, kernel bug */
-    Ptr->REG_EIP=Entry;
-    Ptr->REG_ECS=0x23U;
-    Ptr->REG_EFLAGS=0x202U;
-    Ptr->REG_XSS=0x2BU;
-    Ptr->REG_Param=Param;
+    Ctx->REG_EIP=Entry;
+    Ctx->REG_ECS=0x23U;
+    Ctx->REG_EFLAGS=0x202U;
+    Ctx->REG_XSS=0x2BU;
+    Ctx->REG_Param=Param;
 
-    return (rmp_ptr_t)Ptr;
+    return Ptr;
 }
 /* End Function:_RMP_Stack_Init **********************************************/
 

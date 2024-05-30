@@ -16,13 +16,13 @@ Description : The testbench for linux OS. This is not particularly fast due to
 
 /* Define ********************************************************************/
 #define RMP_CNT_READ()      RDTSC_Read()
-/* Are we testing the memory pool? */
+/* Memory pool test switch */
 #define TEST_MEM_POOL       (8192U)
-/* Exit the test after everything */
+/* Test exit switch */
 #define TEST_EXIT
-/* Are we doing minimal measurements? */
+/* Minimal build switch */
 /* #define MINIMAL_SIZE */
-/* The POSIX timers are all 64 bits, so */
+/* Timestamp data type */
 typedef unsigned long long rmp_tim_t;
 
 /* Number of rounds - too many is useless on this demo port */
@@ -45,7 +45,7 @@ Input       : None.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-/* How to read counter */
+/* Counter read wrapper */
 static __inline__ unsigned long long RDTSC_Read(void)
 {
     unsigned long long int Value;
