@@ -288,4 +288,4 @@ In contrast, RT-Linux 4.12's best context switch time on Cortex-M7 is bigger tha
 - Yihe Wang - Stable x86/linux/ptrace port.
 - Ran Zhang - C28x DSP port.
 - Kai Zhang - White-box testing.
-- Haotian Liu - RL78 port
+- Haotian Liu - RL78 port.
