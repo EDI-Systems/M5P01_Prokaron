@@ -17,7 +17,7 @@ Description : The testbench for SPCE061A.
 #define TEST_MEM_POOL       1536
 /* Are we doing minimal measurements? */
 /* #define MINIMAL_SIZE */
-/* The AVR timers we use is 16 bits, so */
+/* The SPCE061 timers we use is 16 bits, so */
 typedef rmp_u16_t rmp_tim_t;
 /* The pointer is also 16-bit, resort to 32-bit accumulators */
 #define PTR_16_BIT
@@ -102,7 +102,9 @@ Return      : None.
 ******************************************************************************/
 /* Play music - without proprietary Sunplus libraries to get the best possible
  * quality on this chip. Also, we're using Timer B instead of Timer A. The chip
- * probably never played music this way throughout its entire product lifetime. */
+ * probably never played music this way throughout its entire product lifetime;
+ * all it had was (hugely) lossy compression algorithms that trade audio quality
+ * for playtime, lest that the audio will exceed its meager flash capacity. */
 #ifdef PLAY_MUSIC
 void Play_Music(void)
 {
