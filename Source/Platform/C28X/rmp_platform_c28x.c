@@ -63,66 +63,67 @@ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
                           rmp_ptr_t Entry,
                           rmp_ptr_t Param)
 {
-    struct RMP_C28X_Stack* Ptr;
+    rmp_ptr_t Ptr;
+    struct RMP_C28X_Stack* Ctx;
 
-    /* Word addressing, must be aligned when passed in - empty ascending */
-    Ptr=(struct RMP_C28X_Stack*)RMP_ROUND_UP(Stack,1U);
+    Ptr=RMP_STACK_PTR(Stack,Size);
+    Ctx=RMP_STACK_CTX(Ptr);
 
     /* Pass entry and parameter */
-    Ptr->PC=Entry;
-    Ptr->ACC=Param;
-    Ptr->DP_ST1=0x00008A08U;
+    Ctx->PC=Entry;
+    Ctx->ACC=Param;
+    Ctx->DP_ST1=0x00008A08U;
 
     /* Enable interrupt for all sources, by default, for each thread */
-    Ptr->DBGSTAT_IER=0x0000FFFFU;
+    Ctx->DBGSTAT_IER=0x0000FFFFU;
 
     /* Initialize the rest of the registers */
-    Ptr->AR1_AR0=0x01010000U;
-    Ptr->AR1H_AR0H=0x01010000U;
-    Ptr->XAR2=0x02020202U;
-    Ptr->XAR3=0x03030303U;
-    Ptr->XAR4=0x04040404U;
-    Ptr->XAR5=0x05050505U;
-    Ptr->XAR6=0x06060606U;
-    Ptr->XAR7=0x07070707U;
+    Ctx->AR1_AR0=0x01010000U;
+    Ctx->AR1H_AR0H=0x01010000U;
+    Ctx->XAR2=0x02020202U;
+    Ctx->XAR3=0x03030303U;
+    Ctx->XAR4=0x04040404U;
+    Ctx->XAR5=0x05050505U;
+    Ctx->XAR6=0x06060606U;
+    Ctx->XAR7=0x07070707U;
 
     /* Selecting FPU64 implies FPU32 */
 #if(RMP_C28X_COP_FPU64!=0U)
     /* Rounding mode - RND32 */
-    Ptr->STF=0x00000200U;
-    Ptr->RB=0x00000000U;
-    Ptr->R0L=0x00000000U;
-    Ptr->R0H=0x00000000U;
-    Ptr->R1L=0x01010101U;
-    Ptr->R1H=0x01010101U;
-    Ptr->R2L=0x02020202U;
-    Ptr->R2H=0x02020202U;
-    Ptr->R3L=0x03030303U;
-    Ptr->R3H=0x03030303U;
-    Ptr->R4L=0x04040404U;
-    Ptr->R4H=0x04040404U;
-    Ptr->R5L=0x05050505U;
-    Ptr->R5H=0x05050505U;
-    Ptr->R6L=0x06060606U;
-    Ptr->R6H=0x06060606U;
-    Ptr->R7L=0x07070707U;
-    Ptr->R7H=0x07070707U;
+    Ctx->STF=0x00000200U;
+    Ctx->RB=0x00000000U;
+    Ctx->R0L=0x00000000U;
+    Ctx->R0H=0x00000000U;
+    Ctx->R1L=0x01010101U;
+    Ctx->R1H=0x01010101U;
+    Ctx->R2L=0x02020202U;
+    Ctx->R2H=0x02020202U;
+    Ctx->R3L=0x03030303U;
+    Ctx->R3H=0x03030303U;
+    Ctx->R4L=0x04040404U;
+    Ctx->R4H=0x04040404U;
+    Ctx->R5L=0x05050505U;
+    Ctx->R5H=0x05050505U;
+    Ctx->R6L=0x06060606U;
+    Ctx->R6H=0x06060606U;
+    Ctx->R7L=0x07070707U;
+    Ctx->R7H=0x07070707U;
 #elif(RMP_C28X_COP_FPU32!=0U)
     /* Rounding mode - RND32 */
-    Ptr->STF=0x00000200U;
-    Ptr->RB=0x00000000U;
-    Ptr->R0H=0x00000000U;
-    Ptr->R1H=0x01010101U;
-    Ptr->R2H=0x02020202U;
-    Ptr->R3H=0x03030303U;
-    Ptr->R4H=0x04040404U;
-    Ptr->R5H=0x05050505U;
-    Ptr->R6H=0x06060606U;
-    Ptr->R7H=0x07070707U;
+    Ctx->STF=0x00000200U;
+    Ctx->RB=0x00000000U;
+    Ctx->R0H=0x00000000U;
+    Ctx->R1H=0x01010101U;
+    Ctx->R2H=0x02020202U;
+    Ctx->R3H=0x03030303U;
+    Ctx->R4H=0x04040404U;
+    Ctx->R5H=0x05050505U;
+    Ctx->R6H=0x06060606U;
+    Ctx->R7H=0x07070707U;
 #endif
 
-    /* Empty ascending stack & need to account for the "+1" when "IRET"ing */
-    return Stack+sizeof(struct RMP_C28X_Stack)+1U;
+    /* Compensate for the "-1" when "IRET"ing */
+    return Ptr+1U;
 }
 /* End Function:_RMP_Stack_Init **********************************************/
 

@@ -9,12 +9,12 @@ Description : The testbench for FE310-G000.
               easily costs tens of thousands of cycles when it misses.
               Each test needs a full power cycle - FE310 chip is seriously
               flawed in many aspects especially in its WDT timer.
-		      This project only worked with the Freedom Studio Beta 3
-		      (FreedomStudio-Win_x86_64-20180122) which is now deprecated
-		      (in fact all releases of the FreedomStudio is as of 2023), and
-		      the provided OpenOCD debugger is very sluggish. It is advised
-		      to stay away from this board unless you already have one.
-		      This is a typical academia chip: looks nice but is useless.
+              This project only worked with the Freedom Studio Beta 3
+              (FreedomStudio-Win_x86_64-20180122) which is now deprecated
+              (in fact all releases of the FreedomStudio is as of 2023), and
+              the provided OpenOCD debugger is very sluggish. It is advised
+              to stay away from this board unless you already have one.
+              This is a typical academia chip: looks nice but is useless.
 
 GCC 7.2.0 -O3 (Note: numbers > 10000 is due to SPI flash reads)
     ___   __  ___ ___
@@ -40,13 +40,13 @@ ISR Blocking message queue         : 47856 / 47922 / 480
 /* End Include ***************************************************************/
 
 /* Define ********************************************************************/
-/* How to read counter */
+/* Counter read wrapper */
 #define RMP_CNT_READ()      ((rmp_tim_t)RMP_RV32P_MCYCLE_Get())
-/* Are we testing the memory pool? */
-/* #define TEST_MEM_POOL       8192 */
-/* Are we doing minimal measurements? */
+/* Memory pool test switch */
+/* #define TEST_MEM_POOL */
+/* Minimal build switch */
 /* #define MINIMAL_SIZE */
-/* The FE310 timers are all 64 bits, however we only need last 16 bits */
+/* Timestamp data type - MCYCLE is 64 bits, but we only need 16 bits */
 typedef rmp_u16_t rmp_tim_t;
 /* End Define ****************************************************************/
 
@@ -73,7 +73,7 @@ Return      : None.
 void Timer_Init(void)
 {
     /* No need to init the measurement timer - we read MCYCLE register instead */
-	RMP_DBG_S("Confirming serial good - connect to TXD.1 pin");
+    RMP_DBG_S("Confirming serial good - connect to TXD.1 pin");
 }
 /* End Function:Timer_Init ***************************************************/
 
@@ -100,18 +100,18 @@ void Int_Init(void)
     /* Feed dog - cannot assume that the pin is not asserted */
     AON_REG(AON_WDOGKEY)=AON_WDOGKEY_VALUE;
     AON_REG(AON_WDOGFEED)=AON_WDOGFEED_VALUE;
-	/* Disable WDT before trying to enable interrupt */
+    /* Disable WDT before trying to enable interrupt */
     AON_REG(AON_WDOGKEY)=AON_WDOGKEY_VALUE;
-	AON_REG(AON_WDOGCFG)=0;
-	/* Enable WDT interrupt */
-	RMP_Global_PLIC.base_addr=PLIC_CTRL_ADDR;
-	/* If there is already one pending, get rid of it */
-	PLIC_complete_interrupt(&RMP_Global_PLIC, PLIC_claim_interrupt(&RMP_Global_PLIC));
+    AON_REG(AON_WDOGCFG)=0;
+    /* Enable WDT interrupt */
+    RMP_Global_PLIC.base_addr=PLIC_CTRL_ADDR;
+    /* If there is already one pending, get rid of it */
+    PLIC_complete_interrupt(&RMP_Global_PLIC, PLIC_claim_interrupt(&RMP_Global_PLIC));
     PLIC_set_priority(&RMP_Global_PLIC, INT_WDOGCMP, 1);
-	PLIC_enable_interrupt(&RMP_Global_PLIC, INT_WDOGCMP);
-	/* Enable WDT with automatic counter zeroing */
+    PLIC_enable_interrupt(&RMP_Global_PLIC, INT_WDOGCMP);
+    /* Enable WDT with automatic counter zeroing */
     AON_REG(AON_WDOGKEY)=AON_WDOGKEY_VALUE;
-	AON_REG(AON_WDOGCFG)=AON_WDOGCFG_ENALWAYS|AON_WDOGCFG_ZEROCMP;
+    AON_REG(AON_WDOGCFG)=AON_WDOGCFG_ENALWAYS|AON_WDOGCFG_ZEROCMP;
 }
 
 void WDT_Interrupt(void)
@@ -127,7 +127,7 @@ void WDT_Interrupt(void)
     {
         /* Clear the interrupt pending bit */
         AON_REG(AON_WDOGKEY)=AON_WDOGKEY_VALUE;
-    	AON_REG(AON_WDOGCFG)&=~AON_WDOGCFG_CMPIP;
+        AON_REG(AON_WDOGCFG)&=~AON_WDOGCFG_CMPIP;
         Int_Handler();
     }
 
@@ -146,12 +146,12 @@ void Int_Disable(void)
 {
     plic_instance_t RMP_Global_PLIC;
 
-	/* Disable WDT interrupt */
-	RMP_Global_PLIC.base_addr=PLIC_CTRL_ADDR;
-	PLIC_disable_interrupt(&RMP_Global_PLIC,INT_WDOGCMP);
-	/* Disable WDT */
-	AON_REG(AON_WDOGKEY)=AON_WDOGKEY_VALUE;
-	AON_REG(AON_WDOGCFG)=0;
+    /* Disable WDT interrupt */
+    RMP_Global_PLIC.base_addr=PLIC_CTRL_ADDR;
+    PLIC_disable_interrupt(&RMP_Global_PLIC,INT_WDOGCMP);
+    /* Disable WDT */
+    AON_REG(AON_WDOGKEY)=AON_WDOGKEY_VALUE;
+    AON_REG(AON_WDOGCFG)=0;
 }
 #endif
 /* End Function:Int_Disable **************************************************/

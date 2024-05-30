@@ -15,16 +15,17 @@ GCC 12.2.0 -O3 (FPU disabled)
  /_/|_|/_/  /_//_/
 ====================================================
 Test (number in CPU cycles)        : AVG / MAX / MIN
-Yield                              : 246 / 256 / 246
-Mailbox                            : 426 / 451 / 426
-Semaphore                          : 386 / 409 / 386
-FIFO                               : 179 / 196 / 179
-Message queue                      : 605 / 652 / 605
-Blocking message queue             : 767 / 789 / 767
-ISR Mailbox                        : 359 / 382 / 287
-ISR Semaphore                      : 321 / 352 / 321
-ISR Message queue                  : 466 / 499 / 466
-ISR Blocking message queue         : 593 / 609 / 593
+Yield                              : 232 / 429 / 232
+Mailbox                            : 407 / 615 / 407
+Semaphore                          : 372 / 578 / 369
+FIFO                               : 172 / 380 / 172
+Message queue                      : 578 / 788 / 576
+Blocking message queue             : 725 / 939 / 722
+Memory allocation/free pair        : 432 / 461 / 428
+ISR Mailbox                        : 369 / 391 / 288
+ISR Semaphore                      : 327 / 350 / 326
+ISR Message queue                  : 468 / 501 / 467
+ISR Blocking message queue         : 582 / 789 / 577
 
 GCC 12.2.0 -O3 (FPU context active)
     ___   __  ___ ___
@@ -33,16 +34,17 @@ GCC 12.2.0 -O3 (FPU context active)
  /_/|_|/_/  /_//_/
 ====================================================
 Test (number in CPU cycles)        : AVG / MAX / MIN
-Yield                              : 318 / 330 / 318
-Mailbox                            : 495 / 522 / 495
-Semaphore                          : 457 / 478 / 457
-FIFO                               : 182 / 204 / 182
-Message queue                      : 674 / 718 / 674
-Blocking message queue             : 836 / 865 / 836
-ISR Mailbox                        : 405 / 430 / 330
-ISR Semaphore                      : 366 / 390 / 366
-ISR Message queue                  : 500 / 523 / 500
-ISR Blocking message queue         : 624 / 647 / 624
+Yield                              : 305 / 603 / 305
+Mailbox                            : 484 / 761 / 480
+Semaphore                          : 445 / 709 / 445
+FIFO                               : 176 / 462 / 175
+Message queue                      : 650 / 931 / 649
+Blocking message queue             : 804 / 1082 / 802
+Memory allocation/free pair        : 429 / 466 / 425
+ISR Mailbox                        : 403 / 423 / 338
+ISR Semaphore                      : 374 / 631 / 369
+ISR Message queue                  : 508 / 547 / 508
+ISR Blocking message queue         : 626 / 652 / 626
 ******************************************************************************/
 
 /* Include *******************************************************************/
@@ -50,20 +52,20 @@ ISR Blocking message queue         : 624 / 647 / 624
 /* End Include ***************************************************************/
 
 /* Define ********************************************************************/
-/* How to read counter */
+/* Counter read wrapper */
 #define RMP_CNT_READ()      (TIM1->CNT)
-/* Are we testing the memory pool? */
-/* #define TEST_MEM_POOL       8192 */
-/* Are we doing minimal measurements? */
+/* Memory pool test switch */
+#define TEST_MEM_POOL       (4096U)
+/* Minimal build switch */
 /* #define MINIMAL_SIZE */
-/* CH32V307 timers are all 16-bit */
+/* Timestamp data type */
 typedef rmp_u16_t rmp_tim_t;
 /* End Define ****************************************************************/
 
 /* Global ********************************************************************/
 #ifndef MINIMAL_SIZE
-rmp_ptr_t Stack_1[2048];
-rmp_ptr_t Stack_2[2048];
+rmp_ptr_t Stack_1[1024];
+rmp_ptr_t Stack_2[1024];
 TIM_TimeBaseInitTypeDef TIM4_Handle = {0};
 NVIC_InitTypeDef NVIC_InitStruture = {0};
 

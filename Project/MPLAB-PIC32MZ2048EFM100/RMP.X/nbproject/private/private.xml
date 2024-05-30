@@ -10,6 +10,9 @@
             <file>file:/C:/E/Dev/FreeRTOS/WorkingCopy/FreeRTOS/Source/portable/MPLAB/PIC32MZ/port.c</file>
             <file>file:/C:/E/Dev/FreeRTOS/WorkingCopy/FreeRTOS/Source/portable/MPLAB/PIC32MZ/port_asm.S</file>
         </group>
-        <group/>
+        <group>
+            <file>file:/C:/Code_Library/M5P01_Prokaron/Source/Platform/MP32P/rmp_platform_mp32p.c</file>
+            <file>file:/C:/Code_Library/M5P01_Prokaron/Include/Platform/MP32P/rmp_platform_mp32p.h</file>
+        </group>
     </open-files>
 </project-private>

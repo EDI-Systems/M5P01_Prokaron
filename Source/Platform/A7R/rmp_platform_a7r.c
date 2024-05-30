@@ -40,35 +40,34 @@ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
                           rmp_ptr_t Entry,
                           rmp_ptr_t Param)
 {
-    rmp_ptr_t End;
-    struct RMP_A7R_Stack* Ptr;
+    rmp_ptr_t Ptr;
+    struct RMP_A7R_Stack* Ctx;
 
-    /* Compute & align stack - full descending */
-    End=RMP_ROUND_DOWN(Stack+Size,3U);
-    Ptr=(struct RMP_A7R_Stack*)(End-sizeof(struct RMP_A7R_Stack));
+    Ptr=RMP_STACK_PTR(Stack,Size);
+    Ctx=RMP_STACK_CTX(Ptr);
 
-    Ptr->R0=Param;
-    Ptr->R1=0x01010101U;
-    Ptr->R2=0x02020202U;
-    Ptr->R3=0x03030303U;
-    Ptr->R4=0x04040404U;
-    Ptr->R5=0x05050505U;
-    Ptr->R6=0x06060606U;
-    Ptr->R7=0x07070707U;
-    Ptr->R8=0x08080808U;
-    Ptr->R9=0x09090909U;
-    Ptr->R10=0x10101010U;
-    Ptr->R11=0x11111111U;
-    Ptr->R12=0x12121212U;
-    Ptr->LR=0x14141414U;
-    Ptr->PC=Entry;
-    Ptr->CPSR=RMP_A7R_CPSR_E|RMP_A7R_CPSR_A|RMP_A7R_CPSR_F|RMP_A7R_CPSR_M(RMP_A7R_SYS);
+    Ctx->R0=Param;
+    Ctx->R1=0x01010101U;
+    Ctx->R2=0x02020202U;
+    Ctx->R3=0x03030303U;
+    Ctx->R4=0x04040404U;
+    Ctx->R5=0x05050505U;
+    Ctx->R6=0x06060606U;
+    Ctx->R7=0x07070707U;
+    Ctx->R8=0x08080808U;
+    Ctx->R9=0x09090909U;
+    Ctx->R10=0x10101010U;
+    Ctx->R11=0x11111111U;
+    Ctx->R12=0x12121212U;
+    Ctx->LR=0x14141414U;
+    Ctx->PC=Entry;
+    Ctx->CPSR=RMP_A7R_CPSR_E|RMP_A7R_CPSR_A|RMP_A7R_CPSR_F|RMP_A7R_CPSR_M(RMP_A7R_SYS);
 
     /* See if the user code is thumb or ARM */
     if((Entry&0x01U)!=0U)
-        Ptr->CPSR|=RMP_A7R_CPSR_T;
+        Ctx->CPSR|=RMP_A7R_CPSR_T;
 
-    return (rmp_ptr_t)Ptr;
+    return Ptr;
 }
 /* End Function:_RMP_Stack_Init **********************************************/
 

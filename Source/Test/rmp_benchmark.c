@@ -21,16 +21,16 @@ Description : The performance benchmark for RMP. Do not modify this file; what
 /* End Include ***************************************************************/
 
 /* Define ********************************************************************/
-/* Number of rounds to test */
+/* Number of rounds to test - default to 10000 */
 #ifndef ROUND_NUM
 #define ROUND_NUM       10000
 #endif
-/* Interval of timer overflow reports: 
+/* Recommended interval of timer overflow reports: 
  * ~ 3MHz               1000
  * ~ 30MHz              10000
  * ~ 300MHz             100000 */
 #ifndef OVERFLOW_NUM
-#define OVERFLOW_NUM    10000
+#define OVERFLOW_NUM    10000U
 #endif
 /* Whether to include FPU context */
 /* #define FLOAT_CONTEXT */
@@ -49,7 +49,7 @@ do \
 { \
     Total=0U; \
     Max=0U; \
-    Min=((rmp_tim_t)-1); \
+    Min=((rmp_tim_t)-1U); \
 } \
 while(0)
 
@@ -82,34 +82,34 @@ while(0)
 
 /* Global ********************************************************************/
 #ifndef MINIMAL_SIZE
-volatile rmp_ptr_t Flip=0;
-volatile rmp_tim_t Start=0;
-volatile rmp_tim_t End=0;
-volatile rmp_tim_t Diff=0;
-volatile rmp_tim_t Min=0;
-volatile rmp_tim_t Max=0;
-volatile rmp_u32_t Overflow=0;
+volatile rmp_ptr_t Flip=0U;
+volatile rmp_tim_t Start=0U;
+volatile rmp_tim_t End=0U;
+volatile rmp_tim_t Diff=0U;
+volatile rmp_tim_t Min=0U;
+volatile rmp_tim_t Max=0U;
+volatile rmp_u32_t Overflow=0U;
 #ifdef PTR_16_BIT
-volatile rmp_u32_t Total=0;
-volatile rmp_u32_t Mail_ISR_Total=0;
-volatile rmp_u32_t Sem_ISR_Total=0;
-volatile rmp_u32_t Msgq_ISR_Total=0;
-volatile rmp_u32_t Bmq_ISR_Total=0;
+volatile rmp_u32_t Total=0U;
+volatile rmp_u32_t Mail_ISR_Total=0U;
+volatile rmp_u32_t Sem_ISR_Total=0U;
+volatile rmp_u32_t Msgq_ISR_Total=0U;
+volatile rmp_u32_t Bmq_ISR_Total=0U;
 #else
-volatile rmp_ptr_t Total=0;
-volatile rmp_ptr_t Mail_ISR_Total=0;
-volatile rmp_ptr_t Sem_ISR_Total=0;
-volatile rmp_ptr_t Msgq_ISR_Total=0;
-volatile rmp_ptr_t Bmq_ISR_Total=0;
+volatile rmp_ptr_t Total=0U;
+volatile rmp_ptr_t Mail_ISR_Total=0U;
+volatile rmp_ptr_t Sem_ISR_Total=0U;
+volatile rmp_ptr_t Msgq_ISR_Total=0U;
+volatile rmp_ptr_t Bmq_ISR_Total=0U;
 #endif
-volatile rmp_tim_t Mail_ISR_Max=0;
-volatile rmp_tim_t Mail_ISR_Min=0;
-volatile rmp_tim_t Sem_ISR_Max=0;
-volatile rmp_tim_t Sem_ISR_Min=0;
-volatile rmp_tim_t Msgq_ISR_Max=0;
-volatile rmp_tim_t Msgq_ISR_Min=0;
-volatile rmp_tim_t Bmq_ISR_Max=0;
-volatile rmp_tim_t Bmq_ISR_Min=0;
+volatile rmp_tim_t Mail_ISR_Max=0U;
+volatile rmp_tim_t Mail_ISR_Min=0U;
+volatile rmp_tim_t Sem_ISR_Max=0U;
+volatile rmp_tim_t Sem_ISR_Min=0U;
+volatile rmp_tim_t Msgq_ISR_Max=0U;
+volatile rmp_tim_t Msgq_ISR_Min=0U;
+volatile rmp_tim_t Bmq_ISR_Max=0U;
+volatile rmp_tim_t Bmq_ISR_Min=0U;
 /* Kernel objects */
 volatile struct RMP_Thd Thd_1;
 volatile struct RMP_Thd Thd_2;
@@ -120,7 +120,7 @@ volatile struct RMP_Msgq Msgq_1;
 volatile struct RMP_Bmq Bmq_1;
 /* Memory pool */
 #ifdef TEST_MEM_POOL
-volatile rmp_ptr_t Pool[TEST_MEM_POOL]={0};
+volatile rmp_ptr_t Pool[TEST_MEM_POOL];
 #endif
 /* Floating point context */
 #ifdef FLOAT_CONTEXT
@@ -187,7 +187,7 @@ void Test_Mail_1(void)
     {
         /* Read counter here */
         Start=RMP_CNT_READ();
-        RMP_Thd_Snd(&Thd_2, 1, RMP_SLICE_MAX);
+        RMP_Thd_Snd(&Thd_2, 1U, RMP_SLICE_MAX);
     }
 }
 
@@ -198,7 +198,7 @@ void Test_Sem_1(void)
     {
         /* Read counter here */
         Start=RMP_CNT_READ();
-        RMP_Sem_Post(&Sem_1, 1);
+        RMP_Sem_Post(&Sem_1, 1U);
     }
 }
 
@@ -234,7 +234,7 @@ void Func_1(void)
 
     Test_Yield_1();
     /* Change priority of thread 2 */
-    RMP_Thd_Set(&Thd_2, 2, RMP_SLICE_MAX);
+    RMP_Thd_Set(&Thd_2, 2U, RMP_SLICE_MAX);
     Test_Mail_1();
     Test_Sem_1();
     Test_Msgq_1();
@@ -406,12 +406,12 @@ void Test_Bmq_ISR(void)
 #ifdef TEST_MEM_POOL
 rmp_ptr_t Rand(void)
 {
-    static rmp_ptr_t LFSR=0xACE1;
+    static rmp_ptr_t LFSR=0xACE1U;
     
-    if((LFSR&0x01)!=0)
+    if((LFSR&0x01U)!=0U)
     {
         LFSR>>=1;
-        LFSR^=0xB400;
+        LFSR^=0xB400U;
     }
     else
         LFSR>>=1;
@@ -438,14 +438,14 @@ void Test_Mem_Pool(void)
     rmp_cnt_t Count;
     rmp_cnt_t Test_Count;
     
-    Amount[0]=TEST_MEM_POOL/32;
-    Amount[1]=TEST_MEM_POOL/64+16;
-    Amount[2]=TEST_MEM_POOL/4;
-    Amount[3]=TEST_MEM_POOL/128+32;
-    Amount[4]=TEST_MEM_POOL/16;
-    Amount[5]=TEST_MEM_POOL/8+16;
-    Amount[6]=TEST_MEM_POOL/128+64;
-    Amount[7]=TEST_MEM_POOL/2-64;
+    Amount[0]=TEST_MEM_POOL/32U;
+    Amount[1]=TEST_MEM_POOL/64U+16U;
+    Amount[2]=TEST_MEM_POOL/4U;
+    Amount[3]=TEST_MEM_POOL/128U+32U;
+    Amount[4]=TEST_MEM_POOL/16U;
+    Amount[5]=TEST_MEM_POOL/8U+16U;
+    Amount[6]=TEST_MEM_POOL/128U+64U;
+    Amount[7]=TEST_MEM_POOL/2U-64U;
     
     /* Initialize the pool */
     RMP_Mem_Init(Pool, TEST_MEM_POOL*sizeof(rmp_ptr_t));
@@ -495,7 +495,7 @@ void Test_Mem_Pool(void)
         
         /* This should always be successful because we deallocated everything else.
          * Using 112 here to back off a little bit in case sizeof(rmp_ptr_t)==1. */
-        Mem[0]=RMP_Malloc(Pool, (TEST_MEM_POOL>>7)*112);
+        Mem[0]=RMP_Malloc(Pool, (TEST_MEM_POOL>>7)*112U);
         if(Mem[0]==RMP_NULL)
         {
             RMP_DBG_S("Memory test failure: ");
@@ -635,7 +635,7 @@ void Func_2(void)
         if(Start>End)
         {
             Overflow++;
-            if((Overflow%OVERFLOW_NUM)==0)
+            if((Overflow%OVERFLOW_NUM)==0U)
             {
                 RMP_DBG_I(OVERFLOW_NUM);
                 RMP_DBG_S(" overflows\r\n");
@@ -668,7 +668,7 @@ void Int_Handler(void)
     {
         Count++;
         Start=RMP_CNT_READ();
-        Retval=RMP_Thd_Snd_ISR(&Thd_2, 1);
+        Retval=RMP_Thd_Snd_ISR(&Thd_2, 1U);
         if(Retval<0)
         {
             RMP_DBG_S("ISR Mailbox send failed with code ");
@@ -682,7 +682,7 @@ void Int_Handler(void)
     {
         Count++;
         Start=RMP_CNT_READ();
-        Retval=RMP_Sem_Post_ISR(&Sem_1, 1);
+        Retval=RMP_Sem_Post_ISR(&Sem_1, 1U);
         if(Retval<0)
         {
             RMP_DBG_S("ISR semaphore post failed with code ");

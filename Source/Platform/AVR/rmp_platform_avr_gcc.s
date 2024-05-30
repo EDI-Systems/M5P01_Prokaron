@@ -24,13 +24,11 @@ PMIC_CTRL   : Only present in XMega series for interrupt masking.
 /* Import ********************************************************************/
     /* The real task switch handling function */
     .extern             _RMP_Run_High
-    /* The real systick handler function */
-    .extern             _RMP_Tim_Handler
     /* The PID of the current thread */
     .extern             RMP_Thd_Cur
     /* The stack address of current thread */
     .extern             RMP_SP_Cur
-    /* Kernel stack and table */
+    /* Kernel stack */
     .extern             _RMP_AVR_SP_Kern
 /* End Import ****************************************************************/
 

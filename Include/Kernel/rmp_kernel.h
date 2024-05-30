@@ -99,11 +99,35 @@ Description : The header file for the kernel.
 /* Scheduler bitmap */
 #define RMP_PRIO_WORD_NUM           (RMP_ROUND_UP(RMP_PREEMPT_PRIO_NUM,RMP_WORD_ORDER)>>RMP_WORD_ORDER)
 
-/* Initial stack helpers - end address -1 to avoid empty descending stack issues */
-#define RMP_INIT_STACK_START        ((rmp_ptr_t)RMP_Init_Stack)
-#define RMP_INIT_STACK_END          (RMP_INIT_STACK_START+RMP_INIT_STACK_SIZE-1U)
-#define RMP_INIT_STACK_ASCEND(X)    RMP_ROUND_UP(RMP_INIT_STACK_START+sizeof(rmp_ptr_t),X)
-#define RMP_INIT_STACK_DESCEND(X)   RMP_ROUND_DOWN(RMP_INIT_STACK_END-sizeof(rmp_ptr_t),X)
+/* Stack types */
+#define RMP_STACK_FULL_ASCEND       (0U)
+#define RMP_STACK_FULL_DESCEND      (1U)
+#define RMP_STACK_EMPTY_ASCEND      (2U)
+#define RMP_STACK_EMPTY_DESCEND     (3U)
+
+/* Thread stack calculation helpers for four kinds of stacks */
+#if(RMP_STACK_TYPE==RMP_STACK_FULL_ASCEND)
+#define RMP_STACK_END(STK,SZ)       RMP_ROUND_UP((STK)-sizeof(RMP_STACK_ELEM),RMP_STACK_ALIGN)
+#define RMP_STACK_PTR(STK,SZ)       (RMP_STACK_END(STK,SZ)+sizeof(RMP_STACK_STRUCT))
+#define RMP_STACK_CTX(PTR)          ((RMP_STACK_STRUCT*)((PTR)-sizeof(RMP_STACK_STRUCT)+sizeof(RMP_STACK_ELEM)))
+#elif(RMP_STACK_TYPE==RMP_STACK_FULL_DESCEND)
+#define RMP_STACK_END(STK,SZ)       (RMP_ROUND_DOWN((STK)+(SZ),RMP_STACK_ALIGN))
+#define RMP_STACK_PTR(STK,SZ)       (RMP_STACK_END(STK,SZ)-sizeof(RMP_STACK_STRUCT))
+#define RMP_STACK_CTX(PTR)          ((RMP_STACK_STRUCT*)(PTR))
+#elif(RMP_STACK_TYPE==RMP_STACK_EMPTY_ASCEND)
+#define RMP_STACK_END(STK,SZ)       RMP_ROUND_UP((STK),(RMP_STACK_ALIGN))
+#define RMP_STACK_PTR(STK,SZ)       (RMP_STACK_END(STK,SZ)+sizeof(RMP_STACK_STRUCT))
+#define RMP_STACK_CTX(PTR)          ((RMP_STACK_STRUCT*)((PTR)-sizeof(RMP_STACK_STRUCT)))
+#elif(RMP_STACK_TYPE==RMP_STACK_EMPTY_DESCEND)
+#define RMP_STACK_END(STK,SZ)       (RMP_ROUND_DOWN((STK)+(SZ)-sizeof(RMP_STACK_ELEM),RMP_STACK_ALIGN))
+#define RMP_STACK_PTR(STK,SZ)       (RMP_STACK_END(STK,SZ)-sizeof(RMP_STACK_STRUCT))
+#define RMP_STACK_CTX(PTR)          ((RMP_STACK_STRUCT*)((PTR)+sizeof(RMP_STACK_ELEM)))
+#else
+#error Please choose a correct stack type.
+#endif
+
+/* Initial thread's stack pointer */
+#define RMP_INIT_STACK              RMP_STACK_END((rmp_ptr_t)RMP_Init_Stack,RMP_INIT_STACK_SIZE)
 
 /* Get the thread from delay list - avoid possible interference
  * from struct packing at the head, though this is unlikely */
@@ -475,6 +499,7 @@ __EXTERN__ rmp_ret_t RMP_Thd_Resume(volatile struct RMP_Thd* Thread);
 
 __EXTERN__ rmp_ret_t RMP_Thd_Delay(rmp_ptr_t Slice);
 __EXTERN__ rmp_ret_t RMP_Thd_Cancel(volatile struct RMP_Thd* Thread);
+__EXTERN__ void RMP_Thd_Loop(rmp_ptr_t Loop);
 
 __EXTERN__ rmp_ret_t RMP_Thd_Snd(volatile struct RMP_Thd* Thread,
                                  rmp_ptr_t Data,

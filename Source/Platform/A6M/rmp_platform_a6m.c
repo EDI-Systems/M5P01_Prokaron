@@ -43,37 +43,36 @@ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
                           rmp_ptr_t Entry,
                           rmp_ptr_t Param)
 {
-    rmp_ptr_t End;
-    struct RMP_A6M_Stack* Ptr;
+    rmp_ptr_t Ptr;
+    struct RMP_A6M_Stack* Ctx;
     
-    /* Compute & align stack - full descending */
-    End=RMP_ROUND_DOWN(Stack+Size, 3U);
-    Ptr=(struct RMP_A6M_Stack*)(End-sizeof(struct RMP_A6M_Stack));
+    Ptr=RMP_STACK_PTR(Stack,Size);
+    Ctx=RMP_STACK_CTX(Ptr);
     
     /* Set LR_EXC and xPSR accordingly to avoid INVSTATE */
-    Ptr->LR_EXC=0xFFFFFFFDU;
-    Ptr->XPSR=0x01000000U;
+    Ctx->LR_EXC=0xFFFFFFFDU;
+    Ctx->XPSR=0x01000000U;
     
     /* Pass entry and parameter */
-    Ptr->PC=Entry;
-    Ptr->R0=Param;
+    Ctx->PC=Entry;
+    Ctx->R0=Param;
     
     /* Fill the rest for ease of identification */
-    Ptr->R1=0x01010101U;
-    Ptr->R2=0x02020202U;
-    Ptr->R3=0x03030303U;
-    Ptr->R4=0x04040404U;
-    Ptr->R5=0x05050505U;
-    Ptr->R6=0x06060606U;
-    Ptr->R7=0x07070707U;
-    Ptr->R8=0x08080808U;
-    Ptr->R9=0x09090909U;
-    Ptr->R10=0x10101010U;
-    Ptr->R11=0x11111111U;
-    Ptr->R12=0x12121212U;
-    Ptr->LR=0x14141414U;
+    Ctx->R1=0x01010101U;
+    Ctx->R2=0x02020202U;
+    Ctx->R3=0x03030303U;
+    Ctx->R4=0x04040404U;
+    Ctx->R5=0x05050505U;
+    Ctx->R6=0x06060606U;
+    Ctx->R7=0x07070707U;
+    Ctx->R8=0x08080808U;
+    Ctx->R9=0x09090909U;
+    Ctx->R10=0x10101010U;
+    Ctx->R11=0x11111111U;
+    Ctx->R12=0x12121212U;
+    Ctx->LR=0x14141414U;
     
-    return (rmp_ptr_t)Ptr;
+    return Ptr;
 }
 /* End Function:_RMP_Stack_Init **********************************************/
 

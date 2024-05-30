@@ -30,13 +30,13 @@ ISR Blocking message queue         : 736 / 856 / 736
 /* End Include ***************************************************************/
 
 /* Define ********************************************************************/
-/* How to read counter */
+/* Counter read wrapper */
 #define RMP_CNT_READ()    ((rtiREG1->CNT[0].FRCx)<<3)
-/* Are we testing the memory pool? */
-#define TEST_MEM_POOL     8192
-/* Are we doing minimal measurements? */
+/* Memory pool test switch */
+#define TEST_MEM_POOL     (8192U)
+/* Minimal build switch */
 /* #define MINIMAL_SIZE */
-/* The TMS570LC timers are all 32 bits, so */
+/* Timestamp data type */
 typedef rmp_ptr_t rmp_tim_t;
 /* End Define ****************************************************************/
 

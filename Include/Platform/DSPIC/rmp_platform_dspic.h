@@ -86,26 +86,30 @@ typedef rmp_s16_t rmp_ret_t;
 
 /* System macros *************************************************************/
 /* Compiler "extern" keyword setting */
-#define EXTERN                  extern
+#define EXTERN                          extern
 /* The order of bits in one CPU machine word */
-#define RMP_WORD_ORDER          (4U)
-/* The maximum length of char printing - no need to change this in most cases */
-#define RMP_DEBUG_PRINT_MAX     (255U)
-/* The offset of the stack when initializing */
-#define RMP_INIT_STACK          RMP_INIT_STACK_ASCEND(2U)
+#define RMP_WORD_ORDER                  (4U)
+/* The maximum length of char printing */
+#define RMP_DEBUG_PRINT_MAX             (255U)
+/* Empty ascending stack of rmp_ptr_t, 4-byte alignment */
+#define RMP_STACK_TYPE                  RMP_STACK_EMPTY_ASCEND
+#define RMP_STACK_ALIGN                 (2U)
+#define RMP_STACK_ELEM                  rmp_ptr_t
+#define RMP_STACK_STRUCT                struct RMP_DSPIC_Stack
 /* MSB/LSB extraction */
-#define RMP_MSB_GET(VAL)        RMP_DSPIC_MSB_Get(VAL)
-#define RMP_LSB_GET(VAL)        RMP_DSPIC_LSB_Get(VAL)
+#define RMP_MSB_GET(VAL)                RMP_DSPIC_MSB_Get(VAL)
+#define RMP_LSB_GET(VAL)                RMP_DSPIC_LSB_Get(VAL)
 
 /* The CPU and application specific macros are here */
 #include "rmp_platform_dspic_conf.h"
+
 /* Detect wrong configurations here */
-#define RMP_DSPIC_COP_NUM       (RMP_DSPIC_COP_24F_24H+ \
-                                 RMP_DSPIC_COP_24E+ \
-                                 RMP_DSPIC_COP_30F_33F+ \
-                                 RMP_DSPIC_COP_33E_33C)
+#define RMP_DSPIC_COP_NUM               (RMP_DSPIC_COP_24F_24H+ \
+                                         RMP_DSPIC_COP_24E+ \
+                                         RMP_DSPIC_COP_30F_33F+ \
+                                         RMP_DSPIC_COP_33E_33C)
 #if(RMP_DSPIC_COP_NUM!=1U)
-#error RMP DSPIC port: must choose a single CPU type.
+#error Must choose a single CPU type.
 #endif
 /* End System macros *********************************************************/
 
