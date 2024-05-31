@@ -1,0 +1,384 @@
+<?xml version="1.0" encoding="utf-8"?>
+<strings>
+  <string id="IDS_CONN_ERROR_GDB_SERVER" value="デバッグ接続に失敗しました"/>
+  <string id="IDS_FATAL_ERROR_GDB_SERVER" value="致命的エラー (GDB サーバー):"/>
+  <string id="IDS_COULD_NOT_CONNECT_TO_TARGET" value=
+"ターゲットに接続できません。\n
+GDBサーバ コンソールの表示で詳細をご確認ください。\n
+\n
+考えられる原因:\n
+1: プロジェクトで指定されているデバイスが、ターゲットハードウェアの指定と一致しない\n
+2: デバイスとエミュレータ、および、ターゲットボードとエミュレータ間の接続の問題\n
+3. デバッグオプションがハードウェア要件と一致しない\n
+4: ターゲットボードに電源が供給されていない\n
+5: 間違った電源がターゲットボードに供給されている\n
+6: 必要な .dll や .so ファイルが見つからない\n
+7: サポート対象外のデバイスに接続している\n
+\n
+注: エミュレータの 'RUN' LED が ON もしくは、一度接続に失敗した場合、エミュレータの切断、再接続が必要な場合があります。"
+  />
+  <string id="IDS_OPEN_E1E20_COMMS_FAILURE" value=
+"E1/E20 デバイスへの接続がオープンできません。\n
+GDBサーバ コンソールの表示で詳細をご確認ください。\n
+\n
+考えられる原因:\n
+1: ターゲット・ハードウェアが接続されていない。\n
+2: ターゲット・ハードウェアに電源が供給されていない。 (J-Linkコントロール・パネルを確認してください。).\n
+3: E1/E20 を Segger ターゲット・ハードウェアに接続しようとしている。\n
+\n
+注: もし、エミュレータの 'RUN' LED が ON もしくは、間違ったエミュレータが以前、接続されていた場合、エミュレータの切断、再接続が必要な場合があります。"
+  />
+  <string id="IDS_INIT_E1E20_COMMS_FAILURE" value=
+"E1/E20デバイスが初期化できません。\n
+GDBサーバ コンソールの表示で詳細をご確認ください。\n
+\n
+考えられる原因:\n
+1: Segger のデータで E1/E20 の接続を初期化しようとしている。\n
+2: 外部電源が設定されているが、外部電源は供給されていない。\n
+3: 外部電源が設定されているが、間違った電源がターゲットに供給されている。\n
+\n
+注: もし、エミュレータの 'RUN' LED が ON もしくは、間違ったエミュレータが以前、接続されていた場合、エミュレータの切断、再接続が必要な場合があります。"
+  />
+  <string id="IDS_INIT_EXEC_DVF_FILEEXISTS_FAILURE" value="E1/E20 デバイス dvf ファイルが見つからないかオープンに失敗しました。"/>
+  <string id="IDS_INIT_EXEC_DLL_FILEEXISTS_FAILURE" value="E1/E20 デバイス dll ファイルが見つからないかオープンに失敗しました。"/>
+  <string id="IDS_INIT_EXEC_DDF_FILEEXISTS_FAILURE" value="E1/E20 デバイス ddf ファイルが見つからないかオープンに失敗しました。"/>
+  <string id="IDS_REJECTING_ILLEGAL_ARGUMENT" value="Warning: 不明なコマンド・ライン引数を無視しました (%d: %s)\n"/>
+  <string id="IDS_ERROR_OPENING_CONFIG_FILE" value="構成ファイルのオープンでエラー: \n\t %s \n"/>
+  <string id="IDS_SETIO_WIDTH_FAILED" value="IO幅の設定に失敗しました"/>
+  <string id="IDS_TARGET_CONNECTED_OK" value="ターゲットと接続しました。\n"/>
+  <string id="IDS_DISCONNECTED_FROM_TARGET_DEBUGGER" value="ターゲットデバッガから切断されました。\n"/>
+  <string id="IDS_FAILED_SECURITY_CHECK_INCORRECT_ID" value="セキュリティチェックが失敗しました。使用しているセキュリティIDは '%s'"/>
+  <string id="IDS_FAILED_TARGET_CONNECTION_SECURITY_ID" value="接続できませんでした。セキュリティチェックが失敗しました。"/>
+  <string id="IDS_FAILED_CONNECT_TARGET_CPU_VOLTAGE" value="デバイスに電源が供給されていません。電源供給設定を確認してください。"/>
+  <string id="IDS_WRITING_TO_MEMORY_AREAS_ACCESS_SIZE" value="書き込みが失敗しました。異なるアクセス・サイズのメモリ境界をまたがった書き込みはできません。開始アドレス: 0x%08x, 長さ: 0x%08x.\n"/>
+  <string id="IDS_CHECK_CONNECTION_TO_EMULATOR_ID" value="シリアル番号 '%s' のエミュレータが正しく接続されているか確認してください。"/>
+  <string id="IDS_NO_E1_E20_EMULATORS" value="エミュレータが見つかりません。\n"/>
+  <string id="IDS_E1_E20_EMULATORS_FOUND" value="エミュレータが見つかりました。:\n"/>
+  <string id="IDS_FAILED_TO_SET_FMCD" value="フラッシュメモリ構成データの設定に失敗しました。"/>
+  <string id="IDS_DOWNLOAD_IN_HOTPLUGMODE" value="ホットプラグ・モードにおいてこの操作は無効です。起動構成において 'イメージのロード' を無効にしてください。\n"/>
+  <string id="IDS_HOTPLUG_MESSAGE" value="ターゲットに電源が供給されているか確認し、ターゲットとエミュレータを接続してください。\n接続完了後に OK を押してください。"/>
+  <string id="IDS_HOTPLUG_TITLE" value="Renesas GDB Server Hot Plug"/>
+  <string id="IDS_GDB_ACTION_FAILED_REPORT" value="GDB の操作 '%s' は '%s' のエラーで失敗しました.\n"/>
+  <string id="IDS_GDB_MESSAGE_FAILED_REPORT" value="GDB メッセージ '%s', %s, は失敗しました エラー・レポートは, %s\n"/>
+  <string id="IDS_GDB_ACTION_FAILED_CODE" value="GDB の操作 '%s' は '0x%08x' のエラーコードで失敗しました.\n"/>
+  <string id="IDS_GDB_MESSAGE_FAILED_CODE" value="GDB メッセージ '%s', %s, は失敗しました エラーコードは, 0x%08x\n"/>
+  <string id="IDS_GDB_MESSAGE_UNSUPPORTED" value="GDB メッセージ '%s', はサポートされていないか、不正です\n"/>
+  <string id="IDS_GDB_MESSAGE_INVALID" value="GDB メッセージ '%s', %s, は不正な値を含むか不正です\n"/>
+  <string id="IDS_SET_SW_BREAKPOINT_INSTEAD" value="利用可能なハードウェア・ブレークポイントがありません、代わりにソフトウェア・ブレークポイントを設定します。 (アドレス 0x%x)\n"/>
+  <string id="IDS_HW_BREAKPOINT_SET" value="ハードウェア・ブレークポイントをアドレス0x%xに設定します。\n"/>
+  <string id="IDS_HW_BREAKPOINT_CONVERTED" value="アドレス0x%xのハードウェア・ブレークポイントは、イベント・ポイントでリソースを解放するためにソフトウェア・ブレークポイントに変換されました。\n"/>
+  <string id="IDS_HW_WATCHPOINT_SET" value="ハードウェア・ウォッチポイントはアドレス0x%xに設定されました\n"/>
+  <string id="IDS_HW_WATCHPOINT_CANNOT_BE_SET" value="アドレス0x%xのハードウェア・ウォッチポイントはイベントポイントリソースがないため、有効にできません。.\n"/>
+  <string id="IDS_HOTPLUG_ALREADY_CONNECTED" value="Hot Plug error. すでにユーザシステムが接続されているためホットプラグインで起動できません。プログラムはリセットされました。\n"/>
+  <string id="IDS_HOTPLUG_NO_POWER" value="Hot Plug error. ターゲットは接続されていますが電源が供給されていません。\n"/>
+  <string id="IDS_HOTPLUG_NO_CONNECTION" value="Hot Plug error. ターゲットがエミュレータに接続されていません。\n"/>
+  <string id="IDS_FFWERR_HOTPLUG_OSM_NOT_CHANGE" value="オプション設定メモリを、指定された値に書き換えずにホットプラグインで起動しました。 "/>
+  <string id="IDS_FFWERR_WRITE_OFS1_LVDAS_CHANGE" value="OFS1レジスタへのライトデータを、リセット後電圧監視リセット無効に変更されました。 "/>
+  <string id="IDS_FFWERR_DWN_OSMDATA_NON" value="オプション設定メモリへのダウンロードデータがありません。 "/>
+  <string id="IDS_UNSUPPORTED_MONITOR_COMMAND" value="モニター・コマンド '%s' はサポートされていません。\n"/>
+  <string id="IDS_EXTERNAL_POWER_CONNECTED_ALSO" value="エミュレータ電源が選択されましたが、外部電源が供給されています。"/>
+  <string id="IDS_REGISTER_INDEX_INVALID" value="レジスター・インデックス '%s' は無効です。"/>
+  <string id="IDS_SW_BREAKPOINT_SET" value="'内蔵プログラム ROM を書き換えるプログラムをデバッグする'が'はい'に設定されているため、アドレス 0x%x に対するソフトウェア・ブレークポイントは無効です。 \n"/>
+  <string id="IDS_FAILED_TO_WRITE_TO_PROTECTED_MEMORY" value="保護されたメモリー・アドレス 0x%x に書き込もうとしましたが失敗しました。値は、 0xff に設定されました。\n"/>
+  <string id="IDS_SET_CORE_FAILED" value="コアの設定に失敗しました。"/>
+  <string id="IDS_FFWERR_WRITE_TMAREA" value="Trusted Memory領域への書き込みはできません。"/>
+  <string id="IDS_USAGE_TITLE" value=" 使用方法:  e2-server-gdb  [オプション] \n"/>
+  <string id="IDS_USAGE_TITLE2" value="オプションは:\n"/>
+  <string id="IDS_USAGE_OPTION_1" value="   -h\t\t\t: このヘルプメッセージを表示する。\n"/>
+  <string id="IDS_USAGE_OPTION_2" value="   -b\t\t\t: ハードウェア・ブレークポイントのみを使用する。\n"/>
+  <string id="IDS_USAGE_OPTION_3" value="   -c &lt;構成ファイル&gt;\t: 構成ファイルから構成パラメータを読む。\n"/>
+  <string id="IDS_USAGE_OPTION_4" value="   -d &lt;ポート&gt;\t\t: 指定したソケットで高度なデバッグ・インターフェースを有効にする。\n"/>
+  <string id="IDS_USAGE_OPTION_5" value="   -e\t\t\t: persistant モードを可能にする。\n"/>
+  <string id="IDS_USAGE_OPTION_6" value="   -f &lt;ログ・ファイル&gt;\t: ログファイルの名前\n"/>
+  <string id="IDS_USAGE_OPTION_7" value="   -l &lt;ログ・レベル&gt;\t\t: 0 から 31までのログレベル  \n"/>
+  <string id="IDS_USAGE_OPTION_8" value="   -p &lt;ポート番号&gt;\t\t: RSP TCP-待ち受け ポート番号.\n"/>
+  <string id="IDS_USAGE_OPTION_9" value="   -v\t\t\t: 冗長モード　オン\n"/>
+  <string id="IDS_USAGE_OPTION_10" value="   -r &lt;更新遅延&gt;\t\t: 1秒間のハードウェア状況更新の最小更新遅延。\n"/>
+  <string id="IDS_USAGE_OPTION_11" value="   -t\t\t\t: ターゲット名、デフォルトはR5F56108。\n"/>
+  <string id="IDS_USAGE_OPTION_12" value="   -g\t\t\t: デバイス名、デフォルトは E20 \n"/>
+  <string id="IDS_USAGE_OPTION_13" value="   -t\t\t\t: ターゲット名, デフォルトは E10A_USB_SH_SH2A_FLASH.\n"/>
+  <string id="IDS_USAGE_OPTION_14" value="   -g\t\t\t: デバイス名、デフォルトは E10A \n"/>
+  <string id="IDS_USAGE_OPTION_15" value="   -x  &lt;ポート番号&gt;\t\t: 制御ソケットを有効にする \n"/>
+  <string id="IDS_USAGE_OPTION_16" value="   -m  &lt;モード番号&gt;\t\t: RX プロセッサー・モード 0/1/2 \n"/>
+  <string id="IDS_USAGE_OPTION_17" value="   -w  &lt;0/1&gt;\t\t: E1から 3.3v 500mA ターゲット電源を供給する (1=on)\n"/>
+  <string id="IDS_USAGE_OPTION_18" value="   -n  &lt;0/1&gt;\t\t: エンディアン 0=リトル (デフォルト), 1=ビッグ \n"/>
+  <string id="IDS_USAGE_OPTION_19" value="   -n  &lt;0/1&gt;\t\t: エンディアン 0=リトル, 1=ビッグ (デフォルト)\n"/>
+  <string id="IDS_USAGE_OPTION_20" value="   --advanced=&lt;ポート&gt;\t: 指定したソケットで高度なデバッグ・インターフェースを有効にする。\n"/>
+  <string id="IDS_USAGE_OPTION_21" value="   --console\t\t: このサーバーはEclipseから起動されない \n"/>
+  <string id="IDS_USAGE_OPTION_22" value="   --help\t\t: このヘルプメッセージを表示する。\n"/>
+  <string id="IDS_USAGE_OPTION_23" value="   --logpath=&lt;パス&gt;\t: デバッグ・ログファイルに使用されるパスをする\n"/>
+  <string id="IDS_USAGE_OPTION_24" value="   --elf=&lt;パス&gt;\t\t: ELF オブジェクトへのパスを指定する (エンディアンのチェックを可能にする)\n                      : 使用すると、ログファイルはデフォルトでここに生成される。\n"/>
+  <string id="IDS_USAGE_OPTION_25" value="   --verbose\t\t: 冗長モード　オン.\n"/>
+  <string id="IDS_GDBSERVER_FOR_RENESAS_BANNER" value="GDB Server for Renesas targets.\n\tVersion %s [%s] (%s %s)\n"/>
+  <string id="IDS_JLINK_CPU_OVERLOAD" value="Overloading the CPU name as %s\n"/>
+  <string id="IDS_SEGGER_DLL_VERSION" value="Using J-Link version V%s - %s\n"/>
+  <string id="IDS_BANNER_LINE_1" value="以下のオプションでGDBサーバーを起動します: \n"/>
+  <string id="IDS_BANNER_LINE_2" value="\tオプション\t: %s\n"/>
+  <string id="IDS_BANNER_LINE_3" value="\tPersistant モード\t\t: 有効 \n"/>
+  <string id="IDS_BANNER_LINE_4" value="\tPersistant モード\t\t: 無効 \n"/>
+  <string id="IDS_BANNER_LINE_5" value="\tログファイル名\t\t: %s\n"/>
+  <string id="IDS_BANNER_LINE_6" value="\tログファイル・パス\t\t: %s\n"/>
+  <string id="IDS_BANNER_LINE_7" value="\tログ・レベル\t\t\t: %d\n"/>
+  <string id="IDS_BANNER_LINE_8" value="\t待ち受け ポート番号\t\t: %d\n"/>
+  <string id="IDS_BANNER_LINE_9" value="\t状況更新遅延\t\t: %ds\n"/>
+  <string id="IDS_BANNER_LINE_10" value="\t冗長モード\t\t\t: 有効 \n"/>
+  <string id="IDS_BANNER_LINE_11" value="\t冗長モード\t\t\t: 無効 \n"/>
+  <string id="IDS_BANNER_LINE_12" value="\tSWD デバッグ\t\t: 有効 \n"/>
+  <string id="IDS_BANNER_LINE_13" value="\tGDBServer エンディアン\t: ビッグ\n"/>
+  <string id="IDS_BANNER_LINE_14" value="\tGDBServer エンディアン\t: リトル\n"/>
+  <string id="IDS_BANNER_LINE_15" value="\tコンソール・モード\t\t: オフ\n"/>
+  <string id="IDS_BANNER_LINE_16" value="\tコンソール・モード\t\t: オン\n"/>
+  <string id="IDS_CONNECTING_TO_RH850_TARGET" value="RH850ターゲットへ接続\n"/>
+  <string id="IDS_READ_FROM_REGISTER" value="レジスタからの読込み        %s, GDB = 0x%03x, Exec = 0x%03x, value = 0x%08x\n"/>
+  <string id="IDS_FAILED_READ_FROM_REGISTER" value="レジスタからの読込みに失敗 %s, GDB = 0x%03x, Exec = 0x%03x, error = 0x%08x\n"/>
+  <string id="IDS_CONNECTING_TO_SH_TARGET" value="%sへ接続, SH ターゲット\n"/>
+  <string id="IDS_BANNER_LINE_17" value="\tエミュレーターからの電源供給\t: On\n"/>
+  <string id="IDS_BANNER_LINE_18" value="\tエミュレーターからの電源供給\t: Off\n"/>
+  <string id="IDS_TARGET_ENDIAN_MISMATCH" value="Warning: ターゲットのエンディアン (%s) とデバッグ構成で指定されたエンディアン (%s) が一致しません. デバッグ・ツール設定の'エンディアン'をご確認ください。"/>
+  <string id="IDS_ENDIAN_BIG" value="ビッグ"/>
+  <string id="IDS_ENDIAN_LITTLE" value="リトル"/>
+  <string id="IDS_ERROR_OPENING_MCU_FILE" value="MCU ファイルのオープンでエラー: %s\n"/>
+  <string id="IDS_CANNOT_SET_SW_BP_AT_ADDR" value="アドレス 0x%08x にソフトウェアブレークポイントが設定できません\n"/>
+  <string id="IDS_WRITING_TO_RESERVED_MEMORY" value="予約メモリへの書出し, 開始: 0x%08x, 長さ: 0x%08x\n"/>
+  <string id="IDS_CONNECTING_TO_E1_RL78_TARGET" value="%s, RL78ターゲットへの接続\n"/>
+  <string id="IDS_CONNECTING_TO_IECUBE_RL78_TARGET" value="IECUBE, RL78ターゲットへの接続\n"/>
+  <string id="IDS_CONNECTING_TO_SIM_RL78_TARGET" value="SIMULATOR, RL78ターゲットへの接続\n"/>
+  <string id="IDS_INVALID_ADDRESS_RANGE_INFO" value="不正なアドレス範囲情報:"/>
+  <string id="IDS_INVALID_ADDRESS_RANGE_INFO_2" value="不正なアドレス範囲情報: 0x%08x%08x から 0x%08x%08x, 幅=%d, タイプ=%d\n"/>
+  <string id="IDS_ECLIPSE" value="Eclipse"/>
+  <string id="IDS_ID_CODE_AUTHENTICATION_FAILED" value="IDコード認証に失敗しました:\n\nターゲット・デバイスのフラッシュROMプロテクションが有効なため、デバッグ接続できません。\nデバッグ構成で正しいIDコードを指定するか、デバイスを初期化して再試行してください。\n"/>
+  <string id="IDS_TARGET_DOES_NOT_MATCH_HW" value="IDコード認証に失敗しました:\n\n選択されたターゲット・デバイスと実際のデバイスが一致すること、および、デバイスとエミュレータ間の接続に問題がないことをご確認ください。\n"/>
+  <string id="IDS_ENABLE_PERMIT_CLOCK_SOURCE" value="「内蔵フラッシュ・メモリ書き換え時のクロック操作を許可する」を有効にする必要があります。\n"/>
+  <string id="IDS_PCLK_OUTSIDE_RANGE" value="周辺モジュールクロック(PCLK)の設定は範囲外です。入力クロック(EXTAL)とシステムクロック制御レジスタ(SCKCR)の設定を確認してください。\n"/>
+  <string id="IDS_TARGET_ENDIAN_MDE" value="        ターゲット・エンディアン (MDE ピン)    : %s\n"/>
+  <string id="IDS_CONNECTING_TO_RX_TARGET" value=" %s　へ接続, RX Target\n"/>
+  <string id="IDS_CONNECTING_TO_ARM_TARGET" value=" %s　へ接続, ARM Target\n"/>
+  <string id="IDS_CONNECTING_TO_RCAR_PROXY_ARM_TARGET" value=" %s　へ接続, ARM Passthrough Target: address %s, port: %d\n"/>
+  <string id="IDS_CONNECTING_TO_RCAR_PROXY_VDK_TARGET" value=" %s　へ接続, VDK Passthrough Target: address %s, port: %d\n"/>
+  <string id="IDS_CONNECTING_TO_RCAR_PROXY_QEMU_TARGET" value=" %s　へ接続, QEMU Passthrough Target: address %s, port: %d\n"/>
+  <string id="IDS_CONNECTING_TO_RCAR_PROXY_SHADER_TARGET" value=" %s　へ接続, Shader Passthrough Target: address %s, port: %d\n"/>
+  <string id="IDS_WRITE_BINARY_DATA" value="バイナリーデータの書込み"/>
+  <string id="IDS_READ_MEMORY" value="メモリの読込み"/>
+  <string id="IDS_WRITE_MEMORY" value="メモリの書込み"/>
+  <string id="IDS_BREAKPOINTS" value="ブレークポイント"/>
+  <string id="IDS_ADD_SOFTWARE_BREAKPOINT" value="ソフトウェア・ブレークポイントの追加"/>
+  <string id="IDS_DELETE_SOFTWARE_BREAKPOINT" value="ソフトウェア・ブレークポイントの削除"/>
+  <string id="IDS_ADD_HARDWARE_BREAKPOINT" value="ハードウェア・ブレークポイントの追加"/>
+  <string id="IDS_DELETE_HARDWARE_BREAKPOINT" value="ハードウェア・ブレークポイントの削除"/>
+  <string id="IDS_ADD_HARDWARE_WRITE_WATCHPOINT" value="ハードウェア書込みウォッチポイントの追加"/>
+  <string id="IDS_DELETE_HARDWARE_WRITE_WATCHPOINT" value="ハードウェア書込みウォッチポイントの削除"/>
+  <string id="IDS_ADD_HARDWARE_READ_WATCHPOINT" value="ハードウェア読込みウォッチポイントの追加"/>
+  <string id="IDS_DELETE_HARDWARE_READ_WATCHPOINT" value="ハードウェア読込みウォッチポイントの削除"/>
+  <string id="IDS_CONTINUE" value="コンティニュー"/>
+  <string id="IDS_READ_ALL_REGISTERS" value="すべてのレジスタの読込み"/>
+  <string id="IDS_WRITE_ALL_REGISTERS" value="すべてのレジスタの書込み"/>
+  <string id="IDS_RESET_TARGET" value="ターゲットのリセット"/>
+  <string id="IDS_READ_REGISTER" value="レジスタ読込み"/>
+  <string id="IDS_WRITE_REGISTER" value="レジスタ書込み"/>
+  <string id="IDS_MONITOR_COMMAND" value="モニター・コマンド"/>
+  <string id="IDS_RESTART_COMMAND" value="リスタート・コマンド"/>
+  <string id="IDS_STEP" value="ステップ"/>
+  <string id="IDS_GO" value="実行"/>
+  <string id="IDS_GET_TARGET_STATUS" value="ターゲット状態の取得"/>
+  <string id="IDS_CONNECT_TO_TARGET" value="ターゲットに接続"/>
+  <string id="IDS_ERROR_MESSAGE_NOT_SPECIFIED" value="エラーメッセージが指定されていません"/>
+  <string id="IDS_ERROR_MESSAGE_FORMAT_ERROR" value="エラー・メッセージ・フォーマット・エラー"/>
+  <string id="IDS_ACCESS_RESERVED_MEMORY" value="アドレス0x%08xで予約メモリーへアクセスを試みました"/>
+  <string id="IDS_COMPORT_SLOW_MEMORY_READ_WHEN_RUNNING" value="COMポート接続ではプログラム実行中のメモリーリードに時間がかかるため、メモリーリード処理を中止しました"/>
+  <string id="IDS_STOP_TARGET_WHEN_NOT_RUNNING" value="実行中ではないターゲットに対して停止を試みました"/>
+  <string id="IDS_FAILED_TO_ACCESS_DEVICE_MCU_FOR_CPU" value="このCPUのDeviceファイルあるいはMCUファイルのアクセスに失敗しました"/>
+  <string id="IDS_FAILED_CONNECT_TARGET" value="ターゲットの接続が失敗しました"/>
+  <string id="IDS_CHECK_CORRECT_CPU_SELECTED" value="正しいCPU型名が選択されているか確認してください"/>
+  <string id="IDS_STARTING_TARGET_CONNECTION" value="ターゲット接続開始"/>
+  <string id="IDS_FINISHED_TARGET_CONNECTION" value="ターゲット接続終了"/>
+  <string id="IDS_STARTING_DOWNLOAD" value="ダウンロード開始"/>
+  <string id="IDS_FINISHED_DOWNLOAD" value="ダウンロード終了"/>
+  <string id="IDS_STARTING_FIRMWARE_UPDATE" value="ファームウェアのアップデート開始"/>
+  <string id="IDS_STARTING_FULL_FIRMWARE_UPDATE" value="ファームウェアの完全アップデート開始"/>
+  <string id="IDS_FIRMWARE_UP_TO_DATE" value="ファームウェアの更新"/>
+  <string id="IDS_FINISHED_FIRMWARE_UPDATE" value="ファームウェアのアップデート終了"/>
+  <string id="IDS_TARGET_CONNECTION_STATUS_OK" value="ターゲット接続状況 - OK"/>
+  <string id="IDS_TARGET_CONNECTION_STATUS_FAILED" value="ターゲット接続状況 - 失敗"/>
+  <string id="IDS_STARTING_FIRMWARE_UPDATE_FROM_V_TO_V" value="'%s' から '%s' へファームウェアのアップデート開始"/>
+  <string id="IDS_STARTING_FULL_FIRMWARE_UPDATE_FROM_V_TO_V" value="'%s' から '%s' へファームウェアの完全アップデート開始"/>
+  <string id="IDS_FIRMWARE_UP_TO_DATE_AT_VERSION_V" value="ファームウェアバージョン '%s'"/>
+  <string id="IDS_FAILED_TO_GET_EVENT_DATA" value="イベントデータの取得に失敗しました"/>
+  <string id="IDS_FAILED_TO_SET_EVENT_DATA" value="イベントデータの設定に失敗しました"/>
+  <string id="IDS_FAILED_TO_GET_TRACE_CYCLE_DATA" value="トレース・サイクル・データの取得に失敗しました"/>
+  <string id="IDS_FAILED_TO_GET_TRACE_MODE" value="トレース・モードの取得に失敗しました"/>
+  <string id="IDS_FAILED_TO_GET_EVENT_TRIGGER" value="イベント・トリガーの取得に失敗しました"/>
+  <string id="IDS_FAILED_TO_STOP_TRACE_FACILITY" value="トレース機能の停止に失敗しました"/>
+  <string id="IDS_FAILED_TO_RESTART_TRACE_FACILITY" value="トレース機能の再スタートに失敗しました"/>
+  <string id="IDS_FAILED_TO_READ_TRACE_DATA" value="トレースデータの読込みに失敗しました"/>
+  <string id="IDS_FAILED_TO_ANALYSE_INSTRUCTION_CODE" value="命令コードの分析に失敗しました"/>
+  <string id="IDS_FFW_CALL_ERROR" value="次のエラーにより、ファームウェアの %s APIの呼び出しが失敗しました: %s\n"/>
+  <string id="IDS_FAILED_TO_SET_SOFTWARE_BREAKPOINT" value="ソフトウェア・ブレークポイントの設定に失敗しました"/>
+  <string id="IDS_FAILED_TO_READ_FROM_REGISTERS" value="レジスタから読込みに失敗しました"/>
+  <string id="IDS_FAILED_TO_WRITE_TO_REGISTERS" value="レジスタの書込みに失敗しました"/>
+  <string id="IDS_FAILED_TO_INITIALISE_THE_FFW_API" value="エミュレーターを初期化できませんでした。エミュレータを再接続してから再度お試しください。"/>
+  <string id="IDS_FAILED_TO_SET_THE_PRODUCT_SERIAL_NUMBER" value="製品シリアル番号の設定に失敗しました"/>
+  <string id="IDS_FAILED_TO_SET_THE_USB_TRANSFER_SIZE" value="USB転送サイズの設定に失敗しました"/>
+  <string id="IDS_FAILED_TO_SET_PROCESSOR_TIMEOUT" value="プロセッサ・タイムアウトの設定に失敗しました"/>
+  <string id="IDS_FAILED_TO_GO_TO_BFW" value=" FFWE20Cmd_TRANS_EMLコマンドの実行に失敗しました。"/>
+  <string id="IDS_FAILED_TO_SET_THE_HOTPLUG" value="ホット・プラグの設定に失敗しました"/>
+  <string id="IDS_FAILED_TO_SET_THE_ID_CODE" value="id コードの設定に失敗しました"/>
+  <string id="IDS_FAILED_TO_SET_THE_BREAK_MODE" value="ブレーク・モードの設定に失敗しました"/>
+  <string id="IDS_FAILED_TO_SET_THE_HOTPLUG_MODE" value="ホット・プラグ・モードの設定に失敗しました"/>
+  <string id="IDS_FAILED_TO_GET_EMULATOR_INFORMATION" value="エミュレータ情報の取得に失敗しました"/>
+  <string id="IDS_FAILED_TO_OPEN_DCSF_CHANNEL" value="エミュレーターのFPGAのプログラムに失敗しました。"/>
+  <string id="IDS_FAILED_TO_SEND_DATA_TO_DCSF_CHANNEL" value="エミュレーターのFPGAのプログラムに失敗しました。"/>
+  <string id="IDS_FAILED_TO_CLOSE_DCSF_CHANNEL" value="エミュレーターのFPGAのプログラムに失敗しました。"/>
+  <string id="IDS_FAILED_FIRMWARE_CHECK_FIRMWARE_FILE" value="ファームウェア・チェックに失敗しました、不正なファームウェア・ファイル %s \n"/>
+  <string id="IDS_DEVICE_EML_VERSION" value="デバイスEMLバージョン=%x、ファームウェア・ファイルLV0バージョン=%x"/>
+  <string id="IDS_PLEASE_CONTACT_RENESAS_FOR_FIRMWARE_FILE" value="最新版のe2 studioを再インストールしてお試しください。"/>
+  <string id="IDS_FAILED_TO_SET_THE_DEBUG_INFORMATION" value="デバッグ情報の設定に失敗しました"/>
+  <string id="IDS_ERROR_CODE_AND_MESSAGE" value="エラー '%s', %s\n"/>
+  <string id="IDS_FAILED_TO_WRITE_INTERNAL_WRITE_PROGRAM" value="内部の書込みプログラムの書込みに失敗しました"/>
+  <string id="IDS_FAILED_TO_SET_THE_PROCESSOR_MODE" value="プロセッサ・モードの設定に失敗しました"/>
+  <string id="IDS_FAILED_TO_SET_FLASH_OVERWRITTEN_INFORMATION" value="フラッシュ上書き情報の設定に失敗しました"/>
+  <string id="IDS_FAILED_TO_SET_TRACE_MODE" value="トレース・モードの設定に失敗しました"/>
+  <string id="IDS_FAILED_TO_SET_EVENT_COMBINATION" value="イベント組み合わせの設定に失敗しました"/>
+  <string id="IDS_FAILED_TO_GET_PERFORMANCE_MEASUREMENT_SETTINGS" value="パフォーマンス測定設定の取得に失敗しました"/>
+  <string id="IDS_FAILED_TO_SET_PERFORMANCE_MEASUREMENT_SETTINGS" value="パフォーマンス測定設定の設定に失敗しました"/>
+  <string id="IDS_FAILED_TO_SET_EXTERNAL_POWER_MODE" value="外部電源モードの設定に失敗しました"/>
+  <string id="IDS_FAILED_TO_SET_THE_MCU_INFORMATION" value="MCU情報の設定に失敗しました"/>
+  <string id="IDS_FAILED_TO_GET_THE_JTAG_CLOCK" value="JTAGクロックの取得に失敗しました"/>
+  <string id="IDS_FAILED_TO_SET_THE_SERIAL_COMMUNICATIONS_BAUD_RATE" value="シリアル通信ボーレートの設定に失敗しました"/>
+  <string id="IDS_FAILED_TO_SET_THE_SERIAL_CONTROL_INFORMATION" value="シリアル制御情報の設定に失敗しました"/>
+  <string id="IDS_FAILED_TO_SET_THE_JTAG_CLOCK" value="JTAGクロックの設定に失敗しました"/>
+  <string id="IDS_FAILED_TO_GET_PROGRAM_RUNTIME_INFORMATION" value="プログラム・ランタイム情報の取得に失敗しました"/>
+  <string id="IDS_FAILED_TO_GET_TARGET_STATUS" value="ターゲット状態の取得に失敗しました"/>
+  <string id="IDS_FAILED_TO_INITIALISE_EMULATOR_SETTINGS" value="エミュレータ設定の初期化に失敗しました"/>
+  <string id="IDS_FAILED_TO_RESET_TARGET" value="ターゲットのリセットが失敗しました"/>
+  <string id="IDS_STOP_COMMAND_FAILED" value="ストップ・コマンドが失敗しました"/>
+  <string id="IDS_STEP_COMMAND_FAILED" value="ステップ・コマンドが失敗しました"/>
+  <string id="IDS_FAILED_ON_GOTO_BREAKPOINT" value="ブレークポイントへの移動に失敗しました"/>
+  <string id="IDS_FAILED_TO_WRITE_TO_MEMORY" value="メモリの書込みが失敗しました"/>
+  <string id="IDS_FAILED_TO_GET_CAUSE_OF_BREAK" value="ブレーク要因の取得に失敗しました"/>
+  <string id="IDS_FAILED_TO_GET_C2E_DATA" value="C2E データの取得に失敗しました"/>
+  <string id="IDS_CAN_NOT_CONNECT_TO_THE_EMULATOR" value="エミュレータに接続できません"/>
+  <string id="IDS_CHECK_CONNECTION_TO_EMULATOR" value="エミュレータに接続をチェックしてください"/>
+  <string id="IDS_FAILED_TO_DOWNLOAD" value="ダウンロードに失敗しました"/>
+  <string id="IDS_FAILED_TO_SET_E2C_DATA" value="E2C データの設定に失敗しました"/>
+  <string id="IDS_FAILED_TO_CLEAR_E2C_C2E" value="E2C/C2Eのクリアに失敗しました。"/>
+  <string id="IDS_FAILED_TO_SET_HOT_PLUG_FUNCTION" value="ホット・プラグイン機能の設定に失敗しました"/>
+  <string id="IDS_ERROR_IN_OPENING_MCU_FILE" value="MCU ファイル: %s のオープン中にエラーが発生しました"/>
+  <string id="IDS_FAILED_TO_INITIALIZE_FFW_INTERFACE" value="ファームウェアの初期化に失敗しました。最新版のe2 studioを再インストールしてお試しください。"/>
+  <string id="IDS_FAILED_TO_DOWNLOAD2" value="'%s'のダウンロードに失敗しました"/>
+  <string id="IDS_RESET_FAILED" value="リセットが失敗しました"/>
+  <string id="IDS_START_DOWNLOAD_FAILED" value="ダウンロードの開始が失敗しました"/>
+  <string id="IDS_STOP_DOWNLOAD_FAILED" value="ダウンロードの停止が失敗しました"/>
+  <string id="IDS_FFWERR_DWN_TMAREA" value="Warning: Trusted Memory領域にはダウンロードデータを書き込みませんでした。"/>
+  <string id="IDS_FFWERR_RAM_WAIT_TMP_CHANGE" value="Warning: RAMのウエイト設定を一時的に変更してコマンドを実行しました。"/>
+  <string id="IDS_FFWERR_ROM_WAIT_TMP_CHANGE" value="Warning: ROMのウエイト設定を一時的に変更してコマンドを実行しました。"/>
+  <string id="IDS_FFWERR_STEPADDR_TMAREA" value="ステップ実行開始アドレスがTrusted Memory領域内のため、ステップ実行できません。"/>
+  <string id="IDS_CAN_NOT_CONNECT_TO_THE_EMULATOR_ALREADY_USED" value="指定されたエミュレータは使用中のため接続できません。"/>
+  <string id="IDS_CAN_NOT_CONNECT_TO_THE_EMULATOR_DEVICE_NOTFOUND" value="エミュレータと接続できません。デバイスドライバがインストールされていないか、エミュレータが接続されていない可能性があります。"/>
+  <string id="IDS_FAILED_UNRECOGNISED_COMMAND_LINE_ERROR" value="GDB server, コマンドラインが認識できません"/>
+  <string id="IDS_WRITE_FAILURE_WITH_ADDRESSES" value="write data from '0x%08x' to '0x%08x' failed\n"/>
+  <string id="IDS_WRITE_TO_OCD_RESERVED_AREA" value="write to '0x%08x' to '0x%08x' failed, part of debug monitor area\n"/>
+  <string id="IDS_PROTECTED_FILL_DATA_INVALID" value="Invalid fill data '%s', valid range 0 to 255"/>
+  <string id="IDS_PROTECTED_ADDRESS_RANGE_TOO_LARGE" value="保護されたアドレス範囲 (%s) が1024バイトを超えています"/>
+  <string id="IDS_PROTECTED_ADDRESS_RANGE_OVERLAPS" value="Protected address range overlaps area already defined"/>
+  <string id="IDS_INFO_CONSUMPTION_CURRENT_FULL" value="消費電流のバッファが一杯になりました。プログラムの実行を停止します。\n"/>
+  <string id="IDS_UNKNOWN_INSTRUCTION" value="Unknown instruction\n"/>
+  <string id="IDS_JLINK_DLL_MISSING" value="Failed to load JLink DLL\n"/>
+  <string id="IDS_MOT_FILE_FAIL" value="Could not load E1/E20 firmware mot file.\n"/>
+  <string id="IDS_DEBUGGER_ERROR" value="Debugger error:\n\n%s\nPlease see debug_log.txt for more details\n"/> 
+  <string id="IDS_TARGET_DLL_NOT_FOUND" value="Target DLL\n%s\n not found !\n"/>
+  <string id="IDS_DEBUGGING_DLL" value="Multiple choice for debugging DLL. Assuming J-Link RX DLL, NOT FFWE20RX600.dll\n"/>
+  <string id="IDS_FLASH_WRITE_OF_RUNNING_ERROR" value="CPUコアが実行中のためFlash書き換えに失敗しました。全CPUコアを停止してから再度実行してください。\n"/>
+  <string id="IDS_CONNECTING_TO_T32_TARGET" value="Connecting to %s, Lauterbach Target\n"/>
+  <string id="IDS_FAILED_TO_CHANGE_VOLTAGE_LOWER" value="指定された電圧値はサポートされていません。"/>
+  <string id="IDS_FAILED_TO_CHANGE_VOLTAGE_NOTSUPPLIED" value="エミュレータから電源供給されていません。"/>
+  <string id="IDS_FAILED_TO_CHANGE_VOLTAGE_NOTRUNNIG" value="ターゲットが実行中ではありません。"/>
+  <string id="IDS_FAILED_TO_CHANGE_VOLTAGE_ERROR" value="供給電圧値の変更に失敗しました。"/>
+  <string id="IDS_WARNING_POWER_NOT_SUPPLIED" value="接続完了しましたが、ターゲットボードの電源がOFFの状態です。電源を入れてください。\n"/>
+  <string id="IDS_FAILED_TO_CONNECT_BOARD_SHOULD_BE_REMOVED" value="ターゲットボードの電源を切り、ターゲットボードを外してください。\n"/>
+  <string id="IDS_FAILED_TO_CONNECT_POWER_NOT_SUPPLIED" value="ターゲットボードとの接続を確認し、ターゲットボードの電源を入れてください。\n"/>
+  <string id="IDS_FAILED_TO_GET_BANK_CONTENT" value="指定されたバンク番号のデータを取得できませんでした。"/>
+  <string id="IDS_BANK_NUM_OUT_OF_RANGE" value="バンク番号が範囲外です。%d から %d の範囲を指定してください。"/>
+  <string id="IDS_INVALID_PARAMETER" value="無効なパラメータです。"/>
+  <string id="IDS_TARGET_EXECUTING" value="ターゲットが実行中です。"/>
+  <string id="IDS_BFW_FILE_NOT_FOUND" value="ファームウェアのアップデートに失敗しました、BFW ファイルがオープンできません。\n"/>
+  <string id="IDS_FIRMWARE_UPDATE_UNSUPPORT" value="ファームウェアのアップデートに失敗しました、サポートしていない機能です。\n"/>
+  <string id="IDS_ERR_BFWFROM_WRITE" value="ファームウェアのアップデートに失敗しました、BFW 格納用フラッシュ ROM の書き込みエラー。\n"/>
+  <string id="IDS_ERR_BFWFROM_VERIFY" value="ファームウェアのアップデートに失敗しました、BFW 格納用フラッシュ ROM のベリファイエラー。\n"/>
+  <string id="IDS_OP_FREQUENCY_NOT_SET_TRACE" value="Warning: デバッグ構成で動作周波数が入力されておらず、また、トレース機能を使用中で動作周波数の自動計測もできないため、ブレークまでの実行時間を計測できません。\n"/>
+  <string id="IDS_OP_FREQUENCY_NOT_SET_ERR" value="Warning: 動作周波数値を取得できないため、ブレークまでの実行時間を計測できません。\n\n"/>
+  <string id="IDS_OP_FREQUENCY_NOT_SET_PLS" value="Warning: デバッグ構成のデバッグツール設定で動作周波数を設定してください。\n"/>
+  <string id="IDS_CR_DLL_MISSING" value="C&amp;R認証DLLのロードに失敗しました。DLLファイルパスの設定、または公開関数の仕様を確認してください。\n"/>
+  <string id="IDS_CR_CHALLENGE_DATA_FAIL" value="Challengeデータの取得に失敗しました。認証プログラムが正しく動作しているか確認してください。\n"/>
+  <string id="IDS_CR_RESPONSE_DATA_FAIL" value="Responseデータの取得に失敗しました。認証DLLが正しいか確認してください。\n"/>
+  <string id="IDS_OP_ETM_TRACE_CNL" value="Warning: ETM Trace collection cancelled.\n"/>
+  <string id="IDS_CONNECTING_TO_E2_ARM_TARGET" value="%s, ARMターゲットへの接続\n"/>
+  <string id="IDS_OP_SELECT_BY_IP_AND_USB" value="Warning: J-Link接続の設定にUSBとIPの両方が指定されています。どちらかを指定してください。\n"/>
+  <string id="IDS_READ_MEMORY_DENIED_ACCESS" value="'0x%08x' から '0x%08x' のメモリーリードはアクセスできない領域と重複します。値は '0xff' として返されました。\n"/>
+  <string id="IDS_JLINKARM_DLL_NOT_LOADED" value="J-Link ARM .dll または .so ファイルをロードできません。ファイルが見つかりません。\n"/>
+  <string id="IDS_PRE_INITIALIZATION_FAIL" value="GDBサーバーの初期化に失敗しました。ターゲット・デバイスの指定が正しいかご確認ください。また、最新版のe2 studioを再インストールしてお試しください。"/>
+  <string id="IDS_DEVICE_CHECK_FAIL" value="Error: ターゲット・デバイスとデバッグ構成で指定されたデバイスが一致しません。切断しています ... \n"/>
+  <string id="IDS_JLINK_SCRIPT_EXTENSION_INVALID" value="Warning: デバッグ構成で指定されたJ-Linkスクリプトファイルの拡張子が .JLinkScript ではありません。\n"/>
+  <string id="IDS_NUM_HW_BRK_OVER_LIMIT" value="ハードウェア・ブレークポイントの設定可能最大数(%d)を超えています。\n"/>
+  <string id="IDS_UNABLE_SET_SW_HW_BRK" value="0x%08xには、現在ハードウェア・ブレーク、ソフトウェア・ブレークのどちらも設定できません。\n"/>
+  <string id="IDS_DEVICE_CHECK_SKIPPED" value="Unable to read the connected device ID (device ID address not specified).\n"/>
+  <string id="IDS_SWO_CORE_CLOCK_NOT_SET" value="SWVコアクロックに0が設定されているためITMトレースを開始できません。デバッグ構成でSWVコアクロック値を設定し、再接続してください。\n"/>
+  <string id="IDS_SWO_TRACE_OPERATING_FREQUENCY_EMPTY" value="動作周波数が入力されていないため、ITM Trace Viewのタイムスタンプは正しく表示されません。\n"/>
+  <string id="IDS_SWO_TRACE_NOT_SUPPORTED" value="このデバイスはSWOトレースをサポートしていません。\n"/>
+  <string id="IDS_SWO_TRACE_CLOCK_DIVIDER_FAILED" value="トレースクロックの設定に失敗しました。\n"/>
+  <string id="IDS_SWO_TRACE_RFW_ERROR" value="SWOトレースの設定(%s)でエラーが発生しました: %s\n"/>
+  <string id="IDS_SWO_RFWERR_N_RTTSTAT_RECORDING" value="プログラム実行中のためSWOトレースを無効にできません。プログラムを停止後にSWOトレースを無効にしてください。\n"/>
+  <string id="IDS_SWO_RFWERR_W_SWO_OVERFLOW_EMU" value="Warning: SWOトレースデータの取得中にエミュレータとデバイスの間でオーバーフローが発生しました。データの一部がロストしています。\nPC SamplingのResolution設定値を大きくする、TimestampsのPrescaler設定値を大きくするなど、データ量を減らすことで改善する場合があります。\n"/>
+  <string id="IDS_SWO_RFWERR_W_SWO_WRAPAROUND_RFW" value="Warning: SWOトレースデータの取得中に内部バッファのオーバーフローが発生しました。データの一部がロストしています。\nPC SamplingのResolution設定値を大きくする、TimestampsのPrescaler設定値を大きくするなど、データ量を減らすことで改善する場合があります。\n"/>
+  <string id="IDS_SYNCTRACE_SETTINGWRONG" value="RH850トレースのタイムスタンプ同期に失敗しました。接続しているすべてのデバイスのトレース・モードを同じ設定にしてください。\n トレース・モードの設定は[Trace]ビューの[設定]ボタンより行えます。\n"/>
+  <string id="IDS_SYNCTRACE_TIMEOUT" value="RH850トレースのタイムスタンプ同期に失敗しました。トレース記録の同期処理がタイムアウトしました。\n monitor tracesynctimeout X(X:秒数)コマンドを[Debugger Console]ビューに入力することでタイムアウト時間を設定してください。\n"/>
+  <string id="IDS_FAILED_TO_ERASE_FLASH_MEMORY" value="フラッシュメモリの消去に失敗しました。\n"/>
+  <string id="IDS_NOT_SUPPORT_ERASE_FLASH_OPTION" value="このデバイスでは、ダウンロード前に内蔵フラッシュメモリーを消去するオプションはサポートされません。\n"/>
+  <string id="IDS_UNKNOWN_MESSAGE" value="Message is not defined for 0x%x\n"/>
+  <string id="IDS_IDAU_READ_INCOMPLETE" value="Error: IDAU領域の取得が失敗しました。\n"/>
+  <string id="IDS_RA_BOUNDARY_PROGRAM_SUCCESSFUL" value="\nTrustZone設定: TrustZoneのメモリー境界を更新しました。"/>
+  <string id="IDS_TRUSTZONE_STATUS_MESSAGE" value="TrustZone設定(%s): %s\nTrustZone設定は、Renesas Device Partition Manager (RDPM)やRenesas Flash Programmer (RFP)を使用して、デバッグ開始前に設定してください。\n"/>
+  <string id="IDS_SWO_TRACE_ANALYZING" value="トレース・レコードを分析中です。 完了するまでに少し時間がかかります。\n"/>
+  <string id="IDS_SWO_TRACE_ANALYZING_DONE" value="すべてのトレース・レコードが正常に分析されました。 トレースビューをスクロールして、トレース・レコードの総数を更新してください。\n"/>
+  <string id="IDS_FAILED_TO_ENABLE_EXTERNAL_TRACE" value="エラー・コード%sにより、外部トレースの設定が失敗しました。\n"/>
+  <string id="IDS_WARNING_OF_INTERNALPOWER_MULCHDEVICE" value="マルチデバイス同期デバッグを使用する場合、ボードには外部電源を使用してください。\n"/>
+  <string id="IDS_MULCHDEVICE_EXCLUSIVE_E2EXTENSION" value="外部トリガを用いる機能を使用する場合、マルチデバイス同期デバッグを使用できません。\n"/>
+  <string id="IDS_DEFAULT_WORK_RAM_START_ADDRESS" value="Start/Stop関数設定のワークRAM開始アドレスはデフォルト値 (0x%08x) が使用されています。\n"/>
+  <string id="IDS_RAM_AREA_SECURED_DURING_NONE_SECURED_DEBUGGING" value="指定されたアドレスがセキュア領域のため、Start/Stop関数設定のワークRAM開始アドレス設定に失敗しました。ノンセキュアデバッグ時はセキュア領域にアクセスできません。\n"/>
+  <string id="IDS_UNSUPPORT_DEVICE" value="未サポートのデバイスです。"/>
+  <string id="IDS_UNSUPPORT_DEBUGGER" value="未サポートのデバッグターゲットです。"/>
+  <string id="IDS_UNSUPPORT_SELECTED_CORE" value="未サポートのコアが選択されています。"/>
+  <string id="IDS_UNSUPPORT_BY_DC_SETTING" value="デバッグ構成の設定で無効にされています。"/>
+  <string id="IDS_UNSUPPORT_BY_CONNECTING" value="エミュレータとボードが14pin変換アダプターで接続されているため、本機能は使用できません。"/>
+  <string id="IDS_UNSUPPORT_BY_EXTERNAL_POWER" value="外部電源が使用されているため、本機能は使用できません。"/>
+  <string id="IDS_FAILEDTRACEANALYZE_MEMORYREADERROR" value="ターゲット・デバイスのメモリ・リードができなかったため、トレース・データ解析に失敗しました。\n"/>
+  <string id="IDS_FAILED_TO_SET_VECTOR_CATCH_EVENT" value="ベクターキャッチイベントの設定に失敗しました。\n"/>
+  <string id="IDS_SWO_TRACE_FULL_BRK_MODE" value="'プログラム実行を停止する'モードは、同期デバッグでのみ使用可能です。\n非同期デバッグでは自動的に'トレースメモリーを上書きし実行を続ける'モードに切り替わります。\n"/>
+  <string id="IDS_SYNCTRACE_INVALID_TRACECLOCK" value="トレースのタイムスタンプ算出に失敗しました。Debug ConfigurationsのTrace Clockの入力が誤っています。\n"/>
+  <string id="IDS_SYNCTRACE_ERROROCCUR_OTHERDEVICE" value="タイムスタンプの同期に失敗しました。他の同期対象のデバイスで、エラーが発生しています。\n"/>
+  <string id="IDS_SYNCTRACE_WRONG_RESUME" value="タイムスタンプの同期に失敗しました。同期実行をする際には、Resume all(all sessions)ボタンを使用してください。\n"/>
+  <string id="IDS_SYNCTRACE_SYNCBOARD_CONNECTION" value="タイムスタンプの同期に失敗しました。同期ボードの接続を確認してください。\n"/>
+  <string id="IDS_HOT_PLUG_ERROR_RESET_IGNORED" value="ホットプラグ接続のためリセット要求は無視されました。\n"/>
+  <string id="IDS_HOT_PLUG_ERROR_DOWNLOAD_FAILED" value="ホットプラグイン接続のためダウンロードに失敗しました。\n"/>
+  <string id="IDS_HOT_PLUG_ERROR_SET_REGISTER_FAILED" value="ホットプラグイン接続のためレジスター設定に失敗しました。\n"/>
+  <string id="IDS_ALLOWRMMDMM_ENABLED" value="FAAデバッグのため &quot;実行を一瞬停止してメモリアクセスする&quot; は有効に変更されます。\n"/>
+  <string id="IDS_ACCESS_TO_MEMORY_WHILE_RUNNING" value="プログラム実行中のメモリアクセスは &quot;実行を一瞬停止してメモリアクセスする&quot; の設定により許可されていません。"/>
+  <string id="IDS_LOGGING_TO_FILE" value="ファイル '%s' にログを記録します。\n"/>
+  <string id="IDS_SYNCTRACE_COMMONMARKER_NOTRECORDED" value="RH850トレースのタイムスタンプ同期に失敗しました。タイムスタンプ同期に用いるARMコアから送信される共通マーカが記録されませんでした。\n共通マーカの出力間隔を小さくすることで、改善する場合があります。\nDebugビューでARMコアを選択した上で、monitor commonmarkerinterval X ( X: 出力間隔)を[Debugger Console]ビューに入力することで共通マーカ出力間隔を設定することができます。\n"/>
+  <string id="IDS_SYNCTRACE_TRACERECORD_NOTRECORDED_COMMONMARKER_FILLED" value="RH850トレースのトレースデータ記録に失敗しました。タイムスタンプ同期に用いるARMコアから送信される共通マーカでトレースメモリが埋まっています。\n共通マーカの出力間隔を大きくすることで、改善する場合があります。\n DebugビューでARMコアを選択した上で、monitor commonmarkerinterval X ( X: 出力間隔)を[Debugger Console]ビューに入力することで共通マーカ出力間隔を設定することができます。\n"/>
+  <string id="IDS_CONNECTING_TO_E2_RISCV_TARGET" value="%s, RISC-Vターゲットへの接続\n"/>
+  <string id="IDS_ERAMTRACE_CANTUSE_WITH_EXTRACE" value="ERAMトレースと外部トレースを同時に使うことはできません。トレースは外部トレースを用いて記録します。\n"/>
+  <string id="IDS_ERAMTRACE_NOTSUPPORT" value="このデバイスではERAMトレースを使用できません。トレースは内蔵トレースを用いて記録します。\n"/>
+  <string id="IDS_ERAMTRACE_WRONGADDRESS" value="ERAM開始アドレスとして指定されたアドレスがERAM以外の領域であったため、ERAMトレースを使用できません。トレースは内蔵トレースを用いて記録します。\n"/>
+  <string id="IDS_ERAMTRACE_EXCEEDCAPACITY" value="トレース容量として指定された値がERAM容量を超えています。上限は%sです。トレース容量を上限値に設定しました。\n"/>
+  <string id="IDS_EXTERNALFILE_ERROR" value="指定された外部ファイルの読み込みに失敗しました。\n"/>
+  <string id="IDS_MONITORCOMMAND_ARGUMENT_ERROR" value="モニタコマンドの引数が誤っています。\n"/>
+  <string id="IDS_ONLYSUPPORT_SYNCTRACE" value="この機能はマルチデバイス同期デバッグを有効にして接続した場合のみ使用可能です。"/>
+  <string id="IDS_NUM_SW_BRK_OVER_LIMIT" value="ソフトウェア・ブレークポイントの設定可能最大数を超えています。\n"/>
+  <string id="IDS_MULTIDEVICESYNCDEBUG_INIT_SUCCESS" value="マルチデバイス同期デバッグの初期設定が完了しました。\n"/>
+  <string id="IDS_MULTIDEVICESYNCDEBUG_INIT_FAILURE" value="マルチデバイス同期デバッグの初期設定に失敗しました。全てのコアが起動され、かつプログラム停止状態になった際に、再度初期化処理が実行されます。\n"/>
+  <string id="IDS_MULTIDEVICESYNCDEBUG_NOTSUPPORTED_GO" value="マルチデバイス同期デバッグでは、[Resume],[Step Into(F5)],[Step Over(F6)],[Step Return(F7)]は未サポートです。\n"/>
+  <string id="IDS_MULTIDEVICESYNCDEBUG_NOTSUPPORTED_STEP" value="マルチデバイス同期デバッグでは、[Resume],[Step Into(F5)],[Step Over(F6)],[Step Return(F7)]は未サポートです。[Suspend]を押すことで復旧することができます。\n"/>
+  <string id="IDS_EXTRAFLASH_ERROR" value="ダウンロードに失敗しました。ダウンロードしようとしたファイルにデバッグ構成で許可されていないExtraFlash領域が含まれています。デバッグ構成の「ExtraFlashへのダウンロード」設定を確認してください。\n"/>
+  <string id="IDS_EXTRAFLASH_SUCCESS" value="ExtraFlash領域へのダウンロードを実施しました。デバッガ接続を切断し、「ExtraFlashへのダウンロード」設定、および、「ダウンロード・モジュール」設定を見直し、再接続してください。\n"/>
+  <string id="IDS_REMOTE_DEBUGGING_OF_JLINK_NOT_SUPPORT_IPV6" value="J-Linkリモートデバッグは、IPv6には対応していません。IPv4のアドレスまたはホスト名を指定してください。\n"/>
+</strings>

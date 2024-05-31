@@ -1,0 +1,1312 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<sfrx>
+  <header>
+    <device>R5F110NF</device>
+    <deviceFile>
+      <name>DR5F110NF.DVF</name>
+      <version>V1.21</version>
+      <date>2017-06-05</date>
+      <copyright>Copyright(C) 2017 Renesas</copyright>
+    </deviceFile>
+    <fileToolVersion>4.0.4</fileToolVersion>
+    <generated>2020-09-08T12:45:46.1776928+09:00</generated>
+  </header>
+  <moduletable>
+    <module name="PORT">
+      <register name="P0" address="0xFFF00" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="P1" address="0xFFF01" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="P2" address="0xFFF02" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="P3" address="0xFFF03" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="P4" address="0xFFF04" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="P5" address="0xFFF05" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="P6" address="0xFFF06" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="P7" address="0xFFF07" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="P12" address="0xFFF0C" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="P13" address="0xFFF0D" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="P14" address="0xFFF0E" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="P15" address="0xFFF0F" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="PM0" address="0xFFF20" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="PM1" address="0xFFF21" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="PM2" address="0xFFF22" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="PM3" address="0xFFF23" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="PM4" address="0xFFF24" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="PM5" address="0xFFF25" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="PM6" address="0xFFF26" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="PM7" address="0xFFF27" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="PM12" address="0xFFF2C" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="PM14" address="0xFFF2E" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="PM15" address="0xFFF2F" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="KRCTL" address="0xFFF34" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="KRF" address="0xFFF35" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="KRM0" address="0xFFF37" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="PU0" address="0xF0030" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="PU1" address="0xF0031" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="PU2" address="0xF0032" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="PU3" address="0xF0033" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="PU4" address="0xF0034" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="PU5" address="0xF0035" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="PU7" address="0xF0037" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="PU12" address="0xF003C" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="PU14" address="0xF003E" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="PIM0" address="0xF0040" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="PIM1" address="0xF0041" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="PIM2" address="0xF0042" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="PIM3" address="0xF0043" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="POM0" address="0xF0050" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="POM1" address="0xF0051" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="POM2" address="0xF0052" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="POM3" address="0xF0053" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="PMC2" address="0xF0062" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="PMC4" address="0xF0064" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="PMC14" address="0xF006E" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="PIOR" address="0xF0077" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="PMS" address="0xF007B" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+    </module>
+    <module name="SIF">
+      <register name="SDR00" address="0xFFF10" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" readAction="modifyExternal" alternateAddress="0xF012C" />
+      <register name="SIO00" address="0xFFF10" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" readAction="modifyExternal" alternateAddress="0xF012C" />
+      <register name="TXD0" address="0xFFF10" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" readAction="modifyExternal" alternateAddress="0xF012C" />
+      <register name="SDR01" address="0xFFF12" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" readAction="modifyExternal" alternateAddress="0xF012E" />
+      <register name="RXD0" address="0xFFF12" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" readAction="modifyExternal" alternateAddress="0xF012E" />
+      <register name="SDR12" address="0xFFF14" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" readAction="modifyExternal" alternateAddress="0xF0170" />
+      <register name="SIO30" address="0xFFF14" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" readAction="modifyExternal" alternateAddress="0xF0170" />
+      <register name="TXD3" address="0xFFF14" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" readAction="modifyExternal" alternateAddress="0xF0170" />
+      <register name="SDR13" address="0xFFF16" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" readAction="modifyExternal" alternateAddress="0xF0172" />
+      <register name="RXD3" address="0xFFF16" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" readAction="modifyExternal" alternateAddress="0xF0172" />
+      <register name="SDR02" address="0xFFF44" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" readAction="modifyExternal" alternateAddress="0xF0130" />
+      <register name="SIO10" address="0xFFF44" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" readAction="modifyExternal" alternateAddress="0xF0130" />
+      <register name="TXD1" address="0xFFF44" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" readAction="modifyExternal" alternateAddress="0xF0130" />
+      <register name="SDR03" address="0xFFF46" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" readAction="modifyExternal" alternateAddress="0xF0132" />
+      <register name="RXD1" address="0xFFF46" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" readAction="modifyExternal" alternateAddress="0xF0132" />
+      <register name="SDR10" address="0xFFF48" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" readAction="modifyExternal" alternateAddress="0xF016C" />
+      <register name="SIO20" address="0xFFF48" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" readAction="modifyExternal" alternateAddress="0xF016C" />
+      <register name="TXD2" address="0xFFF48" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" readAction="modifyExternal" alternateAddress="0xF016C" />
+      <register name="SDR11" address="0xFFF4A" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" readAction="modifyExternal" alternateAddress="0xF016E" />
+      <register name="RXD2" address="0xFFF4A" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" readAction="modifyExternal" alternateAddress="0xF016E" />
+      <register name="IICA0" address="0xFFF50" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="IICS0" address="0xFFF51" size="B" value="" absolute="A" format="H" access="R" tagType="SN" readAction="modifyExternal" alternateAddress="0xF0235">
+        <bitfield name="SPD0" bit="0" bitlength="1" />
+        <bitfield name="STD0" bit="1" bitlength="1" />
+        <bitfield name="ACKD0" bit="2" bitlength="1" />
+        <bitfield name="TRC0" bit="3" bitlength="1" />
+        <bitfield name="COI0" bit="4" bitlength="1" />
+        <bitfield name="EXC0" bit="5" bitlength="1" />
+        <bitfield name="ALD0" bit="6" bitlength="1" />
+        <bitfield name="MSTS0" bit="7" bitlength="1" />
+      </register>
+      <register name="IICF0" address="0xFFF52" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <bitfield name="IICRSV0" bit="0" bitlength="1" />
+        <bitfield name="STCEN0" bit="1" bitlength="1" />
+        <bitfield name="IICBSY0" bit="6" bitlength="1" />
+        <bitfield name="STCF0" bit="7" bitlength="1" />
+      </register>
+      <register name="SSR00" address="0xF0100" size="W" value="" absolute="A" format="H" access="R" tagType="SN">
+        <register name="SSR00L" address="0xF0100" size="B" value="" absolute="A" format="H" access="R" tagType="SN" />
+      </register>
+      <register name="SSR01" address="0xF0102" size="W" value="" absolute="A" format="H" access="R" tagType="SN">
+        <register name="SSR01L" address="0xF0102" size="B" value="" absolute="A" format="H" access="R" tagType="SN" />
+      </register>
+      <register name="SSR02" address="0xF0104" size="W" value="" absolute="A" format="H" access="R" tagType="SN">
+        <register name="SSR02L" address="0xF0104" size="B" value="" absolute="A" format="H" access="R" tagType="SN" />
+      </register>
+      <register name="SSR03" address="0xF0106" size="W" value="" absolute="A" format="H" access="R" tagType="SN">
+        <register name="SSR03L" address="0xF0106" size="B" value="" absolute="A" format="H" access="R" tagType="SN" />
+      </register>
+      <register name="SIR00" address="0xF0108" size="W" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <register name="SIR00L" address="0xF0108" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      </register>
+      <register name="SIR01" address="0xF010A" size="W" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <register name="SIR01L" address="0xF010A" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      </register>
+      <register name="SIR02" address="0xF010C" size="W" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <register name="SIR02L" address="0xF010C" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      </register>
+      <register name="SIR03" address="0xF010E" size="W" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <register name="SIR03L" address="0xF010E" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      </register>
+      <register name="SMR00" address="0xF0110" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="SMR01" address="0xF0112" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="SMR02" address="0xF0114" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="SMR03" address="0xF0116" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="SCR00" address="0xF0118" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="SCR01" address="0xF011A" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="SCR02" address="0xF011C" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="SCR03" address="0xF011E" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="SE0" address="0xF0120" size="W" value="" absolute="A" format="H" access="R" tagType="SN">
+        <register name="SE0L" address="0xF0120" size="B" value="" absolute="A" format="H" access="R" tagType="SN" />
+      </register>
+      <register name="SS0" address="0xF0122" size="W" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <register name="SS0L" address="0xF0122" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      </register>
+      <register name="ST0" address="0xF0124" size="W" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <register name="ST0L" address="0xF0124" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      </register>
+      <register name="SPS0" address="0xF0126" size="W" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <register name="SPS0L" address="0xF0126" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      </register>
+      <register name="SO0" address="0xF0128" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="SOE0" address="0xF012A" size="W" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <register name="SOE0L" address="0xF012A" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      </register>
+      <register name="SOL0" address="0xF0134" size="W" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <register name="SOL0L" address="0xF0134" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      </register>
+      <register name="SSC0" address="0xF0138" size="W" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <register name="SSC0L" address="0xF0138" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      </register>
+      <register name="SSR10" address="0xF0140" size="W" value="" absolute="A" format="H" access="R" tagType="SN">
+        <register name="SSR10L" address="0xF0140" size="B" value="" absolute="A" format="H" access="R" tagType="SN" />
+      </register>
+      <register name="SSR11" address="0xF0142" size="W" value="" absolute="A" format="H" access="R" tagType="SN">
+        <register name="SSR11L" address="0xF0142" size="B" value="" absolute="A" format="H" access="R" tagType="SN" />
+      </register>
+      <register name="SSR12" address="0xF0144" size="W" value="" absolute="A" format="H" access="R" tagType="SN">
+        <register name="SSR12L" address="0xF0144" size="B" value="" absolute="A" format="H" access="R" tagType="SN" />
+      </register>
+      <register name="SSR13" address="0xF0146" size="W" value="" absolute="A" format="H" access="R" tagType="SN">
+        <register name="SSR13L" address="0xF0146" size="B" value="" absolute="A" format="H" access="R" tagType="SN" />
+      </register>
+      <register name="SIR10" address="0xF0148" size="W" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <register name="SIR10L" address="0xF0148" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      </register>
+      <register name="SIR11" address="0xF014A" size="W" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <register name="SIR11L" address="0xF014A" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      </register>
+      <register name="SIR12" address="0xF014C" size="W" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <register name="SIR12L" address="0xF014C" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      </register>
+      <register name="SIR13" address="0xF014E" size="W" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <register name="SIR13L" address="0xF014E" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      </register>
+      <register name="SMR10" address="0xF0150" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="SMR11" address="0xF0152" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="SMR12" address="0xF0154" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="SMR13" address="0xF0156" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="SCR10" address="0xF0158" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="SCR11" address="0xF015A" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="SCR12" address="0xF015C" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="SCR13" address="0xF015E" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="SE1" address="0xF0160" size="W" value="" absolute="A" format="H" access="R" tagType="SN">
+        <register name="SE1L" address="0xF0160" size="B" value="" absolute="A" format="H" access="R" tagType="SN" />
+      </register>
+      <register name="SS1" address="0xF0162" size="W" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <register name="SS1L" address="0xF0162" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      </register>
+      <register name="ST1" address="0xF0164" size="W" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <register name="ST1L" address="0xF0164" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      </register>
+      <register name="SPS1" address="0xF0166" size="W" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <register name="SPS1L" address="0xF0166" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      </register>
+      <register name="SO1" address="0xF0168" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="SOE1" address="0xF016A" size="W" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <register name="SOE1L" address="0xF016A" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      </register>
+      <register name="SOL1" address="0xF0174" size="W" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <register name="SOL1L" address="0xF0174" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      </register>
+      <register name="SSC1" address="0xF0178" size="W" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <register name="SSC1L" address="0xF0178" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      </register>
+      <register name="IICCTL00" address="0xF0230" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <bitfield name="SPT0" bit="0" bitlength="1" />
+        <bitfield name="STT0" bit="1" bitlength="1" />
+        <bitfield name="ACKE0" bit="2" bitlength="1" />
+        <bitfield name="WTIM0" bit="3" bitlength="1" />
+        <bitfield name="SPIE0" bit="4" bitlength="1" />
+        <bitfield name="WREL0" bit="5" bitlength="1" />
+        <bitfield name="LREL0" bit="6" bitlength="1" />
+        <bitfield name="IICE0" bit="7" bitlength="1" />
+      </register>
+      <register name="IICCTL01" address="0xF0231" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <bitfield name="PRS0" bit="0" bitlength="1" />
+        <bitfield name="DFC0" bit="2" bitlength="1" />
+        <bitfield name="SMC0" bit="3" bitlength="1" />
+        <bitfield name="DAD0" bit="4" bitlength="1" />
+        <bitfield name="CLD0" bit="5" bitlength="1" />
+        <bitfield name="WUP0" bit="7" bitlength="1" />
+      </register>
+      <register name="IICWL0" address="0xF0232" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="IICWH0" address="0xF0233" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="SVA0" address="0xF0234" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="D0FIFOD00" address="0xF0580" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="D1FIFOD00" address="0xF05C0" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="SYSCFG" address="0xF0600" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="SYSSTS0" address="0xF0604" size="W" value="" absolute="A" format="H" access="R" tagType="SN" />
+      <register name="DVSTCTR0" address="0xF0608" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="CFIFOM" address="0xF0614" size="W" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <register name="CFIFOML" address="0xF0614" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      </register>
+      <register name="D0FIFOM" address="0xF0618" size="W" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <register name="D0FIFOML" address="0xF0618" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      </register>
+      <register name="D1FIFOM" address="0xF061C" size="W" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <register name="D1FIFOML" address="0xF061C" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      </register>
+      <register name="CFIFOSEL" address="0xF0620" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="CFIFOCTR" address="0xF0622" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="D0FIFOSEL" address="0xF0628" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="D0FIFOCTR" address="0xF062A" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="D1FIFOSEL" address="0xF062C" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="D1FIFOCTR" address="0xF062E" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="INTENB0" address="0xF0630" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="INTENB1" address="0xF0632" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="BRDYENB" address="0xF0636" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="NRDYENB" address="0xF0638" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="BEMPENB" address="0xF063A" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="SOFCFG" address="0xF063C" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="INTSTS0" address="0xF0640" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="INTSTS1" address="0xF0642" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="BRDYSTS" address="0xF0646" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="NRDYSTS" address="0xF0648" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="BEMPSTS" address="0xF064A" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="FRMNUM" address="0xF064C" size="W" value="" absolute="A" format="H" access="R" tagType="SN" />
+      <register name="USBADDR" address="0xF0650" size="W" value="" absolute="A" format="H" access="R" tagType="SN" />
+      <register name="USBREQ" address="0xF0654" size="W" value="" absolute="A" format="H" access="R" tagType="SN" />
+      <register name="USBVAL" address="0xF0656" size="W" value="" absolute="A" format="H" access="R" tagType="SN" />
+      <register name="USBINDX" address="0xF0658" size="W" value="" absolute="A" format="H" access="R" tagType="SN" />
+      <register name="USBLENG" address="0xF065A" size="W" value="" absolute="A" format="H" access="R" tagType="SN" />
+      <register name="DCPCFG" address="0xF065C" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="DCPMAXP" address="0xF065E" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="DCPCTR" address="0xF0660" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="PIPESEL" address="0xF0664" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="PIPECFG" address="0xF0668" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="PIPEMAXP" address="0xF066C" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="PIPE4CTR" address="0xF0676" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="PIPE5CTR" address="0xF0678" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="PIPE6CTR" address="0xF067A" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="PIPE7CTR" address="0xF067C" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="PIPE4TRE" address="0xF069C" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="PIPE4TRN" address="0xF069E" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="PIPE5TRE" address="0xF06A0" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="PIPE5TRN" address="0xF06A2" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="DTC0PCFG" address="0xF06A8" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="DTC1PCFG" address="0xF06AC" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="USBBCCTRL0" address="0xF06B0" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="USBBCOPT0" address="0xF06B8" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="UCKSEL" address="0xF06C4" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="USBMC" address="0xF06CC" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+    </module>
+    <module name="TMR">
+      <register name="TDR00" address="0xFFF18" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="TDR01" address="0xFFF1A" size="W" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <register name="TDR01L" address="0xFFF1A" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+        <register name="TDR01H" address="0xFFF1B" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      </register>
+      <register name="TDR02" address="0xFFF64" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="TDR03" address="0xFFF66" size="W" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <register name="TDR03L" address="0xFFF66" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+        <register name="TDR03H" address="0xFFF67" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      </register>
+      <register name="TDR04" address="0xFFF68" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="TDR05" address="0xFFF6A" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="TDR06" address="0xFFF6C" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="TDR07" address="0xFFF6E" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="TOS" address="0xF0079" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <bitfield name="TOS0" bit="0" bitlength="1" />
+      </register>
+      <register name="TCR00" address="0xF0180" size="W" value="" absolute="A" format="H" access="R" tagType="SN" />
+      <register name="TCR01" address="0xF0182" size="W" value="" absolute="A" format="H" access="R" tagType="SN" />
+      <register name="TCR02" address="0xF0184" size="W" value="" absolute="A" format="H" access="R" tagType="SN" />
+      <register name="TCR03" address="0xF0186" size="W" value="" absolute="A" format="H" access="R" tagType="SN" />
+      <register name="TCR04" address="0xF0188" size="W" value="" absolute="A" format="H" access="R" tagType="SN" />
+      <register name="TCR05" address="0xF018A" size="W" value="" absolute="A" format="H" access="R" tagType="SN" />
+      <register name="TCR06" address="0xF018C" size="W" value="" absolute="A" format="H" access="R" tagType="SN" />
+      <register name="TCR07" address="0xF018E" size="W" value="" absolute="A" format="H" access="R" tagType="SN" />
+      <register name="TMR00" address="0xF0190" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="TMR01" address="0xF0192" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="TMR02" address="0xF0194" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="TMR03" address="0xF0196" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="TMR04" address="0xF0198" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="TMR05" address="0xF019A" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="TMR06" address="0xF019C" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="TMR07" address="0xF019E" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="TSR00" address="0xF01A0" size="W" value="" absolute="A" format="H" access="R" tagType="SN">
+        <register name="TSR00L" address="0xF01A0" size="B" value="" absolute="A" format="H" access="R" tagType="SN" />
+      </register>
+      <register name="TSR01" address="0xF01A2" size="W" value="" absolute="A" format="H" access="R" tagType="SN">
+        <register name="TSR01L" address="0xF01A2" size="B" value="" absolute="A" format="H" access="R" tagType="SN" />
+      </register>
+      <register name="TSR02" address="0xF01A4" size="W" value="" absolute="A" format="H" access="R" tagType="SN">
+        <register name="TSR02L" address="0xF01A4" size="B" value="" absolute="A" format="H" access="R" tagType="SN" />
+      </register>
+      <register name="TSR03" address="0xF01A6" size="W" value="" absolute="A" format="H" access="R" tagType="SN">
+        <register name="TSR03L" address="0xF01A6" size="B" value="" absolute="A" format="H" access="R" tagType="SN" />
+      </register>
+      <register name="TSR04" address="0xF01A8" size="W" value="" absolute="A" format="H" access="R" tagType="SN">
+        <register name="TSR04L" address="0xF01A8" size="B" value="" absolute="A" format="H" access="R" tagType="SN" />
+      </register>
+      <register name="TSR05" address="0xF01AA" size="W" value="" absolute="A" format="H" access="R" tagType="SN">
+        <register name="TSR05L" address="0xF01AA" size="B" value="" absolute="A" format="H" access="R" tagType="SN" />
+      </register>
+      <register name="TSR06" address="0xF01AC" size="W" value="" absolute="A" format="H" access="R" tagType="SN">
+        <register name="TSR06L" address="0xF01AC" size="B" value="" absolute="A" format="H" access="R" tagType="SN" />
+      </register>
+      <register name="TSR07" address="0xF01AE" size="W" value="" absolute="A" format="H" access="R" tagType="SN">
+        <register name="TSR07L" address="0xF01AE" size="B" value="" absolute="A" format="H" access="R" tagType="SN" />
+      </register>
+      <register name="TE0" address="0xF01B0" size="W" value="" absolute="A" format="H" access="R" tagType="SN">
+        <register name="TE0L" address="0xF01B0" size="B" value="" absolute="A" format="H" access="R" tagType="SN" />
+      </register>
+      <register name="TS0" address="0xF01B2" size="W" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <register name="TS0L" address="0xF01B2" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      </register>
+      <register name="TT0" address="0xF01B4" size="W" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <register name="TT0L" address="0xF01B4" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      </register>
+      <register name="TPS0" address="0xF01B6" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="TO0" address="0xF01B8" size="W" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <register name="TO0L" address="0xF01B8" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      </register>
+      <register name="TOE0" address="0xF01BA" size="W" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <register name="TOE0L" address="0xF01BA" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      </register>
+      <register name="TOL0" address="0xF01BC" size="W" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <register name="TOL0L" address="0xF01BC" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      </register>
+      <register name="TOM0" address="0xF01BE" size="W" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <register name="TOM0L" address="0xF01BE" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      </register>
+      <register name="TKBCR10" address="0xF0240" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="TKBCR11" address="0xF0242" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="TKBCR12" address="0xF0244" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="TKBCR13" address="0xF0246" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="TKBTGCR1" address="0xF0248" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="TKBSIR10" address="0xF024A" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="TKBSIR11" address="0xF024C" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="TKBDNR10" address="0xF024E" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="TKBSSR10" address="0xF024F" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="TKBDNR11" address="0xF0250" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="TKBSSR11" address="0xF0251" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="TKBTRG1" address="0xF0252" size="B" value="" absolute="A" format="H" access="W" tagType="SN">
+        <bitfield name="TKBRDT1" bit="0" bitlength="1" />
+      </register>
+      <register name="TKBFLG1" address="0xF0253" size="B" value="" absolute="A" format="H" access="R" tagType="SN">
+        <bitfield name="TKBRSF1" bit="0" bitlength="1" />
+        <bitfield name="TKBMFF1" bit="1" bitlength="1" />
+        <bitfield name="TKBIEF1" bit="2" bitlength="1" />
+        <bitfield name="TKBIRF1" bit="3" bitlength="1" />
+        <bitfield name="TKBSEF10" bit="4" bitlength="1" />
+        <bitfield name="TKBSEF11" bit="5" bitlength="1" />
+        <bitfield name="TKBSSF10" bit="6" bitlength="1" />
+        <bitfield name="TKBSSF11" bit="7" bitlength="1" />
+      </register>
+      <register name="TKBCRLD10" address="0xF0254" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="TKBCRLD11" address="0xF0256" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="TKBCNT1" address="0xF0260" size="W" value="" absolute="A" format="H" access="R" tagType="SN" />
+      <register name="TKBCTL10" address="0xF0262" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="TKBMFR1" address="0xF0264" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="TKBIOC10" address="0xF0266" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <bitfield name="TKBTOD10" bit="0" bitlength="1" />
+        <bitfield name="TKBTOD11" bit="1" bitlength="1" />
+        <bitfield name="TKBTOL10" bit="2" bitlength="1" />
+        <bitfield name="TKBTOL11" bit="3" bitlength="1" />
+      </register>
+      <register name="TKBCLR1" address="0xF0267" size="B" value="" absolute="A" format="H" access="W" tagType="SN">
+        <bitfield name="TKBCLMF1" bit="1" bitlength="1" />
+        <bitfield name="TKBCLIE1" bit="2" bitlength="1" />
+        <bitfield name="TKBCLIR1" bit="3" bitlength="1" />
+        <bitfield name="TKBCLSE10" bit="4" bitlength="1" />
+        <bitfield name="TKBCLSE11" bit="5" bitlength="1" />
+      </register>
+      <register name="TKBIOC11" address="0xF0268" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <bitfield name="TKBTOE10" bit="0" bitlength="1" />
+        <bitfield name="TKBTOE11" bit="1" bitlength="1" />
+      </register>
+      <register name="TKBCTL11" address="0xF0269" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <bitfield name="TKBCE1" bit="7" bitlength="1" />
+      </register>
+      <register name="TKBPSCS1" address="0xF026A" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="TKBPACTL10" address="0xF0270" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="TKBPACTL11" address="0xF0272" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="TKBPAHFS1" address="0xF0274" size="B" value="" absolute="A" format="H" access="W" tagType="SN" />
+      <register name="TKBPAHFT1" address="0xF0275" size="B" value="" absolute="A" format="H" access="W" tagType="SN" />
+      <register name="TKBPAFLG1" address="0xF0276" size="B" value="" absolute="A" format="H" access="R" tagType="SN">
+        <bitfield name="TKBPAHIF10" bit="0" bitlength="1" />
+        <bitfield name="TKBPAFIF10" bit="1" bitlength="1" />
+        <bitfield name="TKBPAHIF11" bit="2" bitlength="1" />
+        <bitfield name="TKBPAFIF11" bit="3" bitlength="1" />
+        <bitfield name="TKBPAHSF10" bit="4" bitlength="1" />
+        <bitfield name="TKBPAFSF10" bit="5" bitlength="1" />
+        <bitfield name="TKBPAHSF11" bit="6" bitlength="1" />
+        <bitfield name="TKBPAFSF11" bit="7" bitlength="1" />
+      </register>
+      <register name="TKBPACTL12" address="0xF0277" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <bitfield name="TKBPACE10" bit="0" bitlength="1" />
+        <bitfield name="TKBPACE11" bit="1" bitlength="1" />
+      </register>
+      <register name="TKBCR20" address="0xF0280" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="TKBCR21" address="0xF0282" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="TKBCR22" address="0xF0284" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="TKBCR23" address="0xF0286" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="TKBTGCR2" address="0xF0288" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="TKBSIR20" address="0xF028A" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="TKBSIR21" address="0xF028C" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="TKBDNR20" address="0xF028E" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="TKBSSR20" address="0xF028F" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="TKBDNR21" address="0xF0290" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="TKBSSR21" address="0xF0291" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="TKBTRG2" address="0xF0292" size="B" value="" absolute="A" format="H" access="W" tagType="SN">
+        <bitfield name="TKBRDT2" bit="0" bitlength="1" />
+      </register>
+      <register name="TKBFLG2" address="0xF0293" size="B" value="" absolute="A" format="H" access="R" tagType="SN">
+        <bitfield name="TKBRSF2" bit="0" bitlength="1" />
+        <bitfield name="TKBMFF2" bit="1" bitlength="1" />
+        <bitfield name="TKBIEF2" bit="2" bitlength="1" />
+        <bitfield name="TKBIRF2" bit="3" bitlength="1" />
+        <bitfield name="TKBSEF20" bit="4" bitlength="1" />
+        <bitfield name="TKBSEF21" bit="5" bitlength="1" />
+        <bitfield name="TKBSSF20" bit="6" bitlength="1" />
+        <bitfield name="TKBSSF21" bit="7" bitlength="1" />
+      </register>
+      <register name="TKBCRLD20" address="0xF0294" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="TKBCRLD21" address="0xF0296" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="TKBCNT2" address="0xF02A0" size="W" value="" absolute="A" format="H" access="R" tagType="SN" />
+      <register name="TKBCTL20" address="0xF02A2" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="TKBMFR2" address="0xF02A4" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="TKBIOC20" address="0xF02A6" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <bitfield name="TKBTOD20" bit="0" bitlength="1" />
+        <bitfield name="TKBTOD21" bit="1" bitlength="1" />
+        <bitfield name="TKBTOL20" bit="2" bitlength="1" />
+        <bitfield name="TKBTOL21" bit="3" bitlength="1" />
+      </register>
+      <register name="TKBCLR2" address="0xF02A7" size="B" value="" absolute="A" format="H" access="W" tagType="SN">
+        <bitfield name="TKBCLMF2" bit="1" bitlength="1" />
+        <bitfield name="TKBCLIE2" bit="2" bitlength="1" />
+        <bitfield name="TKBCLIR2" bit="3" bitlength="1" />
+        <bitfield name="TKBCLSE20" bit="4" bitlength="1" />
+        <bitfield name="TKBCLSE21" bit="5" bitlength="1" />
+      </register>
+      <register name="TKBIOC21" address="0xF02A8" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <bitfield name="TKBTOE20" bit="0" bitlength="1" />
+        <bitfield name="TKBTOE21" bit="1" bitlength="1" />
+      </register>
+      <register name="TKBCTL21" address="0xF02A9" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <bitfield name="TKBCE2" bit="7" bitlength="1" />
+      </register>
+      <register name="TKBPSCS2" address="0xF02AA" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="TKBPACTL20" address="0xF02B0" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="TKBPACTL21" address="0xF02B2" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="TKBPAHFS2" address="0xF02B4" size="B" value="" absolute="A" format="H" access="W" tagType="SN" />
+      <register name="TKBPAHFT2" address="0xF02B5" size="B" value="" absolute="A" format="H" access="W" tagType="SN" />
+      <register name="TKBPAFLG2" address="0xF02B6" size="B" value="" absolute="A" format="H" access="R" tagType="SN">
+        <bitfield name="TKBPAHIF20" bit="0" bitlength="1" />
+        <bitfield name="TKBPAFIF20" bit="1" bitlength="1" />
+        <bitfield name="TKBPAHIF21" bit="2" bitlength="1" />
+        <bitfield name="TKBPAFIF21" bit="3" bitlength="1" />
+        <bitfield name="TKBPAHSF20" bit="4" bitlength="1" />
+        <bitfield name="TKBPAFSF20" bit="5" bitlength="1" />
+        <bitfield name="TKBPAHSF21" bit="6" bitlength="1" />
+        <bitfield name="TKBPAFSF21" bit="7" bitlength="1" />
+      </register>
+      <register name="TKBPACTL22" address="0xF02B7" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <bitfield name="TKBPACE20" bit="0" bitlength="1" />
+        <bitfield name="TKBPACE21" bit="1" bitlength="1" />
+      </register>
+      <register name="TKBCR00" address="0xF0500" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="TKBCR01" address="0xF0502" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="TKBCR02" address="0xF0504" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="TKBCR03" address="0xF0506" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="TKBTGCR0" address="0xF0508" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="TKBSIR00" address="0xF050A" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="TKBSIR01" address="0xF050C" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="TKBDNR00" address="0xF050E" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="TKBSSR00" address="0xF050F" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="TKBDNR01" address="0xF0510" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="TKBSSR01" address="0xF0511" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="TKBTRG0" address="0xF0512" size="B" value="" absolute="A" format="H" access="W" tagType="SN">
+        <bitfield name="TKBRDT0" bit="0" bitlength="1" />
+      </register>
+      <register name="TKBFLG0" address="0xF0513" size="B" value="" absolute="A" format="H" access="R" tagType="SN">
+        <bitfield name="TKBRSF0" bit="0" bitlength="1" />
+        <bitfield name="TKBMFF0" bit="1" bitlength="1" />
+        <bitfield name="TKBIEF0" bit="2" bitlength="1" />
+        <bitfield name="TKBIRF0" bit="3" bitlength="1" />
+        <bitfield name="TKBSEF00" bit="4" bitlength="1" />
+        <bitfield name="TKBSEF01" bit="5" bitlength="1" />
+        <bitfield name="TKBSSF00" bit="6" bitlength="1" />
+        <bitfield name="TKBSSF01" bit="7" bitlength="1" />
+      </register>
+      <register name="TKBCRLD00" address="0xF0514" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="TKBCRLD01" address="0xF0516" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="TKBCNT0" address="0xF0520" size="W" value="" absolute="A" format="H" access="R" tagType="SN" />
+      <register name="TKBCTL00" address="0xF0522" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="TKBMFR0" address="0xF0524" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="TKBIOC00" address="0xF0526" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <bitfield name="TKBTOD00" bit="0" bitlength="1" />
+        <bitfield name="TKBTOD01" bit="1" bitlength="1" />
+        <bitfield name="TKBTOL00" bit="2" bitlength="1" />
+        <bitfield name="TKBTOL01" bit="3" bitlength="1" />
+      </register>
+      <register name="TKBCLR0" address="0xF0527" size="B" value="" absolute="A" format="H" access="W" tagType="SN">
+        <bitfield name="TKBCLMF0" bit="1" bitlength="1" />
+        <bitfield name="TKBCLIE0" bit="2" bitlength="1" />
+        <bitfield name="TKBCLIR0" bit="3" bitlength="1" />
+        <bitfield name="TKBCLSE00" bit="4" bitlength="1" />
+        <bitfield name="TKBCLSE01" bit="5" bitlength="1" />
+      </register>
+      <register name="TKBIOC01" address="0xF0528" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <bitfield name="TKBTOE00" bit="0" bitlength="1" />
+        <bitfield name="TKBTOE01" bit="1" bitlength="1" />
+      </register>
+      <register name="TKBCTL01" address="0xF0529" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <bitfield name="TKBCE0" bit="7" bitlength="1" />
+      </register>
+      <register name="TKBPSCS0" address="0xF052A" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="TKBPACTL00" address="0xF0530" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="TKBPACTL01" address="0xF0532" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="TKBPAHFS0" address="0xF0534" size="B" value="" absolute="A" format="H" access="W" tagType="SN" />
+      <register name="TKBPAHFT0" address="0xF0535" size="B" value="" absolute="A" format="H" access="W" tagType="SN" />
+      <register name="TKBPAFLG0" address="0xF0536" size="B" value="" absolute="A" format="H" access="R" tagType="SN">
+        <bitfield name="TKBPAHIF00" bit="0" bitlength="1" />
+        <bitfield name="TKBPAFIF00" bit="1" bitlength="1" />
+        <bitfield name="TKBPAHIF01" bit="2" bitlength="1" />
+        <bitfield name="TKBPAFIF01" bit="3" bitlength="1" />
+        <bitfield name="TKBPAHSF00" bit="4" bitlength="1" />
+        <bitfield name="TKBPAFSF00" bit="5" bitlength="1" />
+        <bitfield name="TKBPAHSF01" bit="6" bitlength="1" />
+        <bitfield name="TKBPAFSF01" bit="7" bitlength="1" />
+      </register>
+      <register name="TKBPACTL02" address="0xF0537" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <bitfield name="TKBPACE00" bit="0" bitlength="1" />
+        <bitfield name="TKBPACE01" bit="1" bitlength="1" />
+      </register>
+    </module>
+    <module name="ADC">
+      <register name="ADCR" address="0xFFF1E" size="W" value="" absolute="A" format="H" access="R" tagType="SN">
+        <register name="ADCRH" address="0xFFF1F" size="B" value="" absolute="A" format="H" access="R" tagType="SN" />
+      </register>
+      <register name="ADM0" address="0xFFF30" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <bitfield name="ADCE" bit="0" bitlength="1" />
+        <bitfield name="ADCS" bit="7" bitlength="1" />
+      </register>
+      <register name="ADS" address="0xFFF31" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="ADM1" address="0xFFF32" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="ADM2" address="0xF0010" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <bitfield name="ADTYP" bit="0" bitlength="1" />
+        <bitfield name="AWC" bit="2" bitlength="1" />
+        <bitfield name="ADRCK" bit="3" bitlength="1" />
+      </register>
+      <register name="ADUL" address="0xF0011" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="ADLL" address="0xF0012" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="ADTES" address="0xF0013" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+    </module>
+    <module name="INT">
+      <register name="EGP0" address="0xFFF38" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="EGN0" address="0xFFF39" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="IF2" address="0xFFFD0" size="W" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <register name="IF2L" address="0xFFFD0" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+          <bitfield name="TMIF04" bit="1" bitlength="1" />
+          <bitfield name="TMIF05" bit="2" bitlength="1" />
+          <bitfield name="PIF6" bit="3" bitlength="1" />
+          <bitfield name="PIF7" bit="4" bitlength="1" />
+          <bitfield name="CMPIF0" bit="6" bitlength="1" />
+        </register>
+        <register name="IF2H" address="0xFFFD1" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+          <bitfield name="TMIF06" bit="0" bitlength="1" />
+          <bitfield name="TMIF07" bit="1" bitlength="1" />
+          <bitfield name="USBIF" bit="2" bitlength="1" />
+          <bitfield name="RSUIF" bit="3" bitlength="1" />
+          <bitfield name="SREIF3" bit="4" bitlength="1" />
+          <bitfield name="TKB2IF0" bit="5" bitlength="1" />
+          <bitfield name="TKB2IF1" bit="6" bitlength="1" />
+          <bitfield name="FLIF" bit="7" bitlength="1" />
+        </register>
+        <bitfield name="TMIF04" bit="1" bitlength="1" />
+        <bitfield name="TMIF05" bit="2" bitlength="1" />
+        <bitfield name="PIF6" bit="3" bitlength="1" />
+        <bitfield name="PIF7" bit="4" bitlength="1" />
+        <bitfield name="CMPIF0" bit="6" bitlength="1" />
+      </register>
+      <register name="IF3" address="0xFFFD2" size="W" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <register name="IF3L" address="0xFFFD2" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+          <bitfield name="TKB2IF2" bit="0" bitlength="1" />
+          <bitfield name="FIFOIF0" bit="1" bitlength="1" />
+          <bitfield name="FIFOIF1" bit="2" bitlength="1" />
+        </register>
+        <bitfield name="TKB2IF2" bit="0" bitlength="1" />
+        <bitfield name="FIFOIF0" bit="1" bitlength="1" />
+        <bitfield name="FIFOIF1" bit="2" bitlength="1" />
+      </register>
+      <register name="MK2" address="0xFFFD4" size="W" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <register name="MK2L" address="0xFFFD4" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+          <bitfield name="TMMK04" bit="1" bitlength="1" />
+          <bitfield name="TMMK05" bit="2" bitlength="1" />
+          <bitfield name="PMK6" bit="3" bitlength="1" />
+          <bitfield name="PMK7" bit="4" bitlength="1" />
+          <bitfield name="CMPMK0" bit="6" bitlength="1" />
+        </register>
+        <register name="MK2H" address="0xFFFD5" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+          <bitfield name="TMMK06" bit="0" bitlength="1" />
+          <bitfield name="TMMK07" bit="1" bitlength="1" />
+          <bitfield name="USBMK" bit="2" bitlength="1" />
+          <bitfield name="RSUMK" bit="3" bitlength="1" />
+          <bitfield name="SREMK3" bit="4" bitlength="1" />
+          <bitfield name="TKB2MK0" bit="5" bitlength="1" />
+          <bitfield name="TKB2MK1" bit="6" bitlength="1" />
+          <bitfield name="FLMK" bit="7" bitlength="1" />
+        </register>
+        <bitfield name="TMMK04" bit="1" bitlength="1" />
+        <bitfield name="TMMK05" bit="2" bitlength="1" />
+        <bitfield name="PMK6" bit="3" bitlength="1" />
+        <bitfield name="PMK7" bit="4" bitlength="1" />
+        <bitfield name="CMPMK0" bit="6" bitlength="1" />
+      </register>
+      <register name="MK3" address="0xFFFD6" size="W" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <register name="MK3L" address="0xFFFD6" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+          <bitfield name="TKB2MK2" bit="0" bitlength="1" />
+          <bitfield name="FIFOMK0" bit="1" bitlength="1" />
+          <bitfield name="FIFOMK1" bit="2" bitlength="1" />
+        </register>
+        <bitfield name="TKB2MK2" bit="0" bitlength="1" />
+        <bitfield name="FIFOMK0" bit="1" bitlength="1" />
+        <bitfield name="FIFOMK1" bit="2" bitlength="1" />
+      </register>
+      <register name="PR02" address="0xFFFD8" size="W" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <register name="PR02L" address="0xFFFD8" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+          <bitfield name="TMPR004" bit="1" bitlength="1" />
+          <bitfield name="TMPR005" bit="2" bitlength="1" />
+          <bitfield name="PPR06" bit="3" bitlength="1" />
+          <bitfield name="PPR07" bit="4" bitlength="1" />
+          <bitfield name="CMPPR00" bit="6" bitlength="1" />
+        </register>
+        <register name="PR02H" address="0xFFFD9" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+          <bitfield name="TMPR006" bit="0" bitlength="1" />
+          <bitfield name="TMPR007" bit="1" bitlength="1" />
+          <bitfield name="USBPR0" bit="2" bitlength="1" />
+          <bitfield name="RSUPR0" bit="3" bitlength="1" />
+          <bitfield name="SREPR03" bit="4" bitlength="1" />
+          <bitfield name="TKB2PR00" bit="5" bitlength="1" />
+          <bitfield name="TKB2PR01" bit="6" bitlength="1" />
+          <bitfield name="FLPR0" bit="7" bitlength="1" />
+        </register>
+        <bitfield name="TMPR004" bit="1" bitlength="1" />
+        <bitfield name="TMPR005" bit="2" bitlength="1" />
+        <bitfield name="PPR06" bit="3" bitlength="1" />
+        <bitfield name="PPR07" bit="4" bitlength="1" />
+        <bitfield name="CMPPR00" bit="6" bitlength="1" />
+      </register>
+      <register name="PR03" address="0xFFFDA" size="W" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <register name="PR03L" address="0xFFFDA" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+          <bitfield name="TKB2PR02" bit="0" bitlength="1" />
+          <bitfield name="FIFOPR00" bit="1" bitlength="1" />
+          <bitfield name="FIFOPR01" bit="2" bitlength="1" />
+        </register>
+        <bitfield name="TKB2PR02" bit="0" bitlength="1" />
+        <bitfield name="FIFOPR00" bit="1" bitlength="1" />
+        <bitfield name="FIFOPR01" bit="2" bitlength="1" />
+      </register>
+      <register name="PR12" address="0xFFFDC" size="W" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <register name="PR12L" address="0xFFFDC" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+          <bitfield name="TMPR104" bit="1" bitlength="1" />
+          <bitfield name="TMPR105" bit="2" bitlength="1" />
+          <bitfield name="PPR16" bit="3" bitlength="1" />
+          <bitfield name="PPR17" bit="4" bitlength="1" />
+          <bitfield name="CMPPR10" bit="6" bitlength="1" />
+        </register>
+        <register name="PR12H" address="0xFFFDD" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+          <bitfield name="TMPR106" bit="0" bitlength="1" />
+          <bitfield name="TMPR107" bit="1" bitlength="1" />
+          <bitfield name="USBPR1" bit="2" bitlength="1" />
+          <bitfield name="RSUPR1" bit="3" bitlength="1" />
+          <bitfield name="SREPR13" bit="4" bitlength="1" />
+          <bitfield name="TKB2PR10" bit="5" bitlength="1" />
+          <bitfield name="TKB2PR11" bit="6" bitlength="1" />
+          <bitfield name="FLPR1" bit="7" bitlength="1" />
+        </register>
+        <bitfield name="TMPR104" bit="1" bitlength="1" />
+        <bitfield name="TMPR105" bit="2" bitlength="1" />
+        <bitfield name="PPR16" bit="3" bitlength="1" />
+        <bitfield name="PPR17" bit="4" bitlength="1" />
+        <bitfield name="CMPPR10" bit="6" bitlength="1" />
+      </register>
+      <register name="PR13" address="0xFFFDE" size="W" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <register name="PR13L" address="0xFFFDE" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+          <bitfield name="TKB2PR12" bit="0" bitlength="1" />
+          <bitfield name="FIFOPR10" bit="1" bitlength="1" />
+          <bitfield name="FIFOPR11" bit="2" bitlength="1" />
+        </register>
+        <bitfield name="TKB2PR12" bit="0" bitlength="1" />
+        <bitfield name="FIFOPR10" bit="1" bitlength="1" />
+        <bitfield name="FIFOPR11" bit="2" bitlength="1" />
+      </register>
+      <register name="IF0" address="0xFFFE0" size="W" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <register name="IF0L" address="0xFFFE0" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+          <bitfield name="WDTIIF" bit="0" bitlength="1" />
+          <bitfield name="LVIIF" bit="1" bitlength="1" />
+          <bitfield name="PIF0" bit="2" bitlength="1" />
+          <bitfield name="PIF1" bit="3" bitlength="1" />
+          <bitfield name="PIF2" bit="4" bitlength="1" />
+          <bitfield name="PIF3" bit="5" bitlength="1" />
+          <bitfield name="PIF4" bit="6" bitlength="1" />
+          <bitfield name="PIF5" bit="7" bitlength="1" />
+        </register>
+        <register name="IF0H" address="0xFFFE1" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+          <bitfield name="CSIIF20" bit="0" bitlength="1" />
+          <bitfield name="IICIF20" bit="0" bitlength="1" />
+          <bitfield name="STIF2" bit="0" bitlength="1" />
+          <bitfield name="SRIF2" bit="1" bitlength="1" />
+          <bitfield name="SREIF2" bit="2" bitlength="1" />
+          <bitfield name="CSIIF00" bit="5" bitlength="1" />
+          <bitfield name="IICIF00" bit="5" bitlength="1" />
+          <bitfield name="STIF0" bit="5" bitlength="1" />
+          <bitfield name="TMIF00" bit="6" bitlength="1" />
+          <bitfield name="SRIF0" bit="7" bitlength="1" />
+        </register>
+        <bitfield name="WDTIIF" bit="0" bitlength="1" />
+        <bitfield name="LVIIF" bit="1" bitlength="1" />
+        <bitfield name="PIF0" bit="2" bitlength="1" />
+        <bitfield name="PIF1" bit="3" bitlength="1" />
+        <bitfield name="PIF2" bit="4" bitlength="1" />
+        <bitfield name="PIF3" bit="5" bitlength="1" />
+        <bitfield name="PIF4" bit="6" bitlength="1" />
+        <bitfield name="PIF5" bit="7" bitlength="1" />
+      </register>
+      <register name="IF1" address="0xFFFE2" size="W" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <register name="IF1L" address="0xFFFE2" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+          <bitfield name="SREIF0" bit="0" bitlength="1" />
+          <bitfield name="TMIF01H" bit="0" bitlength="1" />
+          <bitfield name="CSIIF10" bit="1" bitlength="1" />
+          <bitfield name="IICIF10" bit="1" bitlength="1" />
+          <bitfield name="STIF1" bit="1" bitlength="1" />
+          <bitfield name="SRIF1" bit="2" bitlength="1" />
+          <bitfield name="SREIF1" bit="3" bitlength="1" />
+          <bitfield name="TMIF03H" bit="3" bitlength="1" />
+          <bitfield name="IICAIF0" bit="4" bitlength="1" />
+          <bitfield name="RTITIF" bit="5" bitlength="1" />
+          <bitfield name="TMIF01" bit="7" bitlength="1" />
+        </register>
+        <register name="IF1H" address="0xFFFE3" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+          <bitfield name="TMIF02" bit="0" bitlength="1" />
+          <bitfield name="TMIF03" bit="1" bitlength="1" />
+          <bitfield name="ADIF" bit="2" bitlength="1" />
+          <bitfield name="RTCIF" bit="3" bitlength="1" />
+          <bitfield name="TMKAIF" bit="4" bitlength="1" />
+          <bitfield name="KRIF" bit="5" bitlength="1" />
+          <bitfield name="CSIIF30" bit="6" bitlength="1" />
+          <bitfield name="IICIF30" bit="6" bitlength="1" />
+          <bitfield name="STIF3" bit="6" bitlength="1" />
+          <bitfield name="SRIF3" bit="7" bitlength="1" />
+        </register>
+        <bitfield name="SREIF0" bit="0" bitlength="1" />
+        <bitfield name="TMIF01H" bit="0" bitlength="1" />
+        <bitfield name="CSIIF10" bit="1" bitlength="1" />
+        <bitfield name="IICIF10" bit="1" bitlength="1" />
+        <bitfield name="STIF1" bit="1" bitlength="1" />
+        <bitfield name="SRIF1" bit="2" bitlength="1" />
+        <bitfield name="SREIF1" bit="3" bitlength="1" />
+        <bitfield name="TMIF03H" bit="3" bitlength="1" />
+        <bitfield name="IICAIF0" bit="4" bitlength="1" />
+        <bitfield name="RTITIF" bit="5" bitlength="1" />
+        <bitfield name="TMIF01" bit="7" bitlength="1" />
+      </register>
+      <register name="MK0" address="0xFFFE4" size="W" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <register name="MK0L" address="0xFFFE4" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+          <bitfield name="WDTIMK" bit="0" bitlength="1" />
+          <bitfield name="LVIMK" bit="1" bitlength="1" />
+          <bitfield name="PMK0" bit="2" bitlength="1" />
+          <bitfield name="PMK1" bit="3" bitlength="1" />
+          <bitfield name="PMK2" bit="4" bitlength="1" />
+          <bitfield name="PMK3" bit="5" bitlength="1" />
+          <bitfield name="PMK4" bit="6" bitlength="1" />
+          <bitfield name="PMK5" bit="7" bitlength="1" />
+        </register>
+        <register name="MK0H" address="0xFFFE5" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+          <bitfield name="CSIMK20" bit="0" bitlength="1" />
+          <bitfield name="IICMK20" bit="0" bitlength="1" />
+          <bitfield name="STMK2" bit="0" bitlength="1" />
+          <bitfield name="SRMK2" bit="1" bitlength="1" />
+          <bitfield name="SREMK2" bit="2" bitlength="1" />
+          <bitfield name="CSIMK00" bit="5" bitlength="1" />
+          <bitfield name="IICMK00" bit="5" bitlength="1" />
+          <bitfield name="STMK0" bit="5" bitlength="1" />
+          <bitfield name="TMMK00" bit="6" bitlength="1" />
+          <bitfield name="SRMK0" bit="7" bitlength="1" />
+        </register>
+        <bitfield name="WDTIMK" bit="0" bitlength="1" />
+        <bitfield name="LVIMK" bit="1" bitlength="1" />
+        <bitfield name="PMK0" bit="2" bitlength="1" />
+        <bitfield name="PMK1" bit="3" bitlength="1" />
+        <bitfield name="PMK2" bit="4" bitlength="1" />
+        <bitfield name="PMK3" bit="5" bitlength="1" />
+        <bitfield name="PMK4" bit="6" bitlength="1" />
+        <bitfield name="PMK5" bit="7" bitlength="1" />
+      </register>
+      <register name="MK1" address="0xFFFE6" size="W" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <register name="MK1L" address="0xFFFE6" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+          <bitfield name="SREMK0" bit="0" bitlength="1" />
+          <bitfield name="TMMK01H" bit="0" bitlength="1" />
+          <bitfield name="CSIMK10" bit="1" bitlength="1" />
+          <bitfield name="IICMK10" bit="1" bitlength="1" />
+          <bitfield name="STMK1" bit="1" bitlength="1" />
+          <bitfield name="SRMK1" bit="2" bitlength="1" />
+          <bitfield name="SREMK1" bit="3" bitlength="1" />
+          <bitfield name="TMMK03H" bit="3" bitlength="1" />
+          <bitfield name="IICAMK0" bit="4" bitlength="1" />
+          <bitfield name="RTITMK" bit="5" bitlength="1" />
+          <bitfield name="TMMK01" bit="7" bitlength="1" />
+        </register>
+        <register name="MK1H" address="0xFFFE7" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+          <bitfield name="TMMK02" bit="0" bitlength="1" />
+          <bitfield name="TMMK03" bit="1" bitlength="1" />
+          <bitfield name="ADMK" bit="2" bitlength="1" />
+          <bitfield name="RTCMK" bit="3" bitlength="1" />
+          <bitfield name="TMKAMK" bit="4" bitlength="1" />
+          <bitfield name="KRMK" bit="5" bitlength="1" />
+          <bitfield name="CSIMK30" bit="6" bitlength="1" />
+          <bitfield name="IICMK30" bit="6" bitlength="1" />
+          <bitfield name="STMK3" bit="6" bitlength="1" />
+          <bitfield name="SRMK3" bit="7" bitlength="1" />
+        </register>
+        <bitfield name="SREMK0" bit="0" bitlength="1" />
+        <bitfield name="TMMK01H" bit="0" bitlength="1" />
+        <bitfield name="CSIMK10" bit="1" bitlength="1" />
+        <bitfield name="IICMK10" bit="1" bitlength="1" />
+        <bitfield name="STMK1" bit="1" bitlength="1" />
+        <bitfield name="SRMK1" bit="2" bitlength="1" />
+        <bitfield name="SREMK1" bit="3" bitlength="1" />
+        <bitfield name="TMMK03H" bit="3" bitlength="1" />
+        <bitfield name="IICAMK0" bit="4" bitlength="1" />
+        <bitfield name="RTITMK" bit="5" bitlength="1" />
+        <bitfield name="TMMK01" bit="7" bitlength="1" />
+      </register>
+      <register name="PR00" address="0xFFFE8" size="W" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <register name="PR00L" address="0xFFFE8" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+          <bitfield name="WDTIPR0" bit="0" bitlength="1" />
+          <bitfield name="LVIPR0" bit="1" bitlength="1" />
+          <bitfield name="PPR00" bit="2" bitlength="1" />
+          <bitfield name="PPR01" bit="3" bitlength="1" />
+          <bitfield name="PPR02" bit="4" bitlength="1" />
+          <bitfield name="PPR03" bit="5" bitlength="1" />
+          <bitfield name="PPR04" bit="6" bitlength="1" />
+          <bitfield name="PPR05" bit="7" bitlength="1" />
+        </register>
+        <register name="PR00H" address="0xFFFE9" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+          <bitfield name="CSIPR020" bit="0" bitlength="1" />
+          <bitfield name="IICPR020" bit="0" bitlength="1" />
+          <bitfield name="STPR02" bit="0" bitlength="1" />
+          <bitfield name="SRPR02" bit="1" bitlength="1" />
+          <bitfield name="SREPR02" bit="2" bitlength="1" />
+          <bitfield name="CSIPR000" bit="5" bitlength="1" />
+          <bitfield name="IICPR000" bit="5" bitlength="1" />
+          <bitfield name="STPR00" bit="5" bitlength="1" />
+          <bitfield name="TMPR000" bit="6" bitlength="1" />
+          <bitfield name="SRPR00" bit="7" bitlength="1" />
+        </register>
+        <bitfield name="WDTIPR0" bit="0" bitlength="1" />
+        <bitfield name="LVIPR0" bit="1" bitlength="1" />
+        <bitfield name="PPR00" bit="2" bitlength="1" />
+        <bitfield name="PPR01" bit="3" bitlength="1" />
+        <bitfield name="PPR02" bit="4" bitlength="1" />
+        <bitfield name="PPR03" bit="5" bitlength="1" />
+        <bitfield name="PPR04" bit="6" bitlength="1" />
+        <bitfield name="PPR05" bit="7" bitlength="1" />
+      </register>
+      <register name="PR01" address="0xFFFEA" size="W" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <register name="PR01L" address="0xFFFEA" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+          <bitfield name="SREPR00" bit="0" bitlength="1" />
+          <bitfield name="TMPR001H" bit="0" bitlength="1" />
+          <bitfield name="CSIPR010" bit="1" bitlength="1" />
+          <bitfield name="IICPR010" bit="1" bitlength="1" />
+          <bitfield name="STPR01" bit="1" bitlength="1" />
+          <bitfield name="SRPR01" bit="2" bitlength="1" />
+          <bitfield name="SREPR01" bit="3" bitlength="1" />
+          <bitfield name="TMPR003H" bit="3" bitlength="1" />
+          <bitfield name="IICAPR00" bit="4" bitlength="1" />
+          <bitfield name="RTITPR0" bit="5" bitlength="1" />
+          <bitfield name="TMPR001" bit="7" bitlength="1" />
+        </register>
+        <register name="PR01H" address="0xFFFEB" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+          <bitfield name="TMPR002" bit="0" bitlength="1" />
+          <bitfield name="TMPR003" bit="1" bitlength="1" />
+          <bitfield name="ADPR0" bit="2" bitlength="1" />
+          <bitfield name="RTCPR0" bit="3" bitlength="1" />
+          <bitfield name="TMKAPR0" bit="4" bitlength="1" />
+          <bitfield name="KRPR0" bit="5" bitlength="1" />
+          <bitfield name="CSIPR030" bit="6" bitlength="1" />
+          <bitfield name="IICPR030" bit="6" bitlength="1" />
+          <bitfield name="STPR03" bit="6" bitlength="1" />
+          <bitfield name="SRPR03" bit="7" bitlength="1" />
+        </register>
+        <bitfield name="SREPR00" bit="0" bitlength="1" />
+        <bitfield name="TMPR001H" bit="0" bitlength="1" />
+        <bitfield name="CSIPR010" bit="1" bitlength="1" />
+        <bitfield name="IICPR010" bit="1" bitlength="1" />
+        <bitfield name="STPR01" bit="1" bitlength="1" />
+        <bitfield name="SRPR01" bit="2" bitlength="1" />
+        <bitfield name="SREPR01" bit="3" bitlength="1" />
+        <bitfield name="TMPR003H" bit="3" bitlength="1" />
+        <bitfield name="IICAPR00" bit="4" bitlength="1" />
+        <bitfield name="RTITPR0" bit="5" bitlength="1" />
+        <bitfield name="TMPR001" bit="7" bitlength="1" />
+      </register>
+      <register name="PR10" address="0xFFFEC" size="W" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <register name="PR10L" address="0xFFFEC" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+          <bitfield name="WDTIPR1" bit="0" bitlength="1" />
+          <bitfield name="LVIPR1" bit="1" bitlength="1" />
+          <bitfield name="PPR10" bit="2" bitlength="1" />
+          <bitfield name="PPR11" bit="3" bitlength="1" />
+          <bitfield name="PPR12" bit="4" bitlength="1" />
+          <bitfield name="PPR13" bit="5" bitlength="1" />
+          <bitfield name="PPR14" bit="6" bitlength="1" />
+          <bitfield name="PPR15" bit="7" bitlength="1" />
+        </register>
+        <register name="PR10H" address="0xFFFED" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+          <bitfield name="CSIPR120" bit="0" bitlength="1" />
+          <bitfield name="IICPR120" bit="0" bitlength="1" />
+          <bitfield name="STPR12" bit="0" bitlength="1" />
+          <bitfield name="SRPR12" bit="1" bitlength="1" />
+          <bitfield name="SREPR12" bit="2" bitlength="1" />
+          <bitfield name="CSIPR100" bit="5" bitlength="1" />
+          <bitfield name="IICPR100" bit="5" bitlength="1" />
+          <bitfield name="STPR10" bit="5" bitlength="1" />
+          <bitfield name="TMPR100" bit="6" bitlength="1" />
+          <bitfield name="SRPR10" bit="7" bitlength="1" />
+        </register>
+        <bitfield name="WDTIPR1" bit="0" bitlength="1" />
+        <bitfield name="LVIPR1" bit="1" bitlength="1" />
+        <bitfield name="PPR10" bit="2" bitlength="1" />
+        <bitfield name="PPR11" bit="3" bitlength="1" />
+        <bitfield name="PPR12" bit="4" bitlength="1" />
+        <bitfield name="PPR13" bit="5" bitlength="1" />
+        <bitfield name="PPR14" bit="6" bitlength="1" />
+        <bitfield name="PPR15" bit="7" bitlength="1" />
+      </register>
+      <register name="PR11" address="0xFFFEE" size="W" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <register name="PR11L" address="0xFFFEE" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+          <bitfield name="SREPR10" bit="0" bitlength="1" />
+          <bitfield name="TMPR101H" bit="0" bitlength="1" />
+          <bitfield name="CSIPR110" bit="1" bitlength="1" />
+          <bitfield name="IICPR110" bit="1" bitlength="1" />
+          <bitfield name="STPR11" bit="1" bitlength="1" />
+          <bitfield name="SRPR11" bit="2" bitlength="1" />
+          <bitfield name="SREPR11" bit="3" bitlength="1" />
+          <bitfield name="TMPR103H" bit="3" bitlength="1" />
+          <bitfield name="IICAPR10" bit="4" bitlength="1" />
+          <bitfield name="RTITPR1" bit="5" bitlength="1" />
+          <bitfield name="TMPR101" bit="7" bitlength="1" />
+        </register>
+        <register name="PR11H" address="0xFFFEF" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+          <bitfield name="TMPR102" bit="0" bitlength="1" />
+          <bitfield name="TMPR103" bit="1" bitlength="1" />
+          <bitfield name="ADPR1" bit="2" bitlength="1" />
+          <bitfield name="RTCPR1" bit="3" bitlength="1" />
+          <bitfield name="TMKAPR1" bit="4" bitlength="1" />
+          <bitfield name="KRPR1" bit="5" bitlength="1" />
+          <bitfield name="CSIPR130" bit="6" bitlength="1" />
+          <bitfield name="IICPR130" bit="6" bitlength="1" />
+          <bitfield name="STPR13" bit="6" bitlength="1" />
+          <bitfield name="SRPR13" bit="7" bitlength="1" />
+        </register>
+        <bitfield name="SREPR10" bit="0" bitlength="1" />
+        <bitfield name="TMPR101H" bit="0" bitlength="1" />
+        <bitfield name="CSIPR110" bit="1" bitlength="1" />
+        <bitfield name="IICPR110" bit="1" bitlength="1" />
+        <bitfield name="STPR11" bit="1" bitlength="1" />
+        <bitfield name="SRPR11" bit="2" bitlength="1" />
+        <bitfield name="SREPR11" bit="3" bitlength="1" />
+        <bitfield name="TMPR103H" bit="3" bitlength="1" />
+        <bitfield name="IICAPR10" bit="4" bitlength="1" />
+        <bitfield name="RTITPR1" bit="5" bitlength="1" />
+        <bitfield name="TMPR101" bit="7" bitlength="1" />
+      </register>
+    </module>
+    <module name="LCD">
+      <register name="LCDM0" address="0xFFF40" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="LCDM1" address="0xFFF41" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <bitfield name="LCDVLM" bit="0" bitlength="1" />
+        <bitfield name="LCDSEL" bit="3" bitlength="1" />
+        <bitfield name="BLON" bit="4" bitlength="1" />
+        <bitfield name="VLCON" bit="5" bitlength="1" />
+        <bitfield name="SCOC" bit="6" bitlength="1" />
+        <bitfield name="LCDON" bit="7" bitlength="1" />
+      </register>
+      <register name="LCDC0" address="0xFFF42" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="VLCD" address="0xFFF43" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="PFSEG0" address="0xF0300" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <bitfield name="PFSEG04" bit="4" bitlength="1" />
+        <bitfield name="PFSEG05" bit="5" bitlength="1" />
+        <bitfield name="PFSEG06" bit="6" bitlength="1" />
+      </register>
+      <register name="PFSEG1" address="0xF0301" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <bitfield name="PFSEG12" bit="4" bitlength="1" />
+        <bitfield name="PFSEG13" bit="5" bitlength="1" />
+        <bitfield name="PFSEG14" bit="6" bitlength="1" />
+        <bitfield name="PFSEG15" bit="7" bitlength="1" />
+      </register>
+      <register name="PFSEG2" address="0xF0302" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <bitfield name="PFSEG16" bit="0" bitlength="1" />
+        <bitfield name="PFSEG17" bit="1" bitlength="1" />
+        <bitfield name="PFSEG18" bit="2" bitlength="1" />
+        <bitfield name="PFSEG19" bit="3" bitlength="1" />
+        <bitfield name="PFSEG20" bit="4" bitlength="1" />
+        <bitfield name="PFSEG21" bit="5" bitlength="1" />
+        <bitfield name="PFSEG22" bit="6" bitlength="1" />
+        <bitfield name="PFSEG23" bit="7" bitlength="1" />
+      </register>
+      <register name="PFSEG3" address="0xF0303" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <bitfield name="PFSEG24" bit="0" bitlength="1" />
+        <bitfield name="PFSEG25" bit="1" bitlength="1" />
+        <bitfield name="PFSEG28" bit="4" bitlength="1" />
+        <bitfield name="PFSEG29" bit="5" bitlength="1" />
+        <bitfield name="PFSEG30" bit="6" bitlength="1" />
+        <bitfield name="PFSEG31" bit="7" bitlength="1" />
+      </register>
+      <register name="PFSEG4" address="0xF0304" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <bitfield name="PFSEG32" bit="0" bitlength="1" />
+        <bitfield name="PFSEG33" bit="1" bitlength="1" />
+        <bitfield name="PFSEG34" bit="2" bitlength="1" />
+        <bitfield name="PFSEG35" bit="3" bitlength="1" />
+        <bitfield name="PFSEG36" bit="4" bitlength="1" />
+        <bitfield name="PFSEG37" bit="5" bitlength="1" />
+        <bitfield name="PFSEG38" bit="6" bitlength="1" />
+        <bitfield name="PFSEG39" bit="7" bitlength="1" />
+      </register>
+      <register name="PFSEG5" address="0xF0305" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <bitfield name="PFSEG40" bit="0" bitlength="1" />
+        <bitfield name="PFSEG41" bit="1" bitlength="1" />
+        <bitfield name="PFSEG42" bit="2" bitlength="1" />
+      </register>
+      <register name="PFSEG6" address="0xF0306" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <bitfield name="PFSEG48" bit="0" bitlength="1" />
+        <bitfield name="PFSEG49" bit="1" bitlength="1" />
+        <bitfield name="PFSEG50" bit="2" bitlength="1" />
+        <bitfield name="PFSEG51" bit="3" bitlength="1" />
+        <bitfield name="PFSEG52" bit="4" bitlength="1" />
+        <bitfield name="PFSEG53" bit="5" bitlength="1" />
+        <bitfield name="PFSEG54" bit="6" bitlength="1" />
+        <bitfield name="PFSEG55" bit="7" bitlength="1" />
+      </register>
+      <register name="ISCLCD" address="0xF0308" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="SEG0" address="0xF0400" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="SEG1" address="0xF0401" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="SEG2" address="0xF0402" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="SEG3" address="0xF0403" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="SEG4" address="0xF0404" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="SEG5" address="0xF0405" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="SEG6" address="0xF0406" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="SEG12" address="0xF040C" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="SEG13" address="0xF040D" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="SEG14" address="0xF040E" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="SEG15" address="0xF040F" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="SEG16" address="0xF0410" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="SEG17" address="0xF0411" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="SEG18" address="0xF0412" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="SEG19" address="0xF0413" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="SEG20" address="0xF0414" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="SEG21" address="0xF0415" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="SEG22" address="0xF0416" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="SEG23" address="0xF0417" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="SEG24" address="0xF0418" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="SEG25" address="0xF0419" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="SEG28" address="0xF041C" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="SEG29" address="0xF041D" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="SEG30" address="0xF041E" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="SEG31" address="0xF041F" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="SEG32" address="0xF0420" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="SEG33" address="0xF0421" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="SEG34" address="0xF0422" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="SEG35" address="0xF0423" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="SEG36" address="0xF0424" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="SEG37" address="0xF0425" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="SEG38" address="0xF0426" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="SEG39" address="0xF0427" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="SEG40" address="0xF0428" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="SEG41" address="0xF0429" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="SEG42" address="0xF042A" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="SEG48" address="0xF0430" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="SEG49" address="0xF0431" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="SEG50" address="0xF0432" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="SEG51" address="0xF0433" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="SEG52" address="0xF0434" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="SEG53" address="0xF0435" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="SEG54" address="0xF0436" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="SEG55" address="0xF0437" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+    </module>
+    <module name="DAC">
+      <register name="DACS0" address="0xFFF74" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="DACS1" address="0xFFF75" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="DAM" address="0xFFF76" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <bitfield name="DACE0" bit="4" bitlength="1" />
+        <bitfield name="DACE1" bit="5" bitlength="1" />
+      </register>
+    </module>
+    <module name="WT">
+      <register name="ITMC" address="0xFFF90" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="SEC" address="0xFFF92" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="MIN" address="0xFFF93" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="HOUR" address="0xFFF94" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="WEEK" address="0xFFF95" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="DAY" address="0xFFF96" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="MONTH" address="0xFFF97" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="YEAR" address="0xFFF98" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="ALARMWM" address="0xFFF9A" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="ALARMWH" address="0xFFF9B" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="ALARMWW" address="0xFFF9C" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="RTCC0" address="0xFFF9D" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <bitfield name="CLOE1" bit="5" bitlength="1" />
+        <bitfield name="RTCE" bit="7" bitlength="1" />
+      </register>
+      <register name="RTCC1" address="0xFFF9E" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <bitfield name="RWAIT" bit="0" bitlength="1" />
+        <bitfield name="RWST" bit="1" bitlength="1" />
+        <bitfield name="RIFG" bit="3" bitlength="1" />
+        <bitfield name="WAFG" bit="4" bitlength="1" />
+        <bitfield name="RITE" bit="5" bitlength="1" />
+        <bitfield name="WALIE" bit="6" bitlength="1" />
+        <bitfield name="WALE" bit="7" bitlength="1" />
+      </register>
+      <register name="SUBCUD" address="0xF0310" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+    </module>
+    <module name="PGC">
+      <register name="CMC" address="0xFFFA0" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="CSC" address="0xFFFA1" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <bitfield name="HIOSTOP" bit="0" bitlength="1" />
+        <bitfield name="XTSTOP" bit="6" bitlength="1" />
+        <bitfield name="MSTOP" bit="7" bitlength="1" />
+      </register>
+      <register name="OSTC" address="0xFFFA2" size="B" value="" absolute="A" format="H" access="R" tagType="SN" />
+      <register name="OSTS" address="0xFFFA3" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="CKC" address="0xFFFA4" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <bitfield name="MCM0" bit="4" bitlength="1" />
+        <bitfield name="MCS" bit="5" bitlength="1" />
+        <bitfield name="CSS" bit="6" bitlength="1" />
+        <bitfield name="CLS" bit="7" bitlength="1" />
+      </register>
+      <register name="PER1" address="0xF007A" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <bitfield name="DACEN" bit="0" bitlength="1" />
+        <bitfield name="DTCEN" bit="3" bitlength="1" />
+        <bitfield name="TKB20EN" bit="4" bitlength="1" />
+        <bitfield name="CMPEN" bit="5" bitlength="1" />
+        <bitfield name="TMKAEN" bit="7" bitlength="1" />
+      </register>
+      <register name="PER0" address="0xF00F0" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <bitfield name="TAU0EN" bit="0" bitlength="1" />
+        <bitfield name="SAU0EN" bit="2" bitlength="1" />
+        <bitfield name="SAU1EN" bit="3" bitlength="1" />
+        <bitfield name="IICA0EN" bit="4" bitlength="1" />
+        <bitfield name="ADCEN" bit="5" bitlength="1" />
+        <bitfield name="RTCWEN" bit="7" bitlength="1" />
+      </register>
+      <register name="PORSR" address="0xF00F9" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="PER2" address="0xF00FD" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <bitfield name="TKB21EN" bit="0" bitlength="1" />
+        <bitfield name="TKB22EN" bit="1" bitlength="1" />
+      </register>
+      <register name="DSCCTL" address="0xF02E5" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <bitfield name="DSCON" bit="0" bitlength="1" />
+        <bitfield name="DSCM" bit="1" bitlength="1" />
+        <bitfield name="DSFRDIV" bit="2" bitlength="1" />
+      </register>
+      <register name="MCKC" address="0xF02E6" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <bitfield name="CKSELR" bit="0" bitlength="1" />
+        <bitfield name="RDIV0" bit="1" bitlength="1" />
+        <bitfield name="RDIV1" bit="2" bitlength="1" />
+      </register>
+    </module>
+    <module name="CLOCK">
+      <register name="CKS0" address="0xFFFA5" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <bitfield name="PCLOE0" bit="7" bitlength="1" />
+      </register>
+      <register name="CKS1" address="0xFFFA6" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <bitfield name="PCLOE1" bit="7" bitlength="1" />
+      </register>
+    </module>
+    <module name="RESET">
+      <register name="RESF" address="0xFFFA8" size="B" value="" absolute="A" format="H" access="R" tagType="SN" />
+    </module>
+    <module name="OTHER">
+      <register name="LVIM" address="0xFFFA9" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <bitfield name="LVIF" bit="0" bitlength="1" />
+        <bitfield name="LVIOMSK" bit="1" bitlength="1" />
+        <bitfield name="LVISEN" bit="7" bitlength="1" />
+      </register>
+      <register name="LVIS" address="0xFFFAA" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <bitfield name="LVILV" bit="0" bitlength="1" />
+        <bitfield name="LVIMD" bit="7" bitlength="1" />
+      </register>
+      <register name="CRCIN" address="0xFFFAC" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="MACRL" address="0xFFFF0" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="MACRH" address="0xFFFF2" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="NFEN0" address="0xF0070" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="NFEN1" address="0xF0071" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="ISC" address="0xF0073" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="TIS0" address="0xF0074" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="ADPC" address="0xF0076" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="IAWCTL" address="0xF0078" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="DFLCTL" address="0xF0090" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <bitfield name="DFLEN" bit="0" bitlength="1" />
+      </register>
+      <register name="HIOTRM" address="0xF00A0" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="HOCODIV" address="0xF00A8" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="OSMC" address="0xF00F3" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="RPECTL" address="0xF00F5" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <bitfield name="RPEF" bit="0" bitlength="1" />
+        <bitfield name="RPERDIS" bit="7" bitlength="1" />
+      </register>
+      <register name="BCDADJ" address="0xF00FE" size="B" value="" absolute="A" format="H" access="R" tagType="SN" />
+      <register name="ELSELR00" address="0xF01C0" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="ELSELR01" address="0xF01C1" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="ELSELR02" address="0xF01C2" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="ELSELR03" address="0xF01C3" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="ELSELR04" address="0xF01C4" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="ELSELR05" address="0xF01C5" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="ELSELR06" address="0xF01C6" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="ELSELR07" address="0xF01C7" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="ELSELR08" address="0xF01C8" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="ELSELR09" address="0xF01C9" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="ELSELR10" address="0xF01CA" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="ELSELR11" address="0xF01CB" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="ELSELR12" address="0xF01CC" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="ELSELR13" address="0xF01CD" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="ELSELR14" address="0xF01CE" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="ELSELR15" address="0xF01CF" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="ELSELR16" address="0xF01D0" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="ELSELR17" address="0xF01D1" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="ELSELR18" address="0xF01D2" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="ELSELR20" address="0xF01D4" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="ELSELR21" address="0xF01D5" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="ELSELR22" address="0xF01D6" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="ELSELR23" address="0xF01D7" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="ELSELR24" address="0xF01D8" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="ELSELR25" address="0xF01D9" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="ELSELR26" address="0xF01DA" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="ELSELR27" address="0xF01DB" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="ELSELR28" address="0xF01DC" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="ELSELR29" address="0xF01DD" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="ELSELR30" address="0xF01DE" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="DTCBAR" address="0xF02E0" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="DTCEN0" address="0xF02E8" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="DTCEN1" address="0xF02E9" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="DTCEN2" address="0xF02EA" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="DTCEN3" address="0xF02EB" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="DTCEN4" address="0xF02EC" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="CRCD" address="0xF02FA" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="COMPMDR" address="0xF0340" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <bitfield name="C0ENB" bit="0" bitlength="1" />
+        <bitfield name="C0MON" bit="3" bitlength="1" />
+      </register>
+      <register name="COMPFIR" address="0xF0341" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+      <register name="COMPOCR" address="0xF0342" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <bitfield name="C0IE" bit="0" bitlength="1" />
+        <bitfield name="C0OE" bit="1" bitlength="1" />
+        <bitfield name="C0OP" bit="2" bitlength="1" />
+        <bitfield name="SPDMD" bit="7" bitlength="1" />
+      </register>
+    </module>
+    <module name="WDT">
+      <register name="WDTE" address="0xFFFAB" size="B" value="" absolute="A" format="H" access="RW" tagType="SN" />
+    </module>
+    <module name="IMC">
+      <register name="PMC" address="0xFFFFE" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <bitfield name="MAA" bit="0" bitlength="1" />
+      </register>
+    </module>
+    <module name="TEST">
+      <register name="CRC0CTL" address="0xF02F0" size="B" value="" absolute="A" format="H" access="RW" tagType="SN">
+        <bitfield name="CRC0EN" bit="7" bitlength="1" />
+      </register>
+      <register name="PGCRCL" address="0xF02F2" size="W" value="" absolute="A" format="H" access="RW" tagType="SN" />
+    </module>
+  </moduletable>
+</sfrx>

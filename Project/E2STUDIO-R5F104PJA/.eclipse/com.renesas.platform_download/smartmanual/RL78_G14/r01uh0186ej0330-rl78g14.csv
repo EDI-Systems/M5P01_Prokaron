@@ -1,0 +1,917 @@
+User's manual r01uh0186ej0330-rl78g14; Version 1.00; November 15, 2016
+RegisterName,RegisterBookmark,RegisterTableCaption,NumberOfAppearance,ModuleInformation,SearchKey
+ADM2,14.3.4 A/D converter mode register 2 (ADM2),Figure14-7FormatofA/Dconvertermoderegister2(ADM2)(1/2),,,
+ADTYP,14.3.4 A/D converter mode register 2 (ADM2),Figure14-8FormatofA/Dconvertermoderegister2(ADM2)(2/2),2,,
+AWC,14.3.4 A/D converter mode register 2 (ADM2),Figure14-8FormatofA/Dconvertermoderegister2(ADM2)(2/2),2,,
+ADRCK,14.3.4 A/D converter mode register 2 (ADM2),Figure14-8FormatofA/Dconvertermoderegister2(ADM2)(2/2),2,,
+ADUL,14.3.8 Conversion result comparison upper limit setting register (ADUL),Figure14-14FormatofConversionresultcomparisonupperlimitsettingregister(ADUL),,,
+ADLL,14.3.9 Conversion result comparison lower limit setting register (ADLL),Figure14-15FormatofConversionresultcomparisonlowerlimitsettingregister(ADLL),,,
+ADTES,14.3.10 A/D test register (ADTES),Figure14-16FormatofA/Dtestregister(ADTES),,A/D CONVERTER,
+ADTES,27.3.8 A/D test function,Figure27-16FormatofA/Dtestregister(ADTES),,SAFETY FUNCTIONS,
+PU0,4.3.3 Pull-up resistor option registers (PUxx),Figure4-3FormatofPull-upresistoroptionregister,,,
+PU1,4.3.3 Pull-up resistor option registers (PUxx),Figure4-3FormatofPull-upresistoroptionregister,,,
+PU3,4.3.3 Pull-up resistor option registers (PUxx),Figure4-3FormatofPull-upresistoroptionregister,,,
+PU4,4.3.3 Pull-up resistor option registers (PUxx),Figure4-3FormatofPull-upresistoroptionregister,,,
+PU5,4.3.3 Pull-up resistor option registers (PUxx),Figure4-3FormatofPull-upresistoroptionregister,,,
+PU6,4.3.3 Pull-up resistor option registers (PUxx),Figure4-3FormatofPull-upresistoroptionregister,,,
+PU7,4.3.3 Pull-up resistor option registers (PUxx),Figure4-3FormatofPull-upresistoroptionregister,,,
+PU8,4.3.3 Pull-up resistor option registers (PUxx),Figure4-3FormatofPull-upresistoroptionregister,,,
+PU10,4.3.3 Pull-up resistor option registers (PUxx),Figure4-3FormatofPull-upresistoroptionregister,,,
+PU11,4.3.3 Pull-up resistor option registers (PUxx),Figure4-3FormatofPull-upresistoroptionregister,,,
+PU12,4.3.3 Pull-up resistor option registers (PUxx),Figure4-3FormatofPull-upresistoroptionregister,,,
+PU14,4.3.3 Pull-up resistor option registers (PUxx),Figure4-3FormatofPull-upresistoroptionregister,,,
+POM0,4.3.5 Port output mode registers (POMxx),Figure4-5FormatofPortoutputmoderegister(100-pinproducts),,,
+POM1,4.3.5 Port output mode registers (POMxx),Figure4-5FormatofPortoutputmoderegister(100-pinproducts),,,
+POM3,4.3.5 Port output mode registers (POMxx),Figure4-5FormatofPortoutputmoderegister(100-pinproducts),,,
+POM4,4.3.5 Port output mode registers (POMxx),Figure4-5FormatofPortoutputmoderegister(100-pinproducts),,,
+POM5,4.3.5 Port output mode registers (POMxx),Figure4-5FormatofPortoutputmoderegister(100-pinproducts),,,
+POM7,4.3.5 Port output mode registers (POMxx),Figure4-5FormatofPortoutputmoderegister(100-pinproducts),,,
+POM8,4.3.5 Port output mode registers (POMxx),Figure4-5FormatofPortoutputmoderegister(100-pinproducts),,,
+POM14,4.3.5 Port output mode registers (POMxx),Figure4-5FormatofPortoutputmoderegister(100-pinproducts),,,
+PMC0,4.3.6 Port mode control registers (PMCxx),Figure4-6FormatofPortmodecontrolregister(100-pinproducts),,,
+PMC1,4.3.6 Port mode control registers (PMCxx),Figure4-6FormatofPortmodecontrolregister(100-pinproducts),,,
+PMC10,4.3.6 Port mode control registers (PMCxx),Figure4-6FormatofPortmodecontrolregister(100-pinproducts),,,
+PMC12,4.3.6 Port mode control registers (PMCxx),Figure4-6FormatofPortmodecontrolregister(100-pinproducts),,,
+PMC14,4.3.6 Port mode control registers (PMCxx),Figure4-6FormatofPortmodecontrolregister(100-pinproducts),,,
+NFEN0,17.3.16 Noise filter enable register 0 (NFEN0),Figure17-25FormatofNoisefilterenableregister0(NFEN0),,,
+NFEN1,"6.3.14 Noise filter enable registers 1, 2 (NFEN1, NFEN2)","Figure6-26FormatofNoisefilterenableregister1,2(NFEN1,NFEN2)(1/2)",,,
+NFEN2,"6.3.14 Noise filter enable registers 1, 2 (NFEN1, NFEN2)","Figure6-26FormatofNoisefilterenableregister1,2(NFEN1,NFEN2)(1/2)",,,
+ISC,6.3.13 Input switch control register (ISC),Figure6-25FormatofInputswitchcontrolregister(ISC),,TIMER ARRAY UNIT,
+SSIE00,6.3.13 Input switch control register (ISC),Figure6-25FormatofInputswitchcontrolregister(ISC),2,TIMER ARRAY UNIT,
+ISC,17.3.15 Input switch control register (ISC),Figure17-24FormatofInputswitchcontrolregister(ISC),,SERIAL ARRAY UNIT,
+SSIE00,17.3.15 Input switch control register (ISC),Figure17-24FormatofInputswitchcontrolregister(ISC),2,SERIAL ARRAY UNIT,
+TIS0,6.3.8 Timer input select register 0 (TIS0),Figure6-20FormatofTimerinputselectregister0(TIS0),,TIMER ARRAY UNIT,
+TIS0,27.3.7 Frequency detection function,Figure27-14FormatofTimerinputselectregister0(TIS0),,SAFETY FUNCTIONS,
+ADPC,4.3.7 A/D port configuration register (ADPC),Figure4-7FormatofA/Dportconfigurationregister(ADPC),,,
+PIOR0,4.3.8 Peripheral I/O redirection register 0 (PIOR0),Figure4-8FormatofPeripheralI/Oredirectionregister0(PIOR0),,,
+IAWCTL,27.3.4 RAM guard function,Figure27-9FormatofInvalidmemoryaccessdetectioncontrolregister(IAWCTL),,RAM guard function,
+IAWCTL,27.3.5 SFR guard function,Figure27-10FormatofInvalidmemoryaccessdetectioncontrolregister(IAWCTL),,SFR guard function,
+IAWCTL,27.3.6 Invalid memory access detection function,Figure27-12FormatofInvalidmemoryaccessdetectioncontrolregister(IAWCTL),,Invalid memory access detection function,
+PIOR1,4.3.9 Peripheral I/O redirection register 1 (PIOR1),Figure4-9FormatofPeripheralI/Oredirectionregister1(PIOR1),,,
+PER1,"5.3.6 Peripheral enable registers 0, 1 (PER0, PER1)",Figure5-10FormatofPeripheralenableregister1(PER1)(1/2),,CLOCK GENERATOR,
+TRJ0EN,"5.3.6 Peripheral enable registers 0, 1 (PER0, PER1)",Figure5-11FormatofPeripheralenableregister1(PER1)(2/2),2,CLOCK GENERATOR,
+DTCEN,"5.3.6 Peripheral enable registers 0, 1 (PER0, PER1)",Figure5-11FormatofPeripheralenableregister1(PER1)(2/2),2,CLOCK GENERATOR,
+TRD0EN,"5.3.6 Peripheral enable registers 0, 1 (PER0, PER1)",Figure5-10FormatofPeripheralenableregister1(PER1)(1/2),2,CLOCK GENERATOR,
+CMPEN,"5.3.6 Peripheral enable registers 0, 1 (PER0, PER1)",Figure5-10FormatofPeripheralenableregister1(PER1)(1/2),2,CLOCK GENERATOR,
+TRGEN,"5.3.6 Peripheral enable registers 0, 1 (PER0, PER1)",Figure5-10FormatofPeripheralenableregister1(PER1)(1/2),2,CLOCK GENERATOR,
+DACEN,"5.3.6 Peripheral enable registers 0, 1 (PER0, PER1)",Figure5-10FormatofPeripheralenableregister1(PER1)(1/2),2,CLOCK GENERATOR,
+PER1,7.3.1 Peripheral enable register 1 (PER1),Figure7-2FormatofPeripheralenableregister1(PER1),,TIMER RJ,
+TRJ0EN,7.3.1 Peripheral enable register 1 (PER1),Figure7-2FormatofPeripheralenableregister1(PER1),2,TIMER RJ,
+PER1,8.3.1 Peripheral enable register 1 (PER1),Figure8-2FormatofPeripheralenableregister1(PER1),,TIMER RD,
+TRD0EN,8.3.1 Peripheral enable register 1 (PER1),Figure8-2FormatofPeripheralenableregister1(PER1),2,TIMER RD,
+PER1,9.3.1 Peripheral enable register 1 (PER1),Figure9-2FormatofPeripheralenableregister1(PER1),,TIMER RG,
+TRGEN,9.3.1 Peripheral enable register 1 (PER1),Figure9-2FormatofPeripheralenableregister1(PER1),2,TIMER RG,
+PER1,15.3.1 Peripheral enable register 1 (PER1),Figure15-2FormatofPeripheralenableregister1(PER1),,D/A CONVERTER,
+DACEN,15.3.1 Peripheral enable register 1 (PER1),Figure15-2FormatofPeripheralenableregister1(PER1),2,D/A CONVERTER,
+PER1,16.3.1 Peripheral enable register 1 (PER1),Figure16-2FormatofPeripheralenableregister1(PER1),,COMPARATOR,
+CMPEN,16.3.1 Peripheral enable register 1 (PER1),Figure16-2FormatofPeripheralenableregister1(PER1),2,COMPARATOR,
+PER1,19.3.4 Peripheral enable register 1 (PER1),Figure19-5FormatofPeripheralenableregister1(PER1),,DATA TRANSFER CONTROLLER (DTC),
+DTCEN,19.3.4 Peripheral enable register 1 (PER1),Figure19-5FormatofPeripheralenableregister1(PER1),2,DATA TRANSFER CONTROLLER (DTC),
+PMS,27.3.9 Digital output signal level detection function for I/O pins,Figure27-18FormatofPortmodeselectregister(PMS),,,
+GDIDIS,4.3.10 Global digital input disable register (GDIDIS),Figure4-10FormatofGlobaldigitalinputdisableregister(GDIDIS),,,
+DFLCTL,30.8.2 Register controlling data flash memory,Figure30-12FormatofDataflashcontrolregister(DFLCTL),,,
+DFLEN,30.8.2 Register controlling data flash memory,Figure30-12FormatofDataflashcontrolregister(DFLCTL),2,,
+HIOTRM,5.3.9 High-speed on-chip oscillator trimming register (HIOTRM),Figure5-14FormatofHigh-speedon-chiposcillatortrimmingregister(HIOTRM),,,
+HOCODIV,5.3.8 High-speed on-chip oscillator frequency select register (HOCODIV),Figure5-13FormatofHigh-speedon-chiposcillatorfrequencyselectregister(HOCODIV),,,
+PER0,"5.3.6 Peripheral enable registers 0, 1 (PER0, PER1)",Figure5-7FormatofPeripheralenableregister0(PER0)(1/3),,CLOCK GENERATOR,
+TAU0EN,"5.3.6 Peripheral enable registers 0, 1 (PER0, PER1)",Figure5-9FormatofPeripheralenableregister0(PER0)(3/3),2,CLOCK GENERATOR,
+TAU1EN,"5.3.6 Peripheral enable registers 0, 1 (PER0, PER1)",Figure5-9FormatofPeripheralenableregister0(PER0)(3/3),2,CLOCK GENERATOR,
+SAU0EN,"5.3.6 Peripheral enable registers 0, 1 (PER0, PER1)",Figure5-8FormatofPeripheralenableregister0(PER0)(2/3),2,CLOCK GENERATOR,
+SAU1EN,"5.3.6 Peripheral enable registers 0, 1 (PER0, PER1)",Figure5-8FormatofPeripheralenableregister0(PER0)(2/3),2,CLOCK GENERATOR,
+IICA0EN,"5.3.6 Peripheral enable registers 0, 1 (PER0, PER1)",Figure5-8FormatofPeripheralenableregister0(PER0)(2/3),2,CLOCK GENERATOR,
+ADCEN,"5.3.6 Peripheral enable registers 0, 1 (PER0, PER1)",Figure5-8FormatofPeripheralenableregister0(PER0)(2/3),2,CLOCK GENERATOR,
+IICA1EN,"5.3.6 Peripheral enable registers 0, 1 (PER0, PER1)",Figure5-8FormatofPeripheralenableregister0(PER0)(2/3),2,CLOCK GENERATOR,
+RTCEN,"5.3.6 Peripheral enable registers 0, 1 (PER0, PER1)",Figure5-7FormatofPeripheralenableregister0(PER0)(1/3),2,CLOCK GENERATOR,
+PER0,6.3.1 Peripheral enable register 0 (PER0),Figure6-9FormatofPeripheralenableregister0(PER0),,TIMER ARRAY UNIT,
+TAU0EN,6.3.1 Peripheral enable register 0 (PER0),Figure6-9FormatofPeripheralenableregister0(PER0),2,TIMER ARRAY UNIT,
+TAU1EN,6.3.1 Peripheral enable register 0 (PER0),Figure6-9FormatofPeripheralenableregister0(PER0),2,TIMER ARRAY UNIT,
+PER0,10.3.1 Peripheral enable register 0 (PER0),Figure10-2FormatofPeripheralenableregister0(PER0),,REAL-TIME CLOCK,
+RTCEN,10.3.1 Peripheral enable register 0 (PER0),Figure10-2FormatofPeripheralenableregister0(PER0),2,REAL-TIME CLOCK,
+PER0,11.3.1 Peripheral enable register 0 (PER0),Figure11-2FormatofPeripheralenableregister0(PER0),,12-BIT INTERVAL TIMER,
+RTCEN,11.3.1 Peripheral enable register 0 (PER0),Figure11-2FormatofPeripheralenableregister0(PER0),2,12-BIT INTERVAL TIMER,
+PER0,14.3.1 Peripheral enable register 0 (PER0),Figure14-2FormatofPeripheralenableregister0(PER0),,A/D CONVERTER,
+ADCEN,14.3.1 Peripheral enable register 0 (PER0),Figure14-2FormatofPeripheralenableregister0(PER0),2,A/D CONVERTER,
+PER0,17.3.1 Peripheral enable register 0 (PER0),Figure17-5FormatofPeripheralenableregister0(PER0),,SERIAL ARRAY UNIT,
+SAU0EN,17.3.1 Peripheral enable register 0 (PER0),Figure17-5FormatofPeripheralenableregister0(PER0),1,SERIAL ARRAY UNIT,SAUmEN
+SAU1EN,17.3.1 Peripheral enable register 0 (PER0),Figure17-5FormatofPeripheralenableregister0(PER0),1,SERIAL ARRAY UNIT,SAUmEN
+PER0,18.3.1 Peripheral enable register 0 (PER0),Figure18-5FormatofPeripheralenableregister0(PER0),,SERIAL INTERFACE IICA,
+IICA0EN,18.3.1 Peripheral enable register 0 (PER0),Figure18-5FormatofPeripheralenableregister0(PER0),1,SERIAL INTERFACE IICA,IICAnEN
+IICA1EN,18.3.1 Peripheral enable register 0 (PER0),Figure18-5FormatofPeripheralenableregister0(PER0),1,SERIAL INTERFACE IICA,IICAnEN
+OSMC,5.3.7 Subsystem clock supply mode control register (OSMC),Figure5-12FormatofSubsystemclocksupplymodecontrolregister(OSMC),,CLOCK GENERATOR,
+OSMC,7.3.2 Subsystem clock supply mode control register (OSMC),Figure7-3FormatofSubsystemclocksupplymodecontrolregister(OSMC),,TIMER RJ,
+OSMC,10.3.2 Subsystem clock supply mode control register (OSMC),Figure10-3FormatofSubsystemclocksupplymodecontrolregister(OSMC),,REAL-TIME CLOCK,
+OSMC,11.3.2 Subsystem clock supply mode control register (OSMC),Figure11-3FormatofSubsystemclocksupplymodecontrolregister(OSMC),,12-BIT INTERVAL TIMER,
+RPECTL,27.3.3 RAM parity error detection function,Figure27-7FormatofRAMparityerrorcontrolregister(RPECTL),,,
+RPEF,27.3.3 RAM parity error detection function,Figure27-7FormatofRAMparityerrorcontrolregister(RPECTL),2,,
+RPERDIS,27.3.3 RAM parity error detection function,Figure27-7FormatofRAMparityerrorcontrolregister(RPECTL),2,,
+BCDADJ,32.2.1 BCD correction result register (BCDADJ),Figure32-1FormatofBCDcorrectionresultregister(BCDADJ),,,
+SSR00,17.3.7 Serial status register mn (SSRmn),Figure17-13FormatofSerialstatusregistermn(SSRmn)(1/2),,,
+SSR00L,17.3.7 Serial status register mn (SSRmn),Figure17-13FormatofSerialstatusregistermn(SSRmn)(1/2),,,
+SSR01,17.3.7 Serial status register mn (SSRmn),Figure17-13FormatofSerialstatusregistermn(SSRmn)(1/2),,,
+SSR01L,17.3.7 Serial status register mn (SSRmn),Figure17-13FormatofSerialstatusregistermn(SSRmn)(1/2),,,
+SSR02,17.3.7 Serial status register mn (SSRmn),Figure17-13FormatofSerialstatusregistermn(SSRmn)(1/2),,,
+SSR02L,17.3.7 Serial status register mn (SSRmn),Figure17-13FormatofSerialstatusregistermn(SSRmn)(1/2),,,
+SSR03,17.3.7 Serial status register mn (SSRmn),Figure17-13FormatofSerialstatusregistermn(SSRmn)(1/2),,,
+SSR03L,17.3.7 Serial status register mn (SSRmn),Figure17-13FormatofSerialstatusregistermn(SSRmn)(1/2),,,
+SIR00,17.3.6 Serial flag clear trigger register mn (SIRmn),Figure17-12FormatofSerialflagcleartriggerregistermn(SIRmn),,,
+SIR00L,17.3.6 Serial flag clear trigger register mn (SIRmn),Figure17-12FormatofSerialflagcleartriggerregistermn(SIRmn),,,
+SIR01,17.3.6 Serial flag clear trigger register mn (SIRmn),Figure17-12FormatofSerialflagcleartriggerregistermn(SIRmn),,,
+SIR01L,17.3.6 Serial flag clear trigger register mn (SIRmn),Figure17-12FormatofSerialflagcleartriggerregistermn(SIRmn),,,
+SIR02,17.3.6 Serial flag clear trigger register mn (SIRmn),Figure17-12FormatofSerialflagcleartriggerregistermn(SIRmn),,,
+SIR02L,17.3.6 Serial flag clear trigger register mn (SIRmn),Figure17-12FormatofSerialflagcleartriggerregistermn(SIRmn),,,
+SIR03,17.3.6 Serial flag clear trigger register mn (SIRmn),Figure17-12FormatofSerialflagcleartriggerregistermn(SIRmn),,,
+SIR03L,17.3.6 Serial flag clear trigger register mn (SIRmn),Figure17-12FormatofSerialflagcleartriggerregistermn(SIRmn),,,
+SMR00,17.3.3 Serial mode register mn (SMRmn),Figure17-7FormatofSerialmoderegistermn(SMRmn)(1/2),,,
+SMR01,17.3.3 Serial mode register mn (SMRmn),Figure17-7FormatofSerialmoderegistermn(SMRmn)(1/2),,,
+SMR02,17.3.3 Serial mode register mn (SMRmn),Figure17-7FormatofSerialmoderegistermn(SMRmn)(1/2),,,
+SMR03,17.3.3 Serial mode register mn (SMRmn),Figure17-7FormatofSerialmoderegistermn(SMRmn)(1/2),,,
+SCR00,17.3.4 Serial communication operation setting register mn (SCRmn),Figure17-9FormatofSerialcommunicationoperationsettingregistermn(SCRmn)(1/2),,,
+SCR01,17.3.4 Serial communication operation setting register mn (SCRmn),Figure17-9FormatofSerialcommunicationoperationsettingregistermn(SCRmn)(1/2),,,
+SCR02,17.3.4 Serial communication operation setting register mn (SCRmn),Figure17-9FormatofSerialcommunicationoperationsettingregistermn(SCRmn)(1/2),,,
+SCR03,17.3.4 Serial communication operation setting register mn (SCRmn),Figure17-9FormatofSerialcommunicationoperationsettingregistermn(SCRmn)(1/2),,,
+SE0,17.3.10 Serial channel enable status register m (SEm),Figure17-17FormatofSerialchannelenablestatusregisterm(SEm),,,
+SE0L,17.3.10 Serial channel enable status register m (SEm),Figure17-17FormatofSerialchannelenablestatusregisterm(SEm),,,
+SS0,17.3.8 Serial channel start register m (SSm),Figure17-15FormatofSerialchannelstartregisterm(SSm),,,
+SS0L,17.3.8 Serial channel start register m (SSm),Figure17-15FormatofSerialchannelstartregisterm(SSm),,,
+ST0,17.3.9 Serial channel stop register m (STm),Figure17-16FormatofSerialchannelstopregisterm(STm),,,
+ST0L,17.3.9 Serial channel stop register m (STm),Figure17-16FormatofSerialchannelstopregisterm(STm),,,
+SPS0,17.3.2 Serial clock select register m (SPSm),Figure17-6FormatofSerialclockselectregisterm(SPSm),,,
+SPS0L,17.3.2 Serial clock select register m (SPSm),Figure17-6FormatofSerialclockselectregisterm(SPSm),,,
+SO0,17.3.12 Serial output register m (SOm),Figure17-19FormatofSerialoutputregisterm(SOm),,,
+SOE0,17.3.11 Serial output enable register m (SOEm),Figure17-18FormatofSerialoutputenableregisterm(SOEm),,,
+SOE0L,17.3.11 Serial output enable register m (SOEm),Figure17-18FormatofSerialoutputenableregisterm(SOEm),,,
+SOL0,17.3.13 Serial output level register m (SOLm),Figure17-20FormatofSerialoutputlevelregisterm(SOLm),,,
+SOL0L,17.3.13 Serial output level register m (SOLm),Figure17-20FormatofSerialoutputlevelregisterm(SOLm),,,
+SSC0,17.3.14 Serial standby control register m (SSCm),Figure17-22FormatofSerialstandbycontrolregisterm(SSCm),,,
+SSC0L,17.3.14 Serial standby control register m (SSCm),Figure17-22FormatofSerialstandbycontrolregisterm(SSCm),,,
+SSR10,17.3.7 Serial status register mn (SSRmn),Figure17-13FormatofSerialstatusregistermn(SSRmn)(1/2),,,
+SSR10L,17.3.7 Serial status register mn (SSRmn),Figure17-13FormatofSerialstatusregistermn(SSRmn)(1/2),,,
+SSR11,17.3.7 Serial status register mn (SSRmn),Figure17-13FormatofSerialstatusregistermn(SSRmn)(1/2),,,
+SSR11L,17.3.7 Serial status register mn (SSRmn),Figure17-13FormatofSerialstatusregistermn(SSRmn)(1/2),,,
+SSR12,17.3.7 Serial status register mn (SSRmn),Figure17-13FormatofSerialstatusregistermn(SSRmn)(1/2),,,
+SSR12L,17.3.7 Serial status register mn (SSRmn),Figure17-13FormatofSerialstatusregistermn(SSRmn)(1/2),,,
+SSR13,17.3.7 Serial status register mn (SSRmn),Figure17-13FormatofSerialstatusregistermn(SSRmn)(1/2),,,
+SSR13L,17.3.7 Serial status register mn (SSRmn),Figure17-13FormatofSerialstatusregistermn(SSRmn)(1/2),,,
+SIR10,17.3.6 Serial flag clear trigger register mn (SIRmn),Figure17-12FormatofSerialflagcleartriggerregistermn(SIRmn),,,
+SIR10L,17.3.6 Serial flag clear trigger register mn (SIRmn),Figure17-12FormatofSerialflagcleartriggerregistermn(SIRmn),,,
+SIR11,17.3.6 Serial flag clear trigger register mn (SIRmn),Figure17-12FormatofSerialflagcleartriggerregistermn(SIRmn),,,
+SIR11L,17.3.6 Serial flag clear trigger register mn (SIRmn),Figure17-12FormatofSerialflagcleartriggerregistermn(SIRmn),,,
+SIR12,17.3.6 Serial flag clear trigger register mn (SIRmn),Figure17-12FormatofSerialflagcleartriggerregistermn(SIRmn),,,
+SIR12L,17.3.6 Serial flag clear trigger register mn (SIRmn),Figure17-12FormatofSerialflagcleartriggerregistermn(SIRmn),,,
+SIR13,17.3.6 Serial flag clear trigger register mn (SIRmn),Figure17-12FormatofSerialflagcleartriggerregistermn(SIRmn),,,
+SIR13L,17.3.6 Serial flag clear trigger register mn (SIRmn),Figure17-12FormatofSerialflagcleartriggerregistermn(SIRmn),,,
+SMR10,17.3.3 Serial mode register mn (SMRmn),Figure17-7FormatofSerialmoderegistermn(SMRmn)(1/2),,,
+SMR11,17.3.3 Serial mode register mn (SMRmn),Figure17-7FormatofSerialmoderegistermn(SMRmn)(1/2),,,
+SMR12,17.3.3 Serial mode register mn (SMRmn),Figure17-7FormatofSerialmoderegistermn(SMRmn)(1/2),,,
+SMR13,17.3.3 Serial mode register mn (SMRmn),Figure17-7FormatofSerialmoderegistermn(SMRmn)(1/2),,,
+SCR10,17.3.4 Serial communication operation setting register mn (SCRmn),Figure17-9FormatofSerialcommunicationoperationsettingregistermn(SCRmn)(1/2),,,
+SCR11,17.3.4 Serial communication operation setting register mn (SCRmn),Figure17-9FormatofSerialcommunicationoperationsettingregistermn(SCRmn)(1/2),,,
+SCR12,17.3.4 Serial communication operation setting register mn (SCRmn),Figure17-9FormatofSerialcommunicationoperationsettingregistermn(SCRmn)(1/2),,,
+SCR13,17.3.4 Serial communication operation setting register mn (SCRmn),Figure17-9FormatofSerialcommunicationoperationsettingregistermn(SCRmn)(1/2),,,
+SE1,17.3.10 Serial channel enable status register m (SEm),Figure17-17FormatofSerialchannelenablestatusregisterm(SEm),,,
+SE1L,17.3.10 Serial channel enable status register m (SEm),Figure17-17FormatofSerialchannelenablestatusregisterm(SEm),,,
+SS1,17.3.8 Serial channel start register m (SSm),Figure17-15FormatofSerialchannelstartregisterm(SSm),,,
+SS1L,17.3.8 Serial channel start register m (SSm),Figure17-15FormatofSerialchannelstartregisterm(SSm),,,
+ST1,17.3.9 Serial channel stop register m (STm),Figure17-16FormatofSerialchannelstopregisterm(STm),,,
+ST1L,17.3.9 Serial channel stop register m (STm),Figure17-16FormatofSerialchannelstopregisterm(STm),,,
+SPS1,17.3.2 Serial clock select register m (SPSm),Figure17-6FormatofSerialclockselectregisterm(SPSm),,,
+SPS1L,17.3.2 Serial clock select register m (SPSm),Figure17-6FormatofSerialclockselectregisterm(SPSm),,,
+SO1,17.3.12 Serial output register m (SOm),Figure17-19FormatofSerialoutputregisterm(SOm),,,
+SOE1,17.3.11 Serial output enable register m (SOEm),Figure17-18FormatofSerialoutputenableregisterm(SOEm),,,
+SOE1L,17.3.11 Serial output enable register m (SOEm),Figure17-18FormatofSerialoutputenableregisterm(SOEm),,,
+SOL1,17.3.13 Serial output level register m (SOLm),Figure17-20FormatofSerialoutputlevelregisterm(SOLm),,,
+SOL1L,17.3.13 Serial output level register m (SOLm),Figure17-20FormatofSerialoutputlevelregisterm(SOLm),,,
+SSC1,17.3.14 Serial standby control register m (SSCm),Figure17-22FormatofSerialstandbycontrolregisterm(SSCm),,,
+SSC1L,17.3.14 Serial standby control register m (SSCm),Figure17-22FormatofSerialstandbycontrolregisterm(SSCm),,,
+TCR00,6.2.1 Timer count register mn (TCRmn),Figure6-6FormatofTimercountregistermn(TCRmn),,,
+TCR01,6.2.1 Timer count register mn (TCRmn),Figure6-6FormatofTimercountregistermn(TCRmn),,,
+TCR02,6.2.1 Timer count register mn (TCRmn),Figure6-6FormatofTimercountregistermn(TCRmn),,,
+TCR03,6.2.1 Timer count register mn (TCRmn),Figure6-6FormatofTimercountregistermn(TCRmn),,,
+TMR00,6.3.3 Timer mode register mn (TMRmn),Figure6-12FormatofTimermoderegistermn(TMRmn)(1/4),,,
+TMR01,6.3.3 Timer mode register mn (TMRmn),Figure6-12FormatofTimermoderegistermn(TMRmn)(1/4),,,
+TMR02,6.3.3 Timer mode register mn (TMRmn),Figure6-12FormatofTimermoderegistermn(TMRmn)(1/4),,,
+TMR03,6.3.3 Timer mode register mn (TMRmn),Figure6-12FormatofTimermoderegistermn(TMRmn)(1/4),,,
+TSR00,6.3.4 Timer status register mn (TSRmn),Figure6-16FormatofTimerstatusregistermn(TSRmn),,,
+TSR00L,6.3.4 Timer status register mn (TSRmn),Figure6-16FormatofTimerstatusregistermn(TSRmn),,,
+TSR01,6.3.4 Timer status register mn (TSRmn),Figure6-16FormatofTimerstatusregistermn(TSRmn),,,
+TSR01L,6.3.4 Timer status register mn (TSRmn),Figure6-16FormatofTimerstatusregistermn(TSRmn),,,
+TSR02,6.3.4 Timer status register mn (TSRmn),Figure6-16FormatofTimerstatusregistermn(TSRmn),,,
+TSR02L,6.3.4 Timer status register mn (TSRmn),Figure6-16FormatofTimerstatusregistermn(TSRmn),,,
+TSR03,6.3.4 Timer status register mn (TSRmn),Figure6-16FormatofTimerstatusregistermn(TSRmn),,,
+TSR03L,6.3.4 Timer status register mn (TSRmn),Figure6-16FormatofTimerstatusregistermn(TSRmn),,,
+TE0,6.3.5 Timer channel enable status register m (TEm),Figure6-17FormatofTimerchannelenablestatusregisterm(TEm),,,
+TE0L,6.3.5 Timer channel enable status register m (TEm),Figure6-17FormatofTimerchannelenablestatusregisterm(TEm),,,
+TS0,6.3.6 Timer channel start register m (TSm),Figure6-18FormatofTimerchannelstartregisterm(TSm),,,
+TS0L,6.3.6 Timer channel start register m (TSm),Figure6-18FormatofTimerchannelstartregisterm(TSm),,,
+TT0,6.3.7 Timer channel stop register m (TTm),Figure6-19FormatofTimerchannelstopregisterm(TTm),,,
+TT0L,6.3.7 Timer channel stop register m (TTm),Figure6-19FormatofTimerchannelstopregisterm(TTm),,,
+TPS0,6.3.2 Timer clock select register m (TPSm),Figure6-10FormatofTimerclockselectregisterm(TPSm)(1/2),,,
+TO0,6.3.10 Timer output register m (TOm),Figure6-22FormatofTimeroutputregisterm(TOm),,,
+TO0L,6.3.10 Timer output register m (TOm),Figure6-22FormatofTimeroutputregisterm(TOm),,,
+TOE0,6.3.9 Timer output enable register m (TOEm),Figure6-21FormatofTimeroutputenableregisterm(TOEm),,,
+TOE0L,6.3.9 Timer output enable register m (TOEm),Figure6-21FormatofTimeroutputenableregisterm(TOEm),,,
+TOL0,6.3.11 Timer output level register m (TOLm),Figure6-23FormatofTimeroutputlevelregisterm(TOLm),,,
+TOL0L,6.3.11 Timer output level register m (TOLm),Figure6-23FormatofTimeroutputlevelregisterm(TOLm),,,
+TOM0,6.3.12 Timer output mode register m (TOMm),Figure6-24FormatofTimeroutputmoderegisterm(TOMm),,,
+TOM0L,6.3.12 Timer output mode register m (TOMm),Figure6-24FormatofTimeroutputmoderegisterm(TOMm),,,
+TCR10,6.2.1 Timer count register mn (TCRmn),Figure6-6FormatofTimercountregistermn(TCRmn),,,
+TCR11,6.2.1 Timer count register mn (TCRmn),Figure6-6FormatofTimercountregistermn(TCRmn),,,
+TCR12,6.2.1 Timer count register mn (TCRmn),Figure6-6FormatofTimercountregistermn(TCRmn),,,
+TCR13,6.2.1 Timer count register mn (TCRmn),Figure6-6FormatofTimercountregistermn(TCRmn),,,
+TMR10,6.3.3 Timer mode register mn (TMRmn),Figure6-12FormatofTimermoderegistermn(TMRmn)(1/4),,,
+TMR11,6.3.3 Timer mode register mn (TMRmn),Figure6-12FormatofTimermoderegistermn(TMRmn)(1/4),,,
+TMR12,6.3.3 Timer mode register mn (TMRmn),Figure6-12FormatofTimermoderegistermn(TMRmn)(1/4),,,
+TMR13,6.3.3 Timer mode register mn (TMRmn),Figure6-12FormatofTimermoderegistermn(TMRmn)(1/4),,,
+TSR10,6.3.4 Timer status register mn (TSRmn),Figure6-16FormatofTimerstatusregistermn(TSRmn),,,
+TSR10L,6.3.4 Timer status register mn (TSRmn),Figure6-16FormatofTimerstatusregistermn(TSRmn),,,
+TSR11,6.3.4 Timer status register mn (TSRmn),Figure6-16FormatofTimerstatusregistermn(TSRmn),,,
+TSR11L,6.3.4 Timer status register mn (TSRmn),Figure6-16FormatofTimerstatusregistermn(TSRmn),,,
+TSR12,6.3.4 Timer status register mn (TSRmn),Figure6-16FormatofTimerstatusregistermn(TSRmn),,,
+TSR12L,6.3.4 Timer status register mn (TSRmn),Figure6-16FormatofTimerstatusregistermn(TSRmn),,,
+TSR13,6.3.4 Timer status register mn (TSRmn),Figure6-16FormatofTimerstatusregistermn(TSRmn),,,
+TSR13L,6.3.4 Timer status register mn (TSRmn),Figure6-16FormatofTimerstatusregistermn(TSRmn),,,
+TE1,6.3.5 Timer channel enable status register m (TEm),Figure6-17FormatofTimerchannelenablestatusregisterm(TEm),,,
+TE1L,6.3.5 Timer channel enable status register m (TEm),Figure6-17FormatofTimerchannelenablestatusregisterm(TEm),,,
+TS1,6.3.6 Timer channel start register m (TSm),Figure6-18FormatofTimerchannelstartregisterm(TSm),,,
+TS1L,6.3.6 Timer channel start register m (TSm),Figure6-18FormatofTimerchannelstartregisterm(TSm),,,
+TT1,6.3.7 Timer channel stop register m (TTm),Figure6-19FormatofTimerchannelstopregisterm(TTm),,,
+TT1L,6.3.7 Timer channel stop register m (TTm),Figure6-19FormatofTimerchannelstopregisterm(TTm),,,
+TPS1,6.3.2 Timer clock select register m (TPSm),Figure6-10FormatofTimerclockselectregisterm(TPSm)(1/2),,,
+TO1,6.3.10 Timer output register m (TOm),Figure6-22FormatofTimeroutputregisterm(TOm),,,
+TO1L,6.3.10 Timer output register m (TOm),Figure6-22FormatofTimeroutputregisterm(TOm),,,
+TOE1,6.3.9 Timer output enable register m (TOEm),Figure6-21FormatofTimeroutputenableregisterm(TOEm),,,
+TOE1L,6.3.9 Timer output enable register m (TOEm),Figure6-21FormatofTimeroutputenableregisterm(TOEm),,,
+TOL1,6.3.11 Timer output level register m (TOLm),Figure6-23FormatofTimeroutputlevelregisterm(TOLm),,,
+TOL1L,6.3.11 Timer output level register m (TOLm),Figure6-23FormatofTimeroutputlevelregisterm(TOLm),,,
+TOM1,6.3.12 Timer output mode register m (TOMm),Figure6-24FormatofTimeroutputmoderegisterm(TOMm),,,
+TOM1L,6.3.12 Timer output mode register m (TOMm),Figure6-24FormatofTimeroutputmoderegisterm(TOMm),,,
+IICCTL00,18.3.2 IICA control register n0 (IICCTLn0),Figure18-6FormatofIICAcontrolregistern0(IICCTLn0)(1/4),,,
+SPT0,18.3.2 IICA control register n0 (IICCTLn0),Figure18-9FormatofIICAcontrolregistern0(IICCTLn0)(4/4),1,,SPTn
+STT0,18.3.2 IICA control register n0 (IICCTLn0),Figure18-8FormatofIICAcontrolregistern0(IICCTLn0)(3/4),1,,STTn
+ACKE0,18.3.2 IICA control register n0 (IICCTLn0),Figure18-7FormatofIICAcontrolregistern0(IICCTLn0)(2/4),1,,ACKEn
+WTIM0,18.3.2 IICA control register n0 (IICCTLn0),Figure18-7FormatofIICAcontrolregistern0(IICCTLn0)(2/4),1,,WTIMn
+SPIE0,18.3.2 IICA control register n0 (IICCTLn0),Figure18-7FormatofIICAcontrolregistern0(IICCTLn0)(2/4),1,,SPIEn
+WREL0,18.3.2 IICA control register n0 (IICCTLn0),Figure18-6FormatofIICAcontrolregistern0(IICCTLn0)(1/4),2,,WRELn
+LREL0,18.3.2 IICA control register n0 (IICCTLn0),Figure18-6FormatofIICAcontrolregistern0(IICCTLn0)(1/4),2,,LRELn
+IICE0,18.3.2 IICA control register n0 (IICCTLn0),Figure18-6FormatofIICAcontrolregistern0(IICCTLn0)(1/4),2,,IICEn
+IICCTL01,18.3.5 IICA control register n1 (IICCTLn1),Figure18-14FormatofIICAcontrolregistern1(IICCTLn1)(1/2),,,
+PRS0,18.3.5 IICA control register n1 (IICCTLn1),Figure18-15FormatofIICAcontrolregistern1(IICCTLn1)(2/2),1,,PRSn
+DFC0,18.3.5 IICA control register n1 (IICCTLn1),Figure18-15FormatofIICAcontrolregistern1(IICCTLn1)(2/2),1,,DFCn
+SMC0,18.3.5 IICA control register n1 (IICCTLn1),Figure18-15FormatofIICAcontrolregistern1(IICCTLn1)(2/2),1,,SMCn
+DAD0,18.3.5 IICA control register n1 (IICCTLn1),Figure18-15FormatofIICAcontrolregistern1(IICCTLn1)(2/2),1,,DADn
+CLD0,18.3.5 IICA control register n1 (IICCTLn1),Figure18-15FormatofIICAcontrolregistern1(IICCTLn1)(2/2),1,,CLDn
+WUP0,18.3.5 IICA control register n1 (IICCTLn1),Figure18-14FormatofIICAcontrolregistern1(IICCTLn1)(1/2),2,,WUPn
+IICWL0,18.3.6 IICA low-level width setting register n (IICWLn),Figure18-16FormatofIICAlow-levelwidthsettingregistern(IICWLn),,,
+IICWH0,18.3.7 IICA high-level width setting register n (IICWHn),Figure18-17FormatofIICAhigh-levelwidthsettingregistern(IICWHn),,,
+SVA0,18.2 Configuration of Serial Interface IICA,Figure18-4FormatofSlaveaddressregistern(SVAn),,,
+IICCTL10,18.3.2 IICA control register n0 (IICCTLn0),Figure18-6FormatofIICAcontrolregistern0(IICCTLn0)(1/4),,,
+SPT1,18.3.2 IICA control register n0 (IICCTLn0),Figure18-9FormatofIICAcontrolregistern0(IICCTLn0)(4/4),1,,SPTn
+STT1,18.3.2 IICA control register n0 (IICCTLn0),Figure18-8FormatofIICAcontrolregistern0(IICCTLn0)(3/4),1,,STTn
+ACKE1,18.3.2 IICA control register n0 (IICCTLn0),Figure18-7FormatofIICAcontrolregistern0(IICCTLn0)(2/4),1,,ACKEn
+WTIM1,18.3.2 IICA control register n0 (IICCTLn0),Figure18-7FormatofIICAcontrolregistern0(IICCTLn0)(2/4),1,,WTIMn
+SPIE1,18.3.2 IICA control register n0 (IICCTLn0),Figure18-7FormatofIICAcontrolregistern0(IICCTLn0)(2/4),1,,SPIEn
+WREL1,18.3.2 IICA control register n0 (IICCTLn0),Figure18-6FormatofIICAcontrolregistern0(IICCTLn0)(1/4),2,,WRELn
+LREL1,18.3.2 IICA control register n0 (IICCTLn0),Figure18-6FormatofIICAcontrolregistern0(IICCTLn0)(1/4),2,,LRELn
+IICE1,18.3.2 IICA control register n0 (IICCTLn0),Figure18-6FormatofIICAcontrolregistern0(IICCTLn0)(1/4),2,,IICEn
+IICCTL11,18.3.5 IICA control register n1 (IICCTLn1),Figure18-14FormatofIICAcontrolregistern1(IICCTLn1)(1/2),,,
+PRS1,18.3.5 IICA control register n1 (IICCTLn1),Figure18-15FormatofIICAcontrolregistern1(IICCTLn1)(2/2),1,,PRSn
+DFC1,18.3.5 IICA control register n1 (IICCTLn1),Figure18-15FormatofIICAcontrolregistern1(IICCTLn1)(2/2),1,,DFCn
+SMC1,18.3.5 IICA control register n1 (IICCTLn1),Figure18-15FormatofIICAcontrolregistern1(IICCTLn1)(2/2),1,,SMCn
+DAD1,18.3.5 IICA control register n1 (IICCTLn1),Figure18-15FormatofIICAcontrolregistern1(IICCTLn1)(2/2),1,,DADn
+CLD1,18.3.5 IICA control register n1 (IICCTLn1),Figure18-15FormatofIICAcontrolregistern1(IICCTLn1)(2/2),1,,CLDn
+WUP1,18.3.5 IICA control register n1 (IICCTLn1),Figure18-14FormatofIICAcontrolregistern1(IICCTLn1)(1/2),2,,WUPn
+IICWL1,18.3.6 IICA low-level width setting register n (IICWLn),Figure18-16FormatofIICAlow-levelwidthsettingregistern(IICWLn),,,
+IICWH1,18.3.7 IICA high-level width setting register n (IICWHn),Figure18-17FormatofIICAhigh-levelwidthsettingregistern(IICWHn),,,
+SVA1,18.2 Configuration of Serial Interface IICA,Figure18-4FormatofSlaveaddressregistern(SVAn),,,
+TRJCR0,7.3.4 Timer RJ control register 0 (TRJCR0),Figure7-5FormatofTimerRJcontrolregister0(TRJCR0),,,
+TRJIOC0,7.3.5 Timer RJ I/O control register 0 (TRJIOC0),Figure7-6FormatofTimerRJI/Ocontrolregister0(TRJIOC0),,,
+TRJMR0,7.3.6 Timer RJ mode register 0 (TRJMR0),Figure7-7FormatofTimerRJmoderegister0(TRJMR0),,,
+TRJISR0,7.3.7 Timer RJ event pin select register 0 (TRJISR0),Figure7-8FormatofTimerRJeventpinselectregister0(TRJISR0),,,
+TRGMR,9.3.2 Timer RG mode register (TRGMR),Figure9-3FormatofTimerRGmoderegister(TRGMR),,,
+TRGPWM,9.3.2 Timer RG mode register (TRGMR),Figure9-3FormatofTimerRGmoderegister(TRGMR),2,,
+TRGMDF,9.3.2 Timer RG mode register (TRGMR),Figure9-3FormatofTimerRGmoderegister(TRGMR),2,,
+TRGDFA,9.3.2 Timer RG mode register (TRGMR),Figure9-3FormatofTimerRGmoderegister(TRGMR),2,,
+TRGDFB,9.3.2 Timer RG mode register (TRGMR),Figure9-3FormatofTimerRGmoderegister(TRGMR),2,,
+TRGDFCK0,9.3.2 Timer RG mode register (TRGMR),Figure9-3FormatofTimerRGmoderegister(TRGMR),2,,TRGDFCK1
+TRGDFCK1,9.3.2 Timer RG mode register (TRGMR),Figure9-3FormatofTimerRGmoderegister(TRGMR),2,,
+TRGELCICE,9.3.2 Timer RG mode register (TRGMR),Figure9-3FormatofTimerRGmoderegister(TRGMR),2,,
+TRGSTART,9.3.2 Timer RG mode register (TRGMR),Figure9-3FormatofTimerRGmoderegister(TRGMR),2,,
+TRGCNTC,9.3.3 Timer RG count control register (TRGCNTC),Figure9-4FormatofTimerRGcountcontrolregister(TRGCNTC),,,
+TRGCR,9.3.4 Timer RG control register (TRGCR),Figure9-5FormatofTimerRGcontrolregister(TRGCR),,,
+TRGTCK0,9.3.4 Timer RG control register (TRGCR),Figure9-5FormatofTimerRGcontrolregister(TRGCR),2,,TRGTCK2
+TRGTCK1,9.3.4 Timer RG control register (TRGCR),Figure9-5FormatofTimerRGcontrolregister(TRGCR),2,,TRGTCK2
+TRGTCK2,9.3.4 Timer RG control register (TRGCR),Figure9-5FormatofTimerRGcontrolregister(TRGCR),2,,
+TRGCKEG0,9.3.4 Timer RG control register (TRGCR),Figure9-5FormatofTimerRGcontrolregister(TRGCR),2,,TRGCKEG1
+TRGCKEG1,9.3.4 Timer RG control register (TRGCR),Figure9-5FormatofTimerRGcontrolregister(TRGCR),2,,
+TRGCCLR0,9.3.4 Timer RG control register (TRGCR),Figure9-5FormatofTimerRGcontrolregister(TRGCR),2,,TRGCCLR1
+TRGCCLR1,9.3.4 Timer RG control register (TRGCR),Figure9-5FormatofTimerRGcontrolregister(TRGCR),2,,
+TRGIER,9.3.5 Timer RG interrupt enable register (TRGIER),Figure9-6FormatofTimerRGinterruptenableregister(TRGIER),,,
+TRGIMIEA,9.3.5 Timer RG interrupt enable register (TRGIER),Figure9-6FormatofTimerRGinterruptenableregister(TRGIER),2,,
+TRGIMIEB,9.3.5 Timer RG interrupt enable register (TRGIER),Figure9-6FormatofTimerRGinterruptenableregister(TRGIER),2,,
+TRGUDIE,9.3.5 Timer RG interrupt enable register (TRGIER),Figure9-6FormatofTimerRGinterruptenableregister(TRGIER),2,,
+TRGOVIE,9.3.5 Timer RG interrupt enable register (TRGIER),Figure9-6FormatofTimerRGinterruptenableregister(TRGIER),2,,
+TRGSR,9.3.6 Timer RG status register (TRGSR),Figure9-7FormatofTimerRGstatusregister(TRGSR),,,
+TRGIMFA,9.3.6 Timer RG status register (TRGSR),Figure9-7FormatofTimerRGstatusregister(TRGSR),2,,
+TRGIMFB,9.3.6 Timer RG status register (TRGSR),Figure9-7FormatofTimerRGstatusregister(TRGSR),2,,
+TRGUDF,9.3.6 Timer RG status register (TRGSR),Figure9-7FormatofTimerRGstatusregister(TRGSR),2,,
+TRGOVF,9.3.6 Timer RG status register (TRGSR),Figure9-7FormatofTimerRGstatusregister(TRGSR),2,,
+TRGDIRF,9.3.6 Timer RG status register (TRGSR),Figure9-7FormatofTimerRGstatusregister(TRGSR),2,,
+TRGIOR,9.3.7 Timer RG I/O control register (TRGIOR),Figure9-8FormatofTimerRGI/Ocontrolregister(TRGIOR),,,
+TRGIOA0,9.3.7 Timer RG I/O control register (TRGIOR),Figure9-8FormatofTimerRGI/Ocontrolregister(TRGIOR),2,,TRGIOA1
+TRGIOA1,9.3.7 Timer RG I/O control register (TRGIOR),Figure9-8FormatofTimerRGI/Ocontrolregister(TRGIOR),2,,
+TRGIOA2,9.3.7 Timer RG I/O control register (TRGIOR),Figure9-8FormatofTimerRGI/Ocontrolregister(TRGIOR),2,,
+TRGBUFA,9.3.7 Timer RG I/O control register (TRGIOR),Figure9-8FormatofTimerRGI/Ocontrolregister(TRGIOR),2,,
+TRGIOB0,9.3.7 Timer RG I/O control register (TRGIOR),Figure9-8FormatofTimerRGI/Ocontrolregister(TRGIOR),2,,TRGIOB1
+TRGIOB1,9.3.7 Timer RG I/O control register (TRGIOR),Figure9-8FormatofTimerRGI/Ocontrolregister(TRGIOR),2,,
+TRGIOB2,9.3.7 Timer RG I/O control register (TRGIOR),Figure9-8FormatofTimerRGI/Ocontrolregister(TRGIOR),2,,
+TRGBUFB,9.3.7 Timer RG I/O control register (TRGIOR),Figure9-8FormatofTimerRGI/Ocontrolregister(TRGIOR),2,,
+TRG,9.3.8 Timer RG counter (TRG),Figure9-9FormatofTimerRGcounter(TRG),,,
+TRGGRA,"9.3.9 Timer RG general registers A, B, C, and D (TRGGRA, TRGGRB, TRGGRC, TRGGRD)","Figure9-10FormatofTimerRGgeneralregistersA,B,C,andD(TRGGRA,TRGGRB,TRGGRC,TRGGRD)",,,
+TRGGRB,"9.3.9 Timer RG general registers A, B, C, and D (TRGGRA, TRGGRB, TRGGRC, TRGGRD)","Figure9-10FormatofTimerRGgeneralregistersA,B,C,andD(TRGGRA,TRGGRB,TRGGRC,TRGGRD)",,,
+TRDELC,8.3.2 Timer RD ELC register (TRDELC),Figure8-3FormatofTimerRDELCregister(TRDELC),,,
+TRDSTR,8.3.3 Timer RD start register (TRDSTR),Figure8-4FormatofTimerRDstartregister(TRDSTR),,,
+TRDMR,8.3.4 Timer RD mode register (TRDMR),Figure8-5FormatofTimerRDmoderegister(TRDMR),,,
+TRDSYNC,8.3.4 Timer RD mode register (TRDMR),Figure8-5FormatofTimerRDmoderegister(TRDMR),2,,
+TRDBFC0,8.3.4 Timer RD mode register (TRDMR),Figure8-5FormatofTimerRDmoderegister(TRDMR),2,,
+TRDBFD0,8.3.4 Timer RD mode register (TRDMR),Figure8-5FormatofTimerRDmoderegister(TRDMR),2,,
+TRDBFC1,8.3.4 Timer RD mode register (TRDMR),Figure8-5FormatofTimerRDmoderegister(TRDMR),2,,
+TRDBFD1,8.3.4 Timer RD mode register (TRDMR),Figure8-5FormatofTimerRDmoderegister(TRDMR),2,,
+TRDPMR,8.3.5 Timer RD PWM function select register (TRDPMR),Figure8-6FormatofTimerRDPWMfunctionselectregister(TRDPMR)[TimerMode],,,
+TRDPWMB0,8.3.5 Timer RD PWM function select register (TRDPMR),Figure8-6FormatofTimerRDPWMfunctionselectregister(TRDPMR)[TimerMode],2,,
+TRDPWMC0,8.3.5 Timer RD PWM function select register (TRDPMR),Figure8-6FormatofTimerRDPWMfunctionselectregister(TRDPMR)[TimerMode],2,,
+TRDPWMD0,8.3.5 Timer RD PWM function select register (TRDPMR),Figure8-6FormatofTimerRDPWMfunctionselectregister(TRDPMR)[TimerMode],2,,
+TRDPWMB1,8.3.5 Timer RD PWM function select register (TRDPMR),Figure8-6FormatofTimerRDPWMfunctionselectregister(TRDPMR)[TimerMode],2,,
+TRDPWMC1,8.3.5 Timer RD PWM function select register (TRDPMR),Figure8-6FormatofTimerRDPWMfunctionselectregister(TRDPMR)[TimerMode],2,,
+TRDPWMD1,8.3.5 Timer RD PWM function select register (TRDPMR),Figure8-6FormatofTimerRDPWMfunctionselectregister(TRDPMR)[TimerMode],2,,
+TRDFCR,8.3.6 Timer RD function control register (TRDFCR),Figure8-7FormatofTimerRDfunctioncontrolregister(TRDFCR),,,
+TRDOER1,8.3.7 Timer RD output master enable register 1 (TRDOER1),Figure8-8FormatofTimerRDoutputmasterenableregister1(TRDOER1),,,
+TRDOER2,8.3.8 Timer RD output master enable register 2 (TRDOER2),Figure8-9FormatofTimerRDoutputmasterenableregister2(TRDOER2),,,
+TRDSHUTS,8.3.8 Timer RD output master enable register 2 (TRDOER2),Figure8-9FormatofTimerRDoutputmasterenableregister2(TRDOER2),3,,
+TRDPTO,8.3.8 Timer RD output master enable register 2 (TRDOER2),Figure8-9FormatofTimerRDoutputmasterenableregister2(TRDOER2),2,,
+TRDOCR,8.3.9 Timer RD output control register (TRDOCR),Figure8-10FormatofTimerRDoutputcontrolregister(TRDOCR)[OutputCompareFunction],,,
+TRDDF0,8.3.10 Timer RD digital filter function select register i (TRDDFi) (i = 0 or 1),Figure8-14FormatofTimerRDdigitalfilterfunctionselectregisteri(TRDDFi)(i=0or1),,,
+TRDDF1,8.3.10 Timer RD digital filter function select register i (TRDDFi) (i = 0 or 1),Figure8-14FormatofTimerRDdigitalfilterfunctionselectregisteri(TRDDFi)(i=0or1),,,
+TRDCR0,8.3.11 Timer RD control register i (TRDCRi) (i = 0 or 1),Figure8-16FormatofTimerRDcontrolregisteri(TRDCRi)(i=0or1),,,
+TRDIORA0,8.3.12 Timer RD I/O control register Ai (TRDIORAi) (i = 0 or 1),Figure8-21FormatofTimerRDI/OcontrolregisterAi(TRDIORAi)(i=0or1)[InputCaptureFunction],,,
+TRDIORC0,8.3.13 Timer RD I/O control register Ci (TRDIORCi) (i = 0 or 1),Figure8-24FormatofTimerRDI/OcontrolregisterCi(TRDIORCi)(i=0or1)[OutputCompareFunction],,,
+TRDSR0,8.3.14 Timer RD status register 0 (TRDSR0),Figure8-25FormatofTimerRDstatusregister0(TRDSR0)[InputCaptureFunction],,,
+TRDIER0,8.3.16 Timer RD interrupt enable register i (TRDIERi) (i = 0 or 1),Figure8-29FormatofTimerRDinterruptenableregisteri(TRDIERi)(i=0or1),,,
+TRDPOCR0,8.3.17 Timer RD PWM function output level control register i (TRDPOCRi) (i = 0 or 1),Figure8-30FormatofTimerRDPWMfunctionoutputlevelcontrolregisteri(TRDPOCRi)(i=0or1),,,
+TRD0,8.3.18 Timer RD counter i (TRDi) (i = 0 or 1),Figure8-31FormatofTimerRDcounteri(TRDi)(i=0or1)[TimerMode],,,
+TRDGRA0,"8.3.19 Timer RD general registers Ai, Bi, Ci, and Di (TRDGRAi, TRDGRBi,TRDGRCi, TRDGRDi) (i = 0 or 1) [Input Capture Function]","Figure8-35FormatofTimerRDgeneralregistersAi,Bi,Ci,andDi(TRDGRAi,TRDGRBi,TRDGRCi,TRDGRDi)",,,
+TRDGRB0,"8.3.19 Timer RD general registers Ai, Bi, Ci, and Di (TRDGRAi, TRDGRBi,TRDGRCi, TRDGRDi) (i = 0 or 1) [Input Capture Function]","Figure8-35FormatofTimerRDgeneralregistersAi,Bi,Ci,andDi(TRDGRAi,TRDGRBi,TRDGRCi,TRDGRDi)",,,
+TRDCR1,8.3.11 Timer RD control register i (TRDCRi) (i = 0 or 1),Figure8-16FormatofTimerRDcontrolregisteri(TRDCRi)(i=0or1),,,
+TRDIORA1,8.3.12 Timer RD I/O control register Ai (TRDIORAi) (i = 0 or 1),Figure8-21FormatofTimerRDI/OcontrolregisterAi(TRDIORAi)(i=0or1)[InputCaptureFunction],,,
+TRDIORC1,8.3.13 Timer RD I/O control register Ci (TRDIORCi) (i = 0 or 1),Figure8-24FormatofTimerRDI/OcontrolregisterCi(TRDIORCi)(i=0or1)[OutputCompareFunction],,,
+TRDSR1,8.3.15 Timer RD status register 1 (TRDSR1),Figure8-27FormatofTimerRDstatusregister1(TRDSR1)[InputCaptureFunction],,,
+TRDIER1,8.3.16 Timer RD interrupt enable register i (TRDIERi) (i = 0 or 1),Figure8-29FormatofTimerRDinterruptenableregisteri(TRDIERi)(i=0or1),,,
+TRDPOCR1,8.3.17 Timer RD PWM function output level control register i (TRDPOCRi) (i = 0 or 1),Figure8-30FormatofTimerRDPWMfunctionoutputlevelcontrolregisteri(TRDPOCRi)(i=0or1),,,
+TRD1,8.3.18 Timer RD counter i (TRDi) (i = 0 or 1),Figure8-31FormatofTimerRDcounteri(TRDi)(i=0or1)[TimerMode],,,
+TRDGRA1,"8.3.19 Timer RD general registers Ai, Bi, Ci, and Di (TRDGRAi, TRDGRBi,TRDGRCi, TRDGRDi) (i = 0 or 1) [Input Capture Function]","Figure8-35FormatofTimerRDgeneralregistersAi,Bi,Ci,andDi(TRDGRAi,TRDGRBi,TRDGRCi,TRDGRDi)",,,
+TRDGRB1,"8.3.19 Timer RD general registers Ai, Bi, Ci, and Di (TRDGRAi, TRDGRBi,TRDGRCi, TRDGRDi) (i = 0 or 1) [Input Capture Function]","Figure8-35FormatofTimerRDgeneralregistersAi,Bi,Ci,andDi(TRDGRAi,TRDGRBi,TRDGRCi,TRDGRDi)",,,
+DTCBAR,19.3.12 DTC base address register (DTCBAR),Figure19-13FormatofDTCbaseaddressregister(DTCBAR),,,
+DTCEN0,19.3.11 DTC activation enable register i (DTCENi) (i = 0 to 4),Figure19-12FormatofDTCactivationenableregisteri(DTCENi)(i=0to4),,,
+DTCEN1,19.3.11 DTC activation enable register i (DTCENi) (i = 0 to 4),Figure19-12FormatofDTCactivationenableregisteri(DTCENi)(i=0to4),,,
+DTCEN2,19.3.11 DTC activation enable register i (DTCENi) (i = 0 to 4),Figure19-12FormatofDTCactivationenableregisteri(DTCENi)(i=0to4),,,
+DTCEN3,19.3.11 DTC activation enable register i (DTCENi) (i = 0 to 4),Figure19-12FormatofDTCactivationenableregisteri(DTCENi)(i=0to4),,,
+DTCEN4,19.3.11 DTC activation enable register i (DTCENi) (i = 0 to 4),Figure19-12FormatofDTCactivationenableregisteri(DTCENi)(i=0to4),,,
+CRC0CTL,27.3.1 Flash memory CRC operation function (high-speed CRC),Figure27-1FormatofFlashmemoryCRCcontrolregister(CRC0CTL),,,
+CRC0EN,27.3.1 Flash memory CRC operation function (high-speed CRC),Figure27-1FormatofFlashmemoryCRCcontrolregister(CRC0CTL),2,,
+PGCRCL,27.3.1 Flash memory CRC operation function (high-speed CRC),Figure27-2FormatofFlashmemoryCRCoperationresultregister(PGCRCL),,,
+CRCD,27.3.2 CRC operation function (general-purpose CRC),Figure27-5FormatofCRCdataregister(CRCD),,,
+ELSELR00,20.3.1 Event output destination select register n (ELSELRn) (n = 00 to 25),Figure20-2FormatofEventoutputdestinationselectregistern(ELSELRn),,,
+ELSELR01,20.3.1 Event output destination select register n (ELSELRn) (n = 00 to 25),Figure20-2FormatofEventoutputdestinationselectregistern(ELSELRn),,,
+ELSELR02,20.3.1 Event output destination select register n (ELSELRn) (n = 00 to 25),Figure20-2FormatofEventoutputdestinationselectregistern(ELSELRn),,,
+ELSELR03,20.3.1 Event output destination select register n (ELSELRn) (n = 00 to 25),Figure20-2FormatofEventoutputdestinationselectregistern(ELSELRn),,,
+ELSELR04,20.3.1 Event output destination select register n (ELSELRn) (n = 00 to 25),Figure20-2FormatofEventoutputdestinationselectregistern(ELSELRn),,,
+ELSELR05,20.3.1 Event output destination select register n (ELSELRn) (n = 00 to 25),Figure20-2FormatofEventoutputdestinationselectregistern(ELSELRn),,,
+ELSELR06,20.3.1 Event output destination select register n (ELSELRn) (n = 00 to 25),Figure20-2FormatofEventoutputdestinationselectregistern(ELSELRn),,,
+ELSELR07,20.3.1 Event output destination select register n (ELSELRn) (n = 00 to 25),Figure20-2FormatofEventoutputdestinationselectregistern(ELSELRn),,,
+ELSELR08,20.3.1 Event output destination select register n (ELSELRn) (n = 00 to 25),Figure20-2FormatofEventoutputdestinationselectregistern(ELSELRn),,,
+ELSELR09,20.3.1 Event output destination select register n (ELSELRn) (n = 00 to 25),Figure20-2FormatofEventoutputdestinationselectregistern(ELSELRn),,,
+ELSELR10,20.3.1 Event output destination select register n (ELSELRn) (n = 00 to 25),Figure20-2FormatofEventoutputdestinationselectregistern(ELSELRn),,,
+ELSELR11,20.3.1 Event output destination select register n (ELSELRn) (n = 00 to 25),Figure20-2FormatofEventoutputdestinationselectregistern(ELSELRn),,,
+ELSELR12,20.3.1 Event output destination select register n (ELSELRn) (n = 00 to 25),Figure20-2FormatofEventoutputdestinationselectregistern(ELSELRn),,,
+ELSELR13,20.3.1 Event output destination select register n (ELSELRn) (n = 00 to 25),Figure20-2FormatofEventoutputdestinationselectregistern(ELSELRn),,,
+ELSELR14,20.3.1 Event output destination select register n (ELSELRn) (n = 00 to 25),Figure20-2FormatofEventoutputdestinationselectregistern(ELSELRn),,,
+ELSELR15,20.3.1 Event output destination select register n (ELSELRn) (n = 00 to 25),Figure20-2FormatofEventoutputdestinationselectregistern(ELSELRn),,,
+ELSELR16,20.3.1 Event output destination select register n (ELSELRn) (n = 00 to 25),Figure20-2FormatofEventoutputdestinationselectregistern(ELSELRn),,,
+ELSELR17,20.3.1 Event output destination select register n (ELSELRn) (n = 00 to 25),Figure20-2FormatofEventoutputdestinationselectregistern(ELSELRn),,,
+ELSELR18,20.3.1 Event output destination select register n (ELSELRn) (n = 00 to 25),Figure20-2FormatofEventoutputdestinationselectregistern(ELSELRn),,,
+ELSELR19,20.3.1 Event output destination select register n (ELSELRn) (n = 00 to 25),Figure20-2FormatofEventoutputdestinationselectregistern(ELSELRn),,,
+ELSELR20,20.3.1 Event output destination select register n (ELSELRn) (n = 00 to 25),Figure20-2FormatofEventoutputdestinationselectregistern(ELSELRn),,,
+ELSELR21,20.3.1 Event output destination select register n (ELSELRn) (n = 00 to 25),Figure20-2FormatofEventoutputdestinationselectregistern(ELSELRn),,,
+ELSELR22,20.3.1 Event output destination select register n (ELSELRn) (n = 00 to 25),Figure20-2FormatofEventoutputdestinationselectregistern(ELSELRn),,,
+ELSELR23,20.3.1 Event output destination select register n (ELSELRn) (n = 00 to 25),Figure20-2FormatofEventoutputdestinationselectregistern(ELSELRn),,,
+ELSELR24,20.3.1 Event output destination select register n (ELSELRn) (n = 00 to 25),Figure20-2FormatofEventoutputdestinationselectregistern(ELSELRn),,,
+ELSELR25,20.3.1 Event output destination select register n (ELSELRn) (n = 00 to 25),Figure20-2FormatofEventoutputdestinationselectregistern(ELSELRn),,,
+COMPMDR,16.3.2 Comparator mode setting register (COMPMDR),Figure16-3FormatofComparatormodesettingregister(COMPMDR),,,
+C0ENB,16.3.2 Comparator mode setting register (COMPMDR),Figure16-3FormatofComparatormodesettingregister(COMPMDR),2,,
+C0MON,16.3.2 Comparator mode setting register (COMPMDR),Figure16-3FormatofComparatormodesettingregister(COMPMDR),2,,
+C1ENB,16.3.2 Comparator mode setting register (COMPMDR),Figure16-3FormatofComparatormodesettingregister(COMPMDR),2,,
+C1MON,16.3.2 Comparator mode setting register (COMPMDR),Figure16-3FormatofComparatormodesettingregister(COMPMDR),2,,
+COMPFIR,16.3.3 Comparator filter control register (COMPFIR),Figure16-4FormatofComparatorfiltercontrolregister(COMPFIR),,,
+COMPOCR,16.3.4 Comparator output control register (COMPOCR),Figure16-5FormatofComparatoroutputcontrolregister(COMPOCR),,,
+C0IE,16.3.4 Comparator output control register (COMPOCR),Figure16-5FormatofComparatoroutputcontrolregister(COMPOCR),2,,
+C0OE,16.3.4 Comparator output control register (COMPOCR),Figure16-5FormatofComparatoroutputcontrolregister(COMPOCR),2,,
+C0OP,16.3.4 Comparator output control register (COMPOCR),Figure16-5FormatofComparatoroutputcontrolregister(COMPOCR),2,,
+C1IE,16.3.4 Comparator output control register (COMPOCR),Figure16-5FormatofComparatoroutputcontrolregister(COMPOCR),2,,
+C1OE,16.3.4 Comparator output control register (COMPOCR),Figure16-5FormatofComparatoroutputcontrolregister(COMPOCR),2,,
+C1OP,16.3.4 Comparator output control register (COMPOCR),Figure16-5FormatofComparatoroutputcontrolregister(COMPOCR),2,,
+SPDMD,16.3.4 Comparator output control register (COMPOCR),Figure16-5FormatofComparatoroutputcontrolregister(COMPOCR),2,,
+TRJ0,7.3.3 Timer RJ counter register 0 (TRJ0),Figure7-4FormatofTimerRJcounterregister0(TRJ0),,,
+P0,4.3.2 Port registers (Pxx),Figure4-2FormatofPortregister,,,
+P1,4.3.2 Port registers (Pxx),Figure4-2FormatofPortregister,,,
+P2,4.3.2 Port registers (Pxx),Figure4-2FormatofPortregister,,,
+P3,4.3.2 Port registers (Pxx),Figure4-2FormatofPortregister,,PORT FUNCTIONS,
+P3,10.3.17 Port register 3 (P3),Figure10-19FormatofPortregister3(P3),,REAL-TIME CLOCK,
+P4,4.3.2 Port registers (Pxx),Figure4-2FormatofPortregister,,,
+P5,4.3.2 Port registers (Pxx),Figure4-2FormatofPortregister,,,
+P6,4.3.2 Port registers (Pxx),Figure4-2FormatofPortregister,,,
+P7,4.3.2 Port registers (Pxx),Figure4-2FormatofPortregister,,,
+P8,4.3.2 Port registers (Pxx),Figure4-2FormatofPortregister,,,
+P10,4.3.2 Port registers (Pxx),Figure4-2FormatofPortregister,,,
+P11,4.3.2 Port registers (Pxx),Figure4-2FormatofPortregister,,,
+P12,4.3.2 Port registers (Pxx),Figure4-2FormatofPortregister,,,
+P13,4.3.2 Port registers (Pxx),Figure4-2FormatofPortregister,,,
+P14,4.3.2 Port registers (Pxx),Figure4-2FormatofPortregister,,,
+P15,4.3.2 Port registers (Pxx),Figure4-2FormatofPortregister,,,
+SDR00,17.3.5 Serial data register mn (SDRmn),Figure17-11FormatofSerialdataregistermn(SDRmn),,,
+SIO00,17.3.5 Serial data register mn (SDRmn),Figure17-11FormatofSerialdataregistermn(SDRmn),,,
+TXD0,17.3.5 Serial data register mn (SDRmn),Figure17-11FormatofSerialdataregistermn(SDRmn),,,
+SDR01,17.3.5 Serial data register mn (SDRmn),Figure17-11FormatofSerialdataregistermn(SDRmn),,,
+RXD0,17.3.5 Serial data register mn (SDRmn),Figure17-11FormatofSerialdataregistermn(SDRmn),,,
+SIO01,17.3.5 Serial data register mn (SDRmn),Figure17-11FormatofSerialdataregistermn(SDRmn),,,
+SDR12,17.3.5 Serial data register mn (SDRmn),Figure17-11FormatofSerialdataregistermn(SDRmn),,,
+SIO30,17.3.5 Serial data register mn (SDRmn),Figure17-11FormatofSerialdataregistermn(SDRmn),,,
+TXD3,17.3.5 Serial data register mn (SDRmn),Figure17-11FormatofSerialdataregistermn(SDRmn),,,
+SDR13,17.3.5 Serial data register mn (SDRmn),Figure17-11FormatofSerialdataregistermn(SDRmn),,,
+RXD3,17.3.5 Serial data register mn (SDRmn),Figure17-11FormatofSerialdataregistermn(SDRmn),,,
+SIO31,17.3.5 Serial data register mn (SDRmn),Figure17-11FormatofSerialdataregistermn(SDRmn),,,
+TDR00,6.2.2 Timer data register mn (TDRmn),"Figure6-7FormatofTimerdataregistermn(TDRmn)(n=0,2)",,,
+TDR01,6.2.2 Timer data register mn (TDRmn),"Figure6-8FormatofTimerdataregistermn(TDRmn)(n=1,3)",,,
+TDR01L,6.2.2 Timer data register mn (TDRmn),"Figure6-8FormatofTimerdataregistermn(TDRmn)(n=1,3)",,,
+TDR01H,6.2.2 Timer data register mn (TDRmn),"Figure6-8FormatofTimerdataregistermn(TDRmn)(n=1,3)",,,
+ADCR,14.3.5 10-bit A/D conversion result register (ADCR),Figure14-10Formatof10-bitA/Dconversionresultregister(ADCR),,,
+ADCRH,14.3.6 8-bit A/D conversion result register (ADCRH),Figure14-11Formatof8-bitA/Dconversionresultregister(ADCRH),,,
+PIM0,4.3.4 Port input mode registers (PMxx),Figure4-4FormatofPortinputmoderegister(100-pinproducts),,,
+PIM1,4.3.4 Port input mode registers (PMxx),Figure4-4FormatofPortinputmoderegister(100-pinproducts),,,
+PIM3,4.3.4 Port input mode registers (PMxx),Figure4-4FormatofPortinputmoderegister(100-pinproducts),,,
+PIM4,4.3.4 Port input mode registers (PMxx),Figure4-4FormatofPortinputmoderegister(100-pinproducts),,,
+PIM5,4.3.4 Port input mode registers (PMxx),Figure4-4FormatofPortinputmoderegister(100-pinproducts),,,
+PIM8,4.3.4 Port input mode registers (PMxx),Figure4-4FormatofPortinputmoderegister(100-pinproducts),,,
+PIM14,4.3.4 Port input mode registers (PMxx),Figure4-4FormatofPortinputmoderegister(100-pinproducts),,,
+PM0,4.3.1 Port mode registers (PMxx),Figure4-1FormatofPortmoderegister,,PORT FUNCTIONS,
+PM0,"7.3.8 Port mode registers 0, 3, 4, 5 (PM0, PM3, PM4, PM5)","Figure7-9FormatofPortModeRegisters0,3,4,5(PM0,PM3,PM4,PM5)(100-pinproducts)",,TIMER RJ,
+PM0,"9.3.10 Port mode registers 0, 5 (PM0, PM5)","Figure9-11FormatofPortmoderegisters0,5(PM0,PM5)(100-pinproducts)",,TIMER RG,
+PM1,4.3.1 Port mode registers (PMxx),Figure4-1FormatofPortmoderegister,,PORT FUNCTIONS,
+PM1,8.3.20 Port mode register 1 (PM1),Figure8-41FormatofPortmoderegister1(PM1)(100-pinproducts),,TIMER RD,
+PM2,4.3.1 Port mode registers (PMxx),Figure4-1FormatofPortmoderegister,,,
+PM3,4.3.1 Port mode registers (PMxx),Figure4-1FormatofPortmoderegister,,PORT FUNCTIONS,
+PM3,"7.3.8 Port mode registers 0, 3, 4, 5 (PM0, PM3, PM4, PM5)","Figure7-9FormatofPortModeRegisters0,3,4,5(PM0,PM3,PM4,PM5)(100-pinproducts)",,TIMER RJ,
+PM3,10.3.16 Port mode register 3 (PM3),Figure10-18FormatofPortmoderegister3(PM3),,REAL-TIME CLOCK,
+PM4,4.3.1 Port mode registers (PMxx),Figure4-1FormatofPortmoderegister,,PORT FUNCTIONS,
+PM4,"7.3.8 Port mode registers 0, 3, 4, 5 (PM0, PM3, PM4, PM5)","Figure7-9FormatofPortModeRegisters0,3,4,5(PM0,PM3,PM4,PM5)(100-pinproducts)",,TIMER RJ,
+PM5,4.3.1 Port mode registers (PMxx),Figure4-1FormatofPortmoderegister,,PORT FUNCTIONS,
+PM5,"7.3.8 Port mode registers 0, 3, 4, 5 (PM0, PM3, PM4, PM5)","Figure7-9FormatofPortModeRegisters0,3,4,5(PM0,PM3,PM4,PM5)(100-pinproducts)",,TIMER RJ,
+PM5,"9.3.10 Port mode registers 0, 5 (PM0, PM5)","Figure9-11FormatofPortmoderegisters0,5(PM0,PM5)(100-pinproducts)",,TIMER RG,
+PM6,4.3.1 Port mode registers (PMxx),Figure4-1FormatofPortmoderegister,,PORT FUNCTIONS,
+PM6,18.3.8 Port mode register 6 (PM6),Figure18-18FormatofPortmoderegister6(PM6),,SERIAL INTERFACE IICA,
+PM7,4.3.1 Port mode registers (PMxx),Figure4-1FormatofPortmoderegister,,PORT FUNCTIONS,
+PM7,22.3.2 Port mode register 7 (PM7),Figure22-3FormatofPortmoderegister7(PM7),,KEY INTERRUPT FUNCTION,
+PM8,4.3.1 Port mode registers (PMxx),Figure4-1FormatofPortmoderegister,,,
+PM10,4.3.1 Port mode registers (PMxx),Figure4-1FormatofPortmoderegister,,,
+PM11,4.3.1 Port mode registers (PMxx),Figure4-1FormatofPortmoderegister,,,
+PM12,4.3.1 Port mode registers (PMxx),Figure4-1FormatofPortmoderegister,,,
+PM14,4.3.1 Port mode registers (PMxx),Figure4-1FormatofPortmoderegister,,,
+PM15,4.3.1 Port mode registers (PMxx),Figure4-1FormatofPortmoderegister,,,
+ADM0,14.3.2 A/D converter mode register 0 (ADM0),Figure14-3FormatofA/Dconvertermoderegister0(ADM0),,,
+ADCE,14.3.2 A/D converter mode register 0 (ADM0),Figure14-3FormatofA/Dconvertermoderegister0(ADM0),2,,
+ADCS,14.3.2 A/D converter mode register 0 (ADM0),Figure14-3FormatofA/Dconvertermoderegister0(ADM0),2,,
+ADS,14.3.7 Analog input channel specification register (ADS),Figure14-12FormatofAnaloginputchannelspecificationregister(ADS)(1/2),,A/D CONVERTER,
+ADS,27.3.8 A/D test function,Figure27-17FormatofAnaloginputchannelspecificationregister(ADS),,SAFETY FUNCTIONS,
+ADM1,14.3.3 A/D converter mode register 1 (ADM1),Figure14-6FormatofA/Dconvertermoderegister1(ADM1),,,
+DACS0,"15.3.3 D/A conversion value setting register i (DACSi) (i = 0, 1)","Figure15-4FormatofD/Aconversionvaluesettingregisteri(DACSi)(i=0,1)",,,
+DACS1,"15.3.3 D/A conversion value setting register i (DACSi) (i = 0, 1)","Figure15-4FormatofD/Aconversionvaluesettingregisteri(DACSi)(i=0,1)",,,
+DAM,15.3.2 D/A converter mode register (DAM),Figure15-3FormatofD/Aconvertermoderegister(DAM),,,
+DACE0,15.3.2 D/A converter mode register (DAM),Figure15-3FormatofD/Aconvertermoderegister(DAM),1,,DACEi
+DACE1,15.3.2 D/A converter mode register (DAM),Figure15-3FormatofD/Aconvertermoderegister(DAM),1,,DACEi
+KRM,22.3.1 Key return mode register (KRM),Figure22-2FormatofKeyreturnmoderegister(KRM),,,
+EGP0,"21.3.4 External interrupt rising edge enable registers (EGP0, EGP1), external interrupt falling edge enable registers (EGN0, EGN1)","Figure21-10FormatofExternalInterruptRisingEdgeEnableRegisters(EGP0,EGP1)andExternalInterruptFallingEdgeEnableRegisters(EGN0,EGN1)",,,
+EGN0,"21.3.4 External interrupt rising edge enable registers (EGP0, EGP1), external interrupt falling edge enable registers (EGN0, EGN1)","Figure21-10FormatofExternalInterruptRisingEdgeEnableRegisters(EGP0,EGP1)andExternalInterruptFallingEdgeEnableRegisters(EGN0,EGN1)",,,
+EGP1,"21.3.4 External interrupt rising edge enable registers (EGP0, EGP1), external interrupt falling edge enable registers (EGN0, EGN1)","Figure21-10FormatofExternalInterruptRisingEdgeEnableRegisters(EGP0,EGP1)andExternalInterruptFallingEdgeEnableRegisters(EGN0,EGN1)",,,
+EGN1,"21.3.4 External interrupt rising edge enable registers (EGP0, EGP1), external interrupt falling edge enable registers (EGN0, EGN1)","Figure21-10FormatofExternalInterruptRisingEdgeEnableRegisters(EGP0,EGP1)andExternalInterruptFallingEdgeEnableRegisters(EGN0,EGN1)",,,
+SDR02,17.3.5 Serial data register mn (SDRmn),Figure17-11FormatofSerialdataregistermn(SDRmn),,,
+SIO10,17.3.5 Serial data register mn (SDRmn),Figure17-11FormatofSerialdataregistermn(SDRmn),,,
+TXD1,17.3.5 Serial data register mn (SDRmn),Figure17-11FormatofSerialdataregistermn(SDRmn),,,
+SDR03,17.3.5 Serial data register mn (SDRmn),Figure17-11FormatofSerialdataregistermn(SDRmn),,,
+RXD1,17.3.5 Serial data register mn (SDRmn),Figure17-11FormatofSerialdataregistermn(SDRmn),,,
+SIO11,17.3.5 Serial data register mn (SDRmn),Figure17-11FormatofSerialdataregistermn(SDRmn),,,
+SDR10,17.3.5 Serial data register mn (SDRmn),Figure17-11FormatofSerialdataregistermn(SDRmn),,,
+SIO20,17.3.5 Serial data register mn (SDRmn),Figure17-11FormatofSerialdataregistermn(SDRmn),,,
+TXD2,17.3.5 Serial data register mn (SDRmn),Figure17-11FormatofSerialdataregistermn(SDRmn),,,
+SDR11,17.3.5 Serial data register mn (SDRmn),Figure17-11FormatofSerialdataregistermn(SDRmn),,,
+RXD2,17.3.5 Serial data register mn (SDRmn),Figure17-11FormatofSerialdataregistermn(SDRmn),,,
+SIO21,17.3.5 Serial data register mn (SDRmn),Figure17-11FormatofSerialdataregistermn(SDRmn),,,
+IICA0,18.2 Configuration of Serial Interface IICA,Figure18-3FormatofIICAshiftregistern(IICAn),,,
+IICS0,18.3.3 IICA status register n (IICSn),Figure18-10FormatofIICAstatusregistern(IICSn)(1/3),,,
+SPD0,18.3.3 IICA status register n (IICSn),Figure18-12FormatofIICAstatusregistern(IICSn)(3/3),1,,SPDn
+STD0,18.3.3 IICA status register n (IICSn),Figure18-12FormatofIICAstatusregistern(IICSn)(3/3),1,,STDn
+ACKD0,18.3.3 IICA status register n (IICSn),Figure18-12FormatofIICAstatusregistern(IICSn)(3/3),1,,ACKDn
+TRC0,18.3.3 IICA status register n (IICSn),Figure18-11FormatofIICAstatusregistern(IICSn)(2/3),1,,TRCn
+COI0,18.3.3 IICA status register n (IICSn),Figure18-11FormatofIICAstatusregistern(IICSn)(2/3),1,,COIn
+EXC0,18.3.3 IICA status register n (IICSn),Figure18-11FormatofIICAstatusregistern(IICSn)(2/3),1,,EXCn
+ALD0,18.3.3 IICA status register n (IICSn),Figure18-10FormatofIICAstatusregistern(IICSn)(1/3),3,,ALDn
+MSTS0,18.3.3 IICA status register n (IICSn),Figure18-10FormatofIICAstatusregistern(IICSn)(1/3),2,,MSTSn
+IICF0,18.3.4 IICA flag register n (IICFn),Figure18-13FormatofIICAflagregistern(IICFn),,,
+IICRSV0,18.3.4 IICA flag register n (IICFn),Figure18-13FormatofIICAflagregistern(IICFn),3,,IICRSVn
+STCEN0,18.3.4 IICA flag register n (IICFn),Figure18-13FormatofIICAflagregistern(IICFn),5,,STCENn
+IICBSY0,18.3.4 IICA flag register n (IICFn),Figure18-13FormatofIICAflagregistern(IICFn),2,,IICBSYn
+STCF0,18.3.4 IICA flag register n (IICFn),Figure18-13FormatofIICAflagregistern(IICFn),2,,STCFn
+IICA1,18.2 Configuration of Serial Interface IICA,Figure18-3FormatofIICAshiftregistern(IICAn),,,
+IICS1,18.3.3 IICA status register n (IICSn),Figure18-10FormatofIICAstatusregistern(IICSn)(1/3),,,
+SPD1,18.3.3 IICA status register n (IICSn),Figure18-12FormatofIICAstatusregistern(IICSn)(3/3),1,,SPDn
+STD1,18.3.3 IICA status register n (IICSn),Figure18-12FormatofIICAstatusregistern(IICSn)(3/3),1,,STDn
+ACKD1,18.3.3 IICA status register n (IICSn),Figure18-12FormatofIICAstatusregistern(IICSn)(3/3),1,,ACKDn
+TRC1,18.3.3 IICA status register n (IICSn),Figure18-11FormatofIICAstatusregistern(IICSn)(2/3),1,,TRCn
+COI1,18.3.3 IICA status register n (IICSn),Figure18-11FormatofIICAstatusregistern(IICSn)(2/3),1,,COIn
+EXC1,18.3.3 IICA status register n (IICSn),Figure18-11FormatofIICAstatusregistern(IICSn)(2/3),1,,EXCn
+ALD1,18.3.3 IICA status register n (IICSn),Figure18-10FormatofIICAstatusregistern(IICSn)(1/3),3,,ALDn
+MSTS1,18.3.3 IICA status register n (IICSn),Figure18-10FormatofIICAstatusregistern(IICSn)(1/3),2,,MSTSn
+IICF1,18.3.4 IICA flag register n (IICFn),Figure18-13FormatofIICAflagregistern(IICFn),,,
+IICRSV1,18.3.4 IICA flag register n (IICFn),Figure18-13FormatofIICAflagregistern(IICFn),3,,IICRSVn
+STCEN1,18.3.4 IICA flag register n (IICFn),Figure18-13FormatofIICAflagregistern(IICFn),5,,STCENn
+IICBSY1,18.3.4 IICA flag register n (IICFn),Figure18-13FormatofIICAflagregistern(IICFn),2,,IICBSYn
+STCF1,18.3.4 IICA flag register n (IICFn),Figure18-13FormatofIICAflagregistern(IICFn),2,,STCFn
+TRDGRC0,"8.3.19 Timer RD general registers Ai, Bi, Ci, and Di (TRDGRAi, TRDGRBi,TRDGRCi, TRDGRDi) (i = 0 or 1) [Input Capture Function]","Figure8-35FormatofTimerRDgeneralregistersAi,Bi,Ci,andDi(TRDGRAi,TRDGRBi,TRDGRCi,TRDGRDi)",,,
+TRDGRD0,"8.3.19 Timer RD general registers Ai, Bi, Ci, and Di (TRDGRAi, TRDGRBi,TRDGRCi, TRDGRDi) (i = 0 or 1) [Input Capture Function]","Figure8-35FormatofTimerRDgeneralregistersAi,Bi,Ci,andDi(TRDGRAi,TRDGRBi,TRDGRCi,TRDGRDi)",,,
+TRDGRC1,"8.3.19 Timer RD general registers Ai, Bi, Ci, and Di (TRDGRAi, TRDGRBi,TRDGRCi, TRDGRDi) (i = 0 or 1) [Input Capture Function]","Figure8-35FormatofTimerRDgeneralregistersAi,Bi,Ci,andDi(TRDGRAi,TRDGRBi,TRDGRCi,TRDGRDi)",,,
+TRDGRD1,"8.3.19 Timer RD general registers Ai, Bi, Ci, and Di (TRDGRAi, TRDGRBi,TRDGRCi, TRDGRDi) (i = 0 or 1) [Input Capture Function]","Figure8-35FormatofTimerRDgeneralregistersAi,Bi,Ci,andDi(TRDGRAi,TRDGRBi,TRDGRCi,TRDGRDi)",,,
+TRGGRC,"9.3.9 Timer RG general registers A, B, C, and D (TRGGRA, TRGGRB, TRGGRC, TRGGRD)","Figure9-10FormatofTimerRGgeneralregistersA,B,C,andD(TRGGRA,TRGGRB,TRGGRC,TRGGRD)",,,
+TRGGRD,"9.3.9 Timer RG general registers A, B, C, and D (TRGGRA, TRGGRB, TRGGRC, TRGGRD)","Figure9-10FormatofTimerRGgeneralregistersA,B,C,andD(TRGGRA,TRGGRB,TRGGRC,TRGGRD)",,,
+TDR02,6.2.2 Timer data register mn (TDRmn),"Figure6-7FormatofTimerdataregistermn(TDRmn)(n=0,2)",,,
+TDR03,6.2.2 Timer data register mn (TDRmn),"Figure6-8FormatofTimerdataregistermn(TDRmn)(n=1,3)",,,
+TDR03L,6.2.2 Timer data register mn (TDRmn),"Figure6-8FormatofTimerdataregistermn(TDRmn)(n=1,3)",,,
+TDR03H,6.2.2 Timer data register mn (TDRmn),"Figure6-8FormatofTimerdataregistermn(TDRmn)(n=1,3)",,,
+TDR10,6.2.2 Timer data register mn (TDRmn),"Figure6-7FormatofTimerdataregistermn(TDRmn)(n=0,2)",,,
+TDR11,6.2.2 Timer data register mn (TDRmn),"Figure6-8FormatofTimerdataregistermn(TDRmn)(n=1,3)",,,
+TDR11L,6.2.2 Timer data register mn (TDRmn),"Figure6-8FormatofTimerdataregistermn(TDRmn)(n=1,3)",,,
+TDR11H,6.2.2 Timer data register mn (TDRmn),"Figure6-8FormatofTimerdataregistermn(TDRmn)(n=1,3)",,,
+TDR12,6.2.2 Timer data register mn (TDRmn),"Figure6-7FormatofTimerdataregistermn(TDRmn)(n=0,2)",,,
+TDR13,6.2.2 Timer data register mn (TDRmn),"Figure6-8FormatofTimerdataregistermn(TDRmn)(n=1,3)",,,
+TDR13L,6.2.2 Timer data register mn (TDRmn),"Figure6-8FormatofTimerdataregistermn(TDRmn)(n=1,3)",,,
+TDR13H,6.2.2 Timer data register mn (TDRmn),"Figure6-8FormatofTimerdataregistermn(TDRmn)(n=1,3)",,,
+ITMC,11.3.3 12-bit interval timer control register (ITMC),Figure11-4Formatof12-bitintervaltimercontrolregister(ITMC),,,
+SEC,10.3.5 Second count register (SEC),Figure10-7FormatofSecondcountregister(SEC),,,
+MIN,10.3.6 Minute count register (MIN),Figure10-8FormatofMinutecountregister(MIN),,,
+HOUR,10.3.7 Hour count register (HOUR),Figure10-9FormatofHourcountregister(HOUR),,,
+WEEK,10.3.9 Week count register (WEEK),Figure10-11FormatofWeekcountregister(WEEK),,,
+DAY,10.3.8 Day count register (DAY),Figure10-10FormatofDaycountregister(DAY),,,
+MONTH,10.3.10 Month count register (MONTH),Figure10-12FormatofMonthcountregister(MONTH),,,
+YEAR,10.3.11 Year count register (YEAR),Figure10-13FormatofYearcountregister(YEAR),,,
+SUBCUD,10.3.12 Watch error correction register (SUBCUD),Figure10-14FormatofWatcherrorcorrectionregister(SUBCUD),,,
+ALARMWM,10.3.13 Alarm minute register (ALARMWM),Figure10-15FormatofAlarmminuteregister(ALARMWM),,,
+ALARMWH,10.3.14 Alarm hour register (ALARMWH),Figure10-16FormatofAlarmhourregister(ALARMWH),,,
+ALARMWW,10.3.15 Alarm week register (ALARMWW),Figure10-17FormatofAlarmweekregister(ALARMWW),,,
+RTCC0,10.3.3 Real-time clock control register 0 (RTCC0),Figure10-4FormatofReal-timeclockcontrolregister0(RTCC0),,,
+RCLOE1,10.3.3 Real-time clock control register 0 (RTCC0),Figure10-4FormatofReal-timeclockcontrolregister0(RTCC0),2,,
+RTCE,10.3.3 Real-time clock control register 0 (RTCC0),Figure10-4FormatofReal-timeclockcontrolregister0(RTCC0),2,,
+RTCC1,10.3.4 Real-time clock control register 1 (RTCC1),Figure10-5FormatofReal-timeclockcontrolregister1(RTCC1)(1/2),,,
+RWAIT,10.3.4 Real-time clock control register 1 (RTCC1),Figure10-6FormatofReal-timeclockcontrolregister1(RTCC1)(2/2),2,,
+RWST,10.3.4 Real-time clock control register 1 (RTCC1),Figure10-6FormatofReal-timeclockcontrolregister1(RTCC1)(2/2),1,,
+RIFG,10.3.4 Real-time clock control register 1 (RTCC1),Figure10-6FormatofReal-timeclockcontrolregister1(RTCC1)(2/2),1,,
+WAFG,10.3.4 Real-time clock control register 1 (RTCC1),Figure10-5FormatofReal-timeclockcontrolregister1(RTCC1)(1/2),3,,
+WALIE,10.3.4 Real-time clock control register 1 (RTCC1),Figure10-5FormatofReal-timeclockcontrolregister1(RTCC1)(1/2),4,,
+WALE,10.3.4 Real-time clock control register 1 (RTCC1),Figure10-5FormatofReal-timeclockcontrolregister1(RTCC1)(1/2),2,,
+CMC,5.3.1 Clock operation mode control register (CMC),Figure5-2FormatofClockoperationmodecontrolregister(CMC),,,
+CSC,5.3.3 Clock operation status control register (CSC),Figure5-4FormatofClockoperationstatuscontrolregister(CSC),,,
+HIOSTOP,5.3.3 Clock operation status control register (CSC),Figure5-4FormatofClockoperationstatuscontrolregister(CSC),2,,
+XTSTOP,5.3.3 Clock operation status control register (CSC),Figure5-4FormatofClockoperationstatuscontrolregister(CSC),2,,
+MSTOP,5.3.3 Clock operation status control register (CSC),Figure5-4FormatofClockoperationstatuscontrolregister(CSC),2,,
+OSTC,5.3.4 Oscillation stabilization time counter status register (OSTC),Figure5-5FormatofOscillationstabilizationtimecounterstatusregister(OSTC),,,
+OSTS,5.3.5 Oscillation stabilization time select register (OSTS),Figure5-6FormatofOscillationstabilizationtimeselectregister(OSTS),,,
+CKC,5.3.2 System clock control register (CKC),Figure5-3FormatofSystemclockcontrolregister(CKC),,,
+MCM0,5.3.2 System clock control register (CKC),Figure5-3FormatofSystemclockcontrolregister(CKC),2,,
+MCS,5.3.2 System clock control register (CKC),Figure5-3FormatofSystemclockcontrolregister(CKC),2,,
+CSS,5.3.2 System clock control register (CKC),Figure5-3FormatofSystemclockcontrolregister(CKC),2,,
+CLS,5.3.2 System clock control register (CKC),Figure5-3FormatofSystemclockcontrolregister(CKC),2,,
+CKS0,12.3.1 Clock output select registers n (CKSn),Figure12-2FormatofClockoutputselectregistersn(CKSn),,,
+PCLOE0,12.3.1 Clock output select registers n (CKSn),Figure12-2FormatofClockoutputselectregistersn(CKSn),2,,PCLOEn
+CKS1,12.3.1 Clock output select registers n (CKSn),Figure12-2FormatofClockoutputselectregistersn(CKSn),,,
+PCLOE1,12.3.1 Clock output select registers n (CKSn),Figure12-2FormatofClockoutputselectregistersn(CKSn),2,,PCLOEn
+RESF,24.2.1 Reset control flag register (RESF),Figure24-4FormatofResetcontrolflagregister(RESF),,,
+LVIM,26.3.1 Voltage detection register (LVIM),Figure26-2FormatofVoltagedetectionregister(LVIM),,,
+LVIF,26.3.1 Voltage detection register (LVIM),Figure26-2FormatofVoltagedetectionregister(LVIM),2,,
+LVIOMSK,26.3.1 Voltage detection register (LVIM),Figure26-2FormatofVoltagedetectionregister(LVIM),4,,
+LVISEN,26.3.1 Voltage detection register (LVIM),Figure26-2FormatofVoltagedetectionregister(LVIM),2,,
+LVIS,26.3.2 Voltage detection level register (LVIS),Figure26-3FormatofVoltagedetectionlevelregister(LVIS),,,
+LVILV,26.3.2 Voltage detection level register (LVIS),Figure26-3FormatofVoltagedetectionlevelregister(LVIS),2,,
+LVIMD,26.3.2 Voltage detection level register (LVIS),Figure26-3FormatofVoltagedetectionlevelregister(LVIS),2,,
+WDTE,13.3.1 Watchdog timer enable register (WDTE),Figure13-2FormatofWatchdogtimerenableregister(WDTE),,,
+CRCIN,27.3.2 CRC operation function (general-purpose CRC),Figure27-4FormatofCRCinputregister(CRCIN),,,
+IF2,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-3FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(1/2)",,,
+TMIF11,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-4FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(2/2)",1,,XXIFX
+TMIF12,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-4FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(2/2)",1,,XXIFX
+TMIF13,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-4FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(2/2)",1,,XXIFX
+PIF6,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-4FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(2/2)",1,,XXIFX
+PIF7,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-4FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(2/2)",1,,XXIFX
+PIF8,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-4FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(2/2)",1,,XXIFX
+PIF9,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-4FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(2/2)",1,,XXIFX
+CMPIF0,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-4FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(2/2)",1,,XXIFX
+PIF10,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-4FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(2/2)",1,,XXIFX
+IF2L,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-3FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(1/2)",,,
+IF2H,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-3FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(1/2)",,,
+CMPIF1,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-4FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(2/2)",1,,XXIFX
+PIF11,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-4FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(2/2)",1,,XXIFX
+TRDIF0,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-4FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(2/2)",1,,XXIFX
+TRDIF1,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-4FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(2/2)",1,,XXIFX
+TRGIF,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-4FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(2/2)",1,,XXIFX
+SREIF3,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-4FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(2/2)",1,,XXIFX
+TMIF13H,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-4FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(2/2)",1,,XXIFX
+IICAIF1,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-4FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(2/2)",1,,XXIFX
+FLIF,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-4FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(2/2)",1,,XXIFX
+MK2,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-5FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(1/2)",,,
+TMMK11,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-6FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(2/2)",1,,XXMKX
+TMMK12,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-6FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(2/2)",1,,XXMKX
+TMMK13,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-6FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(2/2)",1,,XXMKX
+PMK6,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-6FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(2/2)",1,,XXMKX
+PMK7,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-6FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(2/2)",1,,XXMKX
+PMK8,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-6FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(2/2)",1,,XXMKX
+PMK9,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-6FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(2/2)",1,,XXMKX
+CMPMK0,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-6FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(2/2)",1,,XXMKX
+PMK10,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-6FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(2/2)",1,,XXMKX
+MK2L,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-5FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(1/2)",,,
+MK2H,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-5FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(1/2)",,,
+CMPMK1,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-6FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(2/2)",1,,XXMKX
+PMK11,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-6FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(2/2)",1,,XXMKX
+TRDMK0,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-6FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(2/2)",1,,XXMKX
+TRDMK1,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-6FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(2/2)",1,,XXMKX
+TRGMK,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-6FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(2/2)",1,,XXMKX
+SREMK3,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-6FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(2/2)",1,,XXMKX
+TMMK13H,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-6FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(2/2)",1,,XXMKX
+IICAMK1,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-6FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(2/2)",1,,XXMKX
+FLMK,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-6FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(2/2)",1,,XXMKX
+PR02,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-7FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(1/3)",,,
+TMPR011,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+TMPR012,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+TMPR013,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+PPR06,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+PPR07,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+PPR08,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+PPR09,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+CMPPR00,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+PPR010,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+PR02L,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-7FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(1/3)",,,
+PR02H,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-7FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(1/3)",,,
+CMPPR01,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+PPR011,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+TRDPR00,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+TRDPR01,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+TRGPR0,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+SREPR03,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+TMPR013H,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+IICAPR01,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+FLPR0,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+PR12,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-7FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(1/3)",,,
+TMPR111,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+TMPR112,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+TMPR113,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+PPR16,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+PPR17,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+PPR18,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+PPR19,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+CMPPR10,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+PPR110,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+PR12L,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-7FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(1/3)",,,
+PR12H,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-7FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(1/3)",,,
+CMPPR11,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+PPR111,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+TRDPR10,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+TRDPR11,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+TRGPR1,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+SREPR13,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+TMPR113H,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+IICAPR11,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+FLPR1,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+IF0,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-3FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(1/2)",,,
+WDTIIF,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-4FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(2/2)",1,,XXIFX
+LVIIF,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-4FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(2/2)",1,,XXIFX
+PIF0,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-4FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(2/2)",1,,XXIFX
+PIF1,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-4FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(2/2)",1,,XXIFX
+PIF2,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-4FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(2/2)",1,,XXIFX
+PIF3,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-4FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(2/2)",1,,XXIFX
+PIF4,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-4FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(2/2)",1,,XXIFX
+PIF5,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-4FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(2/2)",1,,XXIFX
+IF0L,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-3FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(1/2)",,,
+IF0H,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-3FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(1/2)",,,
+CSIIF20,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-4FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(2/2)",1,,XXIFX
+IICIF20,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-4FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(2/2)",1,,XXIFX
+STIF2,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-4FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(2/2)",1,,XXIFX
+CSIIF21,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-4FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(2/2)",1,,XXIFX
+IICIF21,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-4FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(2/2)",1,,XXIFX
+SRIF2,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-4FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(2/2)",1,,XXIFX
+SREIF2,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-4FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(2/2)",1,,XXIFX
+TMIF11H,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-4FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(2/2)",1,,XXIFX
+CSIIF00,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-4FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(2/2)",1,,XXIFX
+IICIF00,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-4FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(2/2)",1,,XXIFX
+STIF0,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-4FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(2/2)",1,,XXIFX
+CSIIF01,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-4FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(2/2)",1,,XXIFX
+IICIF01,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-4FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(2/2)",1,,XXIFX
+SRIF0,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-4FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(2/2)",1,,XXIFX
+SREIF0,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-4FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(2/2)",1,,XXIFX
+TMIF01H,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-4FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(2/2)",1,,XXIFX
+IF1,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-3FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(1/2)",,,
+CSIIF10,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-4FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(2/2)",1,,XXIFX
+IICIF10,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-4FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(2/2)",1,,XXIFX
+STIF1,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-4FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(2/2)",1,,XXIFX
+CSIIF11,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-4FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(2/2)",1,,XXIFX
+IICIF11,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-4FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(2/2)",1,,XXIFX
+SRIF1,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-4FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(2/2)",1,,XXIFX
+SREIF1,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-4FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(2/2)",1,,XXIFX
+TMIF03H,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-4FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(2/2)",1,,XXIFX
+IICAIF0,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-4FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(2/2)",1,,XXIFX
+TMIF00,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-4FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(2/2)",1,,XXIFX
+TMIF01,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-4FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(2/2)",1,,XXIFX
+TMIF02,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-4FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(2/2)",1,,XXIFX
+TMIF03,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-4FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(2/2)",1,,XXIFX
+IF1L,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-3FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(1/2)",,,
+IF1H,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-3FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(1/2)",,,
+ADIF,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-4FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(2/2)",1,,XXIFX
+RTCIF,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-4FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(2/2)",1,,XXIFX
+ITIF,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-4FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(2/2)",1,,XXIFX
+KRIF,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-4FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(2/2)",1,,XXIFX
+CSIIF30,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-4FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(2/2)",1,,XXIFX
+IICIF30,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-4FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(2/2)",1,,XXIFX
+STIF3,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-4FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(2/2)",1,,XXIFX
+CSIIF31,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-4FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(2/2)",1,,XXIFX
+IICIF31,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-4FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(2/2)",1,,XXIFX
+SRIF3,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-4FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(2/2)",1,,XXIFX
+TRJIF0,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-4FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(2/2)",1,,XXIFX
+TMIF10,"21.3.1 Interrupt request flag registers (IF0L, IF0H, IF1L, IF1H, IF2L, IF2H)","Figure21-4FormatofInterruptRequestFlagRegisters(IF0L,IF0H,IF1L,IF1H,IF2L,IF2H)(2/2)",1,,XXIFX
+MK0,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-5FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(1/2)",,,
+WDTIMK,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-6FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(2/2)",1,,XXMKX
+LVIMK,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-6FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(2/2)",1,,XXMKX
+PMK0,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-6FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(2/2)",1,,XXMKX
+PMK1,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-6FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(2/2)",1,,XXMKX
+PMK2,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-6FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(2/2)",1,,XXMKX
+PMK3,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-6FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(2/2)",1,,XXMKX
+PMK4,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-6FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(2/2)",1,,XXMKX
+PMK5,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-6FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(2/2)",1,,XXMKX
+MK0L,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-5FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(1/2)",,,
+MK0H,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-5FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(1/2)",,,
+CSIMK20,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-6FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(2/2)",1,,XXMKX
+IICMK20,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-6FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(2/2)",1,,XXMKX
+STMK2,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-6FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(2/2)",1,,XXMKX
+CSIMK21,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-6FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(2/2)",1,,XXMKX
+IICMK21,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-6FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(2/2)",1,,XXMKX
+SRMK2,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-6FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(2/2)",1,,XXMKX
+SREMK2,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-6FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(2/2)",1,,XXMKX
+TMMK11H,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-6FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(2/2)",1,,XXMKX
+CSIMK00,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-6FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(2/2)",1,,XXMKX
+IICMK00,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-6FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(2/2)",1,,XXMKX
+STMK0,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-6FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(2/2)",1,,XXMKX
+CSIMK01,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-6FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(2/2)",1,,XXMKX
+IICMK01,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-6FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(2/2)",1,,XXMKX
+SRMK0,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-6FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(2/2)",1,,XXMKX
+SREMK0,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-6FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(2/2)",1,,XXMKX
+TMMK01H,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-6FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(2/2)",1,,XXMKX
+MK1,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-5FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(1/2)",,,
+CSIMK10,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-6FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(2/2)",1,,XXMKX
+IICMK10,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-6FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(2/2)",1,,XXMKX
+STMK1,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-6FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(2/2)",1,,XXMKX
+CSIMK11,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-6FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(2/2)",1,,XXMKX
+IICMK11,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-6FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(2/2)",1,,XXMKX
+SRMK1,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-6FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(2/2)",1,,XXMKX
+SREMK1,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-6FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(2/2)",1,,XXMKX
+TMMK03H,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-6FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(2/2)",1,,XXMKX
+IICAMK0,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-6FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(2/2)",1,,XXMKX
+TMMK00,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-6FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(2/2)",1,,XXMKX
+TMMK01,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-6FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(2/2)",1,,XXMKX
+TMMK02,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-6FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(2/2)",1,,XXMKX
+TMMK03,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-6FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(2/2)",1,,XXMKX
+MK1L,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-5FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(1/2)",,,
+MK1H,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-5FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(1/2)",,,
+ADMK,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-6FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(2/2)",1,,XXMKX
+RTCMK,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-6FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(2/2)",1,,XXMKX
+ITMK,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-6FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(2/2)",1,,XXMKX
+KRMK,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-6FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(2/2)",1,,XXMKX
+CSIMK30,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-6FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(2/2)",1,,XXMKX
+IICMK30,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-6FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(2/2)",1,,XXMKX
+STMK3,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-6FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(2/2)",1,,XXMKX
+CSIMK31,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-6FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(2/2)",1,,XXMKX
+IICMK31,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-6FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(2/2)",1,,XXMKX
+SRMK3,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-6FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(2/2)",1,,XXMKX
+TRJMK0,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-6FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(2/2)",1,,XXMKX
+TMMK10,"21.3.2 Interrupt mask flag registers (MK0L, MK0H, MK1L, MK1H, MK2L, MK2H)","Figure21-6FormatofInterruptMaskFlagRegisters(MK0L,MK0H,MK1L,MK1H,MK2L,MK2H)(2/2)",1,,XXMKX
+PR00,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-7FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(1/3)",,,
+WDTIPR0,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+LVIPR0,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+PPR00,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+PPR01,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+PPR02,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+PPR03,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+PPR04,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+PPR05,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+PR00L,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-7FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(1/3)",,,
+PR00H,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-7FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(1/3)",,,
+CSIPR020,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+IICPR020,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+STPR02,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+CSIPR021,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+IICPR021,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+SRPR02,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+SREPR02,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+TMPR011H,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+CSIPR000,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+IICPR000,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+STPR00,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+CSIPR001,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+IICPR001,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+SRPR00,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+SREPR00,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+TMPR001H,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+PR01,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-7FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(1/3)",,,
+CSIPR010,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+IICPR010,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+STPR01,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+CSIPR011,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+IICPR011,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+SRPR01,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+SREPR01,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+TMPR003H,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+IICAPR00,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+TMPR000,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+TMPR001,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+TMPR002,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+TMPR003,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+PR01L,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-7FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(1/3)",,,
+PR01H,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-7FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(1/3)",,,
+ADPR0,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+RTCPR0,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+ITPR0,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+KRPR0,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+CSIPR030,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+IICPR030,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+STPR03,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+CSIPR031,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+IICPR031,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+SRPR03,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+TRJPR00,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+TMPR010,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+PR10,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-7FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(1/3)",,,
+WDTIPR1,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+LVIPR1,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+PPR10,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+PPR11,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+PPR12,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+PPR13,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+PPR14,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+PPR15,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+PR10L,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-7FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(1/3)",,,
+PR10H,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-7FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(1/3)",,,
+CSIPR120,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+IICPR120,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+STPR12,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+CSIPR121,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+IICPR121,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+SRPR12,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+SREPR12,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+TMPR111H,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+CSIPR100,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+IICPR100,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+STPR10,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+CSIPR101,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+IICPR101,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+SRPR10,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+SREPR10,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+TMPR101H,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+PR11,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-7FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(1/3)",,,
+CSIPR110,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+IICPR110,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+STPR11,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+CSIPR111,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+IICPR111,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+SRPR11,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+SREPR11,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+TMPR103H,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+IICAPR10,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+TMPR100,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+TMPR101,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+TMPR102,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+TMPR103,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+PR11L,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-7FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(1/3)",,,
+PR11H,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-7FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(1/3)",,,
+ADPR1,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+RTCPR1,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+ITPR1,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+KRPR1,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+CSIPR130,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+IICPR130,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+STPR13,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+CSIPR131,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+IICPR131,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+SRPR13,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+TRJPR10,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+TMPR110,"21.3.3 Priority specification flag registers (PR00L, PR00H, PR01L, PR01H, PR02L, PR02H, PR10L, PR10H, PR11L, PR11H, PR12L, PR12H)","Figure21-9FormatofPrioritySpecificationFlagRegisters(PR00L,PR00H,PR01L,PR01H,PR02L,PR02H,PR10L,PR10H,PR11L,PR11H,PR12L,PR12H)(3/3)",1,,XXPR1X
+PMC,3.1.2 Mirror area,Figure3-11FormatofConfigurationofProcessormodecontrolregister(PMC),,,
+MAA,3.1.2 Mirror area,Figure3-11FormatofConfigurationofProcessormodecontrolregister(PMC),2,,

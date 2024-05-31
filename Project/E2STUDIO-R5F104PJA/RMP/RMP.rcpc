@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<MicomToolCommonProjectFile Version="1.00">
+  <CreatorType Name="e2studio" Version=""/>
+  <Placeholders>
+    <PlaceholderPrefix>${</PlaceholderPrefix>
+    <PlaceholderPostfix>}</PlaceholderPostfix>
+  </Placeholders>
+  <Project Name="RMP" Type="Application">
+    <Files>
+      <Path>rmp_platform.h</Path>
+      <Path>rmp_platform_rl78_conf.h</Path>
+      <Path>rmp_test.h</Path>
+      <Path>rmp_test_r5f104pj_ccrl.asm</Path>
+      <Category Name="Kernel">
+        <Path>..\..\..\Source\Kernel\rmp_kernel.c</Path>
+      </Category>
+      <Category Name="Lib">
+        <Path>Lib\cstart.asm</Path>
+        <Path>Lib\iodefine.h</Path>
+        <Path>Lib\r_systeminit.c</Path>
+        <Path>Lib\stkinit.asm</Path>
+      </Category>
+      <Category Name="Platform">
+        <Path>..\..\..\Source\Platform\RL78\rmp_platform_rl78.c</Path>
+        <Path>..\..\..\Source\Platform\RL78\rmp_platform_rl78_ccrl.asm</Path>
+      </Category>
+      <Category Name="Test">
+        <Path>..\..\..\Source\Test\rmp_benchmark.c</Path>
+      </Category>
+    </Files>
+    <Device Category="com.renesas.cdt.managedbuild.renesas.ccrl.common.option.cpu.s3" Series="RL78">R5F104PJ</Device>
+    <BuildOptions Name="CC-RL" Version="v1.13.00">
+      <BuildMode Active="True" Name="Debug">
+        <GeneralOptions/>
+        <CompileOptions>
+          <Option>-cpu=S3</Option>
+          <Option>-c</Option>
+          <Option>-dev="C:/M5P01_Prokaron/Project/E2STUDIO-R5F104PJA/.eclipse/com.renesas.platform_1435879475/DebugComp/RL78/RL78/Common/DR5F104PJ.DVF"</Option>
+          <Option>-I "${ProjDirPath}\"</Option>
+          <Option>-I "${ProjDirPath}\..\\..\..\Include"</Option>
+          <Option>-I "${ProjDirPath}\..\\..\..\Include\Platform\RL78"</Option>
+          <Option>-I "${ProjDirPath}\Lib"</Option>
+          <Option>-character_set=utf8</Option>
+          <Option>-g</Option>
+          <Option>-o ${workspace_loc}\${ProjName}/${ConfigName}</Option>
+          <Option>-memory_model=small</Option>
+          <Option>-far_rom</Option>
+          <Option>-Onothing</Option>
+          <Option>-signed_char</Option>
+          <Option>-lang=c</Option>
+        </CompileOptions>
+        <AssembleOptions>
+          <Option>-cpu=S3</Option>
+          <Option>-c</Option>
+          <Option>-dev="C:/M5P01_Prokaron/Project/E2STUDIO-R5F104PJA/.eclipse/com.renesas.platform_1435879475/DebugComp/RL78/RL78/Common/DR5F104PJ.DVF"</Option>
+          <Option>-I "${ProjDirPath}\"</Option>
+          <Option>-I "${ProjDirPath}\..\\..\..\Include"</Option>
+          <Option>-I "${ProjDirPath}\..\\..\..\Include\Platform\RL78"</Option>
+          <Option>-I "${ProjDirPath}\Lib"</Option>
+          <Option>-character_set=utf8</Option>
+          <Option>-g</Option>
+          <Option>-o "${ProjDirPath}/${ConfigName}"</Option>
+        </AssembleOptions>
+        <LinkOptions>
+          <Option>-device="C:/M5P01_Prokaron/Project/E2STUDIO-R5F104PJA/.eclipse/com.renesas.platform_1435879475/DebugComp/RL78/RL78/Common/DR5F104PJ.DVF"</Option>
+          <Option>-list</Option>
+          <Option>-nooptimize</Option>
+          <Option>-entry=_start</Option>
+          <Option>-auto_section_layout</Option>
+          <Option>-security_id=00000000000000000000</Option>
+          <Option>-debug_monitor</Option>
+          <Option>-user_opt_byte=00FFE8</Option>
+          <Option>-ocdbg=04</Option>
+          <Option>-subcommand="LinkerSubCommand.tmp"</Option>
+          <Option>-output="RMP.abs"</Option>
+          <Option>-debug</Option>
+          <Option>-nocompress</Option>
+          <Option>-memory=high</Option>
+          <Option>-rom=.data=.dataR,.sdata=.sdataR</Option>
+          <Option>-nomessage</Option>
+          <Option>-nologo</Option>
+          <Option>-end</Option>
+          <Option>-output="${ProjName}.mot"</Option>
+          <Option>-form=stype</Option>
+          <Option>-byte_count=10</Option>
+          <Option>-nomessage</Option>
+          <Option>-nologo</Option>
+          <Option>-exit</Option>
+          <PreLinker>Auto</PreLinker>
+        </LinkOptions>
+        <LibraryGenerateOptions>
+          <Option>-cpu=S3</Option>
+          <Option>-nologo</Option>
+          <Option>-output="${ProjName}.lib"</Option>
+          <GenerateMode>BuildOptionChanged</GenerateMode>
+        </LibraryGenerateOptions>
+        <LinkOrder>
+          <Path>Debug\Lib\cstart.obj</Path>
+          <Path>Debug\Lib\stkinit.obj</Path>
+          <Path>Debug\Platform\rmp_platform_rl78_ccrl.obj</Path>
+          <Path>Debug\rmp_test_r5f104pj_ccrl.obj</Path>
+          <Path>Debug\Kernel\rmp_kernel.obj</Path>
+          <Path>Debug\Lib\r_systeminit.obj</Path>
+          <Path>Debug\Platform\rmp_platform_rl78.obj</Path>
+          <Path>Debug\Test\rmp_benchmark.obj</Path>
+          <Path>Debug\RMP.lib</Path>
+        </LinkOrder>
+        <CommonOptions>
+          <IncludePathForC>"${ProjDirPath}\"</IncludePathForC>
+          <IncludePathForC>"${ProjDirPath}\..\\..\..\Include"</IncludePathForC>
+          <IncludePathForC>"${ProjDirPath}\..\\..\..\Include\Platform\RL78"</IncludePathForC>
+          <IncludePathForC>"${ProjDirPath}\Lib"</IncludePathForC>
+          <IncludePathForAsm>"${ProjDirPath}\"</IncludePathForAsm>
+          <IncludePathForAsm>"${ProjDirPath}\..\\..\..\Include"</IncludePathForAsm>
+          <IncludePathForAsm>"${ProjDirPath}\..\\..\..\Include\Platform\RL78"</IncludePathForAsm>
+          <IncludePathForAsm>"${ProjDirPath}\Lib"</IncludePathForAsm>
+        </CommonOptions>
+      </BuildMode>
+    </BuildOptions>
+  </Project>
+</MicomToolCommonProjectFile>

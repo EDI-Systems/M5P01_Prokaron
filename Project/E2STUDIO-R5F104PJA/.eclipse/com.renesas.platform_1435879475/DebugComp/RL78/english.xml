@@ -1,0 +1,384 @@
+<?xml version="1.0" encoding="utf-8"?>
+<strings>
+  <string id="IDS_CONN_ERROR_GDB_SERVER" value="Debug connection failed"/>
+  <string id="IDS_FATAL_ERROR_GDB_SERVER" value="FATAL ERROR (GDB Server):"/>
+  <string id="IDS_COULD_NOT_CONNECT_TO_TARGET" value=
+"Could not connect to target.\n
+Please check the GDB Server console for more information!\n
+\n
+Possible causes:\n
+1: Target hardware does not match debug project hardware.\n
+2: Not all cables are connected.\n
+3: Debug options does not match those required by the hardware.\n
+4: No external power is being applied to the target.\n
+5: The wrong power is being applied to the target.\n
+6: The emulator .dll or .so file specified in the device file could not be found.\n
+7. The device connected or the device specified to GDB Server does not match the device specified in the Debug Configuration. \n
+\n
+NOTE: If the Emulator 'RUN' LED is ON or the incorrect emulator was previously selected it may be necessary to disconnect and reconnect the emulator."
+  />
+  <string id="IDS_OPEN_E1E20_COMMS_FAILURE" value=
+"Could not open connection to E1/E20 device.\n
+Please check the GDB Server console for more information!\n
+\n
+Possible causes:\n
+1: Target hardware is not connected.\n
+2: Target hardware is not powered (Check J-Link control panel).\n
+3: An E1/E20 connection is being attempted on Segger target hardware.\n
+\n
+NOTE: If the Emulator 'RUN' LED is ON or the incorrect emulator was previously selected it may be necessary to disconnect and reconnect the emulator."
+  />
+  <string id="IDS_INIT_E1E20_COMMS_FAILURE" value=
+"Could not initialise E1/E20 device.\n
+Please check the GDB Server console for more information!\n
+\n
+Possible causes:\n
+1: An E1/E20 connection is being initialised with Segger data.\n
+2: External power has been stipulated in the settings, but no external power is being applied to the target.\n
+3: External power has been stipulated in the settings, but the wrong power is being applied to the target.\n
+\n
+NOTE: If the Emulator 'RUN' LED is ON or the incorrect emulator was previously selected it may be necessary to disconnect and reconnect the emulator."
+  />
+  <string id="IDS_INIT_EXEC_DVF_FILEEXISTS_FAILURE" value="Failed to find or open E1/E20 device dvf file."/>
+  <string id="IDS_INIT_EXEC_DLL_FILEEXISTS_FAILURE" value="Failed to find or open E1/E20 device dll file."/>
+  <string id="IDS_INIT_EXEC_DDF_FILEEXISTS_FAILURE" value="Failed to find or open E1/E20 device ddf file."/>
+  <string id="IDS_REJECTING_ILLEGAL_ARGUMENT" value="Warning: Rejecting illegal command line argument %d: %s\n"/>
+  <string id="IDS_ERROR_OPENING_CONFIG_FILE" value="Error in opening config file: \n\t %s \n"/>
+  <string id="IDS_SETIO_WIDTH_FAILED" value="SetIO width failed"/>
+  <string id="IDS_TARGET_CONNECTED_OK" value="Target Connected OK.\n"/>
+  <string id="IDS_DISCONNECTED_FROM_TARGET_DEBUGGER" value="Disconnected from the Target Debugger.\n"/>
+  <string id="IDS_FAILED_SECURITY_CHECK_INCORRECT_ID" value="security check failed, using security ID '%s'"/>
+  <string id="IDS_FAILED_TARGET_CONNECTION_SECURITY_ID" value="Could not connect, security check failed."/>
+  <string id="IDS_FAILED_CONNECT_TARGET_CPU_VOLTAGE" value="Power is not supplied to the device. Please check the power supply setting."/>
+  <string id="IDS_WRITING_TO_MEMORY_AREAS_ACCESS_SIZE" value="Write failed, attempting to write across memory boundary with different access sizes, start: 0x%08x, length: 0x%08x.\n"/>
+  <string id="IDS_CHECK_CONNECTION_TO_EMULATOR_ID" value="Check that an emulator with serial number '%s' is correctly connected."/>
+  <string id="IDS_NO_E1_E20_EMULATORS" value="No emulator found.\n"/>
+  <string id="IDS_E1_E20_EMULATORS_FOUND" value="Emulator found:\n"/>
+  <string id="IDS_FAILED_TO_SET_FMCD" value="Failed to set Flash Memory Configuration Data"/>
+  <string id="IDS_DOWNLOAD_IN_HOTPLUGMODE" value="Please disable 'Load Image' in the startup configuration. Operation not valid when in hot plug mode.\n"/>
+  <string id="IDS_HOTPLUG_MESSAGE" value="The target and emulator can now be connected.\nEnsure that the target is powered.\nPress OK when connected otherwise press Cancel."/>
+  <string id="IDS_HOTPLUG_TITLE" value="Renesas GDB Server Hot Plug"/>
+  <string id="IDS_GDB_ACTION_FAILED_REPORT" value="GDB action '%s', has failed with error report, %s\n"/>
+  <string id="IDS_GDB_MESSAGE_FAILED_REPORT" value="GDB Message '%s', %s, has failed with error report, %s\n"/>
+  <string id="IDS_GDB_ACTION_FAILED_CODE" value="GDB action '%s', has failed with error code, 0x%08x\n"/>
+  <string id="IDS_GDB_MESSAGE_FAILED_CODE" value="GDB Message '%s', %s, has failed with error code, 0x%08x\n"/>
+  <string id="IDS_GDB_MESSAGE_UNSUPPORTED" value="GDB Message '%s', is either unsupported or corrupt\n"/>
+  <string id="IDS_GDB_MESSAGE_INVALID" value="GDB Message '%s', %s, contains invalid values or is corrupt\n"/>
+  <string id="IDS_SET_SW_BREAKPOINT_INSTEAD" value="No hardware breakpoints available, setting a software breakpoint instead. (Address 0x%x)\n"/>
+  <string id="IDS_HW_BREAKPOINT_SET" value="Hardware breakpoint set at address 0x%x\n"/>
+  <string id="IDS_HW_BREAKPOINT_CONVERTED" value="The hardware breakpoint at address 0x%x has been converted to a software breakpoint in order to free resource for an Event Point.\n"/>
+  <string id="IDS_HW_WATCHPOINT_SET" value="Hardware watchpoint set for address 0x%x\n"/>
+  <string id="IDS_HW_WATCHPOINT_CANNOT_BE_SET" value="The hardware watchpoint for address 0x%x cannot be enabled as no eventpoint resources are free.\n"/>
+  <string id="IDS_HOTPLUG_ALREADY_CONNECTED" value="Hot Plug error. Target has already been connected to emulator. User program was reset.\n"/>
+  <string id="IDS_HOTPLUG_NO_POWER" value="Hot Plug error. Target connected but no power detected.\n"/>
+  <string id="IDS_HOTPLUG_NO_CONNECTION" value="Hot Plug error. Target not connected to emulator.\n"/>
+  <string id="IDS_FFWERR_HOTPLUG_OSM_NOT_CHANGE" value="Started up with hot plug-in, but option setting memory is not written."/>
+  <string id="IDS_FFWERR_WRITE_OFS1_LVDAS_CHANGE" value="The writing data for OFS1 register was modified to disable the voltage monitoring reset after a reset."/>
+  <string id="IDS_FFWERR_DWN_OSMDATA_NON" value="There's no data for option setting memory."/>
+  <string id="IDS_UNSUPPORTED_MONITOR_COMMAND" value="Monitor command '%s' is not supported.\n"/>
+  <string id="IDS_EXTERNAL_POWER_CONNECTED_ALSO" value="Emulator power is selected, but external power is being applied."/>
+  <string id="IDS_REGISTER_INDEX_INVALID" value="register index '%s' is invalid."/>
+  <string id="IDS_SW_BREAKPOINT_SET" value="No software breakpoints available for address 0x%x because 'Program re-writes internal Program ROM' is set to YES.\n"/>
+  <string id="IDS_FAILED_TO_WRITE_TO_PROTECTED_MEMORY" value="Attempt to write to protected memory address 0x%x failed. Value set to 0xff instead.\n"/>
+  <string id="IDS_SET_CORE_FAILED" value="Set core failure."/>
+  <string id="IDS_FFWERR_WRITE_TMAREA" value="It is unable to write data to the Trusted Memory area."/>
+  <string id="IDS_USAGE_TITLE" value=" Usage:  e2-server-gdb  [options] \n"/>
+  <string id="IDS_USAGE_TITLE2" value=" Where options are:\n"/>
+  <string id="IDS_USAGE_OPTION_1" value="   -h                 : Display this help message.\n"/>
+  <string id="IDS_USAGE_OPTION_2" value="   -b                 : Use hardware breakpoints only.\n"/>
+  <string id="IDS_USAGE_OPTION_3" value="   -c &lt;config-file&gt;   : Read the config params from config file.\n"/>
+  <string id="IDS_USAGE_OPTION_4" value="   -d &lt;port&gt;          : Enable advanced debug interface on specified socket.\n"/>
+  <string id="IDS_USAGE_OPTION_5" value="   -e                 : Enable persistant mode.\n"/>
+  <string id="IDS_USAGE_OPTION_6" value="   -f &lt;Log-File&gt;      : Name of log file.\n"/>
+  <string id="IDS_USAGE_OPTION_7" value="   -l &lt;Log-Level&gt;     : Logging level between 0 to 31 \n"/>
+  <string id="IDS_USAGE_OPTION_8" value="   -p &lt;Port-Number&gt;   : RSP TCP-Listen Port-Number.\n"/>
+  <string id="IDS_USAGE_OPTION_9" value="   -v                 : Turn ON verbose mode.\n"/>
+  <string id="IDS_USAGE_OPTION_10" value="   -r &lt;refresh-delay&gt; : Minimum Hardware status Refresh delay in secs.\n"/>
+  <string id="IDS_USAGE_OPTION_11" value="   -t                 : Target name, default R5F56108.\n"/>
+  <string id="IDS_USAGE_OPTION_12" value="   -g                 : Device name, default E20 \n"/>
+  <string id="IDS_USAGE_OPTION_13" value="   -t                 : Target name, default E10A_USB_SH_SH2A_FLASH.\n"/>
+  <string id="IDS_USAGE_OPTION_14" value="   -g                 : Device name, default E10A \n"/>
+  <string id="IDS_USAGE_OPTION_15" value="   -x  &lt;port number&gt;  : Enable control socket \n"/>
+  <string id="IDS_USAGE_OPTION_16" value="   -m  &lt;mode number&gt;  : RX processor mode 0/1/2 \n"/>
+  <string id="IDS_USAGE_OPTION_17" value="   -w  &lt;0/1&gt;          : Supply 3.3v 500mA target power from E1 (1=on)\n"/>
+  <string id="IDS_USAGE_OPTION_18" value="   -n  &lt;0/1&gt;          : Endianness 0=little (default), 1=big \n"/>
+  <string id="IDS_USAGE_OPTION_19" value="   -n  &lt;0/1&gt;          : Endianness 0=little, 1=big (default)\n"/>
+  <string id="IDS_USAGE_OPTION_20" value="   --advanced=&lt;port&gt;  : Enable advanced debug interface on specified socket.\n"/>
+  <string id="IDS_USAGE_OPTION_21" value="   --console          : This server is not being launched from Eclipse\n"/>
+  <string id="IDS_USAGE_OPTION_22" value="   --help             : Display this help message.\n"/>
+  <string id="IDS_USAGE_OPTION_23" value="   --logpath=&lt;path&gt;   : Specify path to use for debug logfile\n"/>
+  <string id="IDS_USAGE_OPTION_24" value="   --elf=&lt;path&gt;       : Specify path to ELF object (enables endian checking)\n                      : If used, logfile will be generated here by default.\n"/>
+  <string id="IDS_USAGE_OPTION_25" value="   --verbose          : Turn ON verbose mode.\n"/>
+  <string id="IDS_GDBSERVER_FOR_RENESAS_BANNER" value="GDB Server for Renesas targets.\n\tVersion %s [%s] (%s %s)\n"/>
+  <string id="IDS_JLINK_CPU_OVERLOAD" value="Overloading the CPU name as %s\n"/>
+  <string id="IDS_SEGGER_DLL_VERSION" value="Using J-Link version V%s - %s\n"/>
+  <string id="IDS_BANNER_LINE_1" value="Starting server with the following options: \n"/>
+  <string id="IDS_BANNER_LINE_2" value="        Raw options                : %s\n"/>
+  <string id="IDS_BANNER_LINE_3" value="        Persistant Mode            : Enabled \n"/>
+  <string id="IDS_BANNER_LINE_4" value="        Persistant Mode            : Disabled \n"/>
+  <string id="IDS_BANNER_LINE_5" value="        LogFile Name               : %s\n"/>
+  <string id="IDS_BANNER_LINE_6" value="        LogFile Path               : %s\n"/>
+  <string id="IDS_BANNER_LINE_7" value="        Logging Level              : %d\n"/>
+  <string id="IDS_BANNER_LINE_8" value="        Listen Port Number         : %d\n"/>
+  <string id="IDS_BANNER_LINE_9" value="        Status Refresh Delay       : %ds\n"/>
+  <string id="IDS_BANNER_LINE_10" value="        Verbose Mode               : Enabled \n"/>
+  <string id="IDS_BANNER_LINE_11" value="        Verbose Mode               : Disabled \n"/>
+  <string id="IDS_BANNER_LINE_12" value="        SWD Debug                  : Enabled \n"/>
+  <string id="IDS_BANNER_LINE_13" value="        GDBServer endian           : big\n"/>
+  <string id="IDS_BANNER_LINE_14" value="        GDBServer endian           : little\n"/>
+  <string id="IDS_BANNER_LINE_15" value="        Console mode               : off\n"/>
+  <string id="IDS_BANNER_LINE_16" value="        Console mode               : on\n"/>
+  <string id="IDS_CONNECTING_TO_RH850_TARGET" value="Connecting to RH850 Target\n"/>
+  <string id="IDS_READ_FROM_REGISTER" value="Read from register        %s, GDB = 0x%03x, Exec = 0x%03x, value = 0x%08x\n"/>
+  <string id="IDS_FAILED_READ_FROM_REGISTER" value="Failed read from register %s, GDB = 0x%03x, Exec = 0x%03x, error = 0x%08x\n"/>
+  <string id="IDS_CONNECTING_TO_SH_TARGET" value="Connecting to %s, SH Target\n"/>
+  <string id="IDS_BANNER_LINE_17" value="        Target power from emulator : On\n"/>
+  <string id="IDS_BANNER_LINE_18" value="        Target power from emulator : Off \n"/>
+  <string id="IDS_TARGET_ENDIAN_MISMATCH" value="Warning: target endian (%s) does not match the endian in debug configurations (%s). Please check 'Endian' setting in Debug Tool Settings."/>
+  <string id="IDS_ENDIAN_BIG" value="big"/>
+  <string id="IDS_ENDIAN_LITTLE" value="little"/>
+  <string id="IDS_ERROR_OPENING_MCU_FILE" value="Error in opening MCU file: %s\n"/>
+  <string id="IDS_CANNOT_SET_SW_BP_AT_ADDR" value="A software breakpoint cannot be set at address 0x%08x\n"/>
+  <string id="IDS_WRITING_TO_RESERVED_MEMORY" value="Writing to reserved memory, start: 0x%08x, length: 0x%08x\n"/>
+  <string id="IDS_CONNECTING_TO_E1_RL78_TARGET" value="Connecting to %s, RL78 Target\n"/>
+  <string id="IDS_CONNECTING_TO_IECUBE_RL78_TARGET" value="Connecting to IECUBE, RL78 Target\n"/>
+  <string id="IDS_CONNECTING_TO_SIM_RL78_TARGET" value="Connecting to SIMULATOR, RL78 Target\n"/>
+  <string id="IDS_INVALID_ADDRESS_RANGE_INFO" value="Invalid address range info:"/>
+  <string id="IDS_INVALID_ADDRESS_RANGE_INFO_2" value="Invalid address range info: 0x%08x%08x to 0x%08x%08x, width=%d, type=%d\n"/>
+  <string id="IDS_ECLIPSE" value="Eclipse"/>
+  <string id="IDS_ID_CODE_AUTHENTICATION_FAILED" value="ID code authentication failed:\n\nThe target device has Flash ROM protection enabled.\nThis prevents making a debug connection to the target. Please specify the correct ID code on Debug configurations or initialize the device, then try again.\n"/>
+  <string id="IDS_TARGET_DOES_NOT_MATCH_HW" value="ID code authentication failed:\n\nPlease confirm the selected device matches to the actual device, and the connection between device and emulator is correct.\n"/>
+  <string id="IDS_ENABLE_PERMIT_CLOCK_SOURCE" value="'Permit Clock Source Change on Writing Internal Flash Memory' needs to be enabled\n"/>
+  <string id="IDS_PCLK_OUTSIDE_RANGE" value="The setting of the peripheral module clock (PCLK) is outside the range. Please check the setting of the input clock(EXTAL) and the system clock control register (SCKCR).\n"/>
+  <string id="IDS_TARGET_ENDIAN_MDE" value="        Target endian (MDE pin)    : %s\n"/>
+  <string id="IDS_CONNECTING_TO_RX_TARGET" value="Connecting to %s, RX Target\n"/>
+  <string id="IDS_CONNECTING_TO_ARM_TARGET" value="Connecting to %s, ARM Target\n"/>
+  <string id="IDS_CONNECTING_TO_RCAR_PROXY_ARM_TARGET" value="Connecting to %s, ARM Passthrough Target: address %s, port: %d\n"/>
+  <string id="IDS_CONNECTING_TO_RCAR_PROXY_VDK_TARGET" value="Connecting to %s, VDK Passthrough Target: address %s, port: %d\n"/>
+  <string id="IDS_CONNECTING_TO_RCAR_PROXY_QEMU_TARGET" value="Connecting to %s, QEMU Passthrough Target: address %s, port: %d\n"/>
+  <string id="IDS_CONNECTING_TO_RCAR_PROXY_SHADER_TARGET" value="Connecting to %s, Shader Passthrough Target: address %s, port: %d\n"/>
+  <string id="IDS_WRITE_BINARY_DATA" value="write binary data"/>
+  <string id="IDS_READ_MEMORY" value="read memory"/>
+  <string id="IDS_WRITE_MEMORY" value="write memory"/>
+  <string id="IDS_BREAKPOINTS" value="breakpoints"/>
+  <string id="IDS_ADD_SOFTWARE_BREAKPOINT" value="add software breakpoint"/>
+  <string id="IDS_DELETE_SOFTWARE_BREAKPOINT" value="delete software breakpoint"/>
+  <string id="IDS_ADD_HARDWARE_BREAKPOINT" value="add hardware breakpoint"/>
+  <string id="IDS_DELETE_HARDWARE_BREAKPOINT" value="delete hardware breakpoint"/>
+  <string id="IDS_ADD_HARDWARE_WRITE_WATCHPOINT" value="add hardware write watchpoint"/>
+  <string id="IDS_DELETE_HARDWARE_WRITE_WATCHPOINT" value="delete hardware write watchpoint"/>
+  <string id="IDS_ADD_HARDWARE_READ_WATCHPOINT" value="add hardware read watchpoint"/>
+  <string id="IDS_DELETE_HARDWARE_READ_WATCHPOINT" value="delete hardware read watchpoint"/>
+  <string id="IDS_CONTINUE" value="continue"/>
+  <string id="IDS_READ_ALL_REGISTERS" value="read all registers"/>
+  <string id="IDS_WRITE_ALL_REGISTERS" value="write all registers"/>
+  <string id="IDS_RESET_TARGET" value="reset target"/>
+  <string id="IDS_READ_REGISTER" value="read register"/>
+  <string id="IDS_WRITE_REGISTER" value="write register"/>
+  <string id="IDS_MONITOR_COMMAND" value="monitor command"/>
+  <string id="IDS_RESTART_COMMAND" value="restart command"/>
+  <string id="IDS_STEP" value="step"/>
+  <string id="IDS_GO" value="go"/>
+  <string id="IDS_GET_TARGET_STATUS" value="get target status"/>
+  <string id="IDS_CONNECT_TO_TARGET" value="connect to target"/>
+  <string id="IDS_ERROR_MESSAGE_NOT_SPECIFIED" value="Error message not specified"/>
+  <string id="IDS_ERROR_MESSAGE_FORMAT_ERROR" value="Error message format error"/>
+  <string id="IDS_ACCESS_RESERVED_MEMORY" value="attempt to access reserved memory at address 0x%08x"/>
+  <string id="IDS_COMPORT_SLOW_MEMORY_READ_WHEN_RUNNING" value="memory read is terminated due to the operation taking too much time to complete while the program is running in COM port connection"/>
+  <string id="IDS_STOP_TARGET_WHEN_NOT_RUNNING" value="attempt to stop target when it is not running"/>
+  <string id="IDS_FAILED_TO_ACCESS_DEVICE_MCU_FOR_CPU" value="failed to access Device or MCU file for this CPU"/>
+  <string id="IDS_FAILED_CONNECT_TARGET" value="failed to connect to target"/>
+  <string id="IDS_CHECK_CORRECT_CPU_SELECTED" value="Check the correct CPU has been selected"/>
+  <string id="IDS_STARTING_TARGET_CONNECTION" value="Starting target connection"/>
+  <string id="IDS_FINISHED_TARGET_CONNECTION" value="Finished target connection"/>
+  <string id="IDS_STARTING_DOWNLOAD" value="Starting download"/>
+  <string id="IDS_FINISHED_DOWNLOAD" value="Finished download"/>
+  <string id="IDS_STARTING_FIRMWARE_UPDATE" value="Starting firmware update"/>
+  <string id="IDS_STARTING_FULL_FIRMWARE_UPDATE" value="Starting full firmware update"/>
+  <string id="IDS_FIRMWARE_UP_TO_DATE" value="Firmware up to date"/>
+  <string id="IDS_FINISHED_FIRMWARE_UPDATE" value="Finished firmware update"/>
+  <string id="IDS_TARGET_CONNECTION_STATUS_OK" value="Target connection status - OK"/>
+  <string id="IDS_TARGET_CONNECTION_STATUS_FAILED" value="Target connection status - failed"/>
+  <string id="IDS_STARTING_FIRMWARE_UPDATE_FROM_V_TO_V" value="Starting firmware update from '%s' to '%s'"/>
+  <string id="IDS_STARTING_FULL_FIRMWARE_UPDATE_FROM_V_TO_V" value="Starting full firmware update from '%s' to '%s'"/>
+  <string id="IDS_FIRMWARE_UP_TO_DATE_AT_VERSION_V" value="Firmware up to date at version '%s'"/>
+  <string id="IDS_FAILED_TO_GET_EVENT_DATA" value="Failed to get event data"/>
+  <string id="IDS_FAILED_TO_SET_EVENT_DATA" value="Failed to set event data"/>
+  <string id="IDS_FAILED_TO_GET_TRACE_CYCLE_DATA" value="Failed to get the trace cycle data"/>
+  <string id="IDS_FAILED_TO_GET_TRACE_MODE" value="Failed to get the trace mode"/>
+  <string id="IDS_FAILED_TO_GET_EVENT_TRIGGER" value="Failed to get event trigger"/>
+  <string id="IDS_FAILED_TO_STOP_TRACE_FACILITY" value="Failed to stop trace facility"/>
+  <string id="IDS_FAILED_TO_RESTART_TRACE_FACILITY" value="Failed to restart trace facility"/>
+  <string id="IDS_FAILED_TO_READ_TRACE_DATA" value="Failed to read trace data"/>
+  <string id="IDS_FAILED_TO_ANALYSE_INSTRUCTION_CODE" value="Failed to analyse instruction code"/>
+  <string id="IDS_FFW_CALL_ERROR" value="Firmware API %s failed with error: %s\n"/>
+  <string id="IDS_FAILED_TO_SET_SOFTWARE_BREAKPOINT" value="Failed to set the software breakpoint"/>
+  <string id="IDS_FAILED_TO_READ_FROM_REGISTERS" value="Failed to read from the register(s)"/>
+  <string id="IDS_FAILED_TO_WRITE_TO_REGISTERS" value="Failed to write to the register(s)"/>
+  <string id="IDS_FAILED_TO_INITIALISE_THE_FFW_API" value="Failed to initialise the emulator. Please reconnect and retry."/>
+  <string id="IDS_FAILED_TO_SET_THE_PRODUCT_SERIAL_NUMBER" value="Failed to set the product serial number"/>
+  <string id="IDS_FAILED_TO_SET_THE_USB_TRANSFER_SIZE" value="Failed to set the USB transfer size"/>
+  <string id="IDS_FAILED_TO_SET_PROCESSOR_TIMEOUT" value="Failed to set processor timeout"/>
+  <string id="IDS_FAILED_TO_GO_TO_BFW" value="Failed to go to BFW"/>
+  <string id="IDS_FAILED_TO_SET_THE_HOTPLUG" value="Failed to set the hot-plug"/>
+  <string id="IDS_FAILED_TO_SET_THE_ID_CODE" value="Failed to set the id code"/>
+  <string id="IDS_FAILED_TO_SET_THE_BREAK_MODE" value="Failed to set the break mode"/>
+  <string id="IDS_FAILED_TO_SET_THE_HOTPLUG_MODE" value="Failed to set the hot-plug mode"/>
+  <string id="IDS_FAILED_TO_GET_EMULATOR_INFORMATION" value="Failed to get emulator information"/>
+  <string id="IDS_FAILED_TO_OPEN_DCSF_CHANNEL" value="Failed to program the FPGA in the emulator."/>
+  <string id="IDS_FAILED_TO_SEND_DATA_TO_DCSF_CHANNEL" value="Failed to program the FPGA in the emulator."/>
+  <string id="IDS_FAILED_TO_CLOSE_DCSF_CHANNEL" value="Failed to program the FPGA in the emulator."/>
+  <string id="IDS_FAILED_FIRMWARE_CHECK_FIRMWARE_FILE" value="Failed firmware check, invalid firmware file %s \n"/>
+  <string id="IDS_DEVICE_EML_VERSION" value="Device EML version =%x, firmware file LV0 version =%x"/>
+  <string id="IDS_PLEASE_CONTACT_RENESAS_FOR_FIRMWARE_FILE" value="Please re-install the latest version of e2 studio."/>
+  <string id="IDS_FAILED_TO_SET_THE_DEBUG_INFORMATION" value="Failed to set the debug information"/>
+  <string id="IDS_ERROR_CODE_AND_MESSAGE" value="Error '%s', %s\n"/>
+  <string id="IDS_FAILED_TO_WRITE_INTERNAL_WRITE_PROGRAM" value="Failed to write internal write program"/>
+  <string id="IDS_FAILED_TO_SET_THE_PROCESSOR_MODE" value="Failed to set the processor mode"/>
+  <string id="IDS_FAILED_TO_SET_FLASH_OVERWRITTEN_INFORMATION" value="Failed to set flash overwritten information"/>
+  <string id="IDS_FAILED_TO_SET_TRACE_MODE" value="Failed to set trace mode"/>
+  <string id="IDS_FAILED_TO_SET_EVENT_COMBINATION" value="Failed to set event combination"/>
+  <string id="IDS_FAILED_TO_GET_PERFORMANCE_MEASUREMENT_SETTINGS" value="Failed to get performance measurement settings"/>
+  <string id="IDS_FAILED_TO_SET_PERFORMANCE_MEASUREMENT_SETTINGS" value="Failed to set performance measurement settings"/>
+  <string id="IDS_FAILED_TO_SET_EXTERNAL_POWER_MODE" value="Failed to set external power mode"/>
+  <string id="IDS_FAILED_TO_SET_THE_MCU_INFORMATION" value="Failed to set the MCU information"/>
+  <string id="IDS_FAILED_TO_GET_THE_JTAG_CLOCK" value="Failed to get the JTAG clock"/>
+  <string id="IDS_FAILED_TO_SET_THE_SERIAL_COMMUNICATIONS_BAUD_RATE" value="Failed to set the serial communications baud rate"/>
+  <string id="IDS_FAILED_TO_SET_THE_SERIAL_CONTROL_INFORMATION" value="Failed to set the serial control information"/>
+  <string id="IDS_FAILED_TO_SET_THE_JTAG_CLOCK" value="Failed to set the JTAG clock"/>
+  <string id="IDS_FAILED_TO_GET_PROGRAM_RUNTIME_INFORMATION" value="Failed to get program runtime information"/>
+  <string id="IDS_FAILED_TO_GET_TARGET_STATUS" value="Failed to get target status."/>
+  <string id="IDS_FAILED_TO_INITIALISE_EMULATOR_SETTINGS" value="Failed to initialise emulator settings"/>
+  <string id="IDS_FAILED_TO_RESET_TARGET" value="Failed to reset target"/>
+  <string id="IDS_STOP_COMMAND_FAILED" value="Stop command failed"/>
+  <string id="IDS_STEP_COMMAND_FAILED" value="Step command failed"/>
+  <string id="IDS_FAILED_ON_GOTO_BREAKPOINT" value="Failed on goto breakpoint"/>
+  <string id="IDS_FAILED_TO_WRITE_TO_MEMORY" value="Failed to write to memory"/>
+  <string id="IDS_FAILED_TO_GET_CAUSE_OF_BREAK" value="Failed to get cause of break"/>
+  <string id="IDS_FAILED_TO_GET_C2E_DATA" value="Failed to get C2E data"/>
+  <string id="IDS_CAN_NOT_CONNECT_TO_THE_EMULATOR" value="can not connect to the emulator"/>
+  <string id="IDS_CHECK_CONNECTION_TO_EMULATOR" value="Check connection to emulator."/>
+  <string id="IDS_FAILED_TO_DOWNLOAD" value="failed to download"/>
+  <string id="IDS_FAILED_TO_SET_E2C_DATA" value="Failed to set E2C data"/>
+  <string id="IDS_FAILED_TO_CLEAR_E2C_C2E" value="Failed to clear E2C/C2E"/>
+  <string id="IDS_FAILED_TO_SET_HOT_PLUG_FUNCTION" value="Failed to set hot plug function"/>
+  <string id="IDS_ERROR_IN_OPENING_MCU_FILE" value="Error in opening MCU file: %s"/>
+  <string id="IDS_FAILED_TO_INITIALIZE_FFW_INTERFACE" value="Failed to initialize firmware. Please re-install the latest version of e2 studio."/>
+  <string id="IDS_FAILED_TO_DOWNLOAD2" value="failed to download, '%s'"/>
+  <string id="IDS_RESET_FAILED" value="Reset failed"/>
+  <string id="IDS_START_DOWNLOAD_FAILED" value="Start download failed"/>
+  <string id="IDS_STOP_DOWNLOAD_FAILED" value="Stop download failed"/>
+  <string id="IDS_FFWERR_DWN_TMAREA" value="Warning: The download data were not written in the Trusted Memory area."/>
+  <string id="IDS_FFWERR_RAM_WAIT_TMP_CHANGE" value="Warning: The wait setting for the RAM was changed temporarily to access it correctly."/>
+  <string id="IDS_FFWERR_ROM_WAIT_TMP_CHANGE" value="Warning: The wait setting for the ROM was changed temporarily to access it correctly."/>
+  <string id="IDS_FFWERR_STEPADDR_TMAREA" value="The step command is not executable because the current address is in the Trusted Memory area."/>
+  <string id="IDS_CAN_NOT_CONNECT_TO_THE_EMULATOR_ALREADY_USED" value="Failed to connect to the emulator. The specified emulator has already been used."/>
+  <string id="IDS_CAN_NOT_CONNECT_TO_THE_EMULATOR_DEVICE_NOTFOUND" value="Failed to connect to the emulator. The device driver may not be installed, or no emulators may not be connected."/>
+  <string id="IDS_FAILED_UNRECOGNISED_COMMAND_LINE_ERROR" value="GDB server, unrecognised command line error"/>
+  <string id="IDS_WRITE_FAILURE_WITH_ADDRESSES" value="write data from '0x%08x' to '0x%08x' failed\n"/>
+  <string id="IDS_WRITE_TO_OCD_RESERVED_AREA" value="write to '0x%08x' to '0x%08x' failed, part of debug monitor area\n"/>
+  <string id="IDS_PROTECTED_FILL_DATA_INVALID" value="Invalid fill data '%s', valid range 0 to 255"/>
+  <string id="IDS_PROTECTED_ADDRESS_RANGE_TOO_LARGE" value="Protected address range '%s' exceed 1024 bytes"/>
+  <string id="IDS_PROTECTED_ADDRESS_RANGE_OVERLAPS" value="Protected address range overlaps area already defined"/>
+  <string id="IDS_INFO_CONSUMPTION_CURRENT_FULL" value="The buffer of the consumption current became full. The program execution is suspended.\n"/>
+  <string id="IDS_UNKNOWN_INSTRUCTION" value="Unknown instruction\n"/>
+  <string id="IDS_JLINK_DLL_MISSING" value="Failed to load JLink DLL\n"/>
+  <string id="IDS_MOT_FILE_FAIL" value="Could not load E1/E20 firmware mot file.\n"/>
+  <string id="IDS_DEBUGGER_ERROR" value="Debugger error:\n\n%s\nPlease see debug_log.txt for more details\n"/> 
+  <string id="IDS_TARGET_DLL_NOT_FOUND" value="Target DLL\n%s\n not found !\n"/>
+  <string id="IDS_DEBUGGING_DLL" value="Multiple choice for debugging DLL. Assuming J-Link RX DLL, NOT FFWE20RX600.dll\n"/>
+  <string id="IDS_FLASH_WRITE_OF_RUNNING_ERROR" value="Flash rewrite was failed because CPU core is running. Please execute again after stopping all CPU cores.\n"/>
+  <string id="IDS_CONNECTING_TO_T32_TARGET" value="Connecting to %s, Lauterbach Target\n"/>
+  <string id="IDS_FAILED_TO_CHANGE_VOLTAGE_LOWER" value="Specified voltage is not supported."/>
+  <string id="IDS_FAILED_TO_CHANGE_VOLTAGE_NOTSUPPLIED" value="Power is not supplied from emulator."/>
+  <string id="IDS_FAILED_TO_CHANGE_VOLTAGE_NOTRUNNIG" value="Target is not running."/>
+  <string id="IDS_FAILED_TO_CHANGE_VOLTAGE_ERROR" value="Failed to change the voltage."/>
+  <string id="IDS_WARNING_POWER_NOT_SUPPLIED" value="Connection finished, but power supply to the target board is now OFF. Please turn the power ON.\n"/>
+  <string id="IDS_FAILED_TO_CONNECT_BOARD_SHOULD_BE_REMOVED" value="Please power off the target board, and disconnect it.\n"/>
+  <string id="IDS_FAILED_TO_CONNECT_POWER_NOT_SUPPLIED" value="Please check connection with the target board, and power on it.\n"/>
+  <string id="IDS_FAILED_TO_GET_BANK_CONTENT" value="Failed to get content from the entered bank number."/>
+  <string id="IDS_BANK_NUM_OUT_OF_RANGE" value="Bank number is out of range, should be from %d to %d."/>
+  <string id="IDS_INVALID_PARAMETER" value="Invalid parameter!"/>
+  <string id="IDS_TARGET_EXECUTING" value="Target is executing."/>
+  <string id="IDS_BFW_FILE_NOT_FOUND" value="Failed firmware update, not able to open BFW file.\n"/>
+  <string id="IDS_FIRMWARE_UPDATE_UNSUPPORT" value="Failed firmware update, not supported.\n"/>
+  <string id="IDS_ERR_BFWFROM_WRITE" value="Failed firmware update, BFW storage flash ROM, write error.\n"/>
+  <string id="IDS_ERR_BFWFROM_VERIFY" value="Failed firmware update, BFW storage flash ROM, verify error.\n"/>
+  <string id="IDS_OP_FREQUENCY_NOT_SET_TRACE" value="Warning: The Operating Frequency needed to perform the Run-Break Time Measurement is not set and it can not be calculated while Trace is Turned ON.\n"/>
+  <string id="IDS_OP_FREQUENCY_NOT_SET_ERR" value="Warning: The Operating Frequency needed to perform the Run-Break Time Measurement could not be calculated.\n"/>
+  <string id="IDS_OP_FREQUENCY_NOT_SET_PLS" value="Warning: Please go to Debug Tool Settings and set the Operating Frequency[MHz].\n"/>
+  <string id="IDS_CR_DLL_MISSING" value="Failed to load DLL of C&amp;R authentication. Please check the DLL file path configuration or specification of public functions.\n"/>
+  <string id="IDS_CR_CHALLENGE_DATA_FAIL" value="Failed to acquire Challenge Data. Please check whether the authentication program is working properly.\n"/>
+  <string id="IDS_CR_RESPONSE_DATA_FAIL" value="Failed to acquire Response Data. Please check that the authentication DLL is correct.\n"/>
+  <string id="IDS_OP_ETM_TRACE_CNL" value="Warning: ETM Trace collection cancelled.\n"/>
+  <string id="IDS_CONNECTING_TO_E2_ARM_TARGET" value="Connecting to %s, ARM target\n"/>
+  <string id="IDS_OP_SELECT_BY_IP_AND_USB" value="Warning: J-Link connection is set to both USB and IP. Please choose only one.\n"/>
+  <string id="IDS_READ_MEMORY_DENIED_ACCESS" value="read from '0x%08x' to '0x%08x' failed, overlaps inaccessible area, single byte, '0xff' returned\n"/>
+  <string id="IDS_JLINKARM_DLL_NOT_LOADED" value="The J-Link ARM .dll or .so file could not be loaded from the specified location in the device file. \n"/>
+  <string id="IDS_PRE_INITIALIZATION_FAIL" value="Failed to initialize GDB server. Please confirm the specified target device is correct. If errors continue, please re-install the latest version of e2 studio."/>
+  <string id="IDS_DEVICE_CHECK_FAIL" value="Error: The device connected or the device specified to GDB Server does not match the device specified in the Debug Configuration. Disconnecting ... \n"/>
+  <string id="IDS_JLINK_SCRIPT_EXTENSION_INVALID" value="Warning: The JLink script file specified in the debug configuration does not have the required extension- JLinkScript. \n"/>
+  <string id="IDS_NUM_HW_BRK_OVER_LIMIT" value="The number of hardware breakpoints exceeds the maximum allowed (%d).\n"/>
+  <string id="IDS_UNABLE_SET_SW_HW_BRK" value="Neither a hardware or software breakpoint can be set at address 0x%08x.\n"/>
+  <string id="IDS_DEVICE_CHECK_SKIPPED" value="Unable to read the connected device ID (device ID address not specified).\n"/>
+  <string id="IDS_SWO_CORE_CLOCK_NOT_SET" value="ITM trace command failed because the SWV Core Clock is set to 0 in the Launch Configuration. Please set a value for it in the Debug Configurations.\n"/>
+  <string id="IDS_SWO_TRACE_OPERATING_FREQUENCY_EMPTY" value="If Operating Frequency is empty, the timestamp in the ITM Trace View is not correct.\n"/>
+  <string id="IDS_SWO_TRACE_NOT_SUPPORTED" value="SWO trace is not supported for this device.\n"/>
+  <string id="IDS_SWO_TRACE_CLOCK_DIVIDER_FAILED" value="Failed to set the Trace Clock divider.\n"/>
+  <string id="IDS_SWO_TRACE_RFW_ERROR" value="SWO trace setting (%s) failed with an error. %s\n"/>
+  <string id="IDS_SWO_RFWERR_N_RTTSTAT_RECORDING" value="Unable to stop SWO Trace because program is running. Please suspend the program before turning off.\n"/>
+  <string id="IDS_SWO_RFWERR_W_SWO_OVERFLOW_EMU" value="WARNING: SWO trace data overflowed in the emulator. Some SWO data is missing.\nIncreasing the value of PC sampling resolution and timestamp prescalar may reduce the frequency of overflowing.\n"/>
+  <string id="IDS_SWO_RFWERR_W_SWO_WRAPAROUND_RFW" value="WARNING: SWO trace data wraparound has occurred in the firmware buffer. Some SWO data is missing.\nIncreasing the value of PC sampling resolution and timestamp prescalar may reduce the frequency of overflowing.\n"/>
+  <string id="IDS_SYNCTRACE_SETTINGWRONG" value="Failed to synchronize the timestamp of RH850. Please set the same settings for trace mode of all device connected.\nThe trace mode settings can be accessed through the [Trace Acquisition] button in the [Trace] view.\n"/>
+  <string id="IDS_SYNCTRACE_TIMEOUT" value="Failed to synchronize timestamp of RH850. The trace recording synchronization process has timed out.\nSet the timeout period by entering the monitor tracesynctimeout X (X: seconds) command in the Debugger Console view.\n"/>
+  <string id="IDS_FAILED_TO_ERASE_FLASH_MEMORY" value="Failed to erase flash memory.\n"/>
+  <string id="IDS_NOT_SUPPORT_ERASE_FLASH_OPTION" value="This device doesn't support the option to erase on-chip flash memory before download.\n"/>
+  <string id="IDS_UNKNOWN_MESSAGE" value="Message is not defined for 0x%x\n"/>
+  <string id="IDS_IDAU_READ_INCOMPLETE" value="Error: Failed to retrieve all the IDAU secure/non-secure regions.\n"/>
+  <string id="IDS_RA_BOUNDARY_PROGRAM_SUCCESSFUL" value="\nTrustZone configuration status: Secure/non-secure memory boundaries successfully updated."/>
+  <string id="IDS_TRUSTZONE_STATUS_MESSAGE" value="TrustZone configuration (%s): %s\nPlease configure the TrustZone settings manually using Renesas Device Partition Manager (RDPM) or Renesas Flash Programmer (RFP) before debugging.\n"/>
+  <string id="IDS_SWO_TRACE_ANALYZING" value="Raw trace records are being analyzed. This will take some time to complete.\n"/>
+  <string id="IDS_SWO_TRACE_ANALYZING_DONE" value="All trace records have been analyzed successfully. Please scroll on the Trace view to update the total number of trace records.\n"/>
+  <string id="IDS_FAILED_TO_ENABLE_EXTERNAL_TRACE" value="Failed to set external tracing with error code %s.\n"/>
+  <string id="IDS_WARNING_OF_INTERNALPOWER_MULCHDEVICE" value="External power supply to the board is needed when performing multi-device synchronous debugging.\n"/>
+  <string id="IDS_MULCHDEVICE_EXCLUSIVE_E2EXTENSION" value="Multi-device synchronous debugging is not available when using the function that uses external trigger.\n"/>
+  <string id="IDS_DEFAULT_WORK_RAM_START_ADDRESS" value="The default work RAM start address for Start/Stop Function Setting (0x%08x) is used.\n"/>
+  <string id="IDS_RAM_AREA_SECURED_DURING_NONE_SECURED_DEBUGGING" value="Failed to set the start address of the work RAM area for Start/Stop Function Setting because the address is in secure region. In case of non-secure debugging, debugger is unable to access the secure memory.\n"/>
+  <string id="IDS_UNSUPPORT_DEVICE" value="The device is not supported."/>
+  <string id="IDS_UNSUPPORT_DEBUGGER" value="The debugger is not supported."/>
+  <string id="IDS_UNSUPPORT_SELECTED_CORE" value="The selected core is not supported."/>
+  <string id="IDS_UNSUPPORT_BY_DC_SETTING" value="Disabled by the setting in Debug Configuration."/>
+  <string id="IDS_UNSUPPORT_BY_CONNECTING" value="Disabled by the connecting 38 pin to 14 pin adapter from emulator to board."/>
+  <string id="IDS_UNSUPPORT_BY_EXTERNAL_POWER" value="Disabled by the using external power."/>
+  <string id="IDS_FAILEDTRACEANALYZE_MEMORYREADERROR" value="Failed to analyze the trace data because the target device memory could not be read.\n"/>
+  <string id="IDS_FAILED_TO_SET_VECTOR_CATCH_EVENT" value="Can not set Vector Catch event.\n"/>
+  <string id="IDS_SWO_TRACE_FULL_BRK_MODE" value="'Fill until full then break' mode only works with synchronous debugging.\nTrace mode will be switched to 'Fill until stop' mode automatically in asynchronous debugging.\n"/>
+  <string id="IDS_SYNCTRACE_INVALID_TRACECLOCK" value="Failed to calculate trace timestamp. Input of Trace Clock in Debug Configurations is incorrect.\n"/>
+  <string id="IDS_SYNCTRACE_ERROROCCUR_OTHERDEVICE" value="Failed to synchronize timestamp. An error has occurred on another synchronized device.\n"/>
+  <string id="IDS_SYNCTRACE_WRONG_RESUME" value="Failed to synchronize timestamp. Please use the Resume all (all sessions) button when performing synchronized execution.\n"/>
+  <string id="IDS_SYNCTRACE_SYNCBOARD_CONNECTION" value="Failed to synchronize timestamp. Please check the connection of the synchronized board.\n"/>
+  <string id="IDS_HOT_PLUG_ERROR_RESET_IGNORED" value="Reset request ignored on Hotplug connection.\n"/>
+  <string id="IDS_HOT_PLUG_ERROR_DOWNLOAD_FAILED" value="Download request failed on Hotplug connection.\n"/>
+  <string id="IDS_HOT_PLUG_ERROR_SET_REGISTER_FAILED" value="Setting of register request failed on Hotplug connection.\n"/>
+  <string id="IDS_ALLOWRMMDMM_ENABLED" value="&quot;Allow to access by stopping execution while running&quot; is enabled for FAA debugging.\n"/>
+  <string id="IDS_ACCESS_TO_MEMORY_WHILE_RUNNING" value="access to memory is not allowed while the program is running and &quot;Allow to access by stopping execution while running&quot; is disabled.\n"/>
+  <string id="IDS_LOGGING_TO_FILE" value="Logging to file '%s'.\n"/>
+  <string id="IDS_SYNCTRACE_COMMONMARKER_NOTRECORDED" value="Failed to synchronize the timestamp of RH850.The common marker that used synchronize the timestamp send from ARM core is not recorded.\nDecrease the output interval of common markers may resolve this issue.\nPlease set the output interval of common markers by selecting ARM core on Debug view and input monitor commonmarkerinterval X ( X: output interval).\n"/>
+  <string id="IDS_SYNCTRACE_TRACERECORD_NOTRECORDED_COMMONMARKER_FILLED" value="Failed to record the trace data of RH850.The common marker that used synchronize the timestamp send from ARM core filled out trace memory.\nIncrease the output interval of common markers may resolve this issue.\nPlease set the output interval of common markers by selecting ARM core on Debug view and input monitor commonmarkerinterval X ( X: output interval).\n"/>
+  <string id="IDS_CONNECTING_TO_E2_RISCV_TARGET" value="Connecting to %s, RISC-V target\n"/>
+  <string id="IDS_ERAMTRACE_CANTUSE_WITH_EXTRACE" value="ERAM trace and external trace cannot be used simultaneously.Trace will be recorded using external trace.\n"/>
+  <string id="IDS_ERAMTRACE_NOTSUPPORT" value="ERAM trace is not available for this device.Trace will be recorded using internal trace.\n"/>
+  <string id="IDS_ERAMTRACE_WRONGADDRESS" value="ERAM trace cannot be used because the ERAM start address specified is located outside the ERAM area.Trace will be recorded using internal trace.\n"/>
+  <string id="IDS_ERAMTRACE_EXCEEDCAPACITY" value="Trace Capacity specified is exceeded ERAM capacity.upper limit is %s. Trace Capacity is set as upper limit.\n"/>
+  <string id="IDS_EXTERNALFILE_ERROR" value="Failed to read the specified external file.\n"/>
+  <string id="IDS_MONITORCOMMAND_ARGUMENT_ERROR" value="The argument of the monitor command is incorrect.\n"/>
+  <string id="IDS_ONLYSUPPORT_SYNCTRACE" value="This function is available only when connected with multi-device synchronous debug."/>
+  <string id="IDS_NUM_SW_BRK_OVER_LIMIT" value="The number of software breakpoints exceeds the maximum allowed.\n"/>
+  <string id="IDS_MULTIDEVICESYNCDEBUG_INIT_SUCCESS" value="Finished initialize of multi-device synchronous debug.\n"/>
+  <string id="IDS_MULTIDEVICESYNCDEBUG_INIT_FAILURE" value="Failed initialize of multi-device synchronous debug. After all cores are activated and stopped program, initialize will be done again.\n"/>
+  <string id="IDS_MULTIDEVICESYNCDEBUG_NOTSUPPORTED_GO" value="[Resume],[Step Into(F5)],[Step Over(F6)],[Step Return(F7)] are not supported with multi-device synchronous debug.\n"/>
+  <string id="IDS_MULTIDEVICESYNCDEBUG_NOTSUPPORTED_STEP" value="[Resume],[Step Into(F5)],[Step Over(F6)],[Step Return(F7)] are not supported with multi-device synchronous debug.Please press [Suspend] to recover the debug.\n"/>
+  <string id="IDS_EXTRAFLASH_ERROR" value="Download failed. The file you are trying to download contains an ExtraFlash region that is not allowed in the debug configuration. Check the [Download to ExtraFlash] setting in your debug configuration.\n"/>
+  <string id="IDS_EXTRAFLASH_SUCCESS" value="Downloaded to ExtraFlash area. Please disconnect the debugger, and check the [Download to ExtraFlash] settings and the [Download module] settings, and please reconnect.\n"/>
+  <string id="IDS_REMOTE_DEBUGGING_OF_JLINK_NOT_SUPPORT_IPV6" value="J-Link remote debugging is not supported for IPv6 address. Please using IPv4 address or host name instead.\n"/>
+</strings>
