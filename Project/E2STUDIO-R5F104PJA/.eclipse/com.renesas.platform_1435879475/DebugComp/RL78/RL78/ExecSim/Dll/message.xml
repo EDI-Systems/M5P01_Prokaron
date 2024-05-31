@@ -1,9 +1,0 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
-<DEVICE_DISPLAY_MESSAGE>
-	<Product name="DR5FC8011.DVF" Message_CN="软件仿真具有一定的局限性。用户程序发布前，请使用仿真器进行测试确认。" Message_not_CN="Simulator has some limitations. Before release of user's program, please do use Emulator for testing!"/>
-	<Product name="DR5FC8021.DVF" Message_CN="软件仿真具有一定的局限性。用户程序发布前，请使用仿真器进行测试确认。" Message_not_CN="Simulator has some limitations. Before release of user's program, please do use Emulator for testing!"/>
-	<Product name="DR7F0C8051.DVF" Message_CN="软件仿真具有一定的局限性。用户程序发布前，请使用仿真器进行测试确认。" Message_not_CN="Simulator has some limitations. Before release of user's program, please do use Emulator for testing!"/>
-	<Product name="DR7F0C8034.DVF" Message_CN="软件仿真具有一定的局限性。用户程序发布前，请使用仿真器进行测试确认。" Message_not_CN="Simulator has some limitations. Before release of user's program, please do use Emulator for testing!"/>
-	<Product name="DR7F0C8044.DVF" Message_CN="软件仿真具有一定的局限性。用户程序发布前，请使用仿真器进行测试确认。" Message_not_CN="Simulator has some limitations. Before release of user's program, please do use Emulator for testing!"/>
-	<Product name="DR7F0C8054.DVF" Message_CN="软件仿真具有一定的局限性。用户程序发布前，请使用仿真器进行测试确认。" Message_not_CN="Simulator has some limitations. Before release of user's program, please do use Emulator for testing!"/>
-</DEVICE_DISPLAY_MESSAGE>
