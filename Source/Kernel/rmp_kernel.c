@@ -621,17 +621,17 @@ rmp_cnt_t RMP_Hex_Print(rmp_ptr_t Uint)
         /* No action needed */
     }
 
-    /* Filter out all the zeroes */
+    /* Filter out all the leading zeroes */
     Count=0U;
     Iter=Uint;
-    while((Iter>>((sizeof(rmp_ptr_t)*8U)-4U))==0U)
+    while((Iter>>(RMP_POW2(RMP_WORD_ORDER)-4U))==0U)
     {
         Iter<<=4U;
         Count++;
     }
 
     /* Count is the number of pts to print */
-    Count=(sizeof(rmp_ptr_t)<<1U)-Count;
+    Count=RMP_POW2(RMP_WORD_ORDER-2U)-Count;
     Num=Count;
     while(Count>0U)
     {
@@ -3077,7 +3077,7 @@ Description : The entry of the user thread. This is the first user thread that
               The user threads should never return.
 Input       : None.
 Output      : None.
-Return      : int - This function never returns.
+Return      : None.
 ******************************************************************************/
 void RMP_Init(void)
 {

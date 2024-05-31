@@ -22,7 +22,7 @@ Description: The configuration file for SPCE061A.
 /* Are we using custom hooks? */
 #define RMP_HOOK_EXTRA              (0U)
 /* The stack size of the init thread */
-#define RMP_INIT_STACK_SIZE         (96U)
+#define RMP_INIT_STACK_SIZE         (128U)
 /* The mask/unmask interrupt operations */
 #define RMP_INT_MASK()              RMP_Int_Mask(0x01U)
 #define RMP_INT_UNMASK()            RMP_Int_Mask(0x00U)
@@ -39,10 +39,14 @@ Description: The configuration file for SPCE061A.
 #define RMP_UNSP_LOWLVL_INIT() \
 do \
 { \
-    /* System clock: Fosc=Fcpu=49.152MHz */ \
-    *P_SystemClock=C_Fosc_49M|C_Fosc; \
-    /* UART TX on IOB10, configured as output */ \
+    /* System clock: Fosc=Fcpu=24.576MHz; we can't run Fosc at 49.152MHz, \
+     * or the timer reads will become unreliable. This is not documented \
+     * in the SPCE061A manual at all, so this is a silicon bug. */ \
+    *P_SystemClock=C_Fosc_24M|C_32K_Work|C_StrongMode|C_Fosc; \
+    /* UART TX on IOB10 - set attrib to avoid inversion; see datasheet */ \
+    *P_IOB_Attrib=0x0400U; \
     *P_IOB_Dir=0x0400U; \
+    *P_IOB_Data=0x0000U; \
     /* UART reset then TX enable, 115200-8-N-1 */ \
     *P_UART_Command1=C_UART_Reset; \
     *P_UART_Command1=0x00U; \
@@ -51,7 +55,7 @@ do \
     *P_UART_Command2=C_UART_Tx_Pin_ENB; \
     /* Configure 1/1024s tick timer on IRQ4 */ \
     *P_INT_Clear=0xFFFFU; \
-    *P_INT_Ctrl=RMP_UNSP_TICK_VAL; \
+    *P_INT_Mask=RMP_UNSP_TICK_VAL; \
 } \
 while(0)
 
