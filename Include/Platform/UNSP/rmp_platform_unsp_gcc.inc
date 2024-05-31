@@ -59,6 +59,7 @@ RMP_UNSP_SWITCH_POST:   .macro
 // Restore all GP regs ********************************************************
 RMP_UNSP_LOAD:          .macro
     POP                 R1,R5 FROM [SP]
+    RETI
     .endm
     
 // Save macro for unSP V1 *****************************************************

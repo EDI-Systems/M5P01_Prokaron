@@ -6,18 +6,19 @@
 //              The unSP assembly is unusually strong, which allows manipulation
 //              of variables and sensitive registers directly. This strongly
 //              suggests that it is more of a CISC than a RISC.
+//              The unSP GCC performs symbol mangling by prefixing a "_".
 //*****************************************************************************
 
 // The Sunplus (Now Generalplus) unSP Architecture ****************************
-//R1-R3       : General purpose registers.
-//R5          : Base pointer.
-//R8-R15      : General purpose register (only present in unSP V2).
+//R1-R3       : General registers (caller-saved, confirmed from GCC source).
+//R5          : Base pointer(callee-saved, confirmed from GCC source).
+//R8-R15      : General registers (only present in unSP V2; GCC doesn't touch them).
 //SR1-SR4     : Secondary register bank (only present in unSP V2).
 //SR          : Status register (includes CS and DS).
 //SP          : Stack pointer.
 //PC          : Program counter.
-//FR          : Function control register, where
-//              [13]   - BNK - this port will NOT switch register banks
+//FR          : Function control register (only visible in unSP V2), where
+//              [13]   - BNK - this RMP port reserves register banks for FIQs
 //              [12]   - FRA
 //              [11]   - FIR_MOVE
 //              [10:7] - SB
@@ -36,7 +37,7 @@
     .external           _RMP_Thd_Cur
     // The stack address of current thread
     .external          	_RMP_SP_Cur
-    // Kernel stack and table
+    // Kernel stack
     .external         	__RMP_UNSP_SP_Kern
 // End Import *****************************************************************
 
@@ -66,7 +67,7 @@
 //Return      : None.
 //*****************************************************************************
 _RMP_Int_Disable:
-    INT                 FIQ,IRQ
+    INT                 OFF
     RETF
 // End Function:RMP_Int_Disable ***********************************************
 
@@ -83,30 +84,37 @@ _RMP_Int_Enable:
 
 // Function:RMP_Int_Mask ******************************************************
 //Description : Disable/enable IRQ but leave FIQ alone.
-//Input       : [BP] - Whether to mask IRQ.
+//Input       : [SP+3] - Whether to mask IRQ; 1 to mask, 0 to unmask.
 //Output      : None.
 //Return      : None.
 //*****************************************************************************
 _RMP_Int_Mask:
-    BP                  =SP+3
+    // BP is callee-saved
+    PUSH                BP TO [SP]
+    BP                  =SP+4
     R1                  =[BP]
     CMP                 R1,0
     JZ                  _RMP_Int_Mask_Enable
     INT                 FIQ
+    // Restore BP before returning
+    POP                 BP FROM [SP]
     RETF
 _RMP_Int_Mask_Enable:
     INT                 FIQ,IRQ
+    // Restore BP before returning
+    POP                 BP FROM [SP]
     RETF
 // End Function:RMP_Int_Mask **************************************************
 
 // Function:_RMP_Start ********************************************************
 //Description : Jump to the user function and will never return from it.
-//Input       : [BP+0] - The entry of the first task.
-//              [BP+1] - The stack of the first task.
+//Input       : [SP+3] - The entry of the first task.
+//              [SP+4] - The stack of the first task.
 //Output      : None.
 //Return      : None.
 //*****************************************************************************
 __RMP_Start:
+    //No need to save BP as this function never returns
     BP                  =SP+3
     // Save the current kernel SP address - use BP to gain more space
     R1                  =BP+2
@@ -158,8 +166,13 @@ RMP_UNSP_SWITCH:        .macro
 // Restore all GP regs ********************************************************
 RMP_UNSP_LOAD:          .macro
     POP                 R1,R5 FROM [SP]
-    INT                 FIQ,IRQ
-    RETI
+    // Have to reenable IRQ this way because RETI don't enable interrupts.
+    // RETI may also fiddle with the interrupt controller states as well.
+    // Note that this method has a caveat: if the thread is repeated preempted
+    // between the INT and RETF, we get theoretically unbounded stack usage.
+    // This is very unlikely to happen in real life though.
+    INT                 IRQ,FIQ
+    RETF
     .endm
 
 // unSP V1.x ******************************************************************

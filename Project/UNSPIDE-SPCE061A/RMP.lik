@@ -11,31 +11,31 @@ Lib: "C:\Program Files\Sunplus\unSPIDE184\unSPIDE\CMacro.lib"
 Output: "C:\Code_Library\M5P01_Prokaron\Project\UNSPIDE-SPCE061A\Debug\RMP.S37"
 ;Locate: TEXT in "rmp_benchmark.obj" at 8009 
 ;Align: TEXT in "rmp_benchmark.obj" with 0 
-;Locate: IRAM in "rmp_benchmark.obj" at E1C3  linkat 7AB 
+;Locate: IRAM in "rmp_benchmark.obj" at F5E5  linkat 62B 
 ;Align: IRAM in "rmp_benchmark.obj" with 0 
 ;Locate: RAM in "rmp_benchmark.obj" at 0 
 ;Align: RAM in "rmp_benchmark.obj" with 0 
-;Locate: CODE in "rmp_kernel.obj" at B925 
+;Locate: CODE in "rmp_kernel.obj" at B92A 
 ;Align: CODE in "rmp_kernel.obj" with 0 
-;Locate: CODE in "rmp_benchmark.obj" at D1C9 
+;Locate: CODE in "rmp_benchmark.obj" at E331 
 ;Align: CODE in "rmp_benchmark.obj" with 0 
-;Locate: CODE in "divu2" of "CMacro.lib"  at DF76 
-;Align: CODE in "divu2" of "CMacro.lib"  with 0 
-;Locate: CODE in "rmp_platform_unsp.obj" at E01A 
+;Locate: CODE in "rmp_platform_unsp.obj" at F38E 
 ;Align: CODE in "rmp_platform_unsp.obj" with 0 
-;Locate: CODE in "divu1" of "CMacro.lib"  at E0B8 
+;Locate: CODE in "divu2" of "CMacro.lib"  at F436 
+;Align: CODE in "divu2" of "CMacro.lib"  with 0 
+;Locate: CODE in "divu1" of "CMacro.lib"  at F4DA 
 ;Align: CODE in "divu1" of "CMacro.lib"  with 0 
-;Locate: CODE in "divi1" of "CMacro.lib"  at E0F6 
+;Locate: CODE in "divi1" of "CMacro.lib"  at F518 
 ;Align: CODE in "divi1" of "CMacro.lib"  with 0 
-;Locate: CODE in "modi1" of "CMacro.lib"  at E12D 
+;Locate: CODE in "modi1" of "CMacro.lib"  at F54F 
 ;Align: CODE in "modi1" of "CMacro.lib"  with 0 
-;Locate: CODE in "rshu2" of "CMacro.lib"  at E155 
+;Locate: CODE in "rshu2" of "CMacro.lib"  at F577 
 ;Align: CODE in "rshu2" of "CMacro.lib"  with 0 
-;Locate: CODE in "lshiu1" of "CMacro.lib"  at E17B 
+;Locate: CODE in "lshiu1" of "CMacro.lib"  at F59D 
 ;Align: CODE in "lshiu1" of "CMacro.lib"  with 0 
-;Locate: CODE in "rshu1" of "CMacro.lib"  at E190 
+;Locate: CODE in "rshu1" of "CMacro.lib"  at F5B2 
 ;Align: CODE in "rshu1" of "CMacro.lib"  with 0 
-;Locate: CODE in "modu2" of "CMacro.lib"  at E1A5 
+;Locate: CODE in "modu2" of "CMacro.lib"  at F5C7 
 ;Align: CODE in "modu2" of "CMacro.lib"  with 0 
-;Locate: CODE in "modu1" of "CMacro.lib"  at E1B6 
+;Locate: CODE in "modu1" of "CMacro.lib"  at F5D8 
 ;Align: CODE in "modu1" of "CMacro.lib"  with 0 

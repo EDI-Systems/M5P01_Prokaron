@@ -68,6 +68,10 @@ void _RMP_Lowlvl_Init(void)
     RMP_Int_Disable();
     
     RMP_M6502_LOWLVL_INIT();
+
+    /* Clear flags */
+    RMP_M6502_Int_Act=0U;
+    _RMP_M6502_Yield_Pend=0U;
 }
 /* End Function:_RMP_Lowlvl_Init *********************************************/
 

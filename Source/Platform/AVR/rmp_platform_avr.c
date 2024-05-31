@@ -121,6 +121,10 @@ void _RMP_Lowlvl_Init(void)
     RMP_Int_Disable();
     
     RMP_AVR_LOWLVL_INIT();
+
+    /* Clear flags */
+    RMP_AVR_Int_Act=0U;
+    _RMP_AVR_Yield_Pend=0U;
 }
 /* End Function:_RMP_Lowlvl_Init *********************************************/
 
