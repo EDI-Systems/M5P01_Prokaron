@@ -30,7 +30,7 @@
     ;The handler function of interrupt _r_tau0_channel1
     .EXTERN             _TDR01_IRQHandler
     ;The handler function of interrupt _r_tau0_channel0
-    .EXTERN 			__RMP_RL78_Tim_Handler
+    .EXTERN             __RMP_RL78_Tim_Handler
 ;/* End Import ***************************************************************/
 
 ;/* Function:_r_tau0_channel0_interrupt*************************************************

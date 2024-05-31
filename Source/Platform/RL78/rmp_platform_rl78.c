@@ -104,7 +104,7 @@ Return      : None.
 ******************************************************************************/
 void RMP_Putchar(char Char)
 {
-	RMP_RL78_PUTCHAR(Char);
+    RMP_RL78_PUTCHAR(Char);
 }
 /* End Function:RMP_Putchar **************************************************/
 
@@ -115,7 +115,8 @@ Output      : None.
 Return      : None.
 ******************************************************************************/
 void _RMP_Yield(void)
-{	if(RMP_RL78_Int_Act!=0U)
+{
+    if(RMP_RL78_Int_Act!=0U)
         _RMP_RL78_Yield_Pend=1U;
     else
         _RMP_RL78_Yield();
@@ -131,7 +132,6 @@ Return      : None.
 void _RMP_RL78_Tim_Handler(void)
 {
     RMP_RL78_TIM_CLR();
-
     _RMP_Tim_Handler(1U);
 }
 /* End Function:_RMP_RL78_Tim_Handler **************************************/

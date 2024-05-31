@@ -23,7 +23,7 @@ Description: The configuration file for R5F104PJ.
 /* The stzck size of the init thread */
 #define RMP_INIT_STACK_SIZE         (256U)
 /* The mask/unmask interrupt operations - can be adjusted to fit your own levels */
-#define RMP_INT_MASK()    	        RMP_Int_Disable()
+#define RMP_INT_MASK()              RMP_Int_Disable()
 #define RMP_INT_UNMASK()            RMP_Int_Enable()
 /* What is the Systick value? */
 #define RMP_RL78_SYSTICK_VAL        (1000U)
@@ -36,8 +36,8 @@ Description: The configuration file for R5F104PJ.
 #define RMP_RL78_PUTCHAR(CHAR) \
 { \
     TXD1=CHAR; \
-	while(STIF1==0U); \
-	STIF1=0U; \
+    while(STIF1==0U); \
+    STIF1=0U; \
 } \
 while(0)
 /* End Define ****************************************************************/

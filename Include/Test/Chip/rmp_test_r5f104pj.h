@@ -63,21 +63,20 @@ Output      : None.
 Return      : None.
 ******************************************************************************/
 void Timer_Init(void)
-{
-    TAU0EN=1U;/* supplies input clock */
+{   /* supplies input clock */
+    TAU0EN=1U;
     TPS0=0x0000U|0x0000U|0x0100U|0x8000U;
-    /* Stop all channels */
     TT0=0x0001U|0x0002U|0x0004U|0x0008U|0x0200U|0x0800U;
-    TMMK00=1U;/* disable INTTM00 interrupt */
-    TMIF00=0U;/* clear INTTM00 interrupt flag */
-    /* Mask channel 1 interrupt */
-    TMMK01=1U;/* disable INTTM01 interrupt */
-    TMIF01=0U;/* clear INTTM01 interrupt flag */
-    TMMK01=1U;/* disable INTTM00 interrupt */
-    TMIF01=0U;/* clear INTTM00 interrupt flag */
-    TMMK02=1U;/* disable INTTM02 interrupt */
-    TMIF02=0U;/* clear INTTM02 interrupt flag */
-    /* Set INTTM01 high priority */
+    /* Mask channel 0 and 1 and 2 interrupt */
+    TMMK00=1U;
+    TMIF00=0U;
+    TMMK01=1U;
+    TMIF01=0U;
+    TMMK01=1U;
+    TMIF01=0U;
+    TMMK02=1U;
+    TMIF02=0U;
+    /* Set INTTM00 INTTM01 high priority */
     TMPR101=0U;
     TMPR001=0U;
     TMPR100=0U;
@@ -98,7 +97,8 @@ void Timer_Init(void)
     TOE0&=~0x0002U;
     /* Channel 2 used as interval timer */
     TMR02=0x0000U|0x0000U|0x0000U|0x0000U|0x0000U|0x0000U;
-    TDR02=0x067FU;
+    TDR02=0xFFFFU;
+    TCR02=0xFFFFU;
     TOM0&=~0x0004U;
     TOL0&=~0x0004U;
     TO0&=~0x0004U;
@@ -110,8 +110,6 @@ void Timer_Init(void)
     /* enable INTTM00 interrupt */
     TMIF00=0U;
     TMMK00=0U;
-    TDR02=0xFFFFU;
-    TCR02=0xFFFFU;
 }
 
 /* End Function:Timer_Init ***************************************************/
@@ -124,9 +122,8 @@ Output      : None.
 Return      : None.
 ******************************************************************************/
 void Int_Init(void)
-{   /* clear INTTM01 interrupt flag */
+{   /* clear INTTM01 interrupt flag and enable INTTM01 interrupt */
     TMIF01=0U;
-    /* enable INTTM01 interrupt */
     TMMK01=0U;
 }
 /* The interrupt handler */

@@ -20,7 +20,7 @@ typedef signed long rmp_s32_t;
 
 #ifndef __RMP_S16_T__
 #define __RMP_S16_T__
-typedef signed int rmp_s16_t;	
+typedef signed int rmp_s16_t;
 #endif
 
 #ifndef __RMP_S8_T__
@@ -96,7 +96,7 @@ typedef rmp_s16_t rmp_ret_t;
 /*****************************************************************************/
 struct RMP_RL78_Stack
 {
-	/* The former is higher, latter is lower */
+    /* The former is higher, latter is lower */
     rmp_u16_t CSES;
     rmp_u16_t HL;
     rmp_u16_t DE;

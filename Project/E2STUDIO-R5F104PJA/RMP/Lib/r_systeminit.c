@@ -81,15 +81,16 @@ void R_Systeminit(void)
     WDTIMK=1U;
     IAWCTL=0x00U;
     /* SAU0 and UART1 initial setting */
-    SAU0EN=1U; /* supply SAU0 clock */
+    SAU0EN=1U;
     SPS0=0x0004|0x0000;
-    ST0|=0x0004; /* UART1 transmit disable */
-    STMK1=1U; /* disable INTST1 interrupt */
-    STIF1=0U; /* clear INTST1 interrupt flag */
-    SRMK1=1U; /* disable INTSR1 interrupt */
-    SRIF1=0U; /* clear INTSR1 interrupt flag */
-    SREMK1=1U; /* disable INTSRE1 interrupt */
-    SREIF1=0U; /* clear INTSRE1 interrupt flag */
+    ST0|=0x0004;
+    /*disable interrupt INTST1,INTSR1,INTSRE1*/
+    STMK1=1U;
+    STIF1=0U;
+    SRMK1=1U;
+    SRIF1=0U;
+    SREMK1=1U;
+    SREIF1=0U;
     /* Set INTST1 low priority */
     STPR11=1U;
     STPR01=1U;
@@ -97,15 +98,19 @@ void R_Systeminit(void)
     SCR02=0x8000|0x0000|0x0000|0x0080|0x0010|0x0007;
     SDR02=0xCE00;
     SO0|=0x0004;
-    SOL0|=0x0000; /* output level normal */
-    SOE0|=0x0004; /* enable UART1 output */
+    SOL0|=0x0000;
+    /* enable UART1 output */
+    SOE0|=0x0004;
     /* Set TxD1 pin */
     PMC0&=0xFBU;
     P0|=0x04U;
     PM0&=0xFBU;
-    SO0|=0x0004; /* output level normal */
-    SOE0|=0x0004; /* enable UART1 output */
-    SS0|=0x0004; /* enable UART1 transmit */
+    /* output level normal */
+    SO0|=0x0004;
+    /* enable UART1 output */
+    SOE0|=0x0004;
+    /* enable UART1 transmit */
+    SS0|=0x0004;
 }
 
 
