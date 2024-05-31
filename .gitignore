@@ -86,3 +86,6 @@ Project/MPLAB-*/RMP.X/dist
 
 #ATMEL Studio specific
 Project/ATS-*/.vs/
+
+#E2STUDIO specific
+Project/E2STUDIO-*/.eclipse/
