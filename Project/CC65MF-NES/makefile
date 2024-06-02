@@ -88,7 +88,7 @@ rmp.lib:
 # Link ELF target file and print size
 $(TARGET).nes:$(COBJS) $(AOBJS) $(LIBS)
 	@echo "    LD [P]  $(notdir $@)"
-	@$(LD) $(LFLAGS) $(WFLAGS) -C $(LDSCRIPT) -m $(MAP) -o $(OBJ) $(OBJDIR)/*.o $(LIBS)
+	@$(LD) $(LFLAGS) $(WFLAGS) -C $(LDSCRIPT) -m $(MAP) --dbgfile $(OBJDIR)/$(TARGET).dbg -o $(OBJ) $(OBJDIR)/*.o $(LIBS)
 
 # Clean up
 clean:

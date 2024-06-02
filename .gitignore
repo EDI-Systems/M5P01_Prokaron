@@ -71,6 +71,7 @@ JLinkSettings.ini
 
 # Makefile
 Project/*MF-*/Object*/
+Project/*MF-*/.vscode*/
 
 # CCS/Eclipse specific
 Project/**/.jxbrowser-data/

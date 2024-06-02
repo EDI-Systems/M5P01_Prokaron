@@ -54,7 +54,7 @@ Description : The header of "rmp_platform_m6502.c".
                      rmp_u8_t A
                      rmp_u8_t PF
                      rmp_ptr_t PC
-                     rmp_ptr_t ZP[ZP_SIZE];
+                     rmp_ptr_t ;
               4. Pop zero page registers from parameter stack.
               5. Pop working registers from call stack.
                                      | RMP_SP_Cur              

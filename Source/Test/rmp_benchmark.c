@@ -761,7 +761,7 @@ void RMP_Init_Hook(void)
     RMP_Msgq_Crt(&Msgq_1);
     RMP_Bmq_Crt(&Bmq_1, 1U);
     
-    /* Start threads - make sure thread 2 is scheduled first in the test */
+    /* Start threads - thread 2 is added at first so it will be scheduled first */
     RMP_Thd_Crt(&Thd_2,
                 (void*)Func_2, (void*)0x4321U,
                 Stack_2, sizeof(Stack_2),
