@@ -2396,7 +2396,7 @@ rmp_ret_t RMP_Thd_Cancel(volatile struct RMP_Thd* Thread)
     /* Supply cancel error code */
     Thread->Retval=RMP_ERR_OPER;
     RMP_Sched_Unlock();
-		
+        
     return 0;
 }
 /* End Function:RMP_Thd_Cancel ***********************************************/
@@ -2404,20 +2404,20 @@ rmp_ret_t RMP_Thd_Cancel(volatile struct RMP_Thd* Thread)
 /* Function:RMP_Thd_Loop ******************************************************
 Description : Enter a useless loop to waste some time. Can be used when the
               scheduler is locked. The delay caused by each loop is chip and
-			  toolchain specific.
+              toolchain specific.
 Input       : rmp_ptr_t Loop - The number of useless loops to run.
 Output      : None.
 Return      : None.
 ******************************************************************************/
 void RMP_Thd_Loop(rmp_ptr_t Loop)
 {
-	volatile rmp_ptr_t Count;
-	
-	/* Just waste some time */
-	for(Count=0U;Count<Loop;Count++)
-	{
+    volatile rmp_ptr_t Count;
+    
+    /* Just waste some time */
+    for(Count=0U;Count<Loop;Count++)
+    {
         RMP_COVERAGE_MARKER();
-	}
+    }
 }
 /* End Function:RMP_Thd_Loop *************************************************/
 
@@ -2540,7 +2540,7 @@ rmp_ret_t RMP_Sem_Del(volatile struct RMP_Sem* Semaphore)
         
         /* Set to running if not suspended */
         _RMP_Run_Ins(Thread);
-				/* Supply delete error code */
+        /* Supply delete error code */
         Thread->Retval=RMP_ERR_OPER;
     }
     
@@ -3073,10 +3073,10 @@ rmp_ret_t RMP_Sem_Abort(volatile struct RMP_Thd* Thread)
     /* Set to running if not suspended */
     _RMP_Run_Ins(Thread);
     
-		/* Supply abort error code */
+    /* Supply abort error code */
     Thread->Retval=RMP_ERR_OPER;
     RMP_Sched_Unlock();
-		
+    
     return 0;
 }
 /* End Function:RMP_Sem_Abort ************************************************/
@@ -3106,7 +3106,7 @@ rmp_ret_t RMP_Sem_Cnt(volatile struct RMP_Sem* Semaphore)
     RMP_Sched_Lock();
     
     /* Check if the semaphore is in use */
-	if(Semaphore->State!=RMP_SEM_USED)
+    if(Semaphore->State!=RMP_SEM_USED)
     {
         RMP_COVERAGE_MARKER();
         RMP_Sched_Unlock();
@@ -4439,7 +4439,7 @@ rmp_ret_t RMP_Msgq_Crt(volatile struct RMP_Msgq* Queue)
         RMP_COVERAGE_MARKER();
         /* No action required */
     }
-		
+        
     RMP_Sched_Lock();
     
     /* Check if the queue is in use */
