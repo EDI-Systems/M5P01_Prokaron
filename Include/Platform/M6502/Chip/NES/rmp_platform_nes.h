@@ -52,7 +52,6 @@ do \
     /* Initialize Namco 169 timer */ \
     RMP_NES_NAMCO169_IRQL=0x00U; \
     RMP_NES_NAMCO169_IRQH=0x00U|RMP_NES_NAMCO169_IRQH_EN; \
-    while(1); \
 } \
 while(0)
 
