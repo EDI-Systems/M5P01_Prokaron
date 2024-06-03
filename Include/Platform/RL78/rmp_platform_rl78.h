@@ -152,7 +152,6 @@ struct RMP_RL78_Stack
 
 /*****************************************************************************/
 __EXTERN__ rmp_ptr_t _RMP_RL78_SP_Kern;
-
 __EXTERN__ volatile rmp_u8_t RMP_RL78_Int_Act;
 __EXTERN__ volatile rmp_u8_t _RMP_RL78_Yield_Pend;
 
