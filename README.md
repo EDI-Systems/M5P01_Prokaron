@@ -187,6 +187,7 @@ This software is an official work of EDI, and thus belongs to the **public domai
 |ATMEGA1284P  |...         |...   |437  |751  |717  |314  |1098 |1352 |637   |639  |921    |1087  |1680 |
 |ATMEGA2560   |...         |...   |449  |774  |736  |326  |1131 |1396 |656   |654  |942    |1117  |1686 |
 |SPCE061A     |unSP        |GCC   |694  |1732 |1548 |927  |2671 |3709 |1619  |1475 |2242   |2889  |3518 |
+|R5F104PJ     |RL78        |CCRL  |322  |631  |647  |368  |1149 |1515 |600   |636  |1034   |1262  |N/A  |
 |DSPIC33EP512 |DSPIC33E    |XC16  |470  |886  |766  |440  |1266 |1777 |709   |614  |958    |1254  |893  |
 |MSP430F149   |MSP430      |CCS   |312  |641  |573  |312  |985  |1278 |528   |487  |739    |898   |N/A  |
 |MSP430FR5994 |MSP430X     |CCS   |468  |1054 |891  |492  |1573 |2072 |891   |784  |1176   |1464  |3291 |
@@ -290,3 +291,4 @@ This software is an official work of EDI, and thus belongs to the **public domai
 - Yihe Wang - Stable x86/linux/ptrace port.
 - Ran Zhang - C28x DSP port.
 - Kai Zhang - White-box testing.
+- Haotian Liu - RL78 port.
