@@ -40,8 +40,8 @@ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
                           rmp_ptr_t Entry,
                           rmp_ptr_t Param)
 {
-    rmp_ptr_t* Long;
     rmp_ptr_t Ptr;
+    rmp_ptr_t* Long;
     struct RMP_UNSP_Stack* Ctx;
 
     Ptr=RMP_STACK_PTR(Stack,Size);
@@ -78,6 +78,10 @@ void _RMP_Lowlvl_Init(void)
     RMP_Int_Disable();
     
     RMP_UNSP_LOWLVL_INIT();
+    
+    /* Clear flags */
+    RMP_UNSP_Int_Act=0U;
+    _RMP_UNSP_Yield_Pend=0U;
 }
 /* End Function:_RMP_Lowlvl_Init *********************************************/
 

@@ -1,6 +1,6 @@
 #####################################################################
 #																	 
-#	Created by u'nSP IDE		23:10:33	05/30/24
+#	Created by u'nSP IDE		03:55:05	06/01/24
 #
 #####################################################################
 
@@ -33,11 +33,11 @@ ARYFILE	= "$(OUTDIR)\RMP.ary"
 
 SBMFILE	= "$(OUTDIR)\RMP.sbm"
 
-OPT	= -S -Os
+OPT	= -S -O3 -gstabs
 
-ASFLAGS	=  -t2
+ASFLAGS	= -t2
 
-CASFLAGS	=  -t2
+CASFLAGS	= -t2
 
 CFLAGS	= $(OPT) -B$(APPDIR)\ $(INCLUDES) 
 

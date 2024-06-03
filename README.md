@@ -1,4 +1,4 @@
-<h1 align="center">
+﻿<h1 align="center">
 	<img width="300" src="/Document/Public/Demo/logo.png" alt="logo">
 </h1>
 
@@ -21,7 +21,7 @@
 
 点击 **[这里](README_CN.md)** 查看中文版。
 
-&ensp;&ensp;**RMP** is a small real-time operating system which focuses on formal reliability and simplicity. It achieves reliability by deployment of formal techniques(not completed yet; only whitebox testing with 100% branch coverage done. The kernel can be regarded as pre-certified IEC 61508 SIL2, or EAL 4). All the basic functionalities that are necessary for RTOSes are provided, but nothing more. This guarantees that the system is the minimum possible kernel and is also suitable to be used as a guest operating system when hosted on virtual machine monitors.  
+&ensp;&ensp;**RMP** is a small real-time operating system which focuses on formal reliability and simplicity. It achieves reliability by deployment of formal techniques(**not completed yet**; only whitebox testing with 100% branch coverage done. The kernel can be regarded as pre-certified IEC 61508 SIL2, or EAL 4). All the basic functionalities that are necessary for RTOSes are provided, but nothing more. This guarantees that the system is the minimum possible kernel and is also suitable to be used as a guest operating system when hosted on virtual machine monitors.  
 
 &ensp;&ensp;This operating system is much **leaner** than any other RTOSes, especially when compared to _FreeRTOS_ or _RT-Thread_, and understanding it should be simple enough. Yet it provides a complete set of functions that you may need during resource-constrained microcontroller development, such as **efficient memory management**, **anti-aliasing graphics**, and **various helper functions**. All these features come in a **single .C** file, and are **without any extra RAM consumption**!
 
@@ -186,6 +186,7 @@ This software is an official work of EDI, and thus belongs to the **public domai
 |ATMEGA328P   |AVR         |GCC   |408  |719  |686  |313  |1065 |1318 |624   |626  |905    |1073  |N/A  |
 |ATMEGA1284P  |...         |...   |437  |751  |717  |314  |1098 |1352 |637   |639  |921    |1087  |1680 |
 |ATMEGA2560   |...         |...   |449  |774  |736  |326  |1131 |1396 |656   |654  |942    |1117  |1686 |
+|SPCE061A     |unSP        |GCC   |694  |1732 |1548 |927  |2671 |3709 |1619  |1475 |2242   |2889  |3518 |
 |R5F104PJ     |RL78        |CCRL  |322  |631  |647  |368  |1149 |1515 |600   |636  |1034   |1262  |N/A  |
 |DSPIC33EP512 |DSPIC33E    |XC16  |470  |886  |766  |440  |1266 |1777 |709   |614  |958    |1254  |893  |
 |MSP430F149   |MSP430      |CCS   |312  |641  |573  |312  |985  |1278 |528   |487  |739    |898   |N/A  |
@@ -204,8 +205,8 @@ This software is an official work of EDI, and thus belongs to the **public domai
 |TMS570LC4357 |Cortex-R5   |CCS   |275  |479  |467  |216  |746  |998  |440   |435  |595    |763   |482  |
 |PIC32MZ2048  |MIPS M14k   |XC32  |260  |392  |370  |146  |540  |672  |440   |420  |530    |620   |364  |
 |TMS320F28335 |C28x        |CCS   |246  |513  |440  |235  |751  |1001 |440   |413  |622    |770   |946  |
-|CH32V307     |RV32IMAC    |GCC   |246  |426  |386  |179  |605  |767  |359   |321  |466    |593   |TBD  |
-|...          |RV32IMAFC   |GCC   |318  |495  |457  |182  |674  |836  |405   |366  |500    |624   |TBD  |
+|CH32V307     |RV32IMAC    |GCC   |209  |386  |336  |172  |538  |698  |350   |306  |436    |555   |433  |
+|...          |RV32IMAFC   |GCC   |217  |398  |341  |172  |557  |705  |358   |307  |444    |556   |433  |
 |i9-7980XE    |X86-LINUX   |GCC   |TBD  |TBD  |TBD  |TBD  |TBD  |TBD  |TBD   |TBD  |TBD    |TBD   |TBD  |
 
 &ensp;&ensp;The **[RVM](https://github.com/EDI-Systems/M7M02_Ammonite)** embedded hypervisor virtualized versions:

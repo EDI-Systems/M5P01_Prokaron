@@ -15,17 +15,17 @@ GCC 12.2.0 -O3 (FPU disabled)
  /_/|_|/_/  /_//_/
 ====================================================
 Test (number in CPU cycles)        : AVG / MAX / MIN
-Yield                              : 232 / 429 / 232
-Mailbox                            : 407 / 615 / 407
-Semaphore                          : 372 / 578 / 369
-FIFO                               : 172 / 380 / 172
-Message queue                      : 578 / 788 / 576
-Blocking message queue             : 725 / 939 / 722
-Memory allocation/free pair        : 432 / 461 / 428
-ISR Mailbox                        : 369 / 391 / 288
-ISR Semaphore                      : 327 / 350 / 326
-ISR Message queue                  : 468 / 501 / 467
-ISR Blocking message queue         : 582 / 789 / 577
+Yield                              : 209 / 396 / 209
+Mailbox                            : 386 / 592 / 386
+Semaphore                          : 336 / 517 / 333
+FIFO                               : 172 / 363 / 172
+Message queue                      : 538 / 738 / 537
+Blocking message queue             : 698 / 895 / 692
+Memory allocation/free pair        : 433 / 460 / 428
+ISR Mailbox                        : 350 / 379 / 287
+ISR Semaphore                      : 306 / 336 / 305
+ISR Message queue                  : 436 / 484 / 436
+ISR Blocking message queue         : 555 / 752 / 551
 
 GCC 12.2.0 -O3 (FPU context active)
     ___   __  ___ ___
@@ -34,17 +34,17 @@ GCC 12.2.0 -O3 (FPU context active)
  /_/|_|/_/  /_//_/
 ====================================================
 Test (number in CPU cycles)        : AVG / MAX / MIN
-Yield                              : 305 / 603 / 305
-Mailbox                            : 484 / 761 / 480
-Semaphore                          : 445 / 709 / 445
-FIFO                               : 176 / 462 / 175
-Message queue                      : 650 / 931 / 649
-Blocking message queue             : 804 / 1082 / 802
-Memory allocation/free pair        : 429 / 466 / 425
-ISR Mailbox                        : 403 / 423 / 338
-ISR Semaphore                      : 374 / 631 / 369
-ISR Message queue                  : 508 / 547 / 508
-ISR Blocking message queue         : 626 / 652 / 626
+Yield                              : 217 / 410 / 217
+Mailbox                            : 398 / 601 / 394
+Semaphore                          : 341 / 531 / 341
+FIFO                               : 172 / 379 / 172
+Message queue                      : 557 / 758 / 554
+Blocking message queue             : 705 / 913 / 703
+Memory allocation/free pair        : 433 / 461 / 428
+ISR Mailbox                        : 358 / 556 / 294
+ISR Semaphore                      : 307 / 335 / 306
+ISR Message queue                  : 444 / 469 / 443
+ISR Blocking message queue         : 556 / 582 / 555
 ******************************************************************************/
 
 /* Include *******************************************************************/

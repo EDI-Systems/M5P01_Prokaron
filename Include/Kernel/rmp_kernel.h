@@ -249,10 +249,12 @@ struct RMP_Thd
     struct RMP_List Run_Head;
     /* This is exclusively for the timer queue */
     struct RMP_List Dly_Head;
-    /* The list of threads suspended on it because of sending */
+    /* The threads blocked on its mailbox because of sending */
     struct RMP_List Snd_List;
     /* The state of this thread */
     rmp_ptr_t State;
+    /* The current stack address */
+    rmp_ptr_t Stack;
     /* If it is running, how many timeslices it have */
     rmp_ptr_t Slice;
     /* If it is running, how many ticks does it have remaining */
@@ -261,13 +263,9 @@ struct RMP_Thd
     rmp_ptr_t Prio;
     /* The timeout time */
     rmp_ptr_t Timeout;
-    /* The mailbox value */
+    /* The mailbox send/recv cache */
     rmp_ptr_t Mailbox;
-    /* The data to send */  
-    rmp_ptr_t Data;
-    /* The stack address */
-    rmp_ptr_t Stack;
-    /* The return value of certain function calls */
+    /* The return value of certain fallible calls */
     rmp_ret_t Retval;
 };
 
@@ -389,10 +387,12 @@ static void _RMP_Run_Ins(volatile struct RMP_Thd* Thread);
 static void _RMP_Run_Del(volatile struct RMP_Thd* Thread);
 static void _RMP_Dly_Ins(volatile struct RMP_Thd* Thread,
                          rmp_ptr_t Slice);
-static void _RMP_Timer_Proc(void);
+static void _RMP_Tim_Proc(void);
+static void _RMP_Thd_Unblock(volatile struct RMP_Thd* Thd_Cur,
+                             rmp_ptr_t* Data);
+static void _RMP_Sem_Unblock(volatile struct RMP_Sem* Semaphore);
 static rmp_ret_t _RMP_Sem_Pend_Core(volatile struct RMP_Sem* Semaphore,
                                     rmp_ptr_t Slice);
-static void _RMP_Sem_Unblock(volatile struct RMP_Sem* Semaphore);
 static void _RMP_Mem_Block(volatile struct RMP_Mem_Head* Addr,
                            rmp_ptr_t Size);
 static void _RMP_Mem_Ins(volatile void* Pool,
@@ -441,7 +441,7 @@ __EXTERN__ volatile rmp_ptr_t RMP_Sched_Pend;
 /* Timer events pending */
 __EXTERN__ volatile rmp_ptr_t RMP_Timer_Pend;
 
-/* The current thread - the pointer itself is volatile but not its contents */
+/* The current thread - the pointer as well as its contents are volatile */
 __EXTERN__ volatile struct RMP_Thd* volatile RMP_Thd_Cur;
 __EXTERN__ volatile rmp_ptr_t RMP_SP_Cur;
 /*****************************************************************************/
@@ -512,17 +512,17 @@ __EXTERN__ rmp_ret_t RMP_Thd_Rcv(rmp_ptr_t* Data,
 __EXTERN__ rmp_ret_t RMP_Sem_Crt(volatile struct RMP_Sem* Semaphore,
                                  rmp_ptr_t Number);
 __EXTERN__ rmp_ret_t RMP_Sem_Del(volatile struct RMP_Sem* Semaphore);
-__EXTERN__ rmp_ret_t RMP_Sem_Pend(volatile struct RMP_Sem* Semaphore,
-                                  rmp_ptr_t Slice);
-__EXTERN__ rmp_ret_t RMP_Sem_Pend_Unlock(volatile struct RMP_Sem* Semaphore,
-                                         rmp_ptr_t Slice);
-__EXTERN__ rmp_ret_t RMP_Sem_Abort(volatile struct RMP_Thd* Thread);
 __EXTERN__ rmp_ret_t RMP_Sem_Post(volatile struct RMP_Sem* Semaphore,
                                   rmp_ptr_t Number);
 __EXTERN__ rmp_ret_t RMP_Sem_Post_ISR(volatile struct RMP_Sem* Semaphore,
                                       rmp_ptr_t Number);
 __EXTERN__ rmp_ret_t RMP_Sem_Bcst(volatile struct RMP_Sem* Semaphore);
 __EXTERN__ rmp_ret_t RMP_Sem_Bcst_ISR(volatile struct RMP_Sem* Semaphore);
+__EXTERN__ rmp_ret_t RMP_Sem_Pend(volatile struct RMP_Sem* Semaphore,
+                                  rmp_ptr_t Slice);
+__EXTERN__ rmp_ret_t RMP_Sem_Pend_Unlock(volatile struct RMP_Sem* Semaphore,
+                                         rmp_ptr_t Slice);
+__EXTERN__ rmp_ret_t RMP_Sem_Abort(volatile struct RMP_Thd* Thread);
 __EXTERN__ rmp_ret_t RMP_Sem_Cnt(volatile struct RMP_Sem* Semaphore);
 
 /* Memory interfaces */

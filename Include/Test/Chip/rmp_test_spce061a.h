@@ -4,6 +4,52 @@ Author      : pry
 Date        : 22/07/2017
 Licence     : The Unlicense; see LICENSE for details.
 Description : The testbench for SPCE061A.
+              The test presents horrible numbers due to the multi-cycle design
+              of the unSP architecture. Most instructions are multiple machine
+              cycles, which kind of defeats the 49MHz performance argument.
+              For example, a single data transfer can take 9 cycles. This is
+              not very much better than the conventional 8051's 12 cycles.
+              The test can take up to two minutes to finish. If this is deemed
+              too long, reduce the rounds to 1000.
+              Don't push the timers over 49MHz or you will read garbage!
+
+unSP GCC 1.0.10 (based on vanilla GCC 2.95.2) -O3
+    ___   __  ___ ___
+   / _ \ /  |/  // _ \       Simple real-time kernel
+  / , _// /|_/ // ___/       Standard benchmark test
+ /_/|_|/_/  /_//_/
+====================================================
+Test (number in CPU cycles)        : AVG / MAX / MIN
+Yield                              : 694 / 1002 / 684
+Mailbox                            : 1732 / 2026 / 1706
+Semaphore                          : 1548 / 1844 / 1526
+FIFO                               : 927 / 1230 / 910
+Message queue                      : 2671 / 2952 / 2634
+Blocking message queue             : 3709 / 3978 / 3658
+Memory allocation/free pair        : 3518 / 4171 / 2557
+ISR Mailbox                        : 1619 / 1912 / 1594
+ISR Semaphore                      : 1475 / 1770 / 1452
+ISR Message queue                  : 2242 / 2528 / 2210
+ISR Blocking message queue         : 2889 / 3166 / 2848
+
+unSP GCC 1.0.10 (based on vanilla GCC 2.95.2) -Os
+    ___   __  ___ ___
+   / _ \ /  |/  // _ \       Simple real-time kernel
+  / , _// /|_/ // ___/       Standard benchmark test
+ /_/|_|/_/  /_//_/
+====================================================
+Test (number in CPU cycles)        : AVG / MAX / MIN
+Yield                              : 893 / 1198 / 878
+Mailbox                            : 1922 / 2214 / 1894
+Semaphore                          : 1852 / 2144 / 1826
+FIFO                               : 1135 / 1436 / 1118
+Message queue                      : 3329 / 3602 / 3282
+Blocking message queue             : 4531 / 4788 / 4470
+Memory allocation/free pair        : 4049 / 4815 / 2887
+ISR Mailbox                        : 1784 / 2076 / 1758
+ISR Semaphore                      : 1748 / 2040 / 1720
+ISR Message queue                  : 2806 / 3084 / 2766
+ISR Blocking message queue         : 3504 / 3772 / 3456
 ******************************************************************************/
 
 /* Include *******************************************************************/
@@ -11,10 +57,12 @@ Description : The testbench for SPCE061A.
 /* End Include ***************************************************************/
 
 /* Define ********************************************************************/
+/* Test only 1000 rounds if desired - CPU too slow */
+/* #define ROUND_NUM           1000 */
 /* How to read counter */
-#define RMP_CNT_READ()      ((rmp_tim_t)((*P_TimerA_Data)<<1))
+#define RMP_CNT_READ()      (((rmp_tim_t)(*P_TimerA_Data))<<1)
 /* Are we testing the memory pool? */
-#define TEST_MEM_POOL       1536
+#define TEST_MEM_POOL       (1024U)
 /* Are we doing minimal measurements? */
 /* #define MINIMAL_SIZE */
 /* The SPCE061 timers we use is 16 bits, so */
@@ -28,8 +76,8 @@ typedef rmp_u16_t rmp_tim_t;
 /* Global ********************************************************************/
 #ifndef MINIMAL_SIZE
 void Int_Handler(void);
-rmp_ptr_t Stack_1[80];
-rmp_ptr_t Stack_2[80];
+rmp_ptr_t Stack_1[128];
+rmp_ptr_t Stack_2[128];
 
 #ifdef PLAY_MUSIC
 rmp_ptr_t Music;
@@ -71,17 +119,19 @@ void Int_Init(void)
     Music=0U;
 #endif
 
-    /* TIMB clock = 1/2 CPU clock - Fosc/2 - 0.5 us per tick */
-    *P_TimerB_Data=0xCFFFU;
+    /* TIMB clock = 1/2 CPU clock - Fosc/2 - 1ms per tick */
+    *P_TimerB_Data=0x9FFFU;
     *P_TimerB_Ctrl=C_SourceC_Fosc2;
-    *P_INT_Ctrl|=C_IRQ2_TMB;
+    *P_INT_Mask|=C_IRQ2_TMB;
 }
 
 /* The interrupt handler */
 void TIMB_Handler(void)
 {
-    /* Clear TIMB flags */
+    /* Clear TIMB flags & watchdog */
     *P_INT_Clear=C_IRQ2_TMB;
+    *P_Watchdog_Clear=C_WDTCLR;
+    
 #ifdef PLAY_MUSIC
     if(Music==0U)
         Int_Handler();
@@ -119,13 +169,13 @@ void Play_Music(void)
     }
     else
         Value&=0xFF00U;
-    
+        
+    /* Make sure not to exceed the original speaker's volume limit; keep DC=0x8000 */
+    Value=(Value>>1)+0x4000U;
+
     /* Firing both DACs at 8kHz - not using ramping so there will be jerks */
     *P_DAC1=Value;
     *P_DAC2=Value;
-    
-    /* Clear watchdog */
-    *P_Watchdog_Clear=C_WDTCLR;
     
     /* If we played towards the end, play again */
     Pos++;
@@ -136,14 +186,17 @@ void Play_Music(void)
 
 void Int_Disable(void)
 {
-    *P_INT_Ctrl&=~C_IRQ2_TMB;
+    /* Do note that INT_Ctrl reads give active flags instead of enabling status;
+     * INT_Mask bits, when set, enables the interrupt. Very counterintuitive. */
+    *P_INT_Mask&=~C_IRQ2_TMB;
+    
 #ifdef PLAY_MUSIC
     /* Reinitialize TIMB here to prepare for music playback */
-    Music=1;
-    *P_TimerB_Data=0xF3FFU;
+    Music=1U;
+    *P_TimerB_Data=0xF9FFU;
     *P_TimerB_Ctrl=C_SourceC_Fosc2;
-    /* Music playback through TIMB handler, disabling all other interrupts */
-    *P_INT_Ctrl=C_IRQ2_TMB;
+    /* Music playback through TIMB handler, disabling tick timer */
+    *P_INT_Mask=C_IRQ2_TMB;
 #endif
 }
 #endif

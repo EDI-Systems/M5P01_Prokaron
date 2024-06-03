@@ -621,17 +621,17 @@ rmp_cnt_t RMP_Hex_Print(rmp_ptr_t Uint)
         /* No action needed */
     }
 
-    /* Filter out all the zeroes */
+    /* Filter out all the leading zeroes */
     Count=0U;
     Iter=Uint;
-    while((Iter>>((sizeof(rmp_ptr_t)*8U)-4U))==0U)
+    while((Iter>>(RMP_POW2(RMP_WORD_ORDER)-4U))==0U)
     {
         Iter<<=4U;
         Count++;
     }
 
     /* Count is the number of pts to print */
-    Count=(sizeof(rmp_ptr_t)<<1U)-Count;
+    Count=RMP_POW2(RMP_WORD_ORDER-2U)-Count;
     Num=Count;
     while(Count>0U)
     {
@@ -922,13 +922,13 @@ void RMP_Yield(void)
 }
 /* End Function:RMP_Yield ****************************************************/
 
-/* Function:_RMP_Timer_Proc ***************************************************
+/* Function:_RMP_Tim_Proc *****************************************************
 Description : Process RMP timer events.
 Input       : None.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-static void _RMP_Timer_Proc(void)
+static void _RMP_Tim_Proc(void)
 {
     rmp_ptr_t State;
     rmp_ptr_t Diff;
@@ -951,20 +951,24 @@ static void _RMP_Timer_Proc(void)
             {
                 RMP_COVERAGE_MARKER();
                 RMP_List_Del(Thread->Run_Head.Prev, Thread->Run_Head.Next);
+                /* Supply timeout error code */
                 Thread->Retval=RMP_ERR_OPER;
             }
             else if(State==RMP_THD_RCVDLY)
             {
                 RMP_COVERAGE_MARKER();
+                /* Supply timeout error code */
                 Thread->Retval=RMP_ERR_OPER;
             }
             else if(State==RMP_THD_DELAYED)
             {
                 RMP_COVERAGE_MARKER();
+                /* No action required */
             }
             else
             {
                 RMP_COVERAGE_MARKER();
+                /* Impossible: thread in the waiting list but not delayed */
                 RMP_ASSERT(0);
             }
 
@@ -980,7 +984,7 @@ static void _RMP_Timer_Proc(void)
         }
     }
 }
-/* Function:_RMP_Timer_Proc **************************************************/
+/* Function:_RMP_Tim_Proc ****************************************************/
 
 /* Function:_RMP_Run_High *****************************************************
 Description : Get the highest priority thread that is ready. The return value
@@ -1001,18 +1005,22 @@ void _RMP_Run_High(void)
 {
     rmp_cnt_t Word;
     rmp_ptr_t Prio;
+    volatile struct RMP_Thd* Thd_Cur;
     
     /* Save potential extra context */
 #if(RMP_HOOK_EXTRA!=0U)
     RMP_Ctx_Save();
 #endif
     
-    /* Write the SP value to thread structure */
-    RMP_Thd_Cur->Stack=RMP_SP_Cur;
+    /* Cache volatile current thread */
+    Thd_Cur=RMP_Thd_Cur;
     
-    /* No need to detect scheduler locks - if this function can be called, the
-     * scheduler can't be locked, and after we choose the highest priority
-     * thread the scheduler pending flag should be cleared */
+    /* Save SP value to the old thread structure */
+    Thd_Cur->Stack=RMP_SP_Cur;
+    
+    /* No need to detect scheduler locks - if this function can be called,
+     * the scheduler can't be locked, and after we choose the highest
+     * priority thread the scheduler pending flag should be cleared */
     RMP_Sched_Pend=0U;
     /* See which one is ready, and pick it */
     Prio=RMP_PRIO_WORD_NUM-1U;
@@ -1037,12 +1045,12 @@ void _RMP_Run_High(void)
 
     /* See if the current thread is the highest priority one.
      * If yes, place the current at the end of the queue. */
-    if(RMP_Thd_Cur==(volatile struct RMP_Thd*)(RMP_Run[Prio].Next))
+    if(Thd_Cur==(volatile struct RMP_Thd*)(RMP_Run[Prio].Next))
     {
         RMP_COVERAGE_MARKER();
-        RMP_ASSERT(RMP_Thd_Cur->Prio==Prio);
-        RMP_List_Del(RMP_Thd_Cur->Run_Head.Prev, RMP_Thd_Cur->Run_Head.Next);
-        RMP_List_Ins(&(RMP_Thd_Cur->Run_Head),
+        RMP_ASSERT(Thd_Cur->Prio==Prio);
+        RMP_List_Del(Thd_Cur->Run_Head.Prev, Thd_Cur->Run_Head.Next);
+        RMP_List_Ins(&(Thd_Cur->Run_Head),
                      RMP_Run[Prio].Prev,
                      &(RMP_Run[Prio]));
     }
@@ -1053,11 +1061,14 @@ void _RMP_Run_High(void)
     }
     
     /* Replenish timeslices for the old thread and switch to the new one */
-    RMP_Thd_Cur->Slice_Left=RMP_Thd_Cur->Slice;
-    RMP_Thd_Cur=(volatile struct RMP_Thd*)(RMP_Run[Prio].Next);
+    Thd_Cur->Slice_Left=Thd_Cur->Slice;
+    Thd_Cur=(volatile struct RMP_Thd*)(RMP_Run[Prio].Next);
 
-    /* Load the SP value from thread structure */
-    RMP_SP_Cur=RMP_Thd_Cur->Stack;
+    /* Restore SP value from the new thread structure */
+    RMP_SP_Cur=Thd_Cur->Stack;
+    
+    /* Write cached current thread back */
+    RMP_Thd_Cur=Thd_Cur;
     
     /* Load potential extra context and do scheduler hook */
 #if(RMP_HOOK_EXTRA!=0U)
@@ -1075,14 +1086,17 @@ Return      : None.
 ******************************************************************************/
 void _RMP_Tim_Handler(rmp_ptr_t Slice)
 {
-    volatile struct RMP_Thd* Thread;
     rmp_ptr_t Diff;
+    volatile struct RMP_Thd* Thread;
     
     /* Increase the timestamp as always */
     RMP_Timestamp+=Slice;
     
+    /* Cache volatile current thread */
+    Thread=RMP_Thd_Cur;
+    
     /* See if the current thread expired; if yes, trigger a scheduler event */
-    if(Slice>=RMP_Thd_Cur->Slice_Left)
+    if(Slice>=Thread->Slice_Left)
     {
         RMP_COVERAGE_MARKER();
         RMP_Sched_Pend=1U;
@@ -1090,7 +1104,7 @@ void _RMP_Tim_Handler(rmp_ptr_t Slice)
     else
     {
         RMP_COVERAGE_MARKER();
-        RMP_Thd_Cur->Slice_Left-=Slice;
+        Thread->Slice_Left-=Slice;
     }
     
     /* Check if there are any timer events */
@@ -1105,7 +1119,7 @@ void _RMP_Tim_Handler(rmp_ptr_t Slice)
             RMP_COVERAGE_MARKER();
             /* No need to care about scheduler locks if this interrupt can be entered
              * - we have disabled timer and scheduler interrupts in scheduler lock */
-            _RMP_Timer_Proc();
+            _RMP_Tim_Proc();
         }
         else
         {
@@ -1189,7 +1203,7 @@ rmp_ptr_t _RMP_Tim_Future(void)
     rmp_ptr_t Value;
     volatile struct RMP_Thd* Thread;
     
-    /* What is the current thread's timeout value? */
+    /* Cache current thread's timeout value */
     Value=RMP_Thd_Cur->Slice_Left;
     
     /* What is the nearest timer timeout value? */
@@ -1289,17 +1303,23 @@ Return      : None.
 ******************************************************************************/
 static void _RMP_Run_Ins(volatile struct RMP_Thd* Thread)
 {
+    rmp_ptr_t Prio;
+    
     /* No need to operate on suspended threads */
     if((Thread->State&RMP_THD_SUSPENDED)==0U)
     {
         RMP_COVERAGE_MARKER();
+        
+        /* Cache volatile thread priority */
+        Prio=Thread->Prio;
+        
         /* Insert this into the corresponding runqueue's back */
-        RMP_List_Ins(&(Thread->Run_Head),RMP_Run[Thread->Prio].Prev,&(RMP_Run[Thread->Prio]));
+        RMP_List_Ins(&(Thread->Run_Head),RMP_Run[Prio].Prev,&(RMP_Run[Prio]));
         /* Set this priority level as active */
-        RMP_Bitmap[Thread->Prio>>RMP_WORD_ORDER]|=RMP_POW2(Thread->Prio&RMP_WORD_MASK);
+        RMP_Bitmap[Prio>>RMP_WORD_ORDER]|=RMP_POW2(Prio&RMP_WORD_MASK);
         
         /* Compare this with the current one to see if we need a context switch */
-        if(Thread->Prio>RMP_Thd_Cur->Prio)
+        if(Prio>RMP_Thd_Cur->Prio)
         {
             RMP_COVERAGE_MARKER();
             RMP_Sched_Pend=1U;
@@ -1328,6 +1348,8 @@ Return      : None.
 ******************************************************************************/
 static void _RMP_Run_Del(volatile struct RMP_Thd* Thread)
 {
+    rmp_ptr_t Prio;
+    
     /* No need to operate on suspended threads */
     if((Thread->State&RMP_THD_SUSPENDED)==0U)
     {
@@ -1336,8 +1358,10 @@ static void _RMP_Run_Del(volatile struct RMP_Thd* Thread)
         if(Thread->Run_Head.Prev==Thread->Run_Head.Next)
         {
             RMP_COVERAGE_MARKER();
+            /* Cache volatile thread priority */
+            Prio=Thread->Prio;
             /* If yes, set the priority level as inactive */
-            RMP_Bitmap[Thread->Prio>>RMP_WORD_ORDER]&=~RMP_POW2(Thread->Prio&RMP_WORD_MASK);
+            RMP_Bitmap[Prio>>RMP_WORD_ORDER]&=~RMP_POW2(Prio&RMP_WORD_MASK);
         }
         else
         {
@@ -1617,16 +1641,7 @@ rmp_ret_t RMP_Thd_Del(volatile struct RMP_Thd* Thread)
     RMP_Sched_Unlock();
     
     /* Can't reach here if we're deleting ourself */
-    if(Thread==RMP_Thd_Cur)
-    {
-        RMP_COVERAGE_MARKER();
-        RMP_ASSERT(0);
-    }
-    else
-    {
-        RMP_COVERAGE_MARKER();
-        /* No action required */
-    }
+    RMP_ASSERT(Thread!=RMP_Thd_Cur);
 
     return 0;
 }
@@ -1806,8 +1821,7 @@ rmp_ret_t RMP_Thd_Suspend(volatile struct RMP_Thd* Thread)
         /* No action required */
     }
     
-    /* Only when it is running do we clear this. If we are clearing this, it is
-     * not suspended, thus the running queue removal is guaranteed to succeed */
+    /* Remove the thread from runqueue if it is running */
     if(RMP_THD_STATE(Thread->State)==RMP_THD_RUNNING)
     {
         RMP_COVERAGE_MARKER();
@@ -1819,7 +1833,7 @@ rmp_ret_t RMP_Thd_Suspend(volatile struct RMP_Thd* Thread)
         /* No action required */
     }
     
-    /* Mark this as suspended */
+    /* Mark it as suspended */
     Thread->State|=RMP_THD_SUSPENDED;
     
     /* If we are suspending ourself, a schedule must be pending at this point */
@@ -1838,8 +1852,6 @@ Return      : rmp_ret_t - If successful, 0; else error code.
 ******************************************************************************/
 rmp_ret_t RMP_Thd_Resume(volatile struct RMP_Thd* Thread)
 {
-    rmp_ret_t Retval;
-    
     /* Check thread pointer */
     if(Thread==RMP_NULL)
     {
@@ -1867,15 +1879,15 @@ rmp_ret_t RMP_Thd_Resume(volatile struct RMP_Thd* Thread)
         /* No action required */
     }
     
-    /* Check if the thread is suspended, if not, then throw an error */
+    /* Check if the thread is suspended */
     if((Thread->State&RMP_THD_SUSPENDED)!=0U)
     {
         RMP_COVERAGE_MARKER();
         
-        /* Suspended */
+        /* The thread is suspended, need to resume it */
         Thread->State&=~RMP_THD_SUSPENDED;
-        /* Only when it is running will we put it back. It can't be suspended here, 
-         * so the set ready operation will surely put it back */
+        
+        /* Put the thread back if it is running */
         if(RMP_THD_STATE(Thread->State)==RMP_THD_RUNNING)
         {
             RMP_COVERAGE_MARKER();
@@ -1887,26 +1899,28 @@ rmp_ret_t RMP_Thd_Resume(volatile struct RMP_Thd* Thread)
             /* No action required */
         }
         
-        Retval=0;
+        RMP_Sched_Unlock();
+        return 0;
     }
     else
     {
         RMP_COVERAGE_MARKER();
-        Retval=RMP_ERR_STATE;
+        /* No action required */
     }
     
+    /* Thread is not suspended, report an error */
     RMP_Sched_Unlock();
-
-    return Retval;
+    return RMP_ERR_STATE;
 }
 /* End Function:RMP_Thd_Resume ***********************************************/
 
 /* Function:RMP_Thd_Snd *******************************************************
 Description : Send to a real-time thread's mailbox. If the mailbox is full, then
               this operation can potentially block.
-Input       : volatile struct RMP_Thd* Thread - The thread structure of the thread to send to.
+Input       : volatile struct RMP_Thd* Thread - The thread structure of the
+                                                thread to send to.
               rmp_ptr_t Data - The data to send to that thread.
-              rmp_ptr_t Slice - The timeslice to wait, if the mailbox is already full.
+              rmp_ptr_t Slice - The timeslices to wait if the mailbox is full.
 Output      : None.
 Return      : rmp_ret_t - If successful, 0; or an error code.
 ******************************************************************************/
@@ -1914,6 +1928,8 @@ rmp_ret_t RMP_Thd_Snd(volatile struct RMP_Thd* Thread,
                       rmp_ptr_t Data,
                       rmp_ptr_t Slice)
 {
+    volatile struct RMP_Thd* Thd_Cur;
+        
     /* Check thread pointer */
     if(Thread==RMP_NULL)
     {
@@ -1941,8 +1957,11 @@ rmp_ret_t RMP_Thd_Snd(volatile struct RMP_Thd* Thread,
         /* No action required */
     }
     
-    /* Are we sending to ourself? This is not allowed */
-    if(RMP_Thd_Cur==Thread)
+    /* Cache volatile current thread - must be own thread */
+    Thd_Cur=RMP_Thd_Cur;
+    
+    /* Self-sending is not allowed */
+    if(Thd_Cur==Thread)
     {
         RMP_COVERAGE_MARKER();
         RMP_Sched_Unlock();
@@ -1953,56 +1972,19 @@ rmp_ret_t RMP_Thd_Snd(volatile struct RMP_Thd* Thread,
         /* No action required */
         RMP_COVERAGE_MARKER();
     }
-    
-    RMP_Thd_Cur->Retval=0;
 
-    /* See if there is already a value in the mailbox, if yes, we block */
-    if((Thread->State&RMP_THD_MBOXFUL)!=0U)
+    /* Check if mailbox empty */
+    if((Thread->State&RMP_THD_MBOXFUL)==0U)
     {
         RMP_COVERAGE_MARKER();
         
-        /* Mailbox full, we block, and put ourself into the queue */
-        if(Slice==0U)
-        {
-            RMP_COVERAGE_MARKER();
-            RMP_Sched_Unlock();
-            return RMP_ERR_OPER;
-        }
-        else
-        {
-            RMP_COVERAGE_MARKER();
-            /* No action required */
-        }
-
-        /* We must be running */
-        _RMP_Run_Del(RMP_Thd_Cur);
-        RMP_List_Ins(&(RMP_Thd_Cur->Run_Head), Thread->Snd_List.Prev, &(Thread->Snd_List));
-
-        if(Slice<RMP_SLICE_MAX)
-        {
-            RMP_COVERAGE_MARKER();
-            _RMP_Dly_Ins(RMP_Thd_Cur, Slice);
-            RMP_THD_STATE_SET(RMP_Thd_Cur->State, RMP_THD_SNDDLY);
-        }
-        else
-        {
-            RMP_COVERAGE_MARKER();
-            RMP_THD_STATE_SET(RMP_Thd_Cur->State, RMP_THD_SNDBLK);
-        }
-
-        RMP_Thd_Cur->Data=Data;
-    }
-    else
-    {
-        RMP_COVERAGE_MARKER();
-        
-        /* Mailbox not full. We need to check if the receiver is waiting for us */
+        /* Mailbox empty; check if the receiver is waiting for us */
         if((RMP_THD_STATE(Thread->State)==RMP_THD_RCVBLK)||
            (RMP_THD_STATE(Thread->State)==RMP_THD_RCVDLY))
         {
             RMP_COVERAGE_MARKER();
             
-            /* The receiver is blocked, wake it up and return the value */
+            /* The receiver is blocked, wake it up */
             if(RMP_THD_STATE(Thread->State)==RMP_THD_RCVDLY)
             {
                 RMP_COVERAGE_MARKER();
@@ -2024,23 +2006,63 @@ rmp_ret_t RMP_Thd_Snd(volatile struct RMP_Thd* Thread,
             /* No action required */
         }
         
-        /* Set the mailbox */
+        /* Fill the mailbox */
         Thread->Mailbox=Data;
         Thread->State|=RMP_THD_MBOXFUL;
+        
+        RMP_Sched_Unlock();
+        return 0;
+    }
+    else
+    {
+        RMP_COVERAGE_MARKER();
+        
+        /* Mailbox full; see if we're blocking */
+        if(Slice==0U)
+        {
+            RMP_COVERAGE_MARKER();
+            RMP_Sched_Unlock();
+            return RMP_ERR_OPER;
+        }
+        else
+        {
+            RMP_COVERAGE_MARKER();
+            /* When abort, an error code will be supplied instead */
+            Thd_Cur->Retval=0;
+        }
+
+        /* We must be running */
+        _RMP_Run_Del(Thd_Cur);
+        RMP_List_Ins(&(Thd_Cur->Run_Head), Thread->Snd_List.Prev, &(Thread->Snd_List));
+
+        if(Slice<RMP_SLICE_MAX)
+        {
+            RMP_COVERAGE_MARKER();
+            _RMP_Dly_Ins(Thd_Cur, Slice);
+            RMP_THD_STATE_SET(Thd_Cur->State, RMP_THD_SNDDLY);
+        }
+        else
+        {
+            RMP_COVERAGE_MARKER();
+            RMP_THD_STATE_SET(Thd_Cur->State, RMP_THD_SNDBLK);
+        }
+
+        Thd_Cur->Mailbox=Data;
     }
     
     RMP_Sched_Unlock();
 
-    return RMP_Thd_Cur->Retval;
+    /* Retval might be updated */
+    return Thd_Cur->Retval;
 }
 /* End Function:RMP_Thd_Snd **************************************************/
 
 /* Function:RMP_Thd_Snd_ISR ***************************************************
 Description : Send to a real-time thread's mailbox. If the mailbox is full, then
-              this operation will just fail. This function can only be called from
-              an ISR whose priority is below or equal to the context switch handler's.
-              We do not check whether the scheduler is locked; if we are calling this
-              function, we're pretty sure that it's not.
+              this operation will just fail. This function can only be called 
+              from an ISR whose priority is below or equal to the context switch
+              handler's. We do not check whether the scheduler is locked; if we
+              are calling this function, we're pretty sure that it's not.
 Input       : volatile struct RMP_Thd* Thread - The thread structure of the 
                                                 thread to send to.
               rmp_ptr_t Data - The data to send to that thread.
@@ -2074,23 +2096,18 @@ rmp_ret_t RMP_Thd_Snd_ISR(volatile struct RMP_Thd* Thread,
         /* No action required */
     }
 
-    /* See if there is already a value in the mailbox, if yes, we abort */
-    if((Thread->State&RMP_THD_MBOXFUL)!=0U)
-    {
-        RMP_COVERAGE_MARKER();
-        return RMP_ERR_OPER;
-    }
-    else
+    /* Check if mailbox empty */
+    if((Thread->State&RMP_THD_MBOXFUL)==0U)
     {
         RMP_COVERAGE_MARKER();
         
-        /* Mailbox not full. We need to check if the receiver is waiting for us */
+        /* Mailbox empty; check if the receiver is waiting for us */
         if((RMP_THD_STATE(Thread->State)==RMP_THD_RCVBLK)||
            (RMP_THD_STATE(Thread->State)==RMP_THD_RCVDLY))
         {
             RMP_COVERAGE_MARKER();
 
-            /* The receiver is blocked, wake it up and return the value */
+            /* The receiver is blocked, wake it up */
             if(RMP_THD_STATE(Thread->State)==RMP_THD_RCVDLY)
             {
                 RMP_COVERAGE_MARKER();
@@ -2130,45 +2147,50 @@ rmp_ret_t RMP_Thd_Snd_ISR(volatile struct RMP_Thd* Thread,
         Thread->Mailbox=Data;
         Thread->State|=RMP_THD_MBOXFUL;
     }
+    else
+    {
+        RMP_COVERAGE_MARKER();
+        return RMP_ERR_OPER;
+    }
 
     return 0;
 }
 /* End Function:RMP_Thd_Snd_ISR **********************************************/
 
-/* Function:RMP_Thd_Rcv *******************************************************
-Description : Receive a message from our own mailbox, and this is blocking.
-Input       : rmp_ptr_t Slice - The timeslices to wait, if the mailbox is empty.
+/* Function:_RMP_Thd_Unblock **************************************************
+Description : Unblock one thread if there are one waiting, and set the mailbox 
+              full states accordingly.
+Input       : volatile struct RMP_Thd* Thd_Cur - The cached current thread.
 Output      : rmp_ptr_t* Data - The pointer to put the data to.
-Return      : rmp_ret_t - If successful, 0; or an error code.
+Return      : None.
 ******************************************************************************/
-rmp_ret_t RMP_Thd_Rcv(rmp_ptr_t* Data,
-                      rmp_ptr_t Slice)
+static void _RMP_Thd_Unblock(volatile struct RMP_Thd* Thd_Cur,
+                             rmp_ptr_t* Data)
 {
     volatile struct RMP_Thd* Sender;
     
-    /* Check data pointer */
-    if(Data==RMP_NULL)
+    /* Mailbox full; get the value from mailbox */
+    if(Data!=RMP_NULL)
     {
         RMP_COVERAGE_MARKER();
-        return RMP_ERR_OPER;
+        *Data=Thd_Cur->Mailbox;
     }
     else
     {
         RMP_COVERAGE_MARKER();
         /* No action required */
     }
-    
-    RMP_Sched_Lock();
-    
-    /* Is there any other guy waiting on us? If there is, unblock it and set it running */
-    Sender=RMP_NULL;
-    if(&(RMP_Thd_Cur->Snd_List)!=RMP_Thd_Cur->Snd_List.Next)
+        
+    /* Check if there are senders waiting */
+    if(&(Thd_Cur->Snd_List)!=Thd_Cur->Snd_List.Next)
     {
         RMP_COVERAGE_MARKER();
-        /* Read the data */
-        Sender=(volatile struct RMP_Thd*)(RMP_Thd_Cur->Snd_List.Next);
+        
+        /* Delete the sender from waitlist and read the data; mailbox still full */
+        Sender=(volatile struct RMP_Thd*)(Thd_Cur->Snd_List.Next);
         RMP_List_Del(Sender->Run_Head.Prev, Sender->Run_Head.Next);
-        *Data=Sender->Data;
+        Thd_Cur->Mailbox=Sender->Mailbox;
+        
         /* Now we unblock it - what state is it in? */
         if((RMP_THD_STATE(Sender->State)==RMP_THD_SNDDLY))
         {
@@ -2182,29 +2204,41 @@ rmp_ret_t RMP_Thd_Rcv(rmp_ptr_t* Data,
         }
         
         RMP_THD_STATE_SET(Sender->State, RMP_THD_RUNNING);
+        
         /* Set to running if not suspended */
         _RMP_Run_Ins(Sender);
     }
-
-    /* Check if there is a value in our mailbox. If yes, we return with that value */
-    if((RMP_Thd_Cur->State&RMP_THD_MBOXFUL)!=0U)
+    else
     {
         RMP_COVERAGE_MARKER();
-        /* Get the value from mailbox */
-        *Data=RMP_Thd_Cur->Mailbox;
-        /* See if we unblocked a sender. If yes, we place the new value into 
-         * our mailbox and it is still full */
-        if(Sender!=RMP_NULL)
-        {
-            RMP_COVERAGE_MARKER();
-            RMP_Thd_Cur->Mailbox=Sender->Data;
-        }
-        else
-        {
-            RMP_COVERAGE_MARKER();
-            RMP_Thd_Cur->State&=~RMP_THD_MBOXFUL;
-        }
-        
+        /* Nobody to unblock, mailbox empty now */
+        Thd_Cur->State&=~RMP_THD_MBOXFUL;
+    }
+}
+/* End Function:_RMP_Thd_Unblock *********************************************/
+
+/* Function:RMP_Thd_Rcv *******************************************************
+Description : Receive a message from our own mailbox, and this is blocking.
+Input       : rmp_ptr_t Slice - The timeslices to wait, if the mailbox is empty.
+Output      : rmp_ptr_t* Data - The pointer to put the data to.
+Return      : rmp_ret_t - If successful, 0; or an error code.
+******************************************************************************/
+rmp_ret_t RMP_Thd_Rcv(rmp_ptr_t* Data,
+                      rmp_ptr_t Slice)
+{
+    volatile struct RMP_Thd* Thd_Cur;
+    
+    RMP_Sched_Lock();
+    
+    /* Cache volatile current thread - must be own thread */
+    Thd_Cur=RMP_Thd_Cur;
+    
+    /* Check if the mailbox is empty */
+    if((Thd_Cur->State&RMP_THD_MBOXFUL)!=0U)
+    {
+        RMP_COVERAGE_MARKER();
+        /* Extract value and unblock next sender */
+        _RMP_Thd_Unblock(Thd_Cur,Data);
         RMP_Sched_Unlock();
         return 0;
     }
@@ -2212,61 +2246,68 @@ rmp_ret_t RMP_Thd_Rcv(rmp_ptr_t* Data,
     {
         RMP_COVERAGE_MARKER();
         
-        /* Box empty. Do we have somebody waiting? */
-        if(Sender!=RMP_NULL)
+        /* Mailbox is empty, must have nobody on the list now */
+        RMP_ASSERT(&(Thd_Cur->Snd_List)==Thd_Cur->Snd_List.Next);
+        
+        /* See if we're blocking */
+        if(Slice==0U)
         {
             RMP_COVERAGE_MARKER();
-            RMP_Thd_Cur->Mailbox=Sender->Data;
             RMP_Sched_Unlock();
-            return 0;
+            return RMP_ERR_OPER;
         }
-        /* No sender waiting on us and box empty, we need to block */
         else
         {
             RMP_COVERAGE_MARKER();
-            
-            if(Slice==0U)
-            {
-                RMP_COVERAGE_MARKER();
-                RMP_Sched_Unlock();
-                return RMP_ERR_OPER;
-            }
-            else
-            {
-                RMP_COVERAGE_MARKER();
-                /* No action required */
-            }
+            /* When abort, an error code will be supplied instead */
+            Thd_Cur->Retval=0;
+        }
 
-            /* We must be running and not suspended so we will surely be deleted from queue */
-            _RMP_Run_Del(RMP_Thd_Cur);
+        /* We must be running and not suspended and surely be deleted from queue */
+        _RMP_Run_Del(Thd_Cur);
 
-            if(Slice<RMP_SLICE_MAX)
-            {
-                RMP_COVERAGE_MARKER();
-                _RMP_Dly_Ins(RMP_Thd_Cur, Slice);
-                RMP_THD_STATE_SET(RMP_Thd_Cur->State, RMP_THD_RCVDLY);
-            }
-            else
-            {
-                RMP_COVERAGE_MARKER();
-                RMP_THD_STATE_SET(RMP_Thd_Cur->State, RMP_THD_RCVBLK);
-            }
-
-            RMP_Sched_Unlock();
-
-            /* Dummy read - to separate the lock & unlock. If the compiler optimizes these two
-             * functions(inline them) on some architectures sometimes we never block. */
-            *Data=RMP_Thd_Cur->Mailbox;
-            
-            /* We've been unblocked. There must be something in our mbox, or we should have failed */
-            RMP_Sched_Lock();
-            *Data=RMP_Thd_Cur->Mailbox;
-            RMP_Thd_Cur->State&=~RMP_THD_MBOXFUL;
+        if(Slice<RMP_SLICE_MAX)
+        {
+            RMP_COVERAGE_MARKER();
+            _RMP_Dly_Ins(Thd_Cur, Slice);
+            RMP_THD_STATE_SET(Thd_Cur->State, RMP_THD_RCVDLY);
+        }
+        else
+        {
+            RMP_COVERAGE_MARKER();
+            RMP_THD_STATE_SET(Thd_Cur->State, RMP_THD_RCVBLK);
+        }
+        
+        /* Unlock the scheduler, wait for mail */
+        RMP_Sched_Unlock();
+        
+        /* Retval must be updated or mailbox must be filled */
+        
+        /* We've been unblocked; could be a timeout or a full mailbox */
+        RMP_Sched_Lock();
+        
+        /* Full mailbox, or timeout? */
+        if((Thd_Cur->State&RMP_THD_MBOXFUL)!=0U)
+        {
+            RMP_COVERAGE_MARKER();
+            /* The return value must be good */
+            RMP_ASSERT(Thd_Cur->Retval==0);
+            /* Extract value and unblock next sender */
+            _RMP_Thd_Unblock(Thd_Cur,Data);
+        }
+        /* Timeout */
+        else
+        {
+            RMP_COVERAGE_MARKER();
+            /* The return value must be bad */
+            RMP_ASSERT(Thd_Cur->Retval!=0);
         }
     }
     
     RMP_Sched_Unlock();
-    return RMP_Thd_Cur->Retval;
+    
+    /* Retval might be updated earlier */
+    return Thd_Cur->Retval;
 }
 /* End Function:RMP_Thd_Rcv **************************************************/
 
@@ -2278,6 +2319,8 @@ Return      : rmp_ret_t - If successful, 0; or an error code.
 ******************************************************************************/
 rmp_ret_t RMP_Thd_Delay(rmp_ptr_t Slice)
 {
+    volatile struct RMP_Thd* Thd_Cur;
+    
     /* Check slice validity */
     if((Slice==0U)||(Slice>=RMP_SLICE_MAX))
     {
@@ -2291,16 +2334,21 @@ rmp_ret_t RMP_Thd_Delay(rmp_ptr_t Slice)
     }
     
     RMP_Sched_Lock();
+    
+    /* Cache volatile current thread - must be own thread */
+    Thd_Cur=RMP_Thd_Cur;
 
     /* We must be running and not suspended so we will be out of running queue */
-    _RMP_Run_Del(RMP_Thd_Cur);
-    RMP_THD_STATE_SET(RMP_Thd_Cur->State, RMP_THD_DELAYED);
-    _RMP_Dly_Ins(RMP_Thd_Cur, Slice);
+    _RMP_Run_Del(Thd_Cur);
+    RMP_THD_STATE_SET(Thd_Cur->State, RMP_THD_DELAYED);
+    _RMP_Dly_Ins(Thd_Cur, Slice);
 
-    RMP_Thd_Cur->Retval=0;
+    /* When abort, an error code will be supplied instead */
+    Thd_Cur->Retval=0;
     RMP_Sched_Unlock();
-    /* Need to return if successful or not */
-    return RMP_Thd_Cur->Retval;
+    
+    /* Retval might be updated */
+    return Thd_Cur->Retval;
 }
 /* End Function:RMP_Thd_Delay ************************************************/
 
@@ -2345,8 +2393,10 @@ rmp_ret_t RMP_Thd_Cancel(volatile struct RMP_Thd* Thread)
     /* Set to running if not suspended */
     _RMP_Run_Ins(Thread);
     
+    /* Supply cancel error code */
     Thread->Retval=RMP_ERR_OPER;
     RMP_Sched_Unlock();
+        
     return 0;
 }
 /* End Function:RMP_Thd_Cancel ***********************************************/
@@ -2354,20 +2404,20 @@ rmp_ret_t RMP_Thd_Cancel(volatile struct RMP_Thd* Thread)
 /* Function:RMP_Thd_Loop ******************************************************
 Description : Enter a useless loop to waste some time. Can be used when the
               scheduler is locked. The delay caused by each loop is chip and
-			  toolchain specific.
+              toolchain specific.
 Input       : rmp_ptr_t Loop - The number of useless loops to run.
 Output      : None.
 Return      : None.
 ******************************************************************************/
 void RMP_Thd_Loop(rmp_ptr_t Loop)
 {
-	volatile rmp_ptr_t Current;
-	
-	/* Just waste some time */
-	for(Current=0U;Current<Loop;Current++)
-	{
+    volatile rmp_ptr_t Count;
+    
+    /* Just waste some time */
+    for(Count=0U;Count<Loop;Count++)
+    {
         RMP_COVERAGE_MARKER();
-	}
+    }
 }
 /* End Function:RMP_Thd_Loop *************************************************/
 
@@ -2490,6 +2540,7 @@ rmp_ret_t RMP_Sem_Del(volatile struct RMP_Sem* Semaphore)
         
         /* Set to running if not suspended */
         _RMP_Run_Ins(Thread);
+        /* Supply delete error code */
         Thread->Retval=RMP_ERR_OPER;
     }
     
@@ -2499,222 +2550,6 @@ rmp_ret_t RMP_Sem_Del(volatile struct RMP_Sem* Semaphore)
     return 0;
 }
 /* End Function:RMP_Sem_Del **************************************************/
-
-/* Function:_RMP_Sem_Pend_Core ************************************************
-Description : Pend on the semaphore, trying to get one. This is the core logic.
-              When this is entered, the scheduler shall be locked.
-Input       : volatile struct RMP_Sem* Semaphore - The pointer to the semaphore.
-              rmp_ptr_t Slice - The number of slices to wait.
-Output      : None.
-Return      : rmp_ret_t - If successful, the current semaphore number; or an error code.
-******************************************************************************/
-static rmp_ret_t _RMP_Sem_Pend_Core(volatile struct RMP_Sem* Semaphore,
-                                    rmp_ptr_t Slice)
-{
-    /* Check if the semaphore is in use */
-    if(Semaphore->State!=RMP_SEM_USED)
-    {
-        RMP_COVERAGE_MARKER();
-        RMP_Sched_Unlock();
-        return RMP_ERR_SEM;
-    }
-    else
-    {
-        RMP_COVERAGE_MARKER();
-        /* No action required */
-    }
-    
-    /* Check if we can get one immediately */
-    if(Semaphore->Cur_Num!=0U)
-    {
-        RMP_COVERAGE_MARKER();
-        Semaphore->Cur_Num--;
-        RMP_Sched_Unlock();
-        return (rmp_ret_t)Semaphore->Cur_Num;
-    }
-    else
-    {
-        RMP_COVERAGE_MARKER();
-        /* Cannot get one, we need to block */
-        if(Slice==0U)
-        {
-            RMP_COVERAGE_MARKER();
-            RMP_Sched_Unlock();
-            return RMP_ERR_OPER;
-        }
-        else
-        {
-            RMP_COVERAGE_MARKER();
-            /* No action required */
-        }
-
-        /* We must be running - place into waitlist now */
-        _RMP_Run_Del(RMP_Thd_Cur);
-        RMP_List_Ins(&(RMP_Thd_Cur->Run_Head), Semaphore->Wait_List.Prev, &(Semaphore->Wait_List));
-        
-        if(Slice<RMP_SLICE_MAX)
-        {
-            RMP_COVERAGE_MARKER();
-            _RMP_Dly_Ins(RMP_Thd_Cur, Slice);
-            RMP_THD_STATE_SET(RMP_Thd_Cur->State, RMP_THD_SEMDLY);
-        }
-        else
-        {
-            RMP_COVERAGE_MARKER();
-            RMP_THD_STATE_SET(RMP_Thd_Cur->State, RMP_THD_SEMBLK);
-        }
-        
-        RMP_Thd_Cur->Retval=0;
-    }
-    
-    RMP_Sched_Unlock();
-
-    /* Context switch will happen before this when the scheduler unlocks */
-    return RMP_Thd_Cur->Retval;
-}
-/* End Function:_RMP_Sem_Pend_Core *******************************************/
-
-/* Function:RMP_Sem_Pend ******************************************************
-Description : Pend on the semaphore, trying to get one.
-Input       : volatile struct RMP_Sem* Semaphore - The pointer to the semaphore.
-              rmp_ptr_t Slice - The number of slices to wait.
-Output      : None.
-Return      : rmp_ret_t - If successful, the current semaphore number; or an error code.
-******************************************************************************/
-rmp_ret_t RMP_Sem_Pend(volatile struct RMP_Sem* Semaphore,
-                       rmp_ptr_t Slice)
-{
-    /* Check semaphore pointer */
-    if(Semaphore==RMP_NULL)
-    {
-        RMP_COVERAGE_MARKER();
-        return RMP_ERR_SEM;
-    }
-    else
-    {
-        RMP_COVERAGE_MARKER();
-        /* No action required */
-    }
-    
-    RMP_Sched_Lock();
-    
-    return _RMP_Sem_Pend_Core(Semaphore, Slice);
-}
-/* End Function:RMP_Sem_Pend *************************************************/
-
-/* Function:RMP_Sem_Pend_Unlock ***********************************************
-Description : Pend on the semaphore, trying to get one. When we enter this
-              function, the scheduler shall be locked, and it would be auto-
-              unlocked when we exit.
-Input       : volatile struct RMP_Sem* Semaphore - The pointer to the semaphore.
-              rmp_ptr_t Slice - The number of slices to wait.
-Output      : None.
-Return      : rmp_ret_t - If successful, the current semaphore number; or an error code.
-******************************************************************************/
-rmp_ret_t RMP_Sem_Pend_Unlock(volatile struct RMP_Sem* Semaphore,
-                              rmp_ptr_t Slice)
-{
-    /* Check semaphore pointer */
-    if(Semaphore==RMP_NULL)
-    {
-        RMP_COVERAGE_MARKER();
-        RMP_Sched_Unlock();
-        return RMP_ERR_SEM;
-    }
-    else
-    {
-        RMP_COVERAGE_MARKER();
-        /* No action required */
-    }
-    
-    /* Check if the scheduler is really locked only once */
-    if(RMP_Sched_Lock_Cnt!=1U)
-    {
-        RMP_COVERAGE_MARKER();
-        RMP_Sched_Unlock();
-        return RMP_ERR_OPER;
-    }
-    else
-    {
-        /* No action required */
-        RMP_COVERAGE_MARKER();
-    }
-    
-    return _RMP_Sem_Pend_Core(Semaphore, Slice);
-}
-/* End Function:RMP_Sem_Pend_Unlock ******************************************/
-
-/* Function:RMP_Sem_Abort *****************************************************
-Description : Abort the waiting of one thread on a semaphore.
-Input       : volatile struct RMP_Thd* Thread - The pointer to the thread.
-Output      : None.
-Return      : rmp_ret_t - If successful, 0; or an error code.
-******************************************************************************/
-rmp_ret_t RMP_Sem_Abort(volatile struct RMP_Thd* Thread)
-{
-    /* Check thread pointer */
-    if(Thread==RMP_NULL)
-    {
-        RMP_COVERAGE_MARKER();
-        return RMP_ERR_THD;
-    }
-    else
-    {
-        RMP_COVERAGE_MARKER();
-        /* No action required */
-    }
-
-    RMP_Sched_Lock();
-    
-    /* Check if the thread is in use */
-    if(RMP_THD_STATE(Thread->State)==RMP_THD_FREE)
-    {
-        RMP_COVERAGE_MARKER();
-        RMP_Sched_Unlock();
-        return RMP_ERR_THD;
-    }
-    else
-    {
-        RMP_COVERAGE_MARKER();
-        /* No action required */
-    }
-    
-    /* Is it waiting on a semaphore? If no, we abort and return an error code */
-    if((RMP_THD_STATE(Thread->State)!=RMP_THD_SEMBLK)&&
-       (RMP_THD_STATE(Thread->State)!=RMP_THD_SEMDLY))
-    {
-        RMP_COVERAGE_MARKER();
-        RMP_Sched_Unlock();
-        return RMP_ERR_STATE;
-    }
-    else
-    {
-        RMP_COVERAGE_MARKER();
-        /* No action required */
-    }
-
-    /* Waiting for a semaphore. We abort it and return */
-    RMP_List_Del(Thread->Run_Head.Prev, Thread->Run_Head.Next);
-    if(RMP_THD_STATE(Thread->State)==RMP_THD_SEMDLY)
-    {
-        RMP_COVERAGE_MARKER();
-        RMP_List_Del(Thread->Dly_Head.Prev, Thread->Dly_Head.Next);
-    }
-    else
-    {
-        RMP_COVERAGE_MARKER();
-        /* No action required */
-    }
-    
-    RMP_THD_STATE_SET(Thread->State,RMP_THD_RUNNING);
-    /* Set to running if not suspended */
-    _RMP_Run_Ins(Thread);
-    
-    Thread->Retval=RMP_ERR_OPER;
-    RMP_Sched_Unlock();
-    return 0;
-}
-/* End Function:RMP_Sem_Abort ************************************************/
 
 /* Function:_RMP_Sem_Unblock **************************************************
 Description : Unblock a thread from the semaphore's waitlist.
@@ -2744,9 +2579,6 @@ static void _RMP_Sem_Unblock(volatile struct RMP_Sem* Semaphore)
     /* Set to running if not suspended */
     RMP_THD_STATE_SET(Thread->State, RMP_THD_RUNNING);
     _RMP_Run_Ins(Thread);
-
-    /* Finally, return success on unblock */
-    Thread->Retval=0;
 }
 /* End Function:_RMP_Sem_Unblock *********************************************/
 
@@ -3027,6 +2859,228 @@ rmp_ret_t RMP_Sem_Bcst_ISR(volatile struct RMP_Sem* Semaphore)
 }
 /* End Function:RMP_Sem_Bcst_ISR *********************************************/
 
+/* Function:_RMP_Sem_Pend_Core ************************************************
+Description : Pend on the semaphore, trying to get one. This is the core logic.
+              When this is entered, the scheduler shall be locked.
+Input       : volatile struct RMP_Sem* Semaphore - The pointer to the semaphore.
+              rmp_ptr_t Slice - The number of slices to wait.
+Output      : None.
+Return      : rmp_ret_t - If successful, the current semaphore number; or an error code.
+******************************************************************************/
+static rmp_ret_t _RMP_Sem_Pend_Core(volatile struct RMP_Sem* Semaphore,
+                                    rmp_ptr_t Slice)
+{
+    volatile struct RMP_Thd* Thd_Cur;
+    
+    /* Cache volatile current thread */
+    Thd_Cur=RMP_Thd_Cur;
+    
+    /* Check if the semaphore is in use */
+    if(Semaphore->State!=RMP_SEM_USED)
+    {
+        RMP_COVERAGE_MARKER();
+        RMP_Sched_Unlock();
+        return RMP_ERR_SEM;
+    }
+    else
+    {
+        RMP_COVERAGE_MARKER();
+        /* No action required */
+    }
+    
+    /* Check if we can get one immediately */
+    if(Semaphore->Cur_Num!=0U)
+    {
+        RMP_COVERAGE_MARKER();
+        Semaphore->Cur_Num--;
+        RMP_Sched_Unlock();
+        return (rmp_ret_t)Semaphore->Cur_Num;
+    }
+    else
+    {
+        RMP_COVERAGE_MARKER();
+        /* Cannot get one, we need to block */
+        if(Slice==0U)
+        {
+            RMP_COVERAGE_MARKER();
+            RMP_Sched_Unlock();
+            return RMP_ERR_OPER;
+        }
+        else
+        {
+            RMP_COVERAGE_MARKER();
+            /* When abort, an error code will be supplied instead */
+            Thd_Cur->Retval=0;
+        }
+
+        /* We must be running - place into waitlist now */
+        _RMP_Run_Del(Thd_Cur);
+        RMP_List_Ins(&(Thd_Cur->Run_Head), Semaphore->Wait_List.Prev, &(Semaphore->Wait_List));
+        
+        if(Slice<RMP_SLICE_MAX)
+        {
+            RMP_COVERAGE_MARKER();
+            _RMP_Dly_Ins(Thd_Cur, Slice);
+            RMP_THD_STATE_SET(Thd_Cur->State, RMP_THD_SEMDLY);
+        }
+        else
+        {
+            RMP_COVERAGE_MARKER();
+            RMP_THD_STATE_SET(Thd_Cur->State, RMP_THD_SEMBLK);
+        }
+    }
+    
+    RMP_Sched_Unlock();
+
+    /* Retval might be updated */
+    return Thd_Cur->Retval;
+}
+/* End Function:_RMP_Sem_Pend_Core *******************************************/
+
+/* Function:RMP_Sem_Pend ******************************************************
+Description : Pend on the semaphore, trying to get one.
+Input       : volatile struct RMP_Sem* Semaphore - The pointer to the semaphore.
+              rmp_ptr_t Slice - The number of slices to wait.
+Output      : None.
+Return      : rmp_ret_t - If successful, the current semaphore number; or an error code.
+******************************************************************************/
+rmp_ret_t RMP_Sem_Pend(volatile struct RMP_Sem* Semaphore,
+                       rmp_ptr_t Slice)
+{
+    /* Check semaphore pointer */
+    if(Semaphore==RMP_NULL)
+    {
+        RMP_COVERAGE_MARKER();
+        return RMP_ERR_SEM;
+    }
+    else
+    {
+        RMP_COVERAGE_MARKER();
+        /* No action required */
+    }
+    
+    RMP_Sched_Lock();
+    
+    return _RMP_Sem_Pend_Core(Semaphore, Slice);
+}
+/* End Function:RMP_Sem_Pend *************************************************/
+
+/* Function:RMP_Sem_Pend_Unlock ***********************************************
+Description : Pend on the semaphore, trying to get one. When we enter this
+              function, the scheduler shall be locked, and it would be auto-
+              unlocked when we exit.
+Input       : volatile struct RMP_Sem* Semaphore - The pointer to the semaphore.
+              rmp_ptr_t Slice - The number of slices to wait.
+Output      : None.
+Return      : rmp_ret_t - If successful, the current semaphore number; or an error code.
+******************************************************************************/
+rmp_ret_t RMP_Sem_Pend_Unlock(volatile struct RMP_Sem* Semaphore,
+                              rmp_ptr_t Slice)
+{
+    /* Check semaphore pointer */
+    if(Semaphore==RMP_NULL)
+    {
+        RMP_COVERAGE_MARKER();
+        RMP_Sched_Unlock();
+        return RMP_ERR_SEM;
+    }
+    else
+    {
+        RMP_COVERAGE_MARKER();
+        /* No action required */
+    }
+    
+    /* Check if the scheduler is locked just once; no more, no less */
+    if(RMP_Sched_Lock_Cnt!=1U)
+    {
+        RMP_COVERAGE_MARKER();
+        RMP_Sched_Unlock();
+        return RMP_ERR_OPER;
+    }
+    else
+    {
+        /* No action required */
+        RMP_COVERAGE_MARKER();
+    }
+    
+    return _RMP_Sem_Pend_Core(Semaphore, Slice);
+}
+/* End Function:RMP_Sem_Pend_Unlock ******************************************/
+
+/* Function:RMP_Sem_Abort *****************************************************
+Description : Abort the waiting of one thread on a semaphore.
+Input       : volatile struct RMP_Thd* Thread - The pointer to the thread.
+Output      : None.
+Return      : rmp_ret_t - If successful, 0; or an error code.
+******************************************************************************/
+rmp_ret_t RMP_Sem_Abort(volatile struct RMP_Thd* Thread)
+{
+    /* Check thread pointer */
+    if(Thread==RMP_NULL)
+    {
+        RMP_COVERAGE_MARKER();
+        return RMP_ERR_THD;
+    }
+    else
+    {
+        RMP_COVERAGE_MARKER();
+        /* No action required */
+    }
+
+    RMP_Sched_Lock();
+    
+    /* Check if the thread is in use */
+    if(RMP_THD_STATE(Thread->State)==RMP_THD_FREE)
+    {
+        RMP_COVERAGE_MARKER();
+        RMP_Sched_Unlock();
+        return RMP_ERR_THD;
+    }
+    else
+    {
+        RMP_COVERAGE_MARKER();
+        /* No action required */
+    }
+    
+    /* Is it waiting on a semaphore? If no, we abort and return an error code */
+    if((RMP_THD_STATE(Thread->State)!=RMP_THD_SEMBLK)&&
+       (RMP_THD_STATE(Thread->State)!=RMP_THD_SEMDLY))
+    {
+        RMP_COVERAGE_MARKER();
+        RMP_Sched_Unlock();
+        return RMP_ERR_STATE;
+    }
+    else
+    {
+        RMP_COVERAGE_MARKER();
+        /* No action required */
+    }
+
+    /* Waiting for a semaphore. We abort it and return */
+    RMP_List_Del(Thread->Run_Head.Prev, Thread->Run_Head.Next);
+    if(RMP_THD_STATE(Thread->State)==RMP_THD_SEMDLY)
+    {
+        RMP_COVERAGE_MARKER();
+        RMP_List_Del(Thread->Dly_Head.Prev, Thread->Dly_Head.Next);
+    }
+    else
+    {
+        RMP_COVERAGE_MARKER();
+        /* No action required */
+    }
+    
+    RMP_THD_STATE_SET(Thread->State,RMP_THD_RUNNING);
+    /* Set to running if not suspended */
+    _RMP_Run_Ins(Thread);
+    
+    /* Supply abort error code */
+    Thread->Retval=RMP_ERR_OPER;
+    RMP_Sched_Unlock();
+    
+    return 0;
+}
+/* End Function:RMP_Sem_Abort ************************************************/
+
 /* Function:RMP_Sem_Cnt *******************************************************
 Description : Get the number of semaphores.
 Input       : volatile struct RMP_Sem* Semaphore - The pointer to the semaphore.
@@ -3052,7 +3106,7 @@ rmp_ret_t RMP_Sem_Cnt(volatile struct RMP_Sem* Semaphore)
     RMP_Sched_Lock();
     
     /* Check if the semaphore is in use */
-	if(Semaphore->State!=RMP_SEM_USED)
+    if(Semaphore->State!=RMP_SEM_USED)
     {
         RMP_COVERAGE_MARKER();
         RMP_Sched_Unlock();
@@ -3077,7 +3131,7 @@ Description : The entry of the user thread. This is the first user thread that
               The user threads should never return.
 Input       : None.
 Output      : None.
-Return      : int - This function never returns.
+Return      : None.
 ******************************************************************************/
 void RMP_Init(void)
 {
@@ -4385,7 +4439,7 @@ rmp_ret_t RMP_Msgq_Crt(volatile struct RMP_Msgq* Queue)
         RMP_COVERAGE_MARKER();
         /* No action required */
     }
-		
+        
     RMP_Sched_Lock();
     
     /* Check if the queue is in use */
