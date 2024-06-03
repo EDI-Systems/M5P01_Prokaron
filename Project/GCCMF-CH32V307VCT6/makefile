@@ -120,7 +120,7 @@ mkdir:
 # Assemble ASM sources
 %.o:%.s
 	@echo "    AS      $(notdir $<)"
-	@$(AS) -c $(CPU) $(AFLAG) $(WFLAGS) $(DFLAGS) $(INCS) -MMD -MP -MF"$(DEP)" -MT"$(DEP)" "$<" -o "$(OBJ)"
+	@$(AS) -c $(CPU) $(AFLAGS) $(WFLAGS) $(DFLAGS) $(INCS) -MMD -MP -MF"$(DEP)" -MT"$(DEP)" "$<" -o "$(OBJ)"
 
 # Link ELF target file and print size
 $(TARGET).elf:$(COBJS) $(AOBJS)
