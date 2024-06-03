@@ -1,4 +1,4 @@
-Target Path=obj\RMP.hex
+Target Path=Debug\RMP.hex
 Address=0x08000000
 Erase All=true
 Program=true
@@ -14,3 +14,4 @@ Vendor=WCH
 MCU=CH32V307VCT6
 Mcu Type=CH32V30x
 Link=WCH-Link
+CLKSpeed=1
