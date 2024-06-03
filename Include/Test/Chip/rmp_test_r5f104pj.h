@@ -9,7 +9,7 @@ Description : The testbench for R5F104PJ.
               TDR01 - Generate interrupts, @ Fcpu, about every 10000 clock cycles.
               TDR02 - Clock counting timer, @ Fcpu, free running.
 
-CC-RL V1.13.00 (-memory_model=small -far_rom -Onothing -signed_char)
+CC-RL V1.13.00 (-memory_model=small -far_rom -O3 -signed_char)
     ___   __  ___ ___
    / _ \ /  |/  // _ \       Simple real-time kernel
   / , _// /|_/ // ___/       Standard benchmark test
