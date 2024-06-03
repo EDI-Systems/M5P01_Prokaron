@@ -67,7 +67,7 @@ typedef rmp_s16_t rmp_ret_t;
 /* System macros *************************************************************/
 /* Compiler "extern" keyword setting */
 #define EXTERN                          extern
-/* Empty ascending stack of rmp_ptr_t, word-addressing with 1-word alignment */
+/* Full descending stack of rmp_ptr_t, word-addressing with 1-word alignment */
 #define RMP_WORD_ORDER                  (4U)
 #define RMP_STACK_TYPE                  RMP_STACK_FULL_DESCEND
 #define RMP_STACK_ALIGN                 (1U)
