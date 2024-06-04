@@ -33,10 +33,10 @@ RMP_RL78_INT_SAVE    .MACRO
     MOV                 X,A
     MOV                 A,CS
     PUSH                AX
-    MOVW                AX,SP           ; Mov sp to ax
-    MOVW                !_RMP_SP_Cur, AX
+    MOVW                AX,SP
+    MOVW                !_RMP_SP_Cur,AX
     MOVW                AX,!__RMP_RL78_SP_Kern
-    MOVW                SP, AX
+    MOVW                SP,AX
     ONEB                !_RMP_RL78_Int_Act
     .ENDM
 ;/* Load everything from stack, and deal with pending yields if there is *****/

@@ -14,7 +14,7 @@
     .EXTERN             _RMP_Thd_Cur
     ;/* The stack address of current thread */
     .EXTERN             _RMP_SP_Cur
-    ;The kernel s
+    ;/* The kernel sp */
     .EXTERN             __RMP_RL78_SP_Kern
 ;/* End Import ***************************************************************/
             
@@ -53,22 +53,22 @@ _RMP_Int_Enable:
 
 ;/* Function:_RMP_Start *******************************************************
 ;Description : Jump to the user function and will never return from it.
-;Input       : rmp_ptr_t Entry - PC , rmp_ptr_t Stack - SP
+;Input       : rmp_ptr_t Entry AX - PC
+;              rmp_ptr_t Stack BC - SP
 ;Output      : None.
 ;Return      : None.
 ;*****************************************************************************/
 __RMP_Start:
-    ;rmp_ptr_t Entry in AX   rmp_ptr_t Stack in BC
-   ;Save kernel stack
+    ;/* Save kernel stack */
     MOVW                DE,AX
     MOVW                AX,SP
     MOVW                !__RMP_RL78_SP_Kern,AX
-    ;Make up return address
+    ;/* Make up return address */
     MOVW                AX,BC
     MOVW                SP,AX
     MOVW                AX,DE
     BR                  AX
-    ; Dummy return
+    ;/* Dummy return */
     RET
 ;/* End Function:_RMP_Start **************************************************/
 
@@ -79,23 +79,23 @@ __RMP_Start:
 ;Return      : None.
 ;*****************************************************************************/
 __RMP_RL78_Yield:
-    ;Disable all interrupts
+    ;/* Disable all interrupts */
     DI
-    ;Leave hole for PSW/PC to fill in later on
+    ;/* Leave hole for PSW/PC to fill in later on */
     PUSH                AX
     PUSH                AX
-    ;Push all GP regs
+    ;/* Push all GP regs */
     PUSH                AX
     PUSH                BC
     PUSH                DE
     PUSH                HL
-    ;Push segment regs
+    ;/* Push segment regs */
     MOV                 A,ES
     MOV                 X,A
     MOV                 A,CS
     PUSH                AX
 
-    ;Fill PC/PSW back in with interrupt enabled
+    ;/* Fill PC/PSW back in with interrupt enabled */
     MOVW                DE, SP
     MOVW                AX, #LOWW(__RMP_RL78_Yield_Skip)
     MOVW                [DE+10],AX
@@ -104,9 +104,9 @@ __RMP_RL78_Yield:
     MOV                 X,#LOW(HIGHW(__RMP_RL78_Yield_Skip))
     MOVW                [DE+12],AX
 
-    ;Choose highest priority ready thread with kernel stack
+    ;/* Choose highest priority ready thread with kernel stack */
     MOVW                AX,SP
-    ;Load kernel SP
+    ;/* Load kernel SP */
     MOVW                !_RMP_SP_Cur, AX
     MOVW                AX,!__RMP_RL78_SP_Kern
     MOVW                SP, AX
@@ -114,17 +114,17 @@ __RMP_RL78_Yield:
     MOVW                AX,!_RMP_SP_Cur
     MOVW                SP, AX
 
-    ;Pop segment regs
+    ;/* Pop segment regs */
     POP                 AX
     MOV                 CS,A
     MOV                 A,X
     MOV                 ES,A
-    ;Pop all GP regs
+    ;/* Pop all GP regs */
     POP                 HL
     POP                 DE
     POP                 BC
     POP                 AX
-    ;Return from simulated interrupt
+    ;/* Return from simulated interrupt */
     RETI
 __RMP_RL78_Yield_Skip:
     RET

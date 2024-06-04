@@ -73,7 +73,9 @@ Return      : None.
 void _RMP_Lowlvl_Init(void)
 {
     RMP_Int_Disable();
+
     RMP_RL78_LOWLVL_INIT();
+
     RMP_RL78_Int_Act=0U;
     _RMP_RL78_Yield_Pend=0U;
 }
@@ -127,6 +129,7 @@ Return      : None.
 void _RMP_RL78_Tim_Handler(void)
 {
     RMP_RL78_TIM_CLR();
+
     _RMP_Tim_Handler(1U);
 }
 /* End Function:_RMP_RL78_Tim_Handler ****************************************/

@@ -152,9 +152,9 @@ struct RMP_RL78_Stack
 
 /*****************************************************************************/
 __EXTERN__ rmp_ptr_t _RMP_RL78_SP_Kern;
+
 __EXTERN__ volatile rmp_u8_t RMP_RL78_Int_Act;
 __EXTERN__ volatile rmp_u8_t _RMP_RL78_Yield_Pend;
-
 /*****************************************************************************/
 
 /* End Public Variable *******************************************************/
@@ -164,6 +164,7 @@ __EXTERN__ volatile rmp_u8_t _RMP_RL78_Yield_Pend;
 /* Interrupts */
 EXTERN void RMP_Int_Disable(void);
 EXTERN void RMP_Int_Enable(void);
+
 EXTERN void _RMP_Start(rmp_ptr_t Entry, rmp_ptr_t Stack);
 EXTERN void _RMP_RL78_Yield(void);
 EXTERN void _RMP_Yield(void);

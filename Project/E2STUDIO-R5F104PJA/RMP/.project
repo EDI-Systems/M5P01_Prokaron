@@ -35,6 +35,11 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>Lib</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>Platform</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -48,6 +53,26 @@
 			<name>Kernel/rmp_kernel.c</name>
 			<type>1</type>
 			<locationURI>PARENT-5-PROJECT_LOC/M5P01_Prokaron/Source/Kernel/rmp_kernel.c</locationURI>
+		</link>
+		<link>
+			<name>Lib/cstart.asm</name>
+			<type>1</type>
+			<locationURI>PARENT-4-PROJECT_LOC/M0A00_Library/RL78/Lib/cstart.asm</locationURI>
+		</link>
+		<link>
+			<name>Lib/iodefine.h</name>
+			<type>1</type>
+			<locationURI>PARENT-4-PROJECT_LOC/M0A00_Library/RL78/Lib/iodefine.h</locationURI>
+		</link>
+		<link>
+			<name>Lib/r_systeminit.c</name>
+			<type>1</type>
+			<locationURI>PARENT-4-PROJECT_LOC/M0A00_Library/RL78/Lib/r_systeminit.c</locationURI>
+		</link>
+		<link>
+			<name>Lib/stkinit.asm</name>
+			<type>1</type>
+			<locationURI>PARENT-4-PROJECT_LOC/M0A00_Library/RL78/Lib/stkinit.asm</locationURI>
 		</link>
 		<link>
 			<name>Platform/rmp_platform_rl78.c</name>
