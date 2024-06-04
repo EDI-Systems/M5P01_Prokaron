@@ -29,7 +29,7 @@ Description: The configuration file for R5F104PJ.
 /* What is the Systick value? */
 #define RMP_RL78_SYSTICK_VAL        (1000U)
 
-/*lowlevel init mainly in r_systemint.c */
+/* Lowlevel init */
 #define RMP_RL78_LOWLVL_INIT() \
 { \
     PIOR0=0x00U; \
