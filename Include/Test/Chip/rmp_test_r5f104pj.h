@@ -38,7 +38,7 @@ ISR Blocking message queue         : 964 / 1005 / 917
 /* How to read counter */
 #define RMP_CNT_READ()      (~TCR02)
 /* Are we testing the memory pool? */
- #define TEST_MEM_POOL 4096
+#define TEST_MEM_POOL 4096
 /* Are we doing minimal measurements? */
 /* #define MINIMAL_SIZE */
 /* RL78 timers are 16 bits */
@@ -66,7 +66,8 @@ Output      : None.
 Return      : None.
 ******************************************************************************/
 void Timer_Init(void)
-{   /* supplies input clock */
+{
+    /* Supplies input clock */
     TAU0EN=1U;
     TPS0=0x0100U|0x8000U;
     TT0=0x0001U|0x0002U|0x0004U|0x0008U|0x0200U|0x0800U;
@@ -106,15 +107,14 @@ void Timer_Init(void)
     TOL0&=~0x0004U;
     TO0&=~0x0004U;
     TOE0&=~0x0004U;
-    /* start Channel 0 and 1 and 2 */
+    /* Start Channel 0 and 1 and 2 */
     TS0|=0x0001U;
     TS0|=0x0002U;
     TS0|=0x0004U;
-    /* enable INTTM00 interrupt */
+    /* Enable INTTM00 interrupt */
     TMIF00=0U;
     TMMK00=0U;
 }
-
 /* End Function:Timer_Init ***************************************************/
 
 /* Function:Int_Init **********************************************************
@@ -125,14 +125,16 @@ Output      : None.
 Return      : None.
 ******************************************************************************/
 void Int_Init(void)
-{   /* clear INTTM01 interrupt flag and enable INTTM01 interrupt */
+{
+    /* Clear INTTM01 interrupt flag and enable INTTM01 interrupt */
     TMIF01=0U;
     TMMK01=0U;
 }
-/* The interrupt handler */
 
+/* The interrupt handler */
 void TDR01_IRQHandler(void)
-{   /* Clear interrupt request flag */
+{
+    /* Clear interrupt request flag */
     TMIF01=0;
     Int_Handler();
 }

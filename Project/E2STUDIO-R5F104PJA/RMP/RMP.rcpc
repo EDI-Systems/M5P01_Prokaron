@@ -15,10 +15,10 @@
         <Path>..\..\..\Source\Kernel\rmp_kernel.c</Path>
       </Category>
       <Category Name="Lib">
-        <Path>..\..\..\..\M0A00_Library\RL78\Lib\cstart.asm</Path>
-        <Path>..\..\..\..\M0A00_Library\RL78\Lib\iodefine.h</Path>
-        <Path>..\..\..\..\M0A00_Library\RL78\Lib\r_systeminit.c</Path>
-        <Path>..\..\..\..\M0A00_Library\RL78\Lib\stkinit.asm</Path>
+        <Path>..\..\..\..\M0A00_Library\RL78_Library\G14\cstart.asm</Path>
+        <Path>..\..\..\..\M0A00_Library\RL78_Library\G14\iodefine.h</Path>
+        <Path>..\..\..\..\M0A00_Library\RL78_Library\G14\r_systeminit.c</Path>
+        <Path>..\..\..\..\M0A00_Library\RL78_Library\G14\stkinit.asm</Path>
       </Category>
       <Category Name="Platform">
         <Path>..\..\..\Source\Platform\RL78\rmp_platform_rl78.c</Path>
@@ -39,7 +39,7 @@
           <Option>-I "${ProjDirPath}\"</Option>
           <Option>-I "${ProjDirPath}\..\\..\..\Include"</Option>
           <Option>-I "${ProjDirPath}\..\\..\..\Include\Platform\RL78"</Option>
-          <Option>-I "${ProjDirPath}\..\\..\..\..\M0A00_Library\RL78\Lib"</Option>
+          <Option>-I "${ProjDirPath}\..\\..\..\..\M0A00_Library\RL78_Library\G14"</Option>
           <Option>-character_set=utf8</Option>
           <Option>-g</Option>
           <Option>-o ${workspace_loc}\${ProjName}/${ConfigName}</Option>
@@ -56,7 +56,7 @@
           <Option>-I "${ProjDirPath}\"</Option>
           <Option>-I "${ProjDirPath}\..\\..\..\Include"</Option>
           <Option>-I "${ProjDirPath}\..\\..\..\Include\Platform\RL78"</Option>
-          <Option>-I "${ProjDirPath}\..\\..\..\..\M0A00_Library\RL78\Lib"</Option>
+          <Option>-I "${ProjDirPath}\..\\..\..\..\M0A00_Library\RL78_Library\G14"</Option>
           <Option>-character_set=utf8</Option>
           <Option>-g</Option>
           <Option>-o "${ProjDirPath}/${ConfigName}"</Option>
@@ -109,11 +109,11 @@
           <IncludePathForC>"${ProjDirPath}\"</IncludePathForC>
           <IncludePathForC>"${ProjDirPath}\..\\..\..\Include"</IncludePathForC>
           <IncludePathForC>"${ProjDirPath}\..\\..\..\Include\Platform\RL78"</IncludePathForC>
-          <IncludePathForC>"${ProjDirPath}\..\\..\..\..\M0A00_Library\RL78\Lib"</IncludePathForC>
+          <IncludePathForC>"${ProjDirPath}\..\\..\..\..\M0A00_Library\RL78_Library\G14"</IncludePathForC>
           <IncludePathForAsm>"${ProjDirPath}\"</IncludePathForAsm>
           <IncludePathForAsm>"${ProjDirPath}\..\\..\..\Include"</IncludePathForAsm>
           <IncludePathForAsm>"${ProjDirPath}\..\\..\..\Include\Platform\RL78"</IncludePathForAsm>
-          <IncludePathForAsm>"${ProjDirPath}\..\\..\..\..\M0A00_Library\RL78\Lib"</IncludePathForAsm>
+          <IncludePathForAsm>"${ProjDirPath}\..\\..\..\..\M0A00_Library\RL78_Library\G14"</IncludePathForAsm>
         </CommonOptions>
       </BuildMode>
     </BuildOptions>

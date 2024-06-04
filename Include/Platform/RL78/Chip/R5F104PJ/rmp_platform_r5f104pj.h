@@ -87,7 +87,7 @@ while(0)
 
 #define RMP_RL78_PUTCHAR(CHAR) \
 { \
-    TXD1=CHAR; \
+    TXD1=(rmp_u8_t)(CHAR); \
     while(STIF1==0U); \
     STIF1=0U; \
 } \

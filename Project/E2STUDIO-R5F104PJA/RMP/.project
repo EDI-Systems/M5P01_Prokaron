@@ -57,22 +57,22 @@
 		<link>
 			<name>Lib/cstart.asm</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/M0A00_Library/RL78/Lib/cstart.asm</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/M0A00_Library/RL78_Library/G14/cstart.asm</locationURI>
 		</link>
 		<link>
 			<name>Lib/iodefine.h</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/M0A00_Library/RL78/Lib/iodefine.h</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/M0A00_Library/RL78_Library/G14/iodefine.h</locationURI>
 		</link>
 		<link>
 			<name>Lib/r_systeminit.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/M0A00_Library/RL78/Lib/r_systeminit.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/M0A00_Library/RL78_Library/G14/r_systeminit.c</locationURI>
 		</link>
 		<link>
 			<name>Lib/stkinit.asm</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/M0A00_Library/RL78/Lib/stkinit.asm</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/M0A00_Library/RL78_Library/G14/stkinit.asm</locationURI>
 		</link>
 		<link>
 			<name>Platform/rmp_platform_rl78.c</name>
