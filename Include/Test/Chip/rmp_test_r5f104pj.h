@@ -9,23 +9,24 @@ Description : The testbench for R5F104PJ.
               TDR01 - Generate interrupts, @ Fcpu, about every 10000 clock cycles.
               TDR02 - Clock counting timer, @ Fcpu, free running.
 
-CC-RL V1.13.00 (-memory_model=small -far_rom -Onothing -signed_char)
+CC-RL V1.13.00 (-memory_model=small -far_rom -Olite -signed_char)
     ___   __  ___ ___
    / _ \ /  |/  // _ \       Simple real-time kernel
   / , _// /|_/ // ___/       Standard benchmark test
  /_/|_|/_/  /_//_/
 ====================================================
 Test (number in CPU cycles)        : AVG / MAX / MIN
-Yield                              : 322 / 322 / 322
-Mailbox                            : 631 / 692 / 594
-Semaphore                          : 647 / 707 / 609
-FIFO                               : 368 / 690 / 347
-Message queue                      : 1149 / 1180 / 1082
-Blocking message queue             : 1515 / 1524 / 1426
-ISR Mailbox                        : 600 / 668 / 570
-ISR Semaphore                      : 636 / 697 / 599
-ISR Message queue                  : 1034 / 1072 / 974
-ISR Blocking message queue         : 1262 / 1293 / 1195
+Yield                              : 261 / 261 / 261
+Mailbox                            : 565 / 624 / 536
+Semaphore                          : 520 / 581 / 493
+FIFO                               : 308 / 569 / 292
+Message queue                      : 924 / 963 / 875
+Blocking message queue             : 1225 / 1249 / 1161
+Memory allocation/free pair        : 1854 / 1995 / 1733
+ISR Mailbox                        : 539 / 600 / 512
+ISR Semaphore                      : 500 / 561 / 473
+ISR Message queue                  : 789 / 837 / 749
+ISR Blocking message queue         : 964 / 1005 / 917
 ******************************************************************************/
 
 /* Include *******************************************************************/
@@ -37,7 +38,7 @@ ISR Blocking message queue         : 1262 / 1293 / 1195
 /* How to read counter */
 #define RMP_CNT_READ()      (~TCR02)
 /* Are we testing the memory pool? */
-/* #define TEST_MEM_POOL */
+ #define TEST_MEM_POOL 4096
 /* Are we doing minimal measurements? */
 /* #define MINIMAL_SIZE */
 /* RL78 timers are 16 bits */
@@ -129,6 +130,7 @@ void Int_Init(void)
     TMMK01=0U;
 }
 /* The interrupt handler */
+
 void TDR01_IRQHandler(void)
 {   /* Clear interrupt request flag */
     TMIF01=0;

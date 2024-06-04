@@ -45,7 +45,7 @@
           <Option>-o ${workspace_loc}\${ProjName}/${ConfigName}</Option>
           <Option>-memory_model=small</Option>
           <Option>-far_rom</Option>
-          <Option>-Onothing</Option>
+          <Option>-Olite</Option>
           <Option>-signed_char</Option>
           <Option>-lang=c</Option>
         </CompileOptions>

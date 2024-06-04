@@ -28,8 +28,6 @@ Description : The platform specific file for RL78.
 /* Function:_RMP_Stack_Init ***************************************************
 Description : Initiate the process stack when trying to start a process. Never
               call this function in user application.
-              Need to pretend that we're returning from a context switch:
-              HL,DE,BC,AX,
 Input       : rmp_ptr_t Stack - The stack address of the thread.
               rmp_ptr_t Size - The stack size of the thread.
               rmp_ptr_t Entry - The entry address of the thread.
@@ -73,10 +71,9 @@ Output      : None.
 Return      : None.
 ******************************************************************************/
 void _RMP_Lowlvl_Init(void)
-{    
-    RMP_RL78_LOWLVL_INIT();
-  
+{
     RMP_Int_Disable();
+    RMP_RL78_LOWLVL_INIT();
     RMP_RL78_Int_Act=0U;
     _RMP_RL78_Yield_Pend=0U;
 }
@@ -90,7 +87,7 @@ Return      : None.
 ******************************************************************************/
 void _RMP_Plat_Hook(void)
 {
-    RMP_Int_Enable();
+    /* Scheduler lock implemented with interrupt disabling */
 }
 /* End Function:_RMP_Plat_Hook ***********************************************/
 
