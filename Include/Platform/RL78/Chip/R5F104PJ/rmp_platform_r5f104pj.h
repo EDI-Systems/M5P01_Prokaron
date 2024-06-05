@@ -26,10 +26,14 @@ Description: The configuration file for R5F104PJ.
 /* The mask/unmask interrupt operations - can be adjusted to fit your own levels */
 #define RMP_INT_MASK()              RMP_Int_Disable()
 #define RMP_INT_UNMASK()            RMP_Int_Enable()
-/* What is the Systick value? */
-#define RMP_RL78_SYSTICK_VAL        (1000U)
 
-/* Lowlevel init */
+/* The tick timer value */
+#define RMP_RL78_TICK_VAL           (1600U)
+
+/* Other low-level initialization stuff - clock and serial. 
+ * This is the default initialization sequence. If you wish to supply
+ * your own, just redirect this macro to a custom function, or do your
+ * initialization stuff in the initialization hook (RMP_Start_Hook). */
 #define RMP_RL78_LOWLVL_INIT() \
 { \
     PIOR0=0x00U; \
