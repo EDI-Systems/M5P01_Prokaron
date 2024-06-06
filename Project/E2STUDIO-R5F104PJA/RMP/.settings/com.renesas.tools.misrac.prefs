@@ -1,0 +1,11 @@
+applyRule=Apply all rules
+eclipse.preferences.version=1
+exclusionRuleNumber=
+isMisracRuleCheck=false
+isUseCompilerSetting=false
+misra2004=true
+misra2012=false
+outputFormat=TXT Files (*.txt)
+ruleNumber=
+ruleNumberDescriptionFile=
+saveToFile=No save
