@@ -62,6 +62,16 @@ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
     Ctx->R3_MRL=0x0003U;
     Ctx->R4_MRH=0x0004U;
     Ctx->R5_BP=0x0005U;
+#if(RMP_UNSP_COP_SPV2!=0U)
+    Ctx->R8=0x0008U;
+    Ctx->R9=0x0009U;
+    Ctx->R10=0x0010U;
+    Ctx->R11=0x0011U;
+    Ctx->R12=0x0012U;
+    Ctx->R13=0x0013U;
+    Ctx->R14=0x0014U;
+    Ctx->R15=0x0015U;
+#endif
     
     return Ptr;
 }
