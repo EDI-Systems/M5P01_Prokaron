@@ -28,7 +28,7 @@ Description: The configuration file for R5F104PJ.
 #define RMP_INT_UNMASK()            RMP_Int_Enable()
 
 /* The tick timer value */
-#define RMP_RL78_TICK_VAL           (1600U)
+#define RMP_RL78_TICK_VAL           (16000U)
 
 /* Other low-level initialization stuff - clock and serial. 
  * This is the default initialization sequence. If you wish to supply
