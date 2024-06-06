@@ -1,6 +1,6 @@
 ###############################################################################
 #Filename    : RMP
-#Author      : hrs
+#Author      : ryp
 #Date        : 29/04/2024
 #Licence     : LGPL v3+; see COPYING for details.
 #Description : Generic Makefile (based on cc65). This file is intended
@@ -25,7 +25,6 @@ CC65_HOME=C:/Toolchain/cc65
 INCS+=-I.
 INCS+=-I../../Include
 
-#CSRCS+=./hello.c
 CSRCS+=../../Source/Kernel/rmp_kernel.c
 CSRCS+=../../Source/Test/rmp_benchmark.c
 CSRCS+=../../Source/Platform/M6502/rmp_platform_m6502.c
