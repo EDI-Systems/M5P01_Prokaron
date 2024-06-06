@@ -222,7 +222,7 @@ This software is an official work of EDI, and thus belongs to the **public domai
 |...          |...         |GCC   |TBD  |TBD  |TBD  |TBD  |TBD  |TBD  |TBD   |TBD  |TBD    |TBD   |TBD  |
 |CH32V307     |RV32IMAFC   |GCC   |TBD  |TBD  |TBD  |TBD  |TBD  |TBD  |TBD   |TBD  |TBD    |TBD   |TBD  |
 
-&ensp;&ensp;In contrast, RT-Linux 4.12's best context switch time on Cortex-M7 is bigger than 25000 cycles (note that has to run from FMC SDRAM due to its sheer size, so this is not fair comparison). This is measured with futex; if other forms of IPC such as pipes are used, this time is even longer.
+&ensp;&ensp;In contrast, RT-Linux 4.12's best context switch time on Cortex-M7 is bigger than 25000 cycles (it has to run from FMC SDRAM due to its sheer size, so this is not a fair comparison). This is measured with futex; if other forms of IPC such as pipes are used, this time is even longer.
 
 &ensp;&ensp;__No cheating methods__ (such as toolchain-specific peephole optimizations that harm portability, cooperative switches that don't invoke the scheduler, scheduler designs that are fast in average case but have unbounded WCET, or even RMS-style stackless coroutine switches) are used in the experiments, and the reported WCETs in test headers are real. Despite the fact that we list the average case values for generic comparisons, it is important to realize that __only WCETs matter__ in a RTOS; optimizations that help the average case but hurt the worst-case are never suitable for such kernels. If maximum speed is your utmost goal, __no system is faster than RMS or DOS__; the theoretical context switch time of the RMS is zero (when all tasks have a single state and are inlined), while DOS does not need context switches altogether because it only allows one execution flow.
 
@@ -292,3 +292,4 @@ This software is an official work of EDI, and thus belongs to the **public domai
 - Yihe Wang - Stable x86/linux/ptrace port.
 - Ran Zhang - C28x DSP port.
 - Kai Zhang - White-box testing.
+- Haotian Liu - RL78 port.

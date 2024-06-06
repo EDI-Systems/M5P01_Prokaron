@@ -292,3 +292,4 @@ Click **[HERE](README.md)** for English version.
 - 王逸鹤 - 稳定的x86/linux/ptrace移植。
 - 张然 - C28x数字信号处理器移植。
 - 张凯 - 白盒测试用例。
+- 刘皓天 - RL78的移植。
