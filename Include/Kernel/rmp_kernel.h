@@ -59,8 +59,8 @@ Description : The header file for the kernel.
 #define RMP_MSGQ_USED               (1U)
 
 /* States of blocking message queues */
-#define RMP_BMQ_FREE               	(0U)
-#define RMP_BMQ_USED               	(1U)
+#define RMP_BMQ_FREE                (0U)
+#define RMP_BMQ_USED                (1U)
 
 /* Error codes */
 /* This error is thread related */
