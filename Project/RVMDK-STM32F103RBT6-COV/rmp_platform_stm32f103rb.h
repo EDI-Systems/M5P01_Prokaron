@@ -18,7 +18,7 @@ Description: The configuration file for STM32F103RB.
 #define RMP_COVERAGE_LINE_NUM       (6144U)
 
 /* The maximum number of preemption priority levels in the system.
- * This parameter must be divisible by the word length - 32 is usually sufficient */
+ * This parameter must be divisible by the word length - 64 for coverage test */
 #define RMP_PREEMPT_PRIO_NUM        (64U)
 /* The maximum number of slices allowed */
 #define RMP_SLICE_MAX               (100000U)

@@ -1,9 +1,9 @@
 /******************************************************************************
-Filename   : rmp_platform_dspic33ep512.h
+Filename   : rmp_platform_pic24fj128.h
 Author     : pry
 Date       : 24/06/2017
 Licence    : The Unlicense; see LICENSE for details.
-Description: The configuration file for DSPIC33EP512.
+Description: The configuration file for PIC24FJ128.
 ******************************************************************************/
 
 /* Define ********************************************************************/
@@ -23,18 +23,18 @@ Description: The configuration file for DSPIC33EP512.
 /* Are we using custom hooks? */
 #define RMP_HOOK_EXTRA              (0U)
 /* The stack size of the init thread */
-#define RMP_INIT_STACK_SIZE         (1024U)
+#define RMP_INIT_STACK_SIZE         (256U)
 /* The mask/unmask interrupt operations */
 #define RMP_INT_MASK()              RMP_Int_Mask(0x01U)
 #define RMP_INT_UNMASK()            RMP_Int_Mask(0x00U)
 
 /* What is the tick timer tick value? */
-#define RMP_DSPIC_TICK_VAL          (60000U)
+#define RMP_DSPIC_TICK_VAL          (16000U)
 /* The exact CPU type */
-#define RMP_DSPIC_COP_24F_24H       (0U)
+#define RMP_DSPIC_COP_24F_24H       (1U)
 #define RMP_DSPIC_COP_24E           (0U)
 #define RMP_DSPIC_COP_30F_33F       (0U)
-#define RMP_DSPIC_COP_33E_33C       (1U)
+#define RMP_DSPIC_COP_33E_33C       (0U)
 
 /* Timer constants */
 #define RMP_DSPIC_TIM_ON            (0x8000U)
@@ -52,20 +52,23 @@ Description: The configuration file for DSPIC33EP512.
 #define RMP_DSPIC_LOWLVL_INIT() \
 do \
 { \
-    /* Configure PLL to pump device up to Fcpu=Fperi=Fcy=60MHz */ \
-    PLLFBD=238; \
-    CLKDIVbits.PLLPOST=0; \
-    CLKDIVbits.PLLPRE=6; \
-    while(OSCCONbits.COSC!=0b011); \
-    while(OSCCONbits.LOCK!=1); \
+    /* No need to configure PLL at all */ \
     /* Set the timer with IPL=1 */ \
-    T1CON=0; \
-    IPC0bits.T1IP=1; \
-    IFS0bits.T1IF=0; \
-    TMR1=0; \
+    T1CON=0U; \
+    IPC0bits.T1IP=1U; \
+    IFS0bits.T1IF=0U; \
+    TMR1=0U; \
     PR1=RMP_DSPIC_TICK_VAL; \
     T1CON=RMP_DSPIC_TIM_ON|RMP_DSPIC_TIM_PRESC; \
-    IEC0bits.T1IE=1; \
+    IEC0bits.T1IE=1U; \
+    /* UART2 RF5 115200-8-N-1 */ \
+    U2MODE=0U; \
+    U2STA=0U; \
+    U2MODEbits.BRGH=1U; \
+    /* Don't be fooled by PIC24 manual: Fcy=Fosc/2, Fcpu=Fperi=Fcy */ \
+    U2BRG=16000000UL/4UL/115200UL-1U; \
+    U2MODEbits.UARTEN=1U; \
+    U2STAbits.UTXEN=1U; \
 } \
 while(0)
 
@@ -75,10 +78,8 @@ while(0)
 #define RMP_DSPIC_PUTCHAR(CHAR) \
 do \
 { \
-    /*  DSPIC33 starter board have no UART, print to an array instead */ \
-    static rmp_ptr_t Ptr=0; \
-    volatile static rmp_s8_t Output[4096]; \
-    Output[Ptr++]=(CHAR); \
+    while(U2STAbits.UTXBF!=0U); \
+    U2TXREG=(CHAR); \
 } \
 while(0)
 /* End Define ****************************************************************/

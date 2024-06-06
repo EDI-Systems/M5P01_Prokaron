@@ -1,9 +1,10 @@
 /******************************************************************************
-Filename    : rmp_test_dspic33ep512.h
+Filename    : rmp_test_pic24fj128.h
 Author      : pry 
 Date        : 22/07/2017
 Licence     : The Unlicense; see LICENSE for details.
 Description : The testbench for DSPIC33EP512MU810.
+              This test is NOT particularly fast and can take up to one minute.
 
 XC16 2.10 -O3 (--spec hack enabled)
     ___   __  ___ ___
@@ -12,17 +13,17 @@ XC16 2.10 -O3 (--spec hack enabled)
  /_/|_|/_/  /_//_/
 ====================================================
 Test (number in CPU cycles)        : AVG / MAX / MIN
-Yield                              : 214 / 367 / 214
-Mailbox                            : 447 / 601 / 447
-Semaphore                          : 353 / 505 / 353
-FIFO                               : 219 / 373 / 219
-Message queue                      : 608 / 762 / 608
-Blocking message queue             : 851 / 1005 / 851
-Memory allocation/free pair        : 448 / 468 / 438
-ISR Mailbox                        : 368 / 519 / 368
-ISR Semaphore                      : 278 / 431 / 278
-ISR Message queue                  : 455 / 609 / 455
-ISR Blocking message queue         : 602 / 756 / 602
+Yield                              : 152 / 252 / 152
+Mailbox                            : 334 / 434 / 334
+Semaphore                          : 271 / 371 / 271
+FIFO                               : 168 / 268 / 168
+Message queue                      : 468 / 568 / 468
+Blocking message queue             : 654 / 754 / 654
+Memory allocation/free pair        : 379 / 393 / 370
+ISR Mailbox                        : 274 / 374 / 274
+ISR Semaphore                      : 213 / 313 / 213
+ISR Message queue                  : 352 / 452 / 352
+ISR Blocking message queue         : 461 / 561 / 461
 ******************************************************************************/
 
 /* Include *******************************************************************/
@@ -33,7 +34,7 @@ ISR Blocking message queue         : 602 / 756 / 602
 /* Counter read wrapper */
 #define RMP_CNT_READ()          (TMR2)
 /* Memory pool test switch */
-#define TEST_MEM_POOL           (8192U)
+#define TEST_MEM_POOL           (2048U)
 /* Minimal build switch */
 /* #define MINIMAL_SIZE */
 /* Pointer size switch */
@@ -42,49 +43,28 @@ ISR Blocking message queue         : 602 / 756 / 602
 typedef rmp_u16_t rmp_tim_t;
 
 /* The pragmas for PIC16 fuse */
-/* FGS */
-#pragma config GWRP=OFF               /* General Segment Write-Protect bit (General Segment may be written) */
-#pragma config GSS=OFF                /* General Segment Code-Protect bit (General Segment Code protect is disabled) */
-#pragma config GSSK=OFF               /* General Segment Key bits (General Segment Write Protection and Code Protection is Disabled) */
+/* CONFIG2 */
+#pragma config POSCMOD = XT             /* Primary Oscillator Select (HS Oscillator mode selected) */
+#pragma config OSCIOFNC = OFF           /* Primary Oscillator Output Function (OSC2/CLKO/RC15 functions as CLKO (FOSC/2)) */
+#pragma config FCKSM = CSDCMD           /* Clock Switching and Monitor (Clock switching and Fail-Safe Clock Monitor are disabled) */
+#pragma config FNOSC = PRIPLL           /* Oscillator Select (Primary Oscillator with PLL module (HSPLL, ECPLL)) */
+#pragma config IESO = ON                /* Internal External Switch Over Mode (IESO mode (Two-Speed Start-up) enabled) */
 
-/* FOSCSEL */
-#pragma config FNOSC=PRIPLL           /* Initial Oscillator Source Selection Bits (External Oscillator with PLL) */
-#pragma config IESO=ON                /* Two-speed Oscillator Start-up Enable bit (Start up device with FRC, then switch to user-selected oscillator source) */
-
-/* FOSC */
-#pragma config POSCMD=XT              /* Primary Oscillator Mode Select bits (XT Crystal Oscillator Mode). By default this is 50MHz */
-#pragma config OSCIOFNC=OFF           /* OSC2 Pin Function bit (OSC2 is clock output) */
-#pragma config IOL1WAY=OFF            /* Peripheral pin select configuration (Allow multiple reconfigurations) */
-#pragma config FCKSM=CSECMD           /* Clock Switching Mode bits (Clock switching is enabled,Fail-safe Clock Monitor is disabled) */
-
-/* FWDT */
-#pragma config WDTPOST=PS32768        /* Watchdog Timer Postscaler Bits (1:32,768) */
-#pragma config WDTPRE=PR128           /* Watchdog Timer Prescaler bit (1:128) */
-#pragma config PLLKEN=ON              /* PLL Lock Wait Enable bit (Clock switch to PLL source will wait until the PLL lock signal is valid.) */
-#pragma config WINDIS=OFF             /* Watchdog Timer Window Enable bit (Watchdog Timer in Non-Window mode) */
-#pragma config FWDTEN=OFF             /* Watchdog Timer Enable bit (Watchdog timer enabled/disabled by user software) */
-
-/* FPOR */
-#pragma config FPWRT=PWR128           /* Power-on Reset Timer Value Select bits (128ms) */
-#pragma config BOREN=ON               /* Brown-out Reset (BOR) Detection Enable bit (BOR is enabled) */
-#pragma config ALTI2C1=ON             /* Alternate I2C pins for I2C1 (ASDA1/ASCK1 pins are selected as the I/O pins for I2C1) */
-#pragma config ALTI2C2=ON             /* Alternate I2C pins for I2C2 (ASDA2/ASCK2 pins are selected as the I/O pins for I2C2) */
-
-/* FICD */
-#pragma config ICS=PGD1               /* ICD Communication Channel Select bits (Communicate on PGEC1 and PGED1) */
-#pragma config RSTPRI=PF              /* Reset Target Vector Select bit (Device will obtain reset instruction from Primary flash) */
-#pragma config JTAGEN=OFF             /* JTAG Enable bit (JTAG is disabled) */
-
-/* FAS */
-#pragma config AWRP=OFF               /* Auxiliary Segment Write-protect bit (Auxiliary program memory is not write-protected) */
-#pragma config APL=OFF                /* Auxiliary Segment Code-protect bit (Aux Flash Code protect is disabled) */
-#pragma config APLK=OFF               /* Auxiliary Segment Key bits (Aux Flash Write Protection and Code Protection is Disabled) */
+/* CONFIG1 */
+#pragma config WDTPS = PS32768          /* Watchdog Timer Postscaler (1:32,768) */
+#pragma config FWPSA = PR128            /* WDT Prescaler (Prescaler ratio of 1:128) */
+#pragma config WINDIS = ON              /* Watchdog Timer Window (Standard Watchdog Timer enabled,(Windowed-mode is disabled)) */
+#pragma config FWDTEN = OFF             /* Watchdog Timer Enable (Watchdog Timer is disabled) */
+#pragma config ICS = PGx2               /* Comm Channel Select (Emulator/debugger uses EMUC2/EMUD2) */
+#pragma config GWRP = OFF               /* General Code Segment Write Protect (Writes to program memory are allowed) */
+#pragma config GCP = OFF                /* General Code Segment Code Protect (Code protection is disabled) */
+#pragma config JTAGEN = OFF             /* JTAG Port Enable (JTAG port is disabled) */
 /* End Define ****************************************************************/
 
 /* Global ********************************************************************/
 #ifndef MINIMAL_SIZE
-rmp_ptr_t Stack_1[512];
-rmp_ptr_t Stack_2[512];
+rmp_ptr_t Stack_1[128];
+rmp_ptr_t Stack_2[128];
 
 void Int_Handler(void);
 /* End Global ****************************************************************/
