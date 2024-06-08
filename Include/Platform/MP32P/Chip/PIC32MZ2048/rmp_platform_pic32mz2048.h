@@ -1,5 +1,5 @@
 /******************************************************************************
-Filename   : rmp_platform_pic32mz2048efm100.h
+Filename   : rmp_platform_pic32mz2048.h
 Author     : pry
 Date       : 24/06/2017
 Licence    : The Unlicense; see LICENSE for details.
@@ -24,65 +24,64 @@ Description: The configuration file for PIC32MZ2048EFM100.
 /* The stack size of the init thread */
 #define RMP_INIT_STACK_SIZE         (2048U)
 /* The mask/unmask interrupt operations */
-#define RMP_INT_MASK()              RMP_Int_Disable()
-#define RMP_INT_UNMASK()            RMP_Int_Enable()
+#define RMP_INT_MASK()              RMP_Int_Mask(0x01U)
+#define RMP_INT_UNMASK()            RMP_Int_Mask(0x00U)
 
 /* What is the tick timer value? */
 #define RMP_MP32P_CORETIM_VAL       (20000U)
+/* What is the coprocessor type - set according to your bootcode */
+#define RMP_MP32P_COP_DSPASE        (1U)
+#define RMP_MP32P_COP_FR32          (0U)
+#define RMP_MP32P_COP_FR64          (1U)
 
 /* Other low-level initialization stuff - clock and serial. 
  * This is the default initialization sequence. If you wish to supply
  * your own, just redirect this macro to a custom function, or do your
  * initialization stuff in the initialization hook (RMP_Start_Hook). */
+EXTERN void _RMP_Set_Timer(rmp_ptr_t Tick);
 #define RMP_MP32P_LOWLVL_INIT() \
 do \
 { \
     /* set PBCLK2 to deliver 40MHz clock for PMP/I2C/UART/SPI */ \
-	SYSKEY=0xAA996655UL; \
-	SYSKEY=0x556699AAUL; \
-	/* 200MHz/5=40MHz */ \
-	PB2DIVbits.PBDIV=0b100; \
-	/* Timers use clock PBCLK3, set this to 40MHz */ \
-	PB3DIVbits.PBDIV=0b100; \
-	/* Ports use PBCLK4 */ \
-	PB4DIVbits.PBDIV=0b000; \
-	SYSKEY=0; \
-	/* Disable interrupts */ \
-	__builtin_disable_interrupts(); \
-	/* Enable multi-vector interrupts. */ \
-	_CP0_BIS_CAUSE(0x00800000U); \
-	INTCONSET=_INTCON_MVEC_MASK; \
-    /* We always use the timer 1 for interrupts */ \
+    SYSKEY=0xAA996655UL; \
+    SYSKEY=0x556699AAUL; \
+    /* 200MHz/5=40MHz */ \
+    PB2DIVbits.PBDIV=0x04U; \
+    /* Timers use clock PBCLK3, set this to 40MHz */ \
+    PB3DIVbits.PBDIV=0x04U; \
+    /* Ports use PBCLK4 */ \
+    PB4DIVbits.PBDIV=0x00U; \
+    SYSKEY=0U; \
+    /* Disable interrupts */ \
+    __builtin_disable_interrupts(); \
+    /* Enable multi-vector interrupts. */ \
+    _CP0_BIS_CAUSE(0x00800000UL); \
+    INTCONSET=_INTCON_MVEC_MASK; \
+    /* We always use the timer 1 for interrupts, IPL=1, subpriority 3 */ \
     /* Core Timer Interrupt _CORE_TIMER_VECTOR 0 OFF000<17:1> IFS0<0> IEC0<0> IPC0<4:2> IPC0<1:0> */ \
-    /* Core Software Interrupt 0 _CORE_SOFTWARE_0_VECTOR 1 OFF001<17:1> IFS0<1> IEC0<1> IPC0<12:10> IPC0<9:8> */ \
-    /* Clear the software interrupt flags */ \
-	IFS0CLR=_IFS0_CTIF_MASK|_IFS0_CS0IF_MASK; \
-	/* Set both interrupt priority - priority 1, subpriority 3, lowest allowed */ \
-	IPC0CLR=_IPC0_CTIP_MASK|_IPC0_CTIS_MASK| \
-            _IPC0_CS0IP_MASK|_IPC0_CS0IS_MASK; \
-	IPC0SET=(1<<_IPC0_CTIP_POSITION)|(0<<_IPC0_CTIS_POSITION)| \
-            (1<<_IPC0_CS0IP_POSITION)|(0<<_IPC0_CS0IS_POSITION); \
-	IEC0CLR=_IEC0_CTIE_POSITION|_IEC0_CS0IE_MASK; \
-	IEC0SET=(1<<_IEC0_CTIE_POSITION)|(1<<_IEC0_CS0IE_POSITION); \
-    /* Initialize UART1 */ \
-    U1MODE=0; \
-    U1STAbits.UTXEN=1; \
-    U1MODEbits.BRGH=1; \
-    U1BRG=86; /* 115200 - Refer to datasheet for calculation */ \
-    /* RPD15 used as TX port */ \
-    RPD15Rbits.RPD15R=1; \
-    U1MODESET=(1<<15); \
+    IFS0CLR=_IFS0_CTIF_MASK; \
+    IPC0CLR=_IPC0_CTIP_MASK|_IPC0_CTIS_MASK; \
+    IPC0SET=(1U<<_IPC0_CTIP_POSITION)|(0U<<_IPC0_CTIS_POSITION); \
+    IEC0CLR=_IEC0_CTIE_MASK; \
+    IEC0SET=(1U<<_IEC0_CTIE_POSITION); \
+    _RMP_Set_Timer(RMP_MP32P_CORETIM_VAL>>1); \
+    /* UART1 - RPD15 - 115200-8-N-1 */ \
+    U1MODE=0U; \
+    U1STAbits.UTXEN=1U; \
+    U1MODEbits.BRGH=1U; \
+    U1BRG=86U; \
+    RPD15Rbits.RPD15R=1U; \
+    U1MODESET=(1U<<15); \
 } \
 while(0)
 
-#define RMP_MP32P_CLEAR_SOFT_FLAG()    do{IFS0CLR=_IFS0_CS0IF_MASK;}while(0)
-#define RMP_MP32P_CLEAR_TIMER_FLAG()   do{IFS0CLR=_IFS0_CTIF_MASK;}while(0)
+#define RMP_MP32P_TIM_CLR()         (IFS0CLR=_IFS0_CTIF_MASK)
 
 /* This is for debugging output */
 #define RMP_MP32P_PUTCHAR(CHAR) \
 do \
 { \
-    while(U1STAbits.UTXBF!=0); \
+    while(U1STAbits.UTXBF!=0U); \
     U1TXREG=(CHAR); \
 } \
 while(0)

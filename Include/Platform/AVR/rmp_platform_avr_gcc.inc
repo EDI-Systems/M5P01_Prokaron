@@ -24,7 +24,7 @@ Description : The assembly part of the RMP RTOS. This is for AVR, and
 /* End Header ****************************************************************/
 
 /* Import ********************************************************************/
-    /* The kernel stack and table */
+    /* The kernel stack */
     .extern             _RMP_AVR_SP_Kern
     /* The current thread stack */
     .extern             RMP_SP_Cur
@@ -77,7 +77,7 @@ Description : The assembly part of the RMP RTOS. This is for AVR, and
     PUSH                R0
     .endm
 
-/* Actual context switch *****************************************************/
+/* Prepare for the context switch ********************************************/
     .macro              RMP_AVR_SWITCH_PRE
     IN                  R19,RMP_SPH                 /* Save the SP to control block */
     IN                  R18,RMP_SPL
@@ -92,7 +92,7 @@ Description : The assembly part of the RMP RTOS. This is for AVR, and
     CLR                 R1                          /* Clear implicit zero register */
     .endm
 
-/* Actual context switch *****************************************************/
+/* Finish up the context switch **********************************************/
     .macro              RMP_AVR_SWITCH_POST
     LDS                 R18,_RMP_AVR_Yield_Pend
     CPI                 R18,0

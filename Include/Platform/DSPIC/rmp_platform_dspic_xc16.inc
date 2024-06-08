@@ -49,7 +49,7 @@ Description : The assembly part of the RMP RTOS. This is for DSPIC, and
     PUSH                TBLPAG
     .endm
     
-/* Prepare for a context switch **********************************************/
+/* Prepare for the context switch ********************************************/
     .macro              RMP_DSPIC_SWITCH_PRE
     /* Switch to kernel stack and table */
     MOV                 W15,_RMP_SP_Cur

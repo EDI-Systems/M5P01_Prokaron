@@ -32,7 +32,7 @@ RMP_UNSP_SAVE:          .macro
     PUSH                R1,R5 TO [SP]
     .endm
 
-// Actual context switch ******************************************************
+// Prepare for the context switch *********************************************
 RMP_UNSP_SWITCH_PRE:    .macro
     R1                  =0
     SR                  =R1
@@ -42,7 +42,7 @@ RMP_UNSP_SWITCH_PRE:    .macro
     [_RMP_UNSP_Int_Act] =R1
     .endm
 
-// Actual context switch ******************************************************
+// Finish up the context switch ***********************************************
 RMP_UNSP_SWITCH_POST:   .macro
     R1                  =[__RMP_UNSP_Yield_Pend]
     CMP                 R1,0
