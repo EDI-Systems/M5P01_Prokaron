@@ -46,7 +46,7 @@ RMP_C28X_SAVE               .macro
     PUSH                    XT
     .endm
 
-;/* Prepare for a context switch *********************************************/
+;/* Prepare for the context switch *******************************************/
 RMP_C28X_SWITCH_PRE         .macro
     MOV                     AL,SP
     MOV                     DP,#_RMP_SP_Cur

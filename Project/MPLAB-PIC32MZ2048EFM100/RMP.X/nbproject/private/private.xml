@@ -12,7 +12,16 @@
         </group>
         <group>
             <file>file:/C:/Code_Library/M5P01_Prokaron/Source/Platform/MP32P/rmp_platform_mp32p.c</file>
+            <file>file:/C:/Code_Library/M5P01_Prokaron/Include/Platform/MP32P/rmp_platform_mp32p_gcc.inc</file>
+            <file>file:/C:/Code_Library/M5P01_Prokaron/Source/Platform/MP32P/rmp_platform_mp32p_gcc.s</file>
+            <file>file:/C:/Code_Library/M5P01_Prokaron/Source/Kernel/rmp_kernel.c</file>
+            <file>file:/C:/Code_Library/M5P01_Prokaron/Source/Test/rmp_benchmark.c</file>
             <file>file:/C:/Code_Library/M5P01_Prokaron/Include/Platform/MP32P/rmp_platform_mp32p.h</file>
+            <file>file:/C:/Code_Library/M5P01_Prokaron/Include/Kernel/rmp_kernel.h</file>
+            <file>file:/C:/Code_Library/M5P01_Prokaron/Project/MPLAB-PIC32MZ2048EFM100/RMP.X/rmp_test_pic32mz2048_gcc.s</file>
+            <file>file:/C:/Code_Library/M5P01_Prokaron/Project/MPLAB-PIC32MZ2048EFM100/RMP.X/rmp_test.h</file>
+            <file>file:/C:/Code_Library/M5P01_Prokaron/Include/Platform/MP32P/Chip/PIC32MZ2048/rmp_platform_pic32mz2048.h</file>
+            <file>file:/C:/Code_Library/M5P01_Prokaron/Include/Test/Chip/rmp_test_pic32mz2048.h</file>
         </group>
     </open-files>
 </project-private>

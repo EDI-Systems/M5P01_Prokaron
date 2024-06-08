@@ -1,48 +1,68 @@
 /******************************************************************************
-Filename    : rmp_test_pic32mz2048efm100.h
+Filename    : rmp_test_pic32mz2048.h
 Author      : pry 
-Date        : 22/07/2017
+Date        : 08/06/2024
 Licence     : The Unlicense; see LICENSE for details.
 Description : The testbench for PIC32MZ2048EFM100.
-              This port is considered experimental and without FPU support.
+              The XC32-GCC vanilla cache init code does not survive LTO and we
+              refrain from testing LTO.
 
-XC32-GCC 4.35 O3(--specs hack disabled)
+XC32-GCC 4.35 -O3 (DSPASE/FR64 disabled, --specs hack enabled)
     ___   __  ___ ___
    / _ \ /  |/  // _ \       Simple real-time kernel
   / , _// /|_/ // ___/       Standard benchmark test
  /_/|_|/_/  /_//_/
 ====================================================
 Test (number in CPU cycles)        : AVG / MAX / MIN
-Yield                              : 285 / 435 / 285
-Mailbox                            : 402 / 820 / 395
-Semaphore                          : 373 / 745 / 370
-FIFO                               : 151 / 590 / 150
-Message queue                      : 579 / 815 / 575
-Blocking message queue             : 735 / 970 / 730
-Memory allocation/free pair        : 471 / 721 / 458
-ISR Mailbox                        : 445 / 1190 / 440
-ISR Semaphore                      : 425 / 720 / 420
-ISR Message queue                  : 550 / 795 / 545
-ISR Blocking message queue         : 645 / 825 / 640
+Yield                              : 190 / 315 / 190
+Mailbox                            : 345 / 1075 / 345
+Semaphore                          : 305 / 850 / 305
+FIFO                               : 150 / 715 / 150
+Message queue                      : 475 / 985 / 475
+Blocking message queue             : 620 / 925 / 620
+Memory allocation/free pair        : 365 / 678 / 357
+ISR Mailbox                        : 295 / 1095 / 295
+ISR Semaphore                      : 260 / 775 / 260
+ISR Message queue                  : 370 / 1100 / 370
+ISR Blocking message queue         : 465 / 675 / 465
 
-XC32-GCC 4.35 O3(--specs hack enabled)
+XC32-GCC 4.35 -O3 (DSPASE/FR64 enabled, --specs hack enabled)
     ___   __  ___ ___
    / _ \ /  |/  // _ \       Simple real-time kernel
   / , _// /|_/ // ___/       Standard benchmark test
  /_/|_|/_/  /_//_/
 ====================================================
 Test (number in CPU cycles)        : AVG / MAX / MIN
-Yield                              : 260 / 440 / 255
-Mailbox                            : 392 / 1135 / 390
-Semaphore                          : 370 / 935 / 370
-FIFO                               : 146 / 650 / 145
-Message queue                      : 540 / 1195 / 535
-Blocking message queue             : 672 / 1015 / 665
-Memory allocation/free pair        : 364 / 665 / 352
-ISR Mailbox                        : 440 / 1230 / 435
-ISR Semaphore                      : 420 / 925 / 415
-ISR Message queue                  : 530 / 1350 / 525
-ISR Blocking message queue         : 620 / 840 / 615
+Yield                              : 460 / 520 / 460
+Mailbox                            : 610 / 1350 / 610
+Semaphore                          : 570 / 1165 / 570
+FIFO                               : 150 / 695 / 150
+Message queue                      : 740 / 1210 / 740
+Blocking message queue             : 885 / 1215 / 885
+Memory allocation/free pair        : 361 / 660 / 353
+ISR Mailbox                        : 385 / 1375 / 385
+ISR Semaphore                      : 345 / 800 / 345
+ISR Message queue                  : 460 / 1205 / 460
+ISR Blocking message queue         : 550 / 745 / 550
+
+XC32-GCC 4.35 -O3 (DSPASE/FR64 enabled, --specs hack enabled, microMIPS enabled)
+    ___   __  ___ ___
+   / _ \ /  |/  // _ \       Simple real-time kernel
+  / , _// /|_/ // ___/       Standard benchmark test
+ /_/|_|/_/  /_//_/
+====================================================
+Test (number in CPU cycles)        : AVG / MAX / MIN
+Yield                              : 475 / 545 / 475
+Mailbox                            : 630 / 1225 / 630
+Semaphore                          : 585 / 985 / 585
+FIFO                               : 160 / 550 / 160
+Message queue                      : 775 / 1095 / 775
+Blocking message queue             : 935 / 1160 / 935
+Memory allocation/free pair        : 371 / 595 / 363
+ISR Mailbox                        : 400 / 1200 / 400
+ISR Semaphore                      : 360 / 645 / 360
+ISR Message queue                  : 490 / 925 / 490
+ISR Blocking message queue         : 585 / 805 / 585
 ******************************************************************************/
 
 /* Include *******************************************************************/
@@ -158,7 +178,7 @@ void Int_Init(void)
     T2CON=0;
     TMR2=0;
     PR2=20000;
-    /* Lowest interrupt level */
+    /* Lowest interrupt level - kernel-aware interrupt */
     IPC2SET=(1<<_IPC2_T2IP_POSITION)|(0<<_IPC2_T2IS_POSITION);
     IFS0CLR=_IFS0_T2IF_MASK;
     IEC0SET=(1<<_IEC0_T2IE_POSITION);

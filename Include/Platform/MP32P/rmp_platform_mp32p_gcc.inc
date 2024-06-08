@@ -1,94 +1,16 @@
 /******************************************************************************
-Filename    : rmp_platform_mp32p_gcc.s
+Filename    : rmp_platform_mp32p_gcc.inc
 Author      : pry
-Date        : 10/04/2012
-Description : The assembly part of the RMP RTOS, for MIPS "M-class" cores.
+Date        : 22/05/2024
+Description : The assembly part of the RMP RTOS. This is for MIPS, and
+              contains macros to be included in all interrupt assembly code
+              as needed.
 ******************************************************************************/
-    
-/* The MIPS M-Class Architecture **********************************************
-R0:Hardwired register containing "0". 
-R1-R31:General purpose registers that can only be reached by 32-bit instructions.
-HI:Multiply/divide unit high register.
-LO:Multiply/divide unit low register.
-PC:Program counter.
-The processor also include a single-accuracy FPU.
-Detailed usage convention for R0-R31:
-No.    Name       Explanation
-R0     $zero      constant 0
-R1     $at        reserved for assembler
-R2     $v0        expression evaluation and results of a function
-R3     $v1        expression evaluation and results of a function
-R4     $a0        argument 1
-R5     $a1        argument 2
-R6     $a2        argument 3
-R7     $a3        argument 4
-R8     $t0        temporary (not preserved across call)
-R9     $t1        temporary (not preserved across call)
-R10    $t2        temporary (not preserved across call)
-R11    $t3        temporary (not preserved across call)
-R12    $t4        temporary (not preserved across call)
-R13    $t5        temporary (not preserved across call)
-R14    $t6        temporary (not preserved across call)
-R15    $t7        temporary (not preserved across call)
-R16    $s0        saved temporary (preserved across call)
-R17    $s1        saved temporary (preserved across call)
-R18    $s2        saved temporary (preserved across call)
-R19    $s3        saved temporary (preserved across call)
-R20    $s4        saved temporary (preserved across call)
-R21    $s5        saved temporary (preserved across call)
-R22    $s6        saved temporary (preserved across call)
-R23    $s7        saved temporary (preserved across call)
-R24    $t8        temporary (not preserved across call)
-R25    $t9        temporary (not preserved across call)
-R26    $k0        reserved for OS kernel
-R27    $k1        reserved for OS kernel
-R28    $gp        pointer to global area
-R29    $sp        stack pointer
-R30    $fp        frame pointer
-R31    $ra        return address (used by function call)
-A1-A3             64-bit additional accumulators (DSP ASE extension)
-FSCR              FPU status and control register (FPU extension)
-F0-F31            FPU working registers (FPU extension)
-Beware of delay slots upon loads and jumps; we try to hide them as always.
-******************************************************************************/
-
-/* Import ********************************************************************/
-    /* The real task switch handling function */
-    .extern             _RMP_Run_High 
-    /* The PID of the current thread */
-    .extern             RMP_Thd_Cur
-    /* The stack address of current thread */
-    .extern             RMP_SP_Cur
-    /* Kernel SP/GP value */
-    .extern             _RMP_MP32P_GP_Kern
-    .extern             _RMP_MP32P_SP_Kern
-/* End Import ****************************************************************/
-
-/* Export ********************************************************************/
-    /* Disable all interrupts */
-    .global             RMP_Int_Disable      
-    /* Enable all interrupts */
-    .global             RMP_Int_Enable
-    /* Mask interrupts by manipulating IPL */
-    .global             RMP_Int_Mask
-    /* Get the MSB/LSB */
-    .global             _RMP_MP32P_MSB_Get
-    .global             _RMP_MP32P_LSB_Get
-    /* Start the first thread */
-    .global             _RMP_Start
-    /* Different versions of context switch triggers */
-    .global             _RMP_MP32P_Yield_NONE
-    .global             _RMP_MP32P_Yield_DSPASE
-    .global             _RMP_MP32P_Yield_FR32
-    .global             _RMP_MP32P_Yield_FR64
-    .global             _RMP_MP32P_Yield_DSPASE_FR32
-    .global             _RMP_MP32P_Yield_DSPASE_FR64
-/* End Export ****************************************************************/
     
 /* Header ********************************************************************/
     .text
     .align              4
-    
+
     /* CPU register definitions */
     .equ                RMP_CP0_COUNT,$9
     .equ                RMP_CP0_COMPARE,$11
@@ -98,158 +20,35 @@ Beware of delay slots upon loads and jumps; we try to hide them as always.
     .equ                RMP_CP1_FSCR,$31
 /* End Header ****************************************************************/
 
-/* Function:RMP_Int_Disable ***************************************************
-Description    : The function for disabling all interrupts. Does not allow nesting.
-Input          : None.
-Output         : None.
-Return         : None.
-******************************************************************************/
-    .set                nomips16
-    .set                nomicromips
-    .set                noreorder
-    .set                noat
-    .ent                RMP_Int_Disable
-RMP_Int_Disable:
-    DI
-    JR                  $ra
-    NOP
-    .end                RMP_Int_Disable
-/* End Function:RMP_Int_Disable **********************************************/
+/* Import ********************************************************************/
+    /* The kernel SP and GP */
+    .extern             _RMP_MP32P_SP_Kern
+    .extern             _RMP_MP32P_GP_Kern
+    /* The current thread stack */
+    .extern             RMP_SP_Cur
+    /* The interrupt active flag */
+    .extern             RMP_MP32P_Int_Act
+    /* The yield pending flag */
+    .extern             _RMP_MP32P_Yield_Pend
+    /* Extract highest priority running thread */
+    .extern             _RMP_Run_High
+    /* Handler for MP32P timer interrupt */
+    .extern             _RMP_MP32P_Tim_Handler
+/* End Import ****************************************************************/
 
-/* Function:RMP_Int_Enable ****************************************************
-Description : The function for enabling all interrupts. Does not allow nesting.
-Input       : None.
-Output      : None.
-Return      : None.
-******************************************************************************/
-    .set                nomips16
-    .set                nomicromips
-    .set                noreorder
-    .set                noat
-    .ent                RMP_Int_Enable
-RMP_Int_Enable:
-    EI
-    JR                  $ra
-    NOP
-    .end                RMP_Int_Enable
-/* End Function:RMP_Int_Enable ***********************************************/
-    
-/* Function:RMP_Int_Mask ******************************************************
-Description : Mask interrupts given the level.
-Input       : $a0 - The mask level.
-Output      : None.
-Return      : None.
-******************************************************************************/
-    .set                nomips16
-    .set                nomicromips
-    .set                noreorder
-    .set                noat
-    .ent                RMP_Int_Mask
-RMP_Int_Mask:
-    MFC0                $t0,RMP_CP0_STATUS
-    INS                 $t0,$a0,10,6
-    MTC0                $t0,RMP_CP0_STATUS
-    JR                  $ra
-    NOP
-    .end                RMP_Int_Mask
-/* End Function:RMP_Int_Mask *************************************************/
-
-/* Function:_RMP_MP32P_MSB_Get ************************************************
-Description : Get the MSB of the word.
-Input       : $a0 - The value.
-Output      : None.
-Return      : $v0 - The MSB position.
-******************************************************************************/
-    .set                nomips16
-    .set                nomicromips
-    .set                noreorder
-    .set                noat
-    .ent                _RMP_MP32P_MSB_Get
-_RMP_MP32P_MSB_Get:
-    CLZ                 $a0,$a0
-    LI                  $v0,31
-    SUB                 $v0,$a0
-    JR                  $ra
-    NOP
-    .end                _RMP_MP32P_MSB_Get
-/* End Function:_RMP_MP32P_MSB_Get *******************************************/
-
-/* Function:_RMP_MP32P_LSB_Get ************************************************
-Description : Get the LSB of the word.
-Input       : $a0 - The value.
-Output      : None.
-Return      : $v0 - The LSB position.
-******************************************************************************/
-    .set                nomips16
-    .set                nomicromips
-    .set                noreorder
-    .set                noat
-    .ent                _RMP_MP32P_LSB_Get
-_RMP_MP32P_LSB_Get:
-    ADDIU               $t0,$a0,-1
-    NOT                 $v0,$a0
-    AND                 $t0,$v0,$t0
-    ADDIU               $v0,$zero,32
-    CLZ                 $t0,$t0
-    SUBU                $v0,$v0,$t0
-    JR                  $ra
-    NOP
-    .end                _RMP_MP32P_LSB_Get
-/* End Function:_RMP_MP32P_LSB_Get *******************************************/
-
-/* Function:_RMP_Start ********************************************************
-Description : Jump to the user function and will never return from it.
-Input       : $a0 - The address to branch to.
-              $a1 - The stack to use.
-Output      : None.
-Return      : None.
-******************************************************************************/
-    .set                nomips16
-    .set                nomicromips
-    .set                noreorder
-    .set                noat
-    .ent                _RMP_Start
-_RMP_Start:
-    LA                  $a2,_RMP_MP32P_SP_Kern      /* Store kernel GP and SP */
-    SW                  $sp,($a2)
-    LA                  $a2,_RMP_MP32P_GP_Kern
-    SW                  $gp,($a2)
-    MOVE                $sp,$a1                     /* Set the new SP */
-    JAL                 $a0                         /* Branch to target */
-    NOP                                             /* Should never reach here */
-    .end                _RMP_Start
-/* End Function:_RMP_Start ***************************************************/
-
-/* Function:_RMP_Yield ********************************************************
-Description : Trigger a yield to another thread.
-              Note the blatant use of SDC1 and LDC1 here: the MIPS "calling
-              convention" (no offcial specification exists, but this is what
-              all modern compilers essentially assume) the stack will only be
-              manipulated on 8-byte boundaries. Note that this is stronger than
-              just requiring this alignment upon function calling: it requires
-              that such alignments are kept throughout the entire program. Thus
-              we can even assume 8-byte boundaries upon interrupt entry.
-              Also note that GCC %hi and %lo is signed (VERY counterintuitive as
-              this is most used to load addresses!), so we're forced to use the
-              LUI-ADDIU pair (which is somehow chosen as the canonical one for
-              MIPS and RISC-V); ORI can generate wrong addresses at some points.
-              It's best to avoid them altogether and use LA pseudo-op instead.
-Input       : None.
-Output      : None.
-Return      : None.
-******************************************************************************/
+/* Macro *********************************************************************/
 /* Save all GP regs **********************************************************/
-    .macro              RMP_MP32P_SAVE LABEL
+    .macro              RMP_MP32P_SAVE
     ADDIU               $sp,$sp,-34*4               /* 30 GPRs, STATUS, EPC, 2 MDURs */
     SW                  $23,33*4($sp)
     SW                  $22,32*4($sp)
-    LA                  $23,\LABEL                  /* Save PC here */
+    MFC0                $23,RMP_CP0_EPC             /* Save PC here */
     SW                  $23,31*4($sp)
     MFC0                $22,RMP_CP0_STATUS          /* Save STATUS with IPL=0, EXL=1 */
-    ORI                 $22,$22,0x02
     SW                  $22,30*4($sp)
     LI                  $23,1                       /* Mask IPL=1 system interrupts */
     INS                 $22,$23,10,6
+    INS                 $22,$zero,1,1               /* Reenable transparent interrupts, EXL=0 */
     MTC0                $22,RMP_CP0_STATUS
     SW                  $31,29*4($sp)               /* GPRs except for $sp and $zero */
     SW                  $30,28*4($sp)
@@ -285,15 +84,31 @@ Return      : None.
     SW                  $1,0*4($sp)
     .endm
 
-/* Actual context switch *****************************************************/
-    .macro              RMP_MP32P_SWITCH
+/* Prepare for the context switch ********************************************/
+    .macro              RMP_MP32P_SWITCH_PRE
     LA                  $23,RMP_SP_Cur              /* Save SP to control block */
     SW                  $sp,($23)
     LA                  $23,_RMP_MP32P_SP_Kern      /* Load SP for kernel */
     LW                  $sp,($23)
     LA                  $gp,_RMP_MP32P_GP_Kern      /* Load GP for kernel */
+    LW                  $gp,($gp)
+    LI                  $22,1                       /* Indicate interrupt active */
+    LA                  $23,RMP_MP32P_Int_Act
+    SW                  $22,($23)
+    .endm
+
+/* Finish up the context switch **********************************************/
+    .macro              RMP_MP32P_SWITCH_POST
+    LA                  $23,_RMP_MP32P_Yield_Pend
+    LW                  $22,($23)
+    NOP
+    BEQ                 $22,$zero,1f
+    SW                  $zero,($23)                 /* Does no harm even when this always execute */
     JAL                 _RMP_Run_High               /* Get the highest priority task */
-    LW                  $gp,($gp)                   /* Make use of branch delay slot */
+    NOP
+1:
+    LA                  $23,RMP_MP32P_Int_Act
+    SW                  $zero,($23)
     LA                  $23,RMP_SP_Cur              /* Load SP from control block */
     LW                  $sp,($23)
     NOP
@@ -464,7 +279,6 @@ Return      : None.
     
 /* Restore FR64 extra registers **********************************************/
     .macro              RMP_MP32P_FR64_LOAD
-    LW                  $1,0*4($sp)                 /* 32 DFPRs + FSCR */
     .word               0xD7A00004                  /* LDC1    $f0,0*8+4($sp) */
     .word               0x44C1F800                  /* CTC1    $1,RMP_CP1_FSCR - Avoid load delay */
     .word               0xD7A1000C                  /* LDC1    $f1,1*8+4($sp) */
@@ -500,112 +314,94 @@ Return      : None.
     .word               0xD7BF00FC                  /* LDC1    $f31,31*8+4($sp) */
     ADDIU               $sp,$sp,32*8+4
     .endm
+
+/* Save macro for normal case ************************************************/
+    .macro              RMP_MP32P_INT_SAVE_NONE
+    RMP_MP32P_SAVE
+    RMP_MP32P_SWITCH_PRE
+    .endm
     
-/* Nothing *******************************************************************/
-    .set                nomips16
-    .set                nomicromips
-    .set                noreorder
-    .set                noat
-    .ent                _RMP_MP32P_Yield_NONE
-_RMP_MP32P_Yield_NONE:
-    RMP_MP32P_SAVE      _RMP_MP32P_Yield_NONE_Skip
-    RMP_MP32P_SWITCH
+/* Restore macro for normal case *********************************************/
+    .macro              RMP_MP32P_INT_LOAD_NONE
+    RMP_MP32P_SWITCH_POST
     RMP_MP32P_LOAD
-_RMP_MP32P_Yield_NONE_Skip:
-    JR                  $ra
-    NOP
-    .end                _RMP_MP32P_Yield_NONE
-    
-/* DSPASE ********************************************************************/
-    .set                nomips16
-    .set                nomicromips
-    .set                noreorder
-    .set                noat
-    .ent                _RMP_MP32P_Yield_DSPASE
-_RMP_MP32P_Yield_DSPASE:
-    RMP_MP32P_SAVE      _RMP_MP32P_Yield_DSPASE_Skip
+    .endm
+
+/* Save macro for DSPASE *****************************************************/
+    .macro              RMP_MP32P_INT_SAVE_DSPASE
+    RMP_MP32P_SAVE
     RMP_MP32P_DSPASE_SAVE
-    RMP_MP32P_SWITCH
+    RMP_MP32P_SWITCH_PRE
+    .endm
+    
+/* Restore macro for DSPASE **************************************************/
+    .macro              RMP_MP32P_INT_LOAD_DSPASE
+    RMP_MP32P_SWITCH_POST
     RMP_MP32P_DSPASE_LOAD
     RMP_MP32P_LOAD
-_RMP_MP32P_Yield_DSPASE_Skip:
-    JR                  $ra
-    NOP
-    .end                _RMP_MP32P_Yield_DSPASE
-
-/* FR32 **********************************************************************/
-    .set                nomips16
-    .set                nomicromips
-    .set                noreorder
-    .set                noat
-    .ent                _RMP_MP32P_Yield_FR32
-_RMP_MP32P_Yield_FR32:
-    RMP_MP32P_SAVE      _RMP_MP32P_Yield_FR32_Skip
+    .endm
+    
+/* Save macro for FR32 *******************************************************/
+    .macro              RMP_MP32P_INT_SAVE_FR32
+    RMP_MP32P_SAVE
     RMP_MP32P_FR32_SAVE
-    RMP_MP32P_SWITCH
+    RMP_MP32P_SWITCH_PRE
+    .endm
+    
+/* Restore macro for FR32 ****************************************************/
+    .macro              RMP_MP32P_INT_LOAD_FR32
+    RMP_MP32P_SWITCH_POST
     RMP_MP32P_FR32_LOAD
     RMP_MP32P_LOAD
-_RMP_MP32P_Yield_FR32_Skip:
-    JR                  $ra
-    NOP
-    .end                _RMP_MP32P_Yield_FR32
-
-/* FR64 **********************************************************************/
-    .set                nomips16
-    .set                nomicromips
-    .set                noreorder
-    .set                noat
-    .ent                _RMP_MP32P_Yield_FR64
-_RMP_MP32P_Yield_FR64:
-    RMP_MP32P_SAVE      _RMP_MP32P_Yield_FR64_Skip
+    .endm
+    
+/* Save macro for FR64 *******************************************************/
+    .macro              RMP_MP32P_INT_SAVE_FR64
+    RMP_MP32P_SAVE
     RMP_MP32P_FR64_SAVE
-    RMP_MP32P_SWITCH
+    RMP_MP32P_SWITCH_PRE
+    .endm
+    
+/* Restore macro for FR64 ****************************************************/
+    .macro              RMP_MP32P_INT_LOAD_FR64
+    RMP_MP32P_SWITCH_POST
     RMP_MP32P_FR64_LOAD
     RMP_MP32P_LOAD
-_RMP_MP32P_Yield_FR64_Skip:
-    JR                  $ra
-    NOP
-    .end                _RMP_MP32P_Yield_FR64
-
-/* DSPASE & FR32 *************************************************************/
-    .set                nomips16
-    .set                nomicromips
-    .set                noreorder
-    .set                noat
-    .ent                _RMP_MP32P_Yield_DSPASE_FR32
-_RMP_MP32P_Yield_DSPASE_FR32:
-    RMP_MP32P_SAVE      _RMP_MP32P_Yield_DSPASE_FR32_Skip
+    .endm
+    
+/* Save macro for DSPASE & FR32 **********************************************/
+    .macro              RMP_MP32P_INT_SAVE_DSPASE_FR32
+    RMP_MP32P_SAVE
     RMP_MP32P_DSPASE_SAVE
     RMP_MP32P_FR32_SAVE
-    RMP_MP32P_SWITCH
+    RMP_MP32P_SWITCH_PRE
+    .endm
+    
+/* Restore macro for DSPASE & FR32 *******************************************/
+    .macro              RMP_MP32P_INT_LOAD_DSPASE_FR32
+    RMP_MP32P_SWITCH_POST
     RMP_MP32P_FR32_LOAD
     RMP_MP32P_DSPASE_LOAD
     RMP_MP32P_LOAD
-_RMP_MP32P_Yield_DSPASE_FR32_Skip:
-    JR                  $ra
-    NOP
-    .end                _RMP_MP32P_Yield_DSPASE_FR32
-
-/* DSPASE & FR64 *************************************************************/
-    .set                nomips16
-    .set                nomicromips
-    .set                noreorder
-    .set                noat
-    .ent                _RMP_MP32P_Yield_DSPASE_FR64
-_RMP_MP32P_Yield_DSPASE_FR64:
-    RMP_MP32P_SAVE      _RMP_MP32P_Yield_DSPASE_FR64_Skip
+    .endm
+    
+/* Save macro for DSPASE & FR64 **********************************************/
+    .macro              RMP_MP32P_INT_SAVE_DSPASE_FR64
+    RMP_MP32P_SAVE
     RMP_MP32P_DSPASE_SAVE
     RMP_MP32P_FR64_SAVE
-    RMP_MP32P_SWITCH
+    RMP_MP32P_SWITCH_PRE
+    .endm
+    
+/* Restore macro for DSPASE & FR64 *******************************************/
+    .macro              RMP_MP32P_INT_LOAD_DSPASE_FR64
+    RMP_MP32P_SWITCH_POST
     RMP_MP32P_FR64_LOAD
     RMP_MP32P_DSPASE_LOAD
     RMP_MP32P_LOAD
-_RMP_MP32P_Yield_DSPASE_FR64_Skip:
-    JR                  $ra
-    NOP
-    .end                _RMP_MP32P_Yield_DSPASE_FR64
-/* End Function:_RMP_Yield ***************************************************/
-    
+    .endm
+/* End Macro *****************************************************************/
+
 /* End Of File ***************************************************************/
 
 /* Copyright (C) Evo-Devo Instrum. All rights reserved ***********************/

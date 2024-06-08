@@ -3168,18 +3168,17 @@ int main(void)
     }
 #endif
     
-    /* Initialize the kernel data structures first */
+    /* Initialize the low-level hardware first */
     _RMP_Lowlvl_Init();
     
 #if(RMP_HOOK_EXTRA!=0U)
     RMP_Start_Hook();
 #endif
 
-    RMP_Timestamp=0U;
     /* Now initialize the kernel data structures */
+    RMP_Timestamp=0U;
     RMP_Sched_Lock_Cnt=0U;
     RMP_Sched_Pend=0U;
-    RMP_Timer_Pend=0U;
 
     /* Linked lists */
     RMP_List_Crt(&RMP_Delay);

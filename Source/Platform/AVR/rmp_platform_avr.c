@@ -136,7 +136,12 @@ Return      : None.
 ******************************************************************************/
 void _RMP_Plat_Hook(void)
 {
+#if(RMP_AVR_COP_XMEGA!=0U)
+    /* Scheduler lock implemented with interrupt masking */
+    RMP_Int_Enable();
+#else
     /* Scheduler lock implemented with interrupt disabling */
+#endif
 }
 /* End Function:_RMP_Plat_Hook ***********************************************/
 
@@ -185,7 +190,7 @@ void _RMP_Yield(void)
 /* End Function:_RMP_Yield ***************************************************/
 
 /* Function:_RMP_AVR_Tim_Handler **********************************************
-Description : Timer interrupt routine for DSPIC.
+Description : Timer interrupt routine for AVR.
 Input       : None
 Output      : None.
 Return      : None.

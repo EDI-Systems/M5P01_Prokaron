@@ -3,10 +3,10 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Code_Library/M5P01_Prokaron/Source/Platform/DSPIC/rmp_platform_dspic.c</file>
-            <file>file:/C:/Code_Library/M5P01_Prokaron/Source/Kernel/rmp_kernel.c</file>
-            <file>file:/C:/Code_Library/M5P01_Prokaron/Source/Test/rmp_benchmark.c</file>
             <file>file:/C:/Code_Library/M5P01_Prokaron/Source/Platform/DSPIC/rmp_platform_dspic_xc16.s</file>
+            <file>file:/C:/Code_Library/M5P01_Prokaron/Source/Platform/DSPIC/rmp_platform_dspic.c</file>
+            <file>file:/C:/Code_Library/M5P01_Prokaron/Source/Test/rmp_benchmark.c</file>
+            <file>file:/C:/Code_Library/M5P01_Prokaron/Source/Kernel/rmp_kernel.c</file>
             <file>file:/C:/Code_Library/M5P01_Prokaron/Project/MPLAB-PIC24FJ128GA010/RMP.X/rmp_test_pic24fj128ga010.s</file>
         </group>
     </open-files>

@@ -370,9 +370,11 @@ struct RMP_Mem
 /* For coverage use only */
 static volatile rmp_ptr_t RMP_Coverage[RMP_COVERAGE_WORD_NUM];
 #endif
-/* The scheduler bitmap */
+/* Scheduler bitmap - might be modified in interrupts */
 static volatile rmp_ptr_t RMP_Bitmap[RMP_PRIO_WORD_NUM];
+/* Running list for each priority - might be modified in interrupts */
 static volatile struct RMP_List RMP_Run[RMP_PREEMPT_PRIO_NUM];
+/* Delay list - might be modified in interrupts */
 static volatile struct RMP_List RMP_Delay;
 
 /* Init thread stack and structure */
@@ -432,17 +434,25 @@ static void RMP_Progbar_Prog(rmp_cnt_t Coord_X,
 #endif
 
 /*****************************************************************************/
-/* The current tick counter value */
+/* Timestamp - may wraparound but this is fine */
 __EXTERN__ volatile rmp_ptr_t RMP_Timestamp;
-/* Scheduler lock count */
+/* Scheduler lock count - doesn't really need to be volatile from a kernel
+ * standpoint, and transparent interrupts that read it will fetch from memory
+ * anyway, but we wish to indicate that interrupts may read it by volatile. */
 __EXTERN__ volatile rmp_ptr_t RMP_Sched_Lock_Cnt;
-/* Scheduler pending */
+/* Scheduler pending - needs to be volatile; might be modified in interrupts */
 __EXTERN__ volatile rmp_ptr_t RMP_Sched_Pend;
-/* Timer events pending */
-__EXTERN__ volatile rmp_ptr_t RMP_Timer_Pend;
 
-/* The current thread - the pointer as well as its contents are volatile */
+/* The current thread - the pointer as well as its contents are volatile. From
+ * a pure kernel standpoint, the pointer itself doesn't need to be volatile,
+ * because when we switch back to the same thread the pointer must be pointing
+ * to the thread's own structure, thus the compiler-cached pointer value is
+ * correct even when function boundaries are not compiler barriers (may happen
+ * in LTO). However, we still make it volatile here and consciously cache it
+ * at the beginning of every function that might use it to indicate that it
+ * may have changed in the middle (even though it always changes back). */
 __EXTERN__ volatile struct RMP_Thd* volatile RMP_Thd_Cur;
+/* Current thread's stack pointer */
 __EXTERN__ volatile rmp_ptr_t RMP_SP_Cur;
 /*****************************************************************************/
 

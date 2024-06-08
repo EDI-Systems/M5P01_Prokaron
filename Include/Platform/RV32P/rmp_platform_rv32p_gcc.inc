@@ -59,7 +59,7 @@ Description : The assembly part of the RMP RTOS. This is for RV32P, and
     CSRR                a0,mstatus
     .endm
 
-/* Prepare for a context switch **********************************************/
+/* Prepare for the context switch ********************************************/
     .macro              RMP_RV32P_SWITCH_PRE
     ADDI                sp,sp,-4
     SW                  a0,0*4(sp)
