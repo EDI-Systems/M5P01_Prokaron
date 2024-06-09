@@ -504,11 +504,6 @@
               <FilePath>..\..\..\M0A00_Library\HC32L13x_DDL_V2.1.0\driver\src\uart.c</FilePath>
             </File>
             <File>
-              <FileName>interrupts_hc32l13x.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\M0A00_Library\HC32L13x_DDL_V2.1.0\mcu\common\interrupts_hc32l13x.c</FilePath>
-            </File>
-            <File>
               <FileName>startup_hc32l13x.s</FileName>
               <FileType>2</FileType>
               <FilePath>..\..\..\M0A00_Library\HC32L13x_DDL_V2.1.0\mcu\MDK\startup_hc32l13x.s</FilePath>
@@ -517,6 +512,11 @@
               <FileName>system_hc32l13x.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\M0A00_Library\HC32L13x_DDL_V2.1.0\mcu\common\system_hc32l13x.c</FilePath>
+            </File>
+            <File>
+              <FileName>bt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\M0A00_Library\HC32L13x_DDL_V2.1.0\driver\src\bt.c</FilePath>
             </File>
           </Files>
         </Group>
