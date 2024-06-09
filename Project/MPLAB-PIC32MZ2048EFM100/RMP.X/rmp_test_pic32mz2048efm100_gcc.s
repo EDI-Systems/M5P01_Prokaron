@@ -1,5 +1,5 @@
 /******************************************************************************
-Filename    : rmp_test_pic32mz2048_gcc.s
+Filename    : rmp_test_pic32mz2048efm100_gcc.s
 Author      : pry
 Date        : 10/04/2012
 Description : The extra testing file for this PIC32MZ2048EFM100.

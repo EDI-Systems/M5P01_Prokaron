@@ -168,7 +168,7 @@ RMP_UNSP_LOAD:          .macro
     POP                 R1,R5 FROM [SP]
     // Have to reenable IRQ this way because RETI don't enable interrupts.
     // RETI may also fiddle with the interrupt controller states as well.
-    // Note that this method has a caveat: if the thread is repeated preempted
+    // Note that the method has a caveat: if the thread is repeatedly preempted
     // between the INT and RETF, we get theoretically unbounded stack usage.
     // This is very unlikely to happen in real life though.
     INT                 IRQ,FIQ

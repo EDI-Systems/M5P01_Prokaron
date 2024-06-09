@@ -51,17 +51,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=../../../Source/Kernel/rmp_kernel.c ../../../Source/Platform/DSPIC/rmp_platform_dspic.c ../../../Source/Platform/DSPIC/rmp_platform_dspic_xc16.s ../../../Source/Test/rmp_benchmark.c rmp_test_pic24fj128ga010.s
+SOURCEFILES_QUOTED_IF_SPACED=../../../Source/Kernel/rmp_kernel.c ../../../Source/Platform/DSPIC/rmp_platform_dspic.c ../../../Source/Test/rmp_benchmark.c rmp_test_pic24fj128ga010_gcc.s ../../../Source/Platform/DSPIC/rmp_platform_dspic_gcc.s
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/_ext/1067945026/rmp_kernel.o ${OBJECTDIR}/_ext/100099300/rmp_platform_dspic.o ${OBJECTDIR}/_ext/100099300/rmp_platform_dspic_xc16.o ${OBJECTDIR}/_ext/1730986455/rmp_benchmark.o ${OBJECTDIR}/rmp_test_pic24fj128ga010.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/_ext/1067945026/rmp_kernel.o.d ${OBJECTDIR}/_ext/100099300/rmp_platform_dspic.o.d ${OBJECTDIR}/_ext/100099300/rmp_platform_dspic_xc16.o.d ${OBJECTDIR}/_ext/1730986455/rmp_benchmark.o.d ${OBJECTDIR}/rmp_test_pic24fj128ga010.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/_ext/1067945026/rmp_kernel.o ${OBJECTDIR}/_ext/100099300/rmp_platform_dspic.o ${OBJECTDIR}/_ext/1730986455/rmp_benchmark.o ${OBJECTDIR}/rmp_test_pic24fj128ga010_gcc.o ${OBJECTDIR}/_ext/100099300/rmp_platform_dspic_gcc.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/_ext/1067945026/rmp_kernel.o.d ${OBJECTDIR}/_ext/100099300/rmp_platform_dspic.o.d ${OBJECTDIR}/_ext/1730986455/rmp_benchmark.o.d ${OBJECTDIR}/rmp_test_pic24fj128ga010_gcc.o.d ${OBJECTDIR}/_ext/100099300/rmp_platform_dspic_gcc.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/_ext/1067945026/rmp_kernel.o ${OBJECTDIR}/_ext/100099300/rmp_platform_dspic.o ${OBJECTDIR}/_ext/100099300/rmp_platform_dspic_xc16.o ${OBJECTDIR}/_ext/1730986455/rmp_benchmark.o ${OBJECTDIR}/rmp_test_pic24fj128ga010.o
+OBJECTFILES=${OBJECTDIR}/_ext/1067945026/rmp_kernel.o ${OBJECTDIR}/_ext/100099300/rmp_platform_dspic.o ${OBJECTDIR}/_ext/1730986455/rmp_benchmark.o ${OBJECTDIR}/rmp_test_pic24fj128ga010_gcc.o ${OBJECTDIR}/_ext/100099300/rmp_platform_dspic_gcc.o
 
 # Source Files
-SOURCEFILES=../../../Source/Kernel/rmp_kernel.c ../../../Source/Platform/DSPIC/rmp_platform_dspic.c ../../../Source/Platform/DSPIC/rmp_platform_dspic_xc16.s ../../../Source/Test/rmp_benchmark.c rmp_test_pic24fj128ga010.s
+SOURCEFILES=../../../Source/Kernel/rmp_kernel.c ../../../Source/Platform/DSPIC/rmp_platform_dspic.c ../../../Source/Test/rmp_benchmark.c rmp_test_pic24fj128ga010_gcc.s ../../../Source/Platform/DSPIC/rmp_platform_dspic_gcc.s
 
 
 
@@ -131,30 +131,30 @@ endif
 # ------------------------------------------------------------------------------------
 # Rules for buildStep: assemble
 ifeq ($(TYPE_IMAGE), DEBUG_RUN)
-${OBJECTDIR}/_ext/100099300/rmp_platform_dspic_xc16.o: ../../../Source/Platform/DSPIC/rmp_platform_dspic_xc16.s  .generated_files/flags/pic24fj128_pim/4090d44d3d427c38f99a75dcf04e0140b7e49174 .generated_files/flags/pic24fj128_pim/da39a3ee5e6b4b0d3255bfef95601890afd80709
-	@${MKDIR} "${OBJECTDIR}/_ext/100099300" 
-	@${RM} ${OBJECTDIR}/_ext/100099300/rmp_platform_dspic_xc16.o.d 
-	@${RM} ${OBJECTDIR}/_ext/100099300/rmp_platform_dspic_xc16.o 
-	${MP_CC} $(MP_EXTRA_AS_PRE)  ../../../Source/Platform/DSPIC/rmp_platform_dspic_xc16.s  -o ${OBJECTDIR}/_ext/100099300/rmp_platform_dspic_xc16.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1  -omf=elf -DXPRJ_pic24fj128_pim=$(CND_CONF)    -specs=specs.txt -I"../../../Include" -I"." -I"../../../Include" -I"." -Wa,-MD,"${OBJECTDIR}/_ext/100099300/rmp_platform_dspic_xc16.o.d",--defsym=__MPLAB_BUILD=1,--defsym=__ICD2RAM=1,--defsym=__MPLAB_DEBUG=1,--defsym=__DEBUG=1,--defsym=__MPLAB_DEBUGGER_PK3=1,-g,--no-relax$(MP_EXTRA_AS_POST)  -mdfp="${DFP_DIR}/xc16"
-	
-${OBJECTDIR}/rmp_test_pic24fj128ga010.o: rmp_test_pic24fj128ga010.s  .generated_files/flags/pic24fj128_pim/f69e8465601d4b1a994ddeed2ccf9dfaced6f570 .generated_files/flags/pic24fj128_pim/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/rmp_test_pic24fj128ga010_gcc.o: rmp_test_pic24fj128ga010_gcc.s  .generated_files/flags/pic24fj128_pim/21e593ff6c4e12b6ee83810dc63ef405b4cda015 .generated_files/flags/pic24fj128_pim/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} ${OBJECTDIR}/rmp_test_pic24fj128ga010.o.d 
-	@${RM} ${OBJECTDIR}/rmp_test_pic24fj128ga010.o 
-	${MP_CC} $(MP_EXTRA_AS_PRE)  rmp_test_pic24fj128ga010.s  -o ${OBJECTDIR}/rmp_test_pic24fj128ga010.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1  -omf=elf -DXPRJ_pic24fj128_pim=$(CND_CONF)    -specs=specs.txt -I"../../../Include" -I"." -I"../../../Include" -I"." -Wa,-MD,"${OBJECTDIR}/rmp_test_pic24fj128ga010.o.d",--defsym=__MPLAB_BUILD=1,--defsym=__ICD2RAM=1,--defsym=__MPLAB_DEBUG=1,--defsym=__DEBUG=1,--defsym=__MPLAB_DEBUGGER_PK3=1,-g,--no-relax$(MP_EXTRA_AS_POST)  -mdfp="${DFP_DIR}/xc16"
+	@${RM} ${OBJECTDIR}/rmp_test_pic24fj128ga010_gcc.o.d 
+	@${RM} ${OBJECTDIR}/rmp_test_pic24fj128ga010_gcc.o 
+	${MP_CC} $(MP_EXTRA_AS_PRE)  rmp_test_pic24fj128ga010_gcc.s  -o ${OBJECTDIR}/rmp_test_pic24fj128ga010_gcc.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1  -omf=elf -DXPRJ_pic24fj128_pim=$(CND_CONF)    -specs=specs.txt -I"../../../Include" -I"." -I"../../../Include" -I"." -Wa,-MD,"${OBJECTDIR}/rmp_test_pic24fj128ga010_gcc.o.d",--defsym=__MPLAB_BUILD=1,--defsym=__ICD2RAM=1,--defsym=__MPLAB_DEBUG=1,--defsym=__DEBUG=1,--defsym=__MPLAB_DEBUGGER_PK3=1,-g,--no-relax$(MP_EXTRA_AS_POST)  -mdfp="${DFP_DIR}/xc16"
+	
+${OBJECTDIR}/_ext/100099300/rmp_platform_dspic_gcc.o: ../../../Source/Platform/DSPIC/rmp_platform_dspic_gcc.s  .generated_files/flags/pic24fj128_pim/5426b13ac628ef7c8917256c3aa7d2030c14a2f7 .generated_files/flags/pic24fj128_pim/da39a3ee5e6b4b0d3255bfef95601890afd80709
+	@${MKDIR} "${OBJECTDIR}/_ext/100099300" 
+	@${RM} ${OBJECTDIR}/_ext/100099300/rmp_platform_dspic_gcc.o.d 
+	@${RM} ${OBJECTDIR}/_ext/100099300/rmp_platform_dspic_gcc.o 
+	${MP_CC} $(MP_EXTRA_AS_PRE)  ../../../Source/Platform/DSPIC/rmp_platform_dspic_gcc.s  -o ${OBJECTDIR}/_ext/100099300/rmp_platform_dspic_gcc.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1  -omf=elf -DXPRJ_pic24fj128_pim=$(CND_CONF)    -specs=specs.txt -I"../../../Include" -I"." -I"../../../Include" -I"." -Wa,-MD,"${OBJECTDIR}/_ext/100099300/rmp_platform_dspic_gcc.o.d",--defsym=__MPLAB_BUILD=1,--defsym=__ICD2RAM=1,--defsym=__MPLAB_DEBUG=1,--defsym=__DEBUG=1,--defsym=__MPLAB_DEBUGGER_PK3=1,-g,--no-relax$(MP_EXTRA_AS_POST)  -mdfp="${DFP_DIR}/xc16"
 	
 else
-${OBJECTDIR}/_ext/100099300/rmp_platform_dspic_xc16.o: ../../../Source/Platform/DSPIC/rmp_platform_dspic_xc16.s  .generated_files/flags/pic24fj128_pim/176f30955f833ea3502427f1de3d587776fa72da .generated_files/flags/pic24fj128_pim/da39a3ee5e6b4b0d3255bfef95601890afd80709
-	@${MKDIR} "${OBJECTDIR}/_ext/100099300" 
-	@${RM} ${OBJECTDIR}/_ext/100099300/rmp_platform_dspic_xc16.o.d 
-	@${RM} ${OBJECTDIR}/_ext/100099300/rmp_platform_dspic_xc16.o 
-	${MP_CC} $(MP_EXTRA_AS_PRE)  ../../../Source/Platform/DSPIC/rmp_platform_dspic_xc16.s  -o ${OBJECTDIR}/_ext/100099300/rmp_platform_dspic_xc16.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -omf=elf -DXPRJ_pic24fj128_pim=$(CND_CONF)    -specs=specs.txt -I"../../../Include" -I"." -I"../../../Include" -I"." -Wa,-MD,"${OBJECTDIR}/_ext/100099300/rmp_platform_dspic_xc16.o.d",--defsym=__MPLAB_BUILD=1,-g,--no-relax$(MP_EXTRA_AS_POST)  -mdfp="${DFP_DIR}/xc16"
-	
-${OBJECTDIR}/rmp_test_pic24fj128ga010.o: rmp_test_pic24fj128ga010.s  .generated_files/flags/pic24fj128_pim/2dd564972afb7995fb8a67e003c6c0f7481d51f5 .generated_files/flags/pic24fj128_pim/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/rmp_test_pic24fj128ga010_gcc.o: rmp_test_pic24fj128ga010_gcc.s  .generated_files/flags/pic24fj128_pim/ac7f456631c31ed6b5585b32543a3dc9c4a47597 .generated_files/flags/pic24fj128_pim/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} ${OBJECTDIR}/rmp_test_pic24fj128ga010.o.d 
-	@${RM} ${OBJECTDIR}/rmp_test_pic24fj128ga010.o 
-	${MP_CC} $(MP_EXTRA_AS_PRE)  rmp_test_pic24fj128ga010.s  -o ${OBJECTDIR}/rmp_test_pic24fj128ga010.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -omf=elf -DXPRJ_pic24fj128_pim=$(CND_CONF)    -specs=specs.txt -I"../../../Include" -I"." -I"../../../Include" -I"." -Wa,-MD,"${OBJECTDIR}/rmp_test_pic24fj128ga010.o.d",--defsym=__MPLAB_BUILD=1,-g,--no-relax$(MP_EXTRA_AS_POST)  -mdfp="${DFP_DIR}/xc16"
+	@${RM} ${OBJECTDIR}/rmp_test_pic24fj128ga010_gcc.o.d 
+	@${RM} ${OBJECTDIR}/rmp_test_pic24fj128ga010_gcc.o 
+	${MP_CC} $(MP_EXTRA_AS_PRE)  rmp_test_pic24fj128ga010_gcc.s  -o ${OBJECTDIR}/rmp_test_pic24fj128ga010_gcc.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -omf=elf -DXPRJ_pic24fj128_pim=$(CND_CONF)    -specs=specs.txt -I"../../../Include" -I"." -I"../../../Include" -I"." -Wa,-MD,"${OBJECTDIR}/rmp_test_pic24fj128ga010_gcc.o.d",--defsym=__MPLAB_BUILD=1,-g,--no-relax$(MP_EXTRA_AS_POST)  -mdfp="${DFP_DIR}/xc16"
+	
+${OBJECTDIR}/_ext/100099300/rmp_platform_dspic_gcc.o: ../../../Source/Platform/DSPIC/rmp_platform_dspic_gcc.s  .generated_files/flags/pic24fj128_pim/5ebe5fb9f14065d6636e31ece47bb67f1451948b .generated_files/flags/pic24fj128_pim/da39a3ee5e6b4b0d3255bfef95601890afd80709
+	@${MKDIR} "${OBJECTDIR}/_ext/100099300" 
+	@${RM} ${OBJECTDIR}/_ext/100099300/rmp_platform_dspic_gcc.o.d 
+	@${RM} ${OBJECTDIR}/_ext/100099300/rmp_platform_dspic_gcc.o 
+	${MP_CC} $(MP_EXTRA_AS_PRE)  ../../../Source/Platform/DSPIC/rmp_platform_dspic_gcc.s  -o ${OBJECTDIR}/_ext/100099300/rmp_platform_dspic_gcc.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -omf=elf -DXPRJ_pic24fj128_pim=$(CND_CONF)    -specs=specs.txt -I"../../../Include" -I"." -I"../../../Include" -I"." -Wa,-MD,"${OBJECTDIR}/_ext/100099300/rmp_platform_dspic_gcc.o.d",--defsym=__MPLAB_BUILD=1,-g,--no-relax$(MP_EXTRA_AS_POST)  -mdfp="${DFP_DIR}/xc16"
 	
 endif
 

@@ -1,9 +1,9 @@
 /******************************************************************************
-Filename    : rmp_platform_dspic_xc16.s
+Filename    : rmp_platform_dspic_gcc.s
 Author      : pry
 Date        : 10/04/2012
 Description : The assembly part of the RMP RTOS, for DSPIC architectures.
-              The DSPIC toolchain mangles all symbols with an extra '_'.
+              The DSPIC GCC toolchain mangles all symbols with an extra '_'.
 ******************************************************************************/
     
 /* The DSPIC Architecture *****************************************************

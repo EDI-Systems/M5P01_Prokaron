@@ -1,5 +1,5 @@
 /******************************************************************************
-Filename    : rmp_test_pic24fj128ga010.s
+Filename    : rmp_test_dspic33ep512mu810_gcc.s
 Author      : pry
 Date        : 10/04/2012
 Description : The extra testing file for this chip.
@@ -7,7 +7,7 @@ Description : The extra testing file for this chip.
     
 /* Header ********************************************************************/
     .text
-    .include            "Platform/DSPIC/rmp_platform_dspic_xc16.inc"
+    .include            "Platform/DSPIC/rmp_platform_dspic_gcc.inc"
 /* End Header ****************************************************************/
     
 /* Import ********************************************************************/
@@ -25,9 +25,9 @@ Input       : None.
 Output      : None.                                      
 ******************************************************************************/
 __T1Interrupt:
-    RMP_DSPIC_INT_SAVE_24F_24H
+    RMP_DSPIC_INT_SAVE_33E_33C
     CALL                __RMP_DSPIC_Tim_Handler
-    RMP_DSPIC_INT_LOAD_24F_24H
+    RMP_DSPIC_INT_LOAD_33E_33C
 /* End Function:__T1Interrupt ************************************************/
 
 /* Function:__T3Interrupt *****************************************************
@@ -36,9 +36,9 @@ Input       : None.
 Output      : None.                                      
 ******************************************************************************/
 __T3Interrupt:
-    RMP_DSPIC_INT_SAVE_24F_24H
+    RMP_DSPIC_INT_SAVE_33E_33C
     CALL                _Tim3_Interrupt
-    RMP_DSPIC_INT_LOAD_24F_24H
+    RMP_DSPIC_INT_LOAD_33E_33C
 /* End Function:__T3Interrupt ************************************************/
 
 /* End Of File ***************************************************************/

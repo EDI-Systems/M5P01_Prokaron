@@ -19,11 +19,11 @@
       </logicalFolder>
       <logicalFolder name="f5" displayName="Platform" projectFiles="true">
         <itemPath>../../../Source/Platform/DSPIC/rmp_platform_dspic.c</itemPath>
-        <itemPath>../../../Source/Platform/DSPIC/rmp_platform_dspic_xc16.s</itemPath>
+        <itemPath>../../../Source/Platform/DSPIC/rmp_platform_dspic_gcc.s</itemPath>
       </logicalFolder>
       <logicalFolder name="f2" displayName="Test" projectFiles="true">
         <itemPath>../../../Source/Test/rmp_benchmark.c</itemPath>
-        <itemPath>rmp_test_pic24fj128ga010.s</itemPath>
+        <itemPath>rmp_test_pic24fj128ga010_gcc.s</itemPath>
       </logicalFolder>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
