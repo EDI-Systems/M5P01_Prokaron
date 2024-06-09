@@ -10,6 +10,10 @@ Description: The configuration file for HC32L136K8.
 /* The HAL library */
 #include "ddl.h"
 #include "core_cm0plus.h"
+#include "uart.h"
+#include "gpio.h"
+#include "bt.h"
+#include "timer3.h"
 
 /* Debugging */
 #define RMP_ASSERT_CORRECT          (0U)
@@ -44,32 +48,50 @@ Description: The configuration file for HC32L136K8.
 #define RMP_A6M_LOWLVL_INIT() \
 do \
 { \
+    stc_gpio_cfg_t GPIO_Init_Cfg; \
+    stc_uart_cfg_t UART_Init_Cfg; \
+    DDL_ZERO_STRUCT(GPIO_Init_Cfg); \
+    DDL_ZERO_STRUCT(UART_Init_Cfg); \
+    \
     /* Switch to the target clock frequency */ \
     Sysctrl_SetRCLTrim(SysctrlRclFreq32768); \
     Sysctrl_ClkSourceEnable(SysctrlClkRCL, TRUE); \
     Sysctrl_SysClkSwitch(SysctrlClkRCL); \
     Sysctrl_SetRCHTrim(SysctrlRchFreq24MHz); \
 	Sysctrl_SysClkSwitch(SysctrlClkRCH); \
+    \
     /* Turn off the low speed RC oscillator and update core clock */ \
-	Sysctrl_ClkSourceEnable(SysctrlClkRCL, FALSE); \
+    Sysctrl_ClkSourceEnable(SysctrlClkRCL, FALSE); \
     SystemCoreClockUpdate(); \
+    \
     /* Initialize I/O and serial */ \
+    Sysctrl_SetPeripheralGate(SysctrlPeripheralGpio, TRUE); \
+    Sysctrl_SetPeripheralGate(SysctrlPeripheralUart0, TRUE); \
+    \
+    GPIO_Init_Cfg.enDir=GpioDirOut; \
+    Gpio_Init(GpioPortA,GpioPin9,&GPIO_Init_Cfg); \
+    Gpio_SetAfMode(GpioPortA,GpioPin9,GpioAf1); \
+    \
+    UART_Init_Cfg.enRunMode=UartMskMode3; \
+    UART_Init_Cfg.enMmdorCk=UartMskEven; \
+    UART_Init_Cfg.enStopBit=UartMsk1bit; \
+    UART_Init_Cfg.stcBaud.enClkDiv=UartMsk8Or16Div; \
+    UART_Init_Cfg.stcBaud.u32Pclk=Sysctrl_GetPClkFreq(); \
+    UART_Init_Cfg.stcBaud.u32Baud=115200; \
+    Uart_Init(M0P_UART0, &UART_Init_Cfg); \
+    \
     /* Set the priority of timer, svc and faults to the lowest */ \
     NVIC_SetPriority(SVC_IRQn, 0xFF); \
     NVIC_SetPriority(PendSV_IRQn, 0xFF); \
     NVIC_SetPriority(SysTick_IRQn, 0xFF); \
+    \
     /* Configure systick */ \
     SysTick_Config(RMP_A6M_SYSTICK_VAL); \
 } \
 while(0)
 
 /* This is for debugging output */
-#define RMP_A6M_PUTCHAR(CHAR) \
-do \
-{ \
-    /* Need to add serial print */ \
-} \
-while(0)
+#define RMP_A6M_PUTCHAR(CHAR)           Uart_SendDataPoll(M0P_UART0,CHAR)
 /* End Define ****************************************************************/
 
 /* End Of File ***************************************************************/
