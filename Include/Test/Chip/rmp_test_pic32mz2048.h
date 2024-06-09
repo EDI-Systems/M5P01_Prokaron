@@ -63,6 +63,25 @@ ISR Mailbox                        : 400 / 1200 / 400
 ISR Semaphore                      : 360 / 645 / 360
 ISR Message queue                  : 490 / 925 / 490
 ISR Blocking message queue         : 585 / 805 / 585
+
+XC32-GCC 4.35 -O3 (DSPASE/FR32 enabled, --specs hack enabled, microMIPS enabled)
+    ___   __  ___ ___
+   / _ \ /  |/  // _ \       Simple real-time kernel
+  / , _// /|_/ // ___/       Standard benchmark test
+ /_/|_|/_/  /_//_/
+====================================================
+Test (number in CPU cycles)        : AVG / MAX / MIN
+Yield                              : 355 / 355 / 355
+Mailbox                            : 515 / 1120 / 515
+Semaphore                          : 465 / 855 / 465
+FIFO                               : 160 / 535 / 160
+Message queue                      : 655 / 1005 / 655
+Blocking message queue             : 816 / 1100 / 815
+Memory allocation/free pair        : 371 / 596 / 363
+ISR Mailbox                        : 365 / 1125 / 365
+ISR Semaphore                      : 325 / 605 / 325
+ISR Message queue                  : 455 / 855 / 455
+ISR Blocking message queue         : 550 / 755 / 550
 ******************************************************************************/
 
 /* Include *******************************************************************/

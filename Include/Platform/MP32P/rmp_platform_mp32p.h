@@ -5,10 +5,10 @@ Date        : 23/02/2018
 Licence     : The Unlicense; see LICENSE for details.
 Description : The header of "rmp_platform_mp32p.c".
               This supports MIPS version 5, with DSPASE and FR32/FR64, while
-              assuming a physical memory model. This port respects the load and
-              branch delay slots and thus will be theoretically compatible with
-              a wide range of MIPS processors. The machine codes for FPU are
-              coded in words to be compatible with big-endian variants as well.
+              assuming a physical memory model. This port respects the load, FPU
+              move and branch delay slots and thus will be compatible with a
+              wide range of MIPS processors. FPU instructions are coded in words
+              to be compatible with big-endian variants as well.
               All threads in the system must use the same FPU model; we do not
               support cases where a thread uses FR32 while the other uses FR64.
               While it is possible to support such behavior for compatibility
@@ -168,7 +168,6 @@ struct RMP_MP32P_Stack
 {
     /* MIPS FR64 FPU normal mode */
 #if(RMP_MP32P_COP_FR64!=0U)
-    rmp_ptr_t FSCR;
     rmp_ptr_t F0[2];
     rmp_ptr_t F1[2];
     rmp_ptr_t F2[2];
@@ -201,9 +200,11 @@ struct RMP_MP32P_Stack
     rmp_ptr_t F29[2];
     rmp_ptr_t F30[2];
     rmp_ptr_t F31[2];
+    /* Make stack 8-byte aligned even in interrupts */
+    rmp_ptr_t FCSR;
+    rmp_ptr_t DUMMY;
     /* MIPS FR32 FPU compatibility mode */
 #elif(RMP_MP32P_COP_FR32!=0U)
-    rmp_ptr_t FSCR;
     rmp_ptr_t F0;
     rmp_ptr_t F1;
     rmp_ptr_t F2;
@@ -236,6 +237,9 @@ struct RMP_MP32P_Stack
     rmp_ptr_t F29;
     rmp_ptr_t F30;
     rmp_ptr_t F31;
+    /* Make stack 8-byte aligned even in interrupts */
+    rmp_ptr_t FCSR;
+    rmp_ptr_t DUMMY;
 #endif
     
     /* MIPS DSP ASE extension */

@@ -1,5 +1,5 @@
 /******************************************************************************
-Filename    : rmp_platform_dspic_xc16.inc
+Filename    : rmp_platform_dspic_gcc.inc
 Author      : pry
 Date        : 10/04/2012
 Description : The assembly part of the RMP RTOS. This is for DSPIC, and
