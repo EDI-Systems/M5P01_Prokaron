@@ -1,13 +1,13 @@
 /******************************************************************************
-Filename   : rmp_platform_nes.h
+Filename   : rmp_platform_famicom.h
 Author     : pry
 Date       : 23/05/2024
 Licence    : The Unlicense; see LICENSE for details.
-Description: The configuration file for NES.
+Description: The configuration file for FAMICOM.
 ******************************************************************************/
 
 /* Define ********************************************************************/
-/* The NES simple I/O library */
+/* The cc65 simple I/O library */
 #include <conio.h>
 
 /* Debugging */
@@ -22,22 +22,20 @@ Description: The configuration file for NES.
 /* Are we using custom hooks? */
 #define RMP_HOOK_EXTRA              (0U)
 /* The stack size of the init thread */
-#define RMP_INIT_STACK_SIZE         (128U)
+#define RMP_INIT_STACK_SIZE         (256U)
 /* The mask/unmask interrupt operations */
 #define RMP_INT_MASK()              RMP_Int_Disable()
 #define RMP_INT_UNMASK()            RMP_Int_Enable()
 
-/* APU frame counter */
-#define RMP_NES_APU_CTRL            (*((volatile rmp_u8_t*)(0x4015U)))
-#define RMP_NES_APU_FC              (*((volatile rmp_u8_t*)(0x4017U)))
-#define RMP_NES_APU_FC_4STEP        (0x00U)
-#define RMP_NES_APU_FC_5STEP        (0x80U)
-#define RMP_NES_APU_FC_INHIBIT      (0x40U)
+/* Zeropage size - must match what the compiler/linker script says */
+#define RMP_M6502_ZP_SIZE           (0x001AU)
 
-/* Namco 169 timer */
-#define RMP_NES_NAMCO169_IRQL       (*((volatile rmp_u8_t*)(0x5000U)))
-#define RMP_NES_NAMCO169_IRQH       (*((volatile rmp_u8_t*)(0x5800U)))
-#define RMP_NES_NAMCO169_IRQH_EN    (0x80U)
+/* APU frame counter */
+#define RMP_FAMICOM_APU_CTRL        (*((volatile rmp_u8_t*)(0x4015U)))
+#define RMP_FAMICOM_APU_FC          (*((volatile rmp_u8_t*)(0x4017U)))
+#define RMP_FAMICOM_APU_FC_4STEP    (0x00U)
+#define RMP_FAMICOM_APU_FC_5STEP    (0x80U)
+#define RMP_FAMICOM_APU_FC_INHIBIT  (0x40U)
 
 /* Other low-level initialization stuff - clock and serial.
  * This is the default initialization sequence. If you wish to supply
@@ -46,17 +44,23 @@ Description: The configuration file for NES.
 #define RMP_M6502_LOWLVL_INIT() \
 do \
 { \
-    RMP_DBG_S("\r\nPPU initialized. Booting RMP...\r\n"); \
-    /* Set up the APU frame counter to generate 60Hz timer interrupts */ \
-    RMP_NES_APU_FC=RMP_NES_APU_FC_4STEP; \
-    /* Initialize Namco 169 timer */ \
-    RMP_NES_NAMCO169_IRQL=0x00U; \
-    RMP_NES_NAMCO169_IRQH=0x00U|RMP_NES_NAMCO169_IRQH_EN; \
+    RMP_DBG_S("PPU initialized.\r\n"); \
+    RMP_DBG_S("Booting kernel...\r\n"); \
+    /* APU frame counter will generate 60Hz interrupts */ \
+    RMP_FAMICOM_APU_FC=RMP_FAMICOM_APU_FC_4STEP; \
 } \
 while(0)
 
 /* Read control register to clear IRQ status */
-#define RMP_M6502_TIM_CLR()         ((void)RMP_NES_APU_CTRL)
+#define RMP_M6502_TIM_CLR() \
+do \
+{ \
+    /* Use two ack methods to stay compatible with emulators */ \
+    (void)RMP_FAMICOM_APU_FC; \
+    RMP_FAMICOM_APU_FC=RMP_FAMICOM_APU_FC_INHIBIT; \
+    RMP_FAMICOM_APU_FC=RMP_FAMICOM_APU_FC_4STEP; \
+} \
+while(0)
 
 /* This is for debugging output */
 #define RMP_M6502_PUTCHAR(CHAR) \

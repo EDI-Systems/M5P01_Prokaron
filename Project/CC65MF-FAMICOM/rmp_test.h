@@ -1,13 +1,13 @@
 /******************************************************************************
-Filename    : rmp_platform_m6502_conf.h
+Filename    : rmp_test.h
 Author      : pry
 Date        : 24/06/2017
 Licence     : LGPL v3+; see COPYING for details.
-Description : The configuration file for M6502 HAL.
+Description : The configuration file for testing program.
 ******************************************************************************/
 
 /* Config Includes ***********************************************************/
-#include "Platform/M6502/Chip/NES/rmp_platform_nes.h"
+#include "Test/Chip/rmp_test_famicom.h"
 /* End Config Includes *******************************************************/
 
 /* End Of File ***************************************************************/

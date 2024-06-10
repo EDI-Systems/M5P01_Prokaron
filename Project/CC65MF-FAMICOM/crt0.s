@@ -115,8 +115,8 @@ start:
         stx     ringread
         stx     ringwrite
         stx     ringcount
-        ldx     #$ff
-        txs                     ; set stack pointer - full descending stack
+        ldx     #$ff            ; original $100 is counterintuitive (possibly considering that main does not return)
+        txs                     ; set stack pointer - empty descending stack, use $FF
 
 ; Clear internal ring buffer RAM.
         lda     #$20

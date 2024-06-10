@@ -4,7 +4,7 @@ Author      : pry
 Date        : 25/05/2024
 Licence     : The Unlicense; see LICENSE for details.
 Description : The header of "rmp_platform_unsp.c".
-              This port supports both unSP 1.2 and 2.0 (2.0 have 8 extra regs).
+              This port supports both unSP 1.2 and 2.0 (2.0 has 8 extra regs).
               The only chip that this port plans to test is the SPCE061A, an
               obsolete microcontroller at the heart of the Sunplus University
               Program that vanished decades ago. The chip never had a RTOS port,
@@ -68,7 +68,7 @@ Description : The header of "rmp_platform_unsp.c".
                  portforlio diversity. The chip's I/O peripherals are either
                  insufficient or useless for general-purpose control, and too
                  many competitors can provide better products. The peripherals
-                 are also very inflexible; for example, you can only choose
+                 are also very inflexible, for example, you can only choose
                  Fosc/2 or Fosc/256 for timer clock; no middleground exists.
                  To make things worse, some peripherals even exhibit silicon
                  bugs when pushed to a high but still in-datasheet-spec Fosc.

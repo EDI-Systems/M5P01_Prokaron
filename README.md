@@ -34,7 +34,14 @@ This software is an official work of EDI, and thus belongs to the **public domai
 
 ## Quick Demo
 ### Linux minimal runnable binary
-&ensp;&ensp;Compile the 32-bit linux binary **[here](/Project/GCCMF-X86-LINUX)** and watch benchmark results!
+&ensp;&ensp;Compile the 32-bit linux binary **[here](/Project/GCCMF-X86-LINUX)** and watch the benchmark results!
+
+### NES (FAMICOM) minimal runnable binary
+&ensp;&ensp;Download the precompiled "game" **[here](/Document/Public/Demo/RMP.nes)**, load it into your favorite emulator (or a flashable Namco 163 mapper cartridge and plug it into the real console), and watch the benchmark results!
+
+![FAMICOM](/Document/Public/Demo/FAMICOM.png)
+
+&ensp;&ensp;The Namco 163 is not optional, as the system relies on it to provide IRQ timers for performance measurement. Namco 163 is the only mapper that featured a readable timestamp counter, and can be found on cartridges that also originally host famous games such as "Star Wars" and "Sangokushi II: Hanou no Tairiku (三国志II 覇王の大陸)". The chip is sometimes also known as Namcot 163, or iNES mapper 019.
 
 ### Built-in graphics : widgets, example and FXAA anti-aliasing
 ![Controls](/Document/Public/Demo/Controls.png)
@@ -183,6 +190,7 @@ This software is an official work of EDI, and thus belongs to the **public domai
 
 |Chipname     |Platform    |Build |Yield|Mail |Sem  |FIFO |Msgq |Bmq  |Mail/I|Sem/I|Msgq/I |Bmq/I |Mem  |
 |:-----------:|:----------:|:----:|:---:|:---:|:---:|:---:|:---:|:---:|:----:|:---:|:-----:|:----:|:---:|
+|2A03(MESEN)  |MOS6502     |CC65  |4060 |5439 |5424 |2040 |7728 |10443|4836  |5185 |7227   |8355  |7446 |
 |ATMEGA328P   |AVR         |GCC   |408  |719  |686  |313  |1065 |1318 |624   |626  |905    |1073  |N/A  |
 |ATMEGA1284P  |...         |...   |437  |751  |717  |314  |1098 |1352 |637   |639  |921    |1087  |1680 |
 |ATMEGA2560   |...         |...   |449  |774  |736  |326  |1131 |1396 |656   |654  |942    |1117  |1686 |

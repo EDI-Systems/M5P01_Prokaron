@@ -29,10 +29,10 @@ CSRCS+=../../Source/Kernel/rmp_kernel.c
 CSRCS+=../../Source/Test/rmp_benchmark.c
 CSRCS+=../../Source/Platform/M6502/rmp_platform_m6502.c
 
-ASRCS+=./rmp_test_nes_cc65.s
+ASRCS+=./rmp_test_famicom_cc65.s
 ASRCS+=../../Source/Platform/M6502/rmp_platform_m6502_cc65.s
 
-LDSCRIPT=./rmp_platform_nes.ld
+LDSCRIPT=./rmp_platform_famicom.ld
 LIBS=$(OBJDIR)/rmp.lib
 # End Source ##################################################################
 
@@ -59,7 +59,7 @@ OBJ=$(OBJDIR)/$(notdir $@)
 MAP=$(OBJDIR)/$(TARGET).map
 
 # Build all
-all: mkdir rmp.lib $(COBJS) $(AOBJS) $(TARGET).nes
+all: clean mkdir rmp.lib $(COBJS) $(AOBJS) $(TARGET).nes
 
 # Create output folder
 mkdir:
@@ -70,8 +70,9 @@ rmp.lib:
 	@echo "    ASAR    rmp.lib"
 	@$(CP) $(CC65_HOME)/lib/nes.lib $(OBJDIR)/rmp.lib
 	@$(AS) $(CPU) $(AFLAGS) $(WFLAGS) $(DFLAGS) $(INCS) "crt0.s" -o "$(OBJDIR)/crt0.o"
-	@$(AR) a $(OBJDIR)/rmp.lib $(OBJDIR)/crt0.o
-	@$(RM) -f $(OBJDIR)/crt0.o
+	@$(AS) $(CPU) $(AFLAGS) $(WFLAGS) $(DFLAGS) $(INCS) "zeropage.s" -o "$(OBJDIR)/zeropage.o"
+	@$(AR) a $(OBJDIR)/rmp.lib $(OBJDIR)/crt0.o $(OBJDIR)/zeropage.o
+	@$(RM) -f $(OBJDIR)/crt0.o $(OBJDIR)/zeropage.o
 
 # Compile C sources
 %.o:%.c

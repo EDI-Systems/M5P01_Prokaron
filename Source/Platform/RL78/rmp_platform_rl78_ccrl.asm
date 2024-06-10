@@ -74,6 +74,10 @@ __RMP_Start:
 
 ;/* Function:__RMP_RL78_Yield *************************************************
 ;Description : Trigger a yield to another thread.
+;              The RL78's call instruction actually pushes PC and PSW, hence the
+;              call entry and interrupt entry is the same. However, this does
+;              not appear in the official manual, and we refrain from relying on
+;              such unofficial features.
 ;Input       : None.
 ;Output      : None.
 ;Return      : None.

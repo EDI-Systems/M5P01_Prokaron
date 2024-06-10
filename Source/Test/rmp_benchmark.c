@@ -435,8 +435,10 @@ void Test_Mem_Pool(void)
     static rmp_u8_t Free[8];
     static rmp_u8_t Size[8];
     static rmp_ptr_t Amount[8];
-    rmp_cnt_t Count;
-    rmp_cnt_t Test_Count;
+    rmp_ptr_t Pool_Addr;
+    rmp_ptr_t* Pool_Align;
+    rmp_cnt_t Case_Cnt;
+    rmp_cnt_t Test_Cnt;
     
     Amount[0]=TEST_MEM_POOL/32U;
     Amount[1]=TEST_MEM_POOL/64U+16U;
@@ -447,80 +449,95 @@ void Test_Mem_Pool(void)
     Amount[6]=TEST_MEM_POOL/128U+64U;
     Amount[7]=TEST_MEM_POOL/2U-64U;
     
+    /* Round up the pool to machine word boundary just in case compilers don't */
+    Pool_Addr=(rmp_ptr_t)Pool;
+    Pool_Addr=(Pool_Addr+sizeof(rmp_ptr_t)-1U)/sizeof(rmp_ptr_t)*sizeof(rmp_ptr_t);
+    Pool_Align=(rmp_ptr_t*)Pool_Addr;
+
     /* Initialize the pool */
-    RMP_Mem_Init(Pool, TEST_MEM_POOL*sizeof(rmp_ptr_t));
-    for(Test_Count=0;Test_Count<ROUND_NUM;Test_Count++)
+    RMP_ASSERT(RMP_Mem_Init(Pool_Align, (TEST_MEM_POOL-1U)*sizeof(rmp_ptr_t))==0);
+    for(Test_Cnt=0;Test_Cnt<ROUND_NUM;Test_Cnt++)
     {
         /* Random sequence and number generation */
-        for(Count=0;Count<8;Count++)
+        for(Case_Cnt=0;Case_Cnt<8;Case_Cnt++)
         {
-            Alloc[Count]=(rmp_u8_t)Count;
-            Free[Count]=(rmp_u8_t)Count;
-            Size[Count]=(rmp_u8_t)Count;
+            Alloc[Case_Cnt]=(rmp_u8_t)Case_Cnt;
+            Free[Case_Cnt]=(rmp_u8_t)Case_Cnt;
+            Size[Case_Cnt]=(rmp_u8_t)Case_Cnt;
         }
         
-        for(Count=7;Count>0;Count--)
+        for(Case_Cnt=7;Case_Cnt>0;Case_Cnt--)
         {
-            Swap(&Alloc[Count], &Alloc[Rand()%((rmp_ptr_t)Count+1U)]);
-            Swap(&Free[Count], &Free[Rand()%((rmp_ptr_t)Count+1U)]);
-            Swap(&Size[Count], &Size[Rand()%((rmp_ptr_t)Count+1U)]);
+            Swap(&Alloc[Case_Cnt], &Alloc[Rand()%((rmp_ptr_t)Case_Cnt+1U)]);
+            Swap(&Free[Case_Cnt], &Free[Rand()%((rmp_ptr_t)Case_Cnt+1U)]);
+            Swap(&Size[Case_Cnt], &Size[Rand()%((rmp_ptr_t)Case_Cnt+1U)]);
         }
         
         Start=RMP_CNT_READ();
         /* Allocation tests - some malloc may fail if sizeof(rmp_ptr_t)==1; this is
          * normal (could happen on some 16-bitters that have word addressing, because
          * the pool is not big enough). However, the first two must be successful. */
-        Mem[Alloc[0]]=RMP_Malloc(Pool, Amount[Size[0]]);
+        Mem[Alloc[0]]=RMP_Malloc(Pool_Align, Amount[Size[0]]);
         RMP_ASSERT(Mem[Alloc[0]]!=RMP_NULL);
-        Mem[Alloc[1]]=RMP_Malloc(Pool, Amount[Size[1]]);
+        Mem[Alloc[1]]=RMP_Malloc(Pool_Align, Amount[Size[1]]);
         RMP_ASSERT(Mem[Alloc[1]]!=RMP_NULL);
-        Mem[Alloc[2]]=RMP_Malloc(Pool, Amount[Size[2]]);
-        Mem[Alloc[3]]=RMP_Malloc(Pool, Amount[Size[3]]);
-        Mem[Alloc[4]]=RMP_Malloc(Pool, Amount[Size[4]]);
-        Mem[Alloc[5]]=RMP_Malloc(Pool, Amount[Size[5]]);
-        Mem[Alloc[6]]=RMP_Malloc(Pool, Amount[Size[6]]);
-        Mem[Alloc[7]]=RMP_Malloc(Pool, Amount[Size[7]]);
+        Mem[Alloc[2]]=RMP_Malloc(Pool_Align, Amount[Size[2]]);
+        Mem[Alloc[3]]=RMP_Malloc(Pool_Align, Amount[Size[3]]);
+        Mem[Alloc[4]]=RMP_Malloc(Pool_Align, Amount[Size[4]]);
+        Mem[Alloc[5]]=RMP_Malloc(Pool_Align, Amount[Size[5]]);
+        Mem[Alloc[6]]=RMP_Malloc(Pool_Align, Amount[Size[6]]);
+        Mem[Alloc[7]]=RMP_Malloc(Pool_Align, Amount[Size[7]]);
 
         /* Deallocation tests */
-        RMP_Free(Pool,Mem[Free[0]]);
-        RMP_Free(Pool,Mem[Free[1]]);
-        RMP_Free(Pool,Mem[Free[2]]);
-        RMP_Free(Pool,Mem[Free[3]]);
-        RMP_Free(Pool,Mem[Free[4]]);
-        RMP_Free(Pool,Mem[Free[5]]);
-        RMP_Free(Pool,Mem[Free[6]]);
-        RMP_Free(Pool,Mem[Free[7]]);
+        RMP_Free(Pool_Align,Mem[Free[0]]);
+        RMP_Free(Pool_Align,Mem[Free[1]]);
+        RMP_Free(Pool_Align,Mem[Free[2]]);
+        RMP_Free(Pool_Align,Mem[Free[3]]);
+        RMP_Free(Pool_Align,Mem[Free[4]]);
+        RMP_Free(Pool_Align,Mem[Free[5]]);
+        RMP_Free(Pool_Align,Mem[Free[6]]);
+        RMP_Free(Pool_Align,Mem[Free[7]]);
         End=RMP_CNT_READ();
         RMP_DATA();
 
         /* This should always be successful because we deallocated everything else.
          * Using 112 here to back off a little bit in case sizeof(rmp_ptr_t)==1. */
-        Mem[0]=RMP_Malloc(Pool, (TEST_MEM_POOL>>7)*112U);
+        Mem[0]=RMP_Malloc(Pool_Align, (TEST_MEM_POOL>>7)*112U);
         if(Mem[0]==RMP_NULL)
         {
             RMP_DBG_S("Memory test failure: ");
-            RMP_DBG_I(Test_Count);
+            RMP_DBG_I(Test_Cnt);
             RMP_DBG_S(" runs.\r\n");
             while(1);
         }
-        RMP_Free(Pool, Mem[0]); 
+        RMP_Free(Pool_Align, Mem[0]); 
     }
     
-    Total/=8;
-    Max/=8;
-    Min/=8;
+    Total/=8U;
+    Max/=8U;
+    Min/=8U;
 }
 #endif
 
 void Func_2(void)
 {
     /* Print table header */
-    RMP_DBG_S("\r\n    ___   __  ___ ___\r\n");
+    RMP_DBG_S("\r\n");
+#ifndef SMALL_TERMINAL
+    /* Standard display assumes a standard 52-character terminal */
+    RMP_DBG_S("    ___   __  ___ ___\r\n");
     RMP_DBG_S("   / _ \\ /  |/  // _ \\       Simple real-time kernel\r\n");
     RMP_DBG_S("  / , _// /|_/ // ___/       Standard benchmark test\r\n");
     RMP_DBG_S(" /_/|_|/_/  /_//_/\r\n");
     RMP_DBG_S("====================================================\r\n");
     RMP_DBG_S("Test (number in CPU cycles)        : AVG / MAX / MIN\r\n");
+#else
+    /* Miniature display assumes 16 characters per line, and guarantees AVG value display */
+    RMP_DBG_S("=RMP= RT kernel\r\n");
+    RMP_DBG_S(" Std benchmark\r\n");
+    RMP_DBG_S("================\r\n");
+    RMP_DBG_S("CY : A / T / B\r\n");
+#endif
 
 #ifdef FAULT_INJECT
     RMP_DBG_S("Injecting fault by accessing NULL address.\r\n");
@@ -534,7 +551,12 @@ void Func_2(void)
     /* Yield tests */
     RMP_INIT();
     Test_Yield_2();
+#ifndef SMALL_TERMINAL
     RMP_LIST("Yield                             ");
+#else
+    RMP_LIST("Y ");
+#endif
+
     
     /* Elevate priority of thread 2 for IPC tests */
     RMP_Thd_Set(&Thd_2,2U,RMP_SLICE_MAX);
@@ -542,33 +564,57 @@ void Func_2(void)
     /* Mailbox tests */
     RMP_INIT();
     Test_Mail_2();
+#ifndef SMALL_TERMINAL
     RMP_LIST("Mailbox                           ");
+#else
+    RMP_LIST("M ");
+#endif
     
     /* Semaphore tests */
     RMP_INIT();
     Test_Sem_2();
+#ifndef SMALL_TERMINAL
     RMP_LIST("Semaphore                         ");
+#else
+    RMP_LIST("S ");
+#endif
     
     /* Fifo tests */
     RMP_INIT();
     Test_Fifo();
+#ifndef SMALL_TERMINAL
     RMP_LIST("FIFO                              ");
+#else
+    RMP_LIST("F ");
+#endif
     
     /* Message queue tests */
     RMP_INIT();
     Test_Msgq_2();
+#ifndef SMALL_TERMINAL
     RMP_LIST("Message queue                     ");
+#else
+    RMP_LIST("Q ");
+#endif
     
     /* Blocking message queue tests */
     RMP_INIT();
     Test_Bmq_2();
+#ifndef SMALL_TERMINAL
     RMP_LIST("Blocking message queue            ");
+#else
+    RMP_LIST("B ");
+#endif
     
     /* Memory pool tests */
 #ifdef TEST_MEM_POOL
     RMP_INIT();
     Test_Mem_Pool();
+#ifndef SMALL_TERMINAL
     RMP_LIST("Memory allocation/free pair       ");
+#else
+    RMP_LIST("MM");
+#endif
 #endif
 
     /* Prepare interrupt tests */
@@ -606,22 +652,38 @@ void Func_2(void)
     Total=Mail_ISR_Total;
     Max=Mail_ISR_Max;
     Min=Mail_ISR_Min;
+#ifndef SMALL_TERMINAL
     RMP_LIST("ISR Mailbox                       ");
+#else
+    RMP_LIST("MI");
+#endif
     
     Total=Sem_ISR_Total;
     Max=Sem_ISR_Max;
     Min=Sem_ISR_Min;
+#ifndef SMALL_TERMINAL
     RMP_LIST("ISR Semaphore                     ");
+#else
+    RMP_LIST("SI");
+#endif
     
     Total=Msgq_ISR_Total;
     Max=Msgq_ISR_Max;
     Min=Msgq_ISR_Min;
+#ifndef SMALL_TERMINAL
     RMP_LIST("ISR Message queue                 ");
+#else
+    RMP_LIST("QI");
+#endif
     
     Total=Bmq_ISR_Total;
     Max=Bmq_ISR_Max;
     Min=Bmq_ISR_Min;
+#ifndef SMALL_TERMINAL
     RMP_LIST("ISR Blocking message queue        ");
+#else
+    RMP_LIST("BI");
+#endif
     
     /* Test stop - Decide whether to exit, or keep dumping counter values
      * to detect potentially wrong timer clock rate configurations */

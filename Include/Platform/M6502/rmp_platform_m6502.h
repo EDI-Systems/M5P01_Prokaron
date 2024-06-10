@@ -1,17 +1,62 @@
 /******************************************************************************
 Filename    : rmp_platform_m6502.h
 Author      : pry
-Date        : 01/04/2017
+Date        : 10/06/2024
 Licence     : The Unlicense; see LICENSE for details.
 Description : The header of "rmp_platform_m6502.c".
               This is a retro port paying tribute to the legendary MOS 6502
               processor, whose existence made personal computers affordable.
               The only supported console of this port will be the Nintendo
-              Entertainment System (NES/Famicom), a equally legendary platform
-              that made owning high-quality personal gaming consoles possible
-              (contemporary consoles included Atari and SEGA). Throughout the
-              entire 80's and 90's, owning such a console was the dream of many
-              children.
+              Family Computer, a.k.a. Nintendo Entertainment System (NES/FC/
+              FAMICOM), a equally legendary platform that made owning high-
+              quality personal gaming consoles possible (contemporary consoles
+              included Atari and SEGA). Throughout the entire 80's and 90's,
+              owning such a console was the dream of many children.
+              Following the video game crash (a.k.a Atari Shock) of 1983,
+              Nintendo attached much importance to the game quality, and each
+              FAMICOM game release must be inspected then preapproved by 
+              Nintendo. The cartridges were also exclusively supplied by
+              Nintendo; later, several renowned studios are allowed to make
+              their own cartridges or even expansion chips (the "mapper" name
+              is more pronounced; the Nintendo officially called them Memory
+              Management Controllers, a.k.a. MMCs).
+              Released on 15 July 1983 with the "Mario Bros.", FAMICOM was
+              regarded as the most iconic and influential console of all time.
+              It was finally superseded by Super FAMICOM in 1990 which continued
+              the success story. Both were discontinued by Nintendo on May 30,
+              2003. Due to the large number of NES fans, Nintendo remastered the
+              console in 2016 as the "NES Classic Edition", which came bundled
+              with some games. The replica is implemented with emulator though.
+              A total of 1386 official games summing up to less than 300MiB were
+              released for FAMICOM, with the last one being the "Lion King" on
+              25 May 1995.
+              FAMICOM-related development information can be acquired through
+              www.nesdev.org, and many emulators such as iNES, MESEN, FCEUX and
+              MAME exist.
+              ------------------------------------------------------------------
+              The existence of mappers was a signature aspect of FAMICOM. The
+              FAMICOM consists of a CPU, a PPU, 2KiB PRG RAM and 2KiB CHR RAM,
+              and could only address 64KiB of total memory. This was clearly
+              insufficient for larger games. The built-in sound generators were
+              capable of generating simple waveforms but could not play sampled
+              datapoints, which is unsuitable for RPG or SLG games that aimed to
+              provide an immersive experience. To these ends, the mappers were
+              born. The mappers were circuits that (1) switch PRG/CHR ROM banks,
+              (2) supply more working RAM, (3) allow to save games in battery-
+              backed RAM, (4) provide editable CHR RAM, (5) enable more sprites,
+              (6) expand palettes, (7) provide extra sound channels, (8) provide
+              IRQ counters, or even (9) provide additional multipliers. They
+              were soldered onto the game cartridge, and were considered a part
+              of the game. Later games cartridges often included more resources
+              than the base FAMICOM. This business model lowered the price of
+              the base console which was helpful for product reception, and then
+              charged a premium on the games that generated real revenue.
+              The most famous/powerful mappers included:
+              1. No mapper (iNES 000): Just the base FAMICOM.
+              2. Nintendo MMC5 (iNES 005): The most powerful official mapper.
+              3. Konami VRC7 （iNES 085): The best graphics, and great music.
+              4. Sunsoft FME-7 (iNES 069): The best music.
+              5. Namco(t) 163 (iNES 019): The most number of sound channels.
               ------------------------------------------------------------------
               As with many 6502-based systems, NES lacked a true multithreaded,
               preemptive operating system throughout its entire product lifecycle.
@@ -19,57 +64,54 @@ Description : The header of "rmp_platform_m6502.c".
               preemption support, however by looking at the code it is clear that
               preemption is not implemented in its NES port. As such, we feel
               obliged to provide a such a port, bringing true multitasking to the
-              platform.
+              platform. This port would support other systems such as Atari, Acorn
+              (which lives as ARM Ltd today) and Commodore with minimal porting.
               ------------------------------------------------------------------
               The 6502 presents multiple unique technical challenges.
-              1. Call stack size issue: 6502 only had a 8-bit pointer, hence the
+              1. Return stack size issue: 6502 only had a 8-bit pointer, hence the
                  total stack size is 256B. This means that we won't be able to
                  allocate such a stack for each thread, and will have to spill it
                  to software stack before we can do anything. The call stack is an
-                 empty descending one.
+                 EMPTY descending one.
               2. Zero page register issue: some zero-page registers are used by
                  compilers, and we'd have to save and restore that part as well.
-              3. Independent software stack issue: the parameter is not on the
+              3. Independent parameter stack issue: the parameter is not on the
                  call stack because it is way too small. Instead, they are placed
                  onto an independent software-emulated stack. Luckily, this stack
                  is large enough for us, so we're using it to save everything. The
-                 software stack is a full descending one.
-              The difficulties essentially forces us to write the most unusual
-              switching code so far in RMP:
-              1. Push working registers to call stack.
-              2. Push zero page registers to parameter stack.
-              3. Execute interrupt handler. If a context switch is required:
-                 3.1 Save call stack to parameter stack.
-                 3.2 Save software stack pointer to RMP_SP_Cur.
-                 3.3 Call _RMP_Run_High to choose the correct thread.
-                 3.4 Restore software stack pointer from RMP_SP_Cur.
-                 3.5 Restore call stack from parameter stack.
-                     Note that the SP register is also saved onto the stack. This
-                     helps us to know how much call stack is used, so we can move
-                     exactly that amount without messing up the data boundaries.
-                     
-                     rmp_u8_t SP
-                     rmp_u8_t Y
-                     rmp_u8_t X
-                     rmp_u8_t A
-                     rmp_u8_t PF
-                     rmp_ptr_t PC
-                     rmp_ptr_t ;
+                 software stack is a FULL descending one.
+              The difficulties (and full context switch overheads) essentially
+              force us to write the most unusual switching code in RMP: the code
+              (1) only does full pushes and pops when a context switch is actually
+              required, and (2) copies the return stack (RSTK) to the parameter
+              stack (PSTK).
+              1. Push working registers to RSTK.
+              2. Push zero page registers to PSTK.
+              3. Execute interrupt handler with thread stacks.
+                 Only when a context switch is required:
+                 3.1 Save RSTK and RSP to PSTK.
+                 3.2 Save PSP to RMP_SP_Cur.
+                 3.3 Switch to kernel PSTK and rewind RSTK.
+                 3.4 Call _RMP_Run_High to choose the correct thread.
+                 3.5 Restore PSP from RMP_SP_Cur.
+                 3.6 Restore RSTK and RSP from PSTK.
               4. Pop zero page registers from parameter stack.
-              5. Pop working registers from call stack.
-                                     | RMP_SP_Cur              
-                                     v
-              LO [                    SP Y X A PF PC CALL_STACK ZEROPAGE PARAM_STACK ] HI
-              ------------------------------------------------------------------
+              5. Pop working registers from return stack.
+              The stack frame at last would look like:
+                                         | RMP_SP_Cur = PSP
+                                         v
+              LO [                      RSP Y X A PF PC -RSTK- -ZP- -PSTK- ] HI
+              -----------------------------------------------------------------
               Please refrain from trying to use this port on games that require
               good user experience. The NES is simply too meager to run anything
               useful. The kernel itself easily takes up (almost) all the banks
               (24KiB=3x8KiB) with no hope of shrinking it further, forcing the
               programmer to bank code heavily with the last available bank. The
-              mapper chosen is Namco (Namcot) 163 (iNES 019), the only one that
+              mapper chosen is Namco(t) 163 (iNES 019), the only mapper that
               featured a readable free-running counter which makes performance
-              measurements possible. It also comes with sound support and CHRRAM,
-              which makes it one of the most powerful MMCs available.
+              measurements possible. It also comes with multi-channel sound 
+              support and extra CHR RAM, which makes it one of the most powerful 
+              mappers available.
               The NES processor was intended to include a 24-bit timer, yet the
               development is unfinished and most circuitry connecting to it was
               cut (according to nesdev.org). Luckily, the mapper has 8KiB of RAM
@@ -153,6 +195,10 @@ typedef rmp_s16_t rmp_ret_t;
 /* The CPU and application specific macros are here */
 #include "rmp_platform_M6502_conf.h"
 /* End System macros *********************************************************/
+
+/* M6502 specific macros *****************************************************/
+/* Bits within the CP0 STATUS register */
+#define RMP_M6502_PF_ID                 RMP_POW2(2U)    /* Enable interrupts */
 /*****************************************************************************/
 /* __RMP_PLATFORM_M6502_DEF__ */
 #endif
@@ -172,7 +218,21 @@ typedef rmp_s16_t rmp_ret_t;
 /*****************************************************************************/
 struct RMP_M6502_Stack
 {
-    rmp_ptr_t Placeholder;
+    /* CPU registers */
+    rmp_u8_t RSP;
+    rmp_u8_t Y;
+    rmp_u8_t X;
+    rmp_u8_t A;
+    rmp_u8_t PF;
+    rmp_u8_t PCL;
+    rmp_u8_t PCH;
+
+    /* RSTK starts empty */
+
+    /* Zeropage "register" variables */
+    rmp_u8_t ZP[RMP_M6502_ZP_SIZE];
+
+    /* PSTK starts empty */
 };
 /*****************************************************************************/
 /* __RMP_PLATFORM_M6502_STRUCT__ */
@@ -233,9 +293,9 @@ EXTERN void RMP_Int_Enable(void);
 EXTERN void RMP_Int_Mask(rmp_u8_t Level);
 
 EXTERN void _RMP_Start(rmp_ptr_t Entry, rmp_ptr_t Stack);
+EXTERN void _RMP_M6502_Yield(void);
 __EXTERN__ void _RMP_Yield(void);
 
-void _RMP_M6502_Yield(void);
 
 /* Initialization */
 __EXTERN__ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
