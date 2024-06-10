@@ -166,11 +166,17 @@ RMP_UNSP_SWITCH:        .macro
 // Restore all GP regs ********************************************************
 RMP_UNSP_LOAD:          .macro
     POP                 R1,R5 FROM [SP]
-    // Have to reenable IRQ this way because RETI don't enable interrupts.
-    // RETI may also fiddle with the interrupt controller states as well.
+    // Have to reenable IRQ this way cause RETI doesn't enable interrupts; this
+    // is due to the fact that the SR does not include an interrupt enable bit
+    // (the bit is actually in FR which is only visible in V2). RETI may also
+    // fiddle with the interrupt controller states as well. So, we just use the
+    // regular RETF to do the job.
     // Note that the method has a caveat: if the thread is repeatedly preempted
     // between the INT and RETF, we get theoretically unbounded stack usage.
     // This is very unlikely to happen in real life though.
+    // Also note that the Param in the stack init struct is not popped off. This
+    // is OK on unSP because no stack alignment is required after all, so we're
+    // not really respecting the stack alignment macros provided by RMP.    
     INT                 IRQ,FIQ
     RETF
     .endm

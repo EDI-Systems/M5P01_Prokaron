@@ -34,7 +34,14 @@ Click **[HERE](README.md)** for English version.
 
 ## 快速演示
 ### 可在Linux上直接运行的Demo
-&emsp;&emsp;从 **[这里](/Project/GCCMF-X86-LINUX)** 下载预编译的x86-32位Linux系统上可运行的二进制，观察性能测试的运行结果！
+&emsp;&emsp;到 **[这里](/Project/GCCMF-X86-LINUX)** 编译x86-32位Linux系统上可运行的二进制，观察性能测试的运行结果！
+
+### 可在红白机（FAMICOM/NES）上直接运行的Demo
+&emsp;&emsp;从 **[这里](/Document/Public/Demo/RMP.nes)** 下载“游戏”镜像，把它装入你喜欢的模拟器（或者支持南梦宫163扩展芯片的烧录卡并插入实机），观察性能测试的运行结果！
+
+![FAMICOM](/Document/Public/Demo/FAMICOM.png)
+
+&emsp;&emsp;南梦宫163扩展芯片是必需的，因为系统需要利用它内部的IRQ计时器来测量性能。在所有扩展芯片中，唯一支持可读取计时器的只有南梦宫163，这颗芯片也被用于“星球大战（Star Wars）”、“三国志II 霸王的大陆”等知名游戏。南梦宫163有时也被叫做Namcot 163，或者iNES扩展019。
 
 ### 内建图形库：控件，界面样例和FXAA抗锯齿细节
 ![Controls](/Document/Public/Demo/Controls.png)
@@ -183,6 +190,7 @@ Click **[HERE](README.md)** for English version.
 
 |芯片          |架构        |工具链  |Yield|Mail |Sem  |FIFO |Msgq |Bmq  |Mail/I|Sem/I|Msgq/I |Bmq/I |Mem  |
 |:-----------:|:----------:|:----:|:---:|:---:|:---:|:---:|:---:|:---:|:----:|:---:|:-----:|:----:|:---:|
+|2A03(MESEN)  |MOS 6502    |CC65  |4060 |5439 |5424 |2040 |7728 |10443|4836  |5185 |7227   |8355  |7446 |
 |ATMEGA328P   |AVR         |GCC   |408  |719  |686  |313  |1065 |1318 |624   |626  |905    |1073  |N/A  |
 |ATMEGA1284P  |...         |...   |437  |751  |717  |314  |1098 |1352 |637   |639  |921    |1087  |1680 |
 |ATMEGA2560   |...         |...   |449  |774  |736  |326  |1131 |1396 |656   |654  |942    |1117  |1686 |

@@ -40,20 +40,33 @@ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
                           rmp_ptr_t Entry,
                           rmp_ptr_t Param)
 {
-    struct RMP_M6502_Stack* Ptr;
+    rmp_u8_t Count;
+    rmp_ptr_t Ptr;
+    struct RMP_M6502_Stack* Ctx;
     
-    /* Compute stack - empty descending, no alignment requirement */
-    Ptr=(struct RMP_M6502_Stack*)(Stack+Size-sizeof(struct RMP_M6502_Stack)-1U);
+    Ptr=RMP_STACK_PTR(Stack,Size);
+    Ctx=RMP_STACK_CTX(Ptr);
     
     /* Pass entry and parameter - program space is in words instead of bytes */
+    Ctx->PCH=Entry>>8;
+    Ctx->PCL=Entry&0xFFU;
+    Ctx->X=Param>>8;
+    Ctx->A=Param&0xFFU;
 
-    
-    /* Fill the rest for ease of identification - R1 is implicitly zero as required 
-     * by GCC, but we still save/restore it in case the program includes assembly */
- 
-    
-    /* Empty descending */
-    return ((rmp_ptr_t)Ptr)-1U;
+    /* Enable interrupts */
+    Ctx->PF=0x04U;
+
+    /* RSP always at 0xF9: 0xFF-PCH, 0xFE-PCL, 0xFD-PF, 0xFC-A. 0xFB-X, 0xFA-Y */
+    Ctx->RSP=0xF9U;
+
+    /* Fill register for ease of identification */
+    Ctx->Y=0xAAU;
+
+    /* Fill zeropage with sequence numbers for ease of identification */
+    for(Count=0U;Count<RMP_M6502_ZP_SIZE;Count++)
+        Ctx->ZP[Count]=Count;
+
+    return Ptr;
 }
 /* End Function:_RMP_Stack_Init **********************************************/
 

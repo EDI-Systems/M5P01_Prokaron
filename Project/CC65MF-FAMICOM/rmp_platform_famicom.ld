@@ -6,7 +6,10 @@ SYMBOLS {
     __STACKSIZE__: type = weak, value = $0300; # 3 pages stack
 }
 MEMORY {
-    ZP:     file = "", start = $0002, size = $001A, type = rw, define = yes;
+    # This does not count as regular zeropage compiler variables; for PSP only
+    SP:     file = "", start = $0002, size = $0002, type = rw, define = yes;
+    # This includes regular zeropage compiler variables, just like all other registers
+    ZP:     file = "", start = $0004, size = $0018, type = rw, define = yes;
 
     # INES Cartridge Header
     HEADER: file = %O, start = $0000, size = $0010, fill = yes;
@@ -18,7 +21,7 @@ MEMORY {
     # - data (load)
     #ROM0:   file = %O, start = $8000, size = $7FFA, fill = yes, define = yes;
     ROM0:   file = %O, start = $8000, size = $7C00, fill = yes, define = yes;
-    # Common ROM section for banking, etc.
+    # Common ROM section for OS context switching and banking, etc.
     ROMS:   file = %O, start = $FC00, size = $3FA, fill = yes, define = yes;
 
     # Hardware Vectors at End of 2nd 8K ROM
@@ -40,6 +43,7 @@ MEMORY {
     RAM:    file = "", start = $6000, size = $2000, define = yes;
 }
 SEGMENTS {
+    PARAMSTK: load = SP,              type = zp;
     ZEROPAGE: load = ZP,              type = zp;
     HEADER:   load = HEADER,          type = ro;
     STARTUP:  load = ROMS,            type = ro,  define   = yes;
