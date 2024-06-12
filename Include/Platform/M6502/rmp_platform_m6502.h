@@ -10,8 +10,11 @@ Description : The header of "rmp_platform_m6502.c".
               Family Computer, a.k.a. Nintendo Entertainment System (NES/FC/
               FAMICOM), a equally legendary platform that made owning high-
               quality personal gaming consoles possible (contemporary consoles
-              included Atari and SEGA). Throughout the entire 80's and 90's,
-              owning such a console was the dream of many children.
+              included Atari and SEGA). The RP2A03 that powered the console
+              was an unlicensed clone of the MOS 6502, with the binary-coded-
+              decimal mode removed to avoid MOS patent issues. Throughout the
+              entire 80's and 90's, owning such a console was the dream of
+              many children.
               Following the video game crash (a.k.a Atari Shock) of 1983,
               Nintendo attached much importance to the game quality, and each
               FAMICOM game release must be inspected then preapproved by 
@@ -20,19 +23,22 @@ Description : The header of "rmp_platform_m6502.c".
               their own cartridges or even expansion chips (the "mapper" name
               is more pronounced; the Nintendo officially called them Memory
               Management Controllers, a.k.a. MMCs).
-              Released on 15 July 1983 with the "Mario Bros.", FAMICOM was
-              regarded as the most iconic and influential console of all time.
-              It was finally superseded by Super FAMICOM in 1990 which continued
-              the success story. Both were discontinued by Nintendo on May 30,
-              2003. Due to the large number of NES fans, Nintendo remastered the
+              Released on 15 July 1983 with the "Mario Bros." (not the "Super
+              Mario Bros." that released two years later, FAMICOM was regarded
+              as the most iconic and influential console of all time. It was
+              finally superseded by Super FAMICOM in 1990 which continued its
+              success story. Both were discontinued by Nintendo on May 30, 2003.
+              Due to the large number of NES fans, Nintendo replicated the
               console in 2016 as the "NES Classic Edition", which came bundled
-              with some games. The replica is implemented with emulator though.
-              A total of 1386 official games summing up to less than 300MiB were
-              released for FAMICOM, with the last one being the "Lion King" on
-              25 May 1995.
+              with some games. The replica is not powered by the original chips
+              but by a modern emulator.
+              According to WikiPedia, a total of 1386 official games (including
+              all regional versions) summing up to less than 300MiB were released
+              for FAMICOM, with the last one being the "Lion King" on 25 May 1995.
               FAMICOM-related development information can be acquired through
               www.nesdev.org, and many emulators such as iNES, MESEN, FCEUX and
-              MAME exist.
+              MAME exist. Even today, new games and applications are still being
+              developed for the console.
               ------------------------------------------------------------------
               The existence of mappers was a signature aspect of FAMICOM. The
               FAMICOM consists of a CPU, a PPU, 2KiB PRG RAM and 2KiB CHR RAM,
@@ -55,7 +61,7 @@ Description : The header of "rmp_platform_m6502.c".
               1. No mapper (iNES 000): Just the base FAMICOM.
               2. Nintendo MMC5 (iNES 005): The most powerful official mapper.
               3. Konami VRC7 （iNES 085): The best graphics, and great music.
-              4. Sunsoft FME-7 (iNES 069): The best music.
+              4. Sunsoft 5B (iNES 069): The best music.
               5. Namco(t) 163 (iNES 019): The most number of sound channels.
               ------------------------------------------------------------------
               As with many 6502-based systems, NES lacked a true multithreaded,
@@ -101,6 +107,17 @@ Description : The header of "rmp_platform_m6502.c".
                                          | RMP_SP_Cur = PSP
                                          v
               LO [                      RSP Y X A PF PC -RSTK- -ZP- -PSTK- ] HI
+              ------------------------------------------------------------------
+              The FAMICOM itself also poses challenges. It lacked a hardware
+              cycle counter; the RP2A03 was intended to include a 24-bit timer,
+              yet its development is unfinished and most circuitry connecting to
+              it was cut (according to nesdev.org). Thus, a mapper containing
+              such counter must be used to obtain performance numbers. Luckily,
+              such mapper do exist, and Namco(t) 163 contains a READABLE timer.
+              Many other mappers do feature IRQ timers, but they are write-only.
+              The chip was used in many games such as the "Sangokushi II: Hanou
+              no Tairiku" mainly for its PRG banking and multi-channel sound
+              capability.
               -----------------------------------------------------------------
               Please refrain from trying to use this port on games that require
               good user experience. The NES is simply too meager to run anything
@@ -111,12 +128,9 @@ Description : The header of "rmp_platform_m6502.c".
               featured a readable free-running counter which makes performance
               measurements possible. It also comes with multi-channel sound 
               support and extra CHR RAM, which makes it one of the most powerful 
-              mappers available.
-              The NES processor was intended to include a 24-bit timer, yet the
-              development is unfinished and most circuitry connecting to it was
-              cut (according to nesdev.org). Luckily, the mapper has 8KiB of RAM
-              plus 512KiB of ROM, giving determined programmers a chance to port
-              the system.
+              mappers available. To run the operating system on real hardware,
+              you should
+              1. Have a real Namco 163 rer catridge.
 ******************************************************************************/
 
 /* Define ********************************************************************/

@@ -4,6 +4,7 @@
 ; by Groepaz/Hitmen <groepaz@gmx.net>
 ; based on code by Ullrich von Bassewitz <uz@cc65.org>
 ;
+; This file is NOT copyrighted by EDI. it follows's the cc65's license.
 
         .export         _exit
         .export         __STARTUP__ : absolute = 1      ; Mark as startup
@@ -77,36 +78,107 @@
 start:
 
 ; Set up the CPU and System-IRQ - don't touch PPU; cc65 will do it for us.
-
         sei
         cld
+        ldx     #$ff
+        txs
 
 ; Initialize Namco (Namcot) 163: enable PRG SRAM mapping, but disable sound.
+; Remember always to burn your stuff at the end of the memory map, because
+; 163 forces that way. It's gonna make life easier for even 512k catriges.
 
         ldx     #$40            ; Disable WRAM write protect
         stx     $F800
-        ldx     #$0             ; Map in correct PRG pages
+        ldx     #$7C            ; Page 60, no sound
         stx     $E000
-        ldx     #$1
+        ldx     #$FD            ; Page 61, CHR RAM full disable
         stx     $E800
-        ldx     #$2
+        ldx     #$3E            ; Page 62
         stx     $F000
-        ldx     #$0             ; Map in correct CHR pages
+        ldx     #0              ; Map in correct CHR pages- only 2k CHR
         stx     $8000
-        ldx     #$1
+        ldx     #1
         stx     $8800
-        ldx     #$2
+        ldx     #2
         stx     $9000
-        ldx     #$3
+        ldx     #3
         stx     $9800
-        ldx     #$4
+        ldx     #4
         stx     $A000
-        ldx     #$5
+        ldx     #5
         stx     $A800
-        ldx     #$6
+        ldx     #6
         stx     $B000
-        ldx     #$7
+        ldx     #7
         stx     $B800
+        ldx     #$FF            ; Tell the rest of the banks to use CHR-SRAM located in FC
+        stx     $C000           ; It's ok to omit these in emulator, but not in real FC
+        ldx     #$FF            ; See https://www.nesdev.org/namco106.txt for details
+        stx     $C800
+        ldx     #$FF
+        stx     $D000
+        ldx     #$FF
+        stx     $D800
+
+; Clear all FAMICOM memories
+        lda     #$01
+        sta     ptr1+1
+        lda     #$00
+        sta     ptr1
+        tay
+zero_iram:
+        sta     (ptr1),y
+        iny
+        bne     zero_iram
+        inc     ptr1+1
+        lda     ptr1+1
+        cmp     #$08
+        beq     zero_iram_done
+        lda     #0
+        jmp     zero_iram
+zero_iram_done:
+
+; Clear all WRAM memories
+        lda     #$60
+        sta     ptr1+1
+        lda     #$00
+        sta     ptr1
+        tay
+zero_wram:
+        sta     (ptr1),y
+        iny
+        bne     zero_wram
+        inc     ptr1+1
+        lda     ptr1+1
+        cmp     #$80
+        beq     zero_wram_done
+        lda     #0
+        jmp     zero_wram
+zero_wram_done:
+
+; Deal with PPU nametables or we get garbage on real machine.
+; We don't use sprites so just skip OAM DRAM and let it decay.
+        bit     PPU_STATUS
+zero_ppu_vb1:                           ; Wait for two rounds of vblank NMI
+        bit     PPU_STATUS
+        bpl     zero_ppu_vb1
+zero_ppu_vb2:
+        bit     PPU_STATUS
+        bpl     zero_ppu_vb2
+        lda     #$20                    ; Deal with nametables, palette, etc
+        sta     PPU_VRAM_ADDR2
+        lda     #$00
+        sta     PPU_VRAM_ADDR2
+        lda     #0
+        tax
+        tay
+zero_ppu:
+        sta     PPU_VRAM_IO
+        inx
+        bne     zero_ppu
+        iny
+        cpy     #$20
+        bne     zero_ppu
 
 ; Clear flag variables
 
@@ -115,8 +187,6 @@ start:
         stx     ringread
         stx     ringwrite
         stx     ringcount
-        ldx     #$ff            ; original $100 is counterintuitive (possibly considering that main does not return)
-        txs                     ; set stack pointer - empty descending stack, use $FF
 
 ; Clear internal ring buffer RAM.
         lda     #$20

@@ -1,6 +1,7 @@
 # Assuming iNES mapper 019, Namco 129, however we just leave the banking
 # stuff untouched. If banking is required, some modifications might be needed.
 # All other mappers were useless: they lack a readable free-running counter.
+# This file is NOT copyrighted by EDI. it follows's the cc65's license.
 
 SYMBOLS {
     __STACKSIZE__: type = weak, value = $0300; # 3 pages stack
