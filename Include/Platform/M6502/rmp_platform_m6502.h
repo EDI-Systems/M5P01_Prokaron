@@ -106,16 +106,20 @@ Description : The header of "rmp_platform_m6502.c".
               The stack frame at last would look like:
                                          | RMP_SP_Cur = PSP
                                          v
-              LO [                      RSP Y X A PF PC -RSTK- -ZP- -PSTK- ] HI
+              LO [        <------        RSP Y X A PF PC -RSTK- -ZP- -PSTK- ] HI
               ------------------------------------------------------------------
               The FAMICOM itself also poses challenges. It lacked a hardware
               cycle counter; the RP2A03 was intended to include a 24-bit timer,
               yet its development is unfinished and most circuitry connecting to
-              it was cut (according to nesdev.org). Thus, a mapper containing
-              such counter must be used to obtain performance numbers. Luckily,
-              such mapper do exist, and Namco(t) 163 contains a READABLE timer.
-              Many other mappers do feature IRQ timers, but they are write-only.
-              The chip was used in many games such as the "Sangokushi II: Hanou
+              it was cut (according to nesdev.org). Thus, a mapper containing a
+              READABLE counter must be used to obtain performance numbers. The
+              mapper chosen is Namco(t) 163 (iNES 019), the only mapper that
+              featured a READABLE free-running counter which makes performance
+              measurements possible. Many other mappers do feature IRQ timers,
+              but they are write-only.
+              The chip also comes with multi-channel sound support and extra
+              CHR RAM, which makes it one of the most powerful mappers available.
+              It was used in many famous games such as the "Sangokushi II: Hanou
               no Tairiku" mainly for its PRG banking and multi-channel sound
               capability.
               -----------------------------------------------------------------
@@ -124,13 +128,21 @@ Description : The header of "rmp_platform_m6502.c".
               useful. The kernel itself easily takes up (almost) all the banks
               (24KiB=3x8KiB) with no hope of shrinking it further, forcing the
               programmer to bank code heavily with the last available bank. The
-              mapper chosen is Namco(t) 163 (iNES 019), the only mapper that
-              featured a readable free-running counter which makes performance
-              measurements possible. It also comes with multi-channel sound 
-              support and extra CHR RAM, which makes it one of the most powerful 
-              mappers available. To run the operating system on real hardware,
-              you should
-              1. Have a real Namco 163 rer catridge.
+              mapper banking registers could count as segment registers, and the
+              system should save and restore them in theory, however there are
+              simply too many mappers to suooprt one by one. If you need some
+              banking, you can enable extra hooks and save/restore them there.
+              Also, because we use 16-bit pointers, all function pointer entries
+              are supposed to be in the first (or last, depending on the mapper)
+              64KiB, so that their bank number is always zero. Long calls and
+              returns can make use of trampolines in a common bank.
+              To run the system on real hardware, you need to:
+              1. Have a real Namco 163 rewritable CHR/PRG catridge. SD card
+                 cartridges are untested and not guaranteed to work.
+              2. Have a catridge burner that could burn CHR/PRG catridges.
+              3. Have a real FAMICOM/NES. Clones are not guaranteed to work.
+              4. Have a monitor that accepts TV signal, or modify your FAMICOM
+                 so that it outputs AV， RGB or HDMI signals.
 ******************************************************************************/
 
 /* Define ********************************************************************/

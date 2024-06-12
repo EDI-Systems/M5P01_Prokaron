@@ -5,6 +5,7 @@
 ; based on code by Ullrich von Bassewitz <uz@cc65.org>
 ;
 ; This file is NOT copyrighted by EDI. it follows's the cc65's license.
+; It is here instead of in M0A00 for the user's convenience.
 
         .export         _exit
         .export         __STARTUP__ : absolute = 1      ; Mark as startup
@@ -67,7 +68,7 @@
         .byte   1               ; ines chr  - Specifies the number of 8k chr banks.
         .byte   %00110011       ; ines mir  - Specifies VRAM mirroring of the banks.
         .byte   %00010000       ; ines map  - Specifies the NES mapper used - Namco (Namcot) 163 (019).
-        .byte   0,0,0,0,0,0,0,0 ; 8 zeroes - The first byte is actually PRGRAM, but iNES imply 8KiB.
+        .byte   0,0,0,0,0,0,0,0 ; 8 zeroes - The first byte is actually WRAM, but iNES imply 8KiB.
 
 
 ; ------------------------------------------------------------------------
@@ -78,24 +79,26 @@
 start:
 
 ; Set up the CPU and System-IRQ - don't touch PPU; cc65 will do it for us.
+
         sei
         cld
-        ldx     #$ff
+        ldx     #$ff            ; Set up stack
         txs
 
 ; Initialize Namco (Namcot) 163: enable PRG SRAM mapping, but disable sound.
-; Remember always to burn your stuff at the end of the memory map, because
-; 163 forces that way. It's gonna make life easier for even 512k catriges.
+; Remember always to burn your stuff at the end of the catridge PRG to stay
+; compatible with all PRG sizes, because 163 forces that way for the last
+; bank anyway. It's gonna make life easier for even 512k cartidges.
 
         ldx     #$40            ; Disable WRAM write protect
         stx     $F800
-        ldx     #$7C            ; Page 60, no sound
+        ldx     #$7C            ; Page 60, no sound - can turn on later
         stx     $E000
         ldx     #$FD            ; Page 61, CHR RAM full disable
         stx     $E800
         ldx     #$3E            ; Page 62
         stx     $F000
-        ldx     #0              ; Map in correct CHR pages- only 2k CHR
+        ldx     #0              ; Map in correct CHR pages
         stx     $8000
         ldx     #1
         stx     $8800
@@ -121,6 +124,7 @@ start:
         stx     $D800
 
 ; Clear all FAMICOM memories
+
         lda     #$01
         sta     ptr1+1
         lda     #$00
@@ -139,6 +143,7 @@ zero_iram:
 zero_iram_done:
 
 ; Clear all WRAM memories
+
         lda     #$60
         sta     ptr1+1
         lda     #$00
@@ -158,14 +163,15 @@ zero_wram_done:
 
 ; Deal with PPU nametables or we get garbage on real machine.
 ; We don't use sprites so just skip OAM DRAM and let it decay.
+
         bit     PPU_STATUS
-zero_ppu_vb1:                           ; Wait for two rounds of vblank NMI
+zero_ppu_vb1:                   ; Wait for two rounds of vblank NMI
         bit     PPU_STATUS
         bpl     zero_ppu_vb1
 zero_ppu_vb2:
         bit     PPU_STATUS
         bpl     zero_ppu_vb2
-        lda     #$20                    ; Deal with nametables, palette, etc
+        lda     #$20            ; Zeroize with nametables, palette, etc
         sta     PPU_VRAM_ADDR2
         lda     #$00
         sta     PPU_VRAM_ADDR2
@@ -183,12 +189,13 @@ zero_ppu:
 ; Clear flag variables
 
         ldx     #0
-        stx     VBLANK_FLAG     ; clear variables
+        stx     VBLANK_FLAG     ; Clear PPU flag variables
         stx     ringread
         stx     ringwrite
         stx     ringcount
 
 ; Clear internal ring buffer RAM.
+
         lda     #$20
 @l:     sta     ringbuff,x
         sta     ringbuff+$0100,x
@@ -274,7 +281,9 @@ irq:
 ; ------------------------------------------------------------------------
 ; Hardware vectors
 ; ------------------------------------------------------------------------
+
         .import IRQ_Handler
+
 .segment "VECTORS"
 
         .word   nmi         ; $fffa vblank nmi
