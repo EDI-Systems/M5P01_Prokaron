@@ -1,13 +1,15 @@
 # Assuming iNES mapper 019, Namco 129, however we just leave the banking
 # stuff untouched. If banking is required, some modifications might be needed.
 # All other mappers were useless: they lack a readable free-running counter.
-# This file is NOT copyrighted by EDI. it follows's the cc65's license.
+#
+# This file based on CC65 default ld and is NOT copyrighted by EDI. it follows's the cc65's license.
+# It is here instead of in M0A00 for the user's convenience.
 
 SYMBOLS {
-    __STACKSIZE__: type = weak, value = $0300; # 3 pages stack
+    __STACKSIZE__: type = weak, value = $0300; # 3 pages stack, mught be too much for kernel
 }
 MEMORY {
-    # This does not count as regular zeropage compiler variables; for PSP only
+    # This does not count as regular zeropage compiler variables; for parameter stack pointer only
     SP:     file = "", start = $0002, size = $0002, type = rw, define = yes;
     # This includes regular zeropage compiler variables, just like all other registers
     ZP:     file = "", start = $0004, size = $0018, type = rw, define = yes;
@@ -22,7 +24,7 @@ MEMORY {
     # - data (load)
     #ROM0:   file = %O, start = $8000, size = $7FFA, fill = yes, define = yes;
     ROM0:   file = %O, start = $8000, size = $7C00, fill = yes, define = yes;
-    # Common ROM section for OS context switching and banking, etc.
+    # Common ROM section for OS context switching and banking, etc; just don't bank the last section
     ROMS:   file = %O, start = $FC00, size = $3FA, fill = yes, define = yes;
 
     # Hardware Vectors at End of 2nd 8K ROM

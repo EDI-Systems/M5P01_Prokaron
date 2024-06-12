@@ -3,6 +3,8 @@
 ;
 ; CC65 runtime: zeropage usage
 ;
+; This file is NOT copyrighted by EDI. it follows's the cc65's license.
+; It is here instead of in M0A00 for the user's convenience.
 
 .include        "zeropage.inc"
 
