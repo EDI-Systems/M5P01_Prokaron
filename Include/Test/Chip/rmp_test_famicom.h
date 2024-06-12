@@ -158,7 +158,10 @@ void NAMCO_IRQ_Handler(void)
     RMP_FAMICOM_NAMCO_IRQL=0x00U;
 
     /* Increase the MSB counter, a new round comes */
-    Namco_MSB+=0x80U;
+    if(Namco_MSB!=0U)
+        Namco_MSB=0U;
+    else
+        Namco_MSB=0x80U;
     
     /* Only call this when we're testing interrupts */
     if(Namco_IRQ_Test!=0U)
