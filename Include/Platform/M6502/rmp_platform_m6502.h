@@ -61,7 +61,7 @@ Description : The header of "rmp_platform_m6502.c".
               1. No mapper (iNES 000): Just the base FAMICOM.
               2. Nintendo MMC5 (iNES 005): The most powerful official mapper.
               3. Konami VRC7 （iNES 085): The best graphics, and great music.
-              4. Sunsoft 5B (iNES 069): The best music.
+              4. Sunsoft 5B (iNES 069): The single best music ever.
               5. Namco(t) 163 (iNES 019): The most number of sound channels.
               ------------------------------------------------------------------
               As with many 6502-based systems, NES lacked a true multithreaded,
@@ -72,6 +72,11 @@ Description : The header of "rmp_platform_m6502.c".
               obliged to provide a such a port, bringing true multitasking to the
               platform. This port would support other systems such as Atari, Acorn
               (which lives as ARM Ltd today) and Commodore with minimal porting.
+              The 6502 survived the competition for 50 years, and its descendants
+              live under the name of ST7 and STM8S today. These are still actively
+              manufactured by STMicroelectronics; however, they involve too many
+              changes to be regarded as a 6502 compatible and has to be supported
+              by a standalone port.
               ------------------------------------------------------------------
               The 6502 presents multiple unique technical challenges.
               1. Return stack size issue: 6502 only had a 8-bit pointer, hence the
