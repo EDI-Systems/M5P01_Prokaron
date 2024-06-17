@@ -119,20 +119,23 @@ void Timer_Init(void)
 /* Timer read helper */
 rmp_tim_t Timer_Read(void)
 {
+    rmp_u8_t Most;
     rmp_u8_t High;
     rmp_u8_t Low;
 
     /* We can't be sure that when we read the lower bits the higher bits will
-     * stay still. Thus, we keep reading until the higher bits are stable. */
+     * stay still. Thus, we keep reading until the higher bits are stable.
+     * This will take some toll on measurements, of course. */
      do
      {
+        Most=Namco_MSB;
         High=RMP_FAMICOM_NAMCO_IRQH;
         Low=RMP_FAMICOM_NAMCO_IRQL;
      }
-     while(High!=RMP_FAMICOM_NAMCO_IRQH);
+     while((High!=RMP_FAMICOM_NAMCO_IRQH)||(Most!=Namco_MSB));
 
      /* Assemble the final return value */
-     High=(High&0x7FU)+Namco_MSB;
+     High=(High&0x7FU)|Most;
      return (((rmp_tim_t)High)<<8)|Low;
 }
 /* End Function:Timer_Init ***************************************************/
