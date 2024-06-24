@@ -1,5 +1,5 @@
 /******************************************************************************
-Filename   : platform_x86_linux_conf.h
+Filename   : rmp_platform_x86l_conf.h
 Author     : pry
 Date       : 24/06/2017
 Licence    : The Unlicense; see LICENSE for details.
@@ -38,13 +38,14 @@ Description: The configuration file for POSIX platform.
 #define RMP_INIT_STACK_SIZE         (65535U)
 
 /* What is the tick interval? */
-#define RMP_POSIX_TIME_VAL          (100U)
+#define RMP_X86L_TICK_VAL           (20000U)
 
 /* This is for debugging output */
-#define RMP_POSIX_PUTCHAR(CHAR) \
+#define RMP_X86L_PUTCHAR(CHAR) \
 do \
 { \
-	putchar((CHAR)); \
+    putchar(CHAR); \
+    fflush(stdout); \
 } \
 while(0)
 /* End Define ****************************************************************/

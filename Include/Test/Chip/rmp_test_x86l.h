@@ -1,5 +1,5 @@
 /******************************************************************************
-Filename    : rmp_test_X86_linux.h
+Filename    : rmp_test_X86l.h
 Author      : pry 
 Date        : 22/07/2017
 Licence     : The Unlicense; see LICENSE for details.
@@ -26,9 +26,7 @@ Description : The testbench for linux OS. This is not particularly fast due to
 typedef unsigned long long rmp_tim_t;
 
 /* Number of rounds - too many is useless on this demo port */
-#define ROUND_NUM           (20U)
-/* Interrupt interval in usec */
-#define TEST_INT_INTERVAL   (50000U)
+#define ROUND_NUM           (100U)
 /* End Define ****************************************************************/
 
 /* Global ********************************************************************/
@@ -77,22 +75,10 @@ void TIM_IRQHandler(void)
 /* This is used to send interrupt signal to the parent thread */
 void Int_Init(void)
 {
-    struct itimerval Tick;
     /* Setup the external interrupt handler */
-    RMP_Eint_Handler=TIM_IRQHandler;
-
-    /* Set up the timer */
-    memset(&Tick,0,sizeof(Tick));
-    /* First timeout */
-    Tick.it_value.tv_sec=0;
-    Tick.it_value.tv_usec=TEST_INT_INTERVAL;
-    /* Interval time to run function */
-    Tick.it_interval.tv_sec=0;
-    Tick.it_interval.tv_usec=TEST_INT_INTERVAL;
-    RMP_ASSERT(setitimer(ITIMER_REAL,&Tick,NULL)>=0);
+    RMP_X86L_Eint_Handler=TIM_IRQHandler;
     RMP_DBG_S("Timer init done - testing interrupts.\r\n");
 }
-
 /* End Function:Int_Init *****************************************************/
 
 /* Function:Int_Disable *******************************************************
@@ -104,14 +90,8 @@ Return      : None.
 ******************************************************************************/
 void Int_Disable(void)
 {
-    struct itimerval Tick;
     /* Erase handler */
-    RMP_Eint_Handler=0;
-
-    /* Set up the timer */
-    memset(&Tick,0,sizeof(Tick));
-    /* Stop the itimer */
-    RMP_ASSERT(setitimer(ITIMER_REAL,&Tick,NULL)>=0);
+    RMP_X86L_Eint_Handler=RMP_NULL;
 }
 /* End Function:Int_Disable **************************************************/
 

@@ -23,7 +23,7 @@ INCS+=-I.
 INCS+=-I/usr/include/x86_64-linux-gnu
 INCS+=-I../../Include
 
-CSRCS+=../../Source/Platform/X86_LINUX/rmp_platform_x86_linux.c
+CSRCS+=../../Source/Platform/X86L/rmp_platform_x86l.c
 CSRCS+=../../Source/Kernel/rmp_kernel.c
 CSRCS+=../../Source/Test/rmp_benchmark.c
 
