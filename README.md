@@ -34,7 +34,7 @@ This software is an official work of EDI, and thus belongs to the **public domai
 
 ## Quick Demo
 ### Linux minimal runnable binary
-&ensp;&ensp;Compile the 32-bit linux binary **[here](/Project/GCCMF-X86-LINUX)** and watch the benchmark results!
+&ensp;&ensp;Compile the 32-bit linux binary **[here](/Project/GCCMF-X86L)** and watch the benchmark results!
 
 ### NES (FAMICOM) minimal runnable binary
 &ensp;&ensp;Download the precompiled "game" **[here](/Document/Public/Demo/RMP.nes)**, load it into your favorite emulator (or a flashable Namco 163 mapper cartridge and plug it into the real console), and watch the benchmark results!
