@@ -7,7 +7,7 @@ Description : The platform specific types for RMP.
 ******************************************************************************/
 
 /* Platform Include **********************************************************/
-#include "Platform/X86_LINUX/rmp_platform_x86_linux.h"
+#include "Platform/X86L/rmp_platform_x86l.h"
 /* End Platform Include ******************************************************/
 
 /* End Of File ***************************************************************/

@@ -1,15 +1,15 @@
 /******************************************************************************
-Filename    : rmp_platform_x86_linux.h
+Filename    : rmp_platform_x86l.h
 Author      : pry wyh
 Date        : 01/04/2017
 Licence     : The Unlicense; see LICENSE for details.
-Description : The header of "rmp_platform_x86_linux.c".
+Description : The header of "rmp_platform_x86l.c".
 ******************************************************************************/
 
 /* Define ********************************************************************/
 #ifdef __HDR_DEF__
-#ifndef __RMP_PLATFORM_X86_LINUX_DEF__
-#define __RMP_PLATFORM_X86_LINUX_DEF__
+#ifndef __RMP_PLATFORM_X86L_DEF__
+#define __RMP_PLATFORM_X86L_DEF__
 /*****************************************************************************/
 /* Basic Type ****************************************************************/
 #ifndef __RMP_S32_T__
@@ -64,8 +64,8 @@ typedef rmp_s32_t rmp_ret_t;
 /* End Extended Type *********************************************************/
 
 /* System Macro **************************************************************/
-/* Compiler "RMP_EXTERN" keyword setting */
-#define RMP_EXTERN                      RMP_EXTERN
+/* Compiler "extern" keyword setting */
+#define RMP_EXTERN                      extern
 /* The order of bits in one CPU machine word */
 #define RMP_WORD_ORDER                  (5U)
 /* The maximum length of char printing */
@@ -74,23 +74,23 @@ typedef rmp_s32_t rmp_ret_t;
 #define RMP_STACK_TYPE                  RMP_STACK_FULL_DESCEND
 #define RMP_STACK_ALIGN                 (4U)
 #define RMP_STACK_ELEM                  rmp_ptr_t
-#define RMP_STACK_STRUCT                struct RMP_X86_LINUX_Stack
+#define RMP_STACK_STRUCT                struct RMP_X86L_Stack
 /* MSB/LSB extraction */
 #define RMP_MSB_GET(VAL)                RMP_MSB_Generic(VAL)
 #define RMP_LSB_GET(VAL)                RMP_LSB_Generic(VAL)
 
 /* The CPU and application specific macros are here */
-#include "rmp_platform_x86_linux_conf.h"
+#include "rmp_platform_x86l_conf.h"
 
 /* Interrupt masking/unmasking */
-#define RMP_INT_MASK()
-#define RMP_INT_UNMASK()
+#define RMP_INT_MASK()                  RMP_Int_Disable()
+#define RMP_INT_UNMASK()                RMP_Int_Enable()
 /* Yield operation */
-#define RMP_YIELD()                     _RMP_X86_LINUX_Yield()
+#define RMP_YIELD()                     _RMP_X86L_Yield()
 #define RMP_YIELD_ISR()                 RMP_YIELD()
 /* End System Macro **********************************************************/
 /*****************************************************************************/
-/* __RMP_PLATFORM_X86_LINUX_DEF__ */
+/* __RMP_PLATFORM_X86L_DEF__ */
 #endif
 /* __HDR_DEF__ */
 #endif
@@ -98,15 +98,15 @@ typedef rmp_s32_t rmp_ret_t;
 
 /* Struct ********************************************************************/
 #ifdef __HDR_STRUCT__
-#ifndef __RMP_PLATFORM_X86_LINUX_STRUCT__
-#define __RMP_PLATFORM_X86_LINUX_STRUCT__
+#ifndef __RMP_PLATFORM_X86L_STRUCT__
+#define __RMP_PLATFORM_X86L_STRUCT__
 /* We used structs in the header */
 
 /* Use defines in these headers */
 #define __HDR_DEF__
 #undef __HDR_DEF__
 /*****************************************************************************/
-struct RMP_X86_LINUX_Stack
+struct RMP_X86L_Stack
 {
     /* To avoid conflict with Linux headers, we use REG_ prefix */
     rmp_ptr_t REG_EBX;
@@ -128,7 +128,7 @@ struct RMP_X86_LINUX_Stack
     rmp_ptr_t REG_Param;
 };
 /*****************************************************************************/
-/* __RMP_PLATFORM_X86_LINUX_STRUCT__ */
+/* __RMP_PLATFORM_X86L_STRUCT__ */
 #endif
 /* __HDR_STRUCT__ */
 #endif
@@ -136,8 +136,8 @@ struct RMP_X86_LINUX_Stack
 
 /* Private Variable **********************************************************/
 #if(!(defined __HDR_DEF__||defined __HDR_STRUCT__))
-#ifndef __RMP_PLATFORM_X86_LINUX_MEMBER__
-#define __RMP_PLATFORM_X86_LINUX_MEMBER__
+#ifndef __RMP_PLATFORM_X86L_MEMBER__
+#define __RMP_PLATFORM_X86L_MEMBER__
 
 /* In this way we can use the data structures and definitions in the headers */
 #define __HDR_DEF__
@@ -151,15 +151,16 @@ struct RMP_X86_LINUX_Stack
 /* If the header is not used in the public mode */
 #ifndef __HDR_PUBLIC__
 /*****************************************************************************/
-static volatile rmp_ptr_t RMP_SysTick_Flag;
-static volatile rmp_ptr_t RMP_PendSV_Flag;
+static volatile rmp_ptr_t RMP_X86L_Tick_Flag;
+static volatile rmp_ptr_t RMP_X86L_Switch_Flag;
+static volatile rmp_ptr_t RMP_X86L_Eint_Flag;
 /*****************************************************************************/
 /* End Private Variable ******************************************************/
 
 /* Private Function **********************************************************/ 
 /*****************************************************************************/
-static void SysTick_Handler(void);
-static void PendSV_Handler(void);
+static void RMP_X86L_Tick_Handler(void);
+static void RMP_X86L_Switch_Handler(void);
 /*****************************************************************************/
 #define __RMP_EXTERN__
 /* End Private Function ******************************************************/
@@ -173,13 +174,13 @@ static void PendSV_Handler(void);
 
 /*****************************************************************************/
 /* Interrupt */
-__RMP_EXTERN__ volatile rmp_ptr_t RMP_Int_Disabled;
+__RMP_EXTERN__ volatile rmp_ptr_t RMP_X86L_Int_Mask;
 /* PID */
-__RMP_EXTERN__ volatile pid_t RMP_Sys_PID;
-__RMP_EXTERN__ volatile pid_t RMP_User_PID;
+__RMP_EXTERN__ volatile pid_t RMP_X86L_Vct_PID;
+__RMP_EXTERN__ volatile pid_t RMP_X86L_Usr_PID;
 
 /* RMP_EXTERNal interrupt handler */
-__RMP_EXTERN__ void (*volatile RMP_Eint_Handler)(void);
+__RMP_EXTERN__ void (*volatile RMP_X86L_Eint_Handler)(void);
 /*****************************************************************************/
 
 /* End Public Variable *******************************************************/
@@ -192,7 +193,7 @@ __RMP_EXTERN__ void RMP_Int_Enable(void);
 
 __RMP_EXTERN__ void _RMP_Start(rmp_ptr_t Entry,
                                rmp_ptr_t Stack);
-__RMP_EXTERN__ void _RMP_X86_LINUX_Yield(void);
+__RMP_EXTERN__ void _RMP_X86L_Yield(void);
 
 /* Initialization */
 __RMP_EXTERN__ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
@@ -205,7 +206,7 @@ __RMP_EXTERN__ void _RMP_Plat_Hook(void);
 /*****************************************************************************/
 /* Undefine "__RMP_EXTERN__" to avoid redefinition */
 #undef __RMP_EXTERN__
-/* __RMP_PLATFORM_X86_LINUX_MEMBER__ */
+/* __RMP_PLATFORM_X86L_MEMBER__ */
 #endif
 /* !(defined __HDR_DEF__||defined __HDR_STRUCT__) */
 #endif

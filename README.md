@@ -220,7 +220,7 @@ This software is an official work of EDI, and thus belongs to the **public domai
 |TMS320F28335 |C28x/FPU32  |...   |246  |513  |440  |235  |751  |1001 |440   |413  |622    |770   |946  |
 |CH32V307     |RV32IMAC    |GCC   |209  |386  |336  |172  |538  |698  |350   |306  |436    |555   |433  |
 |...          |RV32IMAFC   |...   |217  |398  |341  |172  |557  |705  |358   |307  |444    |556   |433  |
-|i9-7980XE    |X86-LINUX   |...   |TBD  |TBD  |TBD  |TBD  |TBD  |TBD  |TBD   |TBD  |TBD    |TBD   |TBD  |
+|Xeon 6326    |X86-LINUX   |...   |24k  |24k  |24k  |46   |24k  |24k  |31k   |30k  |34k    |53k   |159  |
 
 &ensp;&ensp;The **[RVM](https://github.com/EDI-Systems/M7M02_Ammonite)** embedded hypervisor virtualized versions:
 
