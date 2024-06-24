@@ -121,10 +121,6 @@ void _RMP_Lowlvl_Init(void)
     RMP_Int_Disable();
     
     RMP_AVR_LOWLVL_INIT();
-
-    /* Clear flags */
-    RMP_AVR_Int_Act=0U;
-    _RMP_AVR_Yield_Pend=0U;
 }
 /* End Function:_RMP_Lowlvl_Init *********************************************/
 
@@ -156,38 +152,6 @@ void RMP_Putchar(char Char)
     RMP_AVR_PUTCHAR(Char);
 }
 /* End Function:RMP_Putchar **************************************************/
-
-/* Function:_RMP_Yield ********************************************************
-Description : Trigger a yield to another thread.
-Input       : None.
-Output      : None.
-Return      : None.
-******************************************************************************/
-void _RMP_Yield(void)
-{
-    if(RMP_AVR_Int_Act!=0U)
-        _RMP_AVR_Yield_Pend=1U;
-    else
-        /* EIND implies RAMP */
-#if(RMP_AVR_COP_XMEGA==0U)
-#if(RMP_AVR_COP_EIND!=0U)
-        _RMP_AVR_Yield_MEGA_EIND();
-#elif(RMP_AVR_COP_RAMP!=0U)
-        _RMP_AVR_Yield_MEGA_RAMP();
-#else
-        _RMP_AVR_Yield_MEGA();
-#endif
-#else
-#if(RMP_AVR_COP_EIND!=0U)
-        _RMP_AVR_Yield_XMEGA_EIND();
-#elif(RMP_AVR_COP_RAMP!=0U)
-        _RMP_AVR_Yield_XMEGA_RAMP();
-#else
-        _RMP_AVR_Yield_XMEGA();
-#endif
-#endif
-}
-/* End Function:_RMP_Yield ***************************************************/
 
 /* Function:_RMP_AVR_Tim_Handler **********************************************
 Description : Timer interrupt routine for AVR.

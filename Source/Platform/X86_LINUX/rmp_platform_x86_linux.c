@@ -65,20 +65,20 @@ void RMP_Int_Enable(void)
 }
 /* End Function:RMP_Int_Enable ***********************************************/
 
-/* Function:_RMP_Yield ********************************************************
+/* Function:_RMP_X86_LINUX_Yield **********************************************
 Description : Trigger a yield to another thread.
 Input       : None.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void _RMP_Yield(void)
+void _RMP_X86_LINUX_Yield(void)
 {
     RMP_PendSV_Flag=1U;
 
     if(RMP_Int_Disabled==0U)
         RMP_ASSERT(kill(RMP_User_PID,SIGUSR1)>=0);
 }
-/* End Function:_RMP_Yield ***************************************************/
+/* End Function:_RMP_X86_LINUX_Yield *****************************************/
 
 /* Function:_RMP_Start ********************************************************
 Description : Jump to the user function and will never return from it.

@@ -112,10 +112,6 @@ void _RMP_Lowlvl_Init(void)
     RMP_Int_Disable();
     
     RMP_RV32P_LOWLVL_INIT();
-
-    /* Clear flags */
-    RMP_RV32P_Int_Act=0U;
-    _RMP_RV32P_Yield_Pend=0U;
 }
 /* End Function:_RMP_Lowlvl_Init *********************************************/
 
@@ -143,29 +139,7 @@ void RMP_Putchar(char Char)
 }
 /* End Function:RMP_Putchar **************************************************/
 
-/* Function:_RMP_Yield ********************************************************
-Description : Trigger a yield to another thread.
-Input       : None.
-Output      : None.
-Return      : None.
-******************************************************************************/
-void _RMP_Yield(void)
-{
-    if(RMP_RV32P_Int_Act!=0U)
-        _RMP_RV32P_Yield_Pend=1U;
-    else
-        /* Selecting RVD implies RVF */
-#if(RMP_RV32P_COP_RVD!=0U)
-        _RMP_RV32P_Yield_RVD();
-#elif(RMP_RV32P_COP_RVF!=0U)
-        _RMP_RV32P_Yield_RVF();
-#else
-        _RMP_RV32P_Yield_NONE();
-#endif
-}
-/* End Function:_RMP_Yield ***************************************************/
-
-/* Function:_RMP_RV32P_Tim_Handler *******************************************
+/* Function:_RMP_RV32P_Tim_Handler ********************************************
 Description : The Tick interrupt routine.
 Input       : None.
 Output      : None.
@@ -178,7 +152,7 @@ void _RMP_RV32P_Tim_Handler(void)
 
     _RMP_Tim_Handler(1U);
 }
-/* End Function:_RMP_RV32P_Tim_Handler **************************************/
+/* End Function:_RMP_RV32P_Tim_Handler ***************************************/
 
 /* End Of File ***************************************************************/
 

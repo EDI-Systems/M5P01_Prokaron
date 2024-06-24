@@ -11,7 +11,7 @@ Description: The configuration file for ATMEGA1284P.
 #include "avr/io.h"
 
 /* Debugging */
-#define RMP_ASSERT_CORRECT          (0U)
+#define RMP_ASSERT_ENABLE           (1U)
 /* The maximum number of preemption priority levels in the system.
  * This parameter must be divisible by the word length - 16 is usually sufficient */
 #define RMP_PREEMPT_PRIO_NUM        (16U)
@@ -19,13 +19,8 @@ Description: The configuration file for ATMEGA1284P.
 #define RMP_SLICE_MAX               (10000U)
 /* The maximum number of semaphore counts allowed */
 #define RMP_SEM_CNT_MAX             (1000U)
-/* Are we using custom hooks? */
-#define RMP_HOOK_EXTRA              (0U)
 /* The stack size of the init thread */
 #define RMP_INIT_STACK_SIZE         (256U)
-/* The mask/unmask interrupt operations */
-#define RMP_INT_MASK()              RMP_Int_Disable()
-#define RMP_INT_UNMASK()            RMP_Int_Enable()
 
 /* What is the Systick value? 50U = 12800 cycles = 0.8ms */
 #define RMP_AVR_TICK_VAL            (50U)

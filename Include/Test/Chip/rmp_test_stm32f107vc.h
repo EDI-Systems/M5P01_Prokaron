@@ -24,7 +24,7 @@ ISR Semaphore                      : 338 / 414 / 336
 ISR Message queue                  : 536 / 608 / 528
 ISR Blocking message queue         : 679 / 752 / 674
 
-ARMCC 6.18 -O3 (RMP_ASSERT_CORRECT=1)
+ARMCC 6.18 -O3 (RMP_ASSERT_ENABLE=0)
     ___   __  ___ ___
    / _ \ /  |/  // _ \       Simple real-time kernel
   / , _// /|_/ // ___/       Standard benchmark test

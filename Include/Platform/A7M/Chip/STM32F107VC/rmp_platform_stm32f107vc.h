@@ -13,7 +13,7 @@ Description: The configuration file for STM32F107VC.
 #include "core_cm3.h"
 
 /* Debugging */
-#define RMP_ASSERT_CORRECT          (0U)
+#define RMP_ASSERT_ENABLE           (1U)
 /* The maximum number of preemption priority levels in the system.
  * This parameter must be divisible by the word length - 32 is usually sufficient */
 #define RMP_PREEMPT_PRIO_NUM        (32U)
@@ -21,18 +21,15 @@ Description: The configuration file for STM32F107VC.
 #define RMP_SLICE_MAX               (100000U)
 /* The maximum number of semaphore counts allowed */
 #define RMP_SEM_CNT_MAX             (1000U)
-/* Are we using custom hooks? */
-#define RMP_HOOK_EXTRA              (0U)
 /* The stzck size of the init thread */
 #define RMP_INIT_STACK_SIZE         (256U)
-/* The mask/unmask interrupt operations - can be adjusted to fit your own levels */
-#define RMP_INT_MASK()              RMP_Int_Mask(0xFFU)
-#define RMP_INT_UNMASK()            RMP_Int_Mask(0x00U)
 
 /* What is the NVIC priority grouping? */
 #define RMP_A7M_NVIC_GROUPING       RMP_A7M_NVIC_GROUPING_P2S6
 /* What is the Systick value? */
 #define RMP_A7M_SYSTICK_VAL         (7200U)
+/* What is the interrupt masking level? */
+#define RMP_A7M_INT_MASK_LVL        (0xFFU)
 /* What is the FPU type? */
 #define RMP_A7M_COP_FPV4_SP         (0U)
 #define RMP_A7M_COP_FPV5_SP         (0U)

@@ -14,7 +14,7 @@ Description : The header of "rmp_platform_msp430.c".
 #ifndef __RMP_PLATFORM_MSP430_DEF__
 #define __RMP_PLATFORM_MSP430_DEF__
 /*****************************************************************************/
-/* Basic Types ***************************************************************/
+/* Basic Type ****************************************************************/
 #ifndef __RMP_S32_T__
 #define __RMP_S32_T__
 typedef signed long rmp_s32_t;
@@ -44,15 +44,15 @@ typedef unsigned int rmp_u16_t;
 #define __RMP_U8_T__
 typedef unsigned char rmp_u8_t;
 #endif
-/* End Basic Types ***********************************************************/
+/* End Basic Type ************************************************************/
 
-/* Extended Types ************************************************************/
-/* The CPU and application specific macros are here */
+/* Extended Type *************************************************************/
+/* The CPU and application specific macros are here - needed for data types */
 #include "rmp_platform_msp430_conf.h"
 
 #ifndef __RMP_PTR_T__
 #define __RMP_PTR_T__
-/* The typedef for the pointers - This is the raw style. Pointers must be unsigned */
+/* Pointer */
 #if(RMP_MSP430_COP_430X!=0U)
 typedef rmp_u32_t rmp_ptr_t;
 #else
@@ -62,7 +62,7 @@ typedef rmp_u16_t rmp_ptr_t;
 
 #ifndef __RMP_CNT_T__
 #define __RMP_CNT_T__
-/* The typedef for the count variables */
+/* Counter */
 typedef rmp_s16_t rmp_cnt_t;
 #endif
 
@@ -75,11 +75,11 @@ typedef rmp_s32_t rmp_ret_t;
 typedef rmp_s16_t rmp_ret_t;
 #endif
 #endif
-/* End Extended Types ********************************************************/
+/* End Extended Type *********************************************************/
 
-/* System macros *************************************************************/
+/* System Macro **************************************************************/
 /* Compiler "extern" keyword setting */
-#define EXTERN                          extern
+#define RMP_EXTERN                      extern
 /* The order of bits in one CPU machine word */
 #if(RMP_MSP430_COP_430X!=0U)
 #define RMP_WORD_ORDER                  (5U)
@@ -96,16 +96,28 @@ typedef rmp_s16_t rmp_ret_t;
 /* MSB/LSB extraction */
 #define RMP_MSB_GET(VAL)                RMP_MSB_Generic(VAL)
 #define RMP_LSB_GET(VAL)                RMP_LSB_Generic(VAL)
-/* End System macros *********************************************************/
 
-/* MSP430 specific macros ****************************************************/
-#define RMP_MSP430_SR_SCG1              (1<<7)
-#define RMP_MSP430_SR_SCG0              (1<<6)
-#define RMP_MSP430_SR_OSCOFF            (1<<5)
-#define RMP_MSP430_SR_CPUOFF            (1<<4)
-#define RMP_MSP430_SR_GIE               (1<<3)
+/* Interrupt masking/unmasking */
+#define RMP_INT_MASK()                  RMP_Int_Disable()
+#define RMP_INT_UNMASK()                RMP_Int_Enable()
+/* Yield operation */
+#if(RMP_MSP430_COP_430X!=0U)
+#define RMP_YIELD()                     _RMP_MSP430_Yield_430X()
+#else
+#define RMP_YIELD()                     _RMP_MSP430_Yield_NONE()
+#endif
+/* #define RMP_YIELD_ISR() */
+/* End System Macro **********************************************************/
+
+/* MSP430 Macro **************************************************************/
+#define RMP_MSP430_SR_SCG1              RMP_POW2(7U)
+#define RMP_MSP430_SR_SCG0              RMP_POW2(6U)
+#define RMP_MSP430_SR_OSCOFF            RMP_POW2(5U)
+#define RMP_MSP430_SR_CPUOFF            RMP_POW2(4U)
+#define RMP_MSP430_SR_GIE               RMP_POW2(3U)
 
 #define RMP_MSP430X_PCSR(PC,SR)         (((PC)<<16)|(((PC)>>4)&0xF000)|(SR))
+/* End MSP430 Macro **********************************************************/
 /*****************************************************************************/
 /* __RMP_PLATFORM_MSP430_DEF__ */
 #endif
@@ -176,21 +188,18 @@ struct RMP_MSP430_Stack
 /*****************************************************************************/
 
 /*****************************************************************************/
-#define __EXTERN__
+#define __RMP_EXTERN__
 /* End Private Function ******************************************************/
 
 /* Public Variable ***********************************************************/
 /* __HDR_PUBLIC__ */
 #else
-#define __EXTERN__ EXTERN 
+#define __RMP_EXTERN__ RMP_EXTERN
 /* __HDR_PUBLIC__ */
 #endif
 
 /*****************************************************************************/
-__EXTERN__ rmp_ptr_t _RMP_MSP430_SP_Kern;
-
-__EXTERN__ volatile rmp_ptr_t RMP_MSP430_Int_Act;
-__EXTERN__ volatile rmp_ptr_t _RMP_MSP430_Yield_Pend;
+__RMP_EXTERN__ rmp_ptr_t _RMP_MSP430_SP_Kern;
 /*****************************************************************************/
 
 /* End Public Variable *******************************************************/
@@ -198,31 +207,32 @@ __EXTERN__ volatile rmp_ptr_t _RMP_MSP430_Yield_Pend;
 /* Public Function ***********************************************************/
 /*****************************************************************************/
 /* Interrupts */
-EXTERN void RMP_Int_Disable(void);
-EXTERN void RMP_Int_Enable(void);
+RMP_EXTERN void RMP_Int_Disable(void);
+RMP_EXTERN void RMP_Int_Enable(void);
 
-EXTERN void _RMP_Start(rmp_ptr_t Entry, rmp_ptr_t Stack);
 #if(RMP_MSP430_COP_430X!=0U)
-EXTERN void _RMP_MSP430_Yield_430X(void);
+RMP_EXTERN void _RMP_MSP430_Yield_430X(void);
 #else
-EXTERN void _RMP_MSP430_Yield_NONE(void);
+RMP_EXTERN void _RMP_MSP430_Yield_NONE(void);
 #endif
-__EXTERN__ void _RMP_Yield(void);
+
+RMP_EXTERN void _RMP_Start(rmp_ptr_t Entry,
+                           rmp_ptr_t Stack);
 
 /* Initialization */
-__EXTERN__ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
-                                     rmp_ptr_t Size,
-                                     rmp_ptr_t Entry,
-                                     rmp_ptr_t Param);
-__EXTERN__ void _RMP_Lowlvl_Init(void);
-__EXTERN__ void RMP_Putchar(char Char);
-__EXTERN__ void _RMP_Plat_Hook(void);
+__RMP_EXTERN__ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
+                                         rmp_ptr_t Size,
+                                         rmp_ptr_t Entry,
+                                         rmp_ptr_t Param);
+__RMP_EXTERN__ void _RMP_Lowlvl_Init(void);
+__RMP_EXTERN__ void RMP_Putchar(char Char);
+__RMP_EXTERN__ void _RMP_Plat_Hook(void);
 
 /* Timer handler */
-__EXTERN__ void _RMP_MSP430_Tim_Handler(void);
+__RMP_EXTERN__ void _RMP_MSP430_Tim_Handler(void);
 /*****************************************************************************/
-/* Undefine "__EXTERN__" to avoid redefinition */
-#undef __EXTERN__
+/* Undefine "__RMP_EXTERN__" to avoid redefinition */
+#undef __RMP_EXTERN__
 /* __RMP_PLATFORM_MSP430_MEMBER__ */
 #endif
 /* !(defined __HDR_DEF__||defined __HDR_STRUCT__) */

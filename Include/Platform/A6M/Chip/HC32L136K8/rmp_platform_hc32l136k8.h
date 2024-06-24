@@ -16,7 +16,7 @@ Description: The configuration file for HC32L136K8.
 #include "timer3.h"
 
 /* Debugging */
-#define RMP_ASSERT_CORRECT          (0U)
+#define RMP_ASSERT_ENABLE           (1U)
 /* The maximum number of preemption priority levels in the system.
  * This parameter must be divisible by the word length - 32 is usually sufficient */
 #define RMP_PREEMPT_PRIO_NUM        (32U)
@@ -24,16 +24,9 @@ Description: The configuration file for HC32L136K8.
 #define RMP_SLICE_MAX               (100000U)
 /* The maximum number of semaphore counts allowed */
 #define RMP_SEM_CNT_MAX             (1000U)
-/* Are we using custom hooks? */
-#define RMP_HOOK_EXTRA              (0U)
-/* The stzck size of the init thread */
+/* The stack size of the init thread */
 #define RMP_INIT_STACK_SIZE         (256U)
-/* The mask/unmask interrupt operations */
-#define RMP_INT_MASK()              RMP_Int_Disable()
-#define RMP_INT_UNMASK()            RMP_Int_Enable()
 
-/* What is the NVIC priority grouping? */
-#define RMP_A6M_NVIC_GROUPING       RMP_A6M_NVIC_GROUPING_P2S6
 /* What is the Systick value? */
 #define RMP_A6M_SYSTICK_VAL         (24000U)
 
@@ -44,7 +37,7 @@ Description: The configuration file for HC32L136K8.
  * to something that you possibly don't want. 
  * This is the default initialization sequence. If you wish to supply
  * your own, just redirect this macro to a custom function, or do your
- * initialization stuff in the initialization hook (RMP_Start_Hook). */
+ * initialization stuff in the initialization hook (RMP_START_HOOK). */
 #define RMP_A6M_LOWLVL_INIT() \
 do \
 { \

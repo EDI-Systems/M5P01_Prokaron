@@ -37,8 +37,6 @@ The above 3 registers are saved into the stack in combination(xPSR).
     .global             RMP_Int_Mask
     /* Start the first thread */
     .global             _RMP_Start
-    /* The PendSV trigger */
-    .global             _RMP_Yield
     /* The system pending service routine */
     .global             PendSV_Handler
     /* The systick timer routine */
@@ -75,32 +73,6 @@ RMP_Int_Enable:
     CPSIE               I               
     BX                  LR
 /* End Function:RMP_Int_Enable ***********************************************/
-
-/* Function:RMP_Int_Mask ******************************************************
-Description : Cortex-M0 does not allow masking and this is provided as dummy.
-Input       : rmp_ptr_t R0 - The new BASEPRI to set.
-Output      : None.
-Return      : None.
-******************************************************************************/
-    .thumb_func
-RMP_Int_Mask:
-    BX                  LR
-/* End Function:RMP_Int_Mask *************************************************/
-
-/* Function:_RMP_Yield ********************************************************
-Description : Trigger a yield to another thread.
-Input       : None.
-Output      : None.
-Return      : None.
-******************************************************************************/
-    .thumb_func
-_RMP_Yield:
-    LDR                 R0,=0xE000ED04      /* The NVIC_INT_CTRL register */
-    LDR                 R1,=0x10000000      /* Trigger the PendSV */
-    STR                 R1,[R0]
-    ISB                                     /* Instruction barrier */
-    BX                  LR         
-/* End Function:_RMP_Yield ***************************************************/
 
 /* Function:_RMP_Start ********************************************************
 Description : Jump to the user function and will never return from it.

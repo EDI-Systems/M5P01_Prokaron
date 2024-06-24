@@ -150,52 +150,6 @@ void RMP_Int_Disable(void)
 }
 /* End Function:RMP_Int_Disable **********************************************/
 
-/* Function:RMP_Int_Mask ******************************************************
-Description : Mask interrupts that may do sends.
-Input       : None.
-Output      : None.
-Return      : None.
-******************************************************************************/
-void RMP_Int_Mask(void)
-{
-    RVM_Virt_Int_Mask();
-}
-/* End Function:RMP_Int_Mask *************************************************/
-
-/* Function:RMP_Int_Unmask ****************************************************
-Description : Unmask interrupts that may do sends.
-Input       : None.
-Output      : None.
-Return      : None.
-******************************************************************************/
-void RMP_Int_Unmask(void)
-{
-    RVM_Virt_Int_Unmask();
-}
-/* End Function:RMP_Int_Unmask ***********************************************/
-
-/* Function:_RMP_Yield ********************************************************
-Description : Trigger a yield to a different thread.
-Input       : None.
-Output      : None.
-Return      : None.
-******************************************************************************/
-/* Use "const" to make sure this initializer is in code flash - this will
- * be optimized out when fast context switching is not enabled */
-volatile struct RVM_Param* const RMP_A6M_RVM_Usr_Param=&(RVM_STATE->Usr);
-void _RMP_Yield(void)
-{
-#if(RMP_A6M_RVM_FAST_YIELD!=0U)
-    if(RVM_STATE->Vct_Act!=0U)
-        RVM_Virt_Yield();
-    else
-        _RMP_A6M_RVM_Yield();
-#else
-    RVM_Virt_Yield();
-#endif
-}
-/* End Function:_RMP_Yield ***************************************************/
-
 /* Function:RMP_PendSV_Handler ************************************************
 Description : The PendSV interrupt routine. Real Cortex-M0 does not have STMDB
               (only very restricted forms of STMIA and LDMIA exists), we're

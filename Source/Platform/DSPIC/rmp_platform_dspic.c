@@ -25,28 +25,6 @@ Description : The platform specific file for DSPIC.
 #undef __HDR_PUBLIC__
 /* End Include ***************************************************************/
 
-/* Function:_RMP_Yield ********************************************************
-Description : Trigger a yield to another thread.
-Input       : None.
-Output      : None.                                      
-******************************************************************************/
-void _RMP_Yield(void)
-{
-    if(RMP_DSPIC_Int_Act!=0U)
-        _RMP_DSPIC_Yield_Pend=1U;
-    else
-#if(RMP_DSPIC_COP_24F_24H!=0U)
-        _RMP_DSPIC_Yield_24F_24H();
-#elif(RMP_DSPIC_COP_24E!=0U)
-        _RMP_DSPIC_Yield_24E();
-#elif(RMP_DSPIC_COP_30F_33F!=0U)
-        _RMP_DSPIC_Yield_30F_33F();
-#elif(RMP_DSPIC_COP_33E_33C!=0U)
-        _RMP_DSPIC_Yield_33E_33C();
-#endif
-}                                 
-/* End Function:_RMP_Yield ***************************************************/
-
 /* Function:_RMP_Stack_Init ***************************************************
 Description : Initiate the process stack when trying to start a process. Never
               call this function in user application.
@@ -140,10 +118,6 @@ void _RMP_Lowlvl_Init(void)
     RMP_Int_Disable();
     
     RMP_DSPIC_LOWLVL_INIT();
-
-    /* Clear flags */
-    RMP_DSPIC_Int_Act=0U;
-    _RMP_DSPIC_Yield_Pend=0U;
 }
 /* End Function:_RMP_Lowlvl_Init *********************************************/
 

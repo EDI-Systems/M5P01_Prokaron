@@ -6,9 +6,9 @@ Licence     : LGPL v3+; see COPYING for details.
 Description : The configuration file for AVR HAL.
 ******************************************************************************/
 
-/* Config Includes ***********************************************************/
+/* Config Include ************************************************************/
 #include "Platform/AVR/Chip/ATMEGA1284P/rmp_platform_atmega1284p.h"
-/* End Config Includes *******************************************************/
+/* End Config Include ********************************************************/
 
 /* End Of File ***************************************************************/
 

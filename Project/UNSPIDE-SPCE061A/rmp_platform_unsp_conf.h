@@ -6,9 +6,9 @@ Licence     : LGPL v3+; see COPYING for details.
 Description : The configuration file for UNSP HAL.
 ******************************************************************************/
 
-/* Config Includes ***********************************************************/
+/* Config Include ************************************************************/
 #include "Platform/UNSP/Chip/SPCE061A/rmp_platform_spce061a.h"
-/* End Config Includes *******************************************************/
+/* End Config Include ********************************************************/
 
 /* End Of File ***************************************************************/
 

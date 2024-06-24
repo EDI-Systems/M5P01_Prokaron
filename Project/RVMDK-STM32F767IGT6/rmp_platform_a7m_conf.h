@@ -6,9 +6,9 @@ Licence     : LGPL v3+; see COPYING for details.
 Description : The configuration file for Cortex-M HAL.
 ******************************************************************************/
 
-/* Config Includes ***********************************************************/
+/* Config Include ************************************************************/
 #include "Platform/A7M/Chip/STM32F767IG/rmp_platform_stm32f767ig.h"
-/* End Config Includes *******************************************************/
+/* End Config Include ********************************************************/
 
 /* End Of File ***************************************************************/
 

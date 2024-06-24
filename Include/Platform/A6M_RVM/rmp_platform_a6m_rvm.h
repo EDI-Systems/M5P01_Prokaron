@@ -11,7 +11,7 @@ Description : The header of platform-specific part of RMP for RVM hypervisor.
 #ifndef __RMP_PLATFORM_A6M_RVM_DEF__
 #define __RMP_PLATFORM_A6M_RVM_DEF__
 /*****************************************************************************/
-/* Basic Types ***************************************************************/
+/* Basic Type ****************************************************************/
 #ifndef __RMP_S32_T__
 #define __RMP_S32_T__
 typedef signed int rmp_s32_t;
@@ -41,31 +41,31 @@ typedef unsigned short rmp_u16_t;
 #define __RMP_U8_T__
 typedef unsigned char rmp_u8_t;
 #endif
-/* End Basic Types ***********************************************************/
+/* End Basic Type ************************************************************/
 
-/* Extended Types ************************************************************/
+/* Extended Type *************************************************************/
 #ifndef __RMP_PTR_T__
 #define __RMP_PTR_T__
-/* The typedef for the pointers - This is the raw style. Pointers must be unsigned */
+/* Pointer */
 typedef rmp_u32_t rmp_ptr_t;
 #endif
 
 #ifndef __RMP_CNT_T__
 #define __RMP_CNT_T__
-/* The typedef for the count variables */
+/* Counter */
 typedef rmp_s32_t rmp_cnt_t;
 #endif
 
 #ifndef __RMP_RET_T__
 #define __RMP_RET_T__
-/* The type for process return value */
+/* Return value */
 typedef rmp_s32_t rmp_ret_t;
 #endif
-/* End Extended Types ********************************************************/
+/* End Extended Type *********************************************************/
 
-/* System macros *************************************************************/
+/* System Macro **************************************************************/
 /* Compiler "extern" keyword setting */
-#define EXTERN                          extern
+#define RMP_EXTERN                      extern
 /* The order of bits in one CPU machine word */
 #define RMP_WORD_ORDER                  (5U)
 /* The maximum length of char printing */
@@ -84,7 +84,19 @@ typedef rmp_s32_t rmp_ret_t;
 
 /* The CPU and application specific macros are here */
 #include "rmp_platform_a6m_rvm_conf.h"
-/* End System macros *********************************************************/
+
+/* Interrupt masking/unmasking */
+#define RMP_INT_MASK()                  RVM_Virt_Int_Mask()
+#define RMP_INT_UNMASK()                RVM_Virt_Int_Unmask()
+/* Yield operations */
+#if(RMP_A6M_RVM_FAST_YIELD!=0U)
+#define RMP_YIELD()                     _RMP_A6M_RVM_Yield()
+#define RMP_YIELD_ISR()                 RVM_Virt_Yield()
+#else
+#define RMP_YIELD()                     RVM_Virt_Yield()
+#define RMP_YIELD_ISR()                 RMP_YIELD()
+#endif
+/* End System Macro **********************************************************/
 /*****************************************************************************/
 /* __RMP_PLATFORM_A6M_RVM_DEF__ */
 #endif
@@ -151,7 +163,7 @@ struct RMP_A6M_RVM_Stack
 #ifndef __HDR_PUBLIC__
 /*****************************************************************************/
 static rvm_ptr_t RMP_Console_Ptr;
-EXTERN const rvm_ptr_t RVM_Desc[];
+RMP_EXTERN const rvm_ptr_t RVM_Desc[];
 /*****************************************************************************/
 /* End Private Variable ******************************************************/
 
@@ -161,13 +173,13 @@ EXTERN const rvm_ptr_t RVM_Desc[];
 static void RMP_PendSV_Handler(void);
 static void RMP_SysTick_Handler(void);
 /*****************************************************************************/
-#define __EXTERN__
+#define __RMP_EXTERN__
 /* End Private Function ******************************************************/
 
 /* Public Variable ***********************************************************/
 /* __HDR_PUBLIC__ */
 #else
-#define __EXTERN__ EXTERN 
+#define __RMP_EXTERN__ RMP_EXTERN 
 /* __HDR_PUBLIC__ */
 #endif
 
@@ -179,27 +191,27 @@ static void RMP_SysTick_Handler(void);
 
 /* Public Function ***********************************************************/
 /*****************************************************************************/
-__EXTERN__ void RMP_Int_Enable(void);
-__EXTERN__ void RMP_Int_Disable(void);
-__EXTERN__ void RMP_Int_Mask(void);
-__EXTERN__ void RMP_Int_Unmask(void);
+__RMP_EXTERN__ void RMP_Int_Enable(void);
+__RMP_EXTERN__ void RMP_Int_Disable(void);
+RMP_EXTERN void RVM_Virt_Int_Mask(void);
+RMP_EXTERN void RVM_Virt_Int_Unmask(void);
 
-EXTERN void _RMP_Start(rvm_ptr_t Entry,
-                       rvm_ptr_t Stack);
-EXTERN void _RMP_A6M_RVM_Yield(void);
-__EXTERN__ void _RMP_Yield(void);
+RMP_EXTERN void _RMP_Start(rvm_ptr_t Entry,
+                           rvm_ptr_t Stack);
+RMP_EXTERN void _RMP_A6M_RVM_Yield(void);
+RMP_EXTERN void RVM_Virt_Yield(void);
 
 /* Initialization */
-__EXTERN__ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
-                                     rmp_ptr_t Size,
-                                     rmp_ptr_t Entry,
-                                     rmp_ptr_t Param);
-__EXTERN__ void _RMP_Lowlvl_Init(void);
-__EXTERN__ void RMP_Putchar(char Char);
-__EXTERN__ void _RMP_Plat_Hook(void);
+__RMP_EXTERN__ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
+                                         rmp_ptr_t Size,
+                                         rmp_ptr_t Entry,
+                                         rmp_ptr_t Param);
+__RMP_EXTERN__ void _RMP_Lowlvl_Init(void);
+__RMP_EXTERN__ void RMP_Putchar(char Char);
+__RMP_EXTERN__ void _RMP_Plat_Hook(void);
 /*****************************************************************************/
-/* Undefine "__EXTERN__" to avoid redefinition */
-#undef __EXTERN__
+/* Undefine "__RMP_EXTERN__" to avoid redefinition */
+#undef __RMP_EXTERN__
 /* __RMP_PLATFORM_A6M_RVM_MEMBER__ */
 #endif
 /* !(defined __HDR_DEF__||defined __HDR_STRUCT__) */

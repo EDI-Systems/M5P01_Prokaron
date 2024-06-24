@@ -11,7 +11,7 @@ Description : The header of "rmp_platform_c28x.c".
 #ifndef __RMP_PLATFORM_C28X_DEF__
 #define __RMP_PLATFORM_C28X_DEF__
 /*****************************************************************************/
-/* Basic Types ***************************************************************/
+/* Basic Type ****************************************************************/
 #ifndef __RMP_S32_T__
 #define __RMP_S32_T__
 typedef signed long rmp_s32_t;
@@ -41,21 +41,18 @@ typedef unsigned int rmp_u16_t;
 #define __RMP_U8_T__
 typedef unsigned char rmp_u8_t;
 #endif
-/* End Basic Types ***********************************************************/
+/* End Basic Type ************************************************************/
 
-/* Extended Types ************************************************************/
-/* The CPU and application specific macros are here */
-#include "rmp_platform_c28x_conf.h"
-
+/* Extended Type *************************************************************/
 #ifndef __RMP_PTR_T__
 #define __RMP_PTR_T__
-/* The typedef for the pointers - This is the raw style. Pointers must be unsigned */
+/* Pointer */
 typedef rmp_u32_t rmp_ptr_t;
 #endif
 
 #ifndef __RMP_CNT_T__
 #define __RMP_CNT_T__
-/* The typedef for the count variables */
+/* Counter */
 typedef rmp_s32_t rmp_cnt_t;
 #endif
 
@@ -64,11 +61,11 @@ typedef rmp_s32_t rmp_cnt_t;
 /* The type for return value */
 typedef rmp_s32_t rmp_ret_t;
 #endif
-/* End Extended Types ********************************************************/
+/* End Extended Type *********************************************************/
 
-/* System macros *************************************************************/
+/* System Macro **************************************************************/
 /* Compiler "extern" keyword setting */
-#define EXTERN                          extern
+#define RMP_EXTERN                      extern
 /* The order of bits in one CPU machine word */
 #define RMP_WORD_ORDER                  (5U)
 /* The maximum length of char printing */
@@ -81,7 +78,23 @@ typedef rmp_s32_t rmp_ret_t;
 /* MSB/LSB extraction */
 #define RMP_MSB_GET(VAL)                RMP_MSB_Generic(VAL)
 #define RMP_LSB_GET(VAL)                RMP_LSB_Generic(VAL)
-/* End System macros *********************************************************/
+
+/* The CPU and application specific macros are here */
+#include "rmp_platform_c28x_conf.h"
+
+/* Interrupt masking/unmasking */
+#define RMP_INT_MASK()                  RMP_Int_Disable()
+#define RMP_INT_UNMASK()                RMP_Int_Enable()
+/* Yield operation - FPU64 implies FPU32 */
+#if(RMP_C28X_COP_FPU64!=0U)
+#define RMP_YIELD()                     _RMP_C28X_Yield_FPU64()
+#elif(RMP_C28X_COP_FPU32!=0U)
+#define RMP_YIELD()                     _RMP_C28X_Yield_FPU32()
+#else
+#define RMP_YIELD()                     _RMP_C28X_Yield_NONE()
+#endif
+/* #define RMP_YIELD_ISR() */
+/* End System Macro **********************************************************/
 /*****************************************************************************/
 /* __RMP_PLATFORM_C28X_DEF__ */
 #endif
@@ -185,21 +198,18 @@ struct RMP_C28X_Stack
 /*****************************************************************************/
 
 /*****************************************************************************/
-#define __EXTERN__
+#define __RMP_EXTERN__
 /* End Private Function ******************************************************/
 
 /* Public Variable ***********************************************************/
 /* __HDR_PUBLIC__ */
 #else
-#define __EXTERN__ EXTERN 
+#define __RMP_EXTERN__ RMP_EXTERN
 /* __HDR_PUBLIC__ */
 #endif
 
 /*****************************************************************************/
-__EXTERN__ rmp_u16_t _RMP_C28X_SP_Kern;
-
-__EXTERN__ volatile rmp_u16_t RMP_C28X_Int_Act;
-__EXTERN__ volatile rmp_u16_t _RMP_C28X_Yield_Pend;
+__RMP_EXTERN__ rmp_u16_t _RMP_C28X_SP_Kern;
 /*****************************************************************************/
 
 /* End Public Variable *******************************************************/
@@ -207,29 +217,28 @@ __EXTERN__ volatile rmp_u16_t _RMP_C28X_Yield_Pend;
 /* Public Function ***********************************************************/
 /*****************************************************************************/
 /* Interrupts */
-EXTERN void RMP_Int_Disable(void);
-EXTERN void RMP_Int_Enable(void);
+RMP_EXTERN void RMP_Int_Disable(void);
+RMP_EXTERN void RMP_Int_Enable(void);
 
-EXTERN void _RMP_Start(rmp_ptr_t Entry, rmp_ptr_t Stack);
-EXTERN void _RMP_C28X_Yield_NONE(void);
-EXTERN void _RMP_C28X_Yield_FPU32(void);
-EXTERN void _RMP_C28X_Yield_FPU64(void);
-__EXTERN__ void _RMP_Yield(void);
+RMP_EXTERN void _RMP_Start(rmp_ptr_t Entry, rmp_ptr_t Stack);
+RMP_EXTERN void _RMP_C28X_Yield_NONE(void);
+RMP_EXTERN void _RMP_C28X_Yield_FPU32(void);
+RMP_EXTERN void _RMP_C28X_Yield_FPU64(void);
 
 /* Initialization */
-__EXTERN__ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
-                                     rmp_ptr_t Size,
-                                     rmp_ptr_t Entry,
-                                     rmp_ptr_t Param);
-__EXTERN__ void _RMP_Lowlvl_Init(void);
-__EXTERN__ void RMP_Putchar(char Char);
-__EXTERN__ void _RMP_Plat_Hook(void);
+__RMP_EXTERN__ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
+                                         rmp_ptr_t Size,
+                                         rmp_ptr_t Entry,
+                                         rmp_ptr_t Param);
+__RMP_EXTERN__ void _RMP_Lowlvl_Init(void);
+__RMP_EXTERN__ void RMP_Putchar(char Char);
+__RMP_EXTERN__ void _RMP_Plat_Hook(void);
 
 /* Timer handler */
-__EXTERN__ void _RMP_C28X_Tim_Handler(void);
+__RMP_EXTERN__ void _RMP_C28X_Tim_Handler(void);
 /*****************************************************************************/
-/* Undefine "__EXTERN__" to avoid redefinition */
-#undef __EXTERN__
+/* Undefine "__RMP_EXTERN__" to avoid redefinition */
+#undef __RMP_EXTERN__
 /* __RMP_PLATFORM_C28X_MEMBER__ */
 #endif
 /* !(defined __HDR_DEF__||defined __HDR_STRUCT__) */

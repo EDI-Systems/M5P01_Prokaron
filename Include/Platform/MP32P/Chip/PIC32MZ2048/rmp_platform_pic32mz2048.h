@@ -11,7 +11,7 @@ Description: The configuration file for PIC32MZ2048EFM100.
 #include <xc.h>
 
 /* Debugging */
-#define RMP_ASSERT_CORRECT          (0U)
+#define RMP_ASSERT_ENABLE           (1U)
 /* The maximum number of preemption priority levels in the system.
  * This parameter must be divisible by the word length - 32 is usually sufficient */
 #define RMP_PREEMPT_PRIO_NUM        (32)
@@ -19,13 +19,8 @@ Description: The configuration file for PIC32MZ2048EFM100.
 #define RMP_SLICE_MAX               (100000U)
 /* The maximum number of semaphore counts allowed */
 #define RMP_SEM_CNT_MAX             (1000U)
-/* Are we using custom hooks? */
-#define RMP_HOOK_EXTRA              (0U)
 /* The stack size of the init thread */
 #define RMP_INIT_STACK_SIZE         (2048U)
-/* The mask/unmask interrupt operations */
-#define RMP_INT_MASK()              RMP_Int_Mask(0x01U)
-#define RMP_INT_UNMASK()            RMP_Int_Mask(0x00U)
 
 /* What is the tick timer value? */
 #define RMP_MP32P_CORETIM_VAL       (20000U)
@@ -38,7 +33,7 @@ Description: The configuration file for PIC32MZ2048EFM100.
  * This is the default initialization sequence. If you wish to supply
  * your own, just redirect this macro to a custom function, or do your
  * initialization stuff in the initialization hook (RMP_Start_Hook). */
-EXTERN void _RMP_Set_Timer(rmp_ptr_t Tick);
+RMP_EXTERN void _RMP_Set_Timer(rmp_ptr_t Tick);
 #define RMP_MP32P_LOWLVL_INIT() \
 do \
 { \

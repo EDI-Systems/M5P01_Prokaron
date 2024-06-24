@@ -26,10 +26,8 @@ Description : The assembly part of the RMP RTOS. This is for MIPS, and
     .extern             _RMP_MP32P_GP_Kern
     /* The current thread stack */
     .extern             RMP_SP_Cur
-    /* The interrupt active flag */
-    .extern             RMP_MP32P_Int_Act
     /* The yield pending flag */
-    .extern             _RMP_MP32P_Yield_Pend
+    .extern             RMP_Sched_Pend
     /* Extract highest priority running thread */
     .extern             _RMP_Run_High
     /* Handler for MP32P timer interrupt */
@@ -92,23 +90,18 @@ Description : The assembly part of the RMP RTOS. This is for MIPS, and
     LW                  $sp,($23)
     LA                  $gp,_RMP_MP32P_GP_Kern      /* Load GP for kernel */
     LW                  $gp,($gp)
-    LI                  $22,1                       /* Indicate interrupt active */
-    LA                  $23,RMP_MP32P_Int_Act
-    SW                  $22,($23)
     .endm
 
 /* Finish up the context switch **********************************************/
     .macro              RMP_MP32P_SWITCH_POST
-    LA                  $23,_RMP_MP32P_Yield_Pend
+    LA                  $23,RMP_Sched_Pend
     LW                  $22,($23)
     NOP
     BEQ                 $22,$zero,1f
-    SW                  $zero,($23)                 /* Does no harm even when this always execute */
+    NOP
     JAL                 _RMP_Run_High               /* Get the highest priority task */
     NOP
 1:
-    LA                  $23,RMP_MP32P_Int_Act
-    SW                  $zero,($23)
     LA                  $23,RMP_SP_Cur              /* Load SP from control block */
     LW                  $sp,($23)
     NOP

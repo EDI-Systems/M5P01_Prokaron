@@ -18,7 +18,7 @@ WFLAGS=-Wall -Wno-strict-aliasing
 DFLAGS=-g3
 LFLAGS=-specs=nano.specs -specs=nosys.specs -Wl,--gc-sections,--cref
 
-OBJDIR=Objects
+OBJDIR=Object
 PREFIX=arm-none-eabi-
 # End Config ##################################################################
 

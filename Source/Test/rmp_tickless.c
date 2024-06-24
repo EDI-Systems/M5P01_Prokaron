@@ -166,30 +166,6 @@ void RMP_Init_Hook(void)
 }
 /* End Function:RMP_Init_Hook ************************************************/
 
-/* Function:RMP_Ctx_Save ******************************************************
-Description : Save additional context.
-Input       : None.
-Output      : None.
-Return      : None.
-******************************************************************************/
-void RMP_Ctx_Save(void)
-{
-    return;
-}
-/* End Function:RMP_Ctx_Save *************************************************/
-
-/* Function:RMP_Ctx_Load ******************************************************
-Description : Load additional context.
-Input       : None.
-Output      : None.
-Return      : None.
-******************************************************************************/
-void RMP_Ctx_Load(void)
-{
-    return;
-}
-/* End Function:RMP_Ctx_Load *************************************************/
-
 /* End Of File ***************************************************************/
 
 /* Copyright (C) Evo-Devo Instrum. All rights reserved ***********************/

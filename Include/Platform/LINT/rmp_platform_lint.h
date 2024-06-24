@@ -11,7 +11,7 @@ Description : The header of "rmp_platform_lint.c".
 #ifndef __RMP_PLATFORM_LINT_DEF__
 #define __RMP_PLATFORM_LINT_DEF__
 /*****************************************************************************/
-/* Basic Types ***************************************************************/
+/* Basic Type ****************************************************************/
 #ifndef __RMP_S32_T__
 #define __RMP_S32_T__
 typedef signed long rmp_s32_t;
@@ -41,9 +41,9 @@ typedef unsigned int rmp_u16_t;
 #define __RMP_U8_T__
 typedef unsigned char rmp_u8_t;
 #endif
-/* End Basic Types ***********************************************************/
+/* End Basic Type ************************************************************/
 
-/* Extended Types ************************************************************/
+/* Extended Type *************************************************************/
 #ifndef __RMP_PTR_T__
 #define __RMP_PTR_T__
 typedef rmp_u32_t rmp_ptr_t;
@@ -51,7 +51,7 @@ typedef rmp_u32_t rmp_ptr_t;
 
 #ifndef __RMP_CNT_T__
 #define __RMP_CNT_T__
-/* The typedef for the count variables */
+/* Counter */
 typedef rmp_s32_t rmp_cnt_t;
 #endif
 
@@ -59,9 +59,9 @@ typedef rmp_s32_t rmp_cnt_t;
 #define __RMP_RET_T__
 typedef rmp_s32_t rmp_ret_t;
 #endif
-/* End Extended Types ********************************************************/
+/* End Extended Type *********************************************************/
 
-/* System macros *************************************************************/
+/* System Macro **************************************************************/
 /* Compiler "extern" keyword setting */
 #define EXTERN                          extern
 #define RMP_WORD_ORDER                  (4U)
@@ -76,8 +76,15 @@ typedef rmp_s32_t rmp_ret_t;
 #define RMP_MSB_GET(VAL)                RMP_MSB_Generic(VAL)
 #define RMP_LSB_GET(VAL)                RMP_LSB_Generic(VAL)
 
+/* The mask/unmask interrupt operations */
+#define RMP_INT_MASK()                  RMP_Int_Disable()
+#define RMP_INT_UNMASK()                RMP_Int_Enable()
+/* Yield operation */
+#define RMP_YIELD()                     while(0)
+/* #define RMP_YIELD_ISR() */
+
 /* Debugging */
-#define RMP_ASSERT_CORRECT              (0U)
+#define RMP_ASSERT_ENABLE               (1U)
 /* The maximum number of preemption priority levels in the system.
  * This parameter must be divisible by the word length - 16 is usually sufficient */
 #define RMP_PREEMPT_PRIO_NUM            (32U)
@@ -85,20 +92,15 @@ typedef rmp_s32_t rmp_ret_t;
 #define RMP_SLICE_MAX                   (10000U)
 /* The maximum number of semaphore counts allowed */
 #define RMP_SEM_CNT_MAX                 (1000U)
-/* Are we using custom hooks? */
-#define RMP_HOOK_EXTRA                  (0U)
 /* The stzck size of the init thread */
 #define RMP_INIT_STACK_SIZE             (128U)
-/* The mask/unmask interrupt operations */
-#define RMP_INT_MASK()                  RMP_Int_Disable()
-#define RMP_INT_UNMASK()                RMP_Int_Enable()
 
 /* Other low-level initialization stuff */
 #define RMP_LINT_LOWLVL_INIT()          while(0)
 
 /* This is for debugging output */
 #define RMP_LINT_PUTCHAR(CHAR)          while(0)
-/* End System macros *********************************************************/
+/* End System Macro **********************************************************/
 
 /* LINT specific macros ****************************************************/
 

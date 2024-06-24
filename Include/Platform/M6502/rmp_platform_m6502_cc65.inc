@@ -16,10 +16,8 @@
     .import             __RMP_M6502_SP_Kern
     ; The current thread stack
     .import             _RMP_SP_Cur
-    ; The interrupt active flag
-    .import             _RMP_M6502_Int_Act
     ; The yield pending flag
-    .import             __RMP_M6502_Yield_Pend
+    .import             _RMP_Sched_Pend
     ; Extract highest priority running thread
     .import             __RMP_Run_High
     ; Handler for M6502 timer interrupt
@@ -68,8 +66,6 @@ __RMP_M6502_Int_ZP_Save:
     ; (1) the context is not complete, and (2) we want more performance so we
     ; have to execute interrupt with thread local stack. We only switch to
     ; kernel stack when we really do a heavy-handed context switch.
-    LDX                 #1
-    STX                 _RMP_M6502_Int_Act
     .endmacro
 
 ;/* Load everything from stack, and deal with pending yields if there is *****/
@@ -82,10 +78,8 @@ __RMP_M6502_Int_ZP_Save:
     .local              __RMP_M6502_Int_ZP_Load
     .local              __RMP_M6502_Int_ZP_Load_PSP_Skip
 ;/* Detect potential full context switch requirements ************************/
-    LDX                 __RMP_M6502_Yield_Pend
+    LDX                 _RMP_Sched_Pend
     BEQ                 __RMP_M6502_Int_Ctxsw_Skip
-    LDX                 #0
-    STX                 __RMP_M6502_Yield_Pend
 ;/* Save return stack ********************************************************/
     ; Decrease PSP to prepare for RSTK/RSP save
     TSX
@@ -157,11 +151,8 @@ __RMP_M6502_Int_RSTK_Load:
     BCC                 __RMP_M6502_Int_RSTK_Load_PSP_Skip
     INC                 sp+1
 __RMP_M6502_Int_RSTK_Load_PSP_Skip:
-;/* Indicate interrupt inactive **********************************************/
-__RMP_M6502_Int_Ctxsw_Skip:
-    LDX                 #0
-    STX                 _RMP_M6502_Int_Act
 ;/* Restore zeropage *********************************************************/
+__RMP_M6502_Int_Ctxsw_Skip:
     ; Restore ZP from PSTK (full descending)
     LDX                 #0
     LDY                 #0

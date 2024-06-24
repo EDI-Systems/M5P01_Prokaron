@@ -8,7 +8,7 @@ Description : The configuration file for CH32V307VC, on RVM.
 
 /* Define ********************************************************************/
 /* Debugging */
-#define RMP_ASSERT_CORRECT              (0U)
+#define RMP_ASSERT_ENABLE               (1U)
 /* The maximum number of preemption priority levels in the system.
  * This parameter must be divisible by the word length - 32 is usually sufficient */
 #define RMP_PREEMPT_PRIO_NUM            (32U)
@@ -16,13 +16,8 @@ Description : The configuration file for CH32V307VC, on RVM.
 #define RMP_SLICE_MAX                   (100000U)
 /* The maximum number of semaphore counts allowed */
 #define RMP_SEM_CNT_MAX                 (1000U)
-/* Are we using custom hooks? */
-#define RMP_HOOK_EXTRA                  (0U)
 /* The stzck size of the init thread */
 #define RMP_INIT_STACK_SIZE             (256U)
-/* The mask/unmask interrupt operations */
-#define RMP_INT_MASK()                  RMP_Int_Mask()
-#define RMP_INT_UNMASK()                RMP_Int_Unmask()
 
 /* What is the FPU type? */
 #define RMP_RV32P_RVM_COP_RVF           (1U)

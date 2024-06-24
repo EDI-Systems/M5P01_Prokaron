@@ -33,12 +33,8 @@
     EXPORT              RMP_Int_Disable      
     ;Enable all interrupts            
     EXPORT              RMP_Int_Enable
-    ;Mask/unmask interrupt dummy
-    EXPORT              RMP_Int_Mask
     ;Start the first thread
     EXPORT              _RMP_Start
-    ;The PendSV trigger
-    EXPORT              _RMP_Yield
     ;The system pending service routine              
     EXPORT              PendSV_Handler 
     ;The systick timer routine              
@@ -75,32 +71,6 @@ RMP_Int_Enable          PROC
     BX                  LR
     ENDP
 ;/* End Function:RMP_Int_Enable **********************************************/
-
-;/* Function:RMP_Int_Mask *****************************************************
-;Description : Cortex-M0 does not allow masking and this is provided as dummy.
-;Input       : rmp_ptr_t R0 - The new BASEPRI to set.
-;Output      : None.
-;Return      : None.
-;*****************************************************************************/
-RMP_Int_Mask            PROC
-    BX                  LR
-    ENDP
-;/* End Function:RMP_Int_Mask ************************************************/
-
-;/* Function:_RMP_Yield *******************************************************
-;Description : Trigger a yield to another thread.
-;Input       : None.
-;Output      : None.
-;Return      : None.
-;*****************************************************************************/
-_RMP_Yield              PROC
-    LDR                 R0,=0xE000ED04      ;The NVIC_INT_CTRL register
-    LDR                 R1,=0x10000000      ;Trigger the PendSV          
-    STR                 R1,[R0]
-    ISB                                     ;Instruction barrier
-    BX                  LR
-    ENDP
-;/* End Function:_RMP_Yield **************************************************/
 
 ;/* Function:_RMP_Start *******************************************************
 ;Description : Jump to the user function and will never return from it.

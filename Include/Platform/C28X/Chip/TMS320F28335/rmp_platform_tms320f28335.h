@@ -12,25 +12,19 @@ Description: The configuration file for TMS320F28335.
 #include "DSP2833x_Examples.h"
 
 /* Debugging */
-#define RMP_ASSERT_CORRECT          (0U)
+#define RMP_ASSERT_ENABLE           (1U)
 /* The maximum number of preemption priority levels in the system.
- * This parameter must be divisible by the word length - 16 is usually sufficient */
+ * This parameter must be divisible by the word length - 32 is usually sufficient */
 #define RMP_PREEMPT_PRIO_NUM        (32U)
 /* The maximum number of slices allowed */
 #define RMP_SLICE_MAX               (10000U)
 /* The maximum number of semaphore counts allowed */
 #define RMP_SEM_CNT_MAX             (1000U)
-/* Are we using custom hooks? */
-#define RMP_HOOK_EXTRA              (0U)
 /* The stzck size of the init thread */
-#define RMP_INIT_STACK_SIZE         (128U)
-/* The mask/unmask interrupt operations */
-#define RMP_INT_MASK()              RMP_Int_Disable()
-#define RMP_INT_UNMASK()            RMP_Int_Enable()
+#define RMP_INIT_STACK_SIZE         (256U)
 
 /* The tick timer value */
 #define RMP_C28X_TICK_VAL           (15000U)
-
 /* FPU type */
 #define RMP_C28X_COP_FPU32          (1U)
 #define RMP_C28X_COP_FPU64          (0U)

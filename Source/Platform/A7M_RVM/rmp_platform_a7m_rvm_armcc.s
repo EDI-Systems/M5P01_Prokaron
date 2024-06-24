@@ -24,10 +24,10 @@
     ;The stack address of current thread
     IMPORT              RMP_SP_Cur
     ;Mask/unmask interrupts
-    IMPORT              RMP_Int_Mask
-    IMPORT              RMP_Int_Unmask
+    IMPORT              RVM_Virt_Int_Mask
+    IMPORT              RVM_Virt_Int_Unmask
     ;Hypercall parameter space
-    IMPORT              RMP_A7M_RVM_Usr_Param
+    IMPORT              RVM_Usr_Param
 ;/* End Import ***************************************************************/
 
 ;/* Export *******************************************************************/
@@ -249,20 +249,20 @@ Stk_Extend_Done                             ;Extended frame extra pushing
 
 Stk_Basic_Done       
     PUSH                {R4-R11,LR}         ;Push GP regs
-    LDR                 R0,=RMP_A7M_RVM_Usr_Param
+    LDR                 R0,=RVM_Usr_Param
     LDR                 R0,[R0]             ;Push hypercall parameters
     LDMIA               R0,{R1-R5}
     PUSH                {R1-R5}
 
-    BL                  RMP_Int_Mask        ;Mask interrupts
+    BL                  RVM_Virt_Int_Mask   ;Mask interrupts
     LDR                 R1,=RMP_SP_Cur      ;Save the SP to control block
     STR                 SP,[R1]
     BL                  _RMP_Run_High       ;Get the highest ready task
     LDR                 R1,=RMP_SP_Cur      ;Load the SP
     LDR                 SP,[R1]
-    BL                  RMP_Int_Unmask      ;Unmask interrupts
+    BL                  RVM_Virt_Int_Unmask ;Unmask interrupts
 
-    LDR                 R0,=RMP_A7M_RVM_Usr_Param
+    LDR                 R0,=RVM_Usr_Param
     LDR                 R0,[R0]             ;Pop hypercall parameters
     POP                 {R1-R5}
     STMIA               R0,{R1-R5}
