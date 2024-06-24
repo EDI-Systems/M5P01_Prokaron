@@ -17,7 +17,7 @@ WFLAGS=-Wunused -Wuninitialized
 DFLAGS=-g3
 LFLAGS= -O3 -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -fno-common --specs=nano.specs --specs=nosys.specs
 
-OBJDIR=Objects
+OBJDIR=Object
 PREFIX=riscv-none-elf-
 # End Config ##################################################################
 

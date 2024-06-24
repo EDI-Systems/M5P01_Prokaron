@@ -88,10 +88,6 @@ void _RMP_Lowlvl_Init(void)
     RMP_Int_Disable();
     
     RMP_UNSP_LOWLVL_INIT();
-    
-    /* Clear flags */
-    RMP_UNSP_Int_Act=0U;
-    _RMP_UNSP_Yield_Pend=0U;
 }
 /* End Function:_RMP_Lowlvl_Init *********************************************/
 
@@ -118,25 +114,6 @@ void RMP_Putchar(char Char)
     RMP_UNSP_PUTCHAR(Char);
 }
 /* End Function:RMP_Putchar **************************************************/
-
-/* Function:_RMP_Yield ********************************************************
-Description : Trigger a yield to another thread.
-Input       : None.
-Output      : None.
-Return      : None.
-******************************************************************************/
-void _RMP_Yield(void)
-{
-    if(RMP_UNSP_Int_Act!=0U)
-        _RMP_UNSP_Yield_Pend=1U;
-    else
-#if(RMP_UNSP_COP_SPV2!=0U)
-        _RMP_UNSP_Yield_SPV2();
-#else
-        _RMP_UNSP_Yield_SPV1();
-#endif
-}
-/* End Function:_RMP_Yield ***************************************************/
 
 /* Function:_RMP_UNSP_Tim_Handler *********************************************
 Description : Timer interrupt routine for DSPIC.

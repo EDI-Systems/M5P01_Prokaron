@@ -216,9 +216,6 @@ void _RMP_Lowlvl_Init(void)
     RMP_MP32P_LOWLVL_INIT();
     
     RMP_Int_Disable();
-    
-    RMP_MP32P_Int_Act=0U;
-    _RMP_MP32P_Yield_Pend=0U;
 }
 /* End Function:_RMP_Lowlvl_Init *********************************************/
 
@@ -246,37 +243,6 @@ void RMP_Putchar(char Char)
     RMP_MP32P_PUTCHAR(Char);
 }
 /* End Function:RMP_Putchar **************************************************/
-
-/* Function:_RMP_Yield ********************************************************
-Description : Trigger a yield to another thread.
-Input       : None.
-Output      : None.
-Return      : None.
-******************************************************************************/
-void _RMP_Yield(void)
-{
-    if(RMP_MP32P_Int_Act!=0U)
-        _RMP_MP32P_Yield_Pend=1U;
-    else
-#if(RMP_MP32P_COP_DSPASE==0U)
-#if(RMP_MP32P_COP_FR64!=0U)
-        _RMP_MP32P_Yield_FR64();
-#elif(RMP_MP32P_COP_FR32!=0U)
-        _RMP_MP32P_Yield_FR32();
-#else
-        _RMP_MP32P_Yield_NONE();
-#endif
-#else
-#if(RMP_MP32P_COP_FR64!=0U)
-        _RMP_MP32P_Yield_DSPASE_FR64();
-#elif(RMP_MP32P_COP_FR32!=0U)
-        _RMP_MP32P_Yield_DSPASE_FR32();
-#else
-        _RMP_MP32P_Yield_DSPASE();
-#endif
-#endif
-}
-/* End Function:_RMP_Yield ***************************************************/
 
 /* Function:_RMP_MP32P_Tim_Handler ********************************************
 Description : Clear the timer interrupt flag in the interrupt controller.

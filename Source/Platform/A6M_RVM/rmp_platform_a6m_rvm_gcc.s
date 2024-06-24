@@ -25,11 +25,11 @@ The ARM Cortex-M4/7 also include a FPU.
     .extern             _RMP_Run_High
     /* The stack address of current thread */
     .extern             RMP_SP_Cur
-    /* Mask/unmask interrupts */
-    .extern             RMP_Int_Mask
-    .extern             RMP_Int_Unmask
     /* Hypercall parameter space */
-    .extern             RMP_A6M_RVM_Usr_Param
+    .extern             RVM_Usr_Param
+    /* Mask/unmask interrupts */
+    .extern             RVM_Virt_Int_Mask
+    .extern             RVM_Virt_Int_Unmask
 /* End Import ****************************************************************/
 
 /* Export ********************************************************************/
@@ -195,12 +195,12 @@ Stk_Done:
     PUSH                {R0-R3,LR}
     PUSH                {R4-R7}
 
-    LDR                 R0,=RMP_A6M_RVM_Usr_Param
+    LDR                 R0,=RVM_Usr_Param
     LDR                 R0,[R0]             /* Push hypercall parameters */
     LDMIA               R0!,{R1-R5}
     PUSH                {R1-R5}
 
-    BL                  RMP_Int_Mask        /* Mask interrupts */
+    BL                  RVM_Virt_Int_Mask   /* Mask interrupts */
     LDR                 R1,=RMP_SP_Cur      /* Save the SP to control block */
     MOV                 R0,SP
     STR                 R0,[R1]
@@ -208,9 +208,9 @@ Stk_Done:
     LDR                 R1,=RMP_SP_Cur      /* Load the SP */
     LDR                 R0,[R1]
     MOV                 SP,R0
-    BL                  RMP_Int_Unmask      /* Unmask interrupts */
+    BL                  RVM_Virt_Int_Unmask /* Unmask interrupts */
 
-    LDR                 R0,=RMP_A6M_RVM_Usr_Param
+    LDR                 R0,=RVM_Usr_Param
     LDR                 R0,[R0]             /* Pop hypercall parameters */
     POP                 {R1-R5}
     STMIA               R0!,{R1-R5}

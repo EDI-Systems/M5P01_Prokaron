@@ -18,7 +18,7 @@ WFLAGS=-Wall -Wno-strict-aliasing
 DFLAGS=-g3
 LFLAGS=-specs=nano.specs -specs=nosys.specs -Wl,--gc-sections,--cref
 
-OBJDIR=Objects
+OBJDIR=Object
 PREFIX=arm-none-eabi-
 # End Config ##################################################################
 
@@ -33,16 +33,16 @@ INCS+=-I../../../M0A00_Library/STM32Cube_FW_F7_V1.11.0/Drivers/STM32F7xx_HAL_Dri
 CSRCS+=../../Source/Kernel/rmp_kernel.c
 CSRCS+=../../Source/Test/rmp_benchmark.c
 CSRCS+=../../Source/Platform/A7M/rmp_platform_a7m.c
-CSRCS+=../../../M0A00_Library/STM32Cube_FW_F7_V1.11.0/Drivers/STM32F7xx_HAL_Driver/Src/STM32F7xx_hal_rcc.c
-CSRCS+=../../../M0A00_Library/STM32Cube_FW_F7_V1.11.0/Drivers/STM32F7xx_HAL_Driver/Src/STM32F7xx_hal_cortex.c
-CSRCS+=../../../M0A00_Library/STM32Cube_FW_F7_V1.11.0/Drivers/STM32F7xx_HAL_Driver/Src/STM32F7xx_hal.c
-CSRCS+=../../../M0A00_Library/STM32Cube_FW_F7_V1.11.0/Drivers/STM32F7xx_HAL_Driver/Src/STM32F7xx_hal_gpio.c
-CSRCS+=../../../M0A00_Library/STM32Cube_FW_F7_V1.11.0/Drivers/STM32F7xx_HAL_Driver/Src/STM32F7xx_hal_tim.c
-CSRCS+=../../../M0A00_Library/STM32Cube_FW_F7_V1.11.0/Drivers/STM32F7xx_HAL_Driver/Src/STM32F7xx_hal_tim_ex.c
-CSRCS+=../../../M0A00_Library/STM32Cube_FW_F7_V1.11.0/Drivers/STM32F7xx_HAL_Driver/Src/STM32F7xx_hal_dma.c
-CSRCS+=../../../M0A00_Library/STM32Cube_FW_F7_V1.11.0/Drivers/STM32F7xx_HAL_Driver/Src/STM32F7xx_hal_dma_ex.c
-CSRCS+=../../../M0A00_Library/STM32Cube_FW_F7_V1.11.0/Drivers/STM32F7xx_HAL_Driver/Src/STM32F7xx_hal_uart.c
-CSRCS+=../../../M0A00_Library/STM32Cube_FW_F7_V1.11.0/Drivers/STM32F7xx_HAL_Driver/Src/STM32F7xx_hal_pwr_ex.c
+CSRCS+=../../../M0A00_Library/STM32Cube_FW_F7_V1.11.0/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_rcc.c
+CSRCS+=../../../M0A00_Library/STM32Cube_FW_F7_V1.11.0/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_cortex.c
+CSRCS+=../../../M0A00_Library/STM32Cube_FW_F7_V1.11.0/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal.c
+CSRCS+=../../../M0A00_Library/STM32Cube_FW_F7_V1.11.0/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_gpio.c
+CSRCS+=../../../M0A00_Library/STM32Cube_FW_F7_V1.11.0/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_tim.c
+CSRCS+=../../../M0A00_Library/STM32Cube_FW_F7_V1.11.0/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_tim_ex.c
+CSRCS+=../../../M0A00_Library/STM32Cube_FW_F7_V1.11.0/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_dma.c
+CSRCS+=../../../M0A00_Library/STM32Cube_FW_F7_V1.11.0/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_dma_ex.c
+CSRCS+=../../../M0A00_Library/STM32Cube_FW_F7_V1.11.0/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_uart.c
+CSRCS+=../../../M0A00_Library/STM32Cube_FW_F7_V1.11.0/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_pwr_ex.c
 CSRCS+=../../../M0A00_Library/STM32Cube_FW_F7_V1.11.0/Drivers/CMSIS/Device/ST/STM32F7xx/Source/Templates/system_stm32f7xx.c
 
 ASRCS+=../../Source/Platform/A7M/rmp_platform_a7m_gcc.s

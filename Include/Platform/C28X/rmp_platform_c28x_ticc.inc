@@ -12,8 +12,7 @@
     .if __TI_EABI__
     .asg                    _RMP_C28X_SP_Kern,__RMP_C28X_SP_Kern
     .asg                    RMP_SP_Cur,_RMP_SP_Cur
-    .asg                    RMP_C28X_Int_Act,_RMP_C28X_Int_Act
-    .asg                    _RMP_C28X_Yield_Pend,__RMP_C28X_Yield_Pend
+    .asg                    RMP_Sched_Pend,_RMP_Sched_Pend
     .asg                    _RMP_Run_High,__RMP_Run_High
     .asg                    _RMP_C28X_Tim_Handler,__RMP_C28X_Tim_Handler
     .endif
@@ -22,10 +21,8 @@
     .global                 __RMP_C28X_SP_Kern
     ;The current thread stack
     .global                 _RMP_SP_Cur
-    ;The interrupt active flag
-    .global                 _RMP_C28X_Int_Act
     ;The yield pending flag
-    .global                 __RMP_C28X_Yield_Pend
+    .global                 _RMP_Sched_Pend
     ;Extract highest priority running thread
     .global                 __RMP_Run_High
     ;Handler for C28X timer interrupt
@@ -54,23 +51,15 @@ RMP_C28X_SWITCH_PRE         .macro
     MOV                     DP,#__RMP_C28X_SP_Kern
     MOV                     AL,@__RMP_C28X_SP_Kern
     MOV                     SP,AL
-    MOV                     AL,#1
-    MOV                     DP,#_RMP_C28X_Int_Act
-    MOV                     @_RMP_C28X_Int_Act,AL
     .endm
 
 ;/* Finish up the context switch **********************************************/
 RMP_C28X_SWITCH_POST        .macro
-    MOV                     DP,#__RMP_C28X_Yield_Pend
-    MOV                     AL,@__RMP_C28X_Yield_Pend
+    MOV                     DP,#_RMP_Sched_Pend
+    MOV                     AL,@_RMP_Sched_Pend
     SBF                     RMP_C28X_YIELD_SKIP?,EQ
-    MOV                     AL,#0
-    MOV                     @__RMP_C28X_Yield_Pend, AL
     LCR                     __RMP_Run_High
 RMP_C28X_YIELD_SKIP?
-    MOV                     AL,#0
-    MOV                     DP,#_RMP_C28X_Int_Act
-    MOV                     @_RMP_C28X_Int_Act,AL
     MOV                     DP,#_RMP_SP_Cur
     MOV                     AL,@_RMP_SP_Cur
     MOV                     SP,AL

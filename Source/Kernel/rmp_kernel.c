@@ -74,47 +74,47 @@ rmp_ptr_t RMP_MSB_Generic(rmp_ptr_t Value)
     /* 15-8 */
     if(Value>=RMP_POW2(8U))
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         Bit=8U;
     }
     /* 7-0 */
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         Bit=0U;
     }
 #elif(RMP_WORD_ORDER==5U)
     /* 31-16 */
     if(Value>=RMP_POW2(16U))
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* 31-24 */
         if(Value>=RMP_POW2(24U))
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             Bit=24U;
         }
         /* 24-16 */
         else
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             Bit=16U;
         }
     }
     /* 15-0 */
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* 15-8 */
         if(Value>=RMP_POW2(8U))
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             Bit=8U;
         }
         /* 7-0 */
         else
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             Bit=0U;
         }
     }
@@ -122,38 +122,38 @@ rmp_ptr_t RMP_MSB_Generic(rmp_ptr_t Value)
     /* 63-32 */
     if(Value>=RMP_POW2(32U))
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* 63-48 */
         if(Value>=RMP_POW2(48U))
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             /* 63-56 */
             if(Value>=RMP_POW2(56U))
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 Bit=56U;
             }
             /* 56-48 */
             else
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 Bit=48U;
             }
         }
         /* 47-32 */
         else
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             /* 47-40 */
             if(Value>=RMP_POW2(40U))
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 Bit=40U;
             }
             /* 39-32 */
             else
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 Bit=32U;
             }
         }
@@ -161,38 +161,38 @@ rmp_ptr_t RMP_MSB_Generic(rmp_ptr_t Value)
     /* 31-0 */
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* 31-16 */
         if(Value>=RMP_POW2(16U))
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             /* 31-24 */
             if(Value>=RMP_POW2(24U))
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 Bit=24U;
             }
             /* 24-16 */
             else
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 Bit=16U;
             }
         }
         /* 15-0 */
         else
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             /* 15-8 */
             if(Value>=RMP_POW2(8U))
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 Bit=8U;
             }
             /* 7-0 */
             else
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 Bit=0U;
             }
         }
@@ -240,47 +240,47 @@ rmp_ptr_t RMP_LSB_Generic(rmp_ptr_t Value)
     /* 16-8 */
     if((Value<<8U)==0U)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         Bit=8U;
     }
     /* 7-0 */
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         Bit=0U;
     }
 #elif(RMP_WORD_ORDER==5U)
     /* 31-16 */
     if((Value<<16U)==0U)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* 31-24 */
         if((Value<<8U)==0U)
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             Bit=24U;
         }
         /* 24-16 */
         else
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             Bit=16U;
         }
     }
     /* 15-0 */
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* 15-8 */
         if((Value<<24U)==0U)
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             Bit=8U;
         }
         /* 7-0 */
         else
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             Bit=0U;
         }
     }
@@ -288,38 +288,38 @@ rmp_ptr_t RMP_LSB_Generic(rmp_ptr_t Value)
     /* 63-32 */
     if((Value<<32U)==0U)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* 63-48 */
         if((Value<<16U)==0U)
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             /* 63-56 */
             if((Value<<8U)==0U)
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 Bit=56U;
             }
             /* 56-48 */
             else
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 Bit=48U;
             }
         }
         /* 47-32 */
         else
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             /* 47-40 */
             if((Value<<24U)==0U)
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 Bit=40U;
             }
             /* 39-32 */
             else
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 Bit=32U;
             }
         }
@@ -327,38 +327,38 @@ rmp_ptr_t RMP_LSB_Generic(rmp_ptr_t Value)
     /* 31-0 */
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* 31-16 */
         if((Value<<48U)==0U)
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             /* 31-24 */
             if((Value<<40U)==0U)
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 Bit=24U;
             }
             /* 24-16 */
             else
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 Bit=16U;
             }
         }
         /* 15-0 */
         else
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             /* 15-8 */
             if((Value<<56U)==0U)
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 Bit=8U;
             }
             /* 7-0 */
             else
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 Bit=0U;
             }
         }
@@ -452,7 +452,7 @@ rmp_ptr_t RMP_RBT_Generic(rmp_ptr_t Value)
 }
 /* End Function:RMP_RBT_Generic **********************************************/
 
-/* Function:RMP_Coverage_Print ************************************************
+/* Function:RMP_Cov_Print *****************************************************
 Description : The coverage data printer. Should always be disabled for all cases
               except where a kernel coverage test is needed. This should never
               be called any any user application; for coverage testing only.
@@ -460,43 +460,43 @@ Input       : None.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-#ifdef RMP_COVERAGE_LINE_NUM
-void RMP_Coverage_Print(void)
+#ifdef RMP_COV_LINE_NUM
+void RMP_Cov_Print(void)
 {
     rmp_ptr_t Count;
     rmp_ptr_t Next;
     
     Next=0U;
-    for(Count=0U;Count<RMP_COVERAGE_LINE_NUM;Count++)
+    for(Count=0U;Count<RMP_COV_LINE_NUM;Count++)
     {
-        if((RMP_Coverage[Count>>RMP_WORD_ORDER]&RMP_POW2(Count&RMP_WORD_MASK))!=0U)
+        if((RMP_Cov[Count>>RMP_WORD_ORDER]&RMP_POW2(Count&RMP_WORD_MASK))!=0U)
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             RMP_DBG_I(Count);
             RMP_DBG_S(",");
             /* We put 12 markers on a single line */
             Next++;
             if(Next>11U)
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 Next=0U;
                 RMP_DBG_S("\r\n");
             }
             else
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 /* No action needed */
             }
         }
         else
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             /* No action needed */
         }
     }
 }
 #endif
-/* End Function:RMP_Coverage_Print *******************************************/
+/* End Function:RMP_Cov_Print ************************************************/
 
 /* Function:RMP_Clear *********************************************************
 Description : Memset a memory area to zero.
@@ -535,27 +535,27 @@ rmp_cnt_t RMP_Int_Print(rmp_cnt_t Int)
     /* Exit on zero */
     if(Int==0)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         RMP_Putchar('0');
         return 1;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action needed */
     }
 
     /* Correct all negatives into positives */
     if(Int<0)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         RMP_Putchar('-');
         Abs=-Int;
         Num=1;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         Abs=Int;
         Num=0;
     }
@@ -570,12 +570,12 @@ rmp_cnt_t RMP_Int_Print(rmp_cnt_t Int)
         Count++;
         if(Iter!=0)
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             Div*=10;
         }
         else
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             break;
         }
     }
@@ -611,13 +611,13 @@ rmp_cnt_t RMP_Hex_Print(rmp_ptr_t Uint)
     /* Exit on zero */
     if(Uint==0U)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         RMP_Putchar('0');
         return 1;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action needed */
     }
 
@@ -639,12 +639,12 @@ rmp_cnt_t RMP_Hex_Print(rmp_ptr_t Uint)
         Iter=(Uint>>(Count<<2U))&0x0FU;
         if(Iter<10U)
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             RMP_Putchar((rmp_s8_t)Iter+'0');
         }
         else
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             RMP_Putchar((rmp_s8_t)Iter+'A'-10);
         }
     }
@@ -668,12 +668,12 @@ rmp_cnt_t RMP_Str_Print(const rmp_s8_t* String)
     {
         if(String[Count]==(rmp_s8_t)'\0')
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             break;
         }
         else
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             /* No action needed */
         }
         RMP_Putchar(String[Count]);
@@ -856,23 +856,23 @@ void RMP_Sched_Unlock(void)
 {
     if(RMP_Sched_Lock_Cnt==1U)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* Clear the count before enabling */
         RMP_Sched_Lock_Cnt=0U;
         /* Deal with pending scheduler activations */
         if(RMP_Sched_Pend!=0U)
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
              /* Context switch will clear the pend flag */
-            _RMP_Yield();
+            RMP_YIELD();
         }
         else
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             /* No action required */
         }
         
-        /* Calling _RMP_Yield before truly unmasking interrupts is allowed:
+        /* Calling RMP_YIELD before truly unmasking interrupts is allowed:
          * (1) We're using a dedicated interrupt handler to switch context.
          *     In this case, the software interrupt will be pending until we 
          *     unmask the kernel-aware interrupts here.
@@ -880,14 +880,14 @@ void RMP_Sched_Unlock(void)
          *     In this case, the routine will unmask interrupts at its end 
          *     anyway, and will not leave the interrupt masked when it is 
          *     exiting, and unmasking it again here does no harm. 
-         * We don't want to absorb RMP_INT_UNMASK into _RMP_Yield due to 
+         * We don't want to absorb RMP_INT_UNMASK into RMP_YIELD due to 
          * possible complications of the programming mental model, and
          * we want to keep all invariants as simple as possible. */
         RMP_INT_UNMASK();
     }
     else if(RMP_Sched_Lock_Cnt>1U)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         RMP_Sched_Lock_Cnt--;
     }
     /* Trying to unlock a scheduler that is not locked - should never happen */
@@ -910,13 +910,13 @@ void RMP_Yield(void)
     /* Scheduler not locked, perform a schedule immediately */
     if(RMP_Sched_Lock_Cnt==0U)
     {
-        RMP_COVERAGE_MARKER();
-        _RMP_Yield();
+        RMP_COV_MARKER();
+        RMP_YIELD();
     }
     /* Scheduler locked, have to pend the flag to schedule later */
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         RMP_Sched_Pend=1U;
     }
 }
@@ -943,31 +943,31 @@ static void _RMP_Tim_Proc(void)
         Diff=RMP_DLY_DIFF(Thread->Timeout);
         if(RMP_DIFF_OVF(Diff))
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             
             RMP_List_Del(Thread->Dly_Head.Prev, Thread->Dly_Head.Next);
             State=RMP_THD_STATE(Thread->State);
             if((State==RMP_THD_SNDDLY)||(State==RMP_THD_SEMDLY))
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 RMP_List_Del(Thread->Run_Head.Prev, Thread->Run_Head.Next);
                 /* Supply timeout error code */
                 Thread->Retval=RMP_ERR_OPER;
             }
             else if(State==RMP_THD_RCVDLY)
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 /* Supply timeout error code */
                 Thread->Retval=RMP_ERR_OPER;
             }
             else if(State==RMP_THD_DELAYED)
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 /* No action required */
             }
             else
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 /* Impossible: thread in the waiting list but not delayed */
                 RMP_ASSERT(0);
             }
@@ -979,7 +979,7 @@ static void _RMP_Tim_Proc(void)
         /* Stop until we find a timer that is not overflown */
         else
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             break;
         }
     }
@@ -1008,8 +1008,8 @@ void _RMP_Run_High(void)
     volatile struct RMP_Thd* Thd_Cur;
     
     /* Save potential extra context */
-#if(RMP_HOOK_EXTRA!=0U)
-    RMP_Ctx_Save();
+#ifdef RMP_CTX_SAVE
+    RMP_CTX_SAVE();
 #endif
     
     /* Cache volatile current thread */
@@ -1028,12 +1028,12 @@ void _RMP_Run_High(void)
     {
         if(RMP_Bitmap[Word]!=0U)
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             break;
         }
         else
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             /* No action required */
         }
     }
@@ -1047,7 +1047,7 @@ void _RMP_Run_High(void)
      * If yes, place the current at the end of the queue. */
     if(Thd_Cur==(volatile struct RMP_Thd*)(RMP_Run[Prio].Next))
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         RMP_ASSERT(Thd_Cur->Prio==Prio);
         RMP_List_Del(Thd_Cur->Run_Head.Prev, Thd_Cur->Run_Head.Next);
         RMP_List_Ins(&(Thd_Cur->Run_Head),
@@ -1056,7 +1056,7 @@ void _RMP_Run_High(void)
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
@@ -1071,9 +1071,11 @@ void _RMP_Run_High(void)
     RMP_Thd_Cur=Thd_Cur;
     
     /* Load potential extra context and do scheduler hook */
-#if(RMP_HOOK_EXTRA!=0U)
-    RMP_Ctx_Load();
-    RMP_Sched_Hook();
+#ifdef RMP_CTX_LOAD
+    RMP_CTX_LOAD();
+#endif
+#ifdef RMP_SCHED_HOOK
+    RMP_SCHED_HOOK();
 #endif
 }
 /* End Function:_RMP_Run_High ************************************************/
@@ -1098,56 +1100,58 @@ void _RMP_Tim_Handler(rmp_ptr_t Slice)
     /* See if the current thread expired; if yes, trigger a scheduler event */
     if(Slice>=Thread->Slice_Left)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         RMP_Sched_Pend=1U;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         Thread->Slice_Left-=Slice;
     }
     
     /* Check if there are any timer events */
     if((&RMP_Delay)!=RMP_Delay.Next)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         Thread=RMP_DLY2THD(RMP_Delay.Next);
         /* If there are overflows, process all pending timers */
         Diff=RMP_DLY_DIFF(Thread->Timeout);
         if(RMP_DIFF_OVF(Diff))
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             /* No need to care about scheduler locks if this interrupt can be entered
              * - we have disabled timer and scheduler interrupts in scheduler lock */
             _RMP_Tim_Proc();
         }
         else
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             /* No action required */
         }
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
     /* Trigger a context switch if required */
+#ifdef RMP_YIELD_ISR
     if(RMP_Sched_Pend!=0U)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* Context switch will clear the pend flag */
-        _RMP_Yield();
+        RMP_YIELD_ISR();
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
+#endif
     
-#if(RMP_HOOK_EXTRA!=0U)
-    RMP_Tim_Hook(Slice);
+#ifdef RMP_TIM_HOOK
+    RMP_TIM_HOOK(Slice);
 #endif
 }
 /* End Function:_RMP_Tim_Handler *********************************************/
@@ -1209,30 +1213,30 @@ rmp_ptr_t _RMP_Tim_Future(void)
     /* What is the nearest timer timeout value? */
     if(RMP_Delay.Next!=&RMP_Delay)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         Thread=RMP_DLY2THD(RMP_Delay.Next);
         
         /* Detect possible overflows - trigger timer interrupt ASAP */
         Diff=RMP_DLY_DIFF(Thread->Timeout);
         if(RMP_DIFF_OVF(Diff))
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             Value=1U;
         }
         else if(Diff<Value)
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             Value=Diff;
         }
         else
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             /* No action required */
         }
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
@@ -1255,35 +1259,35 @@ rmp_ret_t _RMP_Tim_Idle(void)
     /* Are there any threads other than the initial idle thread? */
     if(RMP_Run[0].Next!=((volatile struct RMP_List*)&RMP_Init_Thd))
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return -1;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
 
     if(RMP_Run[0].Next!=RMP_Run[0].Prev)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return -1;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
 
     /* Are there any pending timers? */
     if(RMP_Delay.Next!=&RMP_Delay)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return -1;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
 
@@ -1308,7 +1312,7 @@ static void _RMP_Run_Ins(volatile struct RMP_Thd* Thread)
     /* No need to operate on suspended threads */
     if((Thread->State&RMP_THD_SUSPENDED)==0U)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         
         /* Cache volatile thread priority */
         Prio=Thread->Prio;
@@ -1321,18 +1325,18 @@ static void _RMP_Run_Ins(volatile struct RMP_Thd* Thread)
         /* Compare this with the current one to see if we need a context switch */
         if(Prio>RMP_Thd_Cur->Prio)
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             RMP_Sched_Pend=1U;
         }
         else
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             /* No action required */
         }
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
 }
@@ -1353,11 +1357,11 @@ static void _RMP_Run_Del(volatile struct RMP_Thd* Thread)
     /* No need to operate on suspended threads */
     if((Thread->State&RMP_THD_SUSPENDED)==0U)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* See if it is the last thread on the priority level */
         if(Thread->Run_Head.Prev==Thread->Run_Head.Next)
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             /* Cache volatile thread priority */
             Prio=Thread->Prio;
             /* If yes, set the priority level as inactive */
@@ -1365,7 +1369,7 @@ static void _RMP_Run_Del(volatile struct RMP_Thd* Thread)
         }
         else
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             /* No action required */
         }
         
@@ -1375,18 +1379,18 @@ static void _RMP_Run_Del(volatile struct RMP_Thd* Thread)
         /* If it is the current thread, request a context switch */
         if(Thread==RMP_Thd_Cur)
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             RMP_Sched_Pend=1U;
         }
         else
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             /* No action required */
         }
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
 }
@@ -1408,9 +1412,9 @@ static void _RMP_Dly_Ins(volatile struct RMP_Thd* Thread,
     volatile struct RMP_List* Trav_Ptr;
     volatile struct RMP_Thd* Trav_Thd;
 
-#if(RMP_HOOK_EXTRA!=0U)
     /* Potentially update the timestamp if we're running tickless */
-    RMP_Dly_Hook(Slice);
+#ifdef RMP_DLY_HOOK
+    RMP_DLY_HOOK(Slice);
 #endif
     
     /* Find a place to insert this timer */
@@ -1424,12 +1428,12 @@ static void _RMP_Dly_Ins(volatile struct RMP_Thd* Thread,
         Diff=RMP_DLY_DIFF(Trav_Thd->Timeout);
         if(RMP_DIFF_OVF(Diff)||(Diff<Slice))
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             Trav_Ptr=Trav_Ptr->Next;
         }
         else
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             break;
         }
     }
@@ -1465,36 +1469,36 @@ rmp_ret_t RMP_Thd_Crt(volatile struct RMP_Thd* Thread,
     /* Check priority validity */
     if(Prio>=RMP_PREEMPT_PRIO_NUM)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_ERR_PRIO;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
     /* Check slice validity */
     if((Slice==0U)||(Slice>=RMP_SLICE_MAX))
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_ERR_SLICE;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
     /* Check thread pointer */
     if(Thread==RMP_NULL)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_ERR_THD;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
@@ -1503,13 +1507,13 @@ rmp_ret_t RMP_Thd_Crt(volatile struct RMP_Thd* Thread,
     /* Check if the thread is in use */
     if(RMP_THD_STATE(Thread->State)!=RMP_THD_FREE)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         RMP_Sched_Unlock();
         return RMP_ERR_THD;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
@@ -1547,12 +1551,12 @@ rmp_ret_t RMP_Thd_Del(volatile struct RMP_Thd* Thread)
     /* Check thread pointer */
     if(Thread==RMP_NULL)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_ERR_THD;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
@@ -1561,13 +1565,13 @@ rmp_ret_t RMP_Thd_Del(volatile struct RMP_Thd* Thread)
     /* Check if the thread is in use */
     if(RMP_THD_STATE(Thread->State)==RMP_THD_FREE)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         RMP_Sched_Unlock();
         return RMP_ERR_THD;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
@@ -1578,12 +1582,12 @@ rmp_ret_t RMP_Thd_Del(volatile struct RMP_Thd* Thread)
         RMP_List_Del(Release->Run_Head.Prev, Release->Run_Head.Next);
         if(RMP_THD_STATE(Release->State)==RMP_THD_SNDDLY)
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             RMP_List_Del(Release->Dly_Head.Prev, Release->Dly_Head.Next);
         }
         else
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             /* No action required */
         }
         
@@ -1598,36 +1602,36 @@ rmp_ret_t RMP_Thd_Del(volatile struct RMP_Thd* Thread)
     /* Clear ready if not suspended */
     if(State==RMP_THD_RUNNING)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         _RMP_Run_Del(Thread);
     }
     /* Do nothing if it is just blocked on receive */
     else if(State==RMP_THD_RCVBLK)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     /* Unblock it if it was blocked on other stuff */
     else if((State==RMP_THD_SNDBLK)||(State==RMP_THD_SEMBLK))
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         RMP_List_Del(Thread->Run_Head.Prev, Thread->Run_Head.Next);
     }
     else if((State==RMP_THD_RCVDLY)||(State==RMP_THD_DELAYED))
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         RMP_List_Del(Thread->Dly_Head.Prev, Thread->Dly_Head.Next);
     }
     else if((State==RMP_THD_SNDDLY)||(State==RMP_THD_SEMDLY))
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         RMP_List_Del(Thread->Run_Head.Prev, Thread->Run_Head.Next);
         RMP_List_Del(Thread->Dly_Head.Prev, Thread->Dly_Head.Next);
     }
     /* Can't be in this state */
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         RMP_ASSERT(0);
     }
 
@@ -1664,24 +1668,24 @@ rmp_ret_t RMP_Thd_Set(volatile struct RMP_Thd* Thread,
     /* Check slice validity */
     if(Slice==0U)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_ERR_SLICE;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
     /* Check thread pointer */
     if(Thread==RMP_NULL)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_ERR_THD;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
@@ -1690,28 +1694,28 @@ rmp_ret_t RMP_Thd_Set(volatile struct RMP_Thd* Thread,
     /* Check if the thread is in use */
     if(RMP_THD_STATE(Thread->State)==RMP_THD_FREE)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         RMP_Sched_Unlock();
         return RMP_ERR_THD;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
     /* See if the thread is in running state */
     if(RMP_THD_STATE(Thread->State)==RMP_THD_RUNNING)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         
         /* See if we are gonna change one of it or both */
         if(Prio<RMP_PREEMPT_PRIO_NUM)
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             if(Thread->Prio!=Prio)
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 /* It doesn't matter whether this is suspended or not. 
                  * If suspended, the operations will not be conducted. */
                 _RMP_Run_Del(Thread);
@@ -1720,50 +1724,50 @@ rmp_ret_t RMP_Thd_Set(volatile struct RMP_Thd* Thread,
             }
             else
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 /* No action required */
             }
         }
         else
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             /* No action required */
         }
         
         if(Slice<RMP_SLICE_MAX)
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             Thread->Slice=Slice;
         }
         else
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             /* No action required */
         }
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         
         if(Prio<RMP_PREEMPT_PRIO_NUM)
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             Thread->Prio=Prio;
         }
         else
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             /* No action required */
         }
         
         if(Slice<RMP_SLICE_MAX)
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             Thread->Slice=Slice;
         }
         else
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             /* No action required */
         }
     }
@@ -1784,12 +1788,12 @@ rmp_ret_t RMP_Thd_Suspend(volatile struct RMP_Thd* Thread)
     /* Check thread pointer */
     if(Thread==RMP_NULL)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_ERR_THD;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
@@ -1798,38 +1802,38 @@ rmp_ret_t RMP_Thd_Suspend(volatile struct RMP_Thd* Thread)
     /* Check if the thread is in use */
     if(RMP_THD_STATE(Thread->State)==RMP_THD_FREE)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         RMP_Sched_Unlock();
         return RMP_ERR_THD;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
     /* Suspend it */
     if((Thread->State&RMP_THD_SUSPENDED)!=0U)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         RMP_Sched_Unlock();
         return RMP_ERR_STATE;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
     /* Remove the thread from runqueue if it is running */
     if(RMP_THD_STATE(Thread->State)==RMP_THD_RUNNING)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         _RMP_Run_Del(Thread);
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
@@ -1855,12 +1859,12 @@ rmp_ret_t RMP_Thd_Resume(volatile struct RMP_Thd* Thread)
     /* Check thread pointer */
     if(Thread==RMP_NULL)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_ERR_THD;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
 
@@ -1869,20 +1873,20 @@ rmp_ret_t RMP_Thd_Resume(volatile struct RMP_Thd* Thread)
     /* Check if the thread is in use */
     if(RMP_THD_STATE(Thread->State)==RMP_THD_FREE)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         RMP_Sched_Unlock();
         return RMP_ERR_THD;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
     /* Check if the thread is suspended */
     if((Thread->State&RMP_THD_SUSPENDED)!=0U)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         
         /* The thread is suspended, need to resume it */
         Thread->State&=~RMP_THD_SUSPENDED;
@@ -1890,12 +1894,12 @@ rmp_ret_t RMP_Thd_Resume(volatile struct RMP_Thd* Thread)
         /* Put the thread back if it is running */
         if(RMP_THD_STATE(Thread->State)==RMP_THD_RUNNING)
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             _RMP_Run_Ins(Thread);
         }
         else
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             /* No action required */
         }
         
@@ -1904,7 +1908,7 @@ rmp_ret_t RMP_Thd_Resume(volatile struct RMP_Thd* Thread)
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
@@ -1933,12 +1937,12 @@ rmp_ret_t RMP_Thd_Snd(volatile struct RMP_Thd* Thread,
     /* Check thread pointer */
     if(Thread==RMP_NULL)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_ERR_THD;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
@@ -1947,13 +1951,13 @@ rmp_ret_t RMP_Thd_Snd(volatile struct RMP_Thd* Thread,
     /* Check if the thread is in use */
     if(RMP_THD_STATE(Thread->State)==RMP_THD_FREE)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         RMP_Sched_Unlock();
         return RMP_ERR_THD;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
@@ -1963,36 +1967,36 @@ rmp_ret_t RMP_Thd_Snd(volatile struct RMP_Thd* Thread,
     /* Self-sending is not allowed */
     if(Thd_Cur==Thread)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         RMP_Sched_Unlock();
         return RMP_ERR_OPER;
     }
     else
     {
         /* No action required */
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
     }
 
     /* Check if mailbox empty */
     if((Thread->State&RMP_THD_MBOXFUL)==0U)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         
         /* Mailbox empty; check if the receiver is waiting for us */
         if((RMP_THD_STATE(Thread->State)==RMP_THD_RCVBLK)||
            (RMP_THD_STATE(Thread->State)==RMP_THD_RCVDLY))
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             
             /* The receiver is blocked, wake it up */
             if(RMP_THD_STATE(Thread->State)==RMP_THD_RCVDLY)
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 RMP_List_Del(Thread->Dly_Head.Prev, Thread->Dly_Head.Next);
             }
             else
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 /* No action required */
             }
             
@@ -2002,7 +2006,7 @@ rmp_ret_t RMP_Thd_Snd(volatile struct RMP_Thd* Thread,
         }
         else
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             /* No action required */
         }
         
@@ -2015,18 +2019,18 @@ rmp_ret_t RMP_Thd_Snd(volatile struct RMP_Thd* Thread,
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         
         /* Mailbox full; see if we're blocking */
         if(Slice==0U)
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             RMP_Sched_Unlock();
             return RMP_ERR_OPER;
         }
         else
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             /* When abort, an error code will be supplied instead */
             Thd_Cur->Retval=0;
         }
@@ -2037,13 +2041,13 @@ rmp_ret_t RMP_Thd_Snd(volatile struct RMP_Thd* Thread,
 
         if(Slice<RMP_SLICE_MAX)
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             _RMP_Dly_Ins(Thd_Cur, Slice);
             RMP_THD_STATE_SET(Thd_Cur->State, RMP_THD_SNDDLY);
         }
         else
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             RMP_THD_STATE_SET(Thd_Cur->State, RMP_THD_SNDBLK);
         }
 
@@ -2075,47 +2079,47 @@ rmp_ret_t RMP_Thd_Snd_ISR(volatile struct RMP_Thd* Thread,
     /* Check thread pointer */
     if(Thread==RMP_NULL)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_ERR_THD;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
     /* Check if the thread is in use */
     if(RMP_THD_STATE(Thread->State)==RMP_THD_FREE)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_ERR_THD;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
 
     /* Check if mailbox empty */
     if((Thread->State&RMP_THD_MBOXFUL)==0U)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         
         /* Mailbox empty; check if the receiver is waiting for us */
         if((RMP_THD_STATE(Thread->State)==RMP_THD_RCVBLK)||
            (RMP_THD_STATE(Thread->State)==RMP_THD_RCVDLY))
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
 
             /* The receiver is blocked, wake it up */
             if(RMP_THD_STATE(Thread->State)==RMP_THD_RCVDLY)
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 RMP_List_Del(Thread->Dly_Head.Prev, Thread->Dly_Head.Next);
             }
             else
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 /* No action required */
             }
             
@@ -2125,21 +2129,23 @@ rmp_ret_t RMP_Thd_Snd_ISR(volatile struct RMP_Thd* Thread,
             _RMP_Run_Ins(Thread);
 
             /* Trigger a context switch if required */
+#ifdef RMP_YIELD_ISR
             if(RMP_Sched_Pend!=0U)
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 /* Context switch will clear the pend flag */
-                _RMP_Yield();
+                RMP_YIELD_ISR();
             }
             else
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 /* No action required */
             }
+#endif
         }
         else
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             /* No action required */
         }
         
@@ -2149,7 +2155,7 @@ rmp_ret_t RMP_Thd_Snd_ISR(volatile struct RMP_Thd* Thread,
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_ERR_OPER;
     }
 
@@ -2172,19 +2178,19 @@ static void _RMP_Thd_Unblock(volatile struct RMP_Thd* Thd_Cur,
     /* Mailbox full; get the value from mailbox */
     if(Data!=RMP_NULL)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         *Data=Thd_Cur->Mailbox;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
         
     /* Check if there are senders waiting */
     if(&(Thd_Cur->Snd_List)!=Thd_Cur->Snd_List.Next)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         
         /* Delete the sender from waitlist and read the data; mailbox still full */
         Sender=(volatile struct RMP_Thd*)(Thd_Cur->Snd_List.Next);
@@ -2194,12 +2200,12 @@ static void _RMP_Thd_Unblock(volatile struct RMP_Thd* Thd_Cur,
         /* Now we unblock it - what state is it in? */
         if((RMP_THD_STATE(Sender->State)==RMP_THD_SNDDLY))
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             RMP_List_Del(Sender->Dly_Head.Prev,Sender->Dly_Head.Next);
         }
         else
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             /* No action required */
         }
         
@@ -2210,7 +2216,7 @@ static void _RMP_Thd_Unblock(volatile struct RMP_Thd* Thd_Cur,
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* Nobody to unblock, mailbox empty now */
         Thd_Cur->State&=~RMP_THD_MBOXFUL;
     }
@@ -2236,7 +2242,7 @@ rmp_ret_t RMP_Thd_Rcv(rmp_ptr_t* Data,
     /* Check if the mailbox is empty */
     if((Thd_Cur->State&RMP_THD_MBOXFUL)!=0U)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* Extract value and unblock next sender */
         _RMP_Thd_Unblock(Thd_Cur,Data);
         RMP_Sched_Unlock();
@@ -2244,7 +2250,7 @@ rmp_ret_t RMP_Thd_Rcv(rmp_ptr_t* Data,
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         
         /* Mailbox is empty, must have nobody on the list now */
         RMP_ASSERT(&(Thd_Cur->Snd_List)==Thd_Cur->Snd_List.Next);
@@ -2252,13 +2258,13 @@ rmp_ret_t RMP_Thd_Rcv(rmp_ptr_t* Data,
         /* See if we're blocking */
         if(Slice==0U)
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             RMP_Sched_Unlock();
             return RMP_ERR_OPER;
         }
         else
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             /* When abort, an error code will be supplied instead */
             Thd_Cur->Retval=0;
         }
@@ -2268,13 +2274,13 @@ rmp_ret_t RMP_Thd_Rcv(rmp_ptr_t* Data,
 
         if(Slice<RMP_SLICE_MAX)
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             _RMP_Dly_Ins(Thd_Cur, Slice);
             RMP_THD_STATE_SET(Thd_Cur->State, RMP_THD_RCVDLY);
         }
         else
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             RMP_THD_STATE_SET(Thd_Cur->State, RMP_THD_RCVBLK);
         }
         
@@ -2289,7 +2295,7 @@ rmp_ret_t RMP_Thd_Rcv(rmp_ptr_t* Data,
         /* Full mailbox, or timeout? */
         if((Thd_Cur->State&RMP_THD_MBOXFUL)!=0U)
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             /* The return value must be good */
             RMP_ASSERT(Thd_Cur->Retval==0);
             /* Extract value and unblock next sender */
@@ -2298,7 +2304,7 @@ rmp_ret_t RMP_Thd_Rcv(rmp_ptr_t* Data,
         /* Timeout */
         else
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             /* The return value must be bad */
             RMP_ASSERT(Thd_Cur->Retval!=0);
         }
@@ -2324,12 +2330,12 @@ rmp_ret_t RMP_Thd_Delay(rmp_ptr_t Slice)
     /* Check slice validity */
     if((Slice==0U)||(Slice>=RMP_SLICE_MAX))
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_ERR_SLICE;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
@@ -2363,12 +2369,12 @@ rmp_ret_t RMP_Thd_Cancel(volatile struct RMP_Thd* Thread)
     /* Check thread pointer */
     if(Thread==RMP_NULL)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_ERR_THD;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
@@ -2377,13 +2383,13 @@ rmp_ret_t RMP_Thd_Cancel(volatile struct RMP_Thd* Thread)
     /* Check if the thread is in use, and whether it is delayed */
     if(RMP_THD_STATE(Thread->State)!=RMP_THD_DELAYED)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         RMP_Sched_Unlock();
         return RMP_ERR_STATE;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
 
@@ -2416,7 +2422,7 @@ void RMP_Thd_Loop(rmp_ptr_t Loop)
     /* Just waste some time */
     for(Count=0U;Count<Loop;Count++)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
     }
 }
 /* End Function:RMP_Thd_Loop *************************************************/
@@ -2434,12 +2440,12 @@ rmp_ret_t RMP_Sem_Crt(volatile struct RMP_Sem* Semaphore,
     /* Check semaphore pointer */
     if(Semaphore==RMP_NULL)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_ERR_SEM;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
@@ -2448,26 +2454,26 @@ rmp_ret_t RMP_Sem_Crt(volatile struct RMP_Sem* Semaphore,
     /* Check if the semaphore is in use */
     if(Semaphore->State!=RMP_SEM_FREE)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         RMP_Sched_Unlock();
         return RMP_ERR_SEM;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
     /* Is the number too great to initialize? */
     if(Number>=RMP_SEM_CNT_MAX)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         RMP_Sched_Unlock();
         return RMP_ERR_OPER;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
 
@@ -2495,12 +2501,12 @@ rmp_ret_t RMP_Sem_Del(volatile struct RMP_Sem* Semaphore)
     /* Check semaphore pointer */
     if(Semaphore==RMP_NULL)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_ERR_SEM;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
@@ -2509,13 +2515,13 @@ rmp_ret_t RMP_Sem_Del(volatile struct RMP_Sem* Semaphore)
     /* Check if the semaphore is in use */
     if(Semaphore->State!=RMP_SEM_USED)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         RMP_Sched_Unlock();
         return RMP_ERR_SEM;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
 
@@ -2527,12 +2533,12 @@ rmp_ret_t RMP_Sem_Del(volatile struct RMP_Sem* Semaphore)
         
         if(RMP_THD_STATE(Thread->State)==RMP_THD_SEMDLY)
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             RMP_List_Del(Thread->Dly_Head.Prev, Thread->Dly_Head.Next);
         }
         else
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             /* No action required */
         }
 
@@ -2567,12 +2573,12 @@ static void _RMP_Sem_Unblock(volatile struct RMP_Sem* Semaphore)
     
     if(RMP_THD_STATE(Thread->State)==RMP_THD_SEMDLY)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         RMP_List_Del(Thread->Dly_Head.Prev, Thread->Dly_Head.Next);
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
@@ -2595,24 +2601,24 @@ rmp_ret_t RMP_Sem_Post(volatile struct RMP_Sem* Semaphore,
     /* Check semaphore pointer */
     if(Semaphore==RMP_NULL)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_ERR_SEM;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
     /* Check number validity */
     if(Number==0U)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_ERR_OPER;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
@@ -2621,26 +2627,26 @@ rmp_ret_t RMP_Sem_Post(volatile struct RMP_Sem* Semaphore,
     /* Check if the semaphore is in use */
     if(Semaphore->State!=RMP_SEM_USED)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         RMP_Sched_Unlock();
         return RMP_ERR_SEM;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
     /* Would the maximum value be exceeded if this is posted? */
     if((Semaphore->Cur_Num+Number)>=RMP_SEM_CNT_MAX)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         RMP_Sched_Unlock();
         return RMP_ERR_OPER;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
@@ -2674,48 +2680,48 @@ rmp_ret_t RMP_Sem_Post_ISR(volatile struct RMP_Sem* Semaphore,
     /* Check semaphore pointer */
     if(Semaphore==RMP_NULL)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_ERR_SEM;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
     /* Check number validity */
     if(Number==0U)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_ERR_OPER;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
     /* Check if the semaphore is in use */
     if(Semaphore->State!=RMP_SEM_USED)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_ERR_SEM;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
 
     /* Would the maximum value be exceeded if this is posted? */
     if((Semaphore->Cur_Num+Number)>=RMP_SEM_CNT_MAX)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_ERR_OPER;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
@@ -2729,17 +2735,19 @@ rmp_ret_t RMP_Sem_Post_ISR(volatile struct RMP_Sem* Semaphore,
     }
     
     /* Trigger a context switch if required */
+#ifdef RMP_YIELD_ISR
     if(RMP_Sched_Pend!=0U)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* Context switch will clear the pend flag */
-        _RMP_Yield();   
+        RMP_YIELD_ISR();   
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
+#endif
 
     return 0;
 }
@@ -2759,12 +2767,12 @@ rmp_ret_t RMP_Sem_Bcst(volatile struct RMP_Sem* Semaphore)
     /* Check semaphore pointer */
     if(Semaphore==RMP_NULL)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_ERR_SEM;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
@@ -2773,13 +2781,13 @@ rmp_ret_t RMP_Sem_Bcst(volatile struct RMP_Sem* Semaphore)
     /* Check if the semaphore is in use */
     if(Semaphore->State!=RMP_SEM_USED)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         RMP_Sched_Unlock();
         return RMP_ERR_SEM;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
@@ -2813,24 +2821,24 @@ rmp_ret_t RMP_Sem_Bcst_ISR(volatile struct RMP_Sem* Semaphore)
     /* Check semaphore pointer */
     if(Semaphore==RMP_NULL)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_ERR_SEM;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
     /* Check if the semaphore is in use */
     if(Semaphore->State!=RMP_SEM_USED)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_ERR_SEM;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
@@ -2843,17 +2851,19 @@ rmp_ret_t RMP_Sem_Bcst_ISR(volatile struct RMP_Sem* Semaphore)
     }
     
     /* Trigger a context switch if required */
+#ifdef RMP_YIELD_ISR
     if(RMP_Sched_Pend!=0U)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* Context switch will clear the pend flag */
-        _RMP_Yield();
+        RMP_YIELD_ISR();
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
+#endif
 
     return Number;
 }
@@ -2878,37 +2888,37 @@ static rmp_ret_t _RMP_Sem_Pend_Core(volatile struct RMP_Sem* Semaphore,
     /* Check if the semaphore is in use */
     if(Semaphore->State!=RMP_SEM_USED)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         RMP_Sched_Unlock();
         return RMP_ERR_SEM;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
     /* Check if we can get one immediately */
     if(Semaphore->Cur_Num!=0U)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         Semaphore->Cur_Num--;
         RMP_Sched_Unlock();
         return (rmp_ret_t)Semaphore->Cur_Num;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* Cannot get one, we need to block */
         if(Slice==0U)
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             RMP_Sched_Unlock();
             return RMP_ERR_OPER;
         }
         else
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             /* When abort, an error code will be supplied instead */
             Thd_Cur->Retval=0;
         }
@@ -2919,13 +2929,13 @@ static rmp_ret_t _RMP_Sem_Pend_Core(volatile struct RMP_Sem* Semaphore,
         
         if(Slice<RMP_SLICE_MAX)
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             _RMP_Dly_Ins(Thd_Cur, Slice);
             RMP_THD_STATE_SET(Thd_Cur->State, RMP_THD_SEMDLY);
         }
         else
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             RMP_THD_STATE_SET(Thd_Cur->State, RMP_THD_SEMBLK);
         }
     }
@@ -2950,12 +2960,12 @@ rmp_ret_t RMP_Sem_Pend(volatile struct RMP_Sem* Semaphore,
     /* Check semaphore pointer */
     if(Semaphore==RMP_NULL)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_ERR_SEM;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
@@ -2980,27 +2990,27 @@ rmp_ret_t RMP_Sem_Pend_Unlock(volatile struct RMP_Sem* Semaphore,
     /* Check semaphore pointer */
     if(Semaphore==RMP_NULL)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         RMP_Sched_Unlock();
         return RMP_ERR_SEM;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
     /* Check if the scheduler is locked just once; no more, no less */
     if(RMP_Sched_Lock_Cnt!=1U)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         RMP_Sched_Unlock();
         return RMP_ERR_OPER;
     }
     else
     {
         /* No action required */
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
     }
     
     return _RMP_Sem_Pend_Core(Semaphore, Slice);
@@ -3018,12 +3028,12 @@ rmp_ret_t RMP_Sem_Abort(volatile struct RMP_Thd* Thread)
     /* Check thread pointer */
     if(Thread==RMP_NULL)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_ERR_THD;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
 
@@ -3032,13 +3042,13 @@ rmp_ret_t RMP_Sem_Abort(volatile struct RMP_Thd* Thread)
     /* Check if the thread is in use */
     if(RMP_THD_STATE(Thread->State)==RMP_THD_FREE)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         RMP_Sched_Unlock();
         return RMP_ERR_THD;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
@@ -3046,13 +3056,13 @@ rmp_ret_t RMP_Sem_Abort(volatile struct RMP_Thd* Thread)
     if((RMP_THD_STATE(Thread->State)!=RMP_THD_SEMBLK)&&
        (RMP_THD_STATE(Thread->State)!=RMP_THD_SEMDLY))
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         RMP_Sched_Unlock();
         return RMP_ERR_STATE;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
 
@@ -3060,12 +3070,12 @@ rmp_ret_t RMP_Sem_Abort(volatile struct RMP_Thd* Thread)
     RMP_List_Del(Thread->Run_Head.Prev, Thread->Run_Head.Next);
     if(RMP_THD_STATE(Thread->State)==RMP_THD_SEMDLY)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         RMP_List_Del(Thread->Dly_Head.Prev, Thread->Dly_Head.Next);
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
@@ -3094,12 +3104,12 @@ rmp_ret_t RMP_Sem_Cnt(volatile struct RMP_Sem* Semaphore)
     /* Check semaphore pointer */
     if(Semaphore==RMP_NULL)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_ERR_SEM;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
 
@@ -3108,13 +3118,13 @@ rmp_ret_t RMP_Sem_Cnt(volatile struct RMP_Sem* Semaphore)
     /* Check if the semaphore is in use */
     if(Semaphore->State!=RMP_SEM_USED)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         RMP_Sched_Unlock();
         return RMP_ERR_SEM;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
@@ -3160,9 +3170,9 @@ int main(void)
 {
     rmp_ptr_t Count;
 
-#ifdef RMP_COVERAGE_LINE_NUM
+#ifdef RMP_COV_LINE_NUM
     /* Initialize coverage markers if coverage enabled */
-    for(Count=0U;Count<RMP_COVERAGE_WORD_NUM;Count++)
+    for(Count=0U;Count<RMP_COV_WORD_NUM;Count++)
     {
         RMP_Coverage[Count]=0U;
     }
@@ -3171,8 +3181,8 @@ int main(void)
     /* Initialize the low-level hardware first */
     _RMP_Lowlvl_Init();
     
-#if(RMP_HOOK_EXTRA!=0U)
-    RMP_Start_Hook();
+#ifdef RMP_START_HOOK
+    RMP_START_HOOK();
 #endif
 
     /* Now initialize the kernel data structures */
@@ -3267,24 +3277,24 @@ rmp_ret_t RMP_Mem_Init(volatile void* Pool,
      * least 1024 machine words or pool initialization will be refused */
     if((Pool==RMP_NULL)||(Size<(1024U*sizeof(rmp_ptr_t)))||((((rmp_ptr_t)Pool)+Size)<Size))
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_ERR_MEM;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
     /* See if the address and size is word-aligned - divisions will be optimized out */
     if(((((rmp_ptr_t)Pool)%sizeof(rmp_ptr_t))!=0U)||((Size%sizeof(rmp_ptr_t))!=0U))
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_ERR_MEM;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
 
@@ -3392,13 +3402,13 @@ static void _RMP_Mem_Ins(volatile void* Pool,
     /* See if there are any blocks in the level, equal means no. So what we inserted is the first block */
     if(Slot==Slot->Next)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* Set the corresponding bit in the TLSF bitmap */
         Mem->Bitmap[Level>>RMP_WORD_ORDER]|=RMP_POW2(Level&RMP_WORD_MASK);
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
 
@@ -3445,13 +3455,13 @@ static void _RMP_Mem_Del(volatile void* Pool,
      * what we deleted is the last blockm need to clear the flag */
     if(Slot==Slot->Next)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* Clear the corresponding bit in the TLSF bitmap */
         Mem->Bitmap[Level>>RMP_WORD_ORDER]&=~RMP_POW2(Level&RMP_WORD_MASK);
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
 }
@@ -3489,25 +3499,25 @@ static rmp_ret_t _RMP_Mem_Search(volatile void* Pool,
     SLI_Search=(Size>>(FLI_Search+3U))&0x07U;
     if(Size!=(RMP_POW2(FLI_Search+3U)*(SLI_Search+8U)))
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         SLI_Search++;
         
         /* If the SLI level is the largest of the SLI levels, then jump to the next FLI level */
         if(SLI_Search==8U)
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             FLI_Search+=1U;
             SLI_Search=0U;
         }
         else
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             /* No action required */
         }
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
@@ -3515,12 +3525,12 @@ static rmp_ret_t _RMP_Mem_Search(volatile void* Pool,
     Mem=(volatile struct RMP_Mem*)Pool;
     if(FLI_Search>=Mem->FLI_Num)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return -1;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
@@ -3532,7 +3542,7 @@ static rmp_ret_t _RMP_Mem_Search(volatile void* Pool,
     /* If there's at least one block that matches the query, return the level */
     if(Word!=0U)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         LSB=RMP_LSB_GET(Word);
         /* Need to compensate for the lower levels that were shifted away */
         Level=(Level&(~RMP_WORD_MASK))+(LSB+(Level&RMP_WORD_MASK));
@@ -3543,7 +3553,7 @@ static rmp_ret_t _RMP_Mem_Search(volatile void* Pool,
     /* No one exactly fits, compute the size of bitmap and look through it */
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         Limit=RMP_MEM_WORD_NUM(Mem->FLI_Num);
         /* From the next word, query one by one */
         for(Word=(Level>>RMP_WORD_ORDER)+1U;Word<Limit;Word++)
@@ -3551,7 +3561,7 @@ static rmp_ret_t _RMP_Mem_Search(volatile void* Pool,
             /* If the level has blocks of one FLI level */
             if(Mem->Bitmap[Word]!=0U)
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 /* Find the actual level */ 
                 LSB=RMP_LSB_GET(Mem->Bitmap[Word]);
                 *FLI_Level=((Word<<RMP_WORD_ORDER)+LSB)>>3U;
@@ -3560,7 +3570,7 @@ static rmp_ret_t _RMP_Mem_Search(volatile void* Pool,
             }
             else
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 /* No action required */
             }
         }
@@ -3592,12 +3602,12 @@ void* RMP_Malloc(volatile void* Pool,
     
     if((Pool==RMP_NULL)||(Size==0U))
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_NULL;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
@@ -3609,12 +3619,12 @@ void* RMP_Malloc(volatile void* Pool,
     /* See if such block exists, if not, abort */
     if(_RMP_Mem_Search(Pool, Rounded_Size, &FLI_Level, &SLI_Level)!=0)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_NULL;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
@@ -3629,7 +3639,7 @@ void* RMP_Malloc(volatile void* Pool,
     New_Size=((rmp_ptr_t)(Mem_Head->Tail))-((rmp_ptr_t)Mem_Head)-sizeof(struct RMP_Mem_Head)-Rounded_Size;
     if(New_Size>=(sizeof(struct RMP_Mem_Head)+64U+sizeof(struct RMP_Mem_Tail)))
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         Old_Size=sizeof(struct RMP_Mem_Head)+Rounded_Size+sizeof(struct RMP_Mem_Tail);
         New_Mem=(volatile struct RMP_Mem_Head*)(((rmp_ptr_t)Mem_Head)+Old_Size);
 
@@ -3641,7 +3651,7 @@ void* RMP_Malloc(volatile void* Pool,
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
 
@@ -3673,12 +3683,12 @@ void RMP_Free(volatile void* Pool,
     /* Check if pointer is null */
     if((Pool==RMP_NULL)||(Mem_Ptr==RMP_NULL))
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
@@ -3686,12 +3696,12 @@ void RMP_Free(volatile void* Pool,
     Mem=(volatile struct RMP_Mem*)Pool;
     if((((rmp_ptr_t)Mem_Ptr)<=((rmp_ptr_t)Mem))||(((rmp_ptr_t)Mem_Ptr)>=(((rmp_ptr_t)Mem)+Mem->Size)))
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
 
@@ -3699,12 +3709,12 @@ void RMP_Free(volatile void* Pool,
     /* See if the block can really be freed */
     if(Mem_Head->State==RMP_MEM_FREE)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
 
@@ -3715,11 +3725,11 @@ void RMP_Free(volatile void* Pool,
     Right_Head=(volatile struct RMP_Mem_Head*)(((rmp_ptr_t)(Mem_Head->Tail))+sizeof(struct RMP_Mem_Tail));
     if(((rmp_ptr_t)Right_Head)!=(((rmp_ptr_t)Mem)+Mem->Size))
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* If this one is unoccupied */
         if((Right_Head->State)==RMP_MEM_FREE)
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             /* Delete, merge */
             _RMP_Mem_Del(Pool,Right_Head);
             _RMP_Mem_Block(Mem_Head,
@@ -3727,13 +3737,13 @@ void RMP_Free(volatile void* Pool,
         }
         else
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             /* No action required */
         }
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
 
@@ -3742,12 +3752,12 @@ void RMP_Free(volatile void* Pool,
     Left_Head=((volatile struct RMP_Mem_Tail*)(((rmp_ptr_t)Mem_Head)-sizeof(struct RMP_Mem_Tail)))->Head;
     if((rmp_ptr_t)Mem_Head!=Mem->Base)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
 
         /* If this one is unoccupied */
         if(Left_Head->State==RMP_MEM_FREE)
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             /* Delete, merge */
             _RMP_Mem_Del(Pool, Left_Head);
             _RMP_Mem_Block(Left_Head,
@@ -3759,13 +3769,13 @@ void RMP_Free(volatile void* Pool,
         }
         else
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             /* No action required */
         }
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
 
@@ -3773,12 +3783,12 @@ void RMP_Free(volatile void* Pool,
      * into the TLSF table(Merging with the right-side one won't disturb this) */
     if(Merge_Left==0U)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         _RMP_Mem_Ins(Pool, Mem_Head);
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         _RMP_Mem_Ins(Pool, Left_Head);
     }
 }
@@ -3822,24 +3832,24 @@ void* RMP_Realloc(volatile void* Pool,
     /* Check if no pool present */
     if(Pool==RMP_NULL)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_NULL;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
     /* Are we passing in a NULL pointer? */
     if(Mem_Ptr==RMP_NULL)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_Malloc(Pool,Size);
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
@@ -3847,13 +3857,13 @@ void* RMP_Realloc(volatile void* Pool,
      * than standard realloc where you get a "0"-sized realloc-able memory trunk. */
     if(Size==0U)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         RMP_Free(Pool, Mem_Ptr);
         return RMP_NULL;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
@@ -3861,12 +3871,12 @@ void* RMP_Realloc(volatile void* Pool,
     Mem=(volatile struct RMP_Mem*)Pool;
     if((((rmp_ptr_t)Mem_Ptr)<=((rmp_ptr_t)Mem))||(((rmp_ptr_t)Mem_Ptr)>=(((rmp_ptr_t)Mem)+Mem->Size)))
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_NULL;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
 
@@ -3875,12 +3885,12 @@ void* RMP_Realloc(volatile void* Pool,
     /* See if the block can really be realloced */
     if(Mem_Head->State==RMP_MEM_FREE)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_NULL;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
@@ -3894,12 +3904,12 @@ void* RMP_Realloc(volatile void* Pool,
     Right_Head=(volatile struct RMP_Mem_Head*)(((rmp_ptr_t)(Mem_Head->Tail))+sizeof(struct RMP_Mem_Tail));
     if(((rmp_ptr_t)Right_Head)==(((rmp_ptr_t)Mem)+Mem->Size))
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         Right_Head=RMP_NULL;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
@@ -3907,19 +3917,19 @@ void* RMP_Realloc(volatile void* Pool,
     if(Mem_Size<Rounded_Size)
     {
         /* Expanding */
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* Does the right side exist at all? */
         if(Right_Head!=RMP_NULL)
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             /* Is it allocated? */
             if(Right_Head->State==RMP_MEM_FREE)
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 /* Right-side exists and is free. How big is its usable size? Is it sufficient for our realloc? */
                 if((((rmp_ptr_t)Right_Head->Tail)-((rmp_ptr_t)Mem_Ptr))>=Rounded_Size)
                 {
-                    RMP_COVERAGE_MARKER();
+                    RMP_COV_MARKER();
                     /* Remove the right-side from the free list so we can operate on it */
                     _RMP_Mem_Del(Pool, Right_Head);   
                     /* Allocate and calculate if the space left could be big enough to be a new 
@@ -3928,7 +3938,7 @@ void* RMP_Realloc(volatile void* Pool,
                     /* Is the residue big enough to be a block? */
                     if(Res_Size>=(sizeof(struct RMP_Mem_Head)+64U+sizeof(struct RMP_Mem_Tail)))
                     {
-                        RMP_COVERAGE_MARKER();
+                        RMP_COV_MARKER();
                         Old_Size=sizeof(struct RMP_Mem_Head)+Rounded_Size+sizeof(struct RMP_Mem_Tail);
                         Res_Mem=(volatile struct RMP_Mem_Head*)(((rmp_ptr_t)Mem_Head)+Old_Size);
 
@@ -3941,7 +3951,7 @@ void* RMP_Realloc(volatile void* Pool,
                     else
                     {
                         /* Residue too small. Merging the whole thing in is the only option */
-                        RMP_COVERAGE_MARKER();
+                        RMP_COV_MARKER();
                         Old_Size=((rmp_ptr_t)(Right_Head->Tail))-((rmp_ptr_t)Mem_Head)+sizeof(struct RMP_Mem_Tail);
                         _RMP_Mem_Block(Mem_Head, Old_Size);
                     }
@@ -3954,21 +3964,21 @@ void* RMP_Realloc(volatile void* Pool,
                 /* Right-side not large enough, have to go malloc then memcpy */
                 else
                 {
-                    RMP_COVERAGE_MARKER();
+                    RMP_COV_MARKER();
                     /* No action required */
                 }
             }
             /* It is allocated, have to go malloc then memcpy */
             else
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 /* No action required */
             }
         }
         /* Right-side doesn't exist, have to go malloc then memcpy */
         else
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             /* No action required */
         }
         
@@ -3976,12 +3986,12 @@ void* RMP_Realloc(volatile void* Pool,
         /* See if we can allocate this much, if we can't at all, exit */
         if(New_Mem==RMP_NULL)
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             return RMP_NULL;
         }
         else
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             /* No action required */
         }
         
@@ -3999,31 +4009,31 @@ void* RMP_Realloc(volatile void* Pool,
     /* Shrinking or keeping */
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
     /* Are we keeping the size? */
     if(Mem_Size==Rounded_Size)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return Mem_Ptr;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
     /* Does the right side exist at all? */
     if(Right_Head!=RMP_NULL)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* Is it allocated? */
         if(Right_Head->State==RMP_MEM_FREE)
         {
             /* Right-side not allocated. Need to merge the block */
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             /* Remove the right-side from the allocation list so we can operate on it */
             _RMP_Mem_Del(Pool, Right_Head);
             Res_Size=((rmp_ptr_t)(Right_Head->Tail))-((rmp_ptr_t)Mem_Ptr)-Rounded_Size;
@@ -4044,13 +4054,13 @@ void* RMP_Realloc(volatile void* Pool,
         /* Allocated. Need to see if the residue block itself is large enough to be inserted back */
         else
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             /* No action required */
         }
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
@@ -4058,13 +4068,13 @@ void* RMP_Realloc(volatile void* Pool,
     Res_Size=Mem_Size-Rounded_Size;
     if(Res_Size<(sizeof(struct RMP_Mem_Head)+64U+sizeof(struct RMP_Mem_Tail)))
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* The residue block wouldn't even count as a small one. Do nothing and quit */
         return Mem_Ptr;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
@@ -4096,12 +4106,12 @@ rmp_ret_t RMP_Fifo_Crt(volatile struct RMP_Fifo* Fifo)
     /* Check the FIFO pointer */
     if(Fifo==RMP_NULL)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_ERR_FIFO;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
@@ -4110,13 +4120,13 @@ rmp_ret_t RMP_Fifo_Crt(volatile struct RMP_Fifo* Fifo)
     /* Check if the FIFO is in use */
     if(Fifo->State!=RMP_FIFO_FREE)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         RMP_Sched_Unlock();
         return RMP_ERR_FIFO;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
 
@@ -4141,12 +4151,12 @@ rmp_ret_t RMP_Fifo_Del(volatile struct RMP_Fifo* Fifo)
     /* Check the FIFO pointer */
     if(Fifo==RMP_NULL)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_ERR_FIFO;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
@@ -4155,26 +4165,26 @@ rmp_ret_t RMP_Fifo_Del(volatile struct RMP_Fifo* Fifo)
     /* Check if the FIFO is in use */
     if(Fifo->State!=RMP_FIFO_USED)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         RMP_Sched_Unlock();
         return RMP_ERR_FIFO;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
 
     /* See if the FIFO have any elements */
     if(Fifo->Cur_Num!=0U)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         RMP_Sched_Unlock();
         return RMP_ERR_OPER;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
@@ -4198,24 +4208,24 @@ rmp_ret_t RMP_Fifo_Read(volatile struct RMP_Fifo* Fifo,
     /* Check the FIFO pointer */
     if(Fifo==RMP_NULL)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_ERR_FIFO;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
     /* Check the data pointer */
     if(Node==RMP_NULL)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_ERR_OPER;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
@@ -4224,26 +4234,26 @@ rmp_ret_t RMP_Fifo_Read(volatile struct RMP_Fifo* Fifo,
     /* Check if the FIFO is in use */
     if(Fifo->State!=RMP_FIFO_USED)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         RMP_Sched_Unlock();
         return RMP_ERR_FIFO;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
     /* See if the FIFO is empty */
     if(Fifo->Head.Next==&(Fifo->Head))
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         RMP_Sched_Unlock();
         return RMP_ERR_OPER;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
@@ -4273,24 +4283,24 @@ rmp_ret_t RMP_Fifo_Write(volatile struct RMP_Fifo* Fifo,
     /* Check the FIFO pointer */
     if(Fifo==RMP_NULL)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_ERR_FIFO;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
 
     /* Check the data pointer */
     if(Node==RMP_NULL)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_ERR_OPER;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
 
@@ -4299,13 +4309,13 @@ rmp_ret_t RMP_Fifo_Write(volatile struct RMP_Fifo* Fifo,
     /* Check if the FIFO is in use */
     if(Fifo->State!=RMP_FIFO_USED)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         RMP_Sched_Unlock();
         return RMP_ERR_FIFO;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
 
@@ -4334,36 +4344,36 @@ rmp_ret_t RMP_Fifo_Write_ISR(volatile struct RMP_Fifo* Fifo,
     /* Check the FIFO pointer */
     if(Fifo==RMP_NULL)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_ERR_FIFO;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
 
     /* Check the data pointer */
     if(Node==RMP_NULL)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_ERR_OPER;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
     /* Check if the FIFO is in use */
     if(Fifo->State!=RMP_FIFO_USED)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_ERR_FIFO;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
 
@@ -4388,12 +4398,12 @@ rmp_ret_t RMP_Fifo_Cnt(volatile struct RMP_Fifo* Fifo)
     /* Check the FIFO pointer */
     if(Fifo==RMP_NULL)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_ERR_FIFO;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
@@ -4402,13 +4412,13 @@ rmp_ret_t RMP_Fifo_Cnt(volatile struct RMP_Fifo* Fifo)
     /* Check if the FIFO is in use */
     if(Fifo->State!=RMP_FIFO_USED)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         RMP_Sched_Unlock();
         return RMP_ERR_FIFO;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
@@ -4430,12 +4440,12 @@ rmp_ret_t RMP_Msgq_Crt(volatile struct RMP_Msgq* Queue)
     /* Check the queue pointer */
     if(Queue==RMP_NULL)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_ERR_MSGQ;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
         
@@ -4444,13 +4454,13 @@ rmp_ret_t RMP_Msgq_Crt(volatile struct RMP_Msgq* Queue)
     /* Check if the queue is in use */
     if(Queue->State!=RMP_MSGQ_FREE)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         RMP_Sched_Unlock();
         return RMP_ERR_MSGQ;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
@@ -4476,12 +4486,12 @@ rmp_ret_t RMP_Msgq_Del(volatile struct RMP_Msgq* Queue)
     /* Check the queue pointer */
     if(Queue==RMP_NULL)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_ERR_MSGQ;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
@@ -4490,26 +4500,26 @@ rmp_ret_t RMP_Msgq_Del(volatile struct RMP_Msgq* Queue)
     /* Check if the queue is in use */
     if(Queue->State!=RMP_MSGQ_USED)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         RMP_Sched_Unlock();
         return RMP_ERR_MSGQ;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
     /* See if the FIFO could be deleted */
     if(RMP_Fifo_Del(&(Queue->Fifo))<0)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         RMP_Sched_Unlock();
         return RMP_ERR_OPER;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
 
@@ -4534,24 +4544,24 @@ rmp_ret_t RMP_Msgq_Snd(volatile struct RMP_Msgq* Queue,
     /* Check the queue pointer */
     if(Queue==RMP_NULL)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_ERR_MSGQ;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
     /* Check the data pointer */
     if(Node==RMP_NULL)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_ERR_OPER;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
@@ -4560,13 +4570,13 @@ rmp_ret_t RMP_Msgq_Snd(volatile struct RMP_Msgq* Queue,
     /* Check if the queue is in use */
     if(Queue->State!=RMP_MSGQ_USED)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         RMP_Sched_Unlock();
         return RMP_ERR_MSGQ;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
@@ -4576,13 +4586,13 @@ rmp_ret_t RMP_Msgq_Snd(volatile struct RMP_Msgq* Queue,
      * when inside a critical section. */
     if(RMP_Sem_Post(&(Queue->Sem), 1U)<0)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         RMP_Sched_Unlock();
         return RMP_ERR_OPER;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
@@ -4611,48 +4621,48 @@ rmp_ret_t RMP_Msgq_Snd_ISR(volatile struct RMP_Msgq* Queue,
     /* Check the queue pointer */
     if(Queue==RMP_NULL)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_ERR_MSGQ;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
     /* Check the data pointer */
     if(Node==RMP_NULL)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_ERR_OPER;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
     /* Check if the queue is in use */
     if(Queue->State!=RMP_MSGQ_USED)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_ERR_MSGQ;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
     /* Notify the receiver(s) first */
     if(RMP_Sem_Post_ISR(&(Queue->Sem), 1U)<0)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_ERR_OPER;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
@@ -4678,24 +4688,24 @@ rmp_ret_t RMP_Msgq_Rcv(volatile struct RMP_Msgq* Queue,
     /* Check the queue pointer */
     if(Queue==RMP_NULL)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_ERR_MSGQ;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
     /* Check the data pointer */
     if(Node==RMP_NULL)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_ERR_OPER;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
@@ -4704,13 +4714,13 @@ rmp_ret_t RMP_Msgq_Rcv(volatile struct RMP_Msgq* Queue,
     /* Check if the queue is in use */
     if(Queue->State!=RMP_MSGQ_USED)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         RMP_Sched_Unlock();
         return RMP_ERR_MSGQ;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
@@ -4722,24 +4732,24 @@ rmp_ret_t RMP_Msgq_Rcv(volatile struct RMP_Msgq* Queue,
      * guaranteed that something is in the FIFO. */
     if(RMP_Sem_Pend_Unlock(&(Queue->Sem), Slice)<0)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_ERR_OPER;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
     /* Grab the data then - we could have a delete race here */
     if(RMP_Fifo_Read(&(Queue->Fifo), Node)<0)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_ERR_OPER;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
@@ -4760,12 +4770,12 @@ rmp_ret_t RMP_Msgq_Cnt(volatile struct RMP_Msgq* Queue)
     /* Check the queue pointer */
     if(Queue==RMP_NULL)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_ERR_MSGQ;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
@@ -4774,13 +4784,13 @@ rmp_ret_t RMP_Msgq_Cnt(volatile struct RMP_Msgq* Queue)
     /* Check if the queue is in use */
     if(Queue->State!=RMP_MSGQ_USED)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         RMP_Sched_Unlock();
         return RMP_ERR_MSGQ;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
@@ -4816,12 +4826,12 @@ rmp_ret_t RMP_Bmq_Crt(volatile struct RMP_Bmq* Queue,
     /* Check the queue pointer */
     if(Queue==RMP_NULL)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_ERR_BMQ;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
@@ -4830,13 +4840,13 @@ rmp_ret_t RMP_Bmq_Crt(volatile struct RMP_Bmq* Queue,
     /* Check if the queue is in use */
     if(Queue->State!=RMP_BMQ_FREE)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         RMP_Sched_Unlock();
         return RMP_ERR_BMQ;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
@@ -4844,13 +4854,13 @@ rmp_ret_t RMP_Bmq_Crt(volatile struct RMP_Bmq* Queue,
      * number limiting semaphore */
     if((Limit==0U)||(RMP_Sem_Crt(&(Queue->Sem), Limit)<0))
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         RMP_Sched_Unlock();
         return RMP_ERR_OPER;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
 
@@ -4874,12 +4884,12 @@ rmp_ret_t RMP_Bmq_Del(volatile struct RMP_Bmq* Queue)
     /* Check the queue pointer */
     if(Queue==RMP_NULL)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_ERR_MSGQ;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
@@ -4888,26 +4898,26 @@ rmp_ret_t RMP_Bmq_Del(volatile struct RMP_Bmq* Queue)
     /* Check if the queue is in use */
     if(Queue->State!=RMP_BMQ_USED)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         RMP_Sched_Unlock();
         return RMP_ERR_BMQ;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
     /* Attempt to delete the message queue first */
     if(RMP_Msgq_Del(&(Queue->Msgq))<0)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         RMP_Sched_Unlock();
         return RMP_ERR_OPER;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
@@ -4934,24 +4944,24 @@ rmp_ret_t RMP_Bmq_Snd(volatile struct RMP_Bmq* Queue,
     /* Check the queue pointer */
     if(Queue==RMP_NULL)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_ERR_MSGQ;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
     /* Check the data pointer */
     if(Node==RMP_NULL)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_ERR_OPER;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
@@ -4959,24 +4969,24 @@ rmp_ret_t RMP_Bmq_Snd(volatile struct RMP_Bmq* Queue,
      * deletion race protection below: assuming the operations can fail. */
     if(Queue->State!=RMP_BMQ_USED)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_ERR_BMQ;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
     /* Grab a slot first. If we're unable to do this, we need to exit */
     if(RMP_Sem_Pend(&(Queue->Sem), Slice)<0)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_ERR_OPER;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
 
@@ -4986,12 +4996,12 @@ rmp_ret_t RMP_Bmq_Snd(volatile struct RMP_Bmq* Queue,
      * this could fail in the middle. */
     if(RMP_Msgq_Snd(&(Queue->Msgq), Node)<0)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_ERR_OPER;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
@@ -5016,48 +5026,48 @@ rmp_ret_t RMP_Bmq_Snd_ISR(volatile struct RMP_Bmq* Queue,
     /* Check the queue pointer */
     if(Queue==RMP_NULL)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_ERR_MSGQ;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
     /* Check the data pointer */
     if(Node==RMP_NULL)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_ERR_OPER;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
     /* Check if the queue is in use */
     if(Queue->State!=RMP_BMQ_USED)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_ERR_BMQ;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
     /* Check if we have used the queue up */
     if(Queue->Sem.Cur_Num==0U)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_ERR_OPER;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
@@ -5084,24 +5094,24 @@ rmp_ret_t RMP_Bmq_Rcv(volatile struct RMP_Bmq* Queue,
     /* Check the queue pointer */
     if(Queue==RMP_NULL)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_ERR_BMQ;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
     /* Check the data pointer */
     if(Node==RMP_NULL)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_ERR_OPER;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
@@ -5109,24 +5119,24 @@ rmp_ret_t RMP_Bmq_Rcv(volatile struct RMP_Bmq* Queue,
      * deletion race protection below: assuming the operations can fail */
     if(Queue->State!=RMP_BMQ_USED)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_ERR_BMQ;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
     /* Attempt a message queue receive */
     if(RMP_Msgq_Rcv(&(Queue->Msgq), Node, Slice)<0)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_ERR_OPER;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
                           
@@ -5154,12 +5164,12 @@ rmp_ret_t RMP_Bmq_Cnt(volatile struct RMP_Bmq* Queue)
     /* Check the queue pointer */
     if(Queue==RMP_NULL)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return RMP_ERR_BMQ;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
@@ -5168,13 +5178,13 @@ rmp_ret_t RMP_Bmq_Cnt(volatile struct RMP_Bmq* Queue)
     /* Check if the queue is in use */
     if(Queue->State!=RMP_MSGQ_USED)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         RMP_Sched_Unlock();
         return RMP_ERR_MSGQ;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
@@ -5213,18 +5223,18 @@ void RMP_Line(rmp_cnt_t Begin_X,
     /* See if this line is horizontal or vertical. If so we speed it up */
     if(Begin_X==End_X)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
 
         /* Vertical */
         if(Begin_Y>End_Y)
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             Dir_Y=End_Y;
             Trav_Y=Begin_Y;
         }
         else
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             Dir_Y=Begin_Y;
             Trav_Y=End_Y;
         }
@@ -5237,18 +5247,18 @@ void RMP_Line(rmp_cnt_t Begin_X,
     }
     else if(Begin_Y==End_Y)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
 
         /* Horizontal */
         if(Begin_X>End_X)
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             Dir_X=End_X;
             Trav_X=Begin_X;
         }
         else
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             Dir_X=Begin_X;
             Trav_X=End_X;
         }
@@ -5261,7 +5271,7 @@ void RMP_Line(rmp_cnt_t Begin_X,
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
 
@@ -5273,29 +5283,29 @@ void RMP_Line(rmp_cnt_t Begin_X,
     /* Decide the increment direction */
     if((End_X-Begin_X)>0)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         Dir_X=1;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         Dir_X=-1;
     }
 
     if((End_Y-Begin_Y)>0)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         Dir_Y=1;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         Dir_Y=-1;
     }
 
     if(Trav_X>Trav_Y)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
 
         Cur_Y=Begin_Y;
         for(Cur_X=Begin_X;Cur_X!=(End_X+Dir_X);Cur_X+=Dir_X)
@@ -5304,20 +5314,20 @@ void RMP_Line(rmp_cnt_t Begin_X,
             Error+=Trav_Y;
             if(RMP_SAL(Error,1)>=Trav_X)
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 Cur_Y+=Dir_Y;
                 Error-=Trav_X;
             }
             else
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 /* No action required */
             }
         }
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
 
         Cur_X=Begin_X;
         for(Cur_Y=Begin_Y;Cur_Y!=(End_Y+Dir_Y);Cur_Y+=Dir_Y)
@@ -5326,13 +5336,13 @@ void RMP_Line(rmp_cnt_t Begin_X,
             Error+=Trav_X;
             if(RMP_SAL(Error,1)>=Trav_Y)
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 Cur_X+=Dir_X;
                 Error-=Trav_Y;
             }
             else
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 /* No action required */
             }
         }
@@ -5374,29 +5384,29 @@ void RMP_Dot_Line(rmp_cnt_t Begin_X,
     /* Decide the increment direction */
     if((End_X-Begin_X)>0)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         Dir_X=1;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         Dir_X=-1;
     }
 
     if((End_Y-Begin_Y)>0)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         Dir_Y=1;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         Dir_Y=-1;
     }
 
     if(Trav_X>Trav_Y)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
 
         Cur_Y=Begin_Y;
         for(Cur_X=Begin_X;Cur_X!=(End_X+Dir_X);Cur_X+=Dir_X)
@@ -5404,21 +5414,21 @@ void RMP_Dot_Line(rmp_cnt_t Begin_X,
             /* Draw the dot and the white space alternatively */
             if((Cur_X&0x01)!=0)
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 RMP_POINT(Cur_X,Cur_Y,Dot);
             }
             else
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
 
                 if(Space!=RMP_TRANS)
                 {
-                    RMP_COVERAGE_MARKER();
+                    RMP_COV_MARKER();
                     RMP_POINT(Cur_X,Cur_Y,Space);
                 }
                 else
                 {
-                    RMP_COVERAGE_MARKER();
+                    RMP_COV_MARKER();
                     /* No action required */
                 }
             }
@@ -5426,20 +5436,20 @@ void RMP_Dot_Line(rmp_cnt_t Begin_X,
             Error+=Trav_Y;
             if(RMP_SAL(Error,1)>=Trav_X)
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 Cur_Y+=Dir_Y;
                 Error-=Trav_X;
             }
             else
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 /* No action required */
             }
         }
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
 
         Cur_X=Begin_X;
         for(Cur_Y=Begin_Y;Cur_Y!=(End_Y+Dir_Y);Cur_Y+=Dir_Y)
@@ -5447,21 +5457,21 @@ void RMP_Dot_Line(rmp_cnt_t Begin_X,
             /* Draw the dot and the white space alternatively */
             if((((rmp_ptr_t)Cur_Y)&0x01U)!=0U)
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 RMP_POINT(Cur_X,Cur_Y,Dot);
             }
             else
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
 
                 if(Space!=RMP_TRANS)
                 {
-                    RMP_COVERAGE_MARKER();
+                    RMP_COV_MARKER();
                     RMP_POINT(Cur_X,Cur_Y,Space);
                 }
                 else
                 {
-                    RMP_COVERAGE_MARKER();
+                    RMP_COV_MARKER();
                     /* No action required */
                 }
             }
@@ -5469,13 +5479,13 @@ void RMP_Dot_Line(rmp_cnt_t Begin_X,
             Error+=Trav_X;
             if(RMP_SAL(Error,1)>=Trav_Y)
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 Cur_X+=Dir_X;
                 Error-=Trav_Y;
             }
             else
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 /* No action required */
             }
         }
@@ -5508,7 +5518,7 @@ void RMP_Rectangle(rmp_cnt_t Coord_X,
     
     if(Fill!=RMP_TRANS)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         for(Line_Cnt=0;Line_Cnt<Width;Line_Cnt++)
         {
             RMP_Line(Coord_X, Coord_Y+Line_Cnt, Coord_X+Length-1, Coord_Y+Line_Cnt, Fill);
@@ -5516,13 +5526,13 @@ void RMP_Rectangle(rmp_cnt_t Coord_X,
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
 
     if(Border!=RMP_TRANS)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         RMP_Line(Coord_X, Coord_Y, Coord_X+Length-1, Coord_Y, Border);
         RMP_Line(Coord_X+Length-1, Coord_Y, Coord_X+Length-1, Coord_Y+Width-1, Border);
         RMP_Line(Coord_X+Length-1, Coord_Y+Width-1, Coord_X, Coord_Y+Width-1, Border);
@@ -5530,7 +5540,7 @@ void RMP_Rectangle(rmp_cnt_t Coord_X,
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
 }
@@ -5614,7 +5624,7 @@ void RMP_Circle(rmp_cnt_t Center_X,
 
     if(Fill!=RMP_TRANS)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
 
         /* When we are filling the circle, we can try not to fill the areas that have been filled
          * using the rectangle fill method to increase fill speed.
@@ -5627,18 +5637,18 @@ void RMP_Circle(rmp_cnt_t Center_X,
         {  
             if(Cur_X<Quick)
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
 
                 for(Fill_Y=Cur_X;Fill_Y<=Cur_Y;Fill_Y++)  
                 {
                     if(Fill_Y<Quick)
                     {
-                        RMP_COVERAGE_MARKER();
+                        RMP_COV_MARKER();
                         continue;
                     }
                     else
                     {
-                        RMP_COVERAGE_MARKER();
+                        RMP_COV_MARKER();
                         /* No action required */
                     }
                     
@@ -5655,7 +5665,7 @@ void RMP_Circle(rmp_cnt_t Center_X,
             /* Here the "Cur_X" is already out of range. We do not check the conditions anymore */
             else
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
 
                 for(Fill_Y=Cur_X;Fill_Y<=Cur_Y;Fill_Y++)  
                 {                   
@@ -5680,12 +5690,12 @@ void RMP_Circle(rmp_cnt_t Center_X,
 
             if(Error<0) 
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 Error+=RMP_SAL(Cur_X,2)+6;
             }
             else 
             {  
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 Error+=RMP_SAL((rmp_ptr_t)Cur_X-(rmp_ptr_t)Cur_Y,2)+10;
                 Cur_Y--;  
             }
@@ -5695,7 +5705,7 @@ void RMP_Circle(rmp_cnt_t Center_X,
     }
     else 
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
 
         /* Border only */ 
         while(Cur_X<=Cur_Y) 
@@ -5711,12 +5721,12 @@ void RMP_Circle(rmp_cnt_t Center_X,
 
             if(Error<0)
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 Error+=RMP_SAL(Cur_X,2)+6;
             }
             else 
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 Error+=RMP_SAL((rmp_ptr_t)Cur_X-(rmp_ptr_t)Cur_Y,2);
                 Cur_Y--;
             }
@@ -5753,12 +5763,12 @@ void RMP_Matrix(rmp_cnt_t Coord_X,
     
     if((Matrix==RMP_NULL)||(Length==0)||(Width==0)||((((rmp_u8_t)Length)&0x07U)!=0U))
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
@@ -5766,7 +5776,7 @@ void RMP_Matrix(rmp_cnt_t Coord_X,
     /* Natural order */
     if(Bit_Order==RMP_MAT_BIG)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
 
         for(Wid_Cnt=Coord_Y;Wid_Cnt<(Width+Coord_Y);Wid_Cnt++)
         {
@@ -5774,12 +5784,12 @@ void RMP_Matrix(rmp_cnt_t Coord_X,
             {
                 if(RMP_MAT_BPOS(Matrix,Mat_Pos)!=0U)
                 {
-                    RMP_COVERAGE_MARKER();
+                    RMP_COV_MARKER();
                     RMP_Point(Len_Cnt,Wid_Cnt,Color);
                 }
                 else
                 {
-                    RMP_COVERAGE_MARKER();
+                    RMP_COV_MARKER();
                     /* No action required */
                 }
 
@@ -5790,7 +5800,7 @@ void RMP_Matrix(rmp_cnt_t Coord_X,
     /* Small order */
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
 
         for(Wid_Cnt=Coord_Y;Wid_Cnt<(Width+Coord_Y);Wid_Cnt++)
         {
@@ -5798,12 +5808,12 @@ void RMP_Matrix(rmp_cnt_t Coord_X,
             {
                 if(RMP_MAT_SPOS(Matrix,Mat_Pos)!=0U)
                 {
-                    RMP_COVERAGE_MARKER();
+                    RMP_COV_MARKER();
                     RMP_Point(Len_Cnt,Wid_Cnt,Color);
                 }
                 else
                 {
-                    RMP_COVERAGE_MARKER();
+                    RMP_COV_MARKER();
                     /* No action required */
                 }
 
@@ -5851,12 +5861,12 @@ void RMP_Matrix_AA(rmp_cnt_t Coord_X,
     
     if((Matrix==RMP_NULL)||(Length==0)||(Width==0)||((((rmp_u8_t)Length)&0x07U)!=0U))
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
@@ -5869,7 +5879,7 @@ void RMP_Matrix_AA(rmp_cnt_t Coord_X,
     /* Natural order */
     if(Bit_Order==RMP_MAT_BIG)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
 
         for(Wid_Cnt=Coord_Y;Wid_Cnt<(Width+Coord_Y);Wid_Cnt++)
         {
@@ -5877,12 +5887,12 @@ void RMP_Matrix_AA(rmp_cnt_t Coord_X,
             {
                 if(RMP_MAT_BPOS(Matrix, Mat_Pos)!=0U)
                 {
-                    RMP_COVERAGE_MARKER();
+                    RMP_COV_MARKER();
                     RMP_Point(Len_Cnt, Wid_Cnt, Color);
                 }
                 else
                 {
-                    RMP_COVERAGE_MARKER();
+                    RMP_COV_MARKER();
 
                     /* Anti-aliasing */
                     AA_Val=0;
@@ -5890,68 +5900,68 @@ void RMP_Matrix_AA(rmp_cnt_t Coord_X,
                     AA_Pos=Mat_Pos-1;
                     if(AA_Pos>=0)
                     {
-                        RMP_COVERAGE_MARKER();
+                        RMP_COV_MARKER();
 
                         if((Len_Cnt!=Coord_X)&&(RMP_MAT_BPOS(Matrix, AA_Pos)!=0U))
                         {
-                            RMP_COVERAGE_MARKER();
+                            RMP_COV_MARKER();
                             AA_Val++;
                         }
                         else
                         {
-                            RMP_COVERAGE_MARKER();
+                            RMP_COV_MARKER();
                             /* No action required */
                         }
 
                         AA_Pos=Mat_Pos-Length;
                         if((AA_Pos>=0)&&(RMP_MAT_BPOS(Matrix, AA_Pos)!=0U))
                         {
-                            RMP_COVERAGE_MARKER();
+                            RMP_COV_MARKER();
                             AA_Val++;
                         }
                         else
                         {
-                            RMP_COVERAGE_MARKER();
+                            RMP_COV_MARKER();
                             /* No action required */
                         }
                     }
                     else
                     {
-                        RMP_COVERAGE_MARKER();
+                        RMP_COV_MARKER();
                         /* No action required */
                     }
                     
                     AA_Pos=Mat_Pos+1;
                     if(AA_Pos<Total)
                     {
-                        RMP_COVERAGE_MARKER();
+                        RMP_COV_MARKER();
 
                         if((Len_Cnt!=(Coord_X+Length-1))&&(RMP_MAT_BPOS(Matrix, AA_Pos)!=0U))
                         {
-                            RMP_COVERAGE_MARKER();
+                            RMP_COV_MARKER();
                             AA_Val++;
                         }
                         else
                         {
-                            RMP_COVERAGE_MARKER();
+                            RMP_COV_MARKER();
                             /* No action required */
                         }
 
                         AA_Pos=Mat_Pos+Length;
                         if((AA_Pos<Total)&&(RMP_MAT_BPOS(Matrix, AA_Pos)!=0U))
                         {
-                            RMP_COVERAGE_MARKER();
+                            RMP_COV_MARKER();
                             AA_Val++;
                         }
                         else
                         {
-                            RMP_COVERAGE_MARKER();
+                            RMP_COV_MARKER();
                             /* No action required */
                         }
                     }
                     else
                     {
-                        RMP_COVERAGE_MARKER();
+                        RMP_COV_MARKER();
                         /* No action required */
                     }
                     
@@ -5959,25 +5969,25 @@ void RMP_Matrix_AA(rmp_cnt_t Coord_X,
                     {
                         case 1:
                         {
-                            RMP_COVERAGE_MARKER();
+                            RMP_COV_MARKER();
                             RMP_Point(Len_Cnt, Wid_Cnt, Color_25);
                             break;
                         }
                         case 2:
                         {
-                            RMP_COVERAGE_MARKER();
+                            RMP_COV_MARKER();
                             RMP_Point(Len_Cnt, Wid_Cnt, Color_50);
                             break;
                         }
                         case 3:
                         {
-                            RMP_COVERAGE_MARKER();
+                            RMP_COV_MARKER();
                             RMP_Point(Len_Cnt, Wid_Cnt, Color_75);
                             break;
                         }
                         default:
                         {
-                            RMP_COVERAGE_MARKER();
+                            RMP_COV_MARKER();
                             break;
                         }
                     }
@@ -5990,7 +6000,7 @@ void RMP_Matrix_AA(rmp_cnt_t Coord_X,
     /* Small order */
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
 
         for(Wid_Cnt=Coord_Y;Wid_Cnt<(Width+Coord_Y);Wid_Cnt++)
         {
@@ -5998,12 +6008,12 @@ void RMP_Matrix_AA(rmp_cnt_t Coord_X,
             {
                 if(RMP_MAT_SPOS(Matrix, Mat_Pos)!=0U)
                 {
-                    RMP_COVERAGE_MARKER();
+                    RMP_COV_MARKER();
                     RMP_Point(Len_Cnt, Wid_Cnt, Color);
                 }
                 else
                 {
-                    RMP_COVERAGE_MARKER();
+                    RMP_COV_MARKER();
 
                     /* Anti-aliasing */
                     AA_Val=0;
@@ -6011,68 +6021,68 @@ void RMP_Matrix_AA(rmp_cnt_t Coord_X,
                     AA_Pos=Mat_Pos-1;
                     if(AA_Pos>=0)
                     {
-                        RMP_COVERAGE_MARKER();
+                        RMP_COV_MARKER();
 
                         if((Len_Cnt!=Coord_X)&&(RMP_MAT_SPOS(Matrix, AA_Pos)!=0U))
                         {
-                            RMP_COVERAGE_MARKER();
+                            RMP_COV_MARKER();
                             AA_Val++;
                         }
                         else
                         {
-                            RMP_COVERAGE_MARKER();
+                            RMP_COV_MARKER();
                             /* No action required */
                         }
 
                         AA_Pos=Mat_Pos-Length;
                         if((AA_Pos>=0)&&(RMP_MAT_SPOS(Matrix, AA_Pos)!=0U))
                         {
-                            RMP_COVERAGE_MARKER();
+                            RMP_COV_MARKER();
                             AA_Val++;
                         }
                         else
                         {
-                            RMP_COVERAGE_MARKER();
+                            RMP_COV_MARKER();
                             /* No action required */
                         }
                     }
                     else
                     {
-                        RMP_COVERAGE_MARKER();
+                        RMP_COV_MARKER();
                         /* No action required */
                     }
 
                     AA_Pos=Mat_Pos+1;
                     if(AA_Pos<Total)
                     {
-                        RMP_COVERAGE_MARKER();
+                        RMP_COV_MARKER();
 
                         if((Len_Cnt!=(Coord_X+Length-1))&&(RMP_MAT_SPOS(Matrix, AA_Pos)!=0U))
                         {
-                            RMP_COVERAGE_MARKER();
+                            RMP_COV_MARKER();
                             AA_Val++;
                         }
                         else
                         {
-                            RMP_COVERAGE_MARKER();
+                            RMP_COV_MARKER();
                             /* No action required */
                         }
 
                         AA_Pos=Mat_Pos+Length;
                         if((AA_Pos<Total)&&(RMP_MAT_SPOS(Matrix, AA_Pos)!=0U))
                         {
-                            RMP_COVERAGE_MARKER();
+                            RMP_COV_MARKER();
                             AA_Val++;
                         }
                         else
                         {
-                            RMP_COVERAGE_MARKER();
+                            RMP_COV_MARKER();
                             /* No action required */
                         }
                     }
                     else
                     {
-                        RMP_COVERAGE_MARKER();
+                        RMP_COV_MARKER();
                         /* No action required */
                     }
                     
@@ -6080,25 +6090,25 @@ void RMP_Matrix_AA(rmp_cnt_t Coord_X,
                     {
                         case 1:
                         {
-                            RMP_COVERAGE_MARKER();
+                            RMP_COV_MARKER();
                             RMP_Point(Len_Cnt, Wid_Cnt, Color_25);
                             break;
                         }
                         case 2:
                         {
-                            RMP_COVERAGE_MARKER();
+                            RMP_COV_MARKER();
                             RMP_Point(Len_Cnt, Wid_Cnt, Color_50);
                             break;
                         }
                         case 3:
                         {
-                            RMP_COVERAGE_MARKER();
+                            RMP_COV_MARKER();
                             RMP_Point(Len_Cnt, Wid_Cnt, Color_75);
                             break;
                         }
                         default:
                         {
-                            RMP_COVERAGE_MARKER();
+                            RMP_COV_MARKER();
                             break;
                         }
                     }
@@ -6312,7 +6322,7 @@ void RMP_Cursor(rmp_cnt_t Coord_X,
     {
         case RMP_CUR_NORM:
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             Size_B=sizeof(Arrow_B);
             Size_W=sizeof(Arrow_W);
             Black=Arrow_B;
@@ -6322,7 +6332,7 @@ void RMP_Cursor(rmp_cnt_t Coord_X,
         case RMP_CUR_BUSY:
         case RMP_CUR_QUESTION:
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
 
             for(Count=0;Count<(rmp_cnt_t)sizeof(Arrow_B);Count++)
             {
@@ -6337,7 +6347,7 @@ void RMP_Cursor(rmp_cnt_t Coord_X,
             
             if(Style==RMP_CUR_BUSY)
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 Size_B=sizeof(Busy_B);
                 Size_W=sizeof(Busy_W);
                 Black=Busy_B;
@@ -6345,7 +6355,7 @@ void RMP_Cursor(rmp_cnt_t Coord_X,
             }
             else
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 Size_B=sizeof(Question);
                 Size_W=0;
                 Black=Question;
@@ -6355,7 +6365,7 @@ void RMP_Cursor(rmp_cnt_t Coord_X,
         }       
         case RMP_CUR_HAND:
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             Size_B=sizeof(Hand_B);
             Size_W=sizeof(Hand_W);
             Black=Hand_B;
@@ -6364,7 +6374,7 @@ void RMP_Cursor(rmp_cnt_t Coord_X,
         }
         case RMP_CUR_TEXT:
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             Size_B=sizeof(Text);
             Size_W=0;
             Black=Text;
@@ -6373,7 +6383,7 @@ void RMP_Cursor(rmp_cnt_t Coord_X,
         }
         case RMP_CUR_STOP:
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             Size_B=sizeof(Stop_B);
             Size_W=sizeof(Stop_W);
             Black=Stop_B;
@@ -6382,7 +6392,7 @@ void RMP_Cursor(rmp_cnt_t Coord_X,
         }
         case RMP_CUR_MOVE:
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             Size_B=sizeof(Adj_ALL);
             Size_W=0;
             Black=Adj_ALL;
@@ -6391,7 +6401,7 @@ void RMP_Cursor(rmp_cnt_t Coord_X,
         }
         case RMP_CUR_LR:
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             Size_B=sizeof(Adj_LR);
             Size_W=0;
             Black=Adj_LR;
@@ -6400,7 +6410,7 @@ void RMP_Cursor(rmp_cnt_t Coord_X,
         }
         case RMP_CUR_UD:
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             Size_B=sizeof(Adj_UD);
             Size_W=0;
             Black=Adj_UD;
@@ -6409,7 +6419,7 @@ void RMP_Cursor(rmp_cnt_t Coord_X,
         }
         case RMP_CUR_ULBR:
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             Size_B=sizeof(Adj_ULBR);
             Size_W=0;
             Black=Adj_ULBR;
@@ -6418,7 +6428,7 @@ void RMP_Cursor(rmp_cnt_t Coord_X,
         }
         case RMP_CUR_URBL:
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             Size_B=sizeof(Adj_URBL);
             Size_W=0;
             Black=Adj_URBL;
@@ -6427,7 +6437,7 @@ void RMP_Cursor(rmp_cnt_t Coord_X,
         }
         case RMP_CUR_CROSS:
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             Size_B=sizeof(Cross);
             Size_W=0;
             Black=Cross;
@@ -6436,7 +6446,7 @@ void RMP_Cursor(rmp_cnt_t Coord_X,
         }
         default:
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             return;
         }
     }
@@ -6540,12 +6550,12 @@ void RMP_Checkbox(rmp_cnt_t Coord_X,
     
     if(Status!=0U)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         RMP_Checkbox_Set(Coord_X, Coord_Y, Length);
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
 }
@@ -6625,12 +6635,12 @@ void RMP_Cmdbtn(rmp_cnt_t Coord_X,
 
     if(Status!=0U)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         RMP_Cmdbtn_Down(Coord_X, Coord_Y, Length, Width);
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         RMP_Cmdbtn_Up(Coord_X, Coord_Y, Length, Width);
     }
 }
@@ -6726,12 +6736,12 @@ void RMP_Radiobtn_Circle(rmp_cnt_t Coord_X,
         
         if(Error<0) 
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             Error+=RMP_SAL(Cur_X,2)+6;
         }
         else 
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             Error+=RMP_SAL((rmp_ptr_t)Cur_X-(rmp_ptr_t)Cur_Y,2);
             Cur_Y--;
         }
@@ -6759,12 +6769,12 @@ void RMP_Radiobtn_Circle(rmp_cnt_t Coord_X,
         
         if(Error<0) 
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             Error+=RMP_SAL(Cur_X,2)+6;
         } 
         else 
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
             Error+=RMP_SAL((rmp_ptr_t)Cur_X-(rmp_ptr_t)Cur_Y,2);
             Cur_Y--;  
         }  
@@ -6830,12 +6840,12 @@ void RMP_Radiobtn(rmp_cnt_t Coord_X,
     /* See if the radio button is selected */
     if(Status==RMP_RBTN_SEL)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         RMP_Radiobtn_Set(Coord_X, Coord_Y, Length);
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
 }
@@ -6872,12 +6882,12 @@ void RMP_Progbar_Set(rmp_cnt_t Coord_X,
     /* If things does not change, return to save time */
     if(Old_Prog==New_Prog)
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         return;
     }
     else
     {
-        RMP_COVERAGE_MARKER();
+        RMP_COV_MARKER();
         /* No action required */
     }
     
@@ -6885,80 +6895,80 @@ void RMP_Progbar_Set(rmp_cnt_t Coord_X,
     {
         case RMP_PBAR_L2R:
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
 
             Old_Pivot=(Length-2)*Old_Prog/100;
             New_Pivot=(Length-2)*New_Prog/100;
             /* Progress decreased */
             if(Old_Pivot>New_Pivot)
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 RMP_Rectangle(Coord_X+1+New_Pivot, Coord_Y+1, Old_Pivot-New_Pivot, Width-2, Back, Back);
             }
             /* Progress increased */
             else
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 RMP_Rectangle(Coord_X+1+Old_Pivot, Coord_Y+1, New_Pivot-Old_Pivot, Width-2, Fore, Fore);
             }
             break;
         }
         case RMP_PBAR_D2U:
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
 
             Old_Pivot=(Width-2)*Old_Prog/100;
             New_Pivot=(Width-2)*New_Prog/100;
             /* Progress decreased */
             if(Old_Pivot>New_Pivot)
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 RMP_Rectangle(Coord_X+1, Coord_Y-1+Width-Old_Pivot, Length-2, Old_Pivot-New_Pivot, Back, Back);
             }
             /* Progress increased */
             else
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 RMP_Rectangle(Coord_X+1, Coord_Y-1+Width-New_Pivot, Length-2, New_Pivot-Old_Pivot, Fore, Fore);
             }
             break;
         }
         case RMP_PBAR_R2L:
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
 
             Old_Pivot=(Length-2)*Old_Prog/100;
             New_Pivot=(Length-2)*New_Prog/100;
             /* Progress decreased */
             if(Old_Pivot>New_Pivot)
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 RMP_Rectangle(Coord_X-1+Length-Old_Pivot, Coord_Y+1, Old_Pivot-New_Pivot, Width-2, Back, Back);
             }
             /* Progress increased */
             else
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 RMP_Rectangle(Coord_X-1+Length-New_Pivot, Coord_Y+1, New_Pivot-Old_Pivot, Width-2, Fore, Fore);
             }
             break;
         }
         case RMP_PBAR_U2D:
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
 
             Old_Pivot=(Width-2)*Old_Prog/100;
             New_Pivot=(Width-2)*New_Prog/100;
             /* Progress decreased */
             if(Old_Pivot>New_Pivot)
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 RMP_Rectangle(Coord_X+1, Coord_Y+1+New_Pivot, Length-2, Old_Pivot-New_Pivot, Back, Back);
             }
             /* Progress increased */
             else
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 RMP_Rectangle(Coord_X+1, Coord_Y+1+Old_Pivot, Length-2, New_Pivot-Old_Pivot, Fore, Fore);
             }
             break;
@@ -6997,112 +7007,112 @@ void RMP_Progbar_Prog(rmp_cnt_t Coord_X,
     {
         case RMP_PBAR_L2R:
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
 
             Pivot=Length*Prog/100;
             if(Prog!=0)
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 RMP_Rectangle(Coord_X, Coord_Y, Pivot, Width, Fore, Fore);
             }
             else
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 /* No action required */
             }
 
             if(Prog!=100)
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 RMP_Rectangle(Coord_X+Pivot, Coord_Y, Length-Pivot, Width, Back, Back);
             }
             else
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 /* No action required */
             }
             break;
         }
         case RMP_PBAR_D2U:
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
 
             Pivot=Width*Prog/100;
             if(Prog!=0)
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 RMP_Rectangle(Coord_X, Coord_Y+Width-Pivot, Length, Pivot, Fore, Fore);
             }
             else
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 /* No action required */
             }
 
             if(Prog!=100)
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 RMP_Rectangle(Coord_X, Coord_Y, Length, Width-Pivot, Back, Back);
             }
             else
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 /* No action required */
             }
             break;
         }
         case RMP_PBAR_R2L:
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
 
             Pivot=Length*Prog/100;
             if(Prog!=0)
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 RMP_Rectangle(Coord_X+Length-Pivot, Coord_Y, Pivot, Width, Fore, Fore);
             }
             else
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 /* No action required */
             }
 
             if(Prog!=100)
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 RMP_Rectangle(Coord_X, Coord_Y, Length-Pivot, Width, Back, Back);
             }
             else
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 /* No action required */
             }
             break;
         }
         case RMP_PBAR_U2D:
         {
-            RMP_COVERAGE_MARKER();
+            RMP_COV_MARKER();
 
             Pivot=Width*Prog/100;
             if(Prog!=0)
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 RMP_Rectangle(Coord_X, Coord_Y, Length, Pivot, Fore, Fore);
             }
             else
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 /* No action required */
             }
 
             if(Prog!=100)
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 RMP_Rectangle(Coord_X, Coord_Y+Pivot, Length, Width-Pivot, Back, Back);
             }
             else
             {
-                RMP_COVERAGE_MARKER();
+                RMP_COV_MARKER();
                 /* No action required */
             }
             break;

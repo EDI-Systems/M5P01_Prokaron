@@ -183,13 +183,13 @@ Description : The header file for the kernel.
 #endif
     
 /* Assert macro - used only in internal development */
-#if(RMP_ASSERT_CORRECT==0U)
+#if(RMP_ASSERT_ENABLE!=0U)
 #define RMP_ASSERT(X) \
 do \
 { \
     if(!(X)) \
     { \
-        RMP_DBG_S("\r\n***\r\nKernel panic - not syncing:\r\n"); \
+        RMP_DBG_S("\r\n***\r\nKernel panic :\r\n"); \
         RMP_DBG_S(__FILE__); \
         RMP_DBG_S(" , Line "); \
         RMP_DBG_I(__LINE__); \
@@ -212,11 +212,11 @@ while(0)
 #endif
     
 /* Coverage marker enabling */
-#ifdef RMP_COVERAGE_LINE_NUM
-#define RMP_COVERAGE_WORD_NUM       (RMP_ROUND_UP(RMP_COVERAGE_LINE_NUM,RMP_WORD_ORDER)>>RMP_WORD_ORDER)
-#define RMP_COVERAGE_MARKER()       (RMP_Coverage[__LINE__>>RMP_WORD_ORDER]|=RMP_POW2(__LINE__&RMP_WORD_MASK))
+#ifdef RMP_COV_LINE_NUM
+#define RMP_COV_WORD_NUM       (RMP_ROUND_UP(RMP_COV_LINE_NUM,RMP_WORD_ORDER)>>RMP_WORD_ORDER)
+#define RMP_COV_MARKER()       (RMP_Cov[__LINE__>>RMP_WORD_ORDER]|=RMP_POW2(__LINE__&RMP_WORD_MASK))
 #else
-#define RMP_COVERAGE_MARKER()
+#define RMP_COV_MARKER()
 #endif
 /*****************************************************************************/
 /* __RMP_KERNEL_DEF__ */
@@ -366,9 +366,9 @@ struct RMP_Mem
 /* If the header is not used in the public mode */
 #ifndef __HDR_PUBLIC__
 /*****************************************************************************/
-#ifdef RMP_COVERAGE_LINE_NUM
+#ifdef RMP_COV_LINE_NUM
 /* For coverage use only */
-static volatile rmp_ptr_t RMP_Coverage[RMP_COVERAGE_WORD_NUM];
+static volatile rmp_ptr_t RMP_Cov[RMP_COV_WORD_NUM];
 #endif
 /* Scheduler bitmap - might be modified in interrupts */
 static volatile rmp_ptr_t RMP_Bitmap[RMP_PRIO_WORD_NUM];
@@ -423,25 +423,25 @@ static void RMP_Progbar_Prog(rmp_cnt_t Coord_X,
                              rmp_ptr_t Back);
 #endif
 /*****************************************************************************/
-#define __EXTERN__
+#define __RMP_EXTERN__
 /* End Private Function ******************************************************/
 
 /* Public Variable ***********************************************************/
 /* __HDR_PUBLIC__ */
 #else
-#define __EXTERN__ EXTERN 
+#define __RMP_EXTERN__ RMP_EXTERN 
 /* __HDR_PUBLIC__ */
 #endif
 
 /*****************************************************************************/
 /* Timestamp - may wraparound but this is fine */
-__EXTERN__ volatile rmp_ptr_t RMP_Timestamp;
+__RMP_EXTERN__ volatile rmp_ptr_t RMP_Timestamp;
 /* Scheduler lock count - doesn't really need to be volatile from a kernel
  * standpoint, and transparent interrupts that read it will fetch from memory
  * anyway, but we wish to indicate that interrupts may read it by volatile. */
-__EXTERN__ volatile rmp_ptr_t RMP_Sched_Lock_Cnt;
+__RMP_EXTERN__ volatile rmp_ptr_t RMP_Sched_Lock_Cnt;
 /* Scheduler pending - needs to be volatile; might be modified in interrupts */
-__EXTERN__ volatile rmp_ptr_t RMP_Sched_Pend;
+__RMP_EXTERN__ volatile rmp_ptr_t RMP_Sched_Pend;
 
 /* The current thread - the pointer as well as its contents are volatile. From
  * a pure kernel standpoint, the pointer itself doesn't need to be volatile,
@@ -451,9 +451,9 @@ __EXTERN__ volatile rmp_ptr_t RMP_Sched_Pend;
  * in LTO). However, we still make it volatile here and consciously cache it
  * at the beginning of every function that might use it to indicate that it
  * may have changed in the middle (even though it always changes back). */
-__EXTERN__ volatile struct RMP_Thd* volatile RMP_Thd_Cur;
+__RMP_EXTERN__ volatile struct RMP_Thd* volatile RMP_Thd_Cur;
 /* Current thread's stack pointer */
-__EXTERN__ volatile rmp_ptr_t RMP_SP_Cur;
+__RMP_EXTERN__ volatile rmp_ptr_t RMP_SP_Cur;
 /*****************************************************************************/
 
 /* End Public Variable *******************************************************/
@@ -461,177 +461,177 @@ __EXTERN__ volatile rmp_ptr_t RMP_SP_Cur;
 /* Public Function ***********************************************************/
 /*****************************************************************************/
 /* Bit manipualtions */
-__EXTERN__ rmp_ptr_t RMP_MSB_Generic(rmp_ptr_t Value);
-__EXTERN__ rmp_ptr_t RMP_LSB_Generic(rmp_ptr_t Value);
-__EXTERN__ rmp_ptr_t RMP_RBT_Generic(rmp_ptr_t Value);
+__RMP_EXTERN__ rmp_ptr_t RMP_MSB_Generic(rmp_ptr_t Value);
+__RMP_EXTERN__ rmp_ptr_t RMP_LSB_Generic(rmp_ptr_t Value);
+__RMP_EXTERN__ rmp_ptr_t RMP_RBT_Generic(rmp_ptr_t Value);
 /* Debug printing functions */
-__EXTERN__ rmp_cnt_t RMP_Int_Print(rmp_cnt_t Int);
-__EXTERN__ rmp_cnt_t RMP_Hex_Print(rmp_ptr_t Uint);
-__EXTERN__ rmp_cnt_t RMP_Str_Print(const rmp_s8_t* String);
+__RMP_EXTERN__ rmp_cnt_t RMP_Int_Print(rmp_cnt_t Int);
+__RMP_EXTERN__ rmp_cnt_t RMP_Hex_Print(rmp_ptr_t Uint);
+__RMP_EXTERN__ rmp_cnt_t RMP_Str_Print(const rmp_s8_t* String);
 /* List operation functions */
-__EXTERN__ void RMP_List_Crt(volatile struct RMP_List* Head);
-__EXTERN__ void RMP_List_Del(volatile struct RMP_List* Prev,
-                             volatile struct RMP_List* Next);
-__EXTERN__ void RMP_List_Ins(volatile struct RMP_List* New,
-                             volatile struct RMP_List* Prev,
-                             volatile struct RMP_List* Next);
+__RMP_EXTERN__ void RMP_List_Crt(volatile struct RMP_List* Head);
+__RMP_EXTERN__ void RMP_List_Del(volatile struct RMP_List* Prev,
+                                 volatile struct RMP_List* Next);
+__RMP_EXTERN__ void RMP_List_Ins(volatile struct RMP_List* New,
+                                 volatile struct RMP_List* Prev,
+                                 volatile struct RMP_List* Next);
                              
 /* This is the entry of user applications */
-EXTERN void RMP_Init(void);
-__EXTERN__ void _RMP_Run_High(void);
-__EXTERN__ void _RMP_Tim_Handler(rmp_ptr_t Slice);
-__EXTERN__ void _RMP_Tim_Elapse(rmp_ptr_t Slice);
-__EXTERN__ rmp_ptr_t _RMP_Tim_Future(void);
-__EXTERN__ rmp_ret_t _RMP_Tim_Idle(void);
-__EXTERN__ void RMP_Clear(volatile void* Addr,
-                          rmp_ptr_t Size);
+RMP_EXTERN void RMP_Init(void);
+__RMP_EXTERN__ void _RMP_Run_High(void);
+__RMP_EXTERN__ void _RMP_Tim_Handler(rmp_ptr_t Slice);
+__RMP_EXTERN__ void _RMP_Tim_Elapse(rmp_ptr_t Slice);
+__RMP_EXTERN__ rmp_ptr_t _RMP_Tim_Future(void);
+__RMP_EXTERN__ rmp_ret_t _RMP_Tim_Idle(void);
+__RMP_EXTERN__ void RMP_Clear(volatile void* Addr,
+                              rmp_ptr_t Size);
 
 /* Scheduler locking & unlocking */
-__EXTERN__ void RMP_Sched_Lock(void);
-__EXTERN__ void RMP_Sched_Unlock(void);
+__RMP_EXTERN__ void RMP_Sched_Lock(void);
+__RMP_EXTERN__ void RMP_Sched_Unlock(void);
 
 
 /* System interfaces */
-__EXTERN__ void RMP_Yield(void);
-__EXTERN__ rmp_ret_t RMP_Thd_Crt(volatile struct RMP_Thd* Thread, 
-                                 void* Entry,
-                                 void* Param, 
-                                 void* Stack,
-                                 rmp_ptr_t Size,
-                                 rmp_ptr_t Prio,
-                                 rmp_ptr_t Slice);
-__EXTERN__ rmp_ret_t RMP_Thd_Del(volatile struct RMP_Thd* Thread);
-__EXTERN__ rmp_ret_t RMP_Thd_Set(volatile struct RMP_Thd* Thread,
-                                 rmp_ptr_t Prio,
-                                 rmp_ptr_t Slice);
-__EXTERN__ rmp_ret_t RMP_Thd_Suspend(volatile struct RMP_Thd* Thread);
-__EXTERN__ rmp_ret_t RMP_Thd_Resume(volatile struct RMP_Thd* Thread);
+__RMP_EXTERN__ void RMP_Yield(void);
+__RMP_EXTERN__ rmp_ret_t RMP_Thd_Crt(volatile struct RMP_Thd* Thread, 
+                                     void* Entry,
+                                     void* Param, 
+                                     void* Stack,
+                                     rmp_ptr_t Size,
+                                     rmp_ptr_t Prio,
+                                     rmp_ptr_t Slice);
+__RMP_EXTERN__ rmp_ret_t RMP_Thd_Del(volatile struct RMP_Thd* Thread);
+__RMP_EXTERN__ rmp_ret_t RMP_Thd_Set(volatile struct RMP_Thd* Thread,
+                                     rmp_ptr_t Prio,
+                                     rmp_ptr_t Slice);
+__RMP_EXTERN__ rmp_ret_t RMP_Thd_Suspend(volatile struct RMP_Thd* Thread);
+__RMP_EXTERN__ rmp_ret_t RMP_Thd_Resume(volatile struct RMP_Thd* Thread);
 
-__EXTERN__ rmp_ret_t RMP_Thd_Delay(rmp_ptr_t Slice);
-__EXTERN__ rmp_ret_t RMP_Thd_Cancel(volatile struct RMP_Thd* Thread);
-__EXTERN__ void RMP_Thd_Loop(rmp_ptr_t Loop);
+__RMP_EXTERN__ rmp_ret_t RMP_Thd_Delay(rmp_ptr_t Slice);
+__RMP_EXTERN__ rmp_ret_t RMP_Thd_Cancel(volatile struct RMP_Thd* Thread);
+__RMP_EXTERN__ void RMP_Thd_Loop(rmp_ptr_t Loop);
 
-__EXTERN__ rmp_ret_t RMP_Thd_Snd(volatile struct RMP_Thd* Thread,
-                                 rmp_ptr_t Data,
-                                 rmp_ptr_t Slice);
-__EXTERN__ rmp_ret_t RMP_Thd_Snd_ISR(volatile struct RMP_Thd* Thread,
-                                     rmp_ptr_t Data);
-__EXTERN__ rmp_ret_t RMP_Thd_Rcv(rmp_ptr_t* Data,
-                                 rmp_ptr_t Slice);
+__RMP_EXTERN__ rmp_ret_t RMP_Thd_Snd(volatile struct RMP_Thd* Thread,
+                                     rmp_ptr_t Data,
+                                     rmp_ptr_t Slice);
+__RMP_EXTERN__ rmp_ret_t RMP_Thd_Snd_ISR(volatile struct RMP_Thd* Thread,
+                                         rmp_ptr_t Data);
+__RMP_EXTERN__ rmp_ret_t RMP_Thd_Rcv(rmp_ptr_t* Data,
+                                     rmp_ptr_t Slice);
 
-__EXTERN__ rmp_ret_t RMP_Sem_Crt(volatile struct RMP_Sem* Semaphore,
-                                 rmp_ptr_t Number);
-__EXTERN__ rmp_ret_t RMP_Sem_Del(volatile struct RMP_Sem* Semaphore);
-__EXTERN__ rmp_ret_t RMP_Sem_Post(volatile struct RMP_Sem* Semaphore,
-                                  rmp_ptr_t Number);
-__EXTERN__ rmp_ret_t RMP_Sem_Post_ISR(volatile struct RMP_Sem* Semaphore,
+__RMP_EXTERN__ rmp_ret_t RMP_Sem_Crt(volatile struct RMP_Sem* Semaphore,
+                                     rmp_ptr_t Number);
+__RMP_EXTERN__ rmp_ret_t RMP_Sem_Del(volatile struct RMP_Sem* Semaphore);
+__RMP_EXTERN__ rmp_ret_t RMP_Sem_Post(volatile struct RMP_Sem* Semaphore,
                                       rmp_ptr_t Number);
-__EXTERN__ rmp_ret_t RMP_Sem_Bcst(volatile struct RMP_Sem* Semaphore);
-__EXTERN__ rmp_ret_t RMP_Sem_Bcst_ISR(volatile struct RMP_Sem* Semaphore);
-__EXTERN__ rmp_ret_t RMP_Sem_Pend(volatile struct RMP_Sem* Semaphore,
-                                  rmp_ptr_t Slice);
-__EXTERN__ rmp_ret_t RMP_Sem_Pend_Unlock(volatile struct RMP_Sem* Semaphore,
-                                         rmp_ptr_t Slice);
-__EXTERN__ rmp_ret_t RMP_Sem_Abort(volatile struct RMP_Thd* Thread);
-__EXTERN__ rmp_ret_t RMP_Sem_Cnt(volatile struct RMP_Sem* Semaphore);
+__RMP_EXTERN__ rmp_ret_t RMP_Sem_Post_ISR(volatile struct RMP_Sem* Semaphore,
+                                          rmp_ptr_t Number);
+__RMP_EXTERN__ rmp_ret_t RMP_Sem_Bcst(volatile struct RMP_Sem* Semaphore);
+__RMP_EXTERN__ rmp_ret_t RMP_Sem_Bcst_ISR(volatile struct RMP_Sem* Semaphore);
+__RMP_EXTERN__ rmp_ret_t RMP_Sem_Pend(volatile struct RMP_Sem* Semaphore,
+                                      rmp_ptr_t Slice);
+__RMP_EXTERN__ rmp_ret_t RMP_Sem_Pend_Unlock(volatile struct RMP_Sem* Semaphore,
+                                             rmp_ptr_t Slice);
+__RMP_EXTERN__ rmp_ret_t RMP_Sem_Abort(volatile struct RMP_Thd* Thread);
+__RMP_EXTERN__ rmp_ret_t RMP_Sem_Cnt(volatile struct RMP_Sem* Semaphore);
 
 /* Memory interfaces */
-__EXTERN__ rmp_ret_t RMP_Mem_Init(volatile void* Pool,
-                                  rmp_ptr_t Size);
-__EXTERN__ void* RMP_Malloc(volatile void* Pool,
-                            rmp_ptr_t Size);
-__EXTERN__ void RMP_Free(volatile void* Pool,
-                         void* Mem_Ptr);
-__EXTERN__ void* RMP_Realloc(volatile void* Pool,
-                             void* Mem_Ptr,
-                             rmp_ptr_t Size);
+__RMP_EXTERN__ rmp_ret_t RMP_Mem_Init(volatile void* Pool,
+                                      rmp_ptr_t Size);
+__RMP_EXTERN__ void* RMP_Malloc(volatile void* Pool,
+                                rmp_ptr_t Size);
+__RMP_EXTERN__ void RMP_Free(volatile void* Pool,
+                             void* Mem_Ptr);
+__RMP_EXTERN__ void* RMP_Realloc(volatile void* Pool,
+                                 void* Mem_Ptr,
+                                 rmp_ptr_t Size);
                              
 /* Extended system interfaces - these are not real primitives */
-__EXTERN__ rmp_ret_t RMP_Fifo_Crt(volatile struct RMP_Fifo* Fifo);
-__EXTERN__ rmp_ret_t RMP_Fifo_Del(volatile struct RMP_Fifo* Fifo);
-__EXTERN__ rmp_ret_t RMP_Fifo_Read(volatile struct RMP_Fifo* Fifo,
-                                   volatile struct RMP_List** Node);
-__EXTERN__ rmp_ret_t RMP_Fifo_Write(volatile struct RMP_Fifo* Fifo,
-                                    volatile struct RMP_List* Node);
-__EXTERN__ rmp_ret_t RMP_Fifo_Write_ISR(volatile struct RMP_Fifo* Fifo,
+__RMP_EXTERN__ rmp_ret_t RMP_Fifo_Crt(volatile struct RMP_Fifo* Fifo);
+__RMP_EXTERN__ rmp_ret_t RMP_Fifo_Del(volatile struct RMP_Fifo* Fifo);
+__RMP_EXTERN__ rmp_ret_t RMP_Fifo_Read(volatile struct RMP_Fifo* Fifo,
+                                       volatile struct RMP_List** Node);
+__RMP_EXTERN__ rmp_ret_t RMP_Fifo_Write(volatile struct RMP_Fifo* Fifo,
                                         volatile struct RMP_List* Node);
-__EXTERN__ rmp_ret_t RMP_Fifo_Cnt(volatile struct RMP_Fifo* Fifo);
+__RMP_EXTERN__ rmp_ret_t RMP_Fifo_Write_ISR(volatile struct RMP_Fifo* Fifo,
+                                            volatile struct RMP_List* Node);
+__RMP_EXTERN__ rmp_ret_t RMP_Fifo_Cnt(volatile struct RMP_Fifo* Fifo);
 
-__EXTERN__ rmp_ret_t RMP_Msgq_Crt(volatile struct RMP_Msgq* Queue);
-__EXTERN__ rmp_ret_t RMP_Msgq_Del(volatile struct RMP_Msgq* Queue);
-__EXTERN__ rmp_ret_t RMP_Msgq_Snd(volatile struct RMP_Msgq* Queue,
-                                  volatile struct RMP_List* Node);
-__EXTERN__ rmp_ret_t RMP_Msgq_Snd_ISR(volatile struct RMP_Msgq* Queue,
+__RMP_EXTERN__ rmp_ret_t RMP_Msgq_Crt(volatile struct RMP_Msgq* Queue);
+__RMP_EXTERN__ rmp_ret_t RMP_Msgq_Del(volatile struct RMP_Msgq* Queue);
+__RMP_EXTERN__ rmp_ret_t RMP_Msgq_Snd(volatile struct RMP_Msgq* Queue,
                                       volatile struct RMP_List* Node);
-__EXTERN__ rmp_ret_t RMP_Msgq_Rcv(volatile struct RMP_Msgq* Queue,
-                                  volatile struct RMP_List** Node,
-                                  rmp_ptr_t Slice);
-__EXTERN__ rmp_ret_t RMP_Msgq_Cnt(volatile struct RMP_Msgq* Queue);
+__RMP_EXTERN__ rmp_ret_t RMP_Msgq_Snd_ISR(volatile struct RMP_Msgq* Queue,
+                                          volatile struct RMP_List* Node);
+__RMP_EXTERN__ rmp_ret_t RMP_Msgq_Rcv(volatile struct RMP_Msgq* Queue,
+                                      volatile struct RMP_List** Node,
+                                      rmp_ptr_t Slice);
+__RMP_EXTERN__ rmp_ret_t RMP_Msgq_Cnt(volatile struct RMP_Msgq* Queue);
 
-__EXTERN__ rmp_ret_t RMP_Bmq_Crt(volatile struct RMP_Bmq* Queue,
-                                 rmp_ptr_t Limit);
-__EXTERN__ rmp_ret_t RMP_Bmq_Del(volatile struct RMP_Bmq* Queue);
-__EXTERN__ rmp_ret_t RMP_Bmq_Snd(volatile struct RMP_Bmq* Queue,
-                                 volatile struct RMP_List* Node,
-                                 rmp_ptr_t Slice);
-__EXTERN__ rmp_ret_t RMP_Bmq_Snd_ISR(volatile struct RMP_Bmq* Queue,
-                                     volatile struct RMP_List* Node);
-__EXTERN__ rmp_ret_t RMP_Bmq_Rcv(volatile struct RMP_Bmq* Queue,
-                                 volatile struct RMP_List** Node,
-                                 rmp_ptr_t Slice);
-__EXTERN__ rmp_ret_t RMP_Bmq_Cnt(volatile struct RMP_Bmq* Queue);
+__RMP_EXTERN__ rmp_ret_t RMP_Bmq_Crt(volatile struct RMP_Bmq* Queue,
+                                     rmp_ptr_t Limit);
+__RMP_EXTERN__ rmp_ret_t RMP_Bmq_Del(volatile struct RMP_Bmq* Queue);
+__RMP_EXTERN__ rmp_ret_t RMP_Bmq_Snd(volatile struct RMP_Bmq* Queue,
+                                     volatile struct RMP_List* Node,
+                                     rmp_ptr_t Slice);
+__RMP_EXTERN__ rmp_ret_t RMP_Bmq_Snd_ISR(volatile struct RMP_Bmq* Queue,
+                                         volatile struct RMP_List* Node);
+__RMP_EXTERN__ rmp_ret_t RMP_Bmq_Rcv(volatile struct RMP_Bmq* Queue,
+                                     volatile struct RMP_List** Node,
+                                     rmp_ptr_t Slice);
+__RMP_EXTERN__ rmp_ret_t RMP_Bmq_Cnt(volatile struct RMP_Bmq* Queue);
 
 
 /* Built-in graphics */
 #ifdef RMP_POINT
-EXTERN void RMP_POINT(rmp_cnt_t Coord_X,
-                      rmp_cnt_t Coord_Y,
-                      rmp_ptr_t Color);
-__EXTERN__ void RMP_Line(rmp_cnt_t Begin_X,
-                         rmp_cnt_t Begin_Y,
-                         rmp_cnt_t End_X,
-                         rmp_cnt_t End_Y,
-                         rmp_ptr_t Color);
-__EXTERN__ void RMP_Dot_Line(rmp_cnt_t Begin_X,
+RMP_EXTERN void RMP_POINT(rmp_cnt_t Coord_X,
+                          rmp_cnt_t Coord_Y,
+                          rmp_ptr_t Color);
+__RMP_EXTERN__ void RMP_Line(rmp_cnt_t Begin_X,
                              rmp_cnt_t Begin_Y,
                              rmp_cnt_t End_X,
                              rmp_cnt_t End_Y,
-                             rmp_ptr_t Dot,
-                             rmp_ptr_t Space);
-__EXTERN__ void RMP_Rectangle(rmp_cnt_t Coord_X,
-                              rmp_cnt_t Coord_Y,
-                              rmp_cnt_t Length,
-                              rmp_cnt_t Width,
-                              rmp_ptr_t Border,
-                              rmp_ptr_t Fill);
-__EXTERN__ void RMP_Round_Rect(rmp_cnt_t Coord_X,
+                             rmp_ptr_t Color);
+__RMP_EXTERN__ void RMP_Dot_Line(rmp_cnt_t Begin_X,
+                                 rmp_cnt_t Begin_Y,
+                                 rmp_cnt_t End_X,
+                                 rmp_cnt_t End_Y,
+                                 rmp_ptr_t Dot,
+                                 rmp_ptr_t Space);
+__RMP_EXTERN__ void RMP_Rectangle(rmp_cnt_t Coord_X,
+                                  rmp_cnt_t Coord_Y,
+                                  rmp_cnt_t Length,
+                                  rmp_cnt_t Width,
+                                  rmp_ptr_t Border,
+                                  rmp_ptr_t Fill);
+__RMP_EXTERN__ void RMP_Round_Rect(rmp_cnt_t Coord_X,
+                                   rmp_cnt_t Coord_Y,
+                                   rmp_cnt_t Length,
+                                   rmp_cnt_t Width,
+                                   rmp_cnt_t Round,
+                                   rmp_ptr_t Color);
+__RMP_EXTERN__ void RMP_Circle(rmp_cnt_t Center_X,
+                               rmp_cnt_t Center_Y,
+                               rmp_cnt_t Radius,
+                               rmp_ptr_t Border,
+                               rmp_ptr_t Fill);
+__RMP_EXTERN__ void RMP_Matrix(rmp_cnt_t Coord_X,
                                rmp_cnt_t Coord_Y,
+                               const rmp_u8_t* Matrix,
+                               rmp_ptr_t Bit_Order,
                                rmp_cnt_t Length,
                                rmp_cnt_t Width,
-                               rmp_cnt_t Round,
                                rmp_ptr_t Color);
-__EXTERN__ void RMP_Circle(rmp_cnt_t Center_X,
-                           rmp_cnt_t Center_Y,
-                           rmp_cnt_t Radius,
-                           rmp_ptr_t Border,
-                           rmp_ptr_t Fill);
-__EXTERN__ void RMP_Matrix(rmp_cnt_t Coord_X,
-                           rmp_cnt_t Coord_Y,
-                           const rmp_u8_t* Matrix,
-                           rmp_ptr_t Bit_Order,
-                           rmp_cnt_t Length,
-                           rmp_cnt_t Width,
-                           rmp_ptr_t Color);
 /* This is only exported when color mixing macros available */
 #if((defined RMP_COLOR_25P)&&(defined RMP_COLOR_50P)&&(defined RMP_COLOR_75P))
-__EXTERN__ void RMP_Matrix_AA(rmp_cnt_t Coord_X,
-                              rmp_cnt_t Coord_Y,
-                              const rmp_u8_t* Matrix,
-                              rmp_ptr_t Bit_Order,
-                              rmp_cnt_t Length,
-                              rmp_cnt_t Width,
-                              rmp_ptr_t Color,
-                              rmp_ptr_t Back);
+__RMP_EXTERN__ void RMP_Matrix_AA(rmp_cnt_t Coord_X,
+                                  rmp_cnt_t Coord_Y,
+                                  const rmp_u8_t* Matrix,
+                                  rmp_ptr_t Bit_Order,
+                                  rmp_cnt_t Length,
+                                  rmp_cnt_t Width,
+                                  rmp_ptr_t Color,
+                                  rmp_ptr_t Back);
 #endif
 /* These are only provided when all used colors are predefined */
 #if((defined RMP_CTL_WHITE)&&(defined RMP_CTL_LGREY)&& \
@@ -639,103 +639,94 @@ __EXTERN__ void RMP_Matrix_AA(rmp_cnt_t Coord_X,
     (defined RMP_CTL_DARK)&&(defined RMP_CTL_DDARK)&& \
     (defined RMP_CTL_BLACK))
 /* Built-in easy controls */
-__EXTERN__ void RMP_Cursor(rmp_cnt_t Coord_X,
-                           rmp_cnt_t Coord_Y,
-                           rmp_ptr_t Style);
-__EXTERN__ void RMP_Checkbox_Set(rmp_cnt_t Coord_X,
+__RMP_EXTERN__ void RMP_Cursor(rmp_cnt_t Coord_X,
+                               rmp_cnt_t Coord_Y,
+                               rmp_ptr_t Style);
+__RMP_EXTERN__ void RMP_Checkbox_Set(rmp_cnt_t Coord_X,
+                                     rmp_cnt_t Coord_Y,
+                                     rmp_cnt_t Length);
+__RMP_EXTERN__ void RMP_Checkbox_Clr(rmp_cnt_t Coord_X,
+                                     rmp_cnt_t Coord_Y,
+                                     rmp_cnt_t Length);
+__RMP_EXTERN__ void RMP_Checkbox(rmp_cnt_t Coord_X,
                                  rmp_cnt_t Coord_Y,
-                                 rmp_cnt_t Length);
-__EXTERN__ void RMP_Checkbox_Clr(rmp_cnt_t Coord_X,
-                                 rmp_cnt_t Coord_Y,
-                                 rmp_cnt_t Length);
-__EXTERN__ void RMP_Checkbox(rmp_cnt_t Coord_X,
-                             rmp_cnt_t Coord_Y,
-                             rmp_cnt_t Length,
-                             rmp_ptr_t Status);
-
-__EXTERN__ void RMP_Cmdbtn_Down(rmp_cnt_t Coord_X,
-                                rmp_cnt_t Coord_Y,
-                                rmp_cnt_t Length,
-                                rmp_cnt_t Width);
-__EXTERN__ void RMP_Cmdbtn_Up(rmp_cnt_t Coord_X,
-                              rmp_cnt_t Coord_Y,
-                              rmp_cnt_t Length,
-                              rmp_cnt_t Width);
-__EXTERN__ void RMP_Cmdbtn(rmp_cnt_t Coord_X,
-                           rmp_cnt_t Coord_Y,
-                           rmp_cnt_t Length,
-                           rmp_cnt_t Width,
-                           rmp_ptr_t Status);
-
-__EXTERN__ void RMP_Lineedit_Clr(rmp_cnt_t Coord_Y,
                                  rmp_cnt_t Length,
-                                 rmp_cnt_t Width,
-                                 rmp_cnt_t Clr_X,
-                                 rmp_cnt_t Clr_Len);
-__EXTERN__ void RMP_Lineedit(rmp_cnt_t Coord_X,
-                             rmp_cnt_t Coord_Y,
-                             rmp_cnt_t Length,
-                             rmp_cnt_t Width);
+                                 rmp_ptr_t Status);
 
-__EXTERN__ void RMP_Radiobtn_Set(rmp_cnt_t Coord_X,
+__RMP_EXTERN__ void RMP_Cmdbtn_Down(rmp_cnt_t Coord_X,
+                                    rmp_cnt_t Coord_Y,
+                                    rmp_cnt_t Length,
+                                    rmp_cnt_t Width);
+__RMP_EXTERN__ void RMP_Cmdbtn_Up(rmp_cnt_t Coord_X,
+                                  rmp_cnt_t Coord_Y,
+                                  rmp_cnt_t Length,
+                                  rmp_cnt_t Width);
+__RMP_EXTERN__ void RMP_Cmdbtn(rmp_cnt_t Coord_X,
+                               rmp_cnt_t Coord_Y,
+                               rmp_cnt_t Length,
+                               rmp_cnt_t Width,
+                               rmp_ptr_t Status);
+
+__RMP_EXTERN__ void RMP_Lineedit_Clr(rmp_cnt_t Coord_Y,
+                                     rmp_cnt_t Length,
+                                     rmp_cnt_t Width,
+                                     rmp_cnt_t Clr_X,
+                                     rmp_cnt_t Clr_Len);
+__RMP_EXTERN__ void RMP_Lineedit(rmp_cnt_t Coord_X,
+                                 rmp_cnt_t Coord_Y,
+                                 rmp_cnt_t Length,
+                                 rmp_cnt_t Width);
+
+__RMP_EXTERN__ void RMP_Radiobtn_Set(rmp_cnt_t Coord_X,
+                                     rmp_cnt_t Coord_Y,
+                                     rmp_cnt_t Length);
+__RMP_EXTERN__ void RMP_Radiobtn_Clr(rmp_cnt_t Coord_X,
                                  rmp_cnt_t Coord_Y,
                                  rmp_cnt_t Length);
-__EXTERN__ void RMP_Radiobtn_Clr(rmp_cnt_t Coord_X,
+__RMP_EXTERN__ void RMP_Radiobtn(rmp_cnt_t Coord_X,
                                  rmp_cnt_t Coord_Y,
-                                 rmp_cnt_t Length);
-__EXTERN__ void RMP_Radiobtn(rmp_cnt_t Coord_X,
-                             rmp_cnt_t Coord_Y,
-                             rmp_cnt_t Length,
-                             rmp_ptr_t Status);
+                                 rmp_cnt_t Length,
+                                 rmp_ptr_t Status);
 
-__EXTERN__ void RMP_Progbar_Set(rmp_cnt_t Coord_X,
+__RMP_EXTERN__ void RMP_Progbar_Set(rmp_cnt_t Coord_X,
+                                    rmp_cnt_t Coord_Y,
+                                    rmp_cnt_t Length,
+                                    rmp_cnt_t Width,
+                                    rmp_cnt_t Style,
+                                    rmp_cnt_t Old_Prog,
+                                    rmp_cnt_t New_Prog,
+                                    rmp_ptr_t Fore,
+                                    rmp_ptr_t Back);
+__RMP_EXTERN__ void RMP_Progbar(rmp_cnt_t Coord_X,
                                 rmp_cnt_t Coord_Y,
                                 rmp_cnt_t Length,
                                 rmp_cnt_t Width,
                                 rmp_cnt_t Style,
-                                rmp_cnt_t Old_Prog,
-                                rmp_cnt_t New_Prog,
+                                rmp_cnt_t Prog,
                                 rmp_ptr_t Fore,
                                 rmp_ptr_t Back);
-__EXTERN__ void RMP_Progbar(rmp_cnt_t Coord_X,
-                            rmp_cnt_t Coord_Y,
-                            rmp_cnt_t Length,
-                            rmp_cnt_t Width,
-                            rmp_cnt_t Style,
-                            rmp_cnt_t Prog,
-                            rmp_ptr_t Fore,
-                            rmp_ptr_t Back);
 #endif
 #endif
 
 /* Other utilities */
 #ifdef __RMP_U8_T__
 #ifdef __RMP_U16_T__
-__EXTERN__ rmp_ptr_t RMP_CRC16(const rmp_u8_t* Data,
-                               rmp_ptr_t Length);
+__RMP_EXTERN__ rmp_ptr_t RMP_CRC16(const rmp_u8_t* Data,
+                                   rmp_ptr_t Length);
 #endif
 #endif
 
-/* Hook functions */
-#if(RMP_HOOK_EXTRA!=0U)
-EXTERN void RMP_Start_Hook(void);
-EXTERN void RMP_Ctx_Save(void);
-EXTERN void RMP_Ctx_Load(void);
-EXTERN void RMP_Sched_Hook(void);
-EXTERN void RMP_Tim_Hook(rmp_ptr_t Slice);
-EXTERN void RMP_Dly_Hook(rmp_ptr_t Slice);
-#endif
-
-EXTERN void RMP_Init_Hook(void);
-EXTERN void RMP_Init_Idle(void);
+/* Mandatory hook */
+RMP_EXTERN void RMP_Init_Hook(void);
+RMP_EXTERN void RMP_Init_Idle(void);
 
 /* Coverage test */
-#ifdef RMP_COVERAGE_LINE_NUM
-__EXTERN__ void RMP_Coverage_Print(void);
+#ifdef RMP_COV_LINE_NUM
+__RMP_EXTERN__ void RMP_Cov_Print(void);
 #endif
 /*****************************************************************************/
-/* Undefine "__EXTERN__" to avoid redefinition */
-#undef __EXTERN__
+/* Undefine "__RMP_EXTERN__" to avoid redefinition */
+#undef __RMP_EXTERN__
 /* __RMP_KERNEL_MEMBER__ */
 #endif
 /* !(defined __HDR_DEF__||defined __HDR_STRUCT__) */

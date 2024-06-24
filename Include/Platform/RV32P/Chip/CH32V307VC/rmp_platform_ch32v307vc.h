@@ -65,7 +65,7 @@ Description : The configuration file for CH32V307VC RISC-V chip.
 #include "core_riscv.h"
 
 /* Debugging */
-#define RMP_ASSERT_CORRECT              (0U)
+#define RMP_ASSERT_ENABLE               (1U)
 /* The maximum number of preemption priority levels in the system.
  * This parameter must be divisible by the word length - 32 is usually sufficient */
 #define RMP_PREEMPT_PRIO_NUM            (32U)
@@ -73,13 +73,8 @@ Description : The configuration file for CH32V307VC RISC-V chip.
 #define RMP_SLICE_MAX                   (100000U)
 /* The maximum number of semaphore counts allowed */
 #define RMP_SEM_CNT_MAX                 (1000U)
-/* Are we using custom hooks? */
-#define RMP_HOOK_EXTRA                  (0U)
 /* The stzck size of the init thread */
 #define RMP_INIT_STACK_SIZE             (256U)
-/* The mask/unmask interrupt operations */
-#define RMP_INT_MASK()                  RMP_Int_Disable()
-#define RMP_INT_UNMASK()                RMP_Int_Enable()
 
 /* 1ms tick time for 144MHz */
 #define RMP_RV32P_OSTIM_VAL             (144000U)
@@ -88,7 +83,7 @@ Description : The configuration file for CH32V307VC RISC-V chip.
 #define RMP_RV32P_COP_RVD               (0U)
 
 /* Reprogram the timer or clear timer interrupt flags */
-#define RMP_RV32P_TIM_CLR()             (SysTick->SR=0)
+#define RMP_RV32P_TIM_CLR()             (SysTick->SR=0U)
 
 /* Other low-level initialization stuff - clock and serial. 
  * This is the default initialization sequence. If you wish to supply

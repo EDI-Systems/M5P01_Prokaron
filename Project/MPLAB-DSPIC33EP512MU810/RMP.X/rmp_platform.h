@@ -6,9 +6,9 @@ Licence     : LGPL v3+; see COPYING for details.
 Description : The platform specific types for RMP.
 ******************************************************************************/
 
-/* Platform Includes *********************************************************/
+/* Platform Include **********************************************************/
 #include "Platform/DSPIC/rmp_platform_dspic.h"
-/* End Platform Includes *****************************************************/
+/* End Platform Include ******************************************************/
 
 /* End Of File ***************************************************************/
 

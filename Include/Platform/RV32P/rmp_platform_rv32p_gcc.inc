@@ -10,10 +10,8 @@ Description : The assembly part of the RMP RTOS. This is for RV32P, and
 /* Import ********************************************************************/
     /* The stack address of current thread */
     .global             RMP_SP_Cur
-    /* The interrupt active flag */
-    .global             RMP_RV32P_Int_Act
     /* The yield pending flag */
-    .global             _RMP_RV32P_Yield_Pend
+    .global             RMP_Sched_Pend
     /* Extract highest priority running thread */
     .global             _RMP_Run_High
     /* Handler for timer interrupt */
@@ -70,21 +68,15 @@ Description : The assembly part of the RMP RTOS. This is for RV32P, and
     LA                  a0,RMP_SP_Cur
     SW                  sp,(a0)
     LA                  sp,_RMP_Stack
-    LA                  a0,RMP_RV32P_Int_Act
-    LI                  a1,1
-    SW                  a1,(a0)
     .endm
 
 /* Finish up the context switch **********************************************/
     .macro              RMP_RV32P_SWITCH_POST
-    LA                  a0,_RMP_RV32P_Yield_Pend
+    LA                  a0,RMP_Sched_Pend
     LW                  a1,(a0)
     BEQZ                a1,1f
-    SW                  zero,(a0)
     CALL                _RMP_Run_High
 1:
-    LA                  a0,RMP_RV32P_Int_Act
-    SW                  zero,(a0)
     LA                  a0,RMP_SP_Cur
     LW                  sp,(a0)
     LW                  a0,0*4(sp)

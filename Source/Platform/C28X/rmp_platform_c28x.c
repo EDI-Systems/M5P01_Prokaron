@@ -26,28 +26,6 @@ Description : The platform specific file for C28X. Note that this architecture
 #undef __HDR_PUBLIC__
 /* End Include ***************************************************************/
 
-/* Function:_RMP_Yield ********************************************************
-Description : Trigger a yield to another thread.
-Input       : None.
-Output      : None.
-Return      : None.
-******************************************************************************/
-void _RMP_Yield(void)
-{
-    if(RMP_C28X_Int_Act!=0U)
-        _RMP_C28X_Yield_Pend=1U;
-    else
-        /* Selecting FPU64 implies FPU32 */
-#if(RMP_C28X_COP_FPU64!=0U)
-        _RMP_C28X_Yield_FPU64();
-#elif(RMP_C28X_COP_FPU32!=0U)
-        _RMP_C28X_Yield_FPU32();
-#else
-        _RMP_C28X_Yield_NONE();
-#endif
-}
-/* End Function:_RMP_Yield ***************************************************/
-
 /* Function:_RMP_Stack_Init ***************************************************
 Description : Initiate the process stack when trying to start a process. Never
               call this function in user application.
@@ -72,7 +50,10 @@ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
     /* Pass entry and parameter */
     Ctx->PC=Entry;
     Ctx->ACC=Param;
-    Ctx->DP_ST1=0x00008A08U;
+
+    /* No product shift, sign extend, aux ptr 0, interrupt enabled upon entry */
+    Ctx->T_ST0=0x00000081U;
+    Ctx->DP_ST1=0x00000A08U;
 
     /* Enable interrupt for all sources, by default, for each thread */
     Ctx->DBGSTAT_IER=0x0000FFFFU;
@@ -138,10 +119,6 @@ void _RMP_Lowlvl_Init(void)
     RMP_Int_Disable();
     
     RMP_C28X_LOWLVL_INIT();
-
-    /* Clear flags */
-    RMP_C28X_Int_Act=0U;
-    _RMP_C28X_Yield_Pend=0U;
 }
 /* End Function:_RMP_Lowlvl_Init *********************************************/
 

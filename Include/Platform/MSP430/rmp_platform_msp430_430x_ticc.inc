@@ -12,10 +12,8 @@
     .global             _RMP_MSP430_SP_Kern
     ;The current thread stack
     .global             RMP_SP_Cur
-    ;The interrupt active flag
-    .global             RMP_MSP430_Int_Act
     ;The yield pending flag
-    .global             _RMP_MSP430_Yield_Pend
+    .global             RMP_Sched_Pend
     ;Extract highest priority running thread
     .global             _RMP_Run_High
     ;Handler for MSP430 timer interrupt
@@ -28,17 +26,14 @@ RMP_MSP430_INT_SAVE_430X    .macro
     PUSHM.A             #12,R15
     MOVA                SP,&RMP_SP_Cur
     MOVA                &_RMP_MSP430_SP_Kern,SP
-    MOV                 #1,&RMP_MSP430_Int_Act
     .endm
 
 ;/* Load everything from stack, and deal with pending yields if there is *****/
 RMP_MSP430_INT_LOAD_430X    .macro
-    CMP                 #0,&_RMP_MSP430_Yield_Pend
+    CMP                 #0,&RMP_Sched_Pend
     JEQ                 RMP_MSP430_YIELD_SKIP?
-    MOV                 #0,&_RMP_MSP430_Yield_Pend
     CALLA               #_RMP_Run_High
 RMP_MSP430_YIELD_SKIP?
-    MOV                 #0,&RMP_MSP430_Int_Act
     MOVA                &RMP_SP_Cur,SP
     POPM.A              #12,R15
     BIC                 #0xF0,0(SP)

@@ -6,9 +6,9 @@ Licence     : LGPL v3+; see COPYING for details.
 Description : The configuration file for DSPIC.
 ******************************************************************************/
 
-/* Config Includes ***********************************************************/
+/* Config Include ************************************************************/
 #include "Platform/DSPIC/Chip/PIC24FJ128/rmp_platform_pic24fj128.h"
-/* End Config Includes *******************************************************/
+/* End Config Include ********************************************************/
 
 /* End Of File ***************************************************************/
 

@@ -11,7 +11,7 @@ Description: The configuration file for R5F104PJ.
 #include "iodefine.h"
 
 /* Debugging */
-#define RMP_ASSERT_CORRECT          (0U)
+#define RMP_ASSERT_ENABLE           (1U)
 /* The maximum number of preemption priority levels in the system.
  * This parameter must be divisible by the word length - 32 is usually sufficient */
 #define RMP_PREEMPT_PRIO_NUM        (16U)
@@ -19,13 +19,8 @@ Description: The configuration file for R5F104PJ.
 #define RMP_SLICE_MAX               (32000U)
 /* The maximum number of semaphore counts allowed */
 #define RMP_SEM_CNT_MAX             (100U)
-/* Are we using custom hooks? */
-#define RMP_HOOK_EXTRA              (0U)
 /* The stzck size of the init thread */
 #define RMP_INIT_STACK_SIZE         (256U)
-/* The mask/unmask interrupt operations - can be adjusted to fit your own levels */
-#define RMP_INT_MASK()              RMP_Int_Disable()
-#define RMP_INT_UNMASK()            RMP_Int_Enable()
 
 /* The tick timer value */
 #define RMP_RL78_TICK_VAL           (16000U)

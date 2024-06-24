@@ -6,7 +6,7 @@ Licence     : The Unlicense; see LICENSE for details.
 Description : The performance benchmark for RMP. Do not modify this file; what
               you need to modify is the test chip header and the platform chip
               header.
-              When Yield Max < 0, there's a chance that the _RMP_Yield is not
+              When Yield Max < 0, there's a chance that the RMP_YIELD is not
               implemented correctly and the interrupt is not triggered
               immediately after writing to the software interrupt register.
               There's also a chance that the stack overflowed.
@@ -120,7 +120,11 @@ volatile struct RMP_Msgq Msgq_1;
 volatile struct RMP_Bmq Bmq_1;
 /* Memory pool */
 #ifdef TEST_MEM_POOL
+#ifdef TEST_MEM_POOL_NOINIT
 volatile rmp_ptr_t Pool[TEST_MEM_POOL];
+#else
+volatile rmp_ptr_t Pool[TEST_MEM_POOL]={0U};
+#endif
 #endif
 /* Floating point context */
 #ifdef FLOAT_CONTEXT

@@ -72,8 +72,9 @@ BI : 8358 / 8424 / 8332
 #define SMALL_TERMINAL
 /* Counter read wrapper */
 #define RMP_CNT_READ()              Timer_Read()
-/* Memory pool test switch */
+/* Memory pool test switch, test without initialization */
 #define TEST_MEM_POOL               (2048U)
+#define TEST_MEM_POOL_NOINIT
 /* Minimal build switch */
 /* #define MINIMAL_SIZE */
 /* Pointer size switch */

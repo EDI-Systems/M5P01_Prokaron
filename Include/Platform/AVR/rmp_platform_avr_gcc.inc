@@ -28,10 +28,8 @@ Description : The assembly part of the RMP RTOS. This is for AVR, and
     .extern             _RMP_AVR_SP_Kern
     /* The current thread stack */
     .extern             RMP_SP_Cur
-    /* The interrupt active flag */
-    .extern             RMP_AVR_Int_Act
     /* The yield pending flag */
-    .extern             _RMP_AVR_Yield_Pend
+    .extern             RMP_Sched_Pend
     /* Extract highest priority running thread */
     .extern             _RMP_Run_High
     /* Handler for AVR timer interrupt */
@@ -87,22 +85,16 @@ Description : The assembly part of the RMP RTOS. This is for AVR, and
     LDS                 R18,_RMP_AVR_SP_Kern
     OUT                 RMP_SPH,R19
     OUT                 RMP_SPL,R18
-    LDI                 R18,1                       /* Indicate interrupt active */
-    STS                 RMP_AVR_Int_Act,R18
     CLR                 R1                          /* Clear implicit zero register */
     .endm
 
 /* Finish up the context switch **********************************************/
     .macro              RMP_AVR_SWITCH_POST
-    LDS                 R18,_RMP_AVR_Yield_Pend
+    LDS                 R18,RMP_Sched_Pend
     CPI                 R18,0
     BREQ                1f
-    CLR                 R18
-    STS                 _RMP_AVR_Yield_Pend,R18
     CALL                _RMP_Run_High               /* No need to clean R1 again */
 1:
-    CLR                 R18
-    STS                 RMP_AVR_Int_Act,R18
     LDS                 R19,RMP_SP_Cur+1            /* Load the SP from control block */
     LDS                 R18,RMP_SP_Cur
     OUT                 RMP_SPH,R19

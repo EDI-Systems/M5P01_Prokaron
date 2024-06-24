@@ -14,7 +14,7 @@ Description: The configuration file for TMS570LS0432.
 #include "sci.h"
 
 /* Debugging */
-#define RMP_ASSERT_CORRECT          (0U)
+#define RMP_ASSERT_ENABLE           (1U)
 /* The maximum number of preemption priority levels in the system.
  * This parameter must be divisible by the word length - 32 is usually sufficient */
 #define RMP_PREEMPT_PRIO_NUM        (32U)

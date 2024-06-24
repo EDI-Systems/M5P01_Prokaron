@@ -107,7 +107,7 @@ __RMP_Start:                .asmfunc
     ;Set user SP
     MOVL                    ACC,*-SP[4]
     MOV                     SP,AL
-    ;Jump tp user code
+    ;Jump to user code
     LB                      *XAR7
     .endasmfunc
 ;/* End Function:__RMP_Start *************************************************/

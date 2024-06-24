@@ -6,9 +6,9 @@ Licence     : LGPL v3+; see COPYING for details.
 Description : The platform specific header for RMP.
 ******************************************************************************/
 
-/* Platform Includes *********************************************************/
+/* Platform Include **********************************************************/
 #include "Platform/RV32P/rmp_platform_rv32p.h"
-/* End Platform Includes *****************************************************/
+/* End Platform Include ******************************************************/
 
 /* End Of File ***************************************************************/
 

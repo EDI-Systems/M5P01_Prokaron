@@ -12,7 +12,7 @@ Description : The testbench for ATMEGA328P.
               Also, if you're using Arduino and want to debugWIRE the board,
               make sure to remove the 100nF capacitor between the nRESET pin
               and the USB-Serial or the debugWIRE will refuse to connect.
-              Please refer to the schematic for more details.
+              Please refer to the Arduino schematic for more details.
 
 GCC 4.7.4 (Atmel Studio GNU 5.4.0) -O3
    ___   __  ___ ___

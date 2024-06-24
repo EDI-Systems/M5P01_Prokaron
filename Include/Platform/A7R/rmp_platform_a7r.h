@@ -11,7 +11,7 @@ Description : The header of "rmp_platform_a7r.c".
 #ifndef __RMP_PLATFORM_A7R_DEF__
 #define __RMP_PLATFORM_A7R_DEF__
 /*****************************************************************************/
-/* Basic Types ***************************************************************/
+/* Basic Type ****************************************************************/
 #ifndef __RMP_S32_T__
 #define __RMP_S32_T__
 typedef signed int rmp_s32_t;
@@ -41,29 +41,29 @@ typedef unsigned short rmp_u16_t;
 #define __RMP_U8_T__
 typedef unsigned char rmp_u8_t;
 #endif
-/* End Basic Types ***********************************************************/
+/* End Basic Type ************************************************************/
 
-/* Extended Types ************************************************************/
+/* Extended Type *************************************************************/
 #ifndef __RMP_PTR_T__
 #define __RMP_PTR_T__
-/* The typedef for the pointers - This is the raw style. Pointers must be unsigned */
+/* Pointer */
 typedef rmp_u32_t rmp_ptr_t;
 #endif
 
 #ifndef __RMP_CNT_T__
 #define __RMP_CNT_T__
-/* The typedef for the count variables */
+/* Counter */
 typedef rmp_s32_t rmp_cnt_t;
 #endif
 
 #ifndef __RMP_RET_T__
 #define __RMP_RET_T__
-/* The type for process return value */
+/* Return value */
 typedef rmp_s32_t rmp_ret_t;
 #endif
-/* End Extended Types ********************************************************/
+/* End Extended Type *********************************************************/
 
-/* System macros *************************************************************/
+/* System Macro **************************************************************/
 /* Compiler "extern" keyword setting */
 #define EXTERN                          extern
 /* The order of bits in one CPU machine word */
@@ -81,7 +81,7 @@ typedef rmp_s32_t rmp_ret_t;
 
 /* The CPU and application specific macros are here */
 #include "rmp_platform_a7r_conf.h"
-/* End System macros *********************************************************/
+/* End System Macro **********************************************************/
 
 /* ARMv7-R specific macros ***************************************************/
 /* Mode definitions */

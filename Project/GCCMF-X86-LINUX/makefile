@@ -15,7 +15,7 @@ CFLAGS=-O3 -fmessage-length=0
 WFLAGS=-Wall
 DFLAGS=-g3
 
-OBJDIR=Objects
+OBJDIR=Object
 # End Config ##################################################################
 
 # Source ######################################################################

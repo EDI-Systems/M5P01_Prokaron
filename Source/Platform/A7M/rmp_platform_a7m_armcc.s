@@ -42,8 +42,6 @@
     EXPORT              _RMP_A7M_LSB_Get
     ;Start the first thread
     EXPORT              _RMP_Start
-    ;The PendSV trigger
-    EXPORT              _RMP_Yield
     ;The system pending service routine              
     EXPORT              PendSV_Handler 
     ;The systick timer routine              
@@ -121,21 +119,6 @@ _RMP_A7M_LSB_Get        PROC
     BX                  LR
     ENDP
 ;/* End Function:_RMP_A7M_LSB_Get ********************************************/
-
-;/* Function:_RMP_Yield *******************************************************
-;Description : Trigger a yield to another thread.
-;Input       : None.
-;Output      : None.
-;Return      : None.
-;*****************************************************************************/
-_RMP_Yield              PROC
-    LDR                 R0,=0xE000ED04      ;The NVIC_INT_CTRL register
-    LDR                 R1,=0x10000000      ;Trigger the PendSV          
-    STR                 R1,[R0]
-    ISB
-    BX                  LR
-    ENDP
-;/* End Function:_RMP_Yield **************************************************/
 
 ;/* Function:_RMP_Start *******************************************************
 ;Description : Jump to the user function and will never return from it.

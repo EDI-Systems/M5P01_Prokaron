@@ -42,8 +42,6 @@ The ARM Cortex-M4/7 also include a FPU.
     .global             _RMP_A7M_LSB_Get
     /* Start the first thread */
     .global             _RMP_Start
-    /* The PendSV trigger */
-    .global             _RMP_Yield
     /* The system pending service routine */
     .global             PendSV_Handler
     /* The systick timer routine */
@@ -121,21 +119,6 @@ _RMP_A7M_LSB_Get:
     CLZ                 R0,R0
     BX                  LR
 /* End Function:_RMP_A7M_LSB_Get *********************************************/
-
-/* Function:_RMP_Yield ********************************************************
-Description : Trigger a yield to another thread.
-Input       : None.
-Output      : None.
-Return      : None.
-******************************************************************************/
-    .thumb_func
-_RMP_Yield:
-    LDR                 R0,=0xE000ED04      /* The NVIC_INT_CTRL register */
-    LDR                 R1,=0x10000000      /* Trigger the PendSV */
-    STR                 R1,[R0]
-    ISB 
-    BX                  LR
-/* End Function:_RMP_Yield ***************************************************/
 
 /* Function:_RMP_Start ********************************************************
 Description : Jump to the user function and will never return from it.

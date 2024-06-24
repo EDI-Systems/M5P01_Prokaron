@@ -21,10 +21,8 @@ Description : The assembly part of the RMP RTOS. This is for DSPIC, and
     .extern             __RMP_DSPIC_PSVDSWPAG_Kern
     /* The current thread stack */
     .extern             _RMP_SP_Cur
-    ;The interrupt active flag
-    .extern             _RMP_DSPIC_Int_Act
     ;The yield pending flag
-    .extern             __RMP_DSPIC_Yield_Pend
+    .extern             _RMP_Sched_Pend
     ;Extract highest priority running thread
     .extern             __RMP_Run_High
     ;Handler for DSPIC timer interrupt
@@ -56,19 +54,14 @@ Description : The assembly part of the RMP RTOS. This is for DSPIC, and
     MOV                 __RMP_DSPIC_SP_Kern,W15
     MOV                 __RMP_DSPIC_TBLPAG_Kern,W2
     MOV                 W2,TBLPAG
-    /* Indicate interrupt active */
-    MOV                 #1,W0
-    MOV                 W0,_RMP_DSPIC_Int_Act
     .endm
 
 /* Finish up the context switch **********************************************/
     .macro              RMP_DSPIC_SWITCH_POST
-    CP0                 __RMP_DSPIC_Yield_Pend
+    CP0                 _RMP_Sched_Pend
     BRA                 Z,1f
-    CLR                 __RMP_DSPIC_Yield_Pend
     CALL                __RMP_Run_High
 1:
-    CLR                 _RMP_DSPIC_Int_Act
     /* Switch back to user stack */
     MOV                 _RMP_SP_Cur,W15
     .endm

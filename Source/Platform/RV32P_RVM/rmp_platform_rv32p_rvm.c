@@ -168,30 +168,6 @@ void RMP_Int_Disable(void)
 }
 /* End Function:RMP_Int_Disable **********************************************/
 
-/* Function:RMP_Int_Mask ******************************************************
-Description : Mask interrupts that may do sends.
-Input       : None.
-Output      : None.
-Return      : None.
-******************************************************************************/
-void RMP_Int_Mask(void)
-{
-    RVM_Virt_Int_Mask();
-}
-/* End Function:RMP_Int_Mask *************************************************/
-
-/* Function:RMP_Int_Unmask ****************************************************
-Description : Unmask interrupts that may do sends.
-Input       : None.
-Output      : None.
-Return      : None.
-******************************************************************************/
-void RMP_Int_Unmask(void)
-{
-    RVM_Virt_Int_Unmask();
-}
-/* End Function:RMP_Int_Unmask ***********************************************/
-
 /* Function:_RMP_Yield ********************************************************
 Description : Trigger a yield to another thread. This will trigger the software
               interrupt in RISC-V.

@@ -32,7 +32,7 @@ Description : The header of "rmp_platform_dspic.c".
 #ifndef __RMP_PLATFORM_DSPIC_DEF__
 #define __RMP_PLATFORM_DSPIC_DEF__
 /*****************************************************************************/
-/* Basic Types ***************************************************************/
+/* Basic Type ****************************************************************/
 #ifndef __RMP_S32_T__
 #define __RMP_S32_T__
 typedef signed long rmp_s32_t;
@@ -62,31 +62,31 @@ typedef unsigned short rmp_u16_t;
 #define __RMP_U8_T__
 typedef unsigned char rmp_u8_t;
 #endif
-/* End Basic Types ***********************************************************/
+/* End Basic Type ************************************************************/
 
-/* Extended Types ************************************************************/
+/* Extended Type *************************************************************/
 #ifndef __RMP_PTR_T__
 #define __RMP_PTR_T__
-/* The typedef for the pointers - This is the raw style. Pointers must be unsigned */
+/* Pointer */
 typedef rmp_u16_t rmp_ptr_t;
 #endif
 
 #ifndef __RMP_CNT_T__
 #define __RMP_CNT_T__
-/* The typedef for the count variables */
+/* Counter */
 typedef rmp_s16_t rmp_cnt_t;
 #endif
 
 #ifndef __RMP_RET_T__
 #define __RMP_RET_T__
-/* The type for process return value */
+/* Return value */
 typedef rmp_s16_t rmp_ret_t;
 #endif
-/* End Extended Types ********************************************************/
+/* End Extended Type *********************************************************/
 
-/* System macros *************************************************************/
+/* System Macro **************************************************************/
 /* Compiler "extern" keyword setting */
-#define EXTERN                          extern
+#define RMP_EXTERN                          extern
 /* The order of bits in one CPU machine word */
 #define RMP_WORD_ORDER                  (4U)
 /* The maximum length of char printing */
@@ -103,6 +103,21 @@ typedef rmp_s16_t rmp_ret_t;
 /* The CPU and application specific macros are here */
 #include "rmp_platform_dspic_conf.h"
 
+/* Interrupt masking/unmasking */
+#define RMP_INT_MASK()                  RMP_Int_Mask(0x01U)
+#define RMP_INT_UNMASK()                RMP_Int_Mask(0x00U)
+/* Yield operation */
+#if(RMP_DSPIC_COP_24F_24H!=0U)
+#define RMP_YIELD()                     _RMP_DSPIC_Yield_24F_24H()
+#elif(RMP_DSPIC_COP_24E!=0U)
+#define RMP_YIELD()                     _RMP_DSPIC_Yield_24E()
+#elif(RMP_DSPIC_COP_30F_33F!=0U)
+#define RMP_YIELD()                     _RMP_DSPIC_Yield_30F_33F()
+#elif(RMP_DSPIC_COP_33E_33C!=0U)
+#define RMP_YIELD()                     _RMP_DSPIC_Yield_33E_33C()
+#endif
+/* #define RMP_YIELD_ISR() */
+
 /* Detect wrong configurations here */
 #define RMP_DSPIC_COP_NUM               (RMP_DSPIC_COP_24F_24H+ \
                                          RMP_DSPIC_COP_24E+ \
@@ -111,7 +126,7 @@ typedef rmp_s16_t rmp_ret_t;
 #if(RMP_DSPIC_COP_NUM!=1U)
 #error Must choose a single CPU type.
 #endif
-/* End System macros *********************************************************/
+/* End System Macro **********************************************************/
 
 /* DSPIC33 class specific macros *********************************************/
 
@@ -211,25 +226,22 @@ struct RMP_DSPIC_Stack
 /*****************************************************************************/
 
 /*****************************************************************************/
-#define __EXTERN__
+#define __RMP_EXTERN__
 /* End Private Function ******************************************************/
 
 /* Public Variable ***********************************************************/
 /* __HDR_PUBLIC__ */
 #else
-#define __EXTERN__ EXTERN 
+#define __RMP_EXTERN__ RMP_EXTERN 
 /* __HDR_PUBLIC__ */
 #endif
 
 /*****************************************************************************/
-__EXTERN__ rmp_ptr_t _RMP_DSPIC_SP_Kern;
-__EXTERN__ rmp_ptr_t _RMP_DSPIC_CORCON_Kern;
-__EXTERN__ rmp_ptr_t _RMP_DSPIC_TBLPAG_Kern;
-__EXTERN__ rmp_ptr_t _RMP_DSPIC_DSRPAG_Kern;
-__EXTERN__ rmp_ptr_t _RMP_DSPIC_PSVDSWPAG_Kern;
-
-__EXTERN__ volatile rmp_ptr_t RMP_DSPIC_Int_Act;
-__EXTERN__ volatile rmp_ptr_t _RMP_DSPIC_Yield_Pend;
+__RMP_EXTERN__ rmp_ptr_t _RMP_DSPIC_SP_Kern;
+__RMP_EXTERN__ rmp_ptr_t _RMP_DSPIC_CORCON_Kern;
+__RMP_EXTERN__ rmp_ptr_t _RMP_DSPIC_TBLPAG_Kern;
+__RMP_EXTERN__ rmp_ptr_t _RMP_DSPIC_DSRPAG_Kern;
+__RMP_EXTERN__ rmp_ptr_t _RMP_DSPIC_PSVDSWPAG_Kern;
 /*****************************************************************************/
 
 /* End Public Variable *******************************************************/
@@ -237,35 +249,29 @@ __EXTERN__ volatile rmp_ptr_t _RMP_DSPIC_Yield_Pend;
 /* Public Function ***********************************************************/
 /*****************************************************************************/
 /* Interrupts */
-EXTERN void RMP_Int_Disable(void);
-EXTERN void RMP_Int_Enable(void);
-EXTERN void RMP_Int_Mask(rmp_ptr_t Level);
+RMP_EXTERN void RMP_Int_Disable(void);
+RMP_EXTERN void RMP_Int_Enable(void);
+RMP_EXTERN void RMP_Int_Mask(rmp_ptr_t Level);
 
-EXTERN rmp_ptr_t RMP_DSPIC_MSB_Get(rmp_ptr_t Value);
-EXTERN rmp_ptr_t RMP_DSPIC_LSB_Get(rmp_ptr_t Value);
-EXTERN void _RMP_Start(rmp_ptr_t Entry, rmp_ptr_t Stack);
-EXTERN void _RMP_DSPIC_Yield_24F_24H(void);
-EXTERN void _RMP_DSPIC_Yield_24E(void);
-EXTERN void _RMP_DSPIC_Yield_30F_33F(void);
-EXTERN void _RMP_DSPIC_Yield_33E_33C(void);
-__EXTERN__ void _RMP_Yield(void);
-__EXTERN__ void _RMP_Set_Timer(rmp_ptr_t Ticks);
+RMP_EXTERN rmp_ptr_t RMP_DSPIC_MSB_Get(rmp_ptr_t Value);
+RMP_EXTERN rmp_ptr_t RMP_DSPIC_LSB_Get(rmp_ptr_t Value);
+RMP_EXTERN void _RMP_Start(rmp_ptr_t Entry, rmp_ptr_t Stack);
+RMP_EXTERN void _RMP_DSPIC_Yield_24F_24H(void);
+RMP_EXTERN void _RMP_DSPIC_Yield_24E(void);
+RMP_EXTERN void _RMP_DSPIC_Yield_30F_33F(void);
+RMP_EXTERN void _RMP_DSPIC_Yield_33E_33C(void);
 
 /* Initialization */
-__EXTERN__ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
-                                     rmp_ptr_t Size,
-                                     rmp_ptr_t Entry,
-                                     rmp_ptr_t Param);
-__EXTERN__ void _RMP_Lowlvl_Init(void);
-__EXTERN__ void RMP_Putchar(char Char);
-__EXTERN__ void _RMP_Plat_Hook(void);
-
-/* Platform-dependent hooks */
-__EXTERN__ void _RMP_Clear_Soft_Flag(void);
-__EXTERN__ void _RMP_Clear_Timer_Flag(void);
+__RMP_EXTERN__ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
+                                         rmp_ptr_t Size,
+                                         rmp_ptr_t Entry,
+                                         rmp_ptr_t Param);
+__RMP_EXTERN__ void _RMP_Lowlvl_Init(void);
+__RMP_EXTERN__ void RMP_Putchar(char Char);
+__RMP_EXTERN__ void _RMP_Plat_Hook(void);
 /*****************************************************************************/
-/* Undefine "__EXTERN__" to avoid redefinition */
-#undef __EXTERN__
+/* Undefine "__RMP_EXTERN__" to avoid redefinition */
+#undef __RMP_EXTERN__
 /* __RMP_PLATFORM_DSPIC_MEMBER__ */
 #endif
 /* !(defined __HDR_DEF__||defined __HDR_STRUCT__) */

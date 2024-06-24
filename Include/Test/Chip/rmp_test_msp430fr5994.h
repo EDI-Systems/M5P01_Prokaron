@@ -4,7 +4,7 @@ Author      : pry
 Date        : 22/07/2017
 Licence     : The Unlicense; see LICENSE for details.
 Description : The testbench for MSP430FR5994.
-              This test is slow. It takes typ.1 min 30 sec to run @ 16MHz.
+              This test is slow. It takes typ.3 min to run @ 16MHz.
 
 TICC V21.6.1LTS -O4 -mf5 (OS timer disabled)
     ___   __  ___ ___
@@ -53,7 +53,7 @@ ISR Blocking message queue         : 1464 / 1687 / 1462
 /* Counter read wrapper */
 #define RMP_CNT_READ()      (TA1R)
 /* Memory pool test switch */
-#define TEST_MEM_POOL       (8192U)
+#define TEST_MEM_POOL       (4096U)
 #pragma PERSISTENT(Pool)
 /* Minimal build switch */
 /* #define MINIMAL_SIZE */

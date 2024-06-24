@@ -13,7 +13,7 @@ Description: The configuration file for STM32F030F4.
 #include "core_cm0.h"
 
 /* Debugging */
-#define RMP_ASSERT_CORRECT          (0U)
+#define RMP_ASSERT_ENABLE           (1U)
 /* The maximum number of preemption priority levels in the system.
  * This parameter must be divisible by the word length - 32 is usually sufficient */
 #define RMP_PREEMPT_PRIO_NUM        (32U)
@@ -21,16 +21,9 @@ Description: The configuration file for STM32F030F4.
 #define RMP_SLICE_MAX               (100000U)
 /* The maximum number of semaphore counts allowed */
 #define RMP_SEM_CNT_MAX             (1000U)
-/* Are we using custom hooks? */
-#define RMP_HOOK_EXTRA              (0U)
 /* The stack size of the init thread */
 #define RMP_INIT_STACK_SIZE         (256U)
-/* The mask/unmask interrupt operations */
-#define RMP_INT_MASK()              RMP_Int_Disable()
-#define RMP_INT_UNMASK()            RMP_Int_Enable()
 
-/* What is the NVIC priority grouping? */
-#define RMP_A6M_NVIC_GROUPING       RMP_A6M_NVIC_GROUPING_P2S6
 /* What is the Systick value? */
 #define RMP_A6M_SYSTICK_VAL         (3600U)
 
@@ -38,7 +31,7 @@ Description: The configuration file for STM32F030F4.
  * STM32F03x APB1<48MHz, APB2<48MHz.
  * This is the default initialization sequence. If you wish to supply
  * your own, just redirect this macro to a custom function, or do your
- * initialization stuff in the initialization hook (RMP_Start_Hook). */
+ * initialization stuff in the initialization hook (RMP_START_HOOK). */
 #define RMP_A6M_LOWLVL_INIT() \
 do \
 { \
@@ -78,7 +71,7 @@ do \
     HAL_GPIO_Init(GPIOA,&GPIO_Init); \
     /* UART initialization */ \
     UART1_Handle.Instance=USART1; \
-    UART1_Handle.Init.BaudRate=115200; \
+    UART1_Handle.Init.BaudRate=115200U; \
     UART1_Handle.Init.WordLength=UART_WORDLENGTH_8B; \
     UART1_Handle.Init.StopBits=UART_STOPBITS_1; \
     UART1_Handle.Init.Parity=UART_PARITY_NONE; \
@@ -89,9 +82,9 @@ do \
     RMP_A6M_PUTCHAR('\n'); \
     \
     /* Set the priority of timer, svc and faults to the lowest */ \
-    NVIC_SetPriority(SVC_IRQn, 0xFF); \
-    NVIC_SetPriority(PendSV_IRQn, 0xFF); \
-    NVIC_SetPriority(SysTick_IRQn, 0xFF); \
+    NVIC_SetPriority(SVC_IRQn, 0xFFU); \
+    NVIC_SetPriority(PendSV_IRQn, 0xFFU); \
+    NVIC_SetPriority(SysTick_IRQn, 0xFFU); \
     /* Configure systick */ \
     SysTick_Config(RMP_A6M_SYSTICK_VAL); \
 } \

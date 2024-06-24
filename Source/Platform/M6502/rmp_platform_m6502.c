@@ -81,10 +81,6 @@ void _RMP_Lowlvl_Init(void)
     RMP_Int_Disable();
     
     RMP_M6502_LOWLVL_INIT();
-
-    /* Clear flags */
-    RMP_M6502_Int_Act=0U;
-    _RMP_M6502_Yield_Pend=0U;
 }
 /* End Function:_RMP_Lowlvl_Init *********************************************/
 
@@ -112,22 +108,7 @@ void RMP_Putchar(char Char)
 }
 /* End Function:RMP_Putchar **************************************************/
 
-/* Function:_RMP_Yield ********************************************************
-Description : Trigger a yield to another thread.
-Input       : None.
-Output      : None.
-Return      : None.
-******************************************************************************/
-void _RMP_Yield(void)
-{
-    if(RMP_M6502_Int_Act!=0U)
-        _RMP_M6502_Yield_Pend=1U;
-    else
-        _RMP_M6502_Yield();
-}
-/* End Function:_RMP_Yield ***************************************************/
-
-/* Function:_RMP_M6502_Tim_Handler **********************************************
+/* Function:_RMP_M6502_Tim_Handler ********************************************
 Description : Timer interrupt routine for DSPIC.
 Input       : None
 Output      : None.
@@ -139,7 +120,7 @@ void _RMP_M6502_Tim_Handler(void)
 
     _RMP_Tim_Handler(1U);
 }
-/* End Function:_RMP_M6502_Tim_Handler *****************************************/
+/* End Function:_RMP_M6502_Tim_Handler ***************************************/
 
 /* End Of File ***************************************************************/
 

@@ -11,7 +11,7 @@ Description: The configuration file for SPCE061A.
 #include "SPCE061V004.H"
 
 /* Debugging */
-#define RMP_ASSERT_CORRECT          (0U)
+#define RMP_ASSERT_ENABLE           (1U)
 /* The maximum number of preemption priority levels in the system.
  * This parameter must be divisible by the word length - 16 is usually sufficient */
 #define RMP_PREEMPT_PRIO_NUM        (16U)
@@ -19,13 +19,8 @@ Description: The configuration file for SPCE061A.
 #define RMP_SLICE_MAX               (10000U)
 /* The maximum number of semaphore counts allowed */
 #define RMP_SEM_CNT_MAX             (1000U)
-/* Are we using custom hooks? */
-#define RMP_HOOK_EXTRA              (0U)
 /* The stack size of the init thread */
 #define RMP_INIT_STACK_SIZE         (128U)
-/* The mask/unmask interrupt operations */
-#define RMP_INT_MASK()              RMP_Int_Mask(0x01U)
-#define RMP_INT_UNMASK()            RMP_Int_Mask(0x00U)
 
 /* Tick timer value decided in IRQ - 1/1024s */
 #define RMP_UNSP_TICK_VAL           (C_IRQ4_1KHz)

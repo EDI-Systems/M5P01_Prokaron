@@ -25,25 +25,6 @@ Description : The platform specific file for MSP430.
 #undef __HDR_PUBLIC__
 /* End Include ***************************************************************/
 
-/* Function:_RMP_Yield ********************************************************
-Description : Trigger a yield to another thread.
-Input       : None.
-Output      : None.
-Return      : None.
-******************************************************************************/
-void _RMP_Yield(void)
-{
-    if(RMP_MSP430_Int_Act!=0U)
-        _RMP_MSP430_Yield_Pend=1U;
-    else
-#if(RMP_MSP430_COP_430X!=0U)
-        _RMP_MSP430_Yield_430X();
-#else
-        _RMP_MSP430_Yield_NONE();
-#endif
-}
-/* End Function:_RMP_Yield ***************************************************/
-
 /* Function:_RMP_Stack_Init ***************************************************
 Description : Initiate the process stack when trying to start a process. Never
               call this function in user application.
@@ -115,10 +96,6 @@ void _RMP_Lowlvl_Init(void)
     RMP_Int_Disable();
     
     RMP_MSP430_LOWLVL_INIT();
-
-    /* Clear flags */
-    RMP_MSP430_Int_Act=0U;
-    _RMP_MSP430_Yield_Pend=0U;
 }
 /* End Function:_RMP_Lowlvl_Init *********************************************/
 

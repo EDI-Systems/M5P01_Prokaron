@@ -13,7 +13,7 @@ Description: The configuration file for MSP430G2553.
 #include "msp430g2553.h"
 
 /* Debugging */
-#define RMP_ASSERT_CORRECT          (0U)
+#define RMP_ASSERT_ENABLE           (1U)
 /* The maximum number of preemption priority levels in the system.
  * This parameter must be divisible by the word length - 16 is usually sufficient */
 #define RMP_PREEMPT_PRIO_NUM        (16U)
@@ -21,13 +21,17 @@ Description: The configuration file for MSP430G2553.
 #define RMP_SLICE_MAX               (30000U)
 /* The maximum number of semaphore counts allowed */
 #define RMP_SEM_CNT_MAX             (30000U)
-/* Are we using custom hooks? - yes, tickless */
-#define RMP_HOOK_EXTRA              (1U)
 /* The stzck size of the init thread */
 #define RMP_INIT_STACK_SIZE         (64U)
-/* The mask/unmask interrupt operations */
-#define RMP_INT_MASK()              RMP_Int_Disable()
-#define RMP_INT_UNMASK()            RMP_Int_Enable()
+/* Custom hooks */
+extern void RMP_Start_Hook(void);
+extern void RMP_Sched_Hook(void);
+extern void RMP_Dly_Hook(rmp_u16_t Slice);
+extern void RMP_Tim_Hook(rmp_u16_t Slice);
+#define RMP_START_HOOK()            RMP_Start_Hook()
+#define RMP_SCHED_HOOK()            RMP_Sched_Hook()
+#define RMP_DLY_HOOK(SLICE)         RMP_Dly_Hook(Slice)
+#define RMP_TIM_HOOK(SLICE)         RMP_Tim_Hook(Slice)
 
 /* We are using MSP430X or not */
 #define RMP_MSP430_COP_430X         (0U)

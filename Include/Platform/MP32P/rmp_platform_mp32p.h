@@ -63,7 +63,7 @@ Description : The header of "rmp_platform_mp32p.c".
 #ifndef __RMP_PLATFORM_MP32P_DEF__
 #define __RMP_PLATFORM_MP32P_DEF__
 /*****************************************************************************/
-/* Basic Types ***************************************************************/
+/* Basic Type ****************************************************************/
 #ifndef __RMP_S32__
 #define __RMP_S32__
 typedef signed int rmp_s32_t;
@@ -93,31 +93,31 @@ typedef unsigned short rmp_u16_t;
 #define __RMP_U8__
 typedef unsigned char rmp_u8_t;
 #endif
-/* End Basic Types ***********************************************************/
+/* End Basic Type ************************************************************/
 
-/* Extended Types ************************************************************/
+/* Extended Type *************************************************************/
 #ifndef __RMP_PTR_T__
 #define __RMP_PTR_T__
-/* The typedef for the pointers - This is the raw style. Pointers must be unsigned */
+/* Pointer */
 typedef rmp_u32_t rmp_ptr_t;
 #endif
 
 #ifndef __RMP_CNT_T__
 #define __RMP_CNT_T__
-/* The typedef for the count variables */
+/* Counter */
 typedef rmp_s32_t rmp_cnt_t;
 #endif
 
 #ifndef __RMP_RET_T__
 #define __RMP_RET_T__
-/* The type for process return value */
+/* Return value */
 typedef rmp_s32_t rmp_ret_t;
 #endif
-/* End Extended Types ********************************************************/
+/* End Extended Type *********************************************************/
 
-/* System macros *************************************************************/
+/* System Macro **************************************************************/
 /* Compiler "extern" keyword setting */
-#define EXTERN                          extern
+#define RMP_EXTERN                      extern
 /* The order of bits in one CPU machine word */
 #define RMP_WORD_ORDER                  (5U)
 /* The maximum length of char printing */
@@ -134,11 +134,34 @@ typedef rmp_s32_t rmp_ret_t;
 /* The CPU and application specific macros are here */
 #include "rmp_platform_mp32p_conf.h"
 
+/* Interrupt masking/unmasking */
+#define RMP_INT_MASK()                  RMP_Int_Mask(0x01U)
+#define RMP_INT_UNMASK()                RMP_Int_Mask(0x00U)
+/* Yield operation */
+#if(RMP_MP32P_COP_DSPASE==0U)
+#if(RMP_MP32P_COP_FR64!=0U)
+#define RMP_YIELD()                     _RMP_MP32P_Yield_FR64()
+#elif(RMP_MP32P_COP_FR32!=0U)
+#define RMP_YIELD()                     _RMP_MP32P_Yield_FR32()
+#else
+#define RMP_YIELD()                     _RMP_MP32P_Yield_NONE()
+#endif
+#else
+#if(RMP_MP32P_COP_FR64!=0U)
+#define RMP_YIELD()                     _RMP_MP32P_Yield_DSPASE_FR64()
+#elif(RMP_MP32P_COP_FR32!=0U)
+#define RMP_YIELD()                     _RMP_MP32P_Yield_DSPASE_FR32()
+#else
+#define RMP_YIELD()                     _RMP_MP32P_Yield_DSPASE()
+#endif
+#endif
+/* #define RMP_YIELD_ISR() */
+
 /* Detect wrong configurations here */
 #if((RMP_MP32P_COP_FR32!=0U)&&(RMP_MP32P_COP_FR64!=0U))
 #error Must choose no more than one FPU type.
 #endif
-/* End System macros *********************************************************/
+/* End System Macro **********************************************************/
 
 /* MIPS-M class specific macros **********************************************/
 /* Bits within the CP0 STATUS register */
@@ -325,22 +348,19 @@ struct RMP_MP32P_Stack
 /*****************************************************************************/
 
 /*****************************************************************************/
-#define __EXTERN__
+#define __RMP_EXTERN__
 /* End Private Function ******************************************************/
 
 /* Public Variable ***********************************************************/
 /* __HDR_PUBLIC__ */
 #else
-#define __EXTERN__ EXTERN 
+#define __RMP_EXTERN__ RMP_EXTERN 
 /* __HDR_PUBLIC__ */
 #endif
 
 /*****************************************************************************/
-__EXTERN__ volatile rmp_ptr_t _RMP_MP32P_SP_Kern;
-__EXTERN__ volatile rmp_ptr_t _RMP_MP32P_GP_Kern;
-
-__EXTERN__ volatile rmp_ptr_t RMP_MP32P_Int_Act;
-__EXTERN__ volatile rmp_ptr_t _RMP_MP32P_Yield_Pend;
+__RMP_EXTERN__ volatile rmp_ptr_t _RMP_MP32P_SP_Kern;
+__RMP_EXTERN__ volatile rmp_ptr_t _RMP_MP32P_GP_Kern;
 /*****************************************************************************/
 
 /* End Public Variable *******************************************************/
@@ -348,37 +368,36 @@ __EXTERN__ volatile rmp_ptr_t _RMP_MP32P_Yield_Pend;
 /* Public Function ***********************************************************/
 /*****************************************************************************/
 /* Interrupts */
-EXTERN void RMP_Int_Disable(void);
-EXTERN void RMP_Int_Enable(void);
-EXTERN void RMP_Int_Mask(rmp_ptr_t Level);
+RMP_EXTERN void RMP_Int_Disable(void);
+RMP_EXTERN void RMP_Int_Enable(void);
+RMP_EXTERN void RMP_Int_Mask(rmp_ptr_t Level);
 
-EXTERN rmp_ptr_t _RMP_MP32P_MSB_Get(rmp_ptr_t Value);
-EXTERN rmp_ptr_t _RMP_MP32P_LSB_Get(rmp_ptr_t Value);
+RMP_EXTERN rmp_ptr_t _RMP_MP32P_MSB_Get(rmp_ptr_t Value);
+RMP_EXTERN rmp_ptr_t _RMP_MP32P_LSB_Get(rmp_ptr_t Value);
 
-EXTERN void _RMP_Start(rmp_ptr_t Entry, rmp_ptr_t Stack);
+RMP_EXTERN void _RMP_Start(rmp_ptr_t Entry, rmp_ptr_t Stack);
 
-EXTERN void _RMP_MP32P_Yield_NONE(void);
-EXTERN void _RMP_MP32P_Yield_DSPASE(void);
-EXTERN void _RMP_MP32P_Yield_FR32(void);
-EXTERN void _RMP_MP32P_Yield_FR64(void);
-EXTERN void _RMP_MP32P_Yield_DSPASE_FR32(void);
-EXTERN void _RMP_MP32P_Yield_DSPASE_FR64(void);
-__EXTERN__ void _RMP_Yield(void);
+RMP_EXTERN void _RMP_MP32P_Yield_NONE(void);
+RMP_EXTERN void _RMP_MP32P_Yield_DSPASE(void);
+RMP_EXTERN void _RMP_MP32P_Yield_FR32(void);
+RMP_EXTERN void _RMP_MP32P_Yield_FR64(void);
+RMP_EXTERN void _RMP_MP32P_Yield_DSPASE_FR32(void);
+RMP_EXTERN void _RMP_MP32P_Yield_DSPASE_FR64(void);
 
 /* Initialization */
-__EXTERN__ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
-                                     rmp_ptr_t Size,
-                                     rmp_ptr_t Entry,
-                                     rmp_ptr_t Param);
-__EXTERN__ void _RMP_Lowlvl_Init(void);
-__EXTERN__ void RMP_Putchar(char Char);
-__EXTERN__ void _RMP_Plat_Hook(void);
+__RMP_EXTERN__ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
+                                         rmp_ptr_t Size,
+                                         rmp_ptr_t Entry,
+                                         rmp_ptr_t Param);
+__RMP_EXTERN__ void _RMP_Lowlvl_Init(void);
+__RMP_EXTERN__ void RMP_Putchar(char Char);
+__RMP_EXTERN__ void _RMP_Plat_Hook(void);
 
 /* Timer handler routine */
-__EXTERN__ void _RMP_MP32P_Tim_Handler(void);
+__RMP_EXTERN__ void _RMP_MP32P_Tim_Handler(void);
 /*****************************************************************************/
-/* Undefine "__EXTERN__" to avoid redefinition */
-#undef __EXTERN__
+/* Undefine "__RMP_EXTERN__" to avoid redefinition */
+#undef __RMP_EXTERN__
 /* __RMP_PLATFORM_MP32P_MEMBER__ */
 #endif
 /* !(defined __HDR_DEF__||defined __HDR_STRUCT__) */

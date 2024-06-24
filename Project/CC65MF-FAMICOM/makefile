@@ -17,7 +17,7 @@ WFLAGS=
 DFLAGS=-g
 LFLAGS=
 
-OBJDIR=Objects
+OBJDIR=Object
 CC65_HOME=C:/Toolchain/cc65
 # End Config ##################################################################
 

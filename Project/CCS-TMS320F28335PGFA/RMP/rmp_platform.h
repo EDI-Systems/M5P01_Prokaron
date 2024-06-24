@@ -6,9 +6,9 @@ Licence     : LGPL v3+; see COPYING for details.
 Description : The platform specific types for RMP.
 ******************************************************************************/
 
-/* Platform Includes *********************************************************/
+/* Platform Include **********************************************************/
 #include "Platform/C28X/rmp_platform_c28x.h"
-/* End Platform Includes *****************************************************/
+/* End Platform Include ******************************************************/
 
 /* End Of File ***************************************************************/
 

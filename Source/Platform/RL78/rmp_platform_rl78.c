@@ -75,9 +75,6 @@ void _RMP_Lowlvl_Init(void)
     RMP_Int_Disable();
 
     RMP_RL78_LOWLVL_INIT();
-
-    RMP_RL78_Int_Act=0U;
-    _RMP_RL78_Yield_Pend=0U;
 }
 /* End Function:_RMP_Lowlvl_Init *********************************************/
 
@@ -104,21 +101,6 @@ void RMP_Putchar(char Char)
     RMP_RL78_PUTCHAR(Char);
 }
 /* End Function:RMP_Putchar **************************************************/
-
-/* Function:_RMP_Yield ********************************************************
-Description : Trigger a yield to another thread.
-Input       : None.
-Output      : None.
-Return      : None.
-******************************************************************************/
-void _RMP_Yield(void)
-{
-    if(RMP_RL78_Int_Act!=0U)
-        _RMP_RL78_Yield_Pend=1U;
-    else
-        _RMP_RL78_Yield();
-}
-/* End Function:_RMP_Yield ***************************************************/
 
 /* Function:_RMP_RL78_Tim_Handler *********************************************
 Description : Timer interrupt routine for RL78;
