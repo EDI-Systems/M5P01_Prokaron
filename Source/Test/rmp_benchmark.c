@@ -120,6 +120,7 @@ volatile struct RMP_Msgq Msgq_1;
 volatile struct RMP_Bmq Bmq_1;
 /* Memory pool */
 #ifdef TEST_MEM_POOL
+/* In case some stupid toolchain emits this into data section */
 #ifdef TEST_MEM_POOL_NOINIT
 volatile rmp_ptr_t Pool[TEST_MEM_POOL];
 #else

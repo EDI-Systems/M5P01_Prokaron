@@ -34,7 +34,7 @@ Click **[HERE](README.md)** for English version.
 
 ## 快速演示
 ### 可在Linux上直接运行的Demo
-&emsp;&emsp;到 **[这里](/Project/GCCMF-X86-LINUX)** 编译x86-32位Linux系统上可运行的二进制，观察性能测试的运行结果！
+&emsp;&emsp;到 **[这里](/Project/GCCMF-X86L)** 编译x86-32位Linux系统上可运行的二进制，观察性能测试的运行结果！
 
 ### 可在红白机（FAMICOM/NES）上直接运行的Demo
 &emsp;&emsp;从 **[这里](/Document/Public/Demo/RMP.nes)** 下载“游戏”镜像，把它装入你喜欢的模拟器（或者支持南梦宫163扩展芯片的烧录卡并插入实机），观察性能测试的运行结果！

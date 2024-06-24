@@ -196,9 +196,9 @@ typedef rmp_s16_t rmp_ret_t;
 #define RMP_INT_UNMASK()                RMP_Int_Mask(0x00U)
 /* Yield operation */
 #if(RMP_UNSP_COP_SPV2!=0U)
-#define RMP_YIELD()                     _RMP_UNSP_Yield_SPV2();
+#define RMP_YIELD()                     _RMP_UNSP_Yield_SPV2()
 #else
-#define RMP_YIELD()                     _RMP_UNSP_Yield_SPV1();
+#define RMP_YIELD()                     _RMP_UNSP_Yield_SPV1()
 #endif
 /* #define RMP_YIELD_ISR() */
 /* End System Macro **********************************************************/
