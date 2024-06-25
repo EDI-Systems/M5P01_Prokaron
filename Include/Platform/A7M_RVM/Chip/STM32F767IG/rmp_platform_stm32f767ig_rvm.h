@@ -18,12 +18,15 @@ Description: The configuration file for STM32F767IG, on RVM.
 #define RMP_SEM_CNT_MAX             (1000)
 /* Are we using custom hooks? */
 #define RMP_HOOK_EXTRA              (0U)
-/* The stzck size of the init thread */
+/* The stack size of the init thread */
 #define RMP_INIT_STACK_SIZE         (1024U)
 
-/* The mask/unmask interrupt operations */
-#define RMP_INT_MASK()              RMP_Int_Mask()
-#define RMP_INT_UNMASK()            RMP_Int_Unmask()
+/* GUI */
+#define RMP_GUI_ENABLE              (0U)
+/* Anti-aliasing */
+#define RMP_GUI_ANTIALIAS_ENABLE    (0U)
+/* Widgets */
+#define RMP_GUI_WIDGET_ENABLE       (0U)
 
 /* What is the FPU type? */
 #define RMP_A7M_RVM_COP_FPV4_SP     (1U)

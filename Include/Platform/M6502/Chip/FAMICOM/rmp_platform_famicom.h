@@ -22,6 +22,13 @@ Description: The configuration file for FAMICOM.
 /* The stack size of the init thread */
 #define RMP_INIT_STACK_SIZE         (256U)
 
+/* GUI */
+#define RMP_GUI_ENABLE              (0U)
+/* Anti-aliasing */
+#define RMP_GUI_ANTIALIAS_ENABLE    (0U)
+/* Widgets */
+#define RMP_GUI_WIDGET_ENABLE       (0U)
+
 /* Zeropage size - must match what the compiler/linker script says */
 #define RMP_M6502_ZP_SIZE           (0x001AU)
 
@@ -35,7 +42,7 @@ Description: The configuration file for FAMICOM.
 /* Other low-level initialization stuff - clock and serial.
  * This is the default initialization sequence. If you wish to supply
  * your own, just redirect this macro to a custom function, or do your
- * initialization stuff in the initialization hook (RMP_Start_Hook). */
+ * initialization stuff in the initialization hook (RMP_START_HOOK). */
 #define RMP_M6502_LOWLVL_INIT() \
 do \
 { \

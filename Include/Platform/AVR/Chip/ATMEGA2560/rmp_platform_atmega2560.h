@@ -22,6 +22,13 @@ Description: The configuration file for ATMEGA2560.
 /* The stack size of the init thread */
 #define RMP_INIT_STACK_SIZE         (256U)
 
+/* GUI */
+#define RMP_GUI_ENABLE              (0U)
+/* Anti-aliasing */
+#define RMP_GUI_ANTIALIAS_ENABLE    (0U)
+/* Widgets */
+#define RMP_GUI_WIDGET_ENABLE       (0U)
+
 /* What is the Systick value? 50U = 12800 cycles = 0.8ms */
 #define RMP_AVR_TICK_VAL            (50U)
 /* Does the chip have RAMP, EIND, and is it XMEGA? */
@@ -32,7 +39,7 @@ Description: The configuration file for ATMEGA2560.
 /* Other low-level initialization stuff - clock and serial.
  * This is the default initialization sequence. If you wish to supply
  * your own, just redirect this macro to a custom function, or do your
- * initialization stuff in the initialization hook (RMP_Start_Hook). */
+ * initialization stuff in the initialization hook (RMP_START_HOOK). */
 #define RMP_AVR_LOWLVL_INIT() \
 do \
 { \

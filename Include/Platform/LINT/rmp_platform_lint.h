@@ -63,7 +63,7 @@ typedef rmp_s32_t rmp_ret_t;
 
 /* System Macro **************************************************************/
 /* Compiler "extern" keyword setting */
-#define EXTERN                          extern
+#define RMP_EXTERN                      extern
 #define RMP_WORD_ORDER                  (4U)
 /* The maximum length of char printing - no need to change this in most cases */
 #define RMP_DEBUG_PRINT_MAX             (128U)
@@ -92,8 +92,15 @@ typedef rmp_s32_t rmp_ret_t;
 #define RMP_SLICE_MAX                   (10000U)
 /* The maximum number of semaphore counts allowed */
 #define RMP_SEM_CNT_MAX                 (1000U)
-/* The stzck size of the init thread */
+/* The stack size of the init thread */
 #define RMP_INIT_STACK_SIZE             (128U)
+
+/* GUI */
+#define RMP_GUI_ENABLE              (0U)
+/* Anti-aliasing */
+#define RMP_GUI_ANTIALIAS_ENABLE    (0U)
+/* Widgets */
+#define RMP_GUI_WIDGET_ENABLE       (0U)
 
 /* Other low-level initialization stuff */
 #define RMP_LINT_LOWLVL_INIT()          while(0)
@@ -157,13 +164,13 @@ struct RMP_LINT_Stack
 /*****************************************************************************/
 
 /*****************************************************************************/
-#define __EXTERN__
+#define __RMP_EXTERN__
 /* End Private Function ******************************************************/
 
 /* Public Variable ***********************************************************/
 /* __HDR_PUBLIC__ */
 #else
-#define __EXTERN__ EXTERN 
+#define __RMP_EXTERN__ RMP_EXTERN 
 /* __HDR_PUBLIC__ */
 #endif
 
@@ -176,23 +183,24 @@ struct RMP_LINT_Stack
 /* Public Function ***********************************************************/
 /*****************************************************************************/
 /* Interrupts */
-__EXTERN__ void RMP_Int_Disable(void);
-__EXTERN__ void RMP_Int_Enable(void);
+__RMP_EXTERN__ void RMP_Int_Disable(void);
+__RMP_EXTERN__ void RMP_Int_Enable(void);
 
-__EXTERN__ void _RMP_Start(rmp_ptr_t Entry, rmp_ptr_t Stack);
-__EXTERN__ void _RMP_Yield(void);
+__RMP_EXTERN__ void _RMP_Start(rmp_ptr_t Entry,
+                               rmp_ptr_t Stack);
+__RMP_EXTERN__ void _RMP_Yield(void);
 
 /* Initialization */
-__EXTERN__ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
-                                     rmp_ptr_t Size,
-                                     rmp_ptr_t Entry,
-                                     rmp_ptr_t Param);
-__EXTERN__ void _RMP_Lowlvl_Init(void);
-__EXTERN__ void RMP_Putchar(char Char);
-__EXTERN__ void _RMP_Plat_Hook(void);
+__RMP_EXTERN__ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
+                                         rmp_ptr_t Size,
+                                         rmp_ptr_t Entry,
+                                         rmp_ptr_t Param);
+__RMP_EXTERN__ void _RMP_Lowlvl_Init(void);
+__RMP_EXTERN__ void RMP_Putchar(char Char);
+__RMP_EXTERN__ void _RMP_Plat_Hook(void);
 /*****************************************************************************/
-/* Undefine "__EXTERN__" to avoid redefinition */
-#undef __EXTERN__
+/* Undefine "__RMP_EXTERN__" to avoid redefinition */
+#undef __RMP_EXTERN__
 /* __RMP_PLATFORM_LINT_MEMBER__ */
 #endif
 /* !(defined __HDR_DEF__||defined __HDR_STRUCT__) */
