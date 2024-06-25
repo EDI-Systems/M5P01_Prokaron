@@ -19,6 +19,13 @@ Description: The configuration file for STM32F405RG.
 /* The stack size of the init thread */
 #define RMP_INIT_STACK_SIZE         (1024U)
 
+/* GUI */
+#define RMP_GUI_ENABLE              (0U)
+/* Anti-aliasing */
+#define RMP_GUI_ANTIALIAS_ENABLE    (0U)
+/* Widgets */
+#define RMP_GUI_WIDGET_ENABLE       (0U)
+
 /* What is the FPU type? */
 #define RMP_A7M_RVM_COP_FPV4_SP     (1U)
 #define RMP_A7M_RVM_COP_FPV5_SP     (0U)

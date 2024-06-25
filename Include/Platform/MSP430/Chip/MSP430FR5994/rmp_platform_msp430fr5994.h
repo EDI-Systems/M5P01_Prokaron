@@ -20,8 +20,15 @@ Description: The configuration file for MSP430FR5994.
 #define RMP_SLICE_MAX               (10000U)
 /* The maximum number of semaphore counts allowed */
 #define RMP_SEM_CNT_MAX             (1000U)
-/* The stzck size of the init thread */
+/* The stack size of the init thread */
 #define RMP_INIT_STACK_SIZE         (128U)
+
+/* GUI */
+#define RMP_GUI_ENABLE              (0U)
+/* Anti-aliasing */
+#define RMP_GUI_ANTIALIAS_ENABLE    (0U)
+/* Widgets */
+#define RMP_GUI_WIDGET_ENABLE       (0U)
 
 /* The tick timer value */
 #define RMP_MSP430_TICK_VAL         (10000U)
@@ -31,7 +38,7 @@ Description: The configuration file for MSP430FR5994.
 /* Other low-level initialization stuff - clock and serial. 
  * This is the default initialization sequence. If you wish to supply
  * your own, just redirect this macro to a custom function, or do your
- * initialization stuff in the initialization hook (RMP_Start_Hook). */
+ * initialization stuff in the initialization hook (RMP_START_HOOK). */
 #define RMP_MSP430_LOWLVL_INIT() \
 do \
 { \

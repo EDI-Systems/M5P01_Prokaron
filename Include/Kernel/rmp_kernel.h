@@ -181,7 +181,12 @@ Description : The header file for the kernel.
 #define RMP_CUR_URBL                (10U)
 #define RMP_CUR_CROSS               (11U)
 #endif
-    
+
+/* Logging macro */
+#ifndef RMP_LOG
+#define RMP_LOG                     RMP_Log
+#endif
+
 /* Assert macro - used only in internal development */
 #if(RMP_ASSERT_ENABLE!=0U)
 #define RMP_ASSERT(X) \
@@ -189,15 +194,7 @@ do \
 { \
     if(!(X)) \
     { \
-        RMP_DBG_S("\r\n***\r\nKernel panic :\r\n"); \
-        RMP_DBG_S(__FILE__); \
-        RMP_DBG_S(" , Line "); \
-        RMP_DBG_I(__LINE__); \
-        RMP_DBG_S("\r\n"); \
-        RMP_DBG_S(__DATE__); \
-        RMP_DBG_S(" , "); \
-        RMP_DBG_S(__TIME__); \
-        RMP_DBG_S("\r\n"); \
+        RMP_LOG(__FILE__,__LINE__,__DATE__,__TIME__); \
         while(1); \
     } \
 } \
@@ -406,10 +403,7 @@ static rmp_ret_t _RMP_Mem_Search(volatile void* Pool,
                                  rmp_ptr_t* FLI_Level,
                                  rmp_ptr_t* SLI_Level);
 
-#if((defined RMP_CTL_WHITE)&&(defined RMP_CTL_LGREY)&& \
-    (defined RMP_CTL_GREY)&&(defined RMP_CTL_DGREY)&& \
-    (defined RMP_CTL_DARK)&&(defined RMP_CTL_DDARK)&& \
-    (defined RMP_CTL_BLACK))
+#if(RMP_GUI_ANTIALIAS_ENABLE!=0U)
 static void RMP_Radiobtn_Circle(rmp_cnt_t Coord_X,
                                 rmp_cnt_t Coord_Y,
                                 rmp_cnt_t Length);
@@ -422,6 +416,9 @@ static void RMP_Progbar_Prog(rmp_cnt_t Coord_X,
                              rmp_ptr_t Fore,
                              rmp_ptr_t Back);
 #endif
+
+/* First thread */
+static void RMP_Init(void);
 /*****************************************************************************/
 #define __RMP_EXTERN__
 /* End Private Function ******************************************************/
@@ -460,7 +457,7 @@ __RMP_EXTERN__ volatile rmp_ptr_t RMP_SP_Cur;
 
 /* Public Function ***********************************************************/
 /*****************************************************************************/
-/* Bit manipualtions */
+/* Bit manipulations */
 __RMP_EXTERN__ rmp_ptr_t RMP_MSB_Generic(rmp_ptr_t Value);
 __RMP_EXTERN__ rmp_ptr_t RMP_LSB_Generic(rmp_ptr_t Value);
 __RMP_EXTERN__ rmp_ptr_t RMP_RBT_Generic(rmp_ptr_t Value);
@@ -468,6 +465,14 @@ __RMP_EXTERN__ rmp_ptr_t RMP_RBT_Generic(rmp_ptr_t Value);
 __RMP_EXTERN__ rmp_cnt_t RMP_Int_Print(rmp_cnt_t Int);
 __RMP_EXTERN__ rmp_cnt_t RMP_Hex_Print(rmp_ptr_t Uint);
 __RMP_EXTERN__ rmp_cnt_t RMP_Str_Print(const rmp_s8_t* String);
+__RMP_EXTERN__ void RMP_Log(const char* File,
+                            long Line,
+                            const char* Date,
+                            const char* Time);
+/* Coverage test functions - internal use */
+#ifdef RMP_COV_LINE_NUM
+__RMP_EXTERN__ void RMP_Cov_Print(void);
+#endif
 /* List operation functions */
 __RMP_EXTERN__ void RMP_List_Crt(volatile struct RMP_List* Head);
 __RMP_EXTERN__ void RMP_List_Del(volatile struct RMP_List* Prev,
@@ -475,9 +480,7 @@ __RMP_EXTERN__ void RMP_List_Del(volatile struct RMP_List* Prev,
 __RMP_EXTERN__ void RMP_List_Ins(volatile struct RMP_List* New,
                                  volatile struct RMP_List* Prev,
                                  volatile struct RMP_List* Next);
-                             
-/* This is the entry of user applications */
-RMP_EXTERN void RMP_Init(void);
+/* Scheduler utilities */
 __RMP_EXTERN__ void _RMP_Run_High(void);
 __RMP_EXTERN__ void _RMP_Tim_Handler(rmp_ptr_t Slice);
 __RMP_EXTERN__ void _RMP_Tim_Elapse(rmp_ptr_t Slice);
@@ -581,12 +584,16 @@ __RMP_EXTERN__ rmp_ret_t RMP_Bmq_Rcv(volatile struct RMP_Bmq* Queue,
                                      rmp_ptr_t Slice);
 __RMP_EXTERN__ rmp_ret_t RMP_Bmq_Cnt(volatile struct RMP_Bmq* Queue);
 
+/* Mandatory hooks */
+RMP_EXTERN void RMP_Init_Hook(void);
+RMP_EXTERN void RMP_Init_Idle(void);
 
 /* Built-in graphics */
-#ifdef RMP_POINT
-RMP_EXTERN void RMP_POINT(rmp_cnt_t Coord_X,
-                          rmp_cnt_t Coord_Y,
-                          rmp_ptr_t Color);
+#if(RMP_GUI_ENABLE!=0U)
+#ifndef RMP_POINT
+#error RMP : Point draw function (RMP_POINT) is missing. 
+#endif
+
 __RMP_EXTERN__ void RMP_Line(rmp_cnt_t Begin_X,
                              rmp_cnt_t Begin_Y,
                              rmp_cnt_t End_X,
@@ -622,8 +629,18 @@ __RMP_EXTERN__ void RMP_Matrix(rmp_cnt_t Coord_X,
                                rmp_cnt_t Length,
                                rmp_cnt_t Width,
                                rmp_ptr_t Color);
-/* This is only exported when color mixing macros available */
-#if((defined RMP_COLOR_25P)&&(defined RMP_COLOR_50P)&&(defined RMP_COLOR_75P))
+/* Anti-aliasing requires color mixing macros */
+#if(RMP_GUI_ANTIALIAS_ENABLE!=0U)
+#ifndef RMP_COLOR_25P
+#error RMP : 25%-75% mixing function (RMP_COLOR_25P) is missing. 
+#endif
+#ifndef RMP_COLOR_50P
+#error RMP : 50%-50% mixing function (RMP_COLOR_50P) is missing. 
+#endif
+#ifndef RMP_COLOR_75P
+#error RMP : 75%-25% mixing function (RMP_COLOR_75P) is missing. 
+#endif
+
 __RMP_EXTERN__ void RMP_Matrix_AA(rmp_cnt_t Coord_X,
                                   rmp_cnt_t Coord_Y,
                                   const rmp_u8_t* Matrix,
@@ -634,10 +651,29 @@ __RMP_EXTERN__ void RMP_Matrix_AA(rmp_cnt_t Coord_X,
                                   rmp_ptr_t Back);
 #endif
 /* These are only provided when all used colors are predefined */
-#if((defined RMP_CTL_WHITE)&&(defined RMP_CTL_LGREY)&& \
-    (defined RMP_CTL_GREY)&&(defined RMP_CTL_DGREY)&& \
-    (defined RMP_CTL_DARK)&&(defined RMP_CTL_DDARK)&& \
-    (defined RMP_CTL_BLACK))
+#if(RMP_GUI_WIDGET_ENABLE!=0U)
+#ifndef RMP_COLOR_WHITE
+#error RMP: White color value (RMP_COLOR_WHITE) is missing. 
+#endif
+#ifndef RMP_COLOR_LGREY
+#error RMP: Lighter grey color value (RMP_COLOR_LGREY) is missing. 
+#endif
+#ifndef RMP_COLOR_GREY
+#error RMP: Grey color value (RMP_COLOR_GREY) is missing. 
+#endif
+#ifndef RMP_COLOR_DGREY
+#error RMP: Darker grey color value (RMP_COLOR_DGREY) is missing. 
+#endif
+#ifndef RMP_COLOR_DARK
+#error RMP: Dark color value (RMP_COLOR_DARK) is missing. 
+#endif
+#ifndef RMP_COLOR_DDARK
+#error RMP: Darker dark color value (RMP_COLOR_DDARK) is missing. 
+#endif
+#ifndef RMP_COLOR_BLACK
+#error RMP: Black color value (RMP_COLOR_BLACK) is missing. 
+#endif
+
 /* Built-in easy controls */
 __RMP_EXTERN__ void RMP_Cursor(rmp_cnt_t Coord_X,
                                rmp_cnt_t Coord_Y,
@@ -668,7 +704,6 @@ __RMP_EXTERN__ void RMP_Cmdbtn(rmp_cnt_t Coord_X,
                                rmp_ptr_t Status);
 
 __RMP_EXTERN__ void RMP_Lineedit_Clr(rmp_cnt_t Coord_Y,
-                                     rmp_cnt_t Length,
                                      rmp_cnt_t Width,
                                      rmp_cnt_t Clr_X,
                                      rmp_cnt_t Clr_Len);
@@ -706,23 +741,6 @@ __RMP_EXTERN__ void RMP_Progbar(rmp_cnt_t Coord_X,
                                 rmp_ptr_t Fore,
                                 rmp_ptr_t Back);
 #endif
-#endif
-
-/* Other utilities */
-#ifdef __RMP_U8_T__
-#ifdef __RMP_U16_T__
-__RMP_EXTERN__ rmp_ptr_t RMP_CRC16(const rmp_u8_t* Data,
-                                   rmp_ptr_t Length);
-#endif
-#endif
-
-/* Mandatory hook */
-RMP_EXTERN void RMP_Init_Hook(void);
-RMP_EXTERN void RMP_Init_Idle(void);
-
-/* Coverage test */
-#ifdef RMP_COV_LINE_NUM
-__RMP_EXTERN__ void RMP_Cov_Print(void);
 #endif
 /*****************************************************************************/
 /* Undefine "__RMP_EXTERN__" to avoid redefinition */

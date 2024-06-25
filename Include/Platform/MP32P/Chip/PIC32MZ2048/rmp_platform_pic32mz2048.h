@@ -22,6 +22,13 @@ Description: The configuration file for PIC32MZ2048EFM100.
 /* The stack size of the init thread */
 #define RMP_INIT_STACK_SIZE         (2048U)
 
+/* GUI */
+#define RMP_GUI_ENABLE              (0U)
+/* Anti-aliasing */
+#define RMP_GUI_ANTIALIAS_ENABLE    (0U)
+/* Widgets */
+#define RMP_GUI_WIDGET_ENABLE       (0U)
+
 /* What is the tick timer value? */
 #define RMP_MP32P_CORETIM_VAL       (20000U)
 /* What is the coprocessor type - set according to your bootcode */
@@ -32,7 +39,7 @@ Description: The configuration file for PIC32MZ2048EFM100.
 /* Other low-level initialization stuff - clock and serial. 
  * This is the default initialization sequence. If you wish to supply
  * your own, just redirect this macro to a custom function, or do your
- * initialization stuff in the initialization hook (RMP_Start_Hook). */
+ * initialization stuff in the initialization hook (RMP_START_HOOK). */
 RMP_EXTERN void _RMP_Set_Timer(rmp_ptr_t Tick);
 #define RMP_MP32P_LOWLVL_INIT() \
 do \

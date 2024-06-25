@@ -37,7 +37,14 @@ Description: The configuration file for POSIX platform.
 /* The stack size of the init thread */
 #define RMP_INIT_STACK_SIZE         (65535U)
 
-/* What is the tick interval? */
+/* GUI */
+#define RMP_GUI_ENABLE              (0U)
+/* Anti-aliasing */
+#define RMP_GUI_ANTIALIAS_ENABLE    (0U)
+/* Widgets */
+#define RMP_GUI_WIDGET_ENABLE       (0U)
+
+/* What is the minimum SIGALRM interval? */
 #define RMP_X86L_TICK_VAL           (20000U)
 
 /* This is for debugging output */

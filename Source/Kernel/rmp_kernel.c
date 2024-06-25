@@ -198,7 +198,7 @@ rmp_ptr_t RMP_MSB_Generic(rmp_ptr_t Value)
         }
     }
 #else
-#error Generic MSB for 128-bits & above are not implemented.
+#error RMP : Generic MSB for 128-bits & above are not implemented.
 #endif
 
     return Table[Value>>Bit]+Bit;
@@ -364,7 +364,7 @@ rmp_ptr_t RMP_LSB_Generic(rmp_ptr_t Value)
         }
     }
 #else
-#error Generic LSB for 128-bits & above are not implemented.
+#error RMP : Generic LSB for 128-bits & above are not implemented.
 #endif
 
     return Table[(rmp_u8_t)(Value>>Bit)]+Bit;
@@ -445,58 +445,12 @@ rmp_ptr_t RMP_RBT_Generic(rmp_ptr_t Value)
     To[6]=Table[From[1]];
     To[7]=Table[From[0]];
 #else
-#error Generic RBT for 128-bits & above are not implemented.
+#error RMP : Generic RBT for 128-bits & above are not implemented.
 #endif
 
     return Ret;
 }
 /* End Function:RMP_RBT_Generic **********************************************/
-
-/* Function:RMP_Cov_Print *****************************************************
-Description : The coverage data printer. Should always be disabled for all cases
-              except where a kernel coverage test is needed. This should never
-              be called any any user application; for coverage testing only.
-Input       : None.
-Output      : None.
-Return      : None.
-******************************************************************************/
-#ifdef RMP_COV_LINE_NUM
-void RMP_Cov_Print(void)
-{
-    rmp_ptr_t Count;
-    rmp_ptr_t Next;
-    
-    Next=0U;
-    for(Count=0U;Count<RMP_COV_LINE_NUM;Count++)
-    {
-        if((RMP_Cov[Count>>RMP_WORD_ORDER]&RMP_POW2(Count&RMP_WORD_MASK))!=0U)
-        {
-            RMP_COV_MARKER();
-            RMP_DBG_I(Count);
-            RMP_DBG_S(",");
-            /* We put 12 markers on a single line */
-            Next++;
-            if(Next>11U)
-            {
-                RMP_COV_MARKER();
-                Next=0U;
-                RMP_DBG_S("\r\n");
-            }
-            else
-            {
-                RMP_COV_MARKER();
-                /* No action needed */
-            }
-        }
-        else
-        {
-            RMP_COV_MARKER();
-            /* No action needed */
-        }
-    }
-}
-#endif
-/* End Function:RMP_Cov_Print ************************************************/
 
 /* Function:RMP_Clear *********************************************************
 Description : Memset a memory area to zero.
@@ -683,6 +637,79 @@ rmp_cnt_t RMP_Str_Print(const rmp_s8_t* String)
 }
 /* End Function:RMP_Str_Print ************************************************/
 
+/* Function:RMP_Log ***********************************************************
+Description : Default logging function, will be used when the user does not 
+              supply one. This will only be called when the kernel panics.
+Input       : const char* File - The filename.
+              long Line - The line number.
+              const char* Date - The compilation date.
+              const char* Time - The compilation time.
+Output      : None.
+Return      : None.
+******************************************************************************/
+void RMP_Log(const char* File,
+             long Line,
+             const char* Date,
+             const char* Time)
+{
+    RMP_DBG_S("\r\n***\r\nKernel panic - not syncing :\r\n"); \
+    RMP_DBG_S(File); \
+    RMP_DBG_S(" , Line "); \
+    RMP_DBG_I(Line); \
+    RMP_DBG_S("\r\n"); \
+    RMP_DBG_S(Date); \
+    RMP_DBG_S(" , "); \
+    RMP_DBG_S(Time); \
+    RMP_DBG_S("\r\n"); \
+}
+/* End Function:RMP_Log ******************************************************/
+
+/* Function:RMP_Cov_Print *****************************************************
+Description : The coverage data printer. Should always be disabled for all cases
+              except where a kernel coverage test is needed. This should never
+              be called any any user application; for coverage testing only.
+Input       : None.
+Output      : None.
+Return      : None.
+******************************************************************************/
+#ifdef RMP_COV_LINE_NUM
+void RMP_Cov_Print(void)
+{
+    rmp_ptr_t Count;
+    rmp_ptr_t Next;
+    
+    Next=0U;
+    for(Count=0U;Count<RMP_COV_LINE_NUM;Count++)
+    {
+        if((RMP_Cov[Count>>RMP_WORD_ORDER]&RMP_POW2(Count&RMP_WORD_MASK))!=0U)
+        {
+            RMP_COV_MARKER();
+            RMP_DBG_I(Count);
+            RMP_DBG_S(",");
+            /* We put 12 markers on a single line */
+            Next++;
+            if(Next>11U)
+            {
+                RMP_COV_MARKER();
+                Next=0U;
+                RMP_DBG_S("\r\n");
+            }
+            else
+            {
+                RMP_COV_MARKER();
+                /* No action needed */
+            }
+        }
+        else
+        {
+            RMP_COV_MARKER();
+            /* No action needed */
+        }
+    }
+}
+#endif
+/* End Function:RMP_Cov_Print ************************************************/
+
 /* Function:RMP_List_Crt ******************************************************
 Description : Create a doubly linkled list.
 Input       : volatile struct RMP_List* Head - The pointer to the list head.
@@ -729,109 +756,6 @@ void RMP_List_Ins(volatile struct RMP_List* New,
     Prev->Next=New;
 }
 /* End Function:RMP_List_Ins *************************************************/
-
-/* Function:RMP_CRC16 *********************************************************
-Description    : CRC16 checksum calculation. Polynomial=0xA001.
-Input          : const rmp_u8_t* Data - The pointer to the dataset.
-                 rmp_ptr_t Length - The length of the data in bytes.
-Output         : None.
-Return         : rmp_ptr_t - The CRC16 value calculated.
-******************************************************************************/
-#ifdef __RMP_U16_T__
-rmp_ptr_t RMP_CRC16(const rmp_u8_t* Data,
-                    rmp_ptr_t Length)
-{
-    rmp_ptr_t Data_Cnt;
-    rmp_u8_t Index;
-    rmp_u8_t Temp_High;
-    rmp_u8_t Temp_Low;
-    
-    /* CRC16 constants with X^16+X^15+X^2+1 */
-    static const rmp_u8_t CRC16_High[256]=
-    {
-        0x00U, 0xC1U, 0x81U, 0x40U, 0x01U, 0xC0U, 0x80U, 0x41U,
-        0x01U, 0xC0U, 0x80U, 0x41U, 0x00U, 0xC1U, 0x81U, 0x40U,
-        0x01U, 0xC0U, 0x80U, 0x41U, 0x00U, 0xC1U, 0x81U, 0x40U,
-        0x00U, 0xC1U, 0x81U, 0x40U, 0x01U, 0xC0U, 0x80U, 0x41U,
-        0x01U, 0xC0U, 0x80U, 0x41U, 0x00U, 0xC1U, 0x81U, 0x40U,
-        0x00U, 0xC1U, 0x81U, 0x40U, 0x01U, 0xC0U, 0x80U, 0x41U,
-        0x00U, 0xC1U, 0x81U, 0x40U, 0x01U, 0xC0U, 0x80U, 0x41U,
-        0x01U, 0xC0U, 0x80U, 0x41U, 0x00U, 0xC1U, 0x81U, 0x40U,
-        0x01U, 0xC0U, 0x80U, 0x41U, 0x00U, 0xC1U, 0x81U, 0x40U,
-        0x00U, 0xC1U, 0x81U, 0x40U, 0x01U, 0xC0U, 0x80U, 0x41U,
-        0x00U, 0xC1U, 0x81U, 0x40U, 0x01U, 0xC0U, 0x80U, 0x41U,
-        0x01U, 0xC0U, 0x80U, 0x41U, 0x00U, 0xC1U, 0x81U, 0x40U,
-        0x00U, 0xC1U, 0x81U, 0x40U, 0x01U, 0xC0U, 0x80U, 0x41U,
-        0x01U, 0xC0U, 0x80U, 0x41U, 0x00U, 0xC1U, 0x81U, 0x40U,
-        0x01U, 0xC0U, 0x80U, 0x41U, 0x00U, 0xC1U, 0x81U, 0x40U,
-        0x00U, 0xC1U, 0x81U, 0x40U, 0x01U, 0xC0U, 0x80U, 0x41U,
-        0x01U, 0xC0U, 0x80U, 0x41U, 0x00U, 0xC1U, 0x81U, 0x40U,
-        0x00U, 0xC1U, 0x81U, 0x40U, 0x01U, 0xC0U, 0x80U, 0x41U,
-        0x00U, 0xC1U, 0x81U, 0x40U, 0x01U, 0xC0U, 0x80U, 0x41U,
-        0x01U, 0xC0U, 0x80U, 0x41U, 0x00U, 0xC1U, 0x81U, 0x40U,
-        0x00U, 0xC1U, 0x81U, 0x40U, 0x01U, 0xC0U, 0x80U, 0x41U,
-        0x01U, 0xC0U, 0x80U, 0x41U, 0x00U, 0xC1U, 0x81U, 0x40U,
-        0x01U, 0xC0U, 0x80U, 0x41U, 0x00U, 0xC1U, 0x81U, 0x40U,
-        0x00U, 0xC1U, 0x81U, 0x40U, 0x01U, 0xC0U, 0x80U, 0x41U,
-        0x00U, 0xC1U, 0x81U, 0x40U, 0x01U, 0xC0U, 0x80U, 0x41U,
-        0x01U, 0xC0U, 0x80U, 0x41U, 0x00U, 0xC1U, 0x81U, 0x40U,
-        0x01U, 0xC0U, 0x80U, 0x41U, 0x00U, 0xC1U, 0x81U, 0x40U,
-        0x00U, 0xC1U, 0x81U, 0x40U, 0x01U, 0xC0U, 0x80U, 0x41U,
-        0x01U, 0xC0U, 0x80U, 0x41U, 0x00U, 0xC1U, 0x81U, 0x40U,
-        0x00U, 0xC1U, 0x81U, 0x40U, 0x01U, 0xC0U, 0x80U, 0x41U,
-        0x00U, 0xC1U, 0x81U, 0x40U, 0x01U, 0xC0U, 0x80U, 0x41U,
-        0x01U, 0xC0U, 0x80U, 0x41U, 0x00U, 0xC1U, 0x81U, 0x40U
-    };
-
-    static const rmp_u8_t CRC16_Low[256]=
-    {
-        0x00U, 0xC0U, 0xC1U, 0x01U, 0xC3U, 0x03U, 0x02U, 0xC2U,
-        0xC6U, 0x06U, 0x07U, 0xC7U, 0x05U, 0xC5U, 0xC4U, 0x04U,
-        0xCCU, 0x0CU, 0x0DU, 0xCDU, 0x0FU, 0xCFU, 0xCEU, 0x0EU,
-        0x0AU, 0xCAU, 0xCBU, 0x0BU, 0xC9U, 0x09U, 0x08U, 0xC8U,
-        0xD8U, 0x18U, 0x19U, 0xD9U, 0x1BU, 0xDBU, 0xDAU, 0x1AU,
-        0x1EU, 0xDEU, 0xDFU, 0x1FU, 0xDDU, 0x1DU, 0x1CU, 0xDCU,
-        0x14U, 0xD4U, 0xD5U, 0x15U, 0xD7U, 0x17U, 0x16U, 0xD6U,
-        0xD2U, 0x12U, 0x13U, 0xD3U, 0x11U, 0xD1U, 0xD0U, 0x10U,
-        0xF0U, 0x30U, 0x31U, 0xF1U, 0x33U, 0xF3U, 0xF2U, 0x32U,
-        0x36U, 0xF6U, 0xF7U, 0x37U, 0xF5U, 0x35U, 0x34U, 0xF4U,
-        0x3CU, 0xFCU, 0xFDU, 0x3DU, 0xFFU, 0x3FU, 0x3EU, 0xFEU,
-        0xFAU, 0x3AU, 0x3BU, 0xFBU, 0x39U, 0xF9U, 0xF8U, 0x38U,
-        0x28U, 0xE8U, 0xE9U, 0x29U, 0xEBU, 0x2BU, 0x2AU, 0xEAU,
-        0xEEU, 0x2EU, 0x2FU, 0xEFU, 0x2DU, 0xEDU, 0xECU, 0x2CU,
-        0xE4U, 0x24U, 0x25U, 0xE5U, 0x27U, 0xE7U, 0xE6U, 0x26U,
-        0x22U, 0xE2U, 0xE3U, 0x23U, 0xE1U, 0x21U, 0x20U, 0xE0U,
-        0xA0U, 0x60U, 0x61U, 0xA1U, 0x63U, 0xA3U, 0xA2U, 0x62U,
-        0x66U, 0xA6U, 0xA7U, 0x67U, 0xA5U, 0x65U, 0x64U, 0xA4U,
-        0x6CU, 0xACU, 0xADU, 0x6DU, 0xAFU, 0x6FU, 0x6EU, 0xAEU,
-        0xAAU, 0x6AU, 0x6BU, 0xABU, 0x69U, 0xA9U, 0xA8U, 0x68U,
-        0x78U, 0xB8U, 0xB9U, 0x79U, 0xBBU, 0x7BU, 0x7AU, 0xBAU,
-        0xBEU, 0x7EU, 0x7FU, 0xBFU, 0x7DU, 0xBDU, 0xBCU, 0x7CU,
-        0xB4U, 0x74U, 0x75U, 0xB5U, 0x77U, 0xB7U, 0xB6U, 0x76U,
-        0x72U, 0xB2U, 0xB3U, 0x73U, 0xB1U, 0x71U, 0x70U, 0xB0U,
-        0x50U, 0x90U, 0x91U, 0x51U, 0x93U, 0x53U, 0x52U, 0x92U,
-        0x96U, 0x56U, 0x57U, 0x97U, 0x55U, 0x95U, 0x94U, 0x54U,
-        0x9CU, 0x5CU, 0x5DU, 0x9DU, 0x5FU, 0x9FU, 0x9EU, 0x5EU,
-        0x5AU, 0x9AU, 0x9BU, 0x5BU, 0x99U, 0x59U, 0x58U, 0x98U,
-        0x88U, 0x48U, 0x49U, 0x89U, 0x4BU, 0x8BU, 0x8AU, 0x4AU,
-        0x4EU, 0x8EU, 0x8FU, 0x4FU, 0x8DU, 0x4DU, 0x4CU, 0x8CU,
-        0x44U, 0x84U, 0x85U, 0x45U, 0x87U, 0x47U, 0x46U, 0x86U,
-        0x82U, 0x42U, 0x43U, 0x83U, 0x41U, 0x81U, 0x80U, 0x40U
-    };
-
-    Temp_High=0xFFU;
-    Temp_Low=0xFFU;
-    for(Data_Cnt=0U;Data_Cnt<Length;Data_Cnt++)
-    {
-        Index=(Temp_Low^Data[Data_Cnt])&0xFFU;
-        Temp_Low=(rmp_u8_t)(Temp_High^CRC16_High[Index])&0xFFU;
-        Temp_High=CRC16_Low[Index];
-    }
-
-    return (rmp_ptr_t)((((rmp_u16_t)Temp_High)<<8U)|Temp_Low);
-}
-#endif
-/* End Function:RMP_CRC16 ****************************************************/
 
 /* Function:RMP_Sched_Lock ****************************************************
 Description : The function locks the scheduler. The locking can be stacked.
@@ -5205,7 +5129,7 @@ Input       : rmp_cnt_t Begin_X - The begin point X coordinate.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-#ifdef RMP_POINT
+#if(RMP_GUI_ENABLE!=0U)
 void RMP_Line(rmp_cnt_t Begin_X,
               rmp_cnt_t Begin_Y,
               rmp_cnt_t End_X,
@@ -5785,7 +5709,7 @@ void RMP_Matrix(rmp_cnt_t Coord_X,
                 if(RMP_MAT_BPOS(Matrix,Mat_Pos)!=0U)
                 {
                     RMP_COV_MARKER();
-                    RMP_Point(Len_Cnt,Wid_Cnt,Color);
+                    RMP_POINT(Len_Cnt,Wid_Cnt,Color);
                 }
                 else
                 {
@@ -5809,7 +5733,7 @@ void RMP_Matrix(rmp_cnt_t Coord_X,
                 if(RMP_MAT_SPOS(Matrix,Mat_Pos)!=0U)
                 {
                     RMP_COV_MARKER();
-                    RMP_Point(Len_Cnt,Wid_Cnt,Color);
+                    RMP_POINT(Len_Cnt,Wid_Cnt,Color);
                 }
                 else
                 {
@@ -5839,7 +5763,7 @@ Input       : rmp_cnt_t Coord_X - The X coordinate.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-#if((defined RMP_COLOR_25P)&&(defined RMP_COLOR_50P)&&(defined RMP_COLOR_75P))
+#if(RMP_GUI_ANTIALIAS_ENABLE!=0U)
 void RMP_Matrix_AA(rmp_cnt_t Coord_X,
                    rmp_cnt_t Coord_Y,
                    const rmp_u8_t* Matrix,
@@ -5888,7 +5812,7 @@ void RMP_Matrix_AA(rmp_cnt_t Coord_X,
                 if(RMP_MAT_BPOS(Matrix, Mat_Pos)!=0U)
                 {
                     RMP_COV_MARKER();
-                    RMP_Point(Len_Cnt, Wid_Cnt, Color);
+                    RMP_POINT(Len_Cnt, Wid_Cnt, Color);
                 }
                 else
                 {
@@ -5970,19 +5894,19 @@ void RMP_Matrix_AA(rmp_cnt_t Coord_X,
                         case 1:
                         {
                             RMP_COV_MARKER();
-                            RMP_Point(Len_Cnt, Wid_Cnt, Color_25);
+                            RMP_POINT(Len_Cnt, Wid_Cnt, Color_25);
                             break;
                         }
                         case 2:
                         {
                             RMP_COV_MARKER();
-                            RMP_Point(Len_Cnt, Wid_Cnt, Color_50);
+                            RMP_POINT(Len_Cnt, Wid_Cnt, Color_50);
                             break;
                         }
                         case 3:
                         {
                             RMP_COV_MARKER();
-                            RMP_Point(Len_Cnt, Wid_Cnt, Color_75);
+                            RMP_POINT(Len_Cnt, Wid_Cnt, Color_75);
                             break;
                         }
                         default:
@@ -6009,7 +5933,7 @@ void RMP_Matrix_AA(rmp_cnt_t Coord_X,
                 if(RMP_MAT_SPOS(Matrix, Mat_Pos)!=0U)
                 {
                     RMP_COV_MARKER();
-                    RMP_Point(Len_Cnt, Wid_Cnt, Color);
+                    RMP_POINT(Len_Cnt, Wid_Cnt, Color);
                 }
                 else
                 {
@@ -6091,19 +6015,19 @@ void RMP_Matrix_AA(rmp_cnt_t Coord_X,
                         case 1:
                         {
                             RMP_COV_MARKER();
-                            RMP_Point(Len_Cnt, Wid_Cnt, Color_25);
+                            RMP_POINT(Len_Cnt, Wid_Cnt, Color_25);
                             break;
                         }
                         case 2:
                         {
                             RMP_COV_MARKER();
-                            RMP_Point(Len_Cnt, Wid_Cnt, Color_50);
+                            RMP_POINT(Len_Cnt, Wid_Cnt, Color_50);
                             break;
                         }
                         case 3:
                         {
                             RMP_COV_MARKER();
-                            RMP_Point(Len_Cnt, Wid_Cnt, Color_75);
+                            RMP_POINT(Len_Cnt, Wid_Cnt, Color_75);
                             break;
                         }
                         default:
@@ -6142,10 +6066,7 @@ Input       : rmp_cnt_t Coord_X - The X coordinate of the cursor.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-#if((defined RMP_CTL_WHITE)&&(defined RMP_CTL_LGREY)&& \
-    (defined RMP_CTL_GREY)&&(defined RMP_CTL_DGREY)&& \
-    (defined RMP_CTL_DARK)&&(defined RMP_CTL_DDARK)&& \
-    (defined RMP_CTL_BLACK))
+#if(RMP_GUI_WIDGET_ENABLE!=0U)
 void RMP_Cursor(rmp_cnt_t Coord_X,
                 rmp_cnt_t Coord_Y,
                 rmp_ptr_t Style)
@@ -6337,12 +6258,12 @@ void RMP_Cursor(rmp_cnt_t Coord_X,
             for(Count=0;Count<(rmp_cnt_t)sizeof(Arrow_B);Count++)
             {
                 RMP_POINT(Coord_X+RMP_CUR_XPOS(Arrow_B,Count),
-                          Coord_Y+RMP_CUR_YPOS(Arrow_B,Count),RMP_CTL_BLACK);
+                          Coord_Y+RMP_CUR_YPOS(Arrow_B,Count),RMP_COLOR_BLACK);
             }
             for(Count=0;Count<(rmp_cnt_t)sizeof(Arrow_W);Count++)
             {
                 RMP_POINT(Coord_X+RMP_CUR_XPOS(Arrow_W,Count),
-                          Coord_Y+RMP_CUR_YPOS(Arrow_W,Count),RMP_CTL_WHITE);
+                          Coord_Y+RMP_CUR_YPOS(Arrow_W,Count),RMP_COLOR_WHITE);
             }
             
             if(Style==RMP_CUR_BUSY)
@@ -6454,12 +6375,12 @@ void RMP_Cursor(rmp_cnt_t Coord_X,
     for(Count=0;Count<Size_B;Count++)
     {
         RMP_POINT(Coord_X+RMP_CUR_XPOS(Black,Count),
-                  Coord_Y+RMP_CUR_YPOS(Black,Count),RMP_CTL_BLACK);
+                  Coord_Y+RMP_CUR_YPOS(Black,Count),RMP_COLOR_BLACK);
     }
     for(Count=0;Count<Size_W;Count++)
     {
         RMP_POINT(Coord_X+RMP_CUR_XPOS(White,Count),
-                  Coord_Y+RMP_CUR_YPOS(White,Count),RMP_CTL_WHITE);
+                  Coord_Y+RMP_CUR_YPOS(White,Count),RMP_COLOR_WHITE);
     }
 }
 /* End Function: RMP_Cursor **************************************************/
@@ -6482,12 +6403,12 @@ void RMP_Checkbox_Set(rmp_cnt_t Coord_X,
     for(Count=0;Count<=(2*Length/13);Count++)
     {
         RMP_Line(Coord_X+(4*Length/13)+Count, Coord_Y+(6*Length/13)+Count,
-                 Coord_X+(4*Length/13)+Count, Coord_Y+(8*Length/13)+Count, RMP_CTL_BLACK);
+                 Coord_X+(4*Length/13)+Count, Coord_Y+(8*Length/13)+Count, RMP_COLOR_BLACK);
     }
     for(Count=0;Count<=(4*Length/13);Count++)
     {
         RMP_Line(Coord_X+(6*Length/13)+Count, Coord_Y+(8*Length/13)-Count,
-                 Coord_X+(6*Length/13)+Count, Coord_Y+(10*Length/13)-Count, RMP_CTL_BLACK);
+                 Coord_X+(6*Length/13)+Count, Coord_Y+(10*Length/13)-Count, RMP_COLOR_BLACK);
     }
 }
 /* End Function:RMP_Checkbox_Set *********************************************/
@@ -6510,12 +6431,12 @@ void RMP_Checkbox_Clr(rmp_cnt_t Coord_X,
     for(Count=0;Count<=(2*Length/13);Count++)
     {
         RMP_Line(Coord_X+(4*Length/13)+Count, Coord_Y+(6*Length/13)+Count,
-                 Coord_X+(4*Length/13)+Count, Coord_Y+(8*Length/13)+Count, RMP_CTL_WHITE);
+                 Coord_X+(4*Length/13)+Count, Coord_Y+(8*Length/13)+Count, RMP_COLOR_WHITE);
     }
     for(Count=0;Count<=(4*Length/13);Count++)
     {
         RMP_Line(Coord_X+(6*Length/13)+Count, Coord_Y+(8*Length/13)-Count,
-                 Coord_X+(6*Length/13)+Count, Coord_Y+(10*Length/13)-Count, RMP_CTL_WHITE);
+                 Coord_X+(6*Length/13)+Count, Coord_Y+(10*Length/13)-Count, RMP_COLOR_WHITE);
     }
 }
 /* End Function:RMP_Checkbox_Clr *********************************************/
@@ -6535,18 +6456,18 @@ void RMP_Checkbox(rmp_cnt_t Coord_X,
                   rmp_ptr_t Status)    
 {   
     /* Clear the area */
-    RMP_Rectangle(Coord_X, Coord_Y, Length, Length, RMP_CTL_WHITE, RMP_CTL_WHITE);
+    RMP_Rectangle(Coord_X, Coord_Y, Length, Length, RMP_COLOR_WHITE, RMP_COLOR_WHITE);
                                                                      
     /* Draw checkbox outline */
-    RMP_Line(Coord_X, Coord_Y, Coord_X+Length-1, Coord_Y, RMP_CTL_DARK);                 
-    RMP_Line(Coord_X+Length-1, Coord_Y, Coord_X+Length-1, Coord_Y+Length-1, RMP_CTL_WHITE);
-    RMP_Line(Coord_X+Length-1, Coord_Y+Length-1, Coord_X, Coord_Y+Length-1, RMP_CTL_WHITE);
-    RMP_Line(Coord_X, Coord_Y+Length-1, Coord_X, Coord_Y, RMP_CTL_DARK);
+    RMP_Line(Coord_X, Coord_Y, Coord_X+Length-1, Coord_Y, RMP_COLOR_DARK);                 
+    RMP_Line(Coord_X+Length-1, Coord_Y, Coord_X+Length-1, Coord_Y+Length-1, RMP_COLOR_WHITE);
+    RMP_Line(Coord_X+Length-1, Coord_Y+Length-1, Coord_X, Coord_Y+Length-1, RMP_COLOR_WHITE);
+    RMP_Line(Coord_X, Coord_Y+Length-1, Coord_X, Coord_Y, RMP_COLOR_DARK);
 
-    RMP_Line(Coord_X+1, Coord_Y+1, Coord_X+Length-2, Coord_Y+1, RMP_CTL_BLACK);
-    RMP_Line(Coord_X+Length-2, Coord_Y+1, Coord_X+Length-2, Coord_Y+Length-2, RMP_CTL_DARK);
-    RMP_Line(Coord_X+Length-2, Coord_Y+Length-2, Coord_X, Coord_Y+Length-2, RMP_CTL_DARK);
-    RMP_Line(Coord_X+1, Coord_Y+Length-2, Coord_X+1, Coord_Y+1, RMP_CTL_BLACK);
+    RMP_Line(Coord_X+1, Coord_Y+1, Coord_X+Length-2, Coord_Y+1, RMP_COLOR_BLACK);
+    RMP_Line(Coord_X+Length-2, Coord_Y+1, Coord_X+Length-2, Coord_Y+Length-2, RMP_COLOR_DARK);
+    RMP_Line(Coord_X+Length-2, Coord_Y+Length-2, Coord_X, Coord_Y+Length-2, RMP_COLOR_DARK);
+    RMP_Line(Coord_X+1, Coord_Y+Length-2, Coord_X+1, Coord_Y+1, RMP_COLOR_BLACK);
     
     if(Status!=0U)
     {
@@ -6575,16 +6496,16 @@ void RMP_Cmdbtn_Down(rmp_cnt_t Coord_X,
                      rmp_cnt_t Length,
                      rmp_cnt_t Width)
 {
-    RMP_Line(Coord_X, Coord_Y, Coord_X+Length-1, Coord_Y, RMP_CTL_BLACK);
-    RMP_Line(Coord_X+Length-1, Coord_Y, Coord_X+Length-1, Coord_Y+Width-1, RMP_CTL_WHITE);
-    RMP_Line(Coord_X+Length-1, Coord_Y+Width-1, Coord_X, Coord_Y+Width-1, RMP_CTL_WHITE);
-    RMP_Line(Coord_X, Coord_Y+Width-1, Coord_X, Coord_Y, RMP_CTL_BLACK);
+    RMP_Line(Coord_X, Coord_Y, Coord_X+Length-1, Coord_Y, RMP_COLOR_BLACK);
+    RMP_Line(Coord_X+Length-1, Coord_Y, Coord_X+Length-1, Coord_Y+Width-1, RMP_COLOR_WHITE);
+    RMP_Line(Coord_X+Length-1, Coord_Y+Width-1, Coord_X, Coord_Y+Width-1, RMP_COLOR_WHITE);
+    RMP_Line(Coord_X, Coord_Y+Width-1, Coord_X, Coord_Y, RMP_COLOR_BLACK);
     /* Clear the old shadow */
-    RMP_Line(Coord_X+Length-2, Coord_Y+Width-2, Coord_X+1, Coord_Y+Width-2, RMP_CTL_GREY);    
-    RMP_Line(Coord_X+Length-2, Coord_Y+1, Coord_X+Length-2, Coord_Y+Width-2, RMP_CTL_GREY);    
+    RMP_Line(Coord_X+Length-2, Coord_Y+Width-2, Coord_X+1, Coord_Y+Width-2, RMP_COLOR_GREY);    
+    RMP_Line(Coord_X+Length-2, Coord_Y+1, Coord_X+Length-2, Coord_Y+Width-2, RMP_COLOR_GREY);    
     /* The shadow */                            
-    RMP_Line(Coord_X+1, Coord_Y+Width-2, Coord_X+1, Coord_Y+1, RMP_CTL_DARK);    
-    RMP_Line(Coord_X+1, Coord_Y+1, Coord_X+Length-2, Coord_Y+1, RMP_CTL_DARK);    
+    RMP_Line(Coord_X+1, Coord_Y+Width-2, Coord_X+1, Coord_Y+1, RMP_COLOR_DARK);    
+    RMP_Line(Coord_X+1, Coord_Y+1, Coord_X+Length-2, Coord_Y+1, RMP_COLOR_DARK);    
 }
 /* End Function:RMP_Cmdbtn_Down **********************************************/
 
@@ -6602,16 +6523,16 @@ void RMP_Cmdbtn_Up(rmp_cnt_t Coord_X,
                    rmp_cnt_t Length,
                    rmp_cnt_t Width)
 {
-    RMP_Line(Coord_X, Coord_Y, Coord_X+Length-1, Coord_Y, RMP_CTL_WHITE);
-    RMP_Line(Coord_X+Length-1, Coord_Y, Coord_X+Length-1, Coord_Y+Width-1, RMP_CTL_BLACK);
-    RMP_Line(Coord_X+Length-1, Coord_Y+Width-1, Coord_X, Coord_Y+Width-1, RMP_CTL_BLACK);
-    RMP_Line(Coord_X, Coord_Y+Width-1, Coord_X, Coord_Y, RMP_CTL_WHITE);
+    RMP_Line(Coord_X, Coord_Y, Coord_X+Length-1, Coord_Y, RMP_COLOR_WHITE);
+    RMP_Line(Coord_X+Length-1, Coord_Y, Coord_X+Length-1, Coord_Y+Width-1, RMP_COLOR_BLACK);
+    RMP_Line(Coord_X+Length-1, Coord_Y+Width-1, Coord_X, Coord_Y+Width-1, RMP_COLOR_BLACK);
+    RMP_Line(Coord_X, Coord_Y+Width-1, Coord_X, Coord_Y, RMP_COLOR_WHITE);
     /* Clear the old shadow */
-    RMP_Line(Coord_X+1, Coord_Y+Width-2, Coord_X+1, Coord_Y+1, RMP_CTL_GREY);    
-    RMP_Line(Coord_X+1, Coord_Y+1, Coord_X+Length-2, Coord_Y+1, RMP_CTL_GREY);    
+    RMP_Line(Coord_X+1, Coord_Y+Width-2, Coord_X+1, Coord_Y+1, RMP_COLOR_GREY);    
+    RMP_Line(Coord_X+1, Coord_Y+1, Coord_X+Length-2, Coord_Y+1, RMP_COLOR_GREY);    
     /* The shadow */
-    RMP_Line(Coord_X+Length-2, Coord_Y+Width-2, Coord_X+1, Coord_Y+Width-2, RMP_CTL_DARK);    
-    RMP_Line(Coord_X+Length-2, Coord_Y+1, Coord_X+Length-2, Coord_Y+Width-2, RMP_CTL_DARK);    
+    RMP_Line(Coord_X+Length-2, Coord_Y+Width-2, Coord_X+1, Coord_Y+Width-2, RMP_COLOR_DARK);    
+    RMP_Line(Coord_X+Length-2, Coord_Y+1, Coord_X+Length-2, Coord_Y+Width-2, RMP_COLOR_DARK);    
 }
 /* End Function:RMP_Cmdbtn_Up ************************************************/
 
@@ -6631,7 +6552,7 @@ void RMP_Cmdbtn(rmp_cnt_t Coord_X,
                 rmp_cnt_t Width,
                 rmp_ptr_t Status)
 {
-    RMP_Rectangle(Coord_X, Coord_Y, Length, Width, RMP_CTL_GREY, RMP_CTL_GREY);
+    RMP_Rectangle(Coord_X, Coord_Y, Length, Width, RMP_COLOR_GREY, RMP_COLOR_GREY);
 
     if(Status!=0U)
     {
@@ -6660,7 +6581,7 @@ void RMP_Lineedit_Clr(rmp_cnt_t Clr_X,
                       rmp_cnt_t Coord_Y,
                       rmp_cnt_t Width)
 {
-    RMP_Rectangle(Clr_X, Coord_Y+1, Clr_Len, Width-2, RMP_CTL_WHITE, RMP_CTL_WHITE);
+    RMP_Rectangle(Clr_X, Coord_Y+1, Clr_Len, Width-2, RMP_COLOR_WHITE, RMP_COLOR_WHITE);
 }
 /* End Function:RMP_Lineedit_Clr *********************************************/
 
@@ -6678,16 +6599,16 @@ void RMP_Lineedit(rmp_cnt_t Coord_X,
                   rmp_cnt_t Length,
                   rmp_cnt_t Width)
 {
-    RMP_Rectangle(Coord_X, Coord_Y, Length, Width, RMP_CTL_WHITE, RMP_CTL_WHITE);
+    RMP_Rectangle(Coord_X, Coord_Y, Length, Width, RMP_COLOR_WHITE, RMP_COLOR_WHITE);
     
     /* Now draw the border */
-    RMP_Line(Coord_X, Coord_Y, Coord_X+Length-1, Coord_Y, RMP_CTL_DARK);
-    RMP_Line(Coord_X+Length-1, Coord_Y, Coord_X+Length-1, Coord_Y+Width-1, RMP_CTL_WHITE);
-    RMP_Line(Coord_X+Length-1, Coord_Y+Width-1, Coord_X, Coord_Y+Width-1, RMP_CTL_WHITE);
-    RMP_Line(Coord_X, Coord_Y+Width-1, Coord_X, Coord_Y, RMP_CTL_DARK);
+    RMP_Line(Coord_X, Coord_Y, Coord_X+Length-1, Coord_Y, RMP_COLOR_DARK);
+    RMP_Line(Coord_X+Length-1, Coord_Y, Coord_X+Length-1, Coord_Y+Width-1, RMP_COLOR_WHITE);
+    RMP_Line(Coord_X+Length-1, Coord_Y+Width-1, Coord_X, Coord_Y+Width-1, RMP_COLOR_WHITE);
+    RMP_Line(Coord_X, Coord_Y+Width-1, Coord_X, Coord_Y, RMP_COLOR_DARK);
     /* The shadow */
-    RMP_Line(Coord_X+1, Coord_Y+Width-2, Coord_X+1, Coord_Y+1, RMP_CTL_BLACK);    
-    RMP_Line(Coord_X+1, Coord_Y+1, Coord_X+Length-2, Coord_Y+1, RMP_CTL_BLACK);
+    RMP_Line(Coord_X+1, Coord_Y+Width-2, Coord_X+1, Coord_Y+1, RMP_COLOR_BLACK);    
+    RMP_Line(Coord_X+1, Coord_Y+1, Coord_X+Length-2, Coord_Y+1, RMP_COLOR_BLACK);
 }
 /* End Function:RMP_Lineedit *************************************************/
 
@@ -6723,16 +6644,16 @@ void RMP_Radiobtn_Circle(rmp_cnt_t Coord_X,
     while(Cur_X<=Cur_Y) 
     {  
         /* This is the upper-left part */
-        RMP_POINT(Center_X+Cur_X, Center_Y-Cur_Y, RMP_CTL_DDARK);
-        RMP_POINT(Center_X-Cur_X, Center_Y-Cur_Y, RMP_CTL_DDARK);
-        RMP_POINT(Center_X-Cur_Y, Center_Y-Cur_X, RMP_CTL_DDARK);
-        RMP_POINT(Center_X-Cur_Y, Center_Y+Cur_X, RMP_CTL_DDARK);
+        RMP_POINT(Center_X+Cur_X, Center_Y-Cur_Y, RMP_COLOR_DDARK);
+        RMP_POINT(Center_X-Cur_X, Center_Y-Cur_Y, RMP_COLOR_DDARK);
+        RMP_POINT(Center_X-Cur_Y, Center_Y-Cur_X, RMP_COLOR_DDARK);
+        RMP_POINT(Center_X-Cur_Y, Center_Y+Cur_X, RMP_COLOR_DDARK);
         
         /* This is the lower-right part */
-        RMP_POINT(Center_X+Cur_X, Center_Y+Cur_Y, RMP_CTL_LGREY);
-        RMP_POINT(Center_X-Cur_X, Center_Y+Cur_Y, RMP_CTL_LGREY);  
-        RMP_POINT(Center_X+Cur_Y, Center_Y+Cur_X, RMP_CTL_LGREY); 
-        RMP_POINT(Center_X+Cur_Y, Center_Y-Cur_X, RMP_CTL_LGREY);  
+        RMP_POINT(Center_X+Cur_X, Center_Y+Cur_Y, RMP_COLOR_LGREY);
+        RMP_POINT(Center_X-Cur_X, Center_Y+Cur_Y, RMP_COLOR_LGREY);  
+        RMP_POINT(Center_X+Cur_Y, Center_Y+Cur_X, RMP_COLOR_LGREY); 
+        RMP_POINT(Center_X+Cur_Y, Center_Y-Cur_X, RMP_COLOR_LGREY);  
         
         if(Error<0) 
         {
@@ -6756,16 +6677,16 @@ void RMP_Radiobtn_Circle(rmp_cnt_t Coord_X,
     while(Cur_X<=Cur_Y) 
     {  
         /* This is the upper-left part */
-        RMP_POINT(Center_X+Cur_X, Center_Y-Cur_Y, RMP_CTL_DGREY);
-        RMP_POINT(Center_X-Cur_X, Center_Y-Cur_Y, RMP_CTL_DGREY);
-        RMP_POINT(Center_X-Cur_Y, Center_Y-Cur_X, RMP_CTL_DGREY);
-        RMP_POINT(Center_X-Cur_Y, Center_Y+Cur_X, RMP_CTL_DGREY);
+        RMP_POINT(Center_X+Cur_X, Center_Y-Cur_Y, RMP_COLOR_DGREY);
+        RMP_POINT(Center_X-Cur_X, Center_Y-Cur_Y, RMP_COLOR_DGREY);
+        RMP_POINT(Center_X-Cur_Y, Center_Y-Cur_X, RMP_COLOR_DGREY);
+        RMP_POINT(Center_X-Cur_Y, Center_Y+Cur_X, RMP_COLOR_DGREY);
         
         /* This is the lower-right part */
-        RMP_POINT(Center_X+Cur_X, Center_Y+Cur_Y, RMP_CTL_WHITE);
-        RMP_POINT(Center_X-Cur_X, Center_Y+Cur_Y, RMP_CTL_WHITE);  
-        RMP_POINT(Center_X+Cur_Y, Center_Y+Cur_X, RMP_CTL_WHITE); 
-        RMP_POINT(Center_X+Cur_Y, Center_Y-Cur_X, RMP_CTL_WHITE);  
+        RMP_POINT(Center_X+Cur_X, Center_Y+Cur_Y, RMP_COLOR_WHITE);
+        RMP_POINT(Center_X-Cur_X, Center_Y+Cur_Y, RMP_COLOR_WHITE);  
+        RMP_POINT(Center_X+Cur_Y, Center_Y+Cur_X, RMP_COLOR_WHITE); 
+        RMP_POINT(Center_X+Cur_Y, Center_Y-Cur_X, RMP_COLOR_WHITE);  
         
         if(Error<0) 
         {
@@ -6796,7 +6717,7 @@ void RMP_Radiobtn_Set(rmp_cnt_t Coord_X,
                       rmp_cnt_t Length)
 {
     RMP_Circle(Coord_X+RMP_SAR(Length,1), Coord_Y+RMP_SAR(Length,1),
-               Length/6, RMP_CTL_BLACK, RMP_CTL_BLACK);
+               Length/6, RMP_COLOR_BLACK, RMP_COLOR_BLACK);
 }
 /* End Function:RMP_Radiobtn_Set *********************************************/
 
@@ -6813,7 +6734,7 @@ void RMP_Radiobtn_Clr(rmp_cnt_t Coord_X,
                       rmp_cnt_t Length)
 {
     RMP_Circle(Coord_X+RMP_SAR(Length,1), Coord_Y+RMP_SAR(Length,1),
-               Length/6, RMP_CTL_GREY, RMP_CTL_GREY);
+               Length/6, RMP_COLOR_GREY, RMP_COLOR_GREY);
 }
 /* End Function:RMP_Radiobtn_Clr *********************************************/
 
@@ -6832,7 +6753,7 @@ void RMP_Radiobtn(rmp_cnt_t Coord_X,
                   rmp_ptr_t Status)
 {   
     /* Fill the area with rect */
-    RMP_Rectangle(Coord_X, Coord_Y, Length, Length, RMP_CTL_GREY, RMP_CTL_GREY);
+    RMP_Rectangle(Coord_X, Coord_Y, Length, Length, RMP_COLOR_GREY, RMP_COLOR_GREY);
     
     /* Draw the circle first */
     RMP_Radiobtn_Circle(Coord_X, Coord_Y, Length);
@@ -7147,10 +7068,10 @@ void RMP_Progbar(rmp_cnt_t Coord_X,
     /* Draw the progress bar according to the style of the progress bar */
     RMP_Progbar_Prog(Coord_X, Coord_Y, Length, Width, Style, Prog, Fore, Back);
     /* Now draw the border */
-    RMP_Line(Coord_X, Coord_Y, Coord_X+Length-1, Coord_Y, RMP_CTL_BLACK);
-    RMP_Line(Coord_X+Length-1, Coord_Y, Coord_X+Length-1, Coord_Y+Width-1, RMP_CTL_BLACK);
-    RMP_Line(Coord_X+Length-1, Coord_Y+Width-1, Coord_X, Coord_Y+Width-1, RMP_CTL_BLACK);
-    RMP_Line(Coord_X, Coord_Y+Width-1, Coord_X, Coord_Y, RMP_CTL_BLACK);
+    RMP_Line(Coord_X, Coord_Y, Coord_X+Length-1, Coord_Y, RMP_COLOR_BLACK);
+    RMP_Line(Coord_X+Length-1, Coord_Y, Coord_X+Length-1, Coord_Y+Width-1, RMP_COLOR_BLACK);
+    RMP_Line(Coord_X+Length-1, Coord_Y+Width-1, Coord_X, Coord_Y+Width-1, RMP_COLOR_BLACK);
+    RMP_Line(Coord_X, Coord_Y+Width-1, Coord_X, Coord_Y, RMP_COLOR_BLACK);
 }
 #endif
 #endif

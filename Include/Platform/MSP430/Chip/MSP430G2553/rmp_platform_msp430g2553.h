@@ -21,7 +21,7 @@ Description: The configuration file for MSP430G2553.
 #define RMP_SLICE_MAX               (30000U)
 /* The maximum number of semaphore counts allowed */
 #define RMP_SEM_CNT_MAX             (30000U)
-/* The stzck size of the init thread */
+/* The stack size of the init thread */
 #define RMP_INIT_STACK_SIZE         (64U)
 /* Custom hooks */
 extern void RMP_Start_Hook(void);
@@ -33,13 +33,20 @@ extern void RMP_Tim_Hook(rmp_u16_t Slice);
 #define RMP_DLY_HOOK(SLICE)         RMP_Dly_Hook(Slice)
 #define RMP_TIM_HOOK(SLICE)         RMP_Tim_Hook(Slice)
 
+/* GUI */
+#define RMP_GUI_ENABLE              (0U)
+/* Anti-aliasing */
+#define RMP_GUI_ANTIALIAS_ENABLE    (0U)
+/* Widgets */
+#define RMP_GUI_WIDGET_ENABLE       (0U)
+
 /* We are using MSP430X or not */
 #define RMP_MSP430_COP_430X         (0U)
 
 /* Other low-level initialization stuff - clock and serial. 
  * This is the default initialization sequence. If you wish to supply
  * your own, just redirect this macro to a custom function, or do your
- * initialization stuff in the initialization hook (RMP_Start_Hook). */
+ * initialization stuff in the initialization hook (RMP_START_HOOK). */
 #define RMP_MSP430_LOWLVL_INIT() \
 do \
 { \

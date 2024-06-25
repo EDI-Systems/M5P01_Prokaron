@@ -22,6 +22,13 @@ Description: The configuration file for SPCE061A.
 /* The stack size of the init thread */
 #define RMP_INIT_STACK_SIZE         (128U)
 
+/* GUI */
+#define RMP_GUI_ENABLE              (0U)
+/* Anti-aliasing */
+#define RMP_GUI_ANTIALIAS_ENABLE    (0U)
+/* Widgets */
+#define RMP_GUI_WIDGET_ENABLE       (0U)
+
 /* Tick timer value decided in IRQ - 1/1024s */
 #define RMP_UNSP_TICK_VAL           (C_IRQ4_1KHz)
 /* Is this unSP V2? */
@@ -30,7 +37,7 @@ Description: The configuration file for SPCE061A.
 /* Other low-level initialization stuff - clock and serial.
  * This is the default initialization sequence. If you wish to supply
  * your own, just redirect this macro to a custom function, or do your
- * initialization stuff in the initialization hook (RMP_Start_Hook). */
+ * initialization stuff in the initialization hook (RMP_START_HOOK). */
 #define RMP_UNSP_LOWLVL_INIT() \
 do \
 { \

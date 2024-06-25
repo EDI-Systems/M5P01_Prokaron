@@ -21,13 +21,15 @@ Description: The configuration file for STM32F767IG.
 #define RMP_SLICE_MAX               (100000U)
 /* The maximum number of semaphore counts allowed */
 #define RMP_SEM_CNT_MAX             (1000U)
-/* Are we using custom hooks? */
-#define RMP_HOOK_EXTRA              (0U)
-/* The stzck size of the init thread */
+/* The stack size of the init thread */
 #define RMP_INIT_STACK_SIZE         (4096U)
-/* The mask/unmask interrupt operations - can be adjusted to fit your own levels */
-#define RMP_INT_MASK()              RMP_Int_Mask(0xFFU)
-#define RMP_INT_UNMASK()            RMP_Int_Mask(0x00U)
+
+/* GUI */
+#define RMP_GUI_ENABLE              (0U)
+/* Anti-aliasing */
+#define RMP_GUI_ANTIALIAS_ENABLE    (0U)
+/* Widgets */
+#define RMP_GUI_WIDGET_ENABLE       (0U)
 
 /* What is the NVIC priority grouping? */
 #define RMP_A7M_NVIC_GROUPING       RMP_A7M_NVIC_GROUPING_P2S6
@@ -44,7 +46,7 @@ Description: The configuration file for STM32F767IG.
  * be fine. 
  * This is the default initialization sequence. If you wish to supply
  * your own, just redirect this macro to a custom function, or do your
- * initialization stuff in the initialization hook (RMP_Start_Hook). */
+ * initialization stuff in the initialization hook (RMP_START_HOOK). */
 #define RMP_A7M_LOWLVL_INIT() \
 do \
 { \

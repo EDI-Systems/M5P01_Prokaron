@@ -24,6 +24,13 @@ Description: The configuration file for STM32L071CB.
 /* The stack size of the init thread */
 #define RMP_INIT_STACK_SIZE         (512U)
 
+/* GUI */
+#define RMP_GUI_ENABLE              (0U)
+/* Anti-aliasing */
+#define RMP_GUI_ANTIALIAS_ENABLE    (0U)
+/* Widgets */
+#define RMP_GUI_WIDGET_ENABLE       (0U)
+
 /* What is the Systick value? */
 #define RMP_A6M_SYSTICK_VAL         (3600U)
 

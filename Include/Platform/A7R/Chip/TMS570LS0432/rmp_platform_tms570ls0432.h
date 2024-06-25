@@ -24,18 +24,25 @@ Description: The configuration file for TMS570LS0432.
 #define RMP_SEM_CNT_MAX             (1000U)
 /* Are we using custom hooks? */
 #define RMP_HOOK_EXTRA              (0U)
-/* The stzck size of the init thread */
+/* The stack size of the init thread */
 #define RMP_INIT_STACK_SIZE         (1024U)
 /* The mask/unmask interrupt operations */
 #define RMP_INT_MASK()              RMP_Int_Disable()
 #define RMP_INT_UNMASK()            RMP_Int_Enable()
+
+/* GUI */
+#define RMP_GUI_ENABLE              (0U)
+/* Anti-aliasing */
+#define RMP_GUI_ANTIALIAS_ENABLE    (0U)
+/* Widgets */
+#define RMP_GUI_WIDGET_ENABLE       (0U)
 
 #define RMP_A7R_SYSTICK_VAL         (10000U)
 
 /* Other low-level initialization stuff - clock and serial. 
  * This is the default initialization sequence. If you wish to supply
  * your own, just redirect this macro to a custom function, or do your
- * initialization stuff in the initialization hook (RMP_Start_Hook). */
+ * initialization stuff in the initialization hook (RMP_START_HOOK). */
 #define RMP_A7R_LOWLVL_INIT() \
 do \
 { \
