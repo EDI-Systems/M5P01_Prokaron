@@ -184,9 +184,9 @@ Description : The header file for the kernel.
 
 /* Logging macro */
 #ifndef RMP_LOG
-#define _RMP_LOG                    RMP_Log
+#define RMP_LOG_STUB                RMP_Log
 #else
-#define _RMP_LOG                    RMP_LOG
+#define RMP_LOG_STUB                RMP_LOG
 #endif
 
 /* Assert macro - used only in internal development */
@@ -196,7 +196,7 @@ do \
 { \
     if(!(X)) \
     { \
-        _RMP_LOG(__FILE__,__LINE__,__DATE__,__TIME__); \
+        RMP_LOG_STUB(__FILE__,__LINE__,__DATE__,__TIME__); \
         while(1); \
     } \
 } \
