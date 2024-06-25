@@ -647,6 +647,7 @@ Input       : const char* File - The filename.
 Output      : None.
 Return      : None.
 ******************************************************************************/
+#ifndef RMP_LOG
 void RMP_Log(const char* File,
              long Line,
              const char* Date,
@@ -662,6 +663,7 @@ void RMP_Log(const char* File,
     RMP_DBG_S(Time); \
     RMP_DBG_S("\r\n"); \
 }
+#endif
 /* End Function:RMP_Log ******************************************************/
 
 /* Function:RMP_Cov_Print *****************************************************
