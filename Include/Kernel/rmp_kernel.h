@@ -184,7 +184,9 @@ Description : The header file for the kernel.
 
 /* Logging macro */
 #ifndef RMP_LOG
-#define RMP_LOG                     RMP_Log
+#define _RMP_LOG                    RMP_Log
+#else
+#define _RMP_LOG                    RMP_LOG
 #endif
 
 /* Assert macro - used only in internal development */
@@ -194,7 +196,7 @@ do \
 { \
     if(!(X)) \
     { \
-        RMP_LOG(__FILE__,__LINE__,__DATE__,__TIME__); \
+        _RMP_LOG(__FILE__,__LINE__,__DATE__,__TIME__); \
         while(1); \
     } \
 } \
@@ -386,6 +388,7 @@ static void _RMP_Run_Ins(volatile struct RMP_Thd* Thread);
 static void _RMP_Run_Del(volatile struct RMP_Thd* Thread);
 static void _RMP_Dly_Ins(volatile struct RMP_Thd* Thread,
                          rmp_ptr_t Slice);
+
 static void _RMP_Tim_Proc(void);
 static void _RMP_Thd_Unblock(volatile struct RMP_Thd* Thd_Cur,
                              rmp_ptr_t* Data);
@@ -403,7 +406,7 @@ static rmp_ret_t _RMP_Mem_Search(volatile void* Pool,
                                  rmp_ptr_t* FLI_Level,
                                  rmp_ptr_t* SLI_Level);
 
-#if(RMP_GUI_ANTIALIAS_ENABLE!=0U)
+#if(RMP_GUI_WIDGET_ENABLE!=0U)
 static void RMP_Radiobtn_Circle(rmp_cnt_t Coord_X,
                                 rmp_cnt_t Coord_Y,
                                 rmp_cnt_t Length);
@@ -465,10 +468,12 @@ __RMP_EXTERN__ rmp_ptr_t RMP_RBT_Generic(rmp_ptr_t Value);
 __RMP_EXTERN__ rmp_cnt_t RMP_Int_Print(rmp_cnt_t Int);
 __RMP_EXTERN__ rmp_cnt_t RMP_Hex_Print(rmp_ptr_t Uint);
 __RMP_EXTERN__ rmp_cnt_t RMP_Str_Print(const rmp_s8_t* String);
+#ifndef RMP_LOG
 __RMP_EXTERN__ void RMP_Log(const char* File,
                             long Line,
                             const char* Date,
                             const char* Time);
+#endif
 /* Coverage test functions - internal use */
 #ifdef RMP_COV_LINE_NUM
 __RMP_EXTERN__ void RMP_Cov_Print(void);
