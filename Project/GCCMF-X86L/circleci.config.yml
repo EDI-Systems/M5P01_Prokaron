@@ -11,7 +11,7 @@ jobs:
       # Replace this with a real test runner invocation
       - run:
           name: Run tests
-          command: sudo dpkg --add-architecture i386 && sudo apt-get update && sudo apt-get -qq -y install gcc-multilib libc6:i386 libgcc1:i386 && cd Project/GCCMF-X86-LINUX && make
+          command: sudo dpkg --add-architecture i386 && sudo apt-get update && sudo apt-get -qq -y install gcc-multilib libc6:i386 libgcc1:i386 && cd Project/GCCMF-X86L && make
   build:
     docker:
       - image: cimg/base:stable
