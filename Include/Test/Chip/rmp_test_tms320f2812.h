@@ -62,12 +62,13 @@ Return      : None.
 ******************************************************************************/
 void Timer_Init(void)
 {
+    CpuTimer1Regs.TCR.bit.TIE=0U;
     CpuTimer1Regs.TCR.bit.TSS=1U;
+    CpuTimer1Regs.TCR.bit.TIF=0U;
     CpuTimer1Regs.PRD.all=0xFFFFU;
     CpuTimer1Regs.TPR.all=0U;
     CpuTimer1Regs.TPRH.all=0U;
     CpuTimer1Regs.TCR.bit.TRB=1U;
-    CpuTimer1Regs.TCR.bit.TIE=0U;
     CpuTimer1Regs.TCR.bit.TSS=0U;
 }
 /* End Function:Timer_Init ***************************************************/

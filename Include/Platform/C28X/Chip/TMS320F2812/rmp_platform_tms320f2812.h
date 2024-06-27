@@ -54,6 +54,7 @@ do \
     InitSysCtrl(); \
     /* Initialize vector table and sources but not global interrupt yet */ \
     InitPieVectTable(); \
+    IFR=0x0000U; \
     IER=0xFFFFU; \
     /* Initialize RAMFUNC */ \
     MemCopy(&RamfuncsLoadStart,&RamfuncsLoadEnd,&RamfuncsRunStart); \
