@@ -51,6 +51,8 @@ RMP_C28X_SWITCH_PRE         .macro
     MOV                     DP,#__RMP_C28X_SP_Kern
     MOV                     AL,@__RMP_C28X_SP_Kern
     MOV                     SP,AL
+    SPM                     0
+    CLRC                    OVM
     .endm
 
 ;/* Finish up the context switch **********************************************/

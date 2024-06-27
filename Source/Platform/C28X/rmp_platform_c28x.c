@@ -51,7 +51,9 @@ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
     Ctx->PC=Entry;
     Ctx->ACC=Param;
 
-    /* No product shift, sign extend, aux ptr 0, interrupt enabled upon entry */
+    /* No product shift (SPM 0/PM=3'b001), sign extend enabled (SXM=1), no
+     * saturation (OVM=0), aux ptr 0 (ARP=0), interrupt enabled (INTM=0),
+     * no C27x compatibility mode (PAGE0=0) upon thread entry */
     Ctx->T_ST0=0x00000081U;
     Ctx->DP_ST1=0x00000A08U;
 

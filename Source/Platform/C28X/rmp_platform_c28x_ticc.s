@@ -138,7 +138,7 @@ RMP_C28X_SAVE               .macro LABEL
     POP                     ACC
     AND                     AL,#0xFFFEU
     PUSH                    ACC
-    ;Push 0 for DBGSTAT; clear emulation context
+    ;Push 0 for DBGSTAT, may mess debugging up but we have no choice
     XOR                     AH,AH
     MOV                     AL,IER
     PUSH                    ACC
@@ -169,6 +169,12 @@ RMP_C28X_SWITCH             .macro
     MOV                     DP,#__RMP_C28X_SP_Kern
     MOV                     AH,@__RMP_C28X_SP_Kern
     MOV                     SP,AH
+    ;C runtime assumes SPM 0 (PM=3'b001), OVM=0 and PAGE0=0, but PAGE0 is always
+    ;0 for C28x, and this yield stub is masqueraded as a C function. As a result,
+    ;we don't need to set anything here, because the compiler must have done that
+    ;for us. However, we have to SPM 0 and CLRC OVM at the interrupt because we
+    ;have no clue when an interrupt will kick in. We don't need to ASP/NASP
+    ;there because we're using a separate kernel stack to run the kernel code.
     LCR                     __RMP_Run_High
     MOV                     DP,#_RMP_SP_Cur
     MOV                     AH,@_RMP_SP_Cur
