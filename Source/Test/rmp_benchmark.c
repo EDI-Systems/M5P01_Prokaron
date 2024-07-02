@@ -153,7 +153,7 @@ void Test_Bmq_ISR(void);
 
 #ifdef TEST_MEM_POOL
 rmp_ptr_t Rand(void);
-void Swap(rmp_u8_t* Arg1, rmp_u8_t* Arg2);
+void Swap(rmp_ptr_t* Arg1, rmp_ptr_t* Arg2);
 void Test_Mem_Pool(void);
 #endif
 
@@ -424,37 +424,37 @@ rmp_ptr_t Rand(void)
     return LFSR;
 }
 
-void Swap(rmp_u8_t* Arg1, rmp_u8_t* Arg2)
+void Swap(rmp_ptr_t* Arg1, rmp_ptr_t* Arg2)
 {
-    rmp_u8_t Char;
+    rmp_ptr_t Temp;
     
-    Char=*Arg1;
+    Temp=*Arg1;
     *Arg1=*Arg2;
-    *Arg2=Char;
+    *Arg2=Temp;
 }
 
 void Test_Mem_Pool(void)
 {
     static void* Mem[8];
-    static rmp_u8_t Alloc[8];
-    static rmp_u8_t Free[8];
-    static rmp_u8_t Size[8];
+    static rmp_ptr_t Alloc[8];
+    static rmp_ptr_t Free[8];
+    static rmp_ptr_t Size[8];
     static rmp_ptr_t Amount[8];
     rmp_ptr_t Pool_Addr;
     rmp_ptr_t* Pool_Align;
     rmp_cnt_t Case_Cnt;
     rmp_cnt_t Test_Cnt;
     
-    Amount[0]=TEST_MEM_POOL/32U;
-    Amount[1]=TEST_MEM_POOL/64U+16U;
-    Amount[2]=TEST_MEM_POOL/4U;
-    Amount[3]=TEST_MEM_POOL/128U+32U;
-    Amount[4]=TEST_MEM_POOL/16U;
-    Amount[5]=TEST_MEM_POOL/8U+16U;
-    Amount[6]=TEST_MEM_POOL/128U+64U;
-    Amount[7]=TEST_MEM_POOL/2U-64U;
+    Amount[0]=(TEST_MEM_POOL/32U)*sizeof(rmp_ptr_t);
+    Amount[1]=(TEST_MEM_POOL/64U+16U)*sizeof(rmp_ptr_t);
+    Amount[2]=(TEST_MEM_POOL/4U)*sizeof(rmp_ptr_t);
+    Amount[3]=(TEST_MEM_POOL/128U+32U)*sizeof(rmp_ptr_t);
+    Amount[4]=(TEST_MEM_POOL/16U)*sizeof(rmp_ptr_t);
+    Amount[5]=(TEST_MEM_POOL/8U+16U)*sizeof(rmp_ptr_t);
+    Amount[6]=(TEST_MEM_POOL/128U+64U)*sizeof(rmp_ptr_t);
+    Amount[7]=(TEST_MEM_POOL/2U-256U)*sizeof(rmp_ptr_t);
     
-    /* Round up the pool to machine word boundary just in case compilers don't */
+    /* Round up the pool to machine word boundary just in case toolchains don't */
     Pool_Addr=(rmp_ptr_t)Pool;
     Pool_Addr=(Pool_Addr+sizeof(rmp_ptr_t)-1U)/sizeof(rmp_ptr_t)*sizeof(rmp_ptr_t);
     Pool_Align=(rmp_ptr_t*)Pool_Addr;
@@ -479,15 +479,16 @@ void Test_Mem_Pool(void)
         }
         
         Start=RMP_CNT_READ();
-        /* Allocation tests - some malloc may fail if sizeof(rmp_ptr_t)==1; this is
-         * normal (could happen on some 16-bitters that have word addressing, because
-         * the pool is not big enough). However, the first two must be successful. */
+        /* Allocation tests - one of the mallocs may fail if because the management data
+         * structure takes up some space. However, the first four must be successful. */
         Mem[Alloc[0]]=RMP_Malloc(Pool_Align, Amount[Size[0]]);
         RMP_ASSERT(Mem[Alloc[0]]!=RMP_NULL);
         Mem[Alloc[1]]=RMP_Malloc(Pool_Align, Amount[Size[1]]);
         RMP_ASSERT(Mem[Alloc[1]]!=RMP_NULL);
         Mem[Alloc[2]]=RMP_Malloc(Pool_Align, Amount[Size[2]]);
+        RMP_ASSERT(Mem[Alloc[2]]!=RMP_NULL);
         Mem[Alloc[3]]=RMP_Malloc(Pool_Align, Amount[Size[3]]);
+        RMP_ASSERT(Mem[Alloc[3]]!=RMP_NULL);
         Mem[Alloc[4]]=RMP_Malloc(Pool_Align, Amount[Size[4]]);
         Mem[Alloc[5]]=RMP_Malloc(Pool_Align, Amount[Size[5]]);
         Mem[Alloc[6]]=RMP_Malloc(Pool_Align, Amount[Size[6]]);
@@ -505,9 +506,9 @@ void Test_Mem_Pool(void)
         End=RMP_CNT_READ();
         RMP_DATA();
 
-        /* This should always be successful because we deallocated everything else.
-         * Using 112 here to back off a little bit in case sizeof(rmp_ptr_t)==1. */
-        Mem[0]=RMP_Malloc(Pool_Align, (TEST_MEM_POOL>>7)*112U);
+        /* This should always be successful because we deallocated everything else, and
+         * management data structure should never take up more than 1/8 of the pool. */
+        Mem[0]=RMP_Malloc(Pool_Align, TEST_MEM_POOL*sizeof(rmp_ptr_t)*7U/8U);
         if(Mem[0]==RMP_NULL)
         {
             RMP_DBG_S("Memory test failure: ");
@@ -541,7 +542,7 @@ void Func_2(void)
     RMP_DBG_S("=RMP= RT kernel\r\n");
     RMP_DBG_S(" Std benchmark\r\n");
     RMP_DBG_S("================\r\n");
-    RMP_DBG_S("CY : A / T / B\r\n");
+    RMP_DBG_S("CY : A / TP / BM\r\n");
 #endif
 
 #ifdef FAULT_INJECT
