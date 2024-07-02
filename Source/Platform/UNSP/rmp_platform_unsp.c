@@ -43,9 +43,8 @@ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
     rmp_ptr_t Ptr;
     rmp_ptr_t* Long;
     struct RMP_UNSP_Stack* Ctx;
-
-    Ptr=RMP_STACK_PTR(Stack,Size);
-    Ctx=RMP_STACK_CTX(Ptr);
+    
+    RMP_STACK_CALC(Ptr,Ctx,Stack,Size);
     
     /* Pass entry/SR - the long entry is stored in face value at this address
      * rather than being at the address; this chip lacks true long jumps. */

@@ -181,7 +181,7 @@ void Test_Yield_1(void)
         Flip=1U;
         /* Read counter here */
         Start=RMP_CNT_READ();
-        RMP_Yield();
+        RMP_Thd_Yield();
     }
 }
 
@@ -259,7 +259,7 @@ void Test_Yield_2(void)
     rmp_cnt_t Count;
     for(Count=0;Count<ROUND_NUM;Count++)
     {
-        RMP_Yield();
+        RMP_Thd_Yield();
         /* Read counter here */
         End=RMP_CNT_READ();
         RMP_DATA();

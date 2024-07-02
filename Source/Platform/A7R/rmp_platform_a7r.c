@@ -42,9 +42,8 @@ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
 {
     rmp_ptr_t Ptr;
     struct RMP_A7R_Stack* Ctx;
-
-    Ptr=RMP_STACK_PTR(Stack,Size);
-    Ctx=RMP_STACK_CTX(Ptr);
+    
+    RMP_STACK_CALC(Ptr,Ctx,Stack,Size);
 
     Ctx->R0=Param;
     Ctx->R1=0x01010101U;

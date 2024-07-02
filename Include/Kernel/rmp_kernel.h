@@ -14,6 +14,9 @@ Description : The header file for the kernel.
 /* Constants */
 #define RMP_NULL                    ((void*)0)
 
+/* Dewarn compiler */
+#define RMP_USE(X)                  ((void)(X))
+
 /* States of threads */
 #define RMP_THD_STATE(X)            ((X)&((rmp_ptr_t)0xFFU))
 #define RMP_THD_FLAG(X)             ((X)&~((rmp_ptr_t)0xFFU))
@@ -69,22 +72,24 @@ Description : The header file for the kernel.
 #define RMP_ERR_PRIO                (-2)
 /* This error is timeslice related */
 #define RMP_ERR_SLICE               (-3)
+/* This error is stack related */
+#define RMP_ERR_STACK               (-4)
 /* This error is thread state related */
-#define RMP_ERR_STATE               (-4)
+#define RMP_ERR_STATE               (-5)
 /* This error is operation related */
-#define RMP_ERR_OPER                (-5)
+#define RMP_ERR_OPER                (-6)
 /* This error is semaphore related */
-#define RMP_ERR_SEM                 (-6)
+#define RMP_ERR_SEM                 (-7)
 /* This error is memory related */
-#define RMP_ERR_MEM                 (-7)
+#define RMP_ERR_MEM                 (-8)
 
 /* Extended error codes */
 /* This error is FIFO related */
-#define RMP_ERR_FIFO                (-8)
+#define RMP_ERR_FIFO                (-9)
 /* This error is message queue related */
-#define RMP_ERR_MSGQ                (-9)
+#define RMP_ERR_MSGQ                (-10)
 /* This error is blocking message queue related */
-#define RMP_ERR_BMQ                 (-10)
+#define RMP_ERR_BMQ                 (-11)
 
 /* Power and rounding */
 #define RMP_POW2(POW)               (((rmp_ptr_t)1U)<<(POW))
@@ -126,6 +131,16 @@ Description : The header file for the kernel.
 #error Please choose a correct stack type.
 #endif
 
+/* Stack pointer and context extraction */
+#define RMP_STACK_CALC(PTR,CTX,STK,SZ) \
+do \
+{ \
+    RMP_USE(SZ); \
+    (PTR)=RMP_STACK_PTR(STK,SZ); \
+    (CTX)=RMP_STACK_CTX(PTR); \
+} \
+while(0)
+
 /* Initial thread's stack pointer */
 #define RMP_INIT_STACK              RMP_STACK_END((rmp_ptr_t)RMP_Init_Stack,RMP_INIT_STACK_SIZE)
 
@@ -143,8 +158,23 @@ Description : The header file for the kernel.
 #define RMP_DBG_S(STR)              RMP_Str_Print((const rmp_s8_t*)(STR))
 
 /* Memory pool */
+/* Table */
 #define RMP_MEM_WORD_NUM(FLI)       (RMP_ROUND_UP((FLI)<<3,RMP_WORD_ORDER)>>RMP_WORD_ORDER)
 #define RMP_MEM_POS(FLI,SLI)        ((SLI)+((FLI)<<3U))
+/* Tail initialization */
+#define RMP_MEM_TAIL_INIT(HEAD,SZ)  ((volatile struct RMP_Mem_Tail*)(((rmp_ptr_t)(HEAD))+((rmp_ptr_t)(SZ))-sizeof(struct RMP_Mem_Tail)))
+/* Convert head to something else */
+#define RMP_MEM_HEAD2SIZE(HEAD)     (((rmp_ptr_t)((HEAD)->Tail))-((rmp_ptr_t)(HEAD))-sizeof(struct RMP_Mem_Head))
+#define RMP_MEM_HEAD2END(HEAD)      (((rmp_ptr_t)((HEAD)->Tail))+sizeof(struct RMP_Mem_Tail))
+#define RMP_MEM_HEAD2RIGHT(HEAD)    ((volatile struct RMP_Mem_Head*)(((rmp_ptr_t)((HEAD)->Tail))+sizeof(struct RMP_Mem_Tail)))
+#define RMP_MEM_HEAD2LEFT(HEAD)     (((volatile struct RMP_Mem_Tail*)(((rmp_ptr_t)(HEAD))-sizeof(struct RMP_Mem_Tail)))->Head)
+/* Convert between usable area size and the whole block size */
+#define RMP_MEM_SIZE2WHOLE(SZ)      (sizeof(struct RMP_Mem_Head)+((rmp_ptr_t)(SZ))+sizeof(struct RMP_Mem_Tail))
+#define RMP_MEM_WHOLE2SIZE(WHOLE)   (((rmp_ptr_t)(WHOLE))-sizeof(struct RMP_Mem_Head)-sizeof(struct RMP_Mem_Tail))
+/* Convert between usable area pointer and the while block pointer */
+#define RMP_MEM_PTR2HEAD(PTR)       ((volatile struct RMP_Mem_Head*)(((rmp_ptr_t)(PTR))-sizeof(struct RMP_Mem_Head)))
+/* Difference between pointers */
+#define RMP_MEM_PTR_DIFF(PTR1,PTR2) (((rmp_ptr_t)(PTR1))-((rmp_ptr_t)(PTR2)))
 
 /* Built-in graphics */
 #ifdef RMP_POINT
@@ -205,7 +235,7 @@ while(0)
 #define RMP_ASSERT(X) \
 do \
 { \
-    (void)(X); \
+    RMP_USE(X); \
 } \
 while(0)
 #endif
@@ -234,11 +264,11 @@ while(0)
 #define __HDR_DEF__
 #undef __HDR_DEF__
 /*****************************************************************************/
-/* The list head structure */
+/* List head structure - next before prev for faster traversal */
 struct RMP_List
 {
-    volatile struct RMP_List* Prev;
     volatile struct RMP_List* Next;
+    volatile struct RMP_List* Prev;
 };
 
 /* Thread structure - 15 words */
@@ -276,7 +306,7 @@ struct RMP_Sem
     /* The state of the semaphore */
     rmp_ptr_t State;
     /* The current number of semaphore */
-    rmp_ptr_t Cur_Num;
+    rmp_ptr_t Num_Cur;
 };
 
 /* The FIFO structure */
@@ -285,7 +315,7 @@ struct RMP_Fifo
     /* The datablocks */
     struct RMP_List Head;
     /* The current number of datablocks */
-    rmp_ptr_t Cur_Num;
+    rmp_ptr_t Num_Cur;
     /* The state of the FIFO */
     rmp_ptr_t State;
 };
@@ -333,7 +363,7 @@ struct RMP_Mem
     rmp_ptr_t FLI_Num;
     /* The base address of the actual memory pool */
     rmp_ptr_t Base;
-    /* The size of this pool, including the header, bitmap and list table */
+    /* The total size of this pool, including the header, bitmap and list table */
     rmp_ptr_t Size;
     /* The location of the list table itself */
     struct RMP_List* Table;
@@ -395,12 +425,13 @@ static void _RMP_Thd_Unblock(volatile struct RMP_Thd* Thd_Cur,
 static void _RMP_Sem_Unblock(volatile struct RMP_Sem* Semaphore);
 static rmp_ret_t _RMP_Sem_Pend_Core(volatile struct RMP_Sem* Semaphore,
                                     rmp_ptr_t Slice);
-static void _RMP_Mem_Block(volatile struct RMP_Mem_Head* Addr,
-                           rmp_ptr_t Size);
+static void _RMP_Mem_Block(volatile struct RMP_Mem_Head* Head,
+                           rmp_ptr_t Size,
+                           rmp_ptr_t State);
 static void _RMP_Mem_Ins(volatile void* Pool,
-                         volatile struct RMP_Mem_Head* Mem_Head);
+                         volatile struct RMP_Mem_Head* Head);
 static void _RMP_Mem_Del(volatile void* Pool,
-                         volatile struct RMP_Mem_Head* Mem_Head);
+                         volatile struct RMP_Mem_Head* Head);
 static rmp_ret_t _RMP_Mem_Search(volatile void* Pool,
                                  rmp_ptr_t Size,
                                  rmp_ptr_t* FLI_Level,
@@ -500,7 +531,7 @@ __RMP_EXTERN__ void RMP_Sched_Unlock(void);
 
 
 /* System interfaces */
-__RMP_EXTERN__ void RMP_Yield(void);
+__RMP_EXTERN__ void RMP_Thd_Yield(void);
 __RMP_EXTERN__ rmp_ret_t RMP_Thd_Crt(volatile struct RMP_Thd* Thread, 
                                      void* Entry,
                                      void* Param, 
@@ -512,6 +543,7 @@ __RMP_EXTERN__ rmp_ret_t RMP_Thd_Del(volatile struct RMP_Thd* Thread);
 __RMP_EXTERN__ rmp_ret_t RMP_Thd_Set(volatile struct RMP_Thd* Thread,
                                      rmp_ptr_t Prio,
                                      rmp_ptr_t Slice);
+
 __RMP_EXTERN__ rmp_ret_t RMP_Thd_Suspend(volatile struct RMP_Thd* Thread);
 __RMP_EXTERN__ rmp_ret_t RMP_Thd_Resume(volatile struct RMP_Thd* Thread);
 

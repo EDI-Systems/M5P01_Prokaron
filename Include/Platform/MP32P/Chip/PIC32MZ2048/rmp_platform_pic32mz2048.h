@@ -12,8 +12,10 @@ Description: The configuration file for PIC32MZ2048EFM100.
 
 /* Debugging */
 #define RMP_ASSERT_ENABLE           (1U)
-/* The maximum number of preemption priority levels in the system.
- * This parameter must be divisible by the word length - 32 is usually sufficient */
+#define RMP_CHECK_ENABLE            (1U)
+
+/* System */
+/* The maximum number of preemption priorities */
 #define RMP_PREEMPT_PRIO_NUM        (32)
 /* The maximum number of slices allowed */
 #define RMP_SLICE_MAX               (100000U)

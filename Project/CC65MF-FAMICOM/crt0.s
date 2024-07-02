@@ -78,7 +78,7 @@
 
 start:
 
-; Set up the CPU and System-IRQ - don't touch PPU; cc65 will do it for us.
+; Set up the CPU and System-IRQ - don't touch the PPU; cc65 will do it for us.
 
         sei
         cld
@@ -92,7 +92,7 @@ start:
 
         ldx     #$40            ; Disable WRAM write protect
         stx     $F800
-        ldx     #$7C            ; Page 60, no sound - can turn on later
+        ldx     #$7C            ; Page 60, no sound - turn on later if needed
         stx     $E000
         ldx     #$FD            ; Page 61, CHR RAM full disable
         stx     $E800

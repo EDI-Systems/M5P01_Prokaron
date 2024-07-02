@@ -14,11 +14,11 @@ Description: The configuration file for STM32F103RB.
 
 /* Debugging */
 #define RMP_ASSERT_ENABLE           (1U)
-/* Coverage */
+#define RMP_CHECK_ENABLE            (1U)
 #define RMP_COV_LINE_NUM            (6144U)
 
-/* The maximum number of preemption priority levels in the system.
- * This parameter must be divisible by the word length - 64 for coverage test */
+/* System */
+/* The maximum number of preemption priorities */
 #define RMP_PREEMPT_PRIO_NUM        (64U)
 /* The maximum number of slices allowed */
 #define RMP_SLICE_MAX               (100000U)
