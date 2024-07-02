@@ -38,7 +38,7 @@ ISR Blocking message queue         : 964 / 1005 / 917
 /* How to read counter */
 #define RMP_CNT_READ()      (~TCR02)
 /* Are we testing the memory pool? */
-#define TEST_MEM_POOL 4096
+#define TEST_MEM_POOL      (4096U)
 /* Are we doing minimal measurements? */
 /* #define MINIMAL_SIZE */
 /* RL78 timers are 16 bits */

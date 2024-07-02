@@ -62,7 +62,7 @@ ISR Blocking message queue         : 3504 / 3772 / 3456
 /* How to read counter */
 #define RMP_CNT_READ()      (((rmp_tim_t)(*P_TimerA_Data))<<1)
 /* Are we testing the memory pool? */
-#define TEST_MEM_POOL       (1024U)
+#define TEST_MEM_POOL       (1280U)
 #define TEST_MEM_POOL_NOINIT
 /* Are we doing minimal measurements? */
 /* #define MINIMAL_SIZE */

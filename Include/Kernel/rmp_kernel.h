@@ -455,9 +455,6 @@ static void RMP_Progbar_Prog(rmp_cnt_t Coord_X,
                              rmp_ptr_t Fore,
                              rmp_ptr_t Back);
 #endif
-
-/* First thread */
-static void RMP_Init(void);
 /*****************************************************************************/
 #define __RMP_EXTERN__
 /* End Private Function ******************************************************/
@@ -534,6 +531,8 @@ __RMP_EXTERN__ void RMP_Clear(volatile void* Addr,
 __RMP_EXTERN__ void RMP_Sched_Lock(void);
 __RMP_EXTERN__ void RMP_Sched_Unlock(void);
 
+/* First thread - in case the user needs to boot similar threads */
+__RMP_EXTERN__ void RMP_Init(void);
 
 /* System interfaces */
 __RMP_EXTERN__ void RMP_Thd_Yield(void);
