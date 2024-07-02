@@ -3269,13 +3269,12 @@ rmp_ret_t RMP_Sem_Cnt(volatile struct RMP_Sem* Semaphore)
 
 /* Function:RMP_Init **********************************************************
 Description : The entry of the user thread. This is the first user thread that
-              will be created.
-              The user threads should never return.
+              will be created. The user threads shall never return.
 Input       : None.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-static void RMP_Init(void)
+void RMP_Init(void)
 {
     RMP_Sched_Lock();
     /* Perform per-platform initialization */
