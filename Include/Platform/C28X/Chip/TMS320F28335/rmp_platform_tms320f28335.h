@@ -13,8 +13,10 @@ Description: The configuration file for TMS320F28335.
 
 /* Debugging */
 #define RMP_ASSERT_ENABLE           (1U)
-/* The maximum number of preemption priority levels in the system.
- * This parameter must be divisible by the word length - 32 is usually sufficient */
+#define RMP_CHECK_ENABLE            (1U)
+
+/* System */
+/* The maximum number of preemption priorities */
 #define RMP_PREEMPT_PRIO_NUM        (32U)
 /* The maximum number of slices allowed */
 #define RMP_SLICE_MAX               (10000U)

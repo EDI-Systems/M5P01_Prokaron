@@ -207,9 +207,8 @@ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
 {
     rmp_ptr_t Ptr;
     struct RMP_X86L_Stack* Ctx;
-
-    Ptr=RMP_STACK_PTR(Stack,Size);
-    Ctx=RMP_STACK_CTX(Ptr);
+    
+    RMP_STACK_CALC(Ptr,Ctx,Stack,Size);
 
     Ctx->REG_EBX=0x0B0B0B0BU;
     Ctx->REG_ECX=0x0C0C0C0CU;

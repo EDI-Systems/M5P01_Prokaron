@@ -825,29 +825,6 @@ void RMP_Sched_Unlock(void)
 }
 /* End Function:RMP_Sched_Unlock *********************************************/
 
-/* Function:RMP_Yield *********************************************************
-Description : Yield to another thread.
-Input       : None.
-Output      : None.
-Return      : None.
-******************************************************************************/
-void RMP_Yield(void)
-{
-    /* Scheduler not locked, perform a schedule immediately */
-    if(RMP_Sched_Lock_Cnt==0U)
-    {
-        RMP_COV_MARKER();
-        RMP_YIELD();
-    }
-    /* Scheduler locked, have to pend the flag to schedule later */
-    else
-    {
-        RMP_COV_MARKER();
-        RMP_Sched_Pend=1U;
-    }
-}
-/* End Function:RMP_Yield ****************************************************/
-
 /* Function:_RMP_Tim_Proc *****************************************************
 Description : Process RMP timer events.
 Input       : None.
@@ -1332,7 +1309,7 @@ Output      : None.
 Return      : None.
 ******************************************************************************/
 static void _RMP_Dly_Ins(volatile struct RMP_Thd* Thread,
-                  rmp_ptr_t Slice)
+                         rmp_ptr_t Slice)
 {
     rmp_ptr_t Diff;
     volatile struct RMP_List* Trav_Ptr;
@@ -1370,10 +1347,33 @@ static void _RMP_Dly_Ins(volatile struct RMP_Thd* Thread,
 }
 /* End Function:_RMP_Dly_Ins *************************************************/
 
+/* Function:RMP_Thd_Yield *****************************************************
+Description : Yield to another thread.
+Input       : None.
+Output      : None.
+Return      : None.
+******************************************************************************/
+void RMP_Thd_Yield(void)
+{
+    /* Scheduler not locked, perform a schedule immediately */
+    if(RMP_Sched_Lock_Cnt==0U)
+    {
+        RMP_COV_MARKER();
+        RMP_YIELD();
+    }
+    /* Scheduler locked, have to pend the flag to schedule later */
+    else
+    {
+        RMP_COV_MARKER();
+        RMP_Sched_Pend=1U;
+    }
+}
+/* End Function:RMP_Thd_Yield ************************************************/
+
 /* Function:RMP_Thd_Crt *******************************************************
 Description : Create a real-time thread.
 Input       : volatile struct RMP_Thd* Thread - The thread structure provided. 
-                                                The user should make this allocation
+                                                The user should make allocation
                                                 as needed.
               void* Entry - The entry of the thread.
               void* Param - The argument to pass to the thread.
@@ -1392,7 +1392,8 @@ rmp_ret_t RMP_Thd_Crt(volatile struct RMP_Thd* Thread,
                       rmp_ptr_t Prio,
                       rmp_ptr_t Slice)
 {
-    /* Check priority validity */
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the priority is valid */
     if(Prio>=RMP_PREEMPT_PRIO_NUM)
     {
         RMP_COV_MARKER();
@@ -1404,7 +1405,7 @@ rmp_ret_t RMP_Thd_Crt(volatile struct RMP_Thd* Thread,
         /* No action required */
     }
     
-    /* Check slice validity */
+    /* Check if the slice is valid */
     if((Slice==0U)||(Slice>=RMP_SLICE_MAX))
     {
         RMP_COV_MARKER();
@@ -1416,7 +1417,19 @@ rmp_ret_t RMP_Thd_Crt(volatile struct RMP_Thd* Thread,
         /* No action required */
     }
     
-    /* Check thread pointer */
+    /* Check if the stack is valid - must not be NULL and have at least the context size */
+    if((Stack==RMP_NULL)||(Size<=sizeof(RMP_STACK_STRUCT)))
+    {
+        RMP_COV_MARKER();
+        return RMP_ERR_STACK;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+    
+    /* Check if the thread pointer is valid */
     if(Thread==RMP_NULL)
     {
         RMP_COV_MARKER();
@@ -1427,10 +1440,12 @@ rmp_ret_t RMP_Thd_Crt(volatile struct RMP_Thd* Thread,
         RMP_COV_MARKER();
         /* No action required */
     }
-    
+#endif
+
     RMP_Sched_Lock();
     
-    /* Check if the thread is in use */
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the thread structure is in use */
     if(RMP_THD_STATE(Thread->State)!=RMP_THD_FREE)
     {
         RMP_COV_MARKER();
@@ -1442,6 +1457,7 @@ rmp_ret_t RMP_Thd_Crt(volatile struct RMP_Thd* Thread,
         RMP_COV_MARKER();
         /* No action required */
     }
+#endif
     
     /* Create the thread and insert it into the list */
     Thread->Prio=Prio;
@@ -1473,8 +1489,9 @@ rmp_ret_t RMP_Thd_Del(volatile struct RMP_Thd* Thread)
 {
     rmp_ptr_t State;
     volatile struct RMP_Thd* Release;
-    
-    /* Check thread pointer */
+
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the thread pointer is valid */
     if(Thread==RMP_NULL)
     {
         RMP_COV_MARKER();
@@ -1485,10 +1502,12 @@ rmp_ret_t RMP_Thd_Del(volatile struct RMP_Thd* Thread)
         RMP_COV_MARKER();
         /* No action required */
     }
+#endif
     
     RMP_Sched_Lock();
     
-    /* Check if the thread is in use */
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the thread structure is in use */
     if(RMP_THD_STATE(Thread->State)==RMP_THD_FREE)
     {
         RMP_COV_MARKER();
@@ -1500,6 +1519,7 @@ rmp_ret_t RMP_Thd_Del(volatile struct RMP_Thd* Thread)
         RMP_COV_MARKER();
         /* No action required */
     }
+#endif
     
     /* See if anyone waiting to send to this thread. If there is, release all these threads */
     while(&(Thread->Snd_List)!=Thread->Snd_List.Next)
@@ -1591,19 +1611,8 @@ rmp_ret_t RMP_Thd_Set(volatile struct RMP_Thd* Thread,
                       rmp_ptr_t Prio,
                       rmp_ptr_t Slice)
 {
-    /* Check slice validity */
-    if(Slice==0U)
-    {
-        RMP_COV_MARKER();
-        return RMP_ERR_SLICE;
-    }
-    else
-    {
-        RMP_COV_MARKER();
-        /* No action required */
-    }
-    
-    /* Check thread pointer */
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the thread pointer is valid */
     if(Thread==RMP_NULL)
     {
         RMP_COV_MARKER();
@@ -1615,9 +1624,23 @@ rmp_ret_t RMP_Thd_Set(volatile struct RMP_Thd* Thread,
         /* No action required */
     }
     
+    /* Check if the slice is valid */
+    if(Slice==0U)
+    {
+        RMP_COV_MARKER();
+        return RMP_ERR_SLICE;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+#endif
+    
     RMP_Sched_Lock();
     
-    /* Check if the thread is in use */
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the thread structure is in use */
     if(RMP_THD_STATE(Thread->State)==RMP_THD_FREE)
     {
         RMP_COV_MARKER();
@@ -1629,6 +1652,7 @@ rmp_ret_t RMP_Thd_Set(volatile struct RMP_Thd* Thread,
         RMP_COV_MARKER();
         /* No action required */
     }
+#endif
     
     /* See if the thread is in running state */
     if(RMP_THD_STATE(Thread->State)==RMP_THD_RUNNING)
@@ -1711,7 +1735,8 @@ Return      : rmp_ret_t - If successful, 0; else error code.
 ******************************************************************************/
 rmp_ret_t RMP_Thd_Suspend(volatile struct RMP_Thd* Thread)
 {
-    /* Check thread pointer */
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the thread pointer is valid */
     if(Thread==RMP_NULL)
     {
         RMP_COV_MARKER();
@@ -1722,10 +1747,12 @@ rmp_ret_t RMP_Thd_Suspend(volatile struct RMP_Thd* Thread)
         RMP_COV_MARKER();
         /* No action required */
     }
+#endif
     
     RMP_Sched_Lock();
     
-    /* Check if the thread is in use */
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the thread structure is in use */
     if(RMP_THD_STATE(Thread->State)==RMP_THD_FREE)
     {
         RMP_COV_MARKER();
@@ -1737,8 +1764,9 @@ rmp_ret_t RMP_Thd_Suspend(volatile struct RMP_Thd* Thread)
         RMP_COV_MARKER();
         /* No action required */
     }
+#endif
     
-    /* Suspend it */
+    /* Check if the thread is already suspended */
     if((Thread->State&RMP_THD_SUSPENDED)!=0U)
     {
         RMP_COV_MARKER();
@@ -1782,7 +1810,8 @@ Return      : rmp_ret_t - If successful, 0; else error code.
 ******************************************************************************/
 rmp_ret_t RMP_Thd_Resume(volatile struct RMP_Thd* Thread)
 {
-    /* Check thread pointer */
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the thread pointer is valid */
     if(Thread==RMP_NULL)
     {
         RMP_COV_MARKER();
@@ -1793,10 +1822,12 @@ rmp_ret_t RMP_Thd_Resume(volatile struct RMP_Thd* Thread)
         RMP_COV_MARKER();
         /* No action required */
     }
-
+#endif
+    
     RMP_Sched_Lock();
     
-    /* Check if the thread is in use */
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the thread structure is in use */
     if(RMP_THD_STATE(Thread->State)==RMP_THD_FREE)
     {
         RMP_COV_MARKER();
@@ -1808,29 +1839,14 @@ rmp_ret_t RMP_Thd_Resume(volatile struct RMP_Thd* Thread)
         RMP_COV_MARKER();
         /* No action required */
     }
+#endif
     
-    /* Check if the thread is suspended */
-    if((Thread->State&RMP_THD_SUSPENDED)!=0U)
+    /* Check if the thread is already suspended */
+    if((Thread->State&RMP_THD_SUSPENDED)==0U)
     {
         RMP_COV_MARKER();
-        
-        /* The thread is suspended, need to resume it */
-        Thread->State&=~RMP_THD_SUSPENDED;
-        
-        /* Put the thread back if it is running */
-        if(RMP_THD_STATE(Thread->State)==RMP_THD_RUNNING)
-        {
-            RMP_COV_MARKER();
-            _RMP_Run_Ins(Thread);
-        }
-        else
-        {
-            RMP_COV_MARKER();
-            /* No action required */
-        }
-        
         RMP_Sched_Unlock();
-        return 0;
+        return RMP_ERR_STATE;
     }
     else
     {
@@ -1838,11 +1854,154 @@ rmp_ret_t RMP_Thd_Resume(volatile struct RMP_Thd* Thread)
         /* No action required */
     }
     
-    /* Thread is not suspended, report an error */
+    /* The thread is suspended, need to resume it */
+    Thread->State&=~RMP_THD_SUSPENDED;
+    
+    /* Put the thread back if it is running */
+    if(RMP_THD_STATE(Thread->State)==RMP_THD_RUNNING)
+    {
+        RMP_COV_MARKER();
+        _RMP_Run_Ins(Thread);
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+    
     RMP_Sched_Unlock();
-    return RMP_ERR_STATE;
+    return 0;
 }
 /* End Function:RMP_Thd_Resume ***********************************************/
+
+/* Function:RMP_Thd_Delay *****************************************************
+Description : Delay the execution of a real-time thread.
+Input       : rmp_ptr_t Slice - The number of timeslices to delay.
+Output      : None.
+Return      : rmp_ret_t - If successful, 0; or an error code.
+******************************************************************************/
+rmp_ret_t RMP_Thd_Delay(rmp_ptr_t Slice)
+{
+    volatile struct RMP_Thd* Thd_Cur;
+
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the slice is valid */
+    if((Slice==0U)||(Slice>=RMP_SLICE_MAX))
+    {
+        RMP_COV_MARKER();
+        return RMP_ERR_SLICE;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+#endif
+    
+    RMP_Sched_Lock();
+    
+    /* Cache volatile current thread - must be own thread */
+    Thd_Cur=RMP_Thd_Cur;
+
+    /* We must be running and not suspended so we will be out of running queue */
+    _RMP_Run_Del(Thd_Cur);
+    RMP_THD_STATE_SET(Thd_Cur->State, RMP_THD_DELAYED);
+    _RMP_Dly_Ins(Thd_Cur, Slice);
+
+    /* When abort, an error code will be supplied instead */
+    Thd_Cur->Retval=0;
+    RMP_Sched_Unlock();
+    
+    /* Retval might be updated */
+    return Thd_Cur->Retval;
+}
+/* End Function:RMP_Thd_Delay ************************************************/
+
+/* Function:RMP_Thd_Cancel ****************************************************
+Description : Cancel the real-time thread from a previous delay.
+Input       : volatile struct RMP_Thd* Thread - The pointer to the thread.
+Output      : None.
+Return      : rmp_ret_t - If successful, 0; or an error code.
+******************************************************************************/
+rmp_ret_t RMP_Thd_Cancel(volatile struct RMP_Thd* Thread)
+{
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the thread pointer is valid */
+    if(Thread==RMP_NULL)
+    {
+        RMP_COV_MARKER();
+        return RMP_ERR_THD;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+#endif
+    
+    RMP_Sched_Lock();
+    
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the thread structure is in use */
+    if(RMP_THD_STATE(Thread->State)==RMP_THD_FREE)
+    {
+        RMP_COV_MARKER();
+        RMP_Sched_Unlock();
+        return RMP_ERR_THD;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+#endif
+    
+    /* Check if the thread is in delay */
+    if(RMP_THD_STATE(Thread->State)!=RMP_THD_DELAYED)
+    {
+        RMP_COV_MARKER();
+        RMP_Sched_Unlock();
+        return RMP_ERR_STATE;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+    
+    /* Delete it from the delay list */
+    RMP_List_Del(Thread->Dly_Head.Prev, Thread->Dly_Head.Next);
+    RMP_THD_STATE_SET(Thread->State, RMP_THD_RUNNING);
+    /* Set to running if not suspended */
+    _RMP_Run_Ins(Thread);
+    
+    /* Supply cancel error code */
+    Thread->Retval=RMP_ERR_OPER;
+    RMP_Sched_Unlock();
+        
+    return 0;
+}
+/* End Function:RMP_Thd_Cancel ***********************************************/
+
+/* Function:RMP_Thd_Loop ******************************************************
+Description : Enter a useless loop to waste some time. Can be used when the
+              scheduler is locked. The delay caused by each loop is chip and
+              toolchain specific.
+Input       : rmp_ptr_t Loop - The number of useless loops to run.
+Output      : None.
+Return      : None.
+******************************************************************************/
+void RMP_Thd_Loop(rmp_ptr_t Loop)
+{
+    volatile rmp_ptr_t Count;
+    
+    /* Just waste some time - volatile thus the compiler will not optimize */
+    for(Count=0U;Count<Loop;Count++)
+    {
+        RMP_COV_MARKER();
+    }
+}
+/* End Function:RMP_Thd_Loop *************************************************/
 
 /* Function:RMP_Thd_Snd *******************************************************
 Description : Send to a real-time thread's mailbox. If the mailbox is full, then
@@ -1859,8 +2018,9 @@ rmp_ret_t RMP_Thd_Snd(volatile struct RMP_Thd* Thread,
                       rmp_ptr_t Slice)
 {
     volatile struct RMP_Thd* Thd_Cur;
-        
-    /* Check thread pointer */
+    
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the thread pointer is valid */
     if(Thread==RMP_NULL)
     {
         RMP_COV_MARKER();
@@ -1871,10 +2031,12 @@ rmp_ret_t RMP_Thd_Snd(volatile struct RMP_Thd* Thread,
         RMP_COV_MARKER();
         /* No action required */
     }
+#endif
     
     RMP_Sched_Lock();
     
-    /* Check if the thread is in use */
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the thread structure is in use */
     if(RMP_THD_STATE(Thread->State)==RMP_THD_FREE)
     {
         RMP_COV_MARKER();
@@ -1886,11 +2048,13 @@ rmp_ret_t RMP_Thd_Snd(volatile struct RMP_Thd* Thread,
         RMP_COV_MARKER();
         /* No action required */
     }
+#endif
     
     /* Cache volatile current thread - must be own thread */
     Thd_Cur=RMP_Thd_Cur;
-    
-    /* Self-sending is not allowed */
+
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if this is a disallowed self-sending */
     if(Thd_Cur==Thread)
     {
         RMP_COV_MARKER();
@@ -1902,8 +2066,9 @@ rmp_ret_t RMP_Thd_Snd(volatile struct RMP_Thd* Thread,
         /* No action required */
         RMP_COV_MARKER();
     }
-
-    /* Check if mailbox empty */
+#endif
+    
+    /* Check if the mailbox is empty */
     if((Thread->State&RMP_THD_MBOXFUL)==0U)
     {
         RMP_COV_MARKER();
@@ -2002,7 +2167,8 @@ Return      : rmp_ret_t - If successful, 0; or an error code.
 rmp_ret_t RMP_Thd_Snd_ISR(volatile struct RMP_Thd* Thread,
                           rmp_ptr_t Data)
 {
-    /* Check thread pointer */
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the thread pointer is valid */
     if(Thread==RMP_NULL)
     {
         RMP_COV_MARKER();
@@ -2014,7 +2180,7 @@ rmp_ret_t RMP_Thd_Snd_ISR(volatile struct RMP_Thd* Thread,
         /* No action required */
     }
     
-    /* Check if the thread is in use */
+    /* Check if the thread structure is in use */
     if(RMP_THD_STATE(Thread->State)==RMP_THD_FREE)
     {
         RMP_COV_MARKER();
@@ -2025,8 +2191,9 @@ rmp_ret_t RMP_Thd_Snd_ISR(volatile struct RMP_Thd* Thread,
         RMP_COV_MARKER();
         /* No action required */
     }
-
-    /* Check if mailbox empty */
+#endif
+    
+    /* Check if the mailbox is empty */
     if((Thread->State&RMP_THD_MBOXFUL)==0U)
     {
         RMP_COV_MARKER();
@@ -2100,8 +2267,8 @@ static void _RMP_Thd_Unblock(volatile struct RMP_Thd* Thd_Cur,
                              rmp_ptr_t* Data)
 {
     volatile struct RMP_Thd* Sender;
-    
-    /* Mailbox full; get the value from mailbox */
+
+    /* Mailbox full; get the value from mailbox if needed */
     if(Data!=RMP_NULL)
     {
         RMP_COV_MARKER();
@@ -2112,7 +2279,7 @@ static void _RMP_Thd_Unblock(volatile struct RMP_Thd* Thd_Cur,
         RMP_COV_MARKER();
         /* No action required */
     }
-        
+    
     /* Check if there are senders waiting */
     if(&(Thd_Cur->Snd_List)!=Thd_Cur->Snd_List.Next)
     {
@@ -2151,8 +2318,9 @@ static void _RMP_Thd_Unblock(volatile struct RMP_Thd* Thd_Cur,
 
 /* Function:RMP_Thd_Rcv *******************************************************
 Description : Receive a message from our own mailbox, and this is blocking.
-Input       : rmp_ptr_t Slice - The timeslices to wait, if the mailbox is empty.
-Output      : rmp_ptr_t* Data - The pointer to put the data to.
+Input       : rmp_ptr_t Slice - The timeslices to wait if the mailbox is empty.
+Output      : rmp_ptr_t* Data - The pointer to put the data to; if NULL, data
+                                will be discarded.
 Return      : rmp_ret_t - If successful, 0; or an error code.
 ******************************************************************************/
 rmp_ret_t RMP_Thd_Rcv(rmp_ptr_t* Data,
@@ -2243,116 +2411,6 @@ rmp_ret_t RMP_Thd_Rcv(rmp_ptr_t* Data,
 }
 /* End Function:RMP_Thd_Rcv **************************************************/
 
-/* Function:RMP_Thd_Delay *****************************************************
-Description : Delay the execution of a real-time thread.
-Input       : rmp_ptr_t Slice - The number of timeslices to delay.
-Output      : None.
-Return      : rmp_ret_t - If successful, 0; or an error code.
-******************************************************************************/
-rmp_ret_t RMP_Thd_Delay(rmp_ptr_t Slice)
-{
-    volatile struct RMP_Thd* Thd_Cur;
-    
-    /* Check slice validity */
-    if((Slice==0U)||(Slice>=RMP_SLICE_MAX))
-    {
-        RMP_COV_MARKER();
-        return RMP_ERR_SLICE;
-    }
-    else
-    {
-        RMP_COV_MARKER();
-        /* No action required */
-    }
-    
-    RMP_Sched_Lock();
-    
-    /* Cache volatile current thread - must be own thread */
-    Thd_Cur=RMP_Thd_Cur;
-
-    /* We must be running and not suspended so we will be out of running queue */
-    _RMP_Run_Del(Thd_Cur);
-    RMP_THD_STATE_SET(Thd_Cur->State, RMP_THD_DELAYED);
-    _RMP_Dly_Ins(Thd_Cur, Slice);
-
-    /* When abort, an error code will be supplied instead */
-    Thd_Cur->Retval=0;
-    RMP_Sched_Unlock();
-    
-    /* Retval might be updated */
-    return Thd_Cur->Retval;
-}
-/* End Function:RMP_Thd_Delay ************************************************/
-
-/* Function:RMP_Thd_Cancel ****************************************************
-Description : Cancel the real-time thread from a previous delay.
-Input       : volatile struct RMP_Thd* Thread - The pointer to the thread.
-Output      : None.
-Return      : rmp_ret_t - If successful, 0; or an error code.
-******************************************************************************/
-rmp_ret_t RMP_Thd_Cancel(volatile struct RMP_Thd* Thread)
-{
-    /* Check thread pointer */
-    if(Thread==RMP_NULL)
-    {
-        RMP_COV_MARKER();
-        return RMP_ERR_THD;
-    }
-    else
-    {
-        RMP_COV_MARKER();
-        /* No action required */
-    }
-    
-    RMP_Sched_Lock();
-    
-    /* Check if the thread is in use, and whether it is delayed */
-    if(RMP_THD_STATE(Thread->State)!=RMP_THD_DELAYED)
-    {
-        RMP_COV_MARKER();
-        RMP_Sched_Unlock();
-        return RMP_ERR_STATE;
-    }
-    else
-    {
-        RMP_COV_MARKER();
-        /* No action required */
-    }
-
-    /* Delete it from the delay list */
-    RMP_List_Del(Thread->Dly_Head.Prev, Thread->Dly_Head.Next);
-    RMP_THD_STATE_SET(Thread->State, RMP_THD_RUNNING);
-    /* Set to running if not suspended */
-    _RMP_Run_Ins(Thread);
-    
-    /* Supply cancel error code */
-    Thread->Retval=RMP_ERR_OPER;
-    RMP_Sched_Unlock();
-        
-    return 0;
-}
-/* End Function:RMP_Thd_Cancel ***********************************************/
-
-/* Function:RMP_Thd_Loop ******************************************************
-Description : Enter a useless loop to waste some time. Can be used when the
-              scheduler is locked. The delay caused by each loop is chip and
-              toolchain specific.
-Input       : rmp_ptr_t Loop - The number of useless loops to run.
-Output      : None.
-Return      : None.
-******************************************************************************/
-void RMP_Thd_Loop(rmp_ptr_t Loop)
-{
-    volatile rmp_ptr_t Count;
-    
-    /* Just waste some time */
-    for(Count=0U;Count<Loop;Count++)
-    {
-        RMP_COV_MARKER();
-    }
-}
-/* End Function:RMP_Thd_Loop *************************************************/
-
 /* Function:RMP_Sem_Crt *******************************************************
 Description : Create a semaphore in the system.
 Input       : volatile struct RMP_Sem* Semaphore - The pointer to the semaphore.
@@ -2363,7 +2421,8 @@ Return      : rmp_ret_t - If successful, 0; or an error code.
 rmp_ret_t RMP_Sem_Crt(volatile struct RMP_Sem* Semaphore,
                       rmp_ptr_t Number)
 {
-    /* Check semaphore pointer */
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the semaphore pointer is valid */
     if(Semaphore==RMP_NULL)
     {
         RMP_COV_MARKER();
@@ -2374,10 +2433,12 @@ rmp_ret_t RMP_Sem_Crt(volatile struct RMP_Sem* Semaphore,
         RMP_COV_MARKER();
         /* No action required */
     }
+#endif
     
     RMP_Sched_Lock();
-    
-    /* Check if the semaphore is in use */
+
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the semaphore structure is in use */
     if(Semaphore->State!=RMP_SEM_FREE)
     {
         RMP_COV_MARKER();
@@ -2390,7 +2451,7 @@ rmp_ret_t RMP_Sem_Crt(volatile struct RMP_Sem* Semaphore,
         /* No action required */
     }
     
-    /* Is the number too great to initialize? */
+    /* Check if the number is too great */
     if(Number>=RMP_SEM_CNT_MAX)
     {
         RMP_COV_MARKER();
@@ -2402,9 +2463,10 @@ rmp_ret_t RMP_Sem_Crt(volatile struct RMP_Sem* Semaphore,
         RMP_COV_MARKER();
         /* No action required */
     }
-
-    /* Initialize contents */
-    Semaphore->Cur_Num=Number;
+#endif
+    
+    /* Initialize semaphore */
+    Semaphore->Num_Cur=Number;
     RMP_List_Crt(&(Semaphore->Wait_List));
     
     Semaphore->State=RMP_SEM_USED;
@@ -2423,8 +2485,9 @@ Return      : rmp_ret_t - If successful, 0; or an error code.
 rmp_ret_t RMP_Sem_Del(volatile struct RMP_Sem* Semaphore)
 {
     volatile struct RMP_Thd* Thread;
-    
-    /* Check semaphore pointer */
+
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the semaphore pointer is valid */
     if(Semaphore==RMP_NULL)
     {
         RMP_COV_MARKER();
@@ -2435,10 +2498,12 @@ rmp_ret_t RMP_Sem_Del(volatile struct RMP_Sem* Semaphore)
         RMP_COV_MARKER();
         /* No action required */
     }
+#endif
     
     RMP_Sched_Lock();
     
-    /* Check if the semaphore is in use */
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the semaphore structure is in use */
     if(Semaphore->State!=RMP_SEM_USED)
     {
         RMP_COV_MARKER();
@@ -2450,8 +2515,9 @@ rmp_ret_t RMP_Sem_Del(volatile struct RMP_Sem* Semaphore)
         RMP_COV_MARKER();
         /* No action required */
     }
-
-    /* Get rid of all guys waiting on it */
+#endif
+    
+    /* Get rid of all threads waiting on it */
     while(&(Semaphore->Wait_List)!=Semaphore->Wait_List.Next)
     {
         Thread=(volatile struct RMP_Thd*)(Semaphore->Wait_List.Next);
@@ -2524,7 +2590,10 @@ Return      : rmp_ret_t - If successful, 0; or an error code.
 rmp_ret_t RMP_Sem_Post(volatile struct RMP_Sem* Semaphore,
                        rmp_ptr_t Number)
 {
-    /* Check semaphore pointer */
+    rmp_ptr_t Num_Cur;
+    
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the semaphore pointer is valid */
     if(Semaphore==RMP_NULL)
     {
         RMP_COV_MARKER();
@@ -2536,7 +2605,7 @@ rmp_ret_t RMP_Sem_Post(volatile struct RMP_Sem* Semaphore,
         /* No action required */
     }
     
-    /* Check number validity */
+    /* Check if the number is valid */
     if(Number==0U)
     {
         RMP_COV_MARKER();
@@ -2547,10 +2616,12 @@ rmp_ret_t RMP_Sem_Post(volatile struct RMP_Sem* Semaphore,
         RMP_COV_MARKER();
         /* No action required */
     }
+#endif
     
     RMP_Sched_Lock();
     
-    /* Check if the semaphore is in use */
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the semaphore structure is in use */
     if(Semaphore->State!=RMP_SEM_USED)
     {
         RMP_COV_MARKER();
@@ -2562,9 +2633,14 @@ rmp_ret_t RMP_Sem_Post(volatile struct RMP_Sem* Semaphore,
         RMP_COV_MARKER();
         /* No action required */
     }
+#endif
     
-    /* Would the maximum value be exceeded if this is posted? */
-    if((Semaphore->Cur_Num+Number)>=RMP_SEM_CNT_MAX)
+    /* Cache volatile current number */
+    Num_Cur=Semaphore->Num_Cur;
+
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the maximum value will be exceeded if this is posted */
+    if((Num_Cur+Number)>=RMP_SEM_CNT_MAX)
     {
         RMP_COV_MARKER();
         RMP_Sched_Unlock();
@@ -2575,15 +2651,19 @@ rmp_ret_t RMP_Sem_Post(volatile struct RMP_Sem* Semaphore,
         RMP_COV_MARKER();
         /* No action required */
     }
+#endif
     
-    Semaphore->Cur_Num+=Number;
+    Num_Cur+=Number;
     
-    /* Is there any thread waiting on it? If there are, clean them up*/
-    while((&(Semaphore->Wait_List)!=Semaphore->Wait_List.Next)&&(Semaphore->Cur_Num!=0U))
+    /* Is there any thread waiting on it? If there are, clean them up */
+    while((&(Semaphore->Wait_List)!=Semaphore->Wait_List.Next)&&(Num_Cur!=0U))
     {
         _RMP_Sem_Unblock(Semaphore);
-        Semaphore->Cur_Num--;
+        Num_Cur--;
     }
+    
+    /* Put cached number back */
+    Semaphore->Num_Cur=Num_Cur;
 
     RMP_Sched_Unlock();
     return 0;
@@ -2602,8 +2682,11 @@ Return      : rmp_ret_t - If successful, 0; or an error code.
 ******************************************************************************/
 rmp_ret_t RMP_Sem_Post_ISR(volatile struct RMP_Sem* Semaphore,
                            rmp_ptr_t Number)
-{   
-    /* Check semaphore pointer */
+{
+    rmp_ptr_t Num_Cur;
+    
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the semaphore pointer is valid */
     if(Semaphore==RMP_NULL)
     {
         RMP_COV_MARKER();
@@ -2615,7 +2698,7 @@ rmp_ret_t RMP_Sem_Post_ISR(volatile struct RMP_Sem* Semaphore,
         /* No action required */
     }
     
-    /* Check number validity */
+    /* Check if the number is valid */
     if(Number==0U)
     {
         RMP_COV_MARKER();
@@ -2627,7 +2710,7 @@ rmp_ret_t RMP_Sem_Post_ISR(volatile struct RMP_Sem* Semaphore,
         /* No action required */
     }
     
-    /* Check if the semaphore is in use */
+    /* Check if the semaphore structure is in use */
     if(Semaphore->State!=RMP_SEM_USED)
     {
         RMP_COV_MARKER();
@@ -2638,9 +2721,14 @@ rmp_ret_t RMP_Sem_Post_ISR(volatile struct RMP_Sem* Semaphore,
         RMP_COV_MARKER();
         /* No action required */
     }
+#endif
+    
+    /* Cache volatile current number */
+    Num_Cur=Semaphore->Num_Cur;
 
-    /* Would the maximum value be exceeded if this is posted? */
-    if((Semaphore->Cur_Num+Number)>=RMP_SEM_CNT_MAX)
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the maximum value will be exceeded if this is posted */
+    if((Num_Cur+Number)>=RMP_SEM_CNT_MAX)
     {
         RMP_COV_MARKER();
         return RMP_ERR_OPER;
@@ -2650,15 +2738,19 @@ rmp_ret_t RMP_Sem_Post_ISR(volatile struct RMP_Sem* Semaphore,
         RMP_COV_MARKER();
         /* No action required */
     }
+#endif
     
-    Semaphore->Cur_Num+=Number;
+    Num_Cur+=Number;
     
-    /* Is there any thread waiting on it? If there are, clean them up*/
-    while((&(Semaphore->Wait_List)!=Semaphore->Wait_List.Next)&&(Semaphore->Cur_Num!=0U))
+    /* Is there any thread waiting on it? If there are, clean them up */
+    while((&(Semaphore->Wait_List)!=Semaphore->Wait_List.Next)&&(Num_Cur!=0U))
     {
         _RMP_Sem_Unblock(Semaphore);
-        Semaphore->Cur_Num--;
+        Num_Cur--;
     }
+    
+    /* Put cached number back */
+    Semaphore->Num_Cur=Num_Cur;
     
     /* Trigger a context switch if required */
 #ifdef RMP_YIELD_ISR
@@ -2690,7 +2782,8 @@ rmp_ret_t RMP_Sem_Bcst(volatile struct RMP_Sem* Semaphore)
 {
     rmp_ret_t Number;
     
-    /* Check semaphore pointer */
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the semaphore pointer is valid */
     if(Semaphore==RMP_NULL)
     {
         RMP_COV_MARKER();
@@ -2701,10 +2794,12 @@ rmp_ret_t RMP_Sem_Bcst(volatile struct RMP_Sem* Semaphore)
         RMP_COV_MARKER();
         /* No action required */
     }
+#endif
     
     RMP_Sched_Lock();
     
-    /* Check if the semaphore is in use */
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the semaphore structure is in use */
     if(Semaphore->State!=RMP_SEM_USED)
     {
         RMP_COV_MARKER();
@@ -2716,6 +2811,7 @@ rmp_ret_t RMP_Sem_Bcst(volatile struct RMP_Sem* Semaphore)
         RMP_COV_MARKER();
         /* No action required */
     }
+#endif
     
     /* Is there any thread waiting on it? If there are, clean them up */
     Number=0;
@@ -2744,7 +2840,8 @@ rmp_ret_t RMP_Sem_Bcst_ISR(volatile struct RMP_Sem* Semaphore)
 {   
     rmp_ret_t Number;
     
-    /* Check semaphore pointer */
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the semaphore pointer is valid */
     if(Semaphore==RMP_NULL)
     {
         RMP_COV_MARKER();
@@ -2756,7 +2853,7 @@ rmp_ret_t RMP_Sem_Bcst_ISR(volatile struct RMP_Sem* Semaphore)
         /* No action required */
     }
     
-    /* Check if the semaphore is in use */
+    /* Check if the semaphore structure is in use */
     if(Semaphore->State!=RMP_SEM_USED)
     {
         RMP_COV_MARKER();
@@ -2767,6 +2864,7 @@ rmp_ret_t RMP_Sem_Bcst_ISR(volatile struct RMP_Sem* Semaphore)
         RMP_COV_MARKER();
         /* No action required */
     }
+#endif
     
     /* Is there any thread waiting on it? If there are, clean them up */
     Number=0;
@@ -2806,12 +2904,14 @@ Return      : rmp_ret_t - If successful, the current semaphore number; or an err
 static rmp_ret_t _RMP_Sem_Pend_Core(volatile struct RMP_Sem* Semaphore,
                                     rmp_ptr_t Slice)
 {
+    volatile rmp_ptr_t Num_Cur;
     volatile struct RMP_Thd* Thd_Cur;
     
     /* Cache volatile current thread */
     Thd_Cur=RMP_Thd_Cur;
     
-    /* Check if the semaphore is in use */
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the semaphore structure is in use */
     if(Semaphore->State!=RMP_SEM_USED)
     {
         RMP_COV_MARKER();
@@ -2823,14 +2923,20 @@ static rmp_ret_t _RMP_Sem_Pend_Core(volatile struct RMP_Sem* Semaphore,
         RMP_COV_MARKER();
         /* No action required */
     }
+#endif
     
-    /* Check if we can get one immediately */
-    if(Semaphore->Cur_Num!=0U)
+    /* Cache volatile current number */
+    Num_Cur=Semaphore->Num_Cur;
+    
+    /* See if we can get one immediately */
+    if(Num_Cur!=0U)
     {
         RMP_COV_MARKER();
-        Semaphore->Cur_Num--;
+        Num_Cur--;
+        /* Put cached number back */
+        Semaphore->Num_Cur=Num_Cur;
         RMP_Sched_Unlock();
-        return (rmp_ret_t)Semaphore->Cur_Num;
+        return (rmp_ret_t)Num_Cur;
     }
     else
     {
@@ -2883,7 +2989,8 @@ Return      : rmp_ret_t - If successful, the current semaphore number; or an err
 rmp_ret_t RMP_Sem_Pend(volatile struct RMP_Sem* Semaphore,
                        rmp_ptr_t Slice)
 {
-    /* Check semaphore pointer */
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the semaphore pointer is valid */
     if(Semaphore==RMP_NULL)
     {
         RMP_COV_MARKER();
@@ -2894,6 +3001,7 @@ rmp_ret_t RMP_Sem_Pend(volatile struct RMP_Sem* Semaphore,
         RMP_COV_MARKER();
         /* No action required */
     }
+#endif
     
     RMP_Sched_Lock();
     
@@ -2913,7 +3021,8 @@ Return      : rmp_ret_t - If successful, the current semaphore number; or an err
 rmp_ret_t RMP_Sem_Pend_Unlock(volatile struct RMP_Sem* Semaphore,
                               rmp_ptr_t Slice)
 {
-    /* Check semaphore pointer */
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the semaphore pointer is valid */
     if(Semaphore==RMP_NULL)
     {
         RMP_COV_MARKER();
@@ -2926,7 +3035,7 @@ rmp_ret_t RMP_Sem_Pend_Unlock(volatile struct RMP_Sem* Semaphore,
         /* No action required */
     }
     
-    /* Check if the scheduler is locked just once; no more, no less */
+    /* Check if the scheduler is locked just once - no more, no less */
     if(RMP_Sched_Lock_Cnt!=1U)
     {
         RMP_COV_MARKER();
@@ -2938,6 +3047,7 @@ rmp_ret_t RMP_Sem_Pend_Unlock(volatile struct RMP_Sem* Semaphore,
         /* No action required */
         RMP_COV_MARKER();
     }
+#endif
     
     return _RMP_Sem_Pend_Core(Semaphore, Slice);
 }
@@ -2951,7 +3061,8 @@ Return      : rmp_ret_t - If successful, 0; or an error code.
 ******************************************************************************/
 rmp_ret_t RMP_Sem_Abort(volatile struct RMP_Thd* Thread)
 {
-    /* Check thread pointer */
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the thread pointer is valid */
     if(Thread==RMP_NULL)
     {
         RMP_COV_MARKER();
@@ -2962,10 +3073,12 @@ rmp_ret_t RMP_Sem_Abort(volatile struct RMP_Thd* Thread)
         RMP_COV_MARKER();
         /* No action required */
     }
-
+#endif
+    
     RMP_Sched_Lock();
     
-    /* Check if the thread is in use */
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the thread structure is in use */
     if(RMP_THD_STATE(Thread->State)==RMP_THD_FREE)
     {
         RMP_COV_MARKER();
@@ -2977,8 +3090,9 @@ rmp_ret_t RMP_Sem_Abort(volatile struct RMP_Thd* Thread)
         RMP_COV_MARKER();
         /* No action required */
     }
+#endif
     
-    /* Is it waiting on a semaphore? If no, we abort and return an error code */
+    /* Check if the thread is really waiting on a semaphore */
     if((RMP_THD_STATE(Thread->State)!=RMP_THD_SEMBLK)&&
        (RMP_THD_STATE(Thread->State)!=RMP_THD_SEMDLY))
     {
@@ -2991,7 +3105,7 @@ rmp_ret_t RMP_Sem_Abort(volatile struct RMP_Thd* Thread)
         RMP_COV_MARKER();
         /* No action required */
     }
-
+    
     /* Waiting for a semaphore. We abort it and return */
     RMP_List_Del(Thread->Run_Head.Prev, Thread->Run_Head.Next);
     if(RMP_THD_STATE(Thread->State)==RMP_THD_SEMDLY)
@@ -3026,8 +3140,9 @@ Return      : rmp_ret_t - If successful, the number of semaphores; or an error c
 rmp_ret_t RMP_Sem_Cnt(volatile struct RMP_Sem* Semaphore)
 {
     rmp_ret_t Count;
-    
-    /* Check semaphore pointer */
+
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the semaphore pointer is valid */
     if(Semaphore==RMP_NULL)
     {
         RMP_COV_MARKER();
@@ -3038,10 +3153,12 @@ rmp_ret_t RMP_Sem_Cnt(volatile struct RMP_Sem* Semaphore)
         RMP_COV_MARKER();
         /* No action required */
     }
-
-    RMP_Sched_Lock();
+#endif
     
-    /* Check if the semaphore is in use */
+    RMP_Sched_Lock();
+
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the semaphore structure is in use */
     if(Semaphore->State!=RMP_SEM_USED)
     {
         RMP_COV_MARKER();
@@ -3053,8 +3170,9 @@ rmp_ret_t RMP_Sem_Cnt(volatile struct RMP_Sem* Semaphore)
         RMP_COV_MARKER();
         /* No action required */
     }
+#endif
     
-    Count=(rmp_ret_t)(Semaphore->Cur_Num);
+    Count=(rmp_ret_t)(Semaphore->Num_Cur);
     
     RMP_Sched_Unlock();
     return Count;
@@ -3069,7 +3187,7 @@ Input       : None.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void RMP_Init(void)
+static void RMP_Init(void)
 {
     RMP_Sched_Lock();
     /* Perform per-platform initialization */
@@ -3198,9 +3316,10 @@ rmp_ret_t RMP_Mem_Init(volatile void* Pool,
     rmp_ptr_t Offset;
     rmp_ptr_t Bitmap_Size;
     volatile struct RMP_Mem* Mem;
-    
-    /* See if the memory pool is large enough to enable dynamic allocation - at
-     * least 1024 machine words or pool initialization will be refused */
+
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the memory pool is large enough to enable dynamic allocation -
+     * at least 1024 machine words or pool initialization will be refused */
     if((Pool==RMP_NULL)||(Size<(1024U*sizeof(rmp_ptr_t)))||((((rmp_ptr_t)Pool)+Size)<Size))
     {
         RMP_COV_MARKER();
@@ -3212,7 +3331,7 @@ rmp_ret_t RMP_Mem_Init(volatile void* Pool,
         /* No action required */
     }
     
-    /* See if the address and size is word-aligned - divisions will be optimized out */
+    /* Check if the address and size is word-aligned - divisions will be optimized out */
     if(((((rmp_ptr_t)Pool)%sizeof(rmp_ptr_t))!=0U)||((Size%sizeof(rmp_ptr_t))!=0U))
     {
         RMP_COV_MARKER();
@@ -3223,25 +3342,23 @@ rmp_ret_t RMP_Mem_Init(volatile void* Pool,
         RMP_COV_MARKER();
         /* No action required */
     }
-
+#endif
+    
     Mem=(volatile struct RMP_Mem*)Pool;
     Mem->Size=Size;
     /* Calculate the FLI value needed for this - we always align to 64 byte */
     Mem->FLI_Num=RMP_MSB_GET(Size-sizeof(struct RMP_Mem))-6U+1U;
     
-    /* Decide the location of the bitmap */
-    Offset=sizeof(struct RMP_Mem);
     /* Initialize the bitmap - how many words are needed for this bitmap? */
     Bitmap_Size=RMP_MEM_WORD_NUM(Mem->FLI_Num);
     for(FLI_Cnt=0U;FLI_Cnt<Bitmap_Size;FLI_Cnt++)
     {
         Mem->Bitmap[FLI_Cnt]=0U;
     }
-    Bitmap_Size*=sizeof(rmp_ptr_t);
     
-    /* Decide the location of the allocation table - "-sizeof(rmp_ptr_t)" is
+    /* Decide the location of the allocation list table - "-1" is
      * because we defined the length=1 in our struct already */
-    Offset+=Bitmap_Size-sizeof(rmp_ptr_t);
+    Offset=sizeof(struct RMP_Mem)+(Bitmap_Size-1U)*sizeof(rmp_ptr_t);
     Mem->Table=(struct RMP_List*)(((rmp_ptr_t)Mem)+Offset);
     /* Initialize the allocation table */
     for(FLI_Cnt=0U;FLI_Cnt<Mem->FLI_Num;FLI_Cnt++)
@@ -3256,13 +3373,13 @@ rmp_ret_t RMP_Mem_Init(volatile void* Pool,
         RMP_List_Crt(&(Mem->Table[RMP_MEM_POS(FLI_Cnt, 7U)]));
     }
     
-    /* Calculate the offset of the actual allocatable memory - each FLI have
-     * 8 SLIs, and each SLI has a corresponding table header */
+    /* Decide the offset of the actual allocatable memory - each FLI
+     * has 8 SLIs, and each SLI has a corresponding table header */
     Offset+=sizeof(struct RMP_List)*8U*Mem->FLI_Num;
     Mem->Base=((rmp_ptr_t)Mem)+Offset;
     
     /* Initialize the first big block */
-    _RMP_Mem_Block((struct RMP_Mem_Head*)(Mem->Base), Size-Offset);
+    _RMP_Mem_Block((struct RMP_Mem_Head*)(Mem->Base),Size-Offset,RMP_MEM_FREE);
     /* Insert the memory into the corresponding level */
     _RMP_Mem_Ins(Pool,(struct RMP_Mem_Head*)(Mem->Base));
     
@@ -3272,25 +3389,21 @@ rmp_ret_t RMP_Mem_Init(volatile void* Pool,
 
 /* Function:_RMP_Mem_Block ****************************************************
 Description : Make a memory block from the memory trunk. The memory block is
-              always free when created. No parameter check performed here.
-Input       : volatile struct RMP_Mem_Head* Addr - The start address of the
+              always free when created. No parameter check is performed here.
+Input       : volatile struct RMP_Mem_Head* Head - The start address of the
                                                    memory block, word-aligned.
-              rmp_ptr_t Size - The size of the memory block, word-aligned.
+              rmp_ptr_t Size - The total size of the memory block, word-aligned.
+              rmp_ptr_t State - The allocation state of the new memory block.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-static void _RMP_Mem_Block(volatile struct RMP_Mem_Head* Addr,
-                           rmp_ptr_t Size)
+static void _RMP_Mem_Block(volatile struct RMP_Mem_Head* Head,
+                           rmp_ptr_t Size,
+                           rmp_ptr_t State)
 {
-    volatile struct RMP_Mem_Head* Mem_Head;
-    
-    /* Get the big memory block's size and position */
-    Mem_Head=Addr;
-    
-    /* Initialize the big memory block */
-    Mem_Head->State=RMP_MEM_FREE;
-    Mem_Head->Tail=(volatile struct RMP_Mem_Tail*)(((rmp_ptr_t)Mem_Head)+Size-sizeof(struct RMP_Mem_Tail));
-    Mem_Head->Tail->Head=Mem_Head;
+    Head->State=State;
+    Head->Tail=RMP_MEM_TAIL_INIT(Head,Size);
+    Head->Tail->Head=Head;
 }
 /* End Function:_RMP_Mem_Block ***********************************************/
 
@@ -3298,12 +3411,12 @@ static void _RMP_Mem_Block(volatile struct RMP_Mem_Head* Addr,
 Description : The memory insertion function, to insert a certain memory block
               into the corresponding FLI and SLI slot.
 Input       : volatile void* Pool - The memory pool.
-              volatile struct RMP_Mem_Head* Mem_Head - The pointer to the memory block.
+              volatile struct RMP_Mem_Head* Head - The pointer to the memory block.
 Output      : None.
 Return      : None.
 ******************************************************************************/
 static void _RMP_Mem_Ins(volatile void* Pool,
-                         volatile struct RMP_Mem_Head* Mem_Head)
+                         volatile struct RMP_Mem_Head* Head)
 {
     rmp_ptr_t FLI_Level;
     rmp_ptr_t SLI_Level;
@@ -3314,7 +3427,7 @@ static void _RMP_Mem_Ins(volatile void* Pool,
     
     /* Get the memory pool and block size */
     Mem=(volatile struct RMP_Mem*)Pool;
-    Size=(rmp_ptr_t)(Mem_Head->Tail)-((rmp_ptr_t)Mem_Head)-sizeof(struct RMP_Mem_Head);
+    Size=RMP_MEM_HEAD2SIZE(Head);
 
     /* Guarantee the Mem_Size is bigger than 64 or a failure will surely occur here */
     FLI_Level=RMP_MSB_GET(Size)-6U;
@@ -3325,7 +3438,7 @@ static void _RMP_Mem_Ins(volatile void* Pool,
     /* Get the slot */
     Slot=&(Mem->Table[Level]);
 
-    /* See if there are any blocks in the level, equal means no. So what we inserted is the first block */
+    /* See if we are inserting the first memory block */
     if(Slot==Slot->Next)
     {
         RMP_COV_MARKER();
@@ -3339,7 +3452,7 @@ static void _RMP_Mem_Ins(volatile void* Pool,
     }
 
     /* Insert the node now */
-    RMP_List_Ins(&(Mem_Head->Head), Slot, Slot->Next);
+    RMP_List_Ins(&(Head->Head), Slot, Slot->Next);
 }
 /* End Function:_RMP_Mem_Ins *************************************************/
 
@@ -3347,12 +3460,12 @@ static void _RMP_Mem_Ins(volatile void* Pool,
 Description : The memory deletion function, to delete a certain memory block
               from the corresponding FLI and SLI class.
 Input       : volatile void* Pool - The memory pool.
-              volatile struct RMP_Mem_Head* Mem_Head - The pointer to the memory block.
+              volatile struct RMP_Mem_Head* Head - The pointer to the memory block.
 Output      : None.
 Return      : None.
 ******************************************************************************/
 static void _RMP_Mem_Del(volatile void* Pool,
-                         volatile struct RMP_Mem_Head* Mem_Head)
+                         volatile struct RMP_Mem_Head* Head)
 {
     rmp_ptr_t FLI_Level;
     rmp_ptr_t SLI_Level;
@@ -3363,9 +3476,9 @@ static void _RMP_Mem_Del(volatile void* Pool,
     
     /* Get the memory pool and block size */
     Mem=(volatile struct RMP_Mem*)Pool;
-    Size=(rmp_ptr_t)(Mem_Head->Tail)-((rmp_ptr_t)Mem_Head)-sizeof(struct RMP_Mem_Head);
+    Size=RMP_MEM_HEAD2SIZE(Head);
     
-    /* Guarantee the Mem_Size is bigger than 64 or a failure will surely occur here */
+    /* Guarantee the Size is bigger than 64 or a failure will surely occur here */
     FLI_Level=RMP_MSB_GET(Size)-6U;
     /* Decide the SLI level directly from the FLI level */
     SLI_Level=(Size>>(FLI_Level+3U))&0x07U;
@@ -3375,7 +3488,7 @@ static void _RMP_Mem_Del(volatile void* Pool,
     Slot=&(Mem->Table[Level]);
 
     /* Delete the node now */
-    RMP_List_Del(Mem_Head->Head.Prev,Mem_Head->Head.Next);
+    RMP_List_Del(Head->Head.Prev,Head->Head.Next);
 
     /* See if there are any blocks in the level, equal means no. So
      * what we deleted is the last blockm need to clear the flag */
@@ -3411,7 +3524,6 @@ static rmp_ret_t _RMP_Mem_Search(volatile void* Pool,
     rmp_ptr_t Level;
     rmp_ptr_t Word;
     rmp_ptr_t Limit;
-    rmp_ptr_t LSB;
     rmp_ptr_t FLI_Search;
     rmp_ptr_t SLI_Search;
     volatile struct RMP_Mem* Mem;
@@ -3461,7 +3573,7 @@ static rmp_ret_t _RMP_Mem_Search(volatile void* Pool,
     }
     
     /* Try to find the word that contains this level, then right shift away the
-     * lower levels to extract the ones that can satisfy this alocation request */
+     * lower levels to extract the ones that can satisfy this allocation request */
     Level=RMP_MEM_POS(FLI_Search,SLI_Search);
     Word=Mem->Bitmap[Level>>RMP_WORD_ORDER]>>(Level&RMP_WORD_MASK);
     
@@ -3469,14 +3581,14 @@ static rmp_ret_t _RMP_Mem_Search(volatile void* Pool,
     if(Word!=0U)
     {
         RMP_COV_MARKER();
-        LSB=RMP_LSB_GET(Word);
-        /* Need to compensate for the lower levels that were shifted away */
-        Level=(Level&(~RMP_WORD_MASK))+(LSB+(Level&RMP_WORD_MASK));
+        /* Also need to compensate for the lower levels that were shifted away; the following line is
+         * simplified from "Level=(Level&(~RMP_WORD_MASK))+(RMP_LSB_GET(Word)+(Level&RMP_WORD_MASK))" */
+        Level+=RMP_LSB_GET(Word);
         *FLI_Level=Level>>3U;
         *SLI_Level=Level&0x07U;
         return 0;
     }
-    /* No one exactly fits, compute the size of bitmap and look through it */
+    /* No fits in that exact level, compute the size of bitmap and look through higher levels */
     else
     {
         RMP_COV_MARKER();
@@ -3489,9 +3601,9 @@ static rmp_ret_t _RMP_Mem_Search(volatile void* Pool,
             {
                 RMP_COV_MARKER();
                 /* Find the actual level */ 
-                LSB=RMP_LSB_GET(Mem->Bitmap[Word]);
-                *FLI_Level=((Word<<RMP_WORD_ORDER)+LSB)>>3U;
-                *SLI_Level=LSB&0x07U;
+                Level=RMP_LSB_GET(Mem->Bitmap[Word]);
+                *FLI_Level=((Word<<RMP_WORD_ORDER)+Level)>>3U;
+                *SLI_Level=Level&0x07U;
                 return 0;
             }
             else
@@ -3512,7 +3624,8 @@ Description : Allocate some memory from a designated memory pool.
 Input       : volatile void* Pool - The pool to allocate from.
               rmp_ptr_t Size - The size of the RAM needed to allocate.
 Output      : None.
-Return      : void* - The pointer to the memory. If no memory available, 0 is returned.
+Return      : void* - The pointer to the memory. If no memory is available,
+                      NULL is returned.
 ******************************************************************************/
 void* RMP_Malloc(volatile void* Pool,
                  rmp_ptr_t Size)
@@ -3521,11 +3634,13 @@ void* RMP_Malloc(volatile void* Pool,
     rmp_ptr_t SLI_Level;
     volatile struct RMP_Mem* Mem;
     rmp_ptr_t Old_Size;
-    volatile struct RMP_Mem_Head* Mem_Head;
+    volatile struct RMP_Mem_Head* Head;
     rmp_ptr_t Rounded_Size;
-    volatile struct RMP_Mem_Head* New_Mem;
+    volatile struct RMP_Mem_Head* New;
     rmp_ptr_t New_Size;
     
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the pool pointer and size is valid */
     if((Pool==RMP_NULL)||(Size==0U))
     {
         RMP_COV_MARKER();
@@ -3536,6 +3651,7 @@ void* RMP_Malloc(volatile void* Pool,
         RMP_COV_MARKER();
         /* No action required */
     }
+#endif
     
     /* Round up the size:a multiple of 8 and bigger than 64B */
     Rounded_Size=RMP_ROUND_UP(Size, 3U);
@@ -3543,7 +3659,7 @@ void* RMP_Malloc(volatile void* Pool,
     Rounded_Size=(Rounded_Size>64U)?Rounded_Size:64U;
 
     /* See if such block exists, if not, abort */
-    if(_RMP_Mem_Search(Pool, Rounded_Size, &FLI_Level, &SLI_Level)!=0)
+    if(_RMP_Mem_Search(Pool,Rounded_Size,&FLI_Level,&SLI_Level)!=0)
     {
         RMP_COV_MARKER();
         return RMP_NULL;
@@ -3556,36 +3672,34 @@ void* RMP_Malloc(volatile void* Pool,
     
     Mem=(volatile struct RMP_Mem*)Pool;
     
-    /* There is such block. Get it and delete it from the TLSF list. */
-    Mem_Head=(volatile struct RMP_Mem_Head*)(Mem->Table[RMP_MEM_POS(FLI_Level, SLI_Level)].Next);
-    _RMP_Mem_Del(Pool, Mem_Head);
+    /* There is such a block; get it and delete it from the TLSF list */
+    Head=(volatile struct RMP_Mem_Head*)(Mem->Table[RMP_MEM_POS(FLI_Level,SLI_Level)].Next);
+    _RMP_Mem_Del(Pool,Head);
 
     /* Allocate and calculate if the space left could be big enough to be a new 
-     * block. If so, we will put the block back into the TLSF table */
-    New_Size=((rmp_ptr_t)(Mem_Head->Tail))-((rmp_ptr_t)Mem_Head)-sizeof(struct RMP_Mem_Head)-Rounded_Size;
-    if(New_Size>=(sizeof(struct RMP_Mem_Head)+64U+sizeof(struct RMP_Mem_Tail)))
+     * block. If so, we will put the block back into the TLSF table. */
+    New_Size=RMP_MEM_HEAD2SIZE(Head)-Rounded_Size;
+    if(New_Size>=RMP_MEM_SIZE2WHOLE(64U))
     {
         RMP_COV_MARKER();
-        Old_Size=sizeof(struct RMP_Mem_Head)+Rounded_Size+sizeof(struct RMP_Mem_Tail);
-        New_Mem=(volatile struct RMP_Mem_Head*)(((rmp_ptr_t)Mem_Head)+Old_Size);
+        Old_Size=RMP_MEM_SIZE2WHOLE(Rounded_Size);
+        New=(volatile struct RMP_Mem_Head*)(((rmp_ptr_t)Head)+Old_Size);
 
-        _RMP_Mem_Block(Mem_Head, Old_Size);
-        _RMP_Mem_Block(New_Mem, New_Size);
+        _RMP_Mem_Block(Head,Old_Size,RMP_MEM_USED);
+        _RMP_Mem_Block(New,New_Size,RMP_MEM_FREE);
 
         /* Put the extra block back */
-        _RMP_Mem_Ins(Pool, New_Mem);
+        _RMP_Mem_Ins(Pool, New);
     }
     else
     {
         RMP_COV_MARKER();
-        /* No action required */
+        /* Residue too small, mark the whole block as in use */
+        Head->State=RMP_MEM_USED;
     }
 
-    /* Mark the block as in use */
-    Mem_Head->State=RMP_MEM_USED;
-
     /* Finally, return the start address */
-    return (void*)(((rmp_ptr_t)Mem_Head)+sizeof(struct RMP_Mem_Head));
+    return (void*)(((rmp_ptr_t)Head)+sizeof(struct RMP_Mem_Head));
 }
 /* End Function:RMP_Malloc ***************************************************/
 
@@ -3601,12 +3715,13 @@ void RMP_Free(volatile void* Pool,
               void* Mem_Ptr)
 {
     volatile struct RMP_Mem* Mem;
-    volatile struct RMP_Mem_Head* Mem_Head;
-    volatile struct RMP_Mem_Head* Left_Head;
-    volatile struct RMP_Mem_Head* Right_Head;
+    volatile struct RMP_Mem_Head* Head;
+    volatile struct RMP_Mem_Head* Left;
+    volatile struct RMP_Mem_Head* Right;
     rmp_ptr_t Merge_Left;
 
-    /* Check if pointer is null */
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the pool and memory pointer is valid */
     if((Pool==RMP_NULL)||(Mem_Ptr==RMP_NULL))
     {
         RMP_COV_MARKER();
@@ -3617,9 +3732,12 @@ void RMP_Free(volatile void* Pool,
         RMP_COV_MARKER();
         /* No action required */
     }
+#endif
     
-    /* See if the address is within the allocatable address range. If not, abort directly. */
     Mem=(volatile struct RMP_Mem*)Pool;
+    
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the address is within the allocatable address range */
     if((((rmp_ptr_t)Mem_Ptr)<=((rmp_ptr_t)Mem))||(((rmp_ptr_t)Mem_Ptr)>=(((rmp_ptr_t)Mem)+Mem->Size)))
     {
         RMP_COV_MARKER();
@@ -3630,10 +3748,13 @@ void RMP_Free(volatile void* Pool,
         RMP_COV_MARKER();
         /* No action required */
     }
+#endif
 
-    Mem_Head=(volatile struct RMP_Mem_Head*)(((rmp_ptr_t)Mem_Ptr)-sizeof(struct RMP_Mem_Head));
-    /* See if the block can really be freed */
-    if(Mem_Head->State==RMP_MEM_FREE)
+    Head=RMP_MEM_PTR2HEAD(Mem_Ptr);
+    
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the block is already freed */
+    if(Head->State==RMP_MEM_FREE)
     {
         RMP_COV_MARKER();
         return;
@@ -3643,23 +3764,23 @@ void RMP_Free(volatile void* Pool,
         RMP_COV_MARKER();
         /* No action required */
     }
-
-    /* Mark it as free */
-    Mem_Head->State=RMP_MEM_FREE;
+#endif
     
-    /* Now check if we can merge it with the higher blocks */
-    Right_Head=(volatile struct RMP_Mem_Head*)(((rmp_ptr_t)(Mem_Head->Tail))+sizeof(struct RMP_Mem_Tail));
-    if(((rmp_ptr_t)Right_Head)!=(((rmp_ptr_t)Mem)+Mem->Size))
+    /* Mark it as free in case no merge happens */
+    Head->State=RMP_MEM_FREE;
+    
+    /* Check if we can merge it with the right side block */
+    Right=RMP_MEM_HEAD2RIGHT(Head);
+    if(((rmp_ptr_t)Right)!=(((rmp_ptr_t)Mem)+Mem->Size))
     {
         RMP_COV_MARKER();
         /* If this one is unoccupied */
-        if((Right_Head->State)==RMP_MEM_FREE)
+        if((Right->State)==RMP_MEM_FREE)
         {
             RMP_COV_MARKER();
             /* Delete, merge */
-            _RMP_Mem_Del(Pool,Right_Head);
-            _RMP_Mem_Block(Mem_Head,
-                           ((rmp_ptr_t)(Right_Head->Tail))+sizeof(struct RMP_Mem_Tail)-(rmp_ptr_t)Mem_Head);
+            _RMP_Mem_Del(Pool,Right);
+            _RMP_Mem_Block(Head,RMP_MEM_HEAD2END(Right)-(rmp_ptr_t)Head,RMP_MEM_FREE);
         }
         else
         {
@@ -3673,24 +3794,21 @@ void RMP_Free(volatile void* Pool,
         /* No action required */
     }
 
-    /* Now check if we can merge it with the lower blocks */
+    /* Check if we can merge it with the left side block */
     Merge_Left=0U;
-    Left_Head=((volatile struct RMP_Mem_Tail*)(((rmp_ptr_t)Mem_Head)-sizeof(struct RMP_Mem_Tail)))->Head;
-    if((rmp_ptr_t)Mem_Head!=Mem->Base)
+    Left=RMP_MEM_HEAD2LEFT(Head);
+    if((rmp_ptr_t)Head!=Mem->Base)
     {
         RMP_COV_MARKER();
 
         /* If this one is unoccupied */
-        if(Left_Head->State==RMP_MEM_FREE)
+        if(Left->State==RMP_MEM_FREE)
         {
             RMP_COV_MARKER();
             /* Delete, merge */
-            _RMP_Mem_Del(Pool, Left_Head);
-            _RMP_Mem_Block(Left_Head,
-                           (rmp_ptr_t)((rmp_ptr_t)(Mem_Head->Tail)+sizeof(struct RMP_Mem_Tail)-(rmp_ptr_t)Left_Head));
-
-            /* We have completed the merge here and the original block has destroyed.
-             * Thus there's no need to insert it into the list again */
+            _RMP_Mem_Del(Pool,Left);
+            _RMP_Mem_Block(Left,RMP_MEM_HEAD2END(Head)-(rmp_ptr_t)Left,RMP_MEM_FREE);
+            /* We have completed the merge here and the original block has destroyed */
             Merge_Left=1U;
         }
         else
@@ -3710,12 +3828,12 @@ void RMP_Free(volatile void* Pool,
     if(Merge_Left==0U)
     {
         RMP_COV_MARKER();
-        _RMP_Mem_Ins(Pool, Mem_Head);
+        _RMP_Mem_Ins(Pool,Head);
     }
     else
     {
         RMP_COV_MARKER();
-        _RMP_Mem_Ins(Pool, Left_Head);
+        _RMP_Mem_Ins(Pool,Left);
     }
 }
 /* End Function:RMP_Free *****************************************************/
@@ -3735,43 +3853,33 @@ void* RMP_Realloc(volatile void* Pool,
                   void* Mem_Ptr,
                   rmp_ptr_t Size)
 {
+    rmp_ptr_t Count;
     /* The size of the original memory block */
     rmp_ptr_t Mem_Size;
     /* The rounded size of the new memory request */
     rmp_ptr_t Rounded_Size;
-    rmp_ptr_t Count;
     /* The pointer to the pool */
     volatile struct RMP_Mem* Mem;
     /* The head of the old memory */
-    volatile struct RMP_Mem_Head* Mem_Head;
+    volatile struct RMP_Mem_Head* Head;
     /* The right-side block head */
-    volatile struct RMP_Mem_Head* Right_Head;
+    volatile struct RMP_Mem_Head* Right;
     /* The pointer to the residue memory head */
-    volatile struct RMP_Mem_Head* Res_Mem;
+    volatile struct RMP_Mem_Head* Res;
     /* The new memory block */
-    void* New_Mem;
+    void* New;
     /* The size of the memory block including the header sizes */
     rmp_ptr_t Old_Size;
     /* The size of the residue memory block including the header sizes */
     rmp_ptr_t Res_Size;
     
-    /* Check if no pool present */
-    if(Pool==RMP_NULL)
-    {
-        RMP_COV_MARKER();
-        return RMP_NULL;
-    }
-    else
-    {
-        RMP_COV_MARKER();
-        /* No action required */
-    }
-    
-    /* Are we passing in a NULL pointer? */
+    /* Are we passing in a NULL pointer? If yes, allocate. It is fine to allocate
+     * without further checking because the allocation will check them anyway. The
+     * same goes for the "free" below. */
     if(Mem_Ptr==RMP_NULL)
     {
         RMP_COV_MARKER();
-        return RMP_Malloc(Pool,Size);
+        return RMP_Malloc(Pool, Size);
     }
     else
     {
@@ -3779,8 +3887,8 @@ void* RMP_Realloc(volatile void* Pool,
         /* No action required */
     }
     
-    /* Is the size passed in zero? If yes, we free directly - this is a little different
-     * than standard realloc where you get a "0"-sized realloc-able memory trunk. */
+    /* Is the size passed in zero? If yes, we free directly - this is somewhat different
+     * than standard realloc where you get a "0"-sized non-NULL realloc-able trunk. */
     if(Size==0U)
     {
         RMP_COV_MARKER();
@@ -3793,8 +3901,26 @@ void* RMP_Realloc(volatile void* Pool,
         /* No action required */
     }
     
-    /* See if the address is within the allocatable address range. If not, abort directly. */
+    /* The real reallocation starts here */
+    
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the pool pointer is valid */
+    if(Pool==RMP_NULL)
+    {
+        RMP_COV_MARKER();
+        return RMP_NULL;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+#endif
+
     Mem=(volatile struct RMP_Mem*)Pool;
+    
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the address is within the allocatable address range */
     if((((rmp_ptr_t)Mem_Ptr)<=((rmp_ptr_t)Mem))||(((rmp_ptr_t)Mem_Ptr)>=(((rmp_ptr_t)Mem)+Mem->Size)))
     {
         RMP_COV_MARKER();
@@ -3805,11 +3931,14 @@ void* RMP_Realloc(volatile void* Pool,
         RMP_COV_MARKER();
         /* No action required */
     }
+#endif
 
-    /* Yes, get the location of the header of the memory */
-    Mem_Head=(volatile struct RMP_Mem_Head*)(((rmp_ptr_t)Mem_Ptr)-sizeof(struct RMP_Mem_Head));
-    /* See if the block can really be realloced */
-    if(Mem_Head->State==RMP_MEM_FREE)
+    /* Get the location of the header of the memory */
+    Head=RMP_MEM_PTR2HEAD(Mem_Ptr);
+    
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the block is already freed */
+    if(Head->State==RMP_MEM_FREE)
     {
         RMP_COV_MARKER();
         return RMP_NULL;
@@ -3819,19 +3948,20 @@ void* RMP_Realloc(volatile void* Pool,
         RMP_COV_MARKER();
         /* No action required */
     }
+#endif
     
     /* Round up the size:a multiple of 8 and bigger than 64B */
     Rounded_Size=RMP_ROUND_UP(Size, 3U);
     /* See if it is smaller than the smallest block */
     Rounded_Size=(Rounded_Size>64U)?Rounded_Size:64U;
     
-    Mem_Size=((rmp_ptr_t)Mem_Head->Tail)-((rmp_ptr_t)Mem_Ptr);
+    Mem_Size=RMP_MEM_PTR_DIFF(Head->Tail, Mem_Ptr);
     /* Does the right-side head exist at all? */
-    Right_Head=(volatile struct RMP_Mem_Head*)(((rmp_ptr_t)(Mem_Head->Tail))+sizeof(struct RMP_Mem_Tail));
-    if(((rmp_ptr_t)Right_Head)==(((rmp_ptr_t)Mem)+Mem->Size))
+    Right=RMP_MEM_HEAD2RIGHT(Head);
+    if(((rmp_ptr_t)Right)==(((rmp_ptr_t)Mem)+Mem->Size))
     {
         RMP_COV_MARKER();
-        Right_Head=RMP_NULL;
+        Right=RMP_NULL;
     }
     else
     {
@@ -3845,45 +3975,44 @@ void* RMP_Realloc(volatile void* Pool,
         /* Expanding */
         RMP_COV_MARKER();
         /* Does the right side exist at all? */
-        if(Right_Head!=RMP_NULL)
+        if(Right!=RMP_NULL)
         {
             RMP_COV_MARKER();
             /* Is it allocated? */
-            if(Right_Head->State==RMP_MEM_FREE)
+            if(Right->State==RMP_MEM_FREE)
             {
                 RMP_COV_MARKER();
-                /* Right-side exists and is free. How big is its usable size? Is it sufficient for our realloc? */
-                if((((rmp_ptr_t)Right_Head->Tail)-((rmp_ptr_t)Mem_Ptr))>=Rounded_Size)
+                /* Right-side exists and is free, need to see if it is big enough */
+                Res_Size=RMP_MEM_PTR_DIFF(Right->Tail,Mem_Ptr);
+                if(Res_Size>=Rounded_Size)
                 {
                     RMP_COV_MARKER();
                     /* Remove the right-side from the free list so we can operate on it */
-                    _RMP_Mem_Del(Pool, Right_Head);   
+                    _RMP_Mem_Del(Pool, Right);   
                     /* Allocate and calculate if the space left could be big enough to be a new 
-                     * block. If so, we will put the block back into the TLSF table */
-                    Res_Size=((rmp_ptr_t)(Right_Head->Tail))-((rmp_ptr_t)Mem_Ptr)-Rounded_Size;
+                     * block. If so, we will put the block back into the TLSF table. */
+                    Res_Size-=Rounded_Size;
                     /* Is the residue big enough to be a block? */
-                    if(Res_Size>=(sizeof(struct RMP_Mem_Head)+64U+sizeof(struct RMP_Mem_Tail)))
+                    if(Res_Size>=RMP_MEM_SIZE2WHOLE(64U))
                     {
                         RMP_COV_MARKER();
-                        Old_Size=sizeof(struct RMP_Mem_Head)+Rounded_Size+sizeof(struct RMP_Mem_Tail);
-                        Res_Mem=(volatile struct RMP_Mem_Head*)(((rmp_ptr_t)Mem_Head)+Old_Size);
+                        Old_Size=RMP_MEM_SIZE2WHOLE(Rounded_Size);
+                        Res=(volatile struct RMP_Mem_Head*)(((rmp_ptr_t)Head)+Old_Size);
 
-                        _RMP_Mem_Block(Mem_Head, Old_Size);
-                        _RMP_Mem_Block(Res_Mem, Res_Size);
+                        _RMP_Mem_Block(Head,Old_Size,RMP_MEM_USED);
+                        _RMP_Mem_Block(Res,Res_Size,RMP_MEM_FREE);
 
-                        /* Put the extra block back */
-                        _RMP_Mem_Ins(Pool, Res_Mem);
+                        /* Put the residue block back */
+                        _RMP_Mem_Ins(Pool, Res);
                     }
                     else
                     {
-                        /* Residue too small. Merging the whole thing in is the only option */
+                        /* Residue too small, merging the whole thing in is the only option */
                         RMP_COV_MARKER();
-                        Old_Size=((rmp_ptr_t)(Right_Head->Tail))-((rmp_ptr_t)Mem_Head)+sizeof(struct RMP_Mem_Tail);
-                        _RMP_Mem_Block(Mem_Head, Old_Size);
+                        Old_Size=RMP_MEM_PTR_DIFF(Right->Tail,Head)+sizeof(struct RMP_Mem_Tail);
+                        _RMP_Mem_Block(Head,Old_Size,RMP_MEM_USED);
                     }
                     
-                    /* Mark the block as in use (making new block clears this flag) */
-                    Mem_Head->State=RMP_MEM_USED;
                     /* Return the old pointer because we expanded it */
                     return Mem_Ptr;
                 }
@@ -3908,9 +4037,9 @@ void* RMP_Realloc(volatile void* Pool,
             /* No action required */
         }
         
-        New_Mem=RMP_Malloc(Pool,Rounded_Size);
+        New=RMP_Malloc(Pool,Rounded_Size);
         /* See if we can allocate this much, if we can't at all, exit */
-        if(New_Mem==RMP_NULL)
+        if(New==RMP_NULL)
         {
             RMP_COV_MARKER();
             return RMP_NULL;
@@ -3921,26 +4050,20 @@ void* RMP_Realloc(volatile void* Pool,
             /* No action required */
         }
         
-        /* Copy old memory to new memory - we know that it must be aligned to word boundary */
+        /* Copy old memory to new memory - we know that it must be aligned to word boundary;
+         * cannot use bitshift with RMP_WORD_ORDER here in case sizeof(rmp_ptr_t) is not 1 */
         Mem_Size/=sizeof(rmp_ptr_t);
         for(Count=0U;Count<Mem_Size;Count++)
         {
-            ((rmp_ptr_t*)New_Mem)[Count]=((rmp_ptr_t*)Mem_Ptr)[Count];
+            ((rmp_ptr_t*)New)[Count]=((rmp_ptr_t*)Mem_Ptr)[Count];
         }
         
         /* Free old memory then return */
         RMP_Free(Pool,Mem_Ptr);
-        return New_Mem;
+        return New;
     }
-    /* Shrinking or keeping */
-    else
-    {
-        RMP_COV_MARKER();
-        /* No action required */
-    }
-    
-    /* Are we keeping the size? */
-    if(Mem_Size==Rounded_Size)
+    /* Keeping the same memory, useless call */
+    else if(Mem_Size==Rounded_Size)
     {
         RMP_COV_MARKER();
         return Mem_Ptr;
@@ -3951,29 +4074,28 @@ void* RMP_Realloc(volatile void* Pool,
         /* No action required */
     }
     
-    /* Does the right side exist at all? */
-    if(Right_Head!=RMP_NULL)
+    /* Must be shrinking memory */
+    if(Right!=RMP_NULL)
     {
+        /* Right side does exist */
         RMP_COV_MARKER();
         /* Is it allocated? */
-        if(Right_Head->State==RMP_MEM_FREE)
+        if(Right->State==RMP_MEM_FREE)
         {
             /* Right-side not allocated. Need to merge the block */
             RMP_COV_MARKER();
             /* Remove the right-side from the allocation list so we can operate on it */
-            _RMP_Mem_Del(Pool, Right_Head);
-            Res_Size=((rmp_ptr_t)(Right_Head->Tail))-((rmp_ptr_t)Mem_Ptr)-Rounded_Size;
-            Old_Size=sizeof(struct RMP_Mem_Head)+Rounded_Size+sizeof(struct RMP_Mem_Tail);
-            Res_Mem=(volatile struct RMP_Mem_Head*)(((rmp_ptr_t)Mem_Head)+Old_Size);
+            _RMP_Mem_Del(Pool, Right);
+            Res_Size=RMP_MEM_PTR_DIFF(Right->Tail,Mem_Ptr)-Rounded_Size;
+            Old_Size=RMP_MEM_SIZE2WHOLE(Rounded_Size);
+            Res=(volatile struct RMP_Mem_Head*)(((rmp_ptr_t)Head)+Old_Size);
 
-            _RMP_Mem_Block(Mem_Head, Old_Size);
-            _RMP_Mem_Block(Res_Mem, Res_Size);
+            _RMP_Mem_Block(Head,Old_Size,RMP_MEM_USED);
+            _RMP_Mem_Block(Res,Res_Size,RMP_MEM_FREE);
 
             /* Put the extra block back */
-            _RMP_Mem_Ins(Pool, Res_Mem);
+            _RMP_Mem_Ins(Pool,Res);
             
-            /* Mark the block as in use (making new block clears this flag) */
-            Mem_Head->State=RMP_MEM_USED;
             /* Return the old pointer because we shrinked it */
             return Mem_Ptr;
         }
@@ -3990,12 +4112,12 @@ void* RMP_Realloc(volatile void* Pool,
         /* No action required */
     }
     
-    /* The right-side head either does not exist or is allocated. Calculate the resulting residue size */
+    /* The right-side head either does not exist or is allocated, calculate the resulting residue size */
     Res_Size=Mem_Size-Rounded_Size;
-    if(Res_Size<(sizeof(struct RMP_Mem_Head)+64U+sizeof(struct RMP_Mem_Tail)))
+    if(Res_Size<RMP_MEM_SIZE2WHOLE(64U))
     {
         RMP_COV_MARKER();
-        /* The residue block wouldn't even count as a small one. Do nothing and quit */
+        /* The residue block wouldn't even count as a small one, do nothing and quit */
         return Mem_Ptr;
     }
     else
@@ -4004,18 +4126,16 @@ void* RMP_Realloc(volatile void* Pool,
         /* No action required */
     }
     
-    /* The residue will be big enough to become a standalone block. We need to place it back */ 
-    Old_Size=sizeof(struct RMP_Mem_Head)+Rounded_Size+sizeof(struct RMP_Mem_Tail);
-    Res_Mem=(volatile struct RMP_Mem_Head*)(((rmp_ptr_t)Mem_Head)+Old_Size);
-
-    _RMP_Mem_Block(Mem_Head, Old_Size);
-    _RMP_Mem_Block(Res_Mem, Res_Size);
+    /* The residue will be big enough to become a standalone block, and we need to place it back */ 
+    Old_Size=RMP_MEM_SIZE2WHOLE(Rounded_Size);
+    Res=(volatile struct RMP_Mem_Head*)(((rmp_ptr_t)Head)+Old_Size);
+    
+    _RMP_Mem_Block(Head,Old_Size,RMP_MEM_USED);
+    _RMP_Mem_Block(Res,Res_Size,RMP_MEM_FREE);
 
     /* Put the extra block back */
-    _RMP_Mem_Ins(Pool, Res_Mem);
-            
-    /* Mark the block as in use (making new block clears this flag) */
-    Mem_Head->State=RMP_MEM_USED;
+    _RMP_Mem_Ins(Pool,Res);
+    
     /* Return the old pointer because we shrinked it */
     return Mem_Ptr;
 }
@@ -4029,7 +4149,8 @@ Return      : rmp_ret_t - If successful, 0; or an error code.
 ******************************************************************************/
 rmp_ret_t RMP_Fifo_Crt(volatile struct RMP_Fifo* Fifo)
 {
-    /* Check the FIFO pointer */
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the FIFO pointer is valid */
     if(Fifo==RMP_NULL)
     {
         RMP_COV_MARKER();
@@ -4040,10 +4161,12 @@ rmp_ret_t RMP_Fifo_Crt(volatile struct RMP_Fifo* Fifo)
         RMP_COV_MARKER();
         /* No action required */
     }
+#endif
     
     RMP_Sched_Lock();
-    
-    /* Check if the FIFO is in use */
+
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the FIFO structure is in use */
     if(Fifo->State!=RMP_FIFO_FREE)
     {
         RMP_COV_MARKER();
@@ -4055,10 +4178,11 @@ rmp_ret_t RMP_Fifo_Crt(volatile struct RMP_Fifo* Fifo)
         RMP_COV_MARKER();
         /* No action required */
     }
-
+#endif
+    
     /* Create linked list */
     RMP_List_Crt(&(Fifo->Head));
-    Fifo->Cur_Num=0U;
+    Fifo->Num_Cur=0U;
     Fifo->State=RMP_FIFO_USED;
     
     RMP_Sched_Unlock();
@@ -4074,7 +4198,8 @@ Return      : rmp_ret_t - If successful, 0; or an error code.
 ******************************************************************************/
 rmp_ret_t RMP_Fifo_Del(volatile struct RMP_Fifo* Fifo)
 {
-    /* Check the FIFO pointer */
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the FIFO pointer is valid */
     if(Fifo==RMP_NULL)
     {
         RMP_COV_MARKER();
@@ -4085,10 +4210,12 @@ rmp_ret_t RMP_Fifo_Del(volatile struct RMP_Fifo* Fifo)
         RMP_COV_MARKER();
         /* No action required */
     }
+#endif
     
     RMP_Sched_Lock();
     
-    /* Check if the FIFO is in use */
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the FIFO structure is in use */
     if(Fifo->State!=RMP_FIFO_USED)
     {
         RMP_COV_MARKER();
@@ -4100,9 +4227,10 @@ rmp_ret_t RMP_Fifo_Del(volatile struct RMP_Fifo* Fifo)
         RMP_COV_MARKER();
         /* No action required */
     }
-
-    /* See if the FIFO have any elements */
-    if(Fifo->Cur_Num!=0U)
+#endif
+    
+    /* Check if the FIFO have any elements */
+    if(Fifo->Num_Cur!=0U)
     {
         RMP_COV_MARKER();
         RMP_Sched_Unlock();
@@ -4131,7 +4259,8 @@ Return      : rmp_ret_t - If successful, 0; or an error code.
 rmp_ret_t RMP_Fifo_Read(volatile struct RMP_Fifo* Fifo,
                         volatile struct RMP_List** Node)
 {
-    /* Check the FIFO pointer */
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the FIFO pointer is valid */
     if(Fifo==RMP_NULL)
     {
         RMP_COV_MARKER();
@@ -4143,7 +4272,7 @@ rmp_ret_t RMP_Fifo_Read(volatile struct RMP_Fifo* Fifo,
         /* No action required */
     }
     
-    /* Check the data pointer */
+    /* Check if the node pointer is valid */
     if(Node==RMP_NULL)
     {
         RMP_COV_MARKER();
@@ -4154,10 +4283,12 @@ rmp_ret_t RMP_Fifo_Read(volatile struct RMP_Fifo* Fifo,
         RMP_COV_MARKER();
         /* No action required */
     }
+#endif
     
     RMP_Sched_Lock();
     
-    /* Check if the FIFO is in use */
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the FIFO structure is in use */
     if(Fifo->State!=RMP_FIFO_USED)
     {
         RMP_COV_MARKER();
@@ -4169,6 +4300,7 @@ rmp_ret_t RMP_Fifo_Read(volatile struct RMP_Fifo* Fifo,
         RMP_COV_MARKER();
         /* No action required */
     }
+#endif
     
     /* See if the FIFO is empty */
     if(Fifo->Head.Next==&(Fifo->Head))
@@ -4188,8 +4320,8 @@ rmp_ret_t RMP_Fifo_Read(volatile struct RMP_Fifo* Fifo,
     RMP_List_Del((*Node)->Prev, (*Node)->Next);
     
     /* The count should not be zero, decrease it */
-    RMP_ASSERT(Fifo->Cur_Num!=0U);
-    Fifo->Cur_Num--;
+    RMP_ASSERT(Fifo->Num_Cur!=0U);
+    Fifo->Num_Cur--;
     
     RMP_Sched_Unlock();
     return 0;
@@ -4206,7 +4338,8 @@ Return      : rmp_ret_t - If successful, 0; or an error code.
 rmp_ret_t RMP_Fifo_Write(volatile struct RMP_Fifo* Fifo,
                          volatile struct RMP_List* Node)
 {
-    /* Check the FIFO pointer */
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the FIFO pointer is valid */
     if(Fifo==RMP_NULL)
     {
         RMP_COV_MARKER();
@@ -4218,7 +4351,7 @@ rmp_ret_t RMP_Fifo_Write(volatile struct RMP_Fifo* Fifo,
         /* No action required */
     }
 
-    /* Check the data pointer */
+    /* Check if the data pointer is valid */
     if(Node==RMP_NULL)
     {
         RMP_COV_MARKER();
@@ -4229,10 +4362,12 @@ rmp_ret_t RMP_Fifo_Write(volatile struct RMP_Fifo* Fifo,
         RMP_COV_MARKER();
         /* No action required */
     }
-
+#endif
+    
     RMP_Sched_Lock();
     
-    /* Check if the FIFO is in use */
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the FIFO structure is in use */
     if(Fifo->State!=RMP_FIFO_USED)
     {
         RMP_COV_MARKER();
@@ -4244,10 +4379,11 @@ rmp_ret_t RMP_Fifo_Write(volatile struct RMP_Fifo* Fifo,
         RMP_COV_MARKER();
         /* No action required */
     }
-
+#endif
+    
     /* Write to list and increase count */
     RMP_List_Ins(Node, Fifo->Head.Prev, &(Fifo->Head));
-    Fifo->Cur_Num++;
+    Fifo->Num_Cur++;
 
     RMP_Sched_Unlock();
     return 0;
@@ -4267,7 +4403,8 @@ Return      : rmp_ret_t - If successful, 0; or an error code.
 rmp_ret_t RMP_Fifo_Write_ISR(volatile struct RMP_Fifo* Fifo,
                              volatile struct RMP_List* Node)
 {
-    /* Check the FIFO pointer */
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the FIFO pointer is valid */
     if(Fifo==RMP_NULL)
     {
         RMP_COV_MARKER();
@@ -4279,7 +4416,7 @@ rmp_ret_t RMP_Fifo_Write_ISR(volatile struct RMP_Fifo* Fifo,
         /* No action required */
     }
 
-    /* Check the data pointer */
+    /* Check if the data pointer is valid */
     if(Node==RMP_NULL)
     {
         RMP_COV_MARKER();
@@ -4291,7 +4428,7 @@ rmp_ret_t RMP_Fifo_Write_ISR(volatile struct RMP_Fifo* Fifo,
         /* No action required */
     }
     
-    /* Check if the FIFO is in use */
+    /* Check if the FIFO structure is in use */
     if(Fifo->State!=RMP_FIFO_USED)
     {
         RMP_COV_MARKER();
@@ -4302,10 +4439,11 @@ rmp_ret_t RMP_Fifo_Write_ISR(volatile struct RMP_Fifo* Fifo,
         RMP_COV_MARKER();
         /* No action required */
     }
-
+#endif
+    
     /* Write to list and increase count */
     RMP_List_Ins(Node, Fifo->Head.Prev, &(Fifo->Head));
-    Fifo->Cur_Num++;
+    Fifo->Num_Cur++;
 
     return 0;
 }
@@ -4320,8 +4458,9 @@ Return      : rmp_ret_t - If successful, the number of nodes; or an error code.
 rmp_ret_t RMP_Fifo_Cnt(volatile struct RMP_Fifo* Fifo)
 {
     rmp_ret_t Count;
-    
-    /* Check the FIFO pointer */
+
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the FIFO pointer is valid */
     if(Fifo==RMP_NULL)
     {
         RMP_COV_MARKER();
@@ -4332,10 +4471,12 @@ rmp_ret_t RMP_Fifo_Cnt(volatile struct RMP_Fifo* Fifo)
         RMP_COV_MARKER();
         /* No action required */
     }
+#endif
     
     RMP_Sched_Lock();
     
-    /* Check if the FIFO is in use */
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the FIFO structure is in use */
     if(Fifo->State!=RMP_FIFO_USED)
     {
         RMP_COV_MARKER();
@@ -4347,8 +4488,9 @@ rmp_ret_t RMP_Fifo_Cnt(volatile struct RMP_Fifo* Fifo)
         RMP_COV_MARKER();
         /* No action required */
     }
+#endif
     
-    Count=(rmp_ret_t)(Fifo->Cur_Num);
+    Count=(rmp_ret_t)(Fifo->Num_Cur);
     
     RMP_Sched_Unlock();
     return Count;
@@ -4363,7 +4505,8 @@ Return      : rmp_ret_t - If successful, 0; or an error code.
 ******************************************************************************/
 rmp_ret_t RMP_Msgq_Crt(volatile struct RMP_Msgq* Queue)
 {
-    /* Check the queue pointer */
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the queue pointer is valid */
     if(Queue==RMP_NULL)
     {
         RMP_COV_MARKER();
@@ -4374,10 +4517,12 @@ rmp_ret_t RMP_Msgq_Crt(volatile struct RMP_Msgq* Queue)
         RMP_COV_MARKER();
         /* No action required */
     }
-        
+#endif
+    
     RMP_Sched_Lock();
     
-    /* Check if the queue is in use */
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the queue structure is in use */
     if(Queue->State!=RMP_MSGQ_FREE)
     {
         RMP_COV_MARKER();
@@ -4389,6 +4534,7 @@ rmp_ret_t RMP_Msgq_Crt(volatile struct RMP_Msgq* Queue)
         RMP_COV_MARKER();
         /* No action required */
     }
+#endif
     
     /* A queue is just a FIFO paired with a counting semaphore */
     RMP_ASSERT(RMP_Sem_Crt(&(Queue->Sem), 0U)==0);
@@ -4409,7 +4555,8 @@ Return      : rmp_ret_t - If successful, 0; or an error code.
 ******************************************************************************/
 rmp_ret_t RMP_Msgq_Del(volatile struct RMP_Msgq* Queue)
 {
-    /* Check the queue pointer */
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the queue pointer is valid */
     if(Queue==RMP_NULL)
     {
         RMP_COV_MARKER();
@@ -4420,10 +4567,12 @@ rmp_ret_t RMP_Msgq_Del(volatile struct RMP_Msgq* Queue)
         RMP_COV_MARKER();
         /* No action required */
     }
+#endif
     
     RMP_Sched_Lock();
-    
-    /* Check if the queue is in use */
+
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the queue structure is in use */
     if(Queue->State!=RMP_MSGQ_USED)
     {
         RMP_COV_MARKER();
@@ -4435,6 +4584,7 @@ rmp_ret_t RMP_Msgq_Del(volatile struct RMP_Msgq* Queue)
         RMP_COV_MARKER();
         /* No action required */
     }
+#endif
     
     /* See if the FIFO could be deleted */
     if(RMP_Fifo_Del(&(Queue->Fifo))<0)
@@ -4448,8 +4598,8 @@ rmp_ret_t RMP_Msgq_Del(volatile struct RMP_Msgq* Queue)
         RMP_COV_MARKER();
         /* No action required */
     }
-
-    /* Proceed to delete the semaphore */
+    
+    /* Proceed to delete the companion semaphore */
     RMP_ASSERT(RMP_Sem_Del(&(Queue->Sem))==0);
     Queue->State=RMP_MSGQ_FREE;
     
@@ -4467,7 +4617,8 @@ Return      : rmp_ret_t - If successful, 0; or an error code.
 rmp_ret_t RMP_Msgq_Snd(volatile struct RMP_Msgq* Queue,
                        volatile struct RMP_List* Node)
 {
-    /* Check the queue pointer */
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the queue pointer is valid */
     if(Queue==RMP_NULL)
     {
         RMP_COV_MARKER();
@@ -4479,7 +4630,7 @@ rmp_ret_t RMP_Msgq_Snd(volatile struct RMP_Msgq* Queue,
         /* No action required */
     }
     
-    /* Check the data pointer */
+    /* Check if the data pointer is valid */
     if(Node==RMP_NULL)
     {
         RMP_COV_MARKER();
@@ -4490,10 +4641,12 @@ rmp_ret_t RMP_Msgq_Snd(volatile struct RMP_Msgq* Queue,
         RMP_COV_MARKER();
         /* No action required */
     }
+#endif
     
     RMP_Sched_Lock();
     
-    /* Check if the queue is in use */
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the queue structure is in use */
     if(Queue->State!=RMP_MSGQ_USED)
     {
         RMP_COV_MARKER();
@@ -4505,6 +4658,7 @@ rmp_ret_t RMP_Msgq_Snd(volatile struct RMP_Msgq* Queue,
         RMP_COV_MARKER();
         /* No action required */
     }
+#endif
     
     /* Note the trick here: we have locked the scheduler, so we're safe to 
      * post the semaphore first. We do this lest the semaphore post may fail
@@ -4544,7 +4698,8 @@ Return      : rmp_ret_t - If successful, 0; or an error code.
 rmp_ret_t RMP_Msgq_Snd_ISR(volatile struct RMP_Msgq* Queue,
                            volatile struct RMP_List* Node)
 {
-    /* Check the queue pointer */
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the the queue pointer is valid */
     if(Queue==RMP_NULL)
     {
         RMP_COV_MARKER();
@@ -4556,7 +4711,7 @@ rmp_ret_t RMP_Msgq_Snd_ISR(volatile struct RMP_Msgq* Queue,
         /* No action required */
     }
     
-    /* Check the data pointer */
+    /* Check if the data pointer is valid */
     if(Node==RMP_NULL)
     {
         RMP_COV_MARKER();
@@ -4568,7 +4723,7 @@ rmp_ret_t RMP_Msgq_Snd_ISR(volatile struct RMP_Msgq* Queue,
         /* No action required */
     }
     
-    /* Check if the queue is in use */
+    /* Check if the queue structure is in use */
     if(Queue->State!=RMP_MSGQ_USED)
     {
         RMP_COV_MARKER();
@@ -4579,6 +4734,7 @@ rmp_ret_t RMP_Msgq_Snd_ISR(volatile struct RMP_Msgq* Queue,
         RMP_COV_MARKER();
         /* No action required */
     }
+#endif
     
     /* Notify the receiver(s) first */
     if(RMP_Sem_Post_ISR(&(Queue->Sem), 1U)<0)
@@ -4611,7 +4767,8 @@ rmp_ret_t RMP_Msgq_Rcv(volatile struct RMP_Msgq* Queue,
                        volatile struct RMP_List** Node,
                        rmp_ptr_t Slice)
 {
-    /* Check the queue pointer */
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the queue pointer is valid */
     if(Queue==RMP_NULL)
     {
         RMP_COV_MARKER();
@@ -4623,7 +4780,7 @@ rmp_ret_t RMP_Msgq_Rcv(volatile struct RMP_Msgq* Queue,
         /* No action required */
     }
     
-    /* Check the data pointer */
+    /* Check if the data pointer is valid */
     if(Node==RMP_NULL)
     {
         RMP_COV_MARKER();
@@ -4634,10 +4791,12 @@ rmp_ret_t RMP_Msgq_Rcv(volatile struct RMP_Msgq* Queue,
         RMP_COV_MARKER();
         /* No action required */
     }
+#endif
     
     RMP_Sched_Lock();
-    
-    /* Check if the queue is in use */
+
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the queue structure is in use */
     if(Queue->State!=RMP_MSGQ_USED)
     {
         RMP_COV_MARKER();
@@ -4649,6 +4808,7 @@ rmp_ret_t RMP_Msgq_Rcv(volatile struct RMP_Msgq* Queue,
         RMP_COV_MARKER();
         /* No action required */
     }
+#endif
     
     /* Try to grab a semaphore, and only when we succeed do we proceed - 
      * there is the possibility that the whole queue gets deleted, so
@@ -4693,7 +4853,8 @@ rmp_ret_t RMP_Msgq_Cnt(volatile struct RMP_Msgq* Queue)
 {
     rmp_ret_t Count;
     
-    /* Check the queue pointer */
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the queue pointer is valid */
     if(Queue==RMP_NULL)
     {
         RMP_COV_MARKER();
@@ -4704,10 +4865,12 @@ rmp_ret_t RMP_Msgq_Cnt(volatile struct RMP_Msgq* Queue)
         RMP_COV_MARKER();
         /* No action required */
     }
+#endif
     
     RMP_Sched_Lock();
     
-    /* Check if the queue is in use */
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the queue structure is in use */
     if(Queue->State!=RMP_MSGQ_USED)
     {
         RMP_COV_MARKER();
@@ -4719,6 +4882,7 @@ rmp_ret_t RMP_Msgq_Cnt(volatile struct RMP_Msgq* Queue)
         RMP_COV_MARKER();
         /* No action required */
     }
+#endif
     
     Count=RMP_Fifo_Cnt(&(Queue->Fifo));
     
@@ -4749,7 +4913,8 @@ Return      : rmp_ret_t - If successful, 0; or an error code.
 rmp_ret_t RMP_Bmq_Crt(volatile struct RMP_Bmq* Queue,
                       rmp_ptr_t Limit)
 {
-    /* Check the queue pointer */
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the queue pointer is valid */
     if(Queue==RMP_NULL)
     {
         RMP_COV_MARKER();
@@ -4760,10 +4925,12 @@ rmp_ret_t RMP_Bmq_Crt(volatile struct RMP_Bmq* Queue,
         RMP_COV_MARKER();
         /* No action required */
     }
+#endif
     
     RMP_Sched_Lock();
-    
-    /* Check if the queue is in use */
+
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the queue pointer is in use */
     if(Queue->State!=RMP_BMQ_FREE)
     {
         RMP_COV_MARKER();
@@ -4776,9 +4943,8 @@ rmp_ret_t RMP_Bmq_Crt(volatile struct RMP_Bmq* Queue,
         /* No action required */
     }
     
-    /* A blocking queue is just a normal queue paired with a message
-     * number limiting semaphore */
-    if((Limit==0U)||(RMP_Sem_Crt(&(Queue->Sem), Limit)<0))
+    /* Check if the limit is valid */
+    if((Limit==0U)||(Limit>=RMP_SEM_CNT_MAX))
     {
         RMP_COV_MARKER();
         RMP_Sched_Unlock();
@@ -4789,7 +4955,11 @@ rmp_ret_t RMP_Bmq_Crt(volatile struct RMP_Bmq* Queue,
         RMP_COV_MARKER();
         /* No action required */
     }
-
+#endif
+    
+    /* A blocking queue is just a message queue paired
+     * with a number limiting semaphore */
+    RMP_ASSERT(RMP_Sem_Crt(&(Queue->Sem), Limit)==0);
     RMP_ASSERT(RMP_Msgq_Crt(&(Queue->Msgq))==0);
     Queue->State=RMP_BMQ_USED;
     
@@ -4807,7 +4977,8 @@ Return      : rmp_ret_t - If successful, 0; or an error code.
 ******************************************************************************/
 rmp_ret_t RMP_Bmq_Del(volatile struct RMP_Bmq* Queue)
 {
-    /* Check the queue pointer */
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the queue pointer is valid */
     if(Queue==RMP_NULL)
     {
         RMP_COV_MARKER();
@@ -4818,10 +4989,12 @@ rmp_ret_t RMP_Bmq_Del(volatile struct RMP_Bmq* Queue)
         RMP_COV_MARKER();
         /* No action required */
     }
+#endif
     
     RMP_Sched_Lock();
     
-    /* Check if the queue is in use */
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the queue structure is in use */
     if(Queue->State!=RMP_BMQ_USED)
     {
         RMP_COV_MARKER();
@@ -4833,6 +5006,7 @@ rmp_ret_t RMP_Bmq_Del(volatile struct RMP_Bmq* Queue)
         RMP_COV_MARKER();
         /* No action required */
     }
+#endif
     
     /* Attempt to delete the message queue first */
     if(RMP_Msgq_Del(&(Queue->Msgq))<0)
@@ -4847,7 +5021,7 @@ rmp_ret_t RMP_Bmq_Del(volatile struct RMP_Bmq* Queue)
         /* No action required */
     }
     
-    /* Proceed to delete the semaphore */
+    /* Proceed to delete the companion semaphore */
     RMP_ASSERT(RMP_Sem_Del(&(Queue->Sem))==0);
     Queue->State=RMP_BMQ_FREE;
     
@@ -4867,7 +5041,8 @@ rmp_ret_t RMP_Bmq_Snd(volatile struct RMP_Bmq* Queue,
                       volatile struct RMP_List* Node,
                       rmp_ptr_t Slice)
 {
-    /* Check the queue pointer */
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the queue pointer is valid */
     if(Queue==RMP_NULL)
     {
         RMP_COV_MARKER();
@@ -4879,7 +5054,7 @@ rmp_ret_t RMP_Bmq_Snd(volatile struct RMP_Bmq* Queue,
         /* No action required */
     }
     
-    /* Check the data pointer */
+    /* Check if the data pointer is valid */
     if(Node==RMP_NULL)
     {
         RMP_COV_MARKER();
@@ -4891,7 +5066,7 @@ rmp_ret_t RMP_Bmq_Snd(volatile struct RMP_Bmq* Queue,
         /* No action required */
     }
     
-    /* Check if the queue is in use - no lock needed because we have 
+    /* Check if the queue structure is in use - no lock needed cause we have 
      * deletion race protection below: assuming the operations can fail. */
     if(Queue->State!=RMP_BMQ_USED)
     {
@@ -4903,6 +5078,7 @@ rmp_ret_t RMP_Bmq_Snd(volatile struct RMP_Bmq* Queue,
         RMP_COV_MARKER();
         /* No action required */
     }
+#endif
     
     /* Grab a slot first. If we're unable to do this, we need to exit */
     if(RMP_Sem_Pend(&(Queue->Sem), Slice)<0)
@@ -4949,7 +5125,8 @@ Return      : rmp_ret_t - If successful, 0; or an error code.
 rmp_ret_t RMP_Bmq_Snd_ISR(volatile struct RMP_Bmq* Queue,
                           volatile struct RMP_List* Node)
 {
-    /* Check the queue pointer */
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the queue pointer is valid */
     if(Queue==RMP_NULL)
     {
         RMP_COV_MARKER();
@@ -4961,7 +5138,7 @@ rmp_ret_t RMP_Bmq_Snd_ISR(volatile struct RMP_Bmq* Queue,
         /* No action required */
     }
     
-    /* Check the data pointer */
+    /* Check if the data pointer is valid */
     if(Node==RMP_NULL)
     {
         RMP_COV_MARKER();
@@ -4973,7 +5150,7 @@ rmp_ret_t RMP_Bmq_Snd_ISR(volatile struct RMP_Bmq* Queue,
         /* No action required */
     }
     
-    /* Check if the queue is in use */
+    /* Check if the queue structure is in use */
     if(Queue->State!=RMP_BMQ_USED)
     {
         RMP_COV_MARKER();
@@ -4986,7 +5163,7 @@ rmp_ret_t RMP_Bmq_Snd_ISR(volatile struct RMP_Bmq* Queue,
     }
     
     /* Check if we have used the queue up */
-    if(Queue->Sem.Cur_Num==0U)
+    if(Queue->Sem.Num_Cur==0U)
     {
         RMP_COV_MARKER();
         return RMP_ERR_OPER;
@@ -4996,9 +5173,10 @@ rmp_ret_t RMP_Bmq_Snd_ISR(volatile struct RMP_Bmq* Queue,
         RMP_COV_MARKER();
         /* No action required */
     }
+#endif
     
     /* Manually operate the semaphore, then send to message queue */
-    Queue->Sem.Cur_Num--;
+    Queue->Sem.Num_Cur--;
     RMP_Msgq_Snd_ISR(&(Queue->Msgq), Node);
 
     return 0;
@@ -5017,7 +5195,8 @@ rmp_ret_t RMP_Bmq_Rcv(volatile struct RMP_Bmq* Queue,
                       volatile struct RMP_List** Node,
                       rmp_ptr_t Slice)
 {
-    /* Check the queue pointer */
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the queue pointer is valid */
     if(Queue==RMP_NULL)
     {
         RMP_COV_MARKER();
@@ -5029,7 +5208,7 @@ rmp_ret_t RMP_Bmq_Rcv(volatile struct RMP_Bmq* Queue,
         /* No action required */
     }
     
-    /* Check the data pointer */
+    /* Check if the data pointer is valid */
     if(Node==RMP_NULL)
     {
         RMP_COV_MARKER();
@@ -5041,7 +5220,7 @@ rmp_ret_t RMP_Bmq_Rcv(volatile struct RMP_Bmq* Queue,
         /* No action required */
     }
     
-    /* Check if the queue is in use - no lock needed because we have 
+    /* Check if the queue structure is in use - no lock needed cause we have 
      * deletion race protection below: assuming the operations can fail */
     if(Queue->State!=RMP_BMQ_USED)
     {
@@ -5053,6 +5232,7 @@ rmp_ret_t RMP_Bmq_Rcv(volatile struct RMP_Bmq* Queue,
         RMP_COV_MARKER();
         /* No action required */
     }
+#endif
     
     /* Attempt a message queue receive */
     if(RMP_Msgq_Rcv(&(Queue->Msgq), Node, Slice)<0)
@@ -5086,8 +5266,9 @@ Return      : rmp_ret_t - If successful, the number of nodes; or an error code.
 rmp_ret_t RMP_Bmq_Cnt(volatile struct RMP_Bmq* Queue)
 {
     rmp_ret_t Count;
-    
-    /* Check the queue pointer */
+
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the queue pointer is valid */
     if(Queue==RMP_NULL)
     {
         RMP_COV_MARKER();
@@ -5098,10 +5279,12 @@ rmp_ret_t RMP_Bmq_Cnt(volatile struct RMP_Bmq* Queue)
         RMP_COV_MARKER();
         /* No action required */
     }
+#endif
     
     RMP_Sched_Lock();
     
-    /* Check if the queue is in use */
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the queue structure is in use */
     if(Queue->State!=RMP_MSGQ_USED)
     {
         RMP_COV_MARKER();
@@ -5113,6 +5296,7 @@ rmp_ret_t RMP_Bmq_Cnt(volatile struct RMP_Bmq* Queue)
         RMP_COV_MARKER();
         /* No action required */
     }
+#endif
     
     Count=RMP_Msgq_Cnt(&(Queue->Msgq));
     

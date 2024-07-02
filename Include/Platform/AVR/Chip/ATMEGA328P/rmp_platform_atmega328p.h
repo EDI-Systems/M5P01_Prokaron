@@ -17,8 +17,10 @@ Description: The configuration file for ATMEGA328P.
 
 /* Debugging */
 #define RMP_ASSERT_ENABLE           (1U)
-/* The maximum number of preemption priority levels in the system.
- * This parameter must be divisible by the word length - 16 is usually sufficient */
+#define RMP_CHECK_ENABLE            (1U)
+
+/* System */
+/* The maximum number of preemption priorities */
 #define RMP_PREEMPT_PRIO_NUM        (16U)
 /* The maximum number of slices allowed */
 #define RMP_SLICE_MAX               (10000U)
