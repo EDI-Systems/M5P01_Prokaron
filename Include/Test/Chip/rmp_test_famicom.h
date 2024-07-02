@@ -28,7 +28,7 @@ cc65 V2.19 (Git 2c4d4d3) -Oirs (MESEN simulator 2.0.0)
 =RMP= RT kernel
  Std benchmark
 ================
-CY : A / T / B
+CY : A / TP / BM
 Y  : 4060 / 5481 / 2334
 M  : 5439 / 6275 / 5292
 S  : 5424 / 7190 / 3185
@@ -45,7 +45,7 @@ cc65 V2.19 (Git 2c4d4d3) -Oirs (FCEUX simulator 2.6.6)
 =RMP= RT kernel
  Std benchmark
 ================
-CY : A / T / B
+CY : A / TP / BM
 Y  : 4060 / 5481 / 2334
 M  : 5439 / 6277 / 5292
 S  : 5424 / 7190 / 3185

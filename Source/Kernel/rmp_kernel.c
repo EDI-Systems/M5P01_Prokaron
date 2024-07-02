@@ -16,6 +16,7 @@ Description : The RMP RTOS single-file kernel.
               performance, but can survive smart LTOs without manually adding
               barriers. The kernel is written such that all frequently read data
               is a copy of the global data, so the performance loss is mild.
+              Most accesses are cached and excessive reads are thus suppressed.
               Function naming conventions: user-program callable functions have
               no "_", while internal kernel-only functions begin with "_".
 ******************************************************************************/
@@ -834,6 +835,7 @@ Return      : None.
 static void _RMP_Tim_Proc(void)
 {
     rmp_ptr_t State;
+    rmp_ptr_t Pure;
     rmp_ptr_t Diff;
     volatile struct RMP_Thd* Thread;
     
@@ -848,22 +850,28 @@ static void _RMP_Tim_Proc(void)
         {
             RMP_COV_MARKER();
             
+            /* Remove it from delay queue */
             RMP_List_Del(Thread->Dly_Head.Prev, Thread->Dly_Head.Next);
-            State=RMP_THD_STATE(Thread->State);
-            if((State==RMP_THD_SNDDLY)||(State==RMP_THD_SEMDLY))
+            /* Cache volatile thread state */
+            State=Thread->State;
+            /* Extract pure state */
+            Pure=RMP_THD_STATE(State);
+            
+            /* See what state the thread is in */
+            if((Pure==RMP_THD_SNDDLY)||(Pure==RMP_THD_SEMDLY))
             {
                 RMP_COV_MARKER();
                 RMP_List_Del(Thread->Run_Head.Prev, Thread->Run_Head.Next);
                 /* Supply timeout error code */
                 Thread->Retval=RMP_ERR_OPER;
             }
-            else if(State==RMP_THD_RCVDLY)
+            else if(Pure==RMP_THD_RCVDLY)
             {
                 RMP_COV_MARKER();
                 /* Supply timeout error code */
                 Thread->Retval=RMP_ERR_OPER;
             }
-            else if(State==RMP_THD_DELAYED)
+            else if(Pure==RMP_THD_DELAYED)
             {
                 RMP_COV_MARKER();
                 /* No action required */
@@ -876,10 +884,13 @@ static void _RMP_Tim_Proc(void)
             }
 
             /* Set to ready if not suspended */
-            RMP_THD_STATE_SET(Thread->State, RMP_THD_RUNNING);
-            _RMP_Run_Ins(Thread);
+            RMP_THD_STATE_SET(State,RMP_THD_RUNNING);
+            /* Put cached thread state back */
+            Thread->State=State;
+            /* Insert into runqueue if not suspended */
+            _RMP_Run_Ins(Thread,State);
         }
-        /* Stop until we find a timer that is not overflown */
+        /* Stop when we find a timer that is not overflown */
         else
         {
             RMP_COV_MARKER();
@@ -952,7 +963,7 @@ void _RMP_Run_High(void)
     {
         RMP_COV_MARKER();
         RMP_ASSERT(Thd_Cur->Prio==Prio);
-        RMP_List_Del(Thd_Cur->Run_Head.Prev, Thd_Cur->Run_Head.Next);
+        RMP_List_Del(Thd_Cur->Run_Head.Prev,Thd_Cur->Run_Head.Next);
         RMP_List_Ins(&(Thd_Cur->Run_Head),
                      RMP_Run[Prio].Prev,
                      &(RMP_Run[Prio]));
@@ -1205,15 +1216,17 @@ Description : Set the thread as ready to schedule. That means, put the thread
               This function will also try to identify if this thread is currently 
               suspended. If yes, it will not be placed into the queue.
 Input       : volatile struct RMP_Thd* Thread - The thread to put into the runqueue.
+              rmp_ptr_t State - The cached thread state.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-static void _RMP_Run_Ins(volatile struct RMP_Thd* Thread)
+static void _RMP_Run_Ins(volatile struct RMP_Thd* Thread,
+                         rmp_ptr_t State)
 {
     rmp_ptr_t Prio;
     
     /* No need to operate on suspended threads */
-    if((Thread->State&RMP_THD_SUSPENDED)==0U)
+    if((State&RMP_THD_SUSPENDED)==0U)
     {
         RMP_COV_MARKER();
         
@@ -1250,15 +1263,17 @@ Description : Clear the thread from the runqueue. When this is called, please
               make sure that the scheduler is locked. This function also checks whether
               the thread is suspended. If yes, it will not remove it from the queue.
 Input       : volatile struct RMP_Thd* Thread - The thread to clear from the runqueue.
+              rmp_ptr_t State - The cached thread state.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-static void _RMP_Run_Del(volatile struct RMP_Thd* Thread)
+static void _RMP_Run_Del(volatile struct RMP_Thd* Thread,
+                         rmp_ptr_t State)
 {
     rmp_ptr_t Prio;
     
     /* No need to operate on suspended threads */
-    if((Thread->State&RMP_THD_SUSPENDED)==0U)
+    if((State&RMP_THD_SUSPENDED)==0U)
     {
         RMP_COV_MARKER();
         /* See if it is the last thread on the priority level */
@@ -1277,7 +1292,7 @@ static void _RMP_Run_Del(volatile struct RMP_Thd* Thread)
         }
         
         /* Delete this from the corresponding runqueue */
-        RMP_List_Del(Thread->Run_Head.Prev, Thread->Run_Head.Next);
+        RMP_List_Del(Thread->Run_Head.Prev,Thread->Run_Head.Next);
         
         /* If it is the current thread, request a context switch */
         if(Thread==RMP_Thd_Cur)
@@ -1343,7 +1358,7 @@ static void _RMP_Dly_Ins(volatile struct RMP_Thd* Thread,
 
     /* Insert this into the list */
     Thread->Timeout=RMP_Timestamp+Slice;
-    RMP_List_Ins(&(Thread->Dly_Head), Trav_Ptr->Prev,Trav_Ptr);
+    RMP_List_Ins(&(Thread->Dly_Head),Trav_Ptr->Prev,Trav_Ptr);
 }
 /* End Function:_RMP_Dly_Ins *************************************************/
 
@@ -1371,10 +1386,8 @@ void RMP_Thd_Yield(void)
 /* End Function:RMP_Thd_Yield ************************************************/
 
 /* Function:RMP_Thd_Crt *******************************************************
-Description : Create a real-time thread.
-Input       : volatile struct RMP_Thd* Thread - The thread structure provided. 
-                                                The user should make allocation
-                                                as needed.
+Description : Create a real-time thread and put it into the runqueue.
+Input       : volatile struct RMP_Thd* Thread - The pointer to the thread.
               void* Entry - The entry of the thread.
               void* Param - The argument to pass to the thread.
               void* Stack - The stack base of this thread.
@@ -1465,19 +1478,60 @@ rmp_ret_t RMP_Thd_Crt(volatile struct RMP_Thd* Thread,
     Thread->Slice_Left=Slice;
     
     /* Initialize its stack and sending list */
-    Thread->Stack=_RMP_Stack_Init((rmp_ptr_t)Stack, Size, 
-                                  (rmp_ptr_t)Entry, (rmp_ptr_t)Param);
+    Thread->Stack=_RMP_Stack_Init((rmp_ptr_t)Stack,Size, 
+                                  (rmp_ptr_t)Entry,(rmp_ptr_t)Param);
     RMP_List_Crt(&(Thread->Snd_List));
     
-    /* Notify the scheduler that we have created something new, also check locks */
+    /* Thread is always set to running on creation */
     Thread->State=RMP_THD_RUNNING;
-    _RMP_Run_Ins(Thread);
+    /* Insert into runqueue - must be not suspended */
+    _RMP_Run_Ins(Thread,RMP_THD_RUNNING);
     
     RMP_Sched_Unlock();
 
     return 0;
 }
 /* End Function:RMP_Thd_Crt **************************************************/
+
+/* Function:_RMP_Thd_Remove ***************************************************
+Description : Remove a thread from the waitlist, and put it back to the running
+              list if it was not suspended.
+Input       : volatile struct RMP_Thd* Thread - The pointer to the thread.
+              rmp_ptr_t Delay_Queue - The delay queue type, can be one of
+                                      RMP_THD_SNDDLY or RMP_THD_SEMDLY.
+Output      : None.
+Return      : None.
+******************************************************************************/
+static void _RMP_Thd_Remove(volatile struct RMP_Thd* Thread,
+                            rmp_ptr_t Delay_Queue)
+{
+    rmp_ptr_t State;
+    
+    /* Remove from the mailbox queue */
+    RMP_List_Del(Thread->Run_Head.Prev,Thread->Run_Head.Next);
+    /* Cache volatile thread state */
+    State=Thread->State;
+    
+    /* Remove from delay queue if it was a timed delay */
+    if(RMP_THD_STATE(State)==Delay_Queue)
+    {
+        RMP_COV_MARKER();
+        RMP_List_Del(Thread->Dly_Head.Prev,Thread->Dly_Head.Next);
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+    
+    /* Set to running */
+    RMP_THD_STATE_SET(State,RMP_THD_RUNNING);
+    /* Put cached thread state back */
+    Thread->State=State;
+    /* Insert into runqueue if not suspended */
+    _RMP_Run_Ins(Thread,State);
+}
+/* End Function:_RMP_Thd_Remove **********************************************/
 
 /* Function:RMP_Thd_Del *******************************************************
 Description : Delete a real-time thread.
@@ -1488,7 +1542,8 @@ Return      : rmp_ret_t - If successful, 0; or an error code.
 rmp_ret_t RMP_Thd_Del(volatile struct RMP_Thd* Thread)
 {
     rmp_ptr_t State;
-    volatile struct RMP_Thd* Release;
+    rmp_ptr_t Pure;
+    volatile struct RMP_Thd* Wait;
 
 #if(RMP_CHECK_ENABLE!=0U)
     /* Check if the thread pointer is valid */
@@ -1506,9 +1561,14 @@ rmp_ret_t RMP_Thd_Del(volatile struct RMP_Thd* Thread)
     
     RMP_Sched_Lock();
     
+    /* Cache volatile thread state */
+    State=Thread->State;
+    /* Extract pure state */
+    Pure=RMP_THD_STATE(State);
+    
 #if(RMP_CHECK_ENABLE!=0U)
     /* Check if the thread structure is in use */
-    if(RMP_THD_STATE(Thread->State)==RMP_THD_FREE)
+    if(Pure==RMP_THD_FREE)
     {
         RMP_COV_MARKER();
         RMP_Sched_Unlock();
@@ -1521,58 +1581,44 @@ rmp_ret_t RMP_Thd_Del(volatile struct RMP_Thd* Thread)
     }
 #endif
     
-    /* See if anyone waiting to send to this thread. If there is, release all these threads */
+    /* See if anyone waiting to send to this thread */
     while(&(Thread->Snd_List)!=Thread->Snd_List.Next)
     {
-        Release=(volatile struct RMP_Thd*)(Thread->Snd_List.Next);
-        RMP_List_Del(Release->Run_Head.Prev, Release->Run_Head.Next);
-        if(RMP_THD_STATE(Release->State)==RMP_THD_SNDDLY)
-        {
-            RMP_COV_MARKER();
-            RMP_List_Del(Release->Dly_Head.Prev, Release->Dly_Head.Next);
-        }
-        else
-        {
-            RMP_COV_MARKER();
-            /* No action required */
-        }
-        
-        RMP_THD_STATE_SET(Release->State, RMP_THD_RUNNING);
-        /* Set ready if not suspended */
-        _RMP_Run_Ins(Release);
-        Release->Retval=RMP_ERR_OPER;
+        Wait=(volatile struct RMP_Thd*)(Thread->Snd_List.Next);
+        /* Remove from mailbox queue */
+        _RMP_Thd_Remove(Wait,RMP_THD_SNDDLY);
+        /* Supply abort error code */
+        Wait->Retval=RMP_ERR_OPER;
     }
     
-    /* See what is its state */
-    State=RMP_THD_STATE(Thread->State);
     /* Clear ready if not suspended */
-    if(State==RMP_THD_RUNNING)
+    if(Pure==RMP_THD_RUNNING)
     {
         RMP_COV_MARKER();
-        _RMP_Run_Del(Thread);
+        _RMP_Run_Del(Thread,State);
     }
     /* Do nothing if it is just blocked on receive */
-    else if(State==RMP_THD_RCVBLK)
+    else if(Pure==RMP_THD_RCVBLK)
     {
         RMP_COV_MARKER();
         /* No action required */
     }
     /* Unblock it if it was blocked on other stuff */
-    else if((State==RMP_THD_SNDBLK)||(State==RMP_THD_SEMBLK))
+    else if((Pure==RMP_THD_SNDBLK)||(Pure==RMP_THD_SEMBLK))
     {
         RMP_COV_MARKER();
-        RMP_List_Del(Thread->Run_Head.Prev, Thread->Run_Head.Next);
+        RMP_List_Del(Thread->Run_Head.Prev,Thread->Run_Head.Next);
     }
-    else if((State==RMP_THD_RCVDLY)||(State==RMP_THD_DELAYED))
+    else if((Pure==RMP_THD_RCVDLY)||(Pure==RMP_THD_DELAYED))
     {
         RMP_COV_MARKER();
-        RMP_List_Del(Thread->Dly_Head.Prev, Thread->Dly_Head.Next);
+        RMP_List_Del(Thread->Dly_Head.Prev,Thread->Dly_Head.Next);
     }
-    else if((State==RMP_THD_SNDDLY)||(State==RMP_THD_SEMDLY))
+    else if((Pure==RMP_THD_SNDDLY)||(Pure==RMP_THD_SEMDLY))
     {
         RMP_COV_MARKER();
-        RMP_List_Del(Thread->Run_Head.Prev, Thread->Run_Head.Next);
-        RMP_List_Del(Thread->Dly_Head.Prev, Thread->Dly_Head.Next);
+        RMP_List_Del(Thread->Run_Head.Prev,Thread->Run_Head.Next);
+        RMP_List_Del(Thread->Dly_Head.Prev,Thread->Dly_Head.Next);
     }
     /* Can't be in this state */
     else
@@ -1581,7 +1627,7 @@ rmp_ret_t RMP_Thd_Del(volatile struct RMP_Thd* Thread)
         RMP_ASSERT(0);
     }
 
-    /* Set return value to failure anyway */
+    /* Set return value to abort anyway, and free the structure */
     Thread->Retval=RMP_ERR_OPER;
     Thread->State=RMP_THD_FREE;
     
@@ -1611,6 +1657,9 @@ rmp_ret_t RMP_Thd_Set(volatile struct RMP_Thd* Thread,
                       rmp_ptr_t Prio,
                       rmp_ptr_t Slice)
 {
+    rmp_ptr_t State;
+    rmp_ptr_t Pure;
+    
 #if(RMP_CHECK_ENABLE!=0U)
     /* Check if the thread pointer is valid */
     if(Thread==RMP_NULL)
@@ -1639,9 +1688,14 @@ rmp_ret_t RMP_Thd_Set(volatile struct RMP_Thd* Thread,
     
     RMP_Sched_Lock();
     
+    /* Cache volatile thread state */
+    State=Thread->State;
+    /* Extract pure state */
+    Pure=RMP_THD_STATE(State);
+    
 #if(RMP_CHECK_ENABLE!=0U)
     /* Check if the thread structure is in use */
-    if(RMP_THD_STATE(Thread->State)==RMP_THD_FREE)
+    if(Pure==RMP_THD_FREE)
     {
         RMP_COV_MARKER();
         RMP_Sched_Unlock();
@@ -1655,7 +1709,7 @@ rmp_ret_t RMP_Thd_Set(volatile struct RMP_Thd* Thread,
 #endif
     
     /* See if the thread is in running state */
-    if(RMP_THD_STATE(Thread->State)==RMP_THD_RUNNING)
+    if(Pure==RMP_THD_RUNNING)
     {
         RMP_COV_MARKER();
         
@@ -1666,11 +1720,12 @@ rmp_ret_t RMP_Thd_Set(volatile struct RMP_Thd* Thread,
             if(Thread->Prio!=Prio)
             {
                 RMP_COV_MARKER();
-                /* It doesn't matter whether this is suspended or not. 
-                 * If suspended, the operations will not be conducted. */
-                _RMP_Run_Del(Thread);
+                /* Delete from runqueue if not suspended */
+                _RMP_Run_Del(Thread,State);
+                /* Change priority */
                 Thread->Prio=Prio;
-                _RMP_Run_Ins(Thread);
+                /* Insert into runqueue if not suspended */
+                _RMP_Run_Ins(Thread,State);
             }
             else
             {
@@ -1735,6 +1790,9 @@ Return      : rmp_ret_t - If successful, 0; else error code.
 ******************************************************************************/
 rmp_ret_t RMP_Thd_Suspend(volatile struct RMP_Thd* Thread)
 {
+    rmp_ptr_t State;
+    rmp_ptr_t Pure;
+    
 #if(RMP_CHECK_ENABLE!=0U)
     /* Check if the thread pointer is valid */
     if(Thread==RMP_NULL)
@@ -1751,9 +1809,14 @@ rmp_ret_t RMP_Thd_Suspend(volatile struct RMP_Thd* Thread)
     
     RMP_Sched_Lock();
     
+    /* Cache volatile thread state */
+    State=Thread->State;
+    /* Extract pure state */
+    Pure=RMP_THD_STATE(State);
+    
 #if(RMP_CHECK_ENABLE!=0U)
     /* Check if the thread structure is in use */
-    if(RMP_THD_STATE(Thread->State)==RMP_THD_FREE)
+    if(Pure==RMP_THD_FREE)
     {
         RMP_COV_MARKER();
         RMP_Sched_Unlock();
@@ -1767,7 +1830,7 @@ rmp_ret_t RMP_Thd_Suspend(volatile struct RMP_Thd* Thread)
 #endif
     
     /* Check if the thread is already suspended */
-    if((Thread->State&RMP_THD_SUSPENDED)!=0U)
+    if((State&RMP_THD_SUSPENDED)!=0U)
     {
         RMP_COV_MARKER();
         RMP_Sched_Unlock();
@@ -1779,11 +1842,12 @@ rmp_ret_t RMP_Thd_Suspend(volatile struct RMP_Thd* Thread)
         /* No action required */
     }
     
-    /* Remove the thread from runqueue if it is running */
-    if(RMP_THD_STATE(Thread->State)==RMP_THD_RUNNING)
+    /* Remove the thread from runqueue if it was running */
+    if(Pure==RMP_THD_RUNNING)
     {
         RMP_COV_MARKER();
-        _RMP_Run_Del(Thread);
+        /* Delete from runqueue - must be not suspended */
+        _RMP_Run_Del(Thread,State);
     }
     else
     {
@@ -1791,8 +1855,8 @@ rmp_ret_t RMP_Thd_Suspend(volatile struct RMP_Thd* Thread)
         /* No action required */
     }
     
-    /* Mark it as suspended */
-    Thread->State|=RMP_THD_SUSPENDED;
+    /* Mark it as suspended and put cached thread state back */
+    Thread->State=State|RMP_THD_SUSPENDED;
     
     /* If we are suspending ourself, a schedule must be pending at this point */
     RMP_ASSERT((Thread!=RMP_Thd_Cur)||(RMP_Sched_Pend!=0U));
@@ -1810,6 +1874,9 @@ Return      : rmp_ret_t - If successful, 0; else error code.
 ******************************************************************************/
 rmp_ret_t RMP_Thd_Resume(volatile struct RMP_Thd* Thread)
 {
+    rmp_ptr_t State;
+    rmp_ptr_t Pure;
+    
 #if(RMP_CHECK_ENABLE!=0U)
     /* Check if the thread pointer is valid */
     if(Thread==RMP_NULL)
@@ -1826,9 +1893,14 @@ rmp_ret_t RMP_Thd_Resume(volatile struct RMP_Thd* Thread)
     
     RMP_Sched_Lock();
     
+    /* Cache volatile thread state */
+    State=Thread->State;
+    /* Extract pure state */
+    Pure=RMP_THD_STATE(State);
+    
 #if(RMP_CHECK_ENABLE!=0U)
     /* Check if the thread structure is in use */
-    if(RMP_THD_STATE(Thread->State)==RMP_THD_FREE)
+    if(Pure==RMP_THD_FREE)
     {
         RMP_COV_MARKER();
         RMP_Sched_Unlock();
@@ -1842,7 +1914,7 @@ rmp_ret_t RMP_Thd_Resume(volatile struct RMP_Thd* Thread)
 #endif
     
     /* Check if the thread is already suspended */
-    if((Thread->State&RMP_THD_SUSPENDED)==0U)
+    if((State&RMP_THD_SUSPENDED)==0U)
     {
         RMP_COV_MARKER();
         RMP_Sched_Unlock();
@@ -1854,14 +1926,16 @@ rmp_ret_t RMP_Thd_Resume(volatile struct RMP_Thd* Thread)
         /* No action required */
     }
     
-    /* The thread is suspended, need to resume it */
-    Thread->State&=~RMP_THD_SUSPENDED;
+    /* Resume the thread and put cached thread state back */
+    State&=~RMP_THD_SUSPENDED;
+    Thread->State=State;
     
-    /* Put the thread back if it is running */
-    if(RMP_THD_STATE(Thread->State)==RMP_THD_RUNNING)
+    /* Put the thread back if it was running */
+    if(Pure==RMP_THD_RUNNING)
     {
         RMP_COV_MARKER();
-        _RMP_Run_Ins(Thread);
+        /* Insert into runqueue - must be not suspended */
+        _RMP_Run_Ins(Thread,State);
     }
     else
     {
@@ -1882,6 +1956,7 @@ Return      : rmp_ret_t - If successful, 0; or an error code.
 ******************************************************************************/
 rmp_ret_t RMP_Thd_Delay(rmp_ptr_t Slice)
 {
+    rmp_ptr_t State;
     volatile struct RMP_Thd* Thd_Cur;
 
 #if(RMP_CHECK_ENABLE!=0U)
@@ -1902,11 +1977,17 @@ rmp_ret_t RMP_Thd_Delay(rmp_ptr_t Slice)
     
     /* Cache volatile current thread - must be own thread */
     Thd_Cur=RMP_Thd_Cur;
+    /* Cache volatile thread state */
+    State=Thd_Cur->State;
 
     /* We must be running and not suspended so we will be out of running queue */
-    _RMP_Run_Del(Thd_Cur);
-    RMP_THD_STATE_SET(Thd_Cur->State, RMP_THD_DELAYED);
-    _RMP_Dly_Ins(Thd_Cur, Slice);
+    _RMP_Run_Del(Thd_Cur,State);
+    /* Set to delayed */
+    RMP_THD_STATE_SET(State,RMP_THD_DELAYED);
+    /* Put cached thread state back */
+    Thd_Cur->State=State;
+    /* Insert into delay queue */
+    _RMP_Dly_Ins(Thd_Cur,Slice);
 
     /* When abort, an error code will be supplied instead */
     Thd_Cur->Retval=0;
@@ -1925,6 +2006,9 @@ Return      : rmp_ret_t - If successful, 0; or an error code.
 ******************************************************************************/
 rmp_ret_t RMP_Thd_Cancel(volatile struct RMP_Thd* Thread)
 {
+    rmp_ptr_t State;
+    rmp_ptr_t Pure;
+    
 #if(RMP_CHECK_ENABLE!=0U)
     /* Check if the thread pointer is valid */
     if(Thread==RMP_NULL)
@@ -1941,9 +2025,14 @@ rmp_ret_t RMP_Thd_Cancel(volatile struct RMP_Thd* Thread)
     
     RMP_Sched_Lock();
     
+    /* Cache volatile thread state */
+    State=Thread->State;
+    /* Extract pure state */
+    Pure=RMP_THD_STATE(State);
+    
 #if(RMP_CHECK_ENABLE!=0U)
     /* Check if the thread structure is in use */
-    if(RMP_THD_STATE(Thread->State)==RMP_THD_FREE)
+    if(Pure==RMP_THD_FREE)
     {
         RMP_COV_MARKER();
         RMP_Sched_Unlock();
@@ -1957,7 +2046,7 @@ rmp_ret_t RMP_Thd_Cancel(volatile struct RMP_Thd* Thread)
 #endif
     
     /* Check if the thread is in delay */
-    if(RMP_THD_STATE(Thread->State)!=RMP_THD_DELAYED)
+    if(Pure!=RMP_THD_DELAYED)
     {
         RMP_COV_MARKER();
         RMP_Sched_Unlock();
@@ -1970,10 +2059,13 @@ rmp_ret_t RMP_Thd_Cancel(volatile struct RMP_Thd* Thread)
     }
     
     /* Delete it from the delay list */
-    RMP_List_Del(Thread->Dly_Head.Prev, Thread->Dly_Head.Next);
-    RMP_THD_STATE_SET(Thread->State, RMP_THD_RUNNING);
-    /* Set to running if not suspended */
-    _RMP_Run_Ins(Thread);
+    RMP_List_Del(Thread->Dly_Head.Prev,Thread->Dly_Head.Next);
+    /* Set to running */
+    RMP_THD_STATE_SET(State,RMP_THD_RUNNING);
+    /* Put cached thread state back */
+    Thread->State=State;
+    /* Insert into runqueue if not suspended */
+    _RMP_Run_Ins(Thread,State);
     
     /* Supply cancel error code */
     Thread->Retval=RMP_ERR_OPER;
@@ -2017,6 +2109,9 @@ rmp_ret_t RMP_Thd_Snd(volatile struct RMP_Thd* Thread,
                       rmp_ptr_t Data,
                       rmp_ptr_t Slice)
 {
+    rmp_ptr_t State;
+    rmp_ptr_t Pure;
+    rmp_ptr_t State_Cur;
     volatile struct RMP_Thd* Thd_Cur;
     
 #if(RMP_CHECK_ENABLE!=0U)
@@ -2035,9 +2130,14 @@ rmp_ret_t RMP_Thd_Snd(volatile struct RMP_Thd* Thread,
     
     RMP_Sched_Lock();
     
+    /* Cache volatile thread state */
+    State=Thread->State;
+    /* Extract pure state */
+    Pure=RMP_THD_STATE(State);
+    
 #if(RMP_CHECK_ENABLE!=0U)
     /* Check if the thread structure is in use */
-    if(RMP_THD_STATE(Thread->State)==RMP_THD_FREE)
+    if(Pure==RMP_THD_FREE)
     {
         RMP_COV_MARKER();
         RMP_Sched_Unlock();
@@ -2069,21 +2169,20 @@ rmp_ret_t RMP_Thd_Snd(volatile struct RMP_Thd* Thread,
 #endif
     
     /* Check if the mailbox is empty */
-    if((Thread->State&RMP_THD_MBOXFUL)==0U)
+    if((State&RMP_THD_MBOXFUL)==0U)
     {
         RMP_COV_MARKER();
         
-        /* Mailbox empty; check if the receiver is waiting for us */
-        if((RMP_THD_STATE(Thread->State)==RMP_THD_RCVBLK)||
-           (RMP_THD_STATE(Thread->State)==RMP_THD_RCVDLY))
+        /* Mailbox empty, check if the receiver is waiting for us */
+        if((Pure==RMP_THD_RCVBLK)||(Pure==RMP_THD_RCVDLY))
         {
             RMP_COV_MARKER();
             
             /* The receiver is blocked, wake it up */
-            if(RMP_THD_STATE(Thread->State)==RMP_THD_RCVDLY)
+            if(Pure==RMP_THD_RCVDLY)
             {
                 RMP_COV_MARKER();
-                RMP_List_Del(Thread->Dly_Head.Prev, Thread->Dly_Head.Next);
+                RMP_List_Del(Thread->Dly_Head.Prev,Thread->Dly_Head.Next);
             }
             else
             {
@@ -2091,9 +2190,10 @@ rmp_ret_t RMP_Thd_Snd(volatile struct RMP_Thd* Thread,
                 /* No action required */
             }
             
-            RMP_THD_STATE_SET(Thread->State, RMP_THD_RUNNING);
-            /* Set to running if not suspended */
-            _RMP_Run_Ins(Thread);
+            /* Set to running */
+            RMP_THD_STATE_SET(State,RMP_THD_RUNNING);
+            /* Insert into runqueue if not suspended */
+            _RMP_Run_Ins(Thread,State);
         }
         else
         {
@@ -2101,9 +2201,9 @@ rmp_ret_t RMP_Thd_Snd(volatile struct RMP_Thd* Thread,
             /* No action required */
         }
         
-        /* Fill the mailbox */
-        Thread->Mailbox=Data;
-        Thread->State|=RMP_THD_MBOXFUL;
+        /* Fill the receive buffer and put cached thread state back */
+        Thread->Mail_Rcv=Data;
+        Thread->State=State|RMP_THD_MBOXFUL;
         
         RMP_Sched_Unlock();
         return 0;
@@ -2126,23 +2226,29 @@ rmp_ret_t RMP_Thd_Snd(volatile struct RMP_Thd* Thread,
             Thd_Cur->Retval=0;
         }
 
-        /* We must be running */
-        _RMP_Run_Del(Thd_Cur);
-        RMP_List_Ins(&(Thd_Cur->Run_Head), Thread->Snd_List.Prev, &(Thread->Snd_List));
-
+        /* Cache volatile thread state */
+        State_Cur=Thd_Cur->State;
+        /* Delete from runqueue - must not be suspended */
+        _RMP_Run_Del(Thd_Cur,State_Cur);
+        /* Insert into mailbox wait queue */
+        RMP_List_Ins(&(Thd_Cur->Run_Head),Thread->Snd_List.Prev,&(Thread->Snd_List));
+        
+        /* See if the wait is timed or infinite */
         if(Slice<RMP_SLICE_MAX)
         {
             RMP_COV_MARKER();
-            _RMP_Dly_Ins(Thd_Cur, Slice);
-            RMP_THD_STATE_SET(Thd_Cur->State, RMP_THD_SNDDLY);
+            _RMP_Dly_Ins(Thd_Cur,Slice);
+            RMP_THD_STATE_SET(State_Cur,RMP_THD_SNDDLY);
         }
         else
         {
             RMP_COV_MARKER();
-            RMP_THD_STATE_SET(Thd_Cur->State, RMP_THD_SNDBLK);
+            RMP_THD_STATE_SET(State_Cur,RMP_THD_SNDBLK);
         }
 
-        Thd_Cur->Mailbox=Data;
+        /* Fill the send buffer and put cached thread state back */
+        Thd_Cur->Mail_Snd=Data;
+        Thd_Cur->State=State_Cur;
     }
     
     RMP_Sched_Unlock();
@@ -2167,6 +2273,9 @@ Return      : rmp_ret_t - If successful, 0; or an error code.
 rmp_ret_t RMP_Thd_Snd_ISR(volatile struct RMP_Thd* Thread,
                           rmp_ptr_t Data)
 {
+    rmp_ptr_t State;
+    rmp_ptr_t Pure;
+    
 #if(RMP_CHECK_ENABLE!=0U)
     /* Check if the thread pointer is valid */
     if(Thread==RMP_NULL)
@@ -2179,9 +2288,16 @@ rmp_ret_t RMP_Thd_Snd_ISR(volatile struct RMP_Thd* Thread,
         RMP_COV_MARKER();
         /* No action required */
     }
+#endif
     
+    /* Cache volatile thread state */
+    State=Thread->State;
+    /* Extract pure state */
+    Pure=RMP_THD_STATE(State);
+    
+#if(RMP_CHECK_ENABLE!=0U)
     /* Check if the thread structure is in use */
-    if(RMP_THD_STATE(Thread->State)==RMP_THD_FREE)
+    if(Pure==RMP_THD_FREE)
     {
         RMP_COV_MARKER();
         return RMP_ERR_THD;
@@ -2194,21 +2310,20 @@ rmp_ret_t RMP_Thd_Snd_ISR(volatile struct RMP_Thd* Thread,
 #endif
     
     /* Check if the mailbox is empty */
-    if((Thread->State&RMP_THD_MBOXFUL)==0U)
+    if((State&RMP_THD_MBOXFUL)==0U)
     {
         RMP_COV_MARKER();
         
-        /* Mailbox empty; check if the receiver is waiting for us */
-        if((RMP_THD_STATE(Thread->State)==RMP_THD_RCVBLK)||
-           (RMP_THD_STATE(Thread->State)==RMP_THD_RCVDLY))
+        /* Mailbox empty, check if the receiver is waiting for us */
+        if((Pure==RMP_THD_RCVBLK)||(Pure==RMP_THD_RCVDLY))
         {
             RMP_COV_MARKER();
 
             /* The receiver is blocked, wake it up */
-            if(RMP_THD_STATE(Thread->State)==RMP_THD_RCVDLY)
+            if(Pure==RMP_THD_RCVDLY)
             {
                 RMP_COV_MARKER();
-                RMP_List_Del(Thread->Dly_Head.Prev, Thread->Dly_Head.Next);
+                RMP_List_Del(Thread->Dly_Head.Prev,Thread->Dly_Head.Next);
             }
             else
             {
@@ -2216,10 +2331,10 @@ rmp_ret_t RMP_Thd_Snd_ISR(volatile struct RMP_Thd* Thread,
                 /* No action required */
             }
             
-            RMP_THD_STATE_SET(Thread->State, RMP_THD_RUNNING);
-
-            /* Set to running if not suspended */
-            _RMP_Run_Ins(Thread);
+            /* Set to running */
+            RMP_THD_STATE_SET(State,RMP_THD_RUNNING);
+            /* Insert into runqueue if not suspended */
+            _RMP_Run_Ins(Thread,State);
 
             /* Trigger a context switch if required */
 #ifdef RMP_YIELD_ISR
@@ -2242,9 +2357,9 @@ rmp_ret_t RMP_Thd_Snd_ISR(volatile struct RMP_Thd* Thread,
             /* No action required */
         }
         
-        /* Set the mailbox */
-        Thread->Mailbox=Data;
-        Thread->State|=RMP_THD_MBOXFUL;
+        /* Fill the receive buffer and put cached thread state back */
+        Thread->Mail_Rcv=Data;
+        Thread->State=State|RMP_THD_MBOXFUL;
     }
     else
     {
@@ -2261,10 +2376,12 @@ Description : Unblock one thread if there are one waiting, and set the mailbox
               full states accordingly.
 Input       : volatile struct RMP_Thd* Thd_Cur - The cached current thread.
 Output      : rmp_ptr_t* Data - The pointer to put the data to.
-Return      : None.
+              rmp_ptr_t State - The cached current thread state.
+Return      : rmp_ptr_t - The new thread state to put back.
 ******************************************************************************/
-static void _RMP_Thd_Unblock(volatile struct RMP_Thd* Thd_Cur,
-                             rmp_ptr_t* Data)
+static rmp_ptr_t _RMP_Thd_Unblock(volatile struct RMP_Thd* Thd_Cur,
+                                  rmp_ptr_t* Data,
+                                  rmp_ptr_t State)
 {
     volatile struct RMP_Thd* Sender;
 
@@ -2272,7 +2389,7 @@ static void _RMP_Thd_Unblock(volatile struct RMP_Thd* Thd_Cur,
     if(Data!=RMP_NULL)
     {
         RMP_COV_MARKER();
-        *Data=Thd_Cur->Mailbox;
+        *Data=Thd_Cur->Mail_Rcv;
     }
     else
     {
@@ -2287,32 +2404,21 @@ static void _RMP_Thd_Unblock(volatile struct RMP_Thd* Thd_Cur,
         
         /* Delete the sender from waitlist and read the data; mailbox still full */
         Sender=(volatile struct RMP_Thd*)(Thd_Cur->Snd_List.Next);
-        RMP_List_Del(Sender->Run_Head.Prev, Sender->Run_Head.Next);
-        Thd_Cur->Mailbox=Sender->Mailbox;
-        
-        /* Now we unblock it - what state is it in? */
-        if((RMP_THD_STATE(Sender->State)==RMP_THD_SNDDLY))
-        {
-            RMP_COV_MARKER();
-            RMP_List_Del(Sender->Dly_Head.Prev,Sender->Dly_Head.Next);
-        }
-        else
-        {
-            RMP_COV_MARKER();
-            /* No action required */
-        }
-        
-        RMP_THD_STATE_SET(Sender->State, RMP_THD_RUNNING);
-        
-        /* Set to running if not suspended */
-        _RMP_Run_Ins(Sender);
+        /* Extract mail from buffer */
+        Thd_Cur->Mail_Rcv=Sender->Mail_Snd;
+        /* Remove from mailbox queue */
+        _RMP_Thd_Remove(Sender,RMP_THD_SNDDLY);
+        /* Mailbox full state is unchanged */
+        return State;
     }
     else
     {
         RMP_COV_MARKER();
-        /* Nobody to unblock, mailbox empty now */
-        Thd_Cur->State&=~RMP_THD_MBOXFUL;
+        /* No action required */
     }
+    
+    /* Nobody to unblock, mailbox empty now */
+    return State&(~RMP_THD_MBOXFUL);
 }
 /* End Function:_RMP_Thd_Unblock *********************************************/
 
@@ -2326,19 +2432,22 @@ Return      : rmp_ret_t - If successful, 0; or an error code.
 rmp_ret_t RMP_Thd_Rcv(rmp_ptr_t* Data,
                       rmp_ptr_t Slice)
 {
+    rmp_ptr_t State;
     volatile struct RMP_Thd* Thd_Cur;
     
     RMP_Sched_Lock();
     
     /* Cache volatile current thread - must be own thread */
     Thd_Cur=RMP_Thd_Cur;
+    /* Cache volatile thread state */
+    State=Thd_Cur->State;
     
     /* Check if the mailbox is empty */
-    if((Thd_Cur->State&RMP_THD_MBOXFUL)!=0U)
+    if((State&RMP_THD_MBOXFUL)!=0U)
     {
         RMP_COV_MARKER();
-        /* Extract value and unblock next sender */
-        _RMP_Thd_Unblock(Thd_Cur,Data);
+        /* Extract value and unblock next sender, then put cached thread state back */
+        Thd_Cur->State=_RMP_Thd_Unblock(Thd_Cur,Data,State);
         RMP_Sched_Unlock();
         return 0;
     }
@@ -2348,7 +2457,6 @@ rmp_ret_t RMP_Thd_Rcv(rmp_ptr_t* Data,
         
         /* Mailbox is empty, must have nobody on the list now */
         RMP_ASSERT(&(Thd_Cur->Snd_List)==Thd_Cur->Snd_List.Next);
-        
         /* See if we're blocking */
         if(Slice==0U)
         {
@@ -2363,37 +2471,41 @@ rmp_ret_t RMP_Thd_Rcv(rmp_ptr_t* Data,
             Thd_Cur->Retval=0;
         }
 
-        /* We must be running and not suspended and surely be deleted from queue */
-        _RMP_Run_Del(Thd_Cur);
-
+        /* We must be running and not suspended and will be deleted from queue */
+        _RMP_Run_Del(Thd_Cur,State);
+        /* See if this is a finite wait */
         if(Slice<RMP_SLICE_MAX)
         {
             RMP_COV_MARKER();
-            _RMP_Dly_Ins(Thd_Cur, Slice);
-            RMP_THD_STATE_SET(Thd_Cur->State, RMP_THD_RCVDLY);
+            _RMP_Dly_Ins(Thd_Cur,Slice);
+            RMP_THD_STATE_SET(State,RMP_THD_RCVDLY);
         }
         else
         {
             RMP_COV_MARKER();
-            RMP_THD_STATE_SET(Thd_Cur->State, RMP_THD_RCVBLK);
+            RMP_THD_STATE_SET(State,RMP_THD_RCVBLK);
         }
         
-        /* Unlock the scheduler, wait for mail */
+        /* Put cached thread state back */
+        Thd_Cur->State=State;
+        /* Unlock the scheduler, wait for mail or timeout */
         RMP_Sched_Unlock();
         
-        /* Retval must be updated or mailbox must be filled */
+        /* Retval must be updated or mailbox must be filled in this interval */
         
         /* We've been unblocked; could be a timeout or a full mailbox */
         RMP_Sched_Lock();
+        /* Cache volatile thread state */
+        State=Thd_Cur->State;
         
         /* Full mailbox, or timeout? */
-        if((Thd_Cur->State&RMP_THD_MBOXFUL)!=0U)
+        if((State&RMP_THD_MBOXFUL)!=0U)
         {
             RMP_COV_MARKER();
             /* The return value must be good */
             RMP_ASSERT(Thd_Cur->Retval==0);
-            /* Extract value and unblock next sender */
-            _RMP_Thd_Unblock(Thd_Cur,Data);
+            /* Extract value and unblock next sender, then put cached thread state back */
+            Thd_Cur->State=_RMP_Thd_Unblock(Thd_Cur,Data,State);
         }
         /* Timeout */
         else
@@ -2466,10 +2578,9 @@ rmp_ret_t RMP_Sem_Crt(volatile struct RMP_Sem* Semaphore,
 #endif
     
     /* Initialize semaphore */
+    Semaphore->State=RMP_SEM_USED;
     Semaphore->Num_Cur=Number;
     RMP_List_Crt(&(Semaphore->Wait_List));
-    
-    Semaphore->State=RMP_SEM_USED;
     
     RMP_Sched_Unlock();
     return 0;
@@ -2484,7 +2595,7 @@ Return      : rmp_ret_t - If successful, 0; or an error code.
 ******************************************************************************/
 rmp_ret_t RMP_Sem_Del(volatile struct RMP_Sem* Semaphore)
 {
-    volatile struct RMP_Thd* Thread;
+    volatile struct RMP_Thd* Wait;
 
 #if(RMP_CHECK_ENABLE!=0U)
     /* Check if the semaphore pointer is valid */
@@ -2520,26 +2631,11 @@ rmp_ret_t RMP_Sem_Del(volatile struct RMP_Sem* Semaphore)
     /* Get rid of all threads waiting on it */
     while(&(Semaphore->Wait_List)!=Semaphore->Wait_List.Next)
     {
-        Thread=(volatile struct RMP_Thd*)(Semaphore->Wait_List.Next);
-        RMP_List_Del(Thread->Run_Head.Prev, Thread->Run_Head.Next);
-        
-        if(RMP_THD_STATE(Thread->State)==RMP_THD_SEMDLY)
-        {
-            RMP_COV_MARKER();
-            RMP_List_Del(Thread->Dly_Head.Prev, Thread->Dly_Head.Next);
-        }
-        else
-        {
-            RMP_COV_MARKER();
-            /* No action required */
-        }
-
-        RMP_THD_STATE_SET(Thread->State,RMP_THD_RUNNING);
-        
-        /* Set to running if not suspended */
-        _RMP_Run_Ins(Thread);
+        Wait=(volatile struct RMP_Thd*)(Semaphore->Wait_List.Next);
+        /* Remove from semaphore waitlist */
+        _RMP_Thd_Remove(Wait,RMP_THD_SEMDLY);
         /* Supply delete error code */
-        Thread->Retval=RMP_ERR_OPER;
+        Wait->Retval=RMP_ERR_OPER;
     }
     
     Semaphore->State=RMP_SEM_FREE;
@@ -2548,37 +2644,6 @@ rmp_ret_t RMP_Sem_Del(volatile struct RMP_Sem* Semaphore)
     return 0;
 }
 /* End Function:RMP_Sem_Del **************************************************/
-
-/* Function:_RMP_Sem_Unblock **************************************************
-Description : Unblock a thread from the semaphore's waitlist.
-Input       : volatile struct RMP_Sem* Semaphore - The pointer to the semaphore.
-Output      : None.
-Return      : None.
-******************************************************************************/
-static void _RMP_Sem_Unblock(volatile struct RMP_Sem* Semaphore)
-{
-    volatile struct RMP_Thd* Thread;
-    
-    /* Get the next thread in the list */
-    Thread=(volatile struct RMP_Thd*)(Semaphore->Wait_List.Next);
-    RMP_List_Del(Thread->Run_Head.Prev, Thread->Run_Head.Next);
-    
-    if(RMP_THD_STATE(Thread->State)==RMP_THD_SEMDLY)
-    {
-        RMP_COV_MARKER();
-        RMP_List_Del(Thread->Dly_Head.Prev, Thread->Dly_Head.Next);
-    }
-    else
-    {
-        RMP_COV_MARKER();
-        /* No action required */
-    }
-    
-    /* Set to running if not suspended */
-    RMP_THD_STATE_SET(Thread->State, RMP_THD_RUNNING);
-    _RMP_Run_Ins(Thread);
-}
-/* End Function:_RMP_Sem_Unblock *********************************************/
 
 /* Function:RMP_Sem_Post ******************************************************
 Description : Post a number of semaphores to the list.
@@ -2655,10 +2720,11 @@ rmp_ret_t RMP_Sem_Post(volatile struct RMP_Sem* Semaphore,
     
     Num_Cur+=Number;
     
-    /* Is there any thread waiting on it? If there are, clean them up */
+    /* Wake up some waiting threads */
     while((&(Semaphore->Wait_List)!=Semaphore->Wait_List.Next)&&(Num_Cur!=0U))
     {
-        _RMP_Sem_Unblock(Semaphore);
+        _RMP_Thd_Remove((volatile struct RMP_Thd*)(Semaphore->Wait_List.Next),
+                        RMP_THD_SEMDLY);
         Num_Cur--;
     }
     
@@ -2742,10 +2808,11 @@ rmp_ret_t RMP_Sem_Post_ISR(volatile struct RMP_Sem* Semaphore,
     
     Num_Cur+=Number;
     
-    /* Is there any thread waiting on it? If there are, clean them up */
+    /* Wake up some waiting threads */
     while((&(Semaphore->Wait_List)!=Semaphore->Wait_List.Next)&&(Num_Cur!=0U))
     {
-        _RMP_Sem_Unblock(Semaphore);
+        _RMP_Thd_Remove((volatile struct RMP_Thd*)(Semaphore->Wait_List.Next),
+                        RMP_THD_SEMDLY);
         Num_Cur--;
     }
     
@@ -2813,11 +2880,12 @@ rmp_ret_t RMP_Sem_Bcst(volatile struct RMP_Sem* Semaphore)
     }
 #endif
     
-    /* Is there any thread waiting on it? If there are, clean them up */
+    /* Wake up all waiting threads */
     Number=0;
     while(&(Semaphore->Wait_List)!=Semaphore->Wait_List.Next)
     {
-        _RMP_Sem_Unblock(Semaphore);
+        _RMP_Thd_Remove((volatile struct RMP_Thd*)(Semaphore->Wait_List.Next),
+                        RMP_THD_SEMDLY);
         Number++;
     }
 
@@ -2866,11 +2934,12 @@ rmp_ret_t RMP_Sem_Bcst_ISR(volatile struct RMP_Sem* Semaphore)
     }
 #endif
     
-    /* Is there any thread waiting on it? If there are, clean them up */
+    /* Wake up all waiting threads */
     Number=0;
     while(&(Semaphore->Wait_List)!=Semaphore->Wait_List.Next)
     {
-        _RMP_Sem_Unblock(Semaphore);
+        _RMP_Thd_Remove((volatile struct RMP_Thd*)(Semaphore->Wait_List.Next),
+                        RMP_THD_SEMDLY);
         Number++;
     }
     
@@ -2904,7 +2973,8 @@ Return      : rmp_ret_t - If successful, the current semaphore number; or an err
 static rmp_ret_t _RMP_Sem_Pend_Core(volatile struct RMP_Sem* Semaphore,
                                     rmp_ptr_t Slice)
 {
-    volatile rmp_ptr_t Num_Cur;
+    rmp_ptr_t State;
+    rmp_ptr_t Num_Cur;
     volatile struct RMP_Thd* Thd_Cur;
     
     /* Cache volatile current thread */
@@ -2941,6 +3011,7 @@ static rmp_ret_t _RMP_Sem_Pend_Core(volatile struct RMP_Sem* Semaphore,
     else
     {
         RMP_COV_MARKER();
+        
         /* Cannot get one, we need to block */
         if(Slice==0U)
         {
@@ -2954,22 +3025,29 @@ static rmp_ret_t _RMP_Sem_Pend_Core(volatile struct RMP_Sem* Semaphore,
             /* When abort, an error code will be supplied instead */
             Thd_Cur->Retval=0;
         }
-
+        
+        /* Cache volatile thread state */
+        State=Thd_Cur->State;
         /* We must be running - place into waitlist now */
-        _RMP_Run_Del(Thd_Cur);
-        RMP_List_Ins(&(Thd_Cur->Run_Head), Semaphore->Wait_List.Prev, &(Semaphore->Wait_List));
+        _RMP_Run_Del(Thd_Cur,State);
+        RMP_List_Ins(&(Thd_Cur->Run_Head),
+                     Semaphore->Wait_List.Prev,
+                     &(Semaphore->Wait_List));
         
         if(Slice<RMP_SLICE_MAX)
         {
             RMP_COV_MARKER();
-            _RMP_Dly_Ins(Thd_Cur, Slice);
-            RMP_THD_STATE_SET(Thd_Cur->State, RMP_THD_SEMDLY);
+            _RMP_Dly_Ins(Thd_Cur,Slice);
+            RMP_THD_STATE_SET(State,RMP_THD_SEMDLY);
         }
         else
         {
             RMP_COV_MARKER();
-            RMP_THD_STATE_SET(Thd_Cur->State, RMP_THD_SEMBLK);
+            RMP_THD_STATE_SET(State,RMP_THD_SEMBLK);
         }
+        
+        /* Put cached thread state back */
+        Thd_Cur->State=State;
     }
     
     RMP_Sched_Unlock();
@@ -3005,7 +3083,7 @@ rmp_ret_t RMP_Sem_Pend(volatile struct RMP_Sem* Semaphore,
     
     RMP_Sched_Lock();
     
-    return _RMP_Sem_Pend_Core(Semaphore, Slice);
+    return _RMP_Sem_Pend_Core(Semaphore,Slice);
 }
 /* End Function:RMP_Sem_Pend *************************************************/
 
@@ -3049,7 +3127,7 @@ rmp_ret_t RMP_Sem_Pend_Unlock(volatile struct RMP_Sem* Semaphore,
     }
 #endif
     
-    return _RMP_Sem_Pend_Core(Semaphore, Slice);
+    return _RMP_Sem_Pend_Core(Semaphore,Slice);
 }
 /* End Function:RMP_Sem_Pend_Unlock ******************************************/
 
@@ -3061,6 +3139,9 @@ Return      : rmp_ret_t - If successful, 0; or an error code.
 ******************************************************************************/
 rmp_ret_t RMP_Sem_Abort(volatile struct RMP_Thd* Thread)
 {
+    rmp_ptr_t State;
+    rmp_ptr_t Pure;
+    
 #if(RMP_CHECK_ENABLE!=0U)
     /* Check if the thread pointer is valid */
     if(Thread==RMP_NULL)
@@ -3077,9 +3158,14 @@ rmp_ret_t RMP_Sem_Abort(volatile struct RMP_Thd* Thread)
     
     RMP_Sched_Lock();
     
+    /* Cache volatile thread state */
+    State=Thread->State;
+    /* Extract pure state */
+    Pure=RMP_THD_STATE(State);
+    
 #if(RMP_CHECK_ENABLE!=0U)
     /* Check if the thread structure is in use */
-    if(RMP_THD_STATE(Thread->State)==RMP_THD_FREE)
+    if(Pure==RMP_THD_FREE)
     {
         RMP_COV_MARKER();
         RMP_Sched_Unlock();
@@ -3093,8 +3179,7 @@ rmp_ret_t RMP_Sem_Abort(volatile struct RMP_Thd* Thread)
 #endif
     
     /* Check if the thread is really waiting on a semaphore */
-    if((RMP_THD_STATE(Thread->State)!=RMP_THD_SEMBLK)&&
-       (RMP_THD_STATE(Thread->State)!=RMP_THD_SEMDLY))
+    if((Pure!=RMP_THD_SEMBLK)&&(Pure!=RMP_THD_SEMDLY))
     {
         RMP_COV_MARKER();
         RMP_Sched_Unlock();
@@ -3107,11 +3192,11 @@ rmp_ret_t RMP_Sem_Abort(volatile struct RMP_Thd* Thread)
     }
     
     /* Waiting for a semaphore. We abort it and return */
-    RMP_List_Del(Thread->Run_Head.Prev, Thread->Run_Head.Next);
-    if(RMP_THD_STATE(Thread->State)==RMP_THD_SEMDLY)
+    RMP_List_Del(Thread->Run_Head.Prev,Thread->Run_Head.Next);
+    if(Pure==RMP_THD_SEMDLY)
     {
         RMP_COV_MARKER();
-        RMP_List_Del(Thread->Dly_Head.Prev, Thread->Dly_Head.Next);
+        RMP_List_Del(Thread->Dly_Head.Prev,Thread->Dly_Head.Next);
     }
     else
     {
@@ -3119,9 +3204,12 @@ rmp_ret_t RMP_Sem_Abort(volatile struct RMP_Thd* Thread)
         /* No action required */
     }
     
-    RMP_THD_STATE_SET(Thread->State,RMP_THD_RUNNING);
-    /* Set to running if not suspended */
-    _RMP_Run_Ins(Thread);
+    /* Set to running */
+    RMP_THD_STATE_SET(State,RMP_THD_RUNNING);
+    /* Put cached thread state back */
+    Thread->State=State;
+    /* Insert into runqueue if not suspended */
+    _RMP_Run_Ins(Thread,State);
     
     /* Supply abort error code */
     Thread->Retval=RMP_ERR_OPER;
@@ -3452,7 +3540,7 @@ static void _RMP_Mem_Ins(volatile void* Pool,
     }
 
     /* Insert the node now */
-    RMP_List_Ins(&(Head->Head), Slot, Slot->Next);
+    RMP_List_Ins(&(Head->Head),Slot,Slot->Next);
 }
 /* End Function:_RMP_Mem_Ins *************************************************/
 
@@ -3635,7 +3723,7 @@ void* RMP_Malloc(volatile void* Pool,
     volatile struct RMP_Mem* Mem;
     rmp_ptr_t Old_Size;
     volatile struct RMP_Mem_Head* Head;
-    rmp_ptr_t Rounded_Size;
+    rmp_ptr_t Round_Size;
     volatile struct RMP_Mem_Head* New;
     rmp_ptr_t New_Size;
     
@@ -3654,12 +3742,12 @@ void* RMP_Malloc(volatile void* Pool,
 #endif
     
     /* Round up the size:a multiple of 8 and bigger than 64B */
-    Rounded_Size=RMP_ROUND_UP(Size, 3U);
+    Round_Size=RMP_ROUND_UP(Size, 3U);
     /* See if it is smaller than the smallest block */
-    Rounded_Size=(Rounded_Size>64U)?Rounded_Size:64U;
+    Round_Size=(Round_Size>64U)?Round_Size:64U;
 
     /* See if such block exists, if not, abort */
-    if(_RMP_Mem_Search(Pool,Rounded_Size,&FLI_Level,&SLI_Level)!=0)
+    if(_RMP_Mem_Search(Pool,Round_Size,&FLI_Level,&SLI_Level)!=0)
     {
         RMP_COV_MARKER();
         return RMP_NULL;
@@ -3678,11 +3766,11 @@ void* RMP_Malloc(volatile void* Pool,
 
     /* Allocate and calculate if the space left could be big enough to be a new 
      * block. If so, we will put the block back into the TLSF table. */
-    New_Size=RMP_MEM_HEAD2SIZE(Head)-Rounded_Size;
+    New_Size=RMP_MEM_HEAD2SIZE(Head)-Round_Size;
     if(New_Size>=RMP_MEM_SIZE2WHOLE(64U))
     {
         RMP_COV_MARKER();
-        Old_Size=RMP_MEM_SIZE2WHOLE(Rounded_Size);
+        Old_Size=RMP_MEM_SIZE2WHOLE(Round_Size);
         New=(volatile struct RMP_Mem_Head*)(((rmp_ptr_t)Head)+Old_Size);
 
         _RMP_Mem_Block(Head,Old_Size,RMP_MEM_USED);
@@ -3720,9 +3808,21 @@ void RMP_Free(volatile void* Pool,
     volatile struct RMP_Mem_Head* Right;
     rmp_ptr_t Merge_Left;
 
+    /* Check if the memory pointer is valid */
+    if(Mem_Ptr==RMP_NULL)
+    {
+        RMP_COV_MARKER();
+        return;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+    
 #if(RMP_CHECK_ENABLE!=0U)
-    /* Check if the pool and memory pointer is valid */
-    if((Pool==RMP_NULL)||(Mem_Ptr==RMP_NULL))
+    /* Check if the pool is valid */
+    if(Pool==RMP_NULL)
     {
         RMP_COV_MARKER();
         return;
@@ -3857,7 +3957,7 @@ void* RMP_Realloc(volatile void* Pool,
     /* The size of the original memory block */
     rmp_ptr_t Mem_Size;
     /* The rounded size of the new memory request */
-    rmp_ptr_t Rounded_Size;
+    rmp_ptr_t Round_Size;
     /* The pointer to the pool */
     volatile struct RMP_Mem* Mem;
     /* The head of the old memory */
@@ -3951,9 +4051,9 @@ void* RMP_Realloc(volatile void* Pool,
 #endif
     
     /* Round up the size:a multiple of 8 and bigger than 64B */
-    Rounded_Size=RMP_ROUND_UP(Size, 3U);
+    Round_Size=RMP_ROUND_UP(Size, 3U);
     /* See if it is smaller than the smallest block */
-    Rounded_Size=(Rounded_Size>64U)?Rounded_Size:64U;
+    Round_Size=(Round_Size>64U)?Round_Size:64U;
     
     Mem_Size=RMP_MEM_PTR_DIFF(Head->Tail, Mem_Ptr);
     /* Does the right-side head exist at all? */
@@ -3970,7 +4070,7 @@ void* RMP_Realloc(volatile void* Pool,
     }
     
     /* Are we gonna expand it? */
-    if(Mem_Size<Rounded_Size)
+    if(Mem_Size<Round_Size)
     {
         /* Expanding */
         RMP_COV_MARKER();
@@ -3984,19 +4084,19 @@ void* RMP_Realloc(volatile void* Pool,
                 RMP_COV_MARKER();
                 /* Right-side exists and is free, need to see if it is big enough */
                 Res_Size=RMP_MEM_PTR_DIFF(Right->Tail,Mem_Ptr);
-                if(Res_Size>=Rounded_Size)
+                if(Res_Size>=Round_Size)
                 {
                     RMP_COV_MARKER();
                     /* Remove the right-side from the free list so we can operate on it */
                     _RMP_Mem_Del(Pool, Right);   
                     /* Allocate and calculate if the space left could be big enough to be a new 
                      * block. If so, we will put the block back into the TLSF table. */
-                    Res_Size-=Rounded_Size;
+                    Res_Size-=Round_Size;
                     /* Is the residue big enough to be a block? */
                     if(Res_Size>=RMP_MEM_SIZE2WHOLE(64U))
                     {
                         RMP_COV_MARKER();
-                        Old_Size=RMP_MEM_SIZE2WHOLE(Rounded_Size);
+                        Old_Size=RMP_MEM_SIZE2WHOLE(Round_Size);
                         Res=(volatile struct RMP_Mem_Head*)(((rmp_ptr_t)Head)+Old_Size);
 
                         _RMP_Mem_Block(Head,Old_Size,RMP_MEM_USED);
@@ -4037,7 +4137,7 @@ void* RMP_Realloc(volatile void* Pool,
             /* No action required */
         }
         
-        New=RMP_Malloc(Pool,Rounded_Size);
+        New=RMP_Malloc(Pool,Round_Size);
         /* See if we can allocate this much, if we can't at all, exit */
         if(New==RMP_NULL)
         {
@@ -4063,7 +4163,7 @@ void* RMP_Realloc(volatile void* Pool,
         return New;
     }
     /* Keeping the same memory, useless call */
-    else if(Mem_Size==Rounded_Size)
+    else if(Mem_Size==Round_Size)
     {
         RMP_COV_MARKER();
         return Mem_Ptr;
@@ -4086,8 +4186,8 @@ void* RMP_Realloc(volatile void* Pool,
             RMP_COV_MARKER();
             /* Remove the right-side from the allocation list so we can operate on it */
             _RMP_Mem_Del(Pool, Right);
-            Res_Size=RMP_MEM_PTR_DIFF(Right->Tail,Mem_Ptr)-Rounded_Size;
-            Old_Size=RMP_MEM_SIZE2WHOLE(Rounded_Size);
+            Res_Size=RMP_MEM_PTR_DIFF(Right->Tail,Mem_Ptr)-Round_Size;
+            Old_Size=RMP_MEM_SIZE2WHOLE(Round_Size);
             Res=(volatile struct RMP_Mem_Head*)(((rmp_ptr_t)Head)+Old_Size);
 
             _RMP_Mem_Block(Head,Old_Size,RMP_MEM_USED);
@@ -4113,7 +4213,7 @@ void* RMP_Realloc(volatile void* Pool,
     }
     
     /* The right-side head either does not exist or is allocated, calculate the resulting residue size */
-    Res_Size=Mem_Size-Rounded_Size;
+    Res_Size=Mem_Size-Round_Size;
     if(Res_Size<RMP_MEM_SIZE2WHOLE(64U))
     {
         RMP_COV_MARKER();
@@ -4127,7 +4227,7 @@ void* RMP_Realloc(volatile void* Pool,
     }
     
     /* The residue will be big enough to become a standalone block, and we need to place it back */ 
-    Old_Size=RMP_MEM_SIZE2WHOLE(Rounded_Size);
+    Old_Size=RMP_MEM_SIZE2WHOLE(Round_Size);
     Res=(volatile struct RMP_Mem_Head*)(((rmp_ptr_t)Head)+Old_Size);
     
     _RMP_Mem_Block(Head,Old_Size,RMP_MEM_USED);
@@ -5081,7 +5181,7 @@ rmp_ret_t RMP_Bmq_Snd(volatile struct RMP_Bmq* Queue,
 #endif
     
     /* Grab a slot first. If we're unable to do this, we need to exit */
-    if(RMP_Sem_Pend(&(Queue->Sem), Slice)<0)
+    if(RMP_Sem_Pend(&(Queue->Sem),Slice)<0)
     {
         RMP_COV_MARKER();
         return RMP_ERR_OPER;
@@ -5094,11 +5194,23 @@ rmp_ret_t RMP_Bmq_Snd(volatile struct RMP_Bmq* Queue,
 
     /* Do the message queue send. This can't fail due to semaphore limit
      * because if it was the case the creation of the blocking message queue
-     * won't succeed at first. However, if the message queue is deleted, then
-     * this could fail in the middle. */
-    if(RMP_Msgq_Snd(&(Queue->Msgq), Node)<0)
+     * won't succeed at first. However, if the message queue is deleted, or
+     * the wait is aborted, then this could fail somewhere in the middle. */
+    if(RMP_Msgq_Snd(&(Queue->Msgq),Node)<0)
     {
         RMP_COV_MARKER();
+        /* Put the semaphore back - this is for handling aborts, and the user
+         * is fully responsible for ABA issues that arise from deletion. */
+        if(Queue->State==RMP_BMQ_USED)
+        {
+            RMP_COV_MARKER();
+            RMP_Sem_Post(&(Queue->Sem),1U);
+        }
+        else
+        {
+            RMP_COV_MARKER();
+            /* No action required */
+        }
         return RMP_ERR_OPER;
     }
     else

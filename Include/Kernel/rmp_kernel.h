@@ -293,7 +293,8 @@ struct RMP_Thd
     /* The timeout time */
     rmp_ptr_t Timeout;
     /* The mailbox send/recv cache */
-    rmp_ptr_t Mailbox;
+    rmp_ptr_t Mail_Snd;
+    rmp_ptr_t Mail_Rcv;
     /* The return value of certain fallible calls */
     rmp_ret_t Retval;
 };
@@ -396,7 +397,7 @@ struct RMP_Mem
 #ifndef __HDR_PUBLIC__
 /*****************************************************************************/
 #ifdef RMP_COV_LINE_NUM
-/* For coverage use only */
+/* For kernel coverage use only */
 static volatile rmp_ptr_t RMP_Cov[RMP_COV_WORD_NUM];
 #endif
 /* Scheduler bitmap - might be modified in interrupts */
@@ -414,15 +415,19 @@ static volatile struct RMP_Thd RMP_Init_Thd;
 
 /* Private Function **********************************************************/ 
 /*****************************************************************************/
-static void _RMP_Run_Ins(volatile struct RMP_Thd* Thread);
-static void _RMP_Run_Del(volatile struct RMP_Thd* Thread);
+static void _RMP_Run_Ins(volatile struct RMP_Thd* Thread,
+                         rmp_ptr_t State);
+static void _RMP_Run_Del(volatile struct RMP_Thd* Thread,
+                         rmp_ptr_t State);
 static void _RMP_Dly_Ins(volatile struct RMP_Thd* Thread,
                          rmp_ptr_t Slice);
 
 static void _RMP_Tim_Proc(void);
-static void _RMP_Thd_Unblock(volatile struct RMP_Thd* Thd_Cur,
-                             rmp_ptr_t* Data);
-static void _RMP_Sem_Unblock(volatile struct RMP_Sem* Semaphore);
+static void _RMP_Thd_Remove(volatile struct RMP_Thd* Thread,
+                            rmp_ptr_t Delay_Queue);
+static rmp_ptr_t _RMP_Thd_Unblock(volatile struct RMP_Thd* Thd_Cur,
+                                  rmp_ptr_t* Data,
+                                  rmp_ptr_t State);
 static rmp_ret_t _RMP_Sem_Pend_Core(volatile struct RMP_Sem* Semaphore,
                                     rmp_ptr_t Slice);
 static void _RMP_Mem_Block(volatile struct RMP_Mem_Head* Head,
