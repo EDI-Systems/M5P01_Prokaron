@@ -479,6 +479,7 @@ Input       : rmp_cnt_t Int - The integer to print.
 Output      : None.
 Return      : rmp_cnt_t - The length of the string printed.
 ******************************************************************************/
+#if(RMP_DBGLOG_ENABLE!=0U)
 rmp_cnt_t RMP_Int_Print(rmp_cnt_t Int)
 {
     rmp_cnt_t Num;
@@ -548,6 +549,7 @@ rmp_cnt_t RMP_Int_Print(rmp_cnt_t Int)
     
     return Num;
 }
+#endif
 /* End Function:RMP_Int_Print ************************************************/
 
 /* Function:RMP_Hex_Print *****************************************************
@@ -557,6 +559,7 @@ Input       : rmp_ptr_t Uint - The unsigned integer to print.
 Output      : None.
 Return      : rmp_cnt_t - The length of the string printed.
 ******************************************************************************/
+#if(RMP_DBGLOG_ENABLE!=0U)
 rmp_cnt_t RMP_Hex_Print(rmp_ptr_t Uint)
 {
     rmp_ptr_t Iter;
@@ -606,6 +609,7 @@ rmp_cnt_t RMP_Hex_Print(rmp_ptr_t Uint)
     
     return (rmp_cnt_t)Num;
 }
+#endif
 /* End Function:RMP_Hex_Print ************************************************/
 
 /* Function:RMP_Str_Print *****************************************************
@@ -615,11 +619,12 @@ Input       : const rmp_s8_t* String - The string to print.
 Output      : None.
 Return      : rmp_cnt_t - The length of the string printed, the '\0' is not included.
 ******************************************************************************/
+#if(RMP_DBGLOG_ENABLE!=0U)
 rmp_cnt_t RMP_Str_Print(const rmp_s8_t* String)
 {
     rmp_ptr_t Count;
     
-    for(Count=0U;Count<RMP_DEBUG_PRINT_MAX;Count++)
+    for(Count=0U;Count<RMP_DBGLOG_MAX;Count++)
     {
         if(String[Count]==(rmp_s8_t)'\0')
         {
@@ -636,6 +641,7 @@ rmp_cnt_t RMP_Str_Print(const rmp_s8_t* String)
     
     return (rmp_cnt_t)Count;
 }
+#endif
 /* End Function:RMP_Str_Print ************************************************/
 
 /* Function:RMP_Log ***********************************************************

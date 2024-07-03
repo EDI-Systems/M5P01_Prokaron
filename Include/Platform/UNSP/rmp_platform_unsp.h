@@ -177,8 +177,6 @@ typedef rmp_s16_t rmp_ret_t;
 #define RMP_EXTERN                      extern
 /* The order of bits in one CPU machine word */
 #define RMP_WORD_ORDER                  (4U)
-/* The maximum length of char printing */
-#define RMP_DEBUG_PRINT_MAX             (255U)
 /* Empty descending stack of rmp_ptr_t, word-addressing with 1-word alignment */
 #define RMP_STACK_TYPE                  RMP_STACK_EMPTY_DESCEND
 #define RMP_STACK_ALIGN                 (0U)

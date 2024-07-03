@@ -65,8 +65,12 @@ Description : The configuration file for CH32V307VC RISC-V chip.
 #include "core_riscv.h"
 
 /* Debugging */
+/* Assertion */
 #define RMP_ASSERT_ENABLE           (1U)
+/* Invalid parameter checking */
 #define RMP_CHECK_ENABLE            (1U)
+/* Debug logging */
+#define RMP_DBGLOG_ENABLE           (1U)
 
 /* System */
 /* The maximum number of preemption priorities */

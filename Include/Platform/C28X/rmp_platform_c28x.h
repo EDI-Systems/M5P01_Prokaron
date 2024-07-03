@@ -68,8 +68,6 @@ typedef rmp_s32_t rmp_ret_t;
 #define RMP_EXTERN                      extern
 /* The order of bits in one CPU machine word */
 #define RMP_WORD_ORDER                  (5U)
-/* The maximum length of char printing */
-#define RMP_DEBUG_PRINT_MAX             (255U)
 /* Empty ascending stack of rmp_ptr_t, word-addressing with 2-word alignment */
 #define RMP_STACK_TYPE                  RMP_STACK_EMPTY_ASCEND
 #define RMP_STACK_ALIGN                 (1U)

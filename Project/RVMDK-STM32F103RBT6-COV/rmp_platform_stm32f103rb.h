@@ -13,8 +13,13 @@ Description: The configuration file for STM32F103RB.
 #include "core_cm3.h"
 
 /* Debugging */
+/* Assertion */
 #define RMP_ASSERT_ENABLE           (1U)
+/* Invalid parameter checking */
 #define RMP_CHECK_ENABLE            (1U)
+/* Debug logging */
+#define RMP_DBGLOG_ENABLE           (1U)
+/* Enable coverage */
 #define RMP_COV_LINE_NUM            (6144U)
 
 /* System */
