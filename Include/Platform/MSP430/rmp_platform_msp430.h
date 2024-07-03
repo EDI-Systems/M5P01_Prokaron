@@ -86,8 +86,6 @@ typedef rmp_s16_t rmp_ret_t;
 #else
 #define RMP_WORD_ORDER                  (4U)
 #endif
-/* The maximum length of char printing */
-#define RMP_DEBUG_PRINT_MAX             (255U)
 /* Full descending stack of rmp_ptr_t, 4-byte alignment */
 #define RMP_STACK_TYPE                  RMP_STACK_FULL_DESCEND
 #define RMP_STACK_ALIGN                 (2U)

@@ -12,8 +12,12 @@ Description: The configuration file for TMS320F28335.
 #include "DSP2833x_Examples.h"
 
 /* Debugging */
+/* Assertion */
 #define RMP_ASSERT_ENABLE           (1U)
+/* Invalid parameter checking */
 #define RMP_CHECK_ENABLE            (1U)
+/* Debug logging */
+#define RMP_DBGLOG_ENABLE           (1U)
 
 /* System */
 /* The maximum number of preemption priorities */

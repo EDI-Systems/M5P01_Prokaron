@@ -13,8 +13,12 @@ Description: The configuration file for STM32L071CB.
 #include "core_cm0plus.h"
 
 /* Debugging */
+/* Assertion */
 #define RMP_ASSERT_ENABLE           (1U)
+/* Invalid parameter checking */
 #define RMP_CHECK_ENABLE            (1U)
+/* Debug logging */
+#define RMP_DBGLOG_ENABLE           (1U)
 
 /* System */
 /* The maximum number of preemption priorities */

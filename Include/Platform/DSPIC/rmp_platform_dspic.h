@@ -86,11 +86,9 @@ typedef rmp_s16_t rmp_ret_t;
 
 /* System Macro **************************************************************/
 /* Compiler "extern" keyword setting */
-#define RMP_EXTERN                          extern
+#define RMP_EXTERN                      extern
 /* The order of bits in one CPU machine word */
 #define RMP_WORD_ORDER                  (4U)
-/* The maximum length of char printing */
-#define RMP_DEBUG_PRINT_MAX             (255U)
 /* Empty ascending stack of rmp_ptr_t, 4-byte alignment */
 #define RMP_STACK_TYPE                  RMP_STACK_EMPTY_ASCEND
 #define RMP_STACK_ALIGN                 (2U)

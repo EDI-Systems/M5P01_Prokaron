@@ -33,7 +33,7 @@ ISR Blocking message queue         : 673 / 757 / 671
 /* Counter read wrapper */
 #define RMP_CNT_READ()      (M0P_TIM0_MODE0->CNT_f.CNT)
 /* Memory pool test switch */
-#define TEST_MEM_POOL       (1024U)
+#define TEST_MEM_POOL       (1088U)
 /* Minimal build switch */
 /* #define MINIMAL_SIZE */
 /* Pointer size switch */

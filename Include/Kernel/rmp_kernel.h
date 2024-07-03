@@ -152,10 +152,18 @@ while(0)
 #define RMP_DLY_DIFF(X)             ((X)-RMP_Timestamp)
 #define RMP_DIFF_OVF(X)             (((X)>(RMP_ALLBITS>>1U))||((X)==0U))
 
-/* Printk macros */
+/* Maximum logging length */
+#define RMP_DBGLOG_MAX              (255U)
+/* Debug logging macros */
+#if(RMP_DBGLOG_ENABLE==1U)
 #define RMP_DBG_I(INT)              RMP_Int_Print((rmp_cnt_t)(INT))
-#define RMP_DBG_H(UINT)             RMP_Hex_Print((rmp_ptr_t)(UINT))
+#define RMP_DBG_H(HEX)              RMP_Hex_Print((rmp_ptr_t)(HEX))
 #define RMP_DBG_S(STR)              RMP_Str_Print((const rmp_s8_t*)(STR))
+#else
+#define RMP_DBG_I(INT)              while(0U)
+#define RMP_DBG_H(HEX)              while(0U)
+#define RMP_DBG_S(STR)              while(0U)
+#endif
 
 /* Memory pool */
 /* Table */
@@ -177,7 +185,7 @@ while(0)
 #define RMP_MEM_PTR_DIFF(PTR1,PTR2) (((rmp_ptr_t)(PTR1))-((rmp_ptr_t)(PTR2)))
 
 /* Built-in graphics */
-#ifdef RMP_POINT
+#if(RMP_GUI_ENABLE!=0U)
 /* Absolute difference between two numbers */
 #define RMP_ABS(X,Y)                (((X)>(Y))?((X)-(Y)):((Y)-(X)))
 /* "Shift (signed number) Arithmetically Left/Right": UB if done directly, however:
@@ -497,20 +505,27 @@ __RMP_EXTERN__ volatile rmp_ptr_t RMP_SP_Cur;
 __RMP_EXTERN__ rmp_ptr_t RMP_MSB_Generic(rmp_ptr_t Value);
 __RMP_EXTERN__ rmp_ptr_t RMP_LSB_Generic(rmp_ptr_t Value);
 __RMP_EXTERN__ rmp_ptr_t RMP_RBT_Generic(rmp_ptr_t Value);
+
 /* Debug printing functions */
+#if(RMP_DBGLOG_ENABLE!=0U)
 __RMP_EXTERN__ rmp_cnt_t RMP_Int_Print(rmp_cnt_t Int);
 __RMP_EXTERN__ rmp_cnt_t RMP_Hex_Print(rmp_ptr_t Uint);
 __RMP_EXTERN__ rmp_cnt_t RMP_Str_Print(const rmp_s8_t* String);
+#endif
+
+/* Default logging function */
 #ifndef RMP_LOG
 __RMP_EXTERN__ void RMP_Log(const char* File,
                             long Line,
                             const char* Date,
                             const char* Time);
 #endif
+                            
 /* Coverage test functions - internal use */
 #ifdef RMP_COV_LINE_NUM
 __RMP_EXTERN__ void RMP_Cov_Print(void);
 #endif
+                            
 /* List operation functions */
 __RMP_EXTERN__ void RMP_List_Crt(volatile struct RMP_List* Head);
 __RMP_EXTERN__ void RMP_List_Del(volatile struct RMP_List* Prev,
@@ -518,6 +533,7 @@ __RMP_EXTERN__ void RMP_List_Del(volatile struct RMP_List* Prev,
 __RMP_EXTERN__ void RMP_List_Ins(volatile struct RMP_List* New,
                                  volatile struct RMP_List* Prev,
                                  volatile struct RMP_List* Next);
+                                 
 /* Scheduler utilities */
 __RMP_EXTERN__ void _RMP_Run_High(void);
 __RMP_EXTERN__ void _RMP_Tim_Handler(rmp_ptr_t Slice);
