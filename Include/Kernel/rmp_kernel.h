@@ -22,10 +22,10 @@ Description : The header file for the kernel.
 #define RMP_THD_FLAG(X)             ((X)&~((rmp_ptr_t)0xFFU))
 #define RMP_THD_STATE_SET(X, S)     ((X)=(RMP_THD_FLAG(X)|(S)))
 
-/* This thread is currently unused */
+/* Thread structure is unused */
 #define RMP_THD_FREE                (0U)
-/* This thread is currently running */
-#define RMP_THD_RUNNING             (1U)
+/* Thread is currently ready */
+#define RMP_THD_READY               (1U)
 /* Blocked on a send endpoint */
 #define RMP_THD_SNDBLK              (2U)
 /* Blocked on a send endpoint with a timeout */
@@ -35,15 +35,15 @@ Description : The header file for the kernel.
 /* Blocked on its own receive endpoint with a timeout */
 #define RMP_THD_RCVDLY              (5U)
 /* Just on the timer delay */
-#define RMP_THD_DELAYED             (6U)
+#define RMP_THD_DELAY               (6U)
 /* Blocked on a semaphore */
 #define RMP_THD_SEMBLK              (7U)
 /* Blocked on a semaphore with a timeout */
 #define RMP_THD_SEMDLY              (8U)
 /* Suspended */
-#define RMP_THD_SUSPENDED           RMP_POW2(8U)
+#define RMP_THD_SUSPEND             RMP_POW2(8U)
 /* Mailbox valid */
-#define RMP_THD_MBOXFUL             (RMP_THD_SUSPENDED<<1U)
+#define RMP_THD_MBOXFUL             RMP_POW2(9U)
     
 /* States of semaphores */
 #define RMP_SEM_FREE                (0U)
@@ -152,19 +152,6 @@ while(0)
 #define RMP_DLY_DIFF(X)             ((X)-RMP_Timestamp)
 #define RMP_DIFF_OVF(X)             (((X)>(RMP_ALLBITS>>1U))||((X)==0U))
 
-/* Maximum logging length */
-#define RMP_DBGLOG_MAX              (255U)
-/* Debug logging macros */
-#if(RMP_DBGLOG_ENABLE==1U)
-#define RMP_DBG_I(INT)              RMP_Int_Print((rmp_cnt_t)(INT))
-#define RMP_DBG_H(HEX)              RMP_Hex_Print((rmp_ptr_t)(HEX))
-#define RMP_DBG_S(STR)              RMP_Str_Print((const rmp_s8_t*)(STR))
-#else
-#define RMP_DBG_I(INT)              while(0U)
-#define RMP_DBG_H(HEX)              while(0U)
-#define RMP_DBG_S(STR)              while(0U)
-#endif
-
 /* Memory pool */
 /* Table */
 #define RMP_MEM_WORD_NUM(FLI)       (RMP_ROUND_UP((FLI)<<3,RMP_WORD_ORDER)>>RMP_WORD_ORDER)
@@ -220,11 +207,24 @@ while(0)
 #define RMP_CUR_CROSS               (11U)
 #endif
 
+/* Maximum logging length */
+#define RMP_DBGLOG_MAX              (255U)
+/* Debug logging macros */
+#if(RMP_DBGLOG_ENABLE==1U)
+#define RMP_DBG_I(INT)              RMP_Int_Print((rmp_cnt_t)(INT))
+#define RMP_DBG_H(HEX)              RMP_Hex_Print((rmp_ptr_t)(HEX))
+#define RMP_DBG_S(STR)              RMP_Str_Print((const rmp_s8_t*)(STR))
+#else
+#define RMP_DBG_I(INT)              while(0U)
+#define RMP_DBG_H(HEX)              while(0U)
+#define RMP_DBG_S(STR)              while(0U)
+#endif
+
 /* Logging macro */
 #ifndef RMP_LOG
-#define RMP_LOG_STUB                RMP_Log
+#define RMP_LOG_OP(F,L,D,T)           RMP_Log(F,L,D,T)
 #else
-#define RMP_LOG_STUB                RMP_LOG
+#define RMP_LOG_OP(F,L,D,T)           RMP_LOG(F,L,D,T)
 #endif
 
 /* Assert macro - used only in internal development */
@@ -234,7 +234,7 @@ do \
 { \
     if(!(X)) \
     { \
-        RMP_LOG_STUB(__FILE__,__LINE__,__DATE__,__TIME__); \
+        RMP_LOG_OP(__FILE__,__LINE__,__DATE__,__TIME__); \
         while(1); \
     } \
 } \
@@ -292,11 +292,11 @@ struct RMP_Thd
     rmp_ptr_t State;
     /* The current stack address */
     rmp_ptr_t Stack;
-    /* If it is running, how many timeslices it have */
+    /* How many timeslices to replenish */
     rmp_ptr_t Slice;
-    /* If it is running, how many ticks does it have remaining */
+    /* How many timeslices are remaining in this round */
     rmp_ptr_t Slice_Left;
-    /* What priority it is running at */
+    /* The thread priority */
     rmp_ptr_t Prio;
     /* The timeout time */
     rmp_ptr_t Timeout;
@@ -501,32 +501,36 @@ __RMP_EXTERN__ volatile rmp_ptr_t RMP_SP_Cur;
 
 /* Public Function ***********************************************************/
 /*****************************************************************************/
-/* Bit manipulations */
-__RMP_EXTERN__ rmp_ptr_t RMP_MSB_Generic(rmp_ptr_t Value);
-__RMP_EXTERN__ rmp_ptr_t RMP_LSB_Generic(rmp_ptr_t Value);
-__RMP_EXTERN__ rmp_ptr_t RMP_RBT_Generic(rmp_ptr_t Value);
-
-/* Debug printing functions */
+/* Debug printing */
 #if(RMP_DBGLOG_ENABLE!=0U)
 __RMP_EXTERN__ rmp_cnt_t RMP_Int_Print(rmp_cnt_t Int);
 __RMP_EXTERN__ rmp_cnt_t RMP_Hex_Print(rmp_ptr_t Uint);
 __RMP_EXTERN__ rmp_cnt_t RMP_Str_Print(const rmp_s8_t* String);
 #endif
 
-/* Default logging function */
+/* Default logging */
 #ifndef RMP_LOG
 __RMP_EXTERN__ void RMP_Log(const char* File,
                             long Line,
                             const char* Date,
-                            const char* Time);
+                            const char* Time);                        
 #endif
-                            
-/* Coverage test functions - internal use */
+
+/* Coverage test - internal use */
 #ifdef RMP_COV_LINE_NUM
 __RMP_EXTERN__ void RMP_Cov_Print(void);
 #endif
+                 
+/* Misc helper */
+__RMP_EXTERN__ void RMP_Clear(volatile void* Addr,
+                              rmp_ptr_t Size);
+
+/* Bit manipulation */
+__RMP_EXTERN__ rmp_ptr_t RMP_MSB_Generic(rmp_ptr_t Value);
+__RMP_EXTERN__ rmp_ptr_t RMP_LSB_Generic(rmp_ptr_t Value);
+__RMP_EXTERN__ rmp_ptr_t RMP_RBT_Generic(rmp_ptr_t Value);
                             
-/* List operation functions */
+/* List operation */
 __RMP_EXTERN__ void RMP_List_Crt(volatile struct RMP_List* Head);
 __RMP_EXTERN__ void RMP_List_Del(volatile struct RMP_List* Prev,
                                  volatile struct RMP_List* Next);
@@ -534,14 +538,12 @@ __RMP_EXTERN__ void RMP_List_Ins(volatile struct RMP_List* New,
                                  volatile struct RMP_List* Prev,
                                  volatile struct RMP_List* Next);
                                  
-/* Scheduler utilities */
+/* Scheduler utility */
 __RMP_EXTERN__ void _RMP_Run_High(void);
 __RMP_EXTERN__ void _RMP_Tim_Handler(rmp_ptr_t Slice);
 __RMP_EXTERN__ void _RMP_Tim_Elapse(rmp_ptr_t Slice);
 __RMP_EXTERN__ rmp_ptr_t _RMP_Tim_Future(void);
 __RMP_EXTERN__ rmp_ret_t _RMP_Tim_Idle(void);
-__RMP_EXTERN__ void RMP_Clear(volatile void* Addr,
-                              rmp_ptr_t Size);
 
 /* Scheduler locking & unlocking */
 __RMP_EXTERN__ void RMP_Sched_Lock(void);
@@ -550,7 +552,7 @@ __RMP_EXTERN__ void RMP_Sched_Unlock(void);
 /* First thread - in case the user needs to boot similar threads */
 __RMP_EXTERN__ void RMP_Init(void);
 
-/* System interfaces */
+/* Basic thread interface */
 __RMP_EXTERN__ void RMP_Thd_Yield(void);
 __RMP_EXTERN__ rmp_ret_t RMP_Thd_Crt(volatile struct RMP_Thd* Thread, 
                                      void* Entry,
@@ -595,7 +597,7 @@ __RMP_EXTERN__ rmp_ret_t RMP_Sem_Pend_Unlock(volatile struct RMP_Sem* Semaphore,
 __RMP_EXTERN__ rmp_ret_t RMP_Sem_Abort(volatile struct RMP_Thd* Thread);
 __RMP_EXTERN__ rmp_ret_t RMP_Sem_Cnt(volatile struct RMP_Sem* Semaphore);
 
-/* Memory interfaces */
+/* Memory interface */
 __RMP_EXTERN__ rmp_ret_t RMP_Mem_Init(volatile void* Pool,
                                       rmp_ptr_t Size);
 __RMP_EXTERN__ void* RMP_Malloc(volatile void* Pool,
@@ -606,7 +608,7 @@ __RMP_EXTERN__ void* RMP_Realloc(volatile void* Pool,
                                  void* Mem_Ptr,
                                  rmp_ptr_t Size);
                              
-/* Extended system interfaces - these are not real primitives */
+/* Extended queue interface - not atomic */
 __RMP_EXTERN__ rmp_ret_t RMP_Fifo_Crt(volatile struct RMP_Fifo* Fifo);
 __RMP_EXTERN__ rmp_ret_t RMP_Fifo_Del(volatile struct RMP_Fifo* Fifo);
 __RMP_EXTERN__ rmp_ret_t RMP_Fifo_Read(volatile struct RMP_Fifo* Fifo,
@@ -641,11 +643,11 @@ __RMP_EXTERN__ rmp_ret_t RMP_Bmq_Rcv(volatile struct RMP_Bmq* Queue,
                                      rmp_ptr_t Slice);
 __RMP_EXTERN__ rmp_ret_t RMP_Bmq_Cnt(volatile struct RMP_Bmq* Queue);
 
-/* Mandatory hooks */
+/* Mandatory external hook */
 RMP_EXTERN void RMP_Init_Hook(void);
 RMP_EXTERN void RMP_Init_Idle(void);
 
-/* Built-in graphics */
+/* GUI interface */
 #if(RMP_GUI_ENABLE!=0U)
 #ifndef RMP_POINT
 #error RMP : Point draw function (RMP_POINT) is missing. 
@@ -686,7 +688,8 @@ __RMP_EXTERN__ void RMP_Matrix(rmp_cnt_t Coord_X,
                                rmp_cnt_t Length,
                                rmp_cnt_t Width,
                                rmp_ptr_t Color);
-/* Anti-aliasing requires color mixing macros */
+                               
+/* Anti-aliasing requires color mixing macro */
 #if(RMP_GUI_ANTIALIAS_ENABLE!=0U)
 #ifndef RMP_COLOR_25P
 #error RMP : 25%-75% mixing function (RMP_COLOR_25P) is missing. 
@@ -707,7 +710,8 @@ __RMP_EXTERN__ void RMP_Matrix_AA(rmp_cnt_t Coord_X,
                                   rmp_ptr_t Color,
                                   rmp_ptr_t Back);
 #endif
-/* These are only provided when all used colors are predefined */
+
+/* Widget requires color macro */
 #if(RMP_GUI_WIDGET_ENABLE!=0U)
 #ifndef RMP_COLOR_WHITE
 #error RMP: White color value (RMP_COLOR_WHITE) is missing. 
@@ -731,7 +735,6 @@ __RMP_EXTERN__ void RMP_Matrix_AA(rmp_cnt_t Coord_X,
 #error RMP: Black color value (RMP_COLOR_BLACK) is missing. 
 #endif
 
-/* Built-in easy controls */
 __RMP_EXTERN__ void RMP_Cursor(rmp_cnt_t Coord_X,
                                rmp_cnt_t Coord_Y,
                                rmp_ptr_t Style);
