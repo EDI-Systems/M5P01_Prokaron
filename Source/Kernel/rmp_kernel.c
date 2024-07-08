@@ -40,6 +40,272 @@ Description : The RMP RTOS single-file kernel.
 #undef __HDR_PUBLIC__
 /* End Include ***************************************************************/
 
+/* Function:RMP_Int_Print *****************************************************
+Description : Print a signed integer on the debugging console. This integer is
+              printed as decimal with sign.
+Input       : rmp_cnt_t Int - The integer to print.
+Output      : None.
+Return      : rmp_cnt_t - The length of the string printed.
+******************************************************************************/
+#if(RMP_DBGLOG_ENABLE!=0U)
+rmp_cnt_t RMP_Int_Print(rmp_cnt_t Int)
+{
+    rmp_cnt_t Num;
+    rmp_cnt_t Abs;
+    rmp_cnt_t Iter;
+    rmp_cnt_t Count;
+    rmp_cnt_t Div;
+    
+    /* Exit on zero */
+    if(Int==0)
+    {
+        RMP_COV_MARKER();
+        RMP_Putchar('0');
+        return 1;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action needed */
+    }
+
+    /* Correct all negatives into positives */
+    if(Int<0)
+    {
+        RMP_COV_MARKER();
+        RMP_Putchar('-');
+        Abs=-Int;
+        Num=1;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        Abs=Int;
+        Num=0;
+    }
+
+    /* How many digits are there? */
+    Count=0;
+    Div=1;
+    Iter=Abs;
+    while(1)
+    {
+        Iter/=10;
+        Count++;
+        if(Iter!=0)
+        {
+            RMP_COV_MARKER();
+            Div*=10;
+        }
+        else
+        {
+            RMP_COV_MARKER();
+            break;
+        }
+    }
+    Num+=Count;
+
+    /* Print the integer */
+    Iter=Abs;
+    while(Count>0)
+    {
+        Count--;
+        RMP_Putchar((rmp_s8_t)(Iter/Div)+'0');
+        Iter=Iter%Div;
+        Div/=10;
+    }
+    
+    return Num;
+}
+#endif
+/* End Function:RMP_Int_Print ************************************************/
+
+/* Function:RMP_Hex_Print *****************************************************
+Description : Print a unsigned integer on the debugging console. This integer is
+              printed as hexadecimal.
+Input       : rmp_ptr_t Uint - The unsigned integer to print.
+Output      : None.
+Return      : rmp_cnt_t - The length of the string printed.
+******************************************************************************/
+#if(RMP_DBGLOG_ENABLE!=0U)
+rmp_cnt_t RMP_Hex_Print(rmp_ptr_t Uint)
+{
+    rmp_ptr_t Iter;
+    rmp_ptr_t Count;
+    rmp_ptr_t Num;
+
+    /* Exit on zero */
+    if(Uint==0U)
+    {
+        RMP_COV_MARKER();
+        RMP_Putchar('0');
+        return 1;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action needed */
+    }
+
+    /* Filter out all the leading zeroes */
+    Count=0U;
+    Iter=Uint;
+    while((Iter>>(RMP_POW2(RMP_WORD_ORDER)-4U))==0U)
+    {
+        Iter<<=4U;
+        Count++;
+    }
+
+    /* Count is the number of pts to print */
+    Count=RMP_POW2(RMP_WORD_ORDER-2U)-Count;
+    Num=Count;
+    while(Count>0U)
+    {
+        Count--;
+        Iter=(Uint>>(Count<<2U))&0x0FU;
+        if(Iter<10U)
+        {
+            RMP_COV_MARKER();
+            RMP_Putchar((rmp_s8_t)Iter+'0');
+        }
+        else
+        {
+            RMP_COV_MARKER();
+            RMP_Putchar((rmp_s8_t)Iter+'A'-10);
+        }
+    }
+    
+    return (rmp_cnt_t)Num;
+}
+#endif
+/* End Function:RMP_Hex_Print ************************************************/
+
+/* Function:RMP_Str_Print *****************************************************
+Description : Print a string on the debugging console.
+              This is only used for user-level debugging.
+Input       : const rmp_s8_t* String - The string to print.
+Output      : None.
+Return      : rmp_cnt_t - The length of the string printed, the '\0' is not included.
+******************************************************************************/
+#if(RMP_DBGLOG_ENABLE!=0U)
+rmp_cnt_t RMP_Str_Print(const rmp_s8_t* String)
+{
+    rmp_ptr_t Count;
+    
+    for(Count=0U;Count<RMP_DBGLOG_MAX;Count++)
+    {
+        if(String[Count]==(rmp_s8_t)'\0')
+        {
+            RMP_COV_MARKER();
+            break;
+        }
+        else
+        {
+            RMP_COV_MARKER();
+            /* No action needed */
+        }
+        RMP_Putchar(String[Count]);
+    }
+    
+    return (rmp_cnt_t)Count;
+}
+#endif
+/* End Function:RMP_Str_Print ************************************************/
+
+/* Function:RMP_Log ***********************************************************
+Description : Default logging function, will be used when the user does not 
+              supply one. This will only be called when the kernel panics.
+Input       : const char* File - The filename.
+              long Line - The line number.
+              const char* Date - The compilation date.
+              const char* Time - The compilation time.
+Output      : None.
+Return      : None.
+******************************************************************************/
+#ifndef RMP_LOG
+void RMP_Log(const char* File,
+             long Line,
+             const char* Date,
+             const char* Time)
+{
+    RMP_DBG_S("\r\n***\r\nKernel panic - not syncing :\r\n"); \
+    RMP_DBG_S(File); \
+    RMP_DBG_S(" , Line "); \
+    RMP_DBG_I(Line); \
+    RMP_DBG_S("\r\n"); \
+    RMP_DBG_S(Date); \
+    RMP_DBG_S(" , "); \
+    RMP_DBG_S(Time); \
+    RMP_DBG_S("\r\n"); \
+}
+#endif
+/* End Function:RMP_Log ******************************************************/
+
+/* Function:RMP_Cov_Print *****************************************************
+Description : The coverage data printer. Should always be disabled for all cases
+              except where a kernel coverage test is needed. This should never
+              be called any any user application; for coverage testing only.
+Input       : None.
+Output      : None.
+Return      : None.
+******************************************************************************/
+#ifdef RMP_COV_LINE_NUM
+void RMP_Cov_Print(void)
+{
+    rmp_ptr_t Count;
+    rmp_ptr_t Next;
+    
+    Next=0U;
+    for(Count=0U;Count<RMP_COV_LINE_NUM;Count++)
+    {
+        if((RMP_Cov[Count>>RMP_WORD_ORDER]&RMP_POW2(Count&RMP_WORD_MASK))!=0U)
+        {
+            RMP_COV_MARKER();
+            RMP_DBG_I(Count);
+            RMP_DBG_S(",");
+            /* We put 12 markers on a single line */
+            Next++;
+            if(Next>11U)
+            {
+                RMP_COV_MARKER();
+                Next=0U;
+                RMP_DBG_S("\r\n");
+            }
+            else
+            {
+                RMP_COV_MARKER();
+                /* No action needed */
+            }
+        }
+        else
+        {
+            RMP_COV_MARKER();
+            /* No action needed */
+        }
+    }
+}
+#endif
+/* End Function:RMP_Cov_Print ************************************************/
+
+/* Function:RMP_Clear *********************************************************
+Description : Memset a memory area to zero.
+Input       : volatile void* Addr - The address to clear.
+              rmp_ptr_t Size - The size to clear.
+Output      : None.
+Return      : None.
+******************************************************************************/
+void RMP_Clear(volatile void* Addr,
+               rmp_ptr_t Size)
+{
+    rmp_ptr_t Count;
+   
+    for(Count=0U;Count<Size;Count++)
+    {
+        ((volatile rmp_u8_t*)Addr)[Count]=0U;
+    }
+}
+/* End Function:RMP_Clear ****************************************************/
+
 /* Function:RMP_MSB_Generic ***************************************************
 Description : Find the MSB's position. This is a portable solution for all
               processors; if your processor does not have fast built-in bit
@@ -453,272 +719,6 @@ rmp_ptr_t RMP_RBT_Generic(rmp_ptr_t Value)
 }
 /* End Function:RMP_RBT_Generic **********************************************/
 
-/* Function:RMP_Clear *********************************************************
-Description : Memset a memory area to zero.
-Input       : volatile void* Addr - The address to clear.
-              rmp_ptr_t Size - The size to clear.
-Output      : None.
-Return      : None.
-******************************************************************************/
-void RMP_Clear(volatile void* Addr,
-               rmp_ptr_t Size)
-{
-    rmp_ptr_t Count;
-   
-    for(Count=0U;Count<Size;Count++)
-    {
-        ((volatile rmp_u8_t*)Addr)[Count]=0U;
-    }
-}
-/* End Function:RMP_Clear ****************************************************/
-
-/* Function:RMP_Int_Print *****************************************************
-Description : Print a signed integer on the debugging console. This integer is
-              printed as decimal with sign.
-Input       : rmp_cnt_t Int - The integer to print.
-Output      : None.
-Return      : rmp_cnt_t - The length of the string printed.
-******************************************************************************/
-#if(RMP_DBGLOG_ENABLE!=0U)
-rmp_cnt_t RMP_Int_Print(rmp_cnt_t Int)
-{
-    rmp_cnt_t Num;
-    rmp_cnt_t Abs;
-    rmp_cnt_t Iter;
-    rmp_cnt_t Count;
-    rmp_cnt_t Div;
-    
-    /* Exit on zero */
-    if(Int==0)
-    {
-        RMP_COV_MARKER();
-        RMP_Putchar('0');
-        return 1;
-    }
-    else
-    {
-        RMP_COV_MARKER();
-        /* No action needed */
-    }
-
-    /* Correct all negatives into positives */
-    if(Int<0)
-    {
-        RMP_COV_MARKER();
-        RMP_Putchar('-');
-        Abs=-Int;
-        Num=1;
-    }
-    else
-    {
-        RMP_COV_MARKER();
-        Abs=Int;
-        Num=0;
-    }
-
-    /* How many digits are there? */
-    Count=0;
-    Div=1;
-    Iter=Abs;
-    while(1)
-    {
-        Iter/=10;
-        Count++;
-        if(Iter!=0)
-        {
-            RMP_COV_MARKER();
-            Div*=10;
-        }
-        else
-        {
-            RMP_COV_MARKER();
-            break;
-        }
-    }
-    Num+=Count;
-
-    /* Print the integer */
-    Iter=Abs;
-    while(Count>0)
-    {
-        Count--;
-        RMP_Putchar((rmp_s8_t)(Iter/Div)+'0');
-        Iter=Iter%Div;
-        Div/=10;
-    }
-    
-    return Num;
-}
-#endif
-/* End Function:RMP_Int_Print ************************************************/
-
-/* Function:RMP_Hex_Print *****************************************************
-Description : Print a unsigned integer on the debugging console. This integer is
-              printed as hexadecimal.
-Input       : rmp_ptr_t Uint - The unsigned integer to print.
-Output      : None.
-Return      : rmp_cnt_t - The length of the string printed.
-******************************************************************************/
-#if(RMP_DBGLOG_ENABLE!=0U)
-rmp_cnt_t RMP_Hex_Print(rmp_ptr_t Uint)
-{
-    rmp_ptr_t Iter;
-    rmp_ptr_t Count;
-    rmp_ptr_t Num;
-
-    /* Exit on zero */
-    if(Uint==0U)
-    {
-        RMP_COV_MARKER();
-        RMP_Putchar('0');
-        return 1;
-    }
-    else
-    {
-        RMP_COV_MARKER();
-        /* No action needed */
-    }
-
-    /* Filter out all the leading zeroes */
-    Count=0U;
-    Iter=Uint;
-    while((Iter>>(RMP_POW2(RMP_WORD_ORDER)-4U))==0U)
-    {
-        Iter<<=4U;
-        Count++;
-    }
-
-    /* Count is the number of pts to print */
-    Count=RMP_POW2(RMP_WORD_ORDER-2U)-Count;
-    Num=Count;
-    while(Count>0U)
-    {
-        Count--;
-        Iter=(Uint>>(Count<<2U))&0x0FU;
-        if(Iter<10U)
-        {
-            RMP_COV_MARKER();
-            RMP_Putchar((rmp_s8_t)Iter+'0');
-        }
-        else
-        {
-            RMP_COV_MARKER();
-            RMP_Putchar((rmp_s8_t)Iter+'A'-10);
-        }
-    }
-    
-    return (rmp_cnt_t)Num;
-}
-#endif
-/* End Function:RMP_Hex_Print ************************************************/
-
-/* Function:RMP_Str_Print *****************************************************
-Description : Print a string on the debugging console.
-              This is only used for user-level debugging.
-Input       : const rmp_s8_t* String - The string to print.
-Output      : None.
-Return      : rmp_cnt_t - The length of the string printed, the '\0' is not included.
-******************************************************************************/
-#if(RMP_DBGLOG_ENABLE!=0U)
-rmp_cnt_t RMP_Str_Print(const rmp_s8_t* String)
-{
-    rmp_ptr_t Count;
-    
-    for(Count=0U;Count<RMP_DBGLOG_MAX;Count++)
-    {
-        if(String[Count]==(rmp_s8_t)'\0')
-        {
-            RMP_COV_MARKER();
-            break;
-        }
-        else
-        {
-            RMP_COV_MARKER();
-            /* No action needed */
-        }
-        RMP_Putchar(String[Count]);
-    }
-    
-    return (rmp_cnt_t)Count;
-}
-#endif
-/* End Function:RMP_Str_Print ************************************************/
-
-/* Function:RMP_Log ***********************************************************
-Description : Default logging function, will be used when the user does not 
-              supply one. This will only be called when the kernel panics.
-Input       : const char* File - The filename.
-              long Line - The line number.
-              const char* Date - The compilation date.
-              const char* Time - The compilation time.
-Output      : None.
-Return      : None.
-******************************************************************************/
-#ifndef RMP_LOG
-void RMP_Log(const char* File,
-             long Line,
-             const char* Date,
-             const char* Time)
-{
-    RMP_DBG_S("\r\n***\r\nKernel panic - not syncing :\r\n"); \
-    RMP_DBG_S(File); \
-    RMP_DBG_S(" , Line "); \
-    RMP_DBG_I(Line); \
-    RMP_DBG_S("\r\n"); \
-    RMP_DBG_S(Date); \
-    RMP_DBG_S(" , "); \
-    RMP_DBG_S(Time); \
-    RMP_DBG_S("\r\n"); \
-}
-#endif
-/* End Function:RMP_Log ******************************************************/
-
-/* Function:RMP_Cov_Print *****************************************************
-Description : The coverage data printer. Should always be disabled for all cases
-              except where a kernel coverage test is needed. This should never
-              be called any any user application; for coverage testing only.
-Input       : None.
-Output      : None.
-Return      : None.
-******************************************************************************/
-#ifdef RMP_COV_LINE_NUM
-void RMP_Cov_Print(void)
-{
-    rmp_ptr_t Count;
-    rmp_ptr_t Next;
-    
-    Next=0U;
-    for(Count=0U;Count<RMP_COV_LINE_NUM;Count++)
-    {
-        if((RMP_Cov[Count>>RMP_WORD_ORDER]&RMP_POW2(Count&RMP_WORD_MASK))!=0U)
-        {
-            RMP_COV_MARKER();
-            RMP_DBG_I(Count);
-            RMP_DBG_S(",");
-            /* We put 12 markers on a single line */
-            Next++;
-            if(Next>11U)
-            {
-                RMP_COV_MARKER();
-                Next=0U;
-                RMP_DBG_S("\r\n");
-            }
-            else
-            {
-                RMP_COV_MARKER();
-                /* No action needed */
-            }
-        }
-        else
-        {
-            RMP_COV_MARKER();
-            /* No action needed */
-        }
-    }
-}
-#endif
-/* End Function:RMP_Cov_Print ************************************************/
-
 /* Function:RMP_List_Crt ******************************************************
 Description : Create a doubly linkled list.
 Input       : volatile struct RMP_List* Head - The pointer to the list head.
@@ -877,7 +877,7 @@ static void _RMP_Tim_Proc(void)
                 /* Supply timeout error code */
                 Thread->Retval=RMP_ERR_OPER;
             }
-            else if(Pure==RMP_THD_DELAYED)
+            else if(Pure==RMP_THD_DELAY)
             {
                 RMP_COV_MARKER();
                 /* No action required */
@@ -890,7 +890,7 @@ static void _RMP_Tim_Proc(void)
             }
 
             /* Set to ready if not suspended */
-            RMP_THD_STATE_SET(State,RMP_THD_RUNNING);
+            RMP_THD_STATE_SET(State,RMP_THD_READY);
             /* Put cached thread state back */
             Thread->State=State;
             /* Insert into runqueue if not suspended */
@@ -1168,7 +1168,7 @@ rmp_ptr_t _RMP_Tim_Future(void)
 Description : See if the timer could be idle. When both conditions below are
               met, we could turn off all kernel clock sources altogether to
               achieve the lowest possible power:
-              1. The only running thread is the initial idle thread.
+              1. The only ready thread is the initial idle thread.
               2. There are no outstanding delay timers.
 Input       : None.
 Output      : None.
@@ -1232,7 +1232,7 @@ static void _RMP_Run_Ins(volatile struct RMP_Thd* Thread,
     rmp_ptr_t Prio;
     
     /* No need to operate on suspended threads */
-    if((State&RMP_THD_SUSPENDED)==0U)
+    if((State&RMP_THD_SUSPEND)==0U)
     {
         RMP_COV_MARKER();
         
@@ -1279,7 +1279,7 @@ static void _RMP_Run_Del(volatile struct RMP_Thd* Thread,
     rmp_ptr_t Prio;
     
     /* No need to operate on suspended threads */
-    if((State&RMP_THD_SUSPENDED)==0U)
+    if((State&RMP_THD_SUSPEND)==0U)
     {
         RMP_COV_MARKER();
         /* See if it is the last thread on the priority level */
@@ -1336,7 +1336,7 @@ static void _RMP_Dly_Ins(volatile struct RMP_Thd* Thread,
     volatile struct RMP_List* Trav_Ptr;
     volatile struct RMP_Thd* Trav_Thd;
 
-    /* Potentially update the timestamp if we're running tickless */
+    /* Potentially update the timestamp if we're tickless */
 #ifdef RMP_DLY_HOOK
     RMP_DLY_HOOK(Slice);
 #endif
@@ -1488,10 +1488,10 @@ rmp_ret_t RMP_Thd_Crt(volatile struct RMP_Thd* Thread,
                                   (rmp_ptr_t)Entry,(rmp_ptr_t)Param);
     RMP_List_Crt(&(Thread->Snd_List));
     
-    /* Thread is always set to running on creation */
-    Thread->State=RMP_THD_RUNNING;
+    /* Thread is always set to ready on creation */
+    Thread->State=RMP_THD_READY;
     /* Insert into runqueue - must be not suspended */
-    _RMP_Run_Ins(Thread,RMP_THD_RUNNING);
+    _RMP_Run_Ins(Thread,RMP_THD_READY);
     
     RMP_Sched_Unlock();
 
@@ -1500,7 +1500,7 @@ rmp_ret_t RMP_Thd_Crt(volatile struct RMP_Thd* Thread,
 /* End Function:RMP_Thd_Crt **************************************************/
 
 /* Function:_RMP_Thd_Remove ***************************************************
-Description : Remove a thread from the waitlist, and put it back to the running
+Description : Remove a thread from the waitlist, and put it back to the ready
               list if it was not suspended.
 Input       : volatile struct RMP_Thd* Thread - The pointer to the thread.
               rmp_ptr_t Delay_Queue - The delay queue type, can be one of
@@ -1530,8 +1530,8 @@ static void _RMP_Thd_Remove(volatile struct RMP_Thd* Thread,
         /* No action required */
     }
     
-    /* Set to running */
-    RMP_THD_STATE_SET(State,RMP_THD_RUNNING);
+    /* Set to ready */
+    RMP_THD_STATE_SET(State,RMP_THD_READY);
     /* Put cached thread state back */
     Thread->State=State;
     /* Insert into runqueue if not suspended */
@@ -1598,7 +1598,7 @@ rmp_ret_t RMP_Thd_Del(volatile struct RMP_Thd* Thread)
     }
     
     /* Clear ready if not suspended */
-    if(Pure==RMP_THD_RUNNING)
+    if(Pure==RMP_THD_READY)
     {
         RMP_COV_MARKER();
         _RMP_Run_Del(Thread,State);
@@ -1615,7 +1615,7 @@ rmp_ret_t RMP_Thd_Del(volatile struct RMP_Thd* Thread)
         RMP_COV_MARKER();
         RMP_List_Del(Thread->Run_Head.Prev,Thread->Run_Head.Next);
     }
-    else if((Pure==RMP_THD_RCVDLY)||(Pure==RMP_THD_DELAYED))
+    else if((Pure==RMP_THD_RCVDLY)||(Pure==RMP_THD_DELAY))
     {
         RMP_COV_MARKER();
         RMP_List_Del(Thread->Dly_Head.Prev,Thread->Dly_Head.Next);
@@ -1714,8 +1714,8 @@ rmp_ret_t RMP_Thd_Set(volatile struct RMP_Thd* Thread,
     }
 #endif
     
-    /* See if the thread is in running state */
-    if(Pure==RMP_THD_RUNNING)
+    /* See if the thread is in ready state */
+    if(Pure==RMP_THD_READY)
     {
         RMP_COV_MARKER();
         
@@ -1836,7 +1836,7 @@ rmp_ret_t RMP_Thd_Suspend(volatile struct RMP_Thd* Thread)
 #endif
     
     /* Check if the thread is already suspended */
-    if((State&RMP_THD_SUSPENDED)!=0U)
+    if((State&RMP_THD_SUSPEND)!=0U)
     {
         RMP_COV_MARKER();
         RMP_Sched_Unlock();
@@ -1848,8 +1848,8 @@ rmp_ret_t RMP_Thd_Suspend(volatile struct RMP_Thd* Thread)
         /* No action required */
     }
     
-    /* Remove the thread from runqueue if it was running */
-    if(Pure==RMP_THD_RUNNING)
+    /* Remove the thread from ready queue if it was ready */
+    if(Pure==RMP_THD_READY)
     {
         RMP_COV_MARKER();
         /* Delete from runqueue - must be not suspended */
@@ -1862,7 +1862,7 @@ rmp_ret_t RMP_Thd_Suspend(volatile struct RMP_Thd* Thread)
     }
     
     /* Mark it as suspended and put cached thread state back */
-    Thread->State=State|RMP_THD_SUSPENDED;
+    Thread->State=State|RMP_THD_SUSPEND;
     
     /* If we are suspending ourself, a schedule must be pending at this point */
     RMP_ASSERT((Thread!=RMP_Thd_Cur)||(RMP_Sched_Pend!=0U));
@@ -1920,7 +1920,7 @@ rmp_ret_t RMP_Thd_Resume(volatile struct RMP_Thd* Thread)
 #endif
     
     /* Check if the thread is already suspended */
-    if((State&RMP_THD_SUSPENDED)==0U)
+    if((State&RMP_THD_SUSPEND)==0U)
     {
         RMP_COV_MARKER();
         RMP_Sched_Unlock();
@@ -1933,11 +1933,11 @@ rmp_ret_t RMP_Thd_Resume(volatile struct RMP_Thd* Thread)
     }
     
     /* Resume the thread and put cached thread state back */
-    State&=~RMP_THD_SUSPENDED;
+    State&=~RMP_THD_SUSPEND;
     Thread->State=State;
     
-    /* Put the thread back if it was running */
-    if(Pure==RMP_THD_RUNNING)
+    /* Put the thread back if it was ready */
+    if(Pure==RMP_THD_READY)
     {
         RMP_COV_MARKER();
         /* Insert into runqueue - must be not suspended */
@@ -1986,10 +1986,10 @@ rmp_ret_t RMP_Thd_Delay(rmp_ptr_t Slice)
     /* Cache volatile thread state */
     State=Thd_Cur->State;
 
-    /* We must be running and not suspended so we will be out of running queue */
+    /* We must be ready and not suspended so we will be in ready queue */
     _RMP_Run_Del(Thd_Cur,State);
     /* Set to delayed */
-    RMP_THD_STATE_SET(State,RMP_THD_DELAYED);
+    RMP_THD_STATE_SET(State,RMP_THD_DELAY);
     /* Put cached thread state back */
     Thd_Cur->State=State;
     /* Insert into delay queue */
@@ -2052,7 +2052,7 @@ rmp_ret_t RMP_Thd_Cancel(volatile struct RMP_Thd* Thread)
 #endif
     
     /* Check if the thread is in delay */
-    if(Pure!=RMP_THD_DELAYED)
+    if(Pure!=RMP_THD_DELAY)
     {
         RMP_COV_MARKER();
         RMP_Sched_Unlock();
@@ -2066,8 +2066,8 @@ rmp_ret_t RMP_Thd_Cancel(volatile struct RMP_Thd* Thread)
     
     /* Delete it from the delay list */
     RMP_List_Del(Thread->Dly_Head.Prev,Thread->Dly_Head.Next);
-    /* Set to running */
-    RMP_THD_STATE_SET(State,RMP_THD_RUNNING);
+    /* Set to ready */
+    RMP_THD_STATE_SET(State,RMP_THD_READY);
     /* Put cached thread state back */
     Thread->State=State;
     /* Insert into runqueue if not suspended */
@@ -2196,8 +2196,8 @@ rmp_ret_t RMP_Thd_Snd(volatile struct RMP_Thd* Thread,
                 /* No action required */
             }
             
-            /* Set to running */
-            RMP_THD_STATE_SET(State,RMP_THD_RUNNING);
+            /* Set to ready */
+            RMP_THD_STATE_SET(State,RMP_THD_READY);
             /* Insert into runqueue if not suspended */
             _RMP_Run_Ins(Thread,State);
         }
@@ -2337,8 +2337,8 @@ rmp_ret_t RMP_Thd_Snd_ISR(volatile struct RMP_Thd* Thread,
                 /* No action required */
             }
             
-            /* Set to running */
-            RMP_THD_STATE_SET(State,RMP_THD_RUNNING);
+            /* Set to ready */
+            RMP_THD_STATE_SET(State,RMP_THD_READY);
             /* Insert into runqueue if not suspended */
             _RMP_Run_Ins(Thread,State);
 
@@ -2477,7 +2477,7 @@ rmp_ret_t RMP_Thd_Rcv(rmp_ptr_t* Data,
             Thd_Cur->Retval=0;
         }
 
-        /* We must be running and not suspended and will be deleted from queue */
+        /* We must be ready and not suspended and will be deleted from ready queue */
         _RMP_Run_Del(Thd_Cur,State);
         /* See if this is a finite wait */
         if(Slice<RMP_SLICE_MAX)
@@ -3034,7 +3034,7 @@ static rmp_ret_t _RMP_Sem_Pend_Core(volatile struct RMP_Sem* Semaphore,
         
         /* Cache volatile thread state */
         State=Thd_Cur->State;
-        /* We must be running - place into waitlist now */
+        /* We must be ready - place into waitlist now */
         _RMP_Run_Del(Thd_Cur,State);
         RMP_List_Ins(&(Thd_Cur->Run_Head),
                      Semaphore->Wait_List.Prev,
@@ -3210,8 +3210,8 @@ rmp_ret_t RMP_Sem_Abort(volatile struct RMP_Thd* Thread)
         /* No action required */
     }
     
-    /* Set to running */
-    RMP_THD_STATE_SET(State,RMP_THD_RUNNING);
+    /* Set to ready */
+    RMP_THD_STATE_SET(State,RMP_THD_READY);
     /* Put cached thread state back */
     Thread->State=State;
     /* Insert into runqueue if not suspended */
@@ -3343,7 +3343,7 @@ int main(void)
     RMP_Init_Thd.Prio=0U;
     RMP_Init_Thd.Slice=65500U;
     RMP_Init_Thd.Slice_Left=65500U;
-    RMP_Init_Thd.State=RMP_THD_RUNNING;
+    RMP_Init_Thd.State=RMP_THD_READY;
     RMP_Init_Thd.Stack=RMP_INIT_STACK;
 
     /* Initialize sending list */
