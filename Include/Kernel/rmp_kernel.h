@@ -17,6 +17,65 @@ Description : The header file for the kernel.
 /* Dewarn compiler */
 #define RMP_USE(X)                  ((void)(X))
 
+/* Power, rounding and masking */
+#define RMP_FIELD(VAL,POW)          (((rmp_ptr_t)(VAL))<<(POW))
+#define RMP_POW2(POW)               RMP_FIELD(1U,POW)
+#define RMP_ROUND_DOWN(NUM,POW)     (((NUM)>>(POW))<<(POW))
+#define RMP_ROUND_UP(NUM,POW)       RMP_ROUND_DOWN((NUM)+RMP_POW2(POW)-1U,POW)
+#define RMP_ALLBITS                 (~((rmp_ptr_t)0U))
+#define RMP_WORD_BITS               RMP_POW2(RMP_WORD_ORDER)
+#define RMP_WORD_MASK               (~(RMP_ALLBITS<<RMP_WORD_ORDER))
+
+/* Maximum logging length */
+#define RMP_DBGLOG_MAX              (255U)
+
+/* Debug logging macros */
+#if(RMP_DBGLOG_ENABLE==1U)
+#define RMP_DBG_I(INT)              RMP_Int_Print((rmp_cnt_t)(INT))
+#define RMP_DBG_H(HEX)              RMP_Hex_Print((rmp_ptr_t)(HEX))
+#define RMP_DBG_S(STR)              RMP_Str_Print((const rmp_s8_t*)(STR))
+#else
+#define RMP_DBG_I(INT)              while(0U)
+#define RMP_DBG_H(HEX)              while(0U)
+#define RMP_DBG_S(STR)              while(0U)
+#endif
+
+/* Logging macro */
+#ifndef RMP_LOG
+#define RMP_LOG_OP(F,L,D,T)         RMP_Log(F,L,D,T)
+#else
+#define RMP_LOG_OP(F,L,D,T)         RMP_LOG(F,L,D,T)
+#endif
+
+/* Assert macro - used only in internal development */
+#if(RMP_ASSERT_ENABLE!=0U)
+#define RMP_ASSERT(X) \
+do \
+{ \
+    if(!(X)) \
+    { \
+        RMP_LOG_OP(__FILE__,__LINE__,__DATE__,__TIME__); \
+        while(1); \
+    } \
+} \
+while(0)
+#else
+#define RMP_ASSERT(X) \
+do \
+{ \
+    RMP_USE(X); \
+} \
+while(0)
+#endif
+    
+/* Coverage marker enabling */
+#ifdef RMP_COV_LINE_NUM
+#define RMP_COV_WORD_NUM            (RMP_ROUND_UP(RMP_COV_LINE_NUM,RMP_WORD_ORDER)>>RMP_WORD_ORDER)
+#define RMP_COV_MARKER()            (RMP_Cov[__LINE__>>RMP_WORD_ORDER]|=RMP_POW2(__LINE__&RMP_WORD_MASK))
+#else
+#define RMP_COV_MARKER()
+#endif
+
 /* States of threads */
 #define RMP_THD_STATE(X)            ((X)&((rmp_ptr_t)0xFFU))
 #define RMP_THD_FLAG(X)             ((X)&~((rmp_ptr_t)0xFFU))
@@ -90,16 +149,6 @@ Description : The header file for the kernel.
 #define RMP_ERR_MSGQ                (-10)
 /* This error is blocking message queue related */
 #define RMP_ERR_BMQ                 (-11)
-
-/* Power and rounding */
-#define RMP_POW2(POW)               (((rmp_ptr_t)1U)<<(POW))
-#define RMP_ROUND_DOWN(NUM,POW)     (((NUM)>>(POW))<<(POW))
-#define RMP_ROUND_UP(NUM,POW)       RMP_ROUND_DOWN((NUM)+RMP_POW2(POW)-1U,POW)
-
-/* Word size - only assume 8 bits for char, even if it exceeds 8 bits */
-#define RMP_ALLBITS                 (~((rmp_ptr_t)0U))
-#define RMP_WORD_SIZE               RMP_POW2(RMP_WORD_ORDER)
-#define RMP_WORD_MASK               (~(RMP_ALLBITS<<RMP_WORD_ORDER))
 
 /* Scheduler bitmap */
 #define RMP_PRIO_WORD_NUM           (RMP_ROUND_UP(RMP_PREEMPT_PRIO_NUM,RMP_WORD_ORDER)>>RMP_WORD_ORDER)
@@ -205,55 +254,6 @@ while(0)
 #define RMP_CUR_ULBR                (9U)
 #define RMP_CUR_URBL                (10U)
 #define RMP_CUR_CROSS               (11U)
-#endif
-
-/* Maximum logging length */
-#define RMP_DBGLOG_MAX              (255U)
-/* Debug logging macros */
-#if(RMP_DBGLOG_ENABLE==1U)
-#define RMP_DBG_I(INT)              RMP_Int_Print((rmp_cnt_t)(INT))
-#define RMP_DBG_H(HEX)              RMP_Hex_Print((rmp_ptr_t)(HEX))
-#define RMP_DBG_S(STR)              RMP_Str_Print((const rmp_s8_t*)(STR))
-#else
-#define RMP_DBG_I(INT)              while(0U)
-#define RMP_DBG_H(HEX)              while(0U)
-#define RMP_DBG_S(STR)              while(0U)
-#endif
-
-/* Logging macro */
-#ifndef RMP_LOG
-#define RMP_LOG_OP(F,L,D,T)           RMP_Log(F,L,D,T)
-#else
-#define RMP_LOG_OP(F,L,D,T)           RMP_LOG(F,L,D,T)
-#endif
-
-/* Assert macro - used only in internal development */
-#if(RMP_ASSERT_ENABLE!=0U)
-#define RMP_ASSERT(X) \
-do \
-{ \
-    if(!(X)) \
-    { \
-        RMP_LOG_OP(__FILE__,__LINE__,__DATE__,__TIME__); \
-        while(1); \
-    } \
-} \
-while(0)
-#else
-#define RMP_ASSERT(X) \
-do \
-{ \
-    RMP_USE(X); \
-} \
-while(0)
-#endif
-    
-/* Coverage marker enabling */
-#ifdef RMP_COV_LINE_NUM
-#define RMP_COV_WORD_NUM       (RMP_ROUND_UP(RMP_COV_LINE_NUM,RMP_WORD_ORDER)>>RMP_WORD_ORDER)
-#define RMP_COV_MARKER()       (RMP_Cov[__LINE__>>RMP_WORD_ORDER]|=RMP_POW2(__LINE__&RMP_WORD_MASK))
-#else
-#define RMP_COV_MARKER()
 #endif
 /*****************************************************************************/
 /* __RMP_KERNEL_DEF__ */
@@ -408,6 +408,7 @@ struct RMP_Mem
 /* For kernel coverage use only */
 static volatile rmp_ptr_t RMP_Cov[RMP_COV_WORD_NUM];
 #endif
+
 /* Scheduler bitmap - might be modified in interrupts */
 static volatile rmp_ptr_t RMP_Bitmap[RMP_PRIO_WORD_NUM];
 /* Running list for each priority - might be modified in interrupts */
@@ -475,6 +476,11 @@ static void RMP_Progbar_Prog(rmp_cnt_t Coord_X,
 #endif
 
 /*****************************************************************************/
+#ifdef RMP_COV_LINE_NUM
+/* For kernel coverage use only */
+static volatile rmp_ptr_t RMP_Cov[RMP_COV_WORD_NUM];
+#endif
+
 /* Timestamp - may wraparound but this is fine */
 __RMP_EXTERN__ volatile rmp_ptr_t RMP_Timestamp;
 /* Scheduler lock count - doesn't really need to be volatile from a kernel
@@ -513,7 +519,7 @@ __RMP_EXTERN__ rmp_cnt_t RMP_Str_Print(const rmp_s8_t* String);
 __RMP_EXTERN__ void RMP_Log(const char* File,
                             long Line,
                             const char* Date,
-                            const char* Time);                        
+                            const char* Time);
 #endif
 
 /* Coverage test - internal use */
@@ -528,7 +534,6 @@ __RMP_EXTERN__ void RMP_Clear(volatile void* Addr,
 /* Bit manipulation */
 __RMP_EXTERN__ rmp_ptr_t RMP_MSB_Generic(rmp_ptr_t Value);
 __RMP_EXTERN__ rmp_ptr_t RMP_LSB_Generic(rmp_ptr_t Value);
-__RMP_EXTERN__ rmp_ptr_t RMP_RBT_Generic(rmp_ptr_t Value);
                             
 /* List operation */
 __RMP_EXTERN__ void RMP_List_Crt(volatile struct RMP_List* Head);
