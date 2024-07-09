@@ -60,19 +60,21 @@ rmp_cnt_t RMP_Int_Print(rmp_cnt_t Int)
     if(Int==0)
     {
         RMP_COV_MARKER();
+        
         RMP_Putchar('0');
         return 1;
     }
     else
     {
         RMP_COV_MARKER();
-        /* No action needed */
+        /* No action required */
     }
 
     /* Correct all negatives into positives */
     if(Int<0)
     {
         RMP_COV_MARKER();
+        
         RMP_Putchar('-');
         Abs=-Int;
         Num=1;
@@ -80,6 +82,7 @@ rmp_cnt_t RMP_Int_Print(rmp_cnt_t Int)
     else
     {
         RMP_COV_MARKER();
+        
         Abs=Int;
         Num=0;
     }
@@ -95,11 +98,13 @@ rmp_cnt_t RMP_Int_Print(rmp_cnt_t Int)
         if(Iter!=0)
         {
             RMP_COV_MARKER();
+            
             Div*=10;
         }
         else
         {
             RMP_COV_MARKER();
+            
             break;
         }
     }
@@ -138,19 +143,20 @@ rmp_cnt_t RMP_Hex_Print(rmp_ptr_t Uint)
     if(Uint==0U)
     {
         RMP_COV_MARKER();
+        
         RMP_Putchar('0');
         return 1;
     }
     else
     {
         RMP_COV_MARKER();
-        /* No action needed */
+        /* No action required */
     }
 
     /* Filter out all the leading zeroes */
     Count=0U;
     Iter=Uint;
-    while((Iter>>(RMP_POW2(RMP_WORD_ORDER)-4U))==0U)
+    while((Iter>>(RMP_WORD_BITS-4U))==0U)
     {
         Iter<<=4U;
         Count++;
@@ -166,11 +172,13 @@ rmp_cnt_t RMP_Hex_Print(rmp_ptr_t Uint)
         if(Iter<10U)
         {
             RMP_COV_MARKER();
+            
             RMP_Putchar((rmp_s8_t)Iter+'0');
         }
         else
         {
             RMP_COV_MARKER();
+            
             RMP_Putchar((rmp_s8_t)Iter+'A'-10);
         }
     }
@@ -182,7 +190,6 @@ rmp_cnt_t RMP_Hex_Print(rmp_ptr_t Uint)
 
 /* Function:RMP_Str_Print *****************************************************
 Description : Print a string on the debugging console.
-              This is only used for user-level debugging.
 Input       : const rmp_s8_t* String - The string to print.
 Output      : None.
 Return      : rmp_cnt_t - The length of the string printed, the '\0' is not included.
@@ -197,13 +204,15 @@ rmp_cnt_t RMP_Str_Print(const rmp_s8_t* String)
         if(String[Count]==(rmp_s8_t)'\0')
         {
             RMP_COV_MARKER();
+            
             break;
         }
         else
         {
             RMP_COV_MARKER();
-            /* No action needed */
+            /* No action required */
         }
+        
         RMP_Putchar(String[Count]);
     }
     
@@ -261,26 +270,29 @@ void RMP_Cov_Print(void)
         if((RMP_Cov[Count>>RMP_WORD_ORDER]&RMP_POW2(Count&RMP_WORD_MASK))!=0U)
         {
             RMP_COV_MARKER();
+            
             RMP_DBG_I(Count);
             RMP_DBG_S(",");
+            
             /* We put 12 markers on a single line */
             Next++;
             if(Next>11U)
             {
                 RMP_COV_MARKER();
+                
                 Next=0U;
                 RMP_DBG_S("\r\n");
             }
             else
             {
                 RMP_COV_MARKER();
-                /* No action needed */
+                /* No action required */
             }
         }
         else
         {
             RMP_COV_MARKER();
-            /* No action needed */
+            /* No action required */
         }
     }
 }
@@ -342,12 +354,14 @@ rmp_ptr_t RMP_MSB_Generic(rmp_ptr_t Value)
     if(Value>=RMP_POW2(8U))
     {
         RMP_COV_MARKER();
+    
         Bit=8U;
     }
     /* 7-0 */
     else
     {
         RMP_COV_MARKER();
+    
         Bit=0U;
     }
 #elif(RMP_WORD_ORDER==5U)
@@ -355,16 +369,19 @@ rmp_ptr_t RMP_MSB_Generic(rmp_ptr_t Value)
     if(Value>=RMP_POW2(16U))
     {
         RMP_COV_MARKER();
+        
         /* 31-24 */
         if(Value>=RMP_POW2(24U))
         {
             RMP_COV_MARKER();
+            
             Bit=24U;
         }
         /* 24-16 */
         else
         {
             RMP_COV_MARKER();
+            
             Bit=16U;
         }
     }
@@ -372,16 +389,19 @@ rmp_ptr_t RMP_MSB_Generic(rmp_ptr_t Value)
     else
     {
         RMP_COV_MARKER();
+        
         /* 15-8 */
         if(Value>=RMP_POW2(8U))
         {
             RMP_COV_MARKER();
+            
             Bit=8U;
         }
         /* 7-0 */
         else
         {
             RMP_COV_MARKER();
+            
             Bit=0U;
         }
     }
@@ -390,20 +410,24 @@ rmp_ptr_t RMP_MSB_Generic(rmp_ptr_t Value)
     if(Value>=RMP_POW2(32U))
     {
         RMP_COV_MARKER();
+    
         /* 63-48 */
         if(Value>=RMP_POW2(48U))
         {
             RMP_COV_MARKER();
+    
             /* 63-56 */
             if(Value>=RMP_POW2(56U))
             {
                 RMP_COV_MARKER();
+    
                 Bit=56U;
             }
             /* 56-48 */
             else
             {
                 RMP_COV_MARKER();
+                
                 Bit=48U;
             }
         }
@@ -411,16 +435,19 @@ rmp_ptr_t RMP_MSB_Generic(rmp_ptr_t Value)
         else
         {
             RMP_COV_MARKER();
+            
             /* 47-40 */
             if(Value>=RMP_POW2(40U))
             {
                 RMP_COV_MARKER();
+                
                 Bit=40U;
             }
             /* 39-32 */
             else
             {
                 RMP_COV_MARKER();
+                
                 Bit=32U;
             }
         }
@@ -429,20 +456,24 @@ rmp_ptr_t RMP_MSB_Generic(rmp_ptr_t Value)
     else
     {
         RMP_COV_MARKER();
+        
         /* 31-16 */
         if(Value>=RMP_POW2(16U))
         {
             RMP_COV_MARKER();
+            
             /* 31-24 */
             if(Value>=RMP_POW2(24U))
             {
                 RMP_COV_MARKER();
+                
                 Bit=24U;
             }
             /* 24-16 */
             else
             {
                 RMP_COV_MARKER();
+                
                 Bit=16U;
             }
         }
@@ -450,16 +481,19 @@ rmp_ptr_t RMP_MSB_Generic(rmp_ptr_t Value)
         else
         {
             RMP_COV_MARKER();
+            
             /* 15-8 */
             if(Value>=RMP_POW2(8U))
             {
                 RMP_COV_MARKER();
+                
                 Bit=8U;
             }
             /* 7-0 */
             else
             {
                 RMP_COV_MARKER();
+                
                 Bit=0U;
             }
         }
@@ -508,12 +542,14 @@ rmp_ptr_t RMP_LSB_Generic(rmp_ptr_t Value)
     if((Value<<8U)==0U)
     {
         RMP_COV_MARKER();
+    
         Bit=8U;
     }
     /* 7-0 */
     else
     {
         RMP_COV_MARKER();
+    
         Bit=0U;
     }
 #elif(RMP_WORD_ORDER==5U)
@@ -521,16 +557,19 @@ rmp_ptr_t RMP_LSB_Generic(rmp_ptr_t Value)
     if((Value<<16U)==0U)
     {
         RMP_COV_MARKER();
+        
         /* 31-24 */
         if((Value<<8U)==0U)
         {
             RMP_COV_MARKER();
+            
             Bit=24U;
         }
         /* 24-16 */
         else
         {
             RMP_COV_MARKER();
+            
             Bit=16U;
         }
     }
@@ -538,16 +577,19 @@ rmp_ptr_t RMP_LSB_Generic(rmp_ptr_t Value)
     else
     {
         RMP_COV_MARKER();
+        
         /* 15-8 */
         if((Value<<24U)==0U)
         {
             RMP_COV_MARKER();
+            
             Bit=8U;
         }
         /* 7-0 */
         else
         {
             RMP_COV_MARKER();
+            
             Bit=0U;
         }
     }
@@ -556,20 +598,24 @@ rmp_ptr_t RMP_LSB_Generic(rmp_ptr_t Value)
     if((Value<<32U)==0U)
     {
         RMP_COV_MARKER();
+    
         /* 63-48 */
         if((Value<<16U)==0U)
         {
             RMP_COV_MARKER();
+    
             /* 63-56 */
             if((Value<<8U)==0U)
             {
                 RMP_COV_MARKER();
+    
                 Bit=56U;
             }
             /* 56-48 */
             else
             {
                 RMP_COV_MARKER();
+                
                 Bit=48U;
             }
         }
@@ -577,16 +623,19 @@ rmp_ptr_t RMP_LSB_Generic(rmp_ptr_t Value)
         else
         {
             RMP_COV_MARKER();
+            
             /* 47-40 */
             if((Value<<24U)==0U)
             {
                 RMP_COV_MARKER();
+                
                 Bit=40U;
             }
             /* 39-32 */
             else
             {
                 RMP_COV_MARKER();
+                
                 Bit=32U;
             }
         }
@@ -595,20 +644,24 @@ rmp_ptr_t RMP_LSB_Generic(rmp_ptr_t Value)
     else
     {
         RMP_COV_MARKER();
+        
         /* 31-16 */
         if((Value<<48U)==0U)
         {
             RMP_COV_MARKER();
+            
             /* 31-24 */
             if((Value<<40U)==0U)
             {
                 RMP_COV_MARKER();
+                
                 Bit=24U;
             }
             /* 24-16 */
             else
             {
                 RMP_COV_MARKER();
+                
                 Bit=16U;
             }
         }
@@ -616,16 +669,19 @@ rmp_ptr_t RMP_LSB_Generic(rmp_ptr_t Value)
         else
         {
             RMP_COV_MARKER();
+            
             /* 15-8 */
             if((Value<<56U)==0U)
             {
                 RMP_COV_MARKER();
+                
                 Bit=8U;
             }
             /* 7-0 */
             else
             {
                 RMP_COV_MARKER();
+                
                 Bit=0U;
             }
         }
@@ -637,87 +693,6 @@ rmp_ptr_t RMP_LSB_Generic(rmp_ptr_t Value)
     return Table[(rmp_u8_t)(Value>>Bit)]+Bit;
 }
 /* End Function:RMP_LSB_Generic **********************************************/
-
-/* Function:RMP_RBT_Generic ***************************************************
-Description : Reverse bit order. This is a portable solution meant for all
-              processors; if your processor does not have fast built-in RBT,
-              you can resort to this instead.
-              This is implemented to be as fast as possible.
-Input       : rmp_ptr_t Value - The value to count.
-Output      : None.
-Return      : rmp_ptr_t - The result.
-******************************************************************************/
-rmp_ptr_t RMP_RBT_Generic(rmp_ptr_t Value)
-{
-    rmp_ptr_t Ret;
-    rmp_ptr_t Src;
-    rmp_u8_t* To;
-    rmp_u8_t* From;
-
-    static const rmp_u8_t Table[256U]=
-    {
-        0x00U,0x80U,0x40U,0xC0U,0x20U,0xA0U,0x60U,0xE0U,
-        0x10U,0x90U,0x50U,0xD0U,0x30U,0xB0U,0x70U,0xF0U,
-        0x08U,0x88U,0x48U,0xC8U,0x28U,0xA8U,0x68U,0xE8U,
-        0x18U,0x98U,0x58U,0xD8U,0x38U,0xB8U,0x78U,0xF8U,
-        0x04U,0x84U,0x44U,0xC4U,0x24U,0xA4U,0x64U,0xE4U,
-        0x14U,0x94U,0x54U,0xD4U,0x34U,0xB4U,0x74U,0xF4U,
-        0x0CU,0x8CU,0x4CU,0xCCU,0x2CU,0xACU,0x6CU,0xECU,
-        0x1CU,0x9CU,0x5CU,0xDCU,0x3CU,0xBCU,0x7CU,0xFCU,
-        0x02U,0x82U,0x42U,0xC2U,0x22U,0xA2U,0x62U,0xE2U,
-        0x12U,0x92U,0x52U,0xD2U,0x32U,0xB2U,0x72U,0xF2U,
-        0x0AU,0x8AU,0x4AU,0xCAU,0x2AU,0xAAU,0x6AU,0xEAU,
-        0x1AU,0x9AU,0x5AU,0xDAU,0x3AU,0xBAU,0x7AU,0xFAU,
-        0x06U,0x86U,0x46U,0xC6U,0x26U,0xA6U,0x66U,0xE6U,
-        0x16U,0x96U,0x56U,0xD6U,0x36U,0xB6U,0x76U,0xF6U,
-        0x0EU,0x8EU,0x4EU,0xCEU,0x2EU,0xAEU,0x6EU,0xEEU,
-        0x1EU,0x9EU,0x5EU,0xDEU,0x3EU,0xBEU,0x7EU,0xFEU,
-        0x01U,0x81U,0x41U,0xC1U,0x21U,0xA1U,0x61U,0xE1U,
-        0x11U,0x91U,0x51U,0xD1U,0x31U,0xB1U,0x71U,0xF1U,
-        0x09U,0x89U,0x49U,0xC9U,0x29U,0xA9U,0x69U,0xE9U,
-        0x19U,0x99U,0x59U,0xD9U,0x39U,0xB9U,0x79U,0xF9U,
-        0x05U,0x85U,0x45U,0xC5U,0x25U,0xA5U,0x65U,0xE5U,
-        0x15U,0x95U,0x55U,0xD5U,0x35U,0xB5U,0x75U,0xF5U,
-        0x0DU,0x8DU,0x4DU,0xCDU,0x2DU,0xADU,0x6DU,0xEDU,
-        0x1DU,0x9DU,0x5DU,0xDDU,0x3DU,0xBDU,0x7DU,0xFDU,
-        0x03U,0x83U,0x43U,0xC3U,0x23U,0xA3U,0x63U,0xE3U,
-        0x13U,0x93U,0x53U,0xD3U,0x33U,0xB3U,0x73U,0xF3U,
-        0x0BU,0x8BU,0x4BU,0xCBU,0x2BU,0xABU,0x6BU,0xEBU,
-        0x1BU,0x9BU,0x5BU,0xDBU,0x3BU,0xBBU,0x7BU,0xFBU,
-        0x07U,0x87U,0x47U,0xC7U,0x27U,0xA7U,0x67U,0xE7U,
-        0x17U,0x97U,0x57U,0xD7U,0x37U,0xB7U,0x77U,0xF7U,
-        0x0FU,0x8FU,0x4FU,0xCFU,0x2FU,0xAFU,0x6FU,0xEFU,
-        0x1FU,0x9FU,0x5FU,0xDFU,0x3FU,0xBFU,0x7FU,0xFFU
-    };
-
-    Src=Value;
-    To=(rmp_u8_t*)(&Ret);
-    From=(rmp_u8_t*)(&Src);
-
-#if(RMP_WORD_ORDER==4U)
-    To[0]=Table[From[1]];
-    To[1]=Table[From[0]];
-#elif(RMP_WORD_ORDER==5U)
-    To[0]=Table[From[3]];
-    To[1]=Table[From[2]];
-    To[2]=Table[From[1]];
-    To[3]=Table[From[0]];
-#elif(RMP_WORD_ORDER==6U)
-    To[0]=Table[From[7]];
-    To[1]=Table[From[6]];
-    To[2]=Table[From[5]];
-    To[3]=Table[From[4]];
-    To[4]=Table[From[3]];
-    To[5]=Table[From[2]];
-    To[6]=Table[From[1]];
-    To[7]=Table[From[0]];
-#else
-#error RMP : Generic RBT for 128-bits & above are not implemented.
-#endif
-
-    return Ret;
-}
-/* End Function:RMP_RBT_Generic **********************************************/
 
 /* Function:RMP_List_Crt ******************************************************
 Description : Create a doubly linkled list.
@@ -790,12 +765,14 @@ void RMP_Sched_Unlock(void)
     if(RMP_Sched_Lock_Cnt==1U)
     {
         RMP_COV_MARKER();
+        
         /* Clear the count before enabling */
         RMP_Sched_Lock_Cnt=0U;
         /* Deal with pending scheduler activations */
         if(RMP_Sched_Pend!=0U)
         {
             RMP_COV_MARKER();
+            
              /* Context switch will clear the pend flag */
             RMP_YIELD();
         }
@@ -821,6 +798,7 @@ void RMP_Sched_Unlock(void)
     else if(RMP_Sched_Lock_Cnt>1U)
     {
         RMP_COV_MARKER();
+        
         RMP_Sched_Lock_Cnt--;
     }
     /* Trying to unlock a scheduler that is not locked - should never happen */
@@ -867,6 +845,7 @@ static void _RMP_Tim_Proc(void)
             if((Pure==RMP_THD_SNDDLY)||(Pure==RMP_THD_SEMDLY))
             {
                 RMP_COV_MARKER();
+                
                 RMP_List_Del(Thread->Run_Head.Prev, Thread->Run_Head.Next);
                 /* Supply timeout error code */
                 Thread->Retval=RMP_ERR_OPER;
@@ -874,18 +853,19 @@ static void _RMP_Tim_Proc(void)
             else if(Pure==RMP_THD_RCVDLY)
             {
                 RMP_COV_MARKER();
+                
                 /* Supply timeout error code */
                 Thread->Retval=RMP_ERR_OPER;
             }
             else if(Pure==RMP_THD_DELAY)
             {
                 RMP_COV_MARKER();
+                
                 /* No action required */
             }
+            /* Impossible: thread in the waiting list but not in delay */
             else
             {
-                RMP_COV_MARKER();
-                /* Impossible: thread in the waiting list but not delayed */
                 RMP_ASSERT(0);
             }
 
@@ -900,6 +880,7 @@ static void _RMP_Tim_Proc(void)
         else
         {
             RMP_COV_MARKER();
+            
             break;
         }
     }
@@ -949,6 +930,7 @@ void _RMP_Run_High(void)
         if(RMP_Bitmap[Word]!=0U)
         {
             RMP_COV_MARKER();
+            
             break;
         }
         else
@@ -968,6 +950,7 @@ void _RMP_Run_High(void)
     if(Thd_Cur==(volatile struct RMP_Thd*)(RMP_Run[Prio].Next))
     {
         RMP_COV_MARKER();
+        
         RMP_ASSERT(Thd_Cur->Prio==Prio);
         RMP_List_Del(Thd_Cur->Run_Head.Prev,Thd_Cur->Run_Head.Next);
         RMP_List_Ins(&(Thd_Cur->Run_Head),
@@ -1021,11 +1004,13 @@ void _RMP_Tim_Handler(rmp_ptr_t Slice)
     if(Slice>=Thread->Slice_Left)
     {
         RMP_COV_MARKER();
+        
         RMP_Sched_Pend=1U;
     }
     else
     {
         RMP_COV_MARKER();
+        
         Thread->Slice_Left-=Slice;
     }
     
@@ -1033,12 +1018,14 @@ void _RMP_Tim_Handler(rmp_ptr_t Slice)
     if((&RMP_Delay)!=RMP_Delay.Next)
     {
         RMP_COV_MARKER();
+        
         Thread=RMP_DLY2THD(RMP_Delay.Next);
         /* If there are overflows, process all pending timers */
         Diff=RMP_DLY_DIFF(Thread->Timeout);
         if(RMP_DIFF_OVF(Diff))
         {
             RMP_COV_MARKER();
+            
             /* No need to care about scheduler locks if this interrupt can be entered
              * - we have disabled timer and scheduler interrupts in scheduler lock */
             _RMP_Tim_Proc();
@@ -1060,6 +1047,7 @@ void _RMP_Tim_Handler(rmp_ptr_t Slice)
     if(RMP_Sched_Pend!=0U)
     {
         RMP_COV_MARKER();
+        
         /* Context switch will clear the pend flag */
         RMP_YIELD_ISR();
     }
@@ -1134,6 +1122,7 @@ rmp_ptr_t _RMP_Tim_Future(void)
     if(RMP_Delay.Next!=&RMP_Delay)
     {
         RMP_COV_MARKER();
+        
         Thread=RMP_DLY2THD(RMP_Delay.Next);
         
         /* Detect possible overflows - trigger timer interrupt ASAP */
@@ -1141,11 +1130,13 @@ rmp_ptr_t _RMP_Tim_Future(void)
         if(RMP_DIFF_OVF(Diff))
         {
             RMP_COV_MARKER();
+            
             Value=1U;
         }
         else if(Diff<Value)
         {
             RMP_COV_MARKER();
+            
             Value=Diff;
         }
         else
@@ -1180,6 +1171,7 @@ rmp_ret_t _RMP_Tim_Idle(void)
     if(RMP_Run[0].Next!=((volatile struct RMP_List*)&RMP_Init_Thd))
     {
         RMP_COV_MARKER();
+        
         return -1;
     }
     else
@@ -1191,6 +1183,7 @@ rmp_ret_t _RMP_Tim_Idle(void)
     if(RMP_Run[0].Next!=RMP_Run[0].Prev)
     {
         RMP_COV_MARKER();
+        
         return -1;
     }
     else
@@ -1203,6 +1196,7 @@ rmp_ret_t _RMP_Tim_Idle(void)
     if(RMP_Delay.Next!=&RMP_Delay)
     {
         RMP_COV_MARKER();
+        
         return -1;
     }
     else
@@ -1248,6 +1242,7 @@ static void _RMP_Run_Ins(volatile struct RMP_Thd* Thread,
         if(Prio>RMP_Thd_Cur->Prio)
         {
             RMP_COV_MARKER();
+            
             RMP_Sched_Pend=1U;
         }
         else
@@ -1282,10 +1277,12 @@ static void _RMP_Run_Del(volatile struct RMP_Thd* Thread,
     if((State&RMP_THD_SUSPEND)==0U)
     {
         RMP_COV_MARKER();
+        
         /* See if it is the last thread on the priority level */
         if(Thread->Run_Head.Prev==Thread->Run_Head.Next)
         {
             RMP_COV_MARKER();
+            
             /* Cache volatile thread priority */
             Prio=Thread->Prio;
             /* If yes, set the priority level as inactive */
@@ -1304,6 +1301,7 @@ static void _RMP_Run_Del(volatile struct RMP_Thd* Thread,
         if(Thread==RMP_Thd_Cur)
         {
             RMP_COV_MARKER();
+            
             RMP_Sched_Pend=1U;
         }
         else
@@ -1353,11 +1351,13 @@ static void _RMP_Dly_Ins(volatile struct RMP_Thd* Thread,
         if(RMP_DIFF_OVF(Diff)||(Diff<Slice))
         {
             RMP_COV_MARKER();
+            
             Trav_Ptr=Trav_Ptr->Next;
         }
         else
         {
             RMP_COV_MARKER();
+            
             break;
         }
     }
@@ -1380,12 +1380,14 @@ void RMP_Thd_Yield(void)
     if(RMP_Sched_Lock_Cnt==0U)
     {
         RMP_COV_MARKER();
+        
         RMP_YIELD();
     }
     /* Scheduler locked, have to pend the flag to schedule later */
     else
     {
         RMP_COV_MARKER();
+        
         RMP_Sched_Pend=1U;
     }
 }
@@ -1416,6 +1418,7 @@ rmp_ret_t RMP_Thd_Crt(volatile struct RMP_Thd* Thread,
     if(Prio>=RMP_PREEMPT_PRIO_NUM)
     {
         RMP_COV_MARKER();
+        
         return RMP_ERR_PRIO;
     }
     else
@@ -1428,6 +1431,7 @@ rmp_ret_t RMP_Thd_Crt(volatile struct RMP_Thd* Thread,
     if((Slice==0U)||(Slice>=RMP_SLICE_MAX))
     {
         RMP_COV_MARKER();
+        
         return RMP_ERR_SLICE;
     }
     else
@@ -1440,6 +1444,7 @@ rmp_ret_t RMP_Thd_Crt(volatile struct RMP_Thd* Thread,
     if((Stack==RMP_NULL)||(Size<=sizeof(RMP_STACK_STRUCT)))
     {
         RMP_COV_MARKER();
+        
         return RMP_ERR_STACK;
     }
     else
@@ -1452,6 +1457,7 @@ rmp_ret_t RMP_Thd_Crt(volatile struct RMP_Thd* Thread,
     if(Thread==RMP_NULL)
     {
         RMP_COV_MARKER();
+        
         return RMP_ERR_THD;
     }
     else
@@ -1468,6 +1474,7 @@ rmp_ret_t RMP_Thd_Crt(volatile struct RMP_Thd* Thread,
     if(RMP_THD_STATE(Thread->State)!=RMP_THD_FREE)
     {
         RMP_COV_MARKER();
+        
         RMP_Sched_Unlock();
         return RMP_ERR_THD;
     }
@@ -1522,6 +1529,7 @@ static void _RMP_Thd_Remove(volatile struct RMP_Thd* Thread,
     if(RMP_THD_STATE(State)==Delay_Queue)
     {
         RMP_COV_MARKER();
+        
         RMP_List_Del(Thread->Dly_Head.Prev,Thread->Dly_Head.Next);
     }
     else
@@ -1556,6 +1564,7 @@ rmp_ret_t RMP_Thd_Del(volatile struct RMP_Thd* Thread)
     if(Thread==RMP_NULL)
     {
         RMP_COV_MARKER();
+        
         return RMP_ERR_THD;
     }
     else
@@ -1577,6 +1586,7 @@ rmp_ret_t RMP_Thd_Del(volatile struct RMP_Thd* Thread)
     if(Pure==RMP_THD_FREE)
     {
         RMP_COV_MARKER();
+        
         RMP_Sched_Unlock();
         return RMP_ERR_THD;
     }
@@ -1601,6 +1611,7 @@ rmp_ret_t RMP_Thd_Del(volatile struct RMP_Thd* Thread)
     if(Pure==RMP_THD_READY)
     {
         RMP_COV_MARKER();
+        
         _RMP_Run_Del(Thread,State);
     }
     /* Do nothing if it is just blocked on receive */
@@ -1613,23 +1624,25 @@ rmp_ret_t RMP_Thd_Del(volatile struct RMP_Thd* Thread)
     else if((Pure==RMP_THD_SNDBLK)||(Pure==RMP_THD_SEMBLK))
     {
         RMP_COV_MARKER();
+        
         RMP_List_Del(Thread->Run_Head.Prev,Thread->Run_Head.Next);
     }
     else if((Pure==RMP_THD_RCVDLY)||(Pure==RMP_THD_DELAY))
     {
         RMP_COV_MARKER();
+        
         RMP_List_Del(Thread->Dly_Head.Prev,Thread->Dly_Head.Next);
     }
     else if((Pure==RMP_THD_SNDDLY)||(Pure==RMP_THD_SEMDLY))
     {
         RMP_COV_MARKER();
+        
         RMP_List_Del(Thread->Run_Head.Prev,Thread->Run_Head.Next);
         RMP_List_Del(Thread->Dly_Head.Prev,Thread->Dly_Head.Next);
     }
-    /* Can't be in this state */
+    /* Invalid state */
     else
     {
-        RMP_COV_MARKER();
         RMP_ASSERT(0);
     }
 
@@ -1671,6 +1684,7 @@ rmp_ret_t RMP_Thd_Set(volatile struct RMP_Thd* Thread,
     if(Thread==RMP_NULL)
     {
         RMP_COV_MARKER();
+        
         return RMP_ERR_THD;
     }
     else
@@ -1683,6 +1697,7 @@ rmp_ret_t RMP_Thd_Set(volatile struct RMP_Thd* Thread,
     if(Slice==0U)
     {
         RMP_COV_MARKER();
+        
         return RMP_ERR_SLICE;
     }
     else
@@ -1704,6 +1719,7 @@ rmp_ret_t RMP_Thd_Set(volatile struct RMP_Thd* Thread,
     if(Pure==RMP_THD_FREE)
     {
         RMP_COV_MARKER();
+        
         RMP_Sched_Unlock();
         return RMP_ERR_THD;
     }
@@ -1723,9 +1739,11 @@ rmp_ret_t RMP_Thd_Set(volatile struct RMP_Thd* Thread,
         if(Prio<RMP_PREEMPT_PRIO_NUM)
         {
             RMP_COV_MARKER();
+            
             if(Thread->Prio!=Prio)
             {
                 RMP_COV_MARKER();
+                
                 /* Delete from runqueue if not suspended */
                 _RMP_Run_Del(Thread,State);
                 /* Change priority */
@@ -1748,6 +1766,7 @@ rmp_ret_t RMP_Thd_Set(volatile struct RMP_Thd* Thread,
         if(Slice<RMP_SLICE_MAX)
         {
             RMP_COV_MARKER();
+            
             Thread->Slice=Slice;
         }
         else
@@ -1763,6 +1782,7 @@ rmp_ret_t RMP_Thd_Set(volatile struct RMP_Thd* Thread,
         if(Prio<RMP_PREEMPT_PRIO_NUM)
         {
             RMP_COV_MARKER();
+            
             Thread->Prio=Prio;
         }
         else
@@ -1774,6 +1794,7 @@ rmp_ret_t RMP_Thd_Set(volatile struct RMP_Thd* Thread,
         if(Slice<RMP_SLICE_MAX)
         {
             RMP_COV_MARKER();
+            
             Thread->Slice=Slice;
         }
         else
@@ -1804,6 +1825,7 @@ rmp_ret_t RMP_Thd_Suspend(volatile struct RMP_Thd* Thread)
     if(Thread==RMP_NULL)
     {
         RMP_COV_MARKER();
+        
         return RMP_ERR_THD;
     }
     else
@@ -1825,6 +1847,7 @@ rmp_ret_t RMP_Thd_Suspend(volatile struct RMP_Thd* Thread)
     if(Pure==RMP_THD_FREE)
     {
         RMP_COV_MARKER();
+        
         RMP_Sched_Unlock();
         return RMP_ERR_THD;
     }
@@ -1839,6 +1862,7 @@ rmp_ret_t RMP_Thd_Suspend(volatile struct RMP_Thd* Thread)
     if((State&RMP_THD_SUSPEND)!=0U)
     {
         RMP_COV_MARKER();
+        
         RMP_Sched_Unlock();
         return RMP_ERR_STATE;
     }
@@ -1852,6 +1876,7 @@ rmp_ret_t RMP_Thd_Suspend(volatile struct RMP_Thd* Thread)
     if(Pure==RMP_THD_READY)
     {
         RMP_COV_MARKER();
+        
         /* Delete from runqueue - must be not suspended */
         _RMP_Run_Del(Thread,State);
     }
@@ -1888,6 +1913,7 @@ rmp_ret_t RMP_Thd_Resume(volatile struct RMP_Thd* Thread)
     if(Thread==RMP_NULL)
     {
         RMP_COV_MARKER();
+        
         return RMP_ERR_THD;
     }
     else
@@ -1909,6 +1935,7 @@ rmp_ret_t RMP_Thd_Resume(volatile struct RMP_Thd* Thread)
     if(Pure==RMP_THD_FREE)
     {
         RMP_COV_MARKER();
+        
         RMP_Sched_Unlock();
         return RMP_ERR_THD;
     }
@@ -1923,6 +1950,7 @@ rmp_ret_t RMP_Thd_Resume(volatile struct RMP_Thd* Thread)
     if((State&RMP_THD_SUSPEND)==0U)
     {
         RMP_COV_MARKER();
+        
         RMP_Sched_Unlock();
         return RMP_ERR_STATE;
     }
@@ -1940,6 +1968,7 @@ rmp_ret_t RMP_Thd_Resume(volatile struct RMP_Thd* Thread)
     if(Pure==RMP_THD_READY)
     {
         RMP_COV_MARKER();
+        
         /* Insert into runqueue - must be not suspended */
         _RMP_Run_Ins(Thread,State);
     }
@@ -1970,6 +1999,7 @@ rmp_ret_t RMP_Thd_Delay(rmp_ptr_t Slice)
     if((Slice==0U)||(Slice>=RMP_SLICE_MAX))
     {
         RMP_COV_MARKER();
+        
         return RMP_ERR_SLICE;
     }
     else
@@ -2020,6 +2050,7 @@ rmp_ret_t RMP_Thd_Cancel(volatile struct RMP_Thd* Thread)
     if(Thread==RMP_NULL)
     {
         RMP_COV_MARKER();
+        
         return RMP_ERR_THD;
     }
     else
@@ -2041,6 +2072,7 @@ rmp_ret_t RMP_Thd_Cancel(volatile struct RMP_Thd* Thread)
     if(Pure==RMP_THD_FREE)
     {
         RMP_COV_MARKER();
+        
         RMP_Sched_Unlock();
         return RMP_ERR_THD;
     }
@@ -2055,6 +2087,7 @@ rmp_ret_t RMP_Thd_Cancel(volatile struct RMP_Thd* Thread)
     if(Pure!=RMP_THD_DELAY)
     {
         RMP_COV_MARKER();
+        
         RMP_Sched_Unlock();
         return RMP_ERR_STATE;
     }
@@ -2096,7 +2129,7 @@ void RMP_Thd_Loop(rmp_ptr_t Loop)
     /* Just waste some time - volatile thus the compiler will not optimize */
     for(Count=0U;Count<Loop;Count++)
     {
-        RMP_COV_MARKER();
+        /* No action required */
     }
 }
 /* End Function:RMP_Thd_Loop *************************************************/
@@ -2125,6 +2158,7 @@ rmp_ret_t RMP_Thd_Snd(volatile struct RMP_Thd* Thread,
     if(Thread==RMP_NULL)
     {
         RMP_COV_MARKER();
+        
         return RMP_ERR_THD;
     }
     else
@@ -2146,6 +2180,7 @@ rmp_ret_t RMP_Thd_Snd(volatile struct RMP_Thd* Thread,
     if(Pure==RMP_THD_FREE)
     {
         RMP_COV_MARKER();
+        
         RMP_Sched_Unlock();
         return RMP_ERR_THD;
     }
@@ -2164,13 +2199,14 @@ rmp_ret_t RMP_Thd_Snd(volatile struct RMP_Thd* Thread,
     if(Thd_Cur==Thread)
     {
         RMP_COV_MARKER();
+        
         RMP_Sched_Unlock();
         return RMP_ERR_OPER;
     }
     else
     {
-        /* No action required */
         RMP_COV_MARKER();
+        /* No action required */
     }
 #endif
     
@@ -2188,6 +2224,7 @@ rmp_ret_t RMP_Thd_Snd(volatile struct RMP_Thd* Thread,
             if(Pure==RMP_THD_RCVDLY)
             {
                 RMP_COV_MARKER();
+                
                 RMP_List_Del(Thread->Dly_Head.Prev,Thread->Dly_Head.Next);
             }
             else
@@ -2222,12 +2259,14 @@ rmp_ret_t RMP_Thd_Snd(volatile struct RMP_Thd* Thread,
         if(Slice==0U)
         {
             RMP_COV_MARKER();
+            
             RMP_Sched_Unlock();
             return RMP_ERR_OPER;
         }
         else
         {
             RMP_COV_MARKER();
+            
             /* When abort, an error code will be supplied instead */
             Thd_Cur->Retval=0;
         }
@@ -2243,12 +2282,14 @@ rmp_ret_t RMP_Thd_Snd(volatile struct RMP_Thd* Thread,
         if(Slice<RMP_SLICE_MAX)
         {
             RMP_COV_MARKER();
+            
             _RMP_Dly_Ins(Thd_Cur,Slice);
             RMP_THD_STATE_SET(State_Cur,RMP_THD_SNDDLY);
         }
         else
         {
             RMP_COV_MARKER();
+            
             RMP_THD_STATE_SET(State_Cur,RMP_THD_SNDBLK);
         }
 
@@ -2287,6 +2328,7 @@ rmp_ret_t RMP_Thd_Snd_ISR(volatile struct RMP_Thd* Thread,
     if(Thread==RMP_NULL)
     {
         RMP_COV_MARKER();
+        
         return RMP_ERR_THD;
     }
     else
@@ -2306,6 +2348,7 @@ rmp_ret_t RMP_Thd_Snd_ISR(volatile struct RMP_Thd* Thread,
     if(Pure==RMP_THD_FREE)
     {
         RMP_COV_MARKER();
+        
         return RMP_ERR_THD;
     }
     else
@@ -2329,6 +2372,7 @@ rmp_ret_t RMP_Thd_Snd_ISR(volatile struct RMP_Thd* Thread,
             if(Pure==RMP_THD_RCVDLY)
             {
                 RMP_COV_MARKER();
+                
                 RMP_List_Del(Thread->Dly_Head.Prev,Thread->Dly_Head.Next);
             }
             else
@@ -2347,6 +2391,7 @@ rmp_ret_t RMP_Thd_Snd_ISR(volatile struct RMP_Thd* Thread,
             if(RMP_Sched_Pend!=0U)
             {
                 RMP_COV_MARKER();
+                
                 /* Context switch will clear the pend flag */
                 RMP_YIELD_ISR();
             }
@@ -2370,6 +2415,7 @@ rmp_ret_t RMP_Thd_Snd_ISR(volatile struct RMP_Thd* Thread,
     else
     {
         RMP_COV_MARKER();
+        
         return RMP_ERR_OPER;
     }
 
@@ -2395,6 +2441,7 @@ static rmp_ptr_t _RMP_Thd_Unblock(volatile struct RMP_Thd* Thd_Cur,
     if(Data!=RMP_NULL)
     {
         RMP_COV_MARKER();
+        
         *Data=Thd_Cur->Mail_Rcv;
     }
     else
@@ -2452,6 +2499,7 @@ rmp_ret_t RMP_Thd_Rcv(rmp_ptr_t* Data,
     if((State&RMP_THD_MBOXFUL)!=0U)
     {
         RMP_COV_MARKER();
+        
         /* Extract value and unblock next sender, then put cached thread state back */
         Thd_Cur->State=_RMP_Thd_Unblock(Thd_Cur,Data,State);
         RMP_Sched_Unlock();
@@ -2467,12 +2515,14 @@ rmp_ret_t RMP_Thd_Rcv(rmp_ptr_t* Data,
         if(Slice==0U)
         {
             RMP_COV_MARKER();
+            
             RMP_Sched_Unlock();
             return RMP_ERR_OPER;
         }
         else
         {
             RMP_COV_MARKER();
+            
             /* When abort, an error code will be supplied instead */
             Thd_Cur->Retval=0;
         }
@@ -2483,12 +2533,14 @@ rmp_ret_t RMP_Thd_Rcv(rmp_ptr_t* Data,
         if(Slice<RMP_SLICE_MAX)
         {
             RMP_COV_MARKER();
+            
             _RMP_Dly_Ins(Thd_Cur,Slice);
             RMP_THD_STATE_SET(State,RMP_THD_RCVDLY);
         }
         else
         {
             RMP_COV_MARKER();
+            
             RMP_THD_STATE_SET(State,RMP_THD_RCVBLK);
         }
         
@@ -2508,6 +2560,7 @@ rmp_ret_t RMP_Thd_Rcv(rmp_ptr_t* Data,
         if((State&RMP_THD_MBOXFUL)!=0U)
         {
             RMP_COV_MARKER();
+            
             /* The return value must be good */
             RMP_ASSERT(Thd_Cur->Retval==0);
             /* Extract value and unblock next sender, then put cached thread state back */
@@ -2517,6 +2570,7 @@ rmp_ret_t RMP_Thd_Rcv(rmp_ptr_t* Data,
         else
         {
             RMP_COV_MARKER();
+            
             /* The return value must be bad */
             RMP_ASSERT(Thd_Cur->Retval!=0);
         }
@@ -2544,6 +2598,7 @@ rmp_ret_t RMP_Sem_Crt(volatile struct RMP_Sem* Semaphore,
     if(Semaphore==RMP_NULL)
     {
         RMP_COV_MARKER();
+        
         return RMP_ERR_SEM;
     }
     else
@@ -2560,6 +2615,7 @@ rmp_ret_t RMP_Sem_Crt(volatile struct RMP_Sem* Semaphore,
     if(Semaphore->State!=RMP_SEM_FREE)
     {
         RMP_COV_MARKER();
+        
         RMP_Sched_Unlock();
         return RMP_ERR_SEM;
     }
@@ -2573,6 +2629,7 @@ rmp_ret_t RMP_Sem_Crt(volatile struct RMP_Sem* Semaphore,
     if(Number>=RMP_SEM_CNT_MAX)
     {
         RMP_COV_MARKER();
+        
         RMP_Sched_Unlock();
         return RMP_ERR_OPER;
     }
@@ -2608,6 +2665,7 @@ rmp_ret_t RMP_Sem_Del(volatile struct RMP_Sem* Semaphore)
     if(Semaphore==RMP_NULL)
     {
         RMP_COV_MARKER();
+        
         return RMP_ERR_SEM;
     }
     else
@@ -2624,6 +2682,7 @@ rmp_ret_t RMP_Sem_Del(volatile struct RMP_Sem* Semaphore)
     if(Semaphore->State!=RMP_SEM_USED)
     {
         RMP_COV_MARKER();
+        
         RMP_Sched_Unlock();
         return RMP_ERR_SEM;
     }
@@ -2668,6 +2727,7 @@ rmp_ret_t RMP_Sem_Post(volatile struct RMP_Sem* Semaphore,
     if(Semaphore==RMP_NULL)
     {
         RMP_COV_MARKER();
+        
         return RMP_ERR_SEM;
     }
     else
@@ -2680,6 +2740,7 @@ rmp_ret_t RMP_Sem_Post(volatile struct RMP_Sem* Semaphore,
     if(Number==0U)
     {
         RMP_COV_MARKER();
+        
         return RMP_ERR_OPER;
     }
     else
@@ -2696,6 +2757,7 @@ rmp_ret_t RMP_Sem_Post(volatile struct RMP_Sem* Semaphore,
     if(Semaphore->State!=RMP_SEM_USED)
     {
         RMP_COV_MARKER();
+        
         RMP_Sched_Unlock();
         return RMP_ERR_SEM;
     }
@@ -2714,6 +2776,7 @@ rmp_ret_t RMP_Sem_Post(volatile struct RMP_Sem* Semaphore,
     if((Num_Cur+Number)>=RMP_SEM_CNT_MAX)
     {
         RMP_COV_MARKER();
+        
         RMP_Sched_Unlock();
         return RMP_ERR_OPER;
     }
@@ -2762,6 +2825,7 @@ rmp_ret_t RMP_Sem_Post_ISR(volatile struct RMP_Sem* Semaphore,
     if(Semaphore==RMP_NULL)
     {
         RMP_COV_MARKER();
+        
         return RMP_ERR_SEM;
     }
     else
@@ -2774,6 +2838,7 @@ rmp_ret_t RMP_Sem_Post_ISR(volatile struct RMP_Sem* Semaphore,
     if(Number==0U)
     {
         RMP_COV_MARKER();
+        
         return RMP_ERR_OPER;
     }
     else
@@ -2786,6 +2851,7 @@ rmp_ret_t RMP_Sem_Post_ISR(volatile struct RMP_Sem* Semaphore,
     if(Semaphore->State!=RMP_SEM_USED)
     {
         RMP_COV_MARKER();
+        
         return RMP_ERR_SEM;
     }
     else
@@ -2803,6 +2869,7 @@ rmp_ret_t RMP_Sem_Post_ISR(volatile struct RMP_Sem* Semaphore,
     if((Num_Cur+Number)>=RMP_SEM_CNT_MAX)
     {
         RMP_COV_MARKER();
+        
         return RMP_ERR_OPER;
     }
     else
@@ -2830,6 +2897,7 @@ rmp_ret_t RMP_Sem_Post_ISR(volatile struct RMP_Sem* Semaphore,
     if(RMP_Sched_Pend!=0U)
     {
         RMP_COV_MARKER();
+        
         /* Context switch will clear the pend flag */
         RMP_YIELD_ISR();   
     }
@@ -2860,6 +2928,7 @@ rmp_ret_t RMP_Sem_Bcst(volatile struct RMP_Sem* Semaphore)
     if(Semaphore==RMP_NULL)
     {
         RMP_COV_MARKER();
+        
         return RMP_ERR_SEM;
     }
     else
@@ -2876,6 +2945,7 @@ rmp_ret_t RMP_Sem_Bcst(volatile struct RMP_Sem* Semaphore)
     if(Semaphore->State!=RMP_SEM_USED)
     {
         RMP_COV_MARKER();
+        
         RMP_Sched_Unlock();
         return RMP_ERR_SEM;
     }
@@ -2919,6 +2989,7 @@ rmp_ret_t RMP_Sem_Bcst_ISR(volatile struct RMP_Sem* Semaphore)
     if(Semaphore==RMP_NULL)
     {
         RMP_COV_MARKER();
+        
         return RMP_ERR_SEM;
     }
     else
@@ -2931,6 +3002,7 @@ rmp_ret_t RMP_Sem_Bcst_ISR(volatile struct RMP_Sem* Semaphore)
     if(Semaphore->State!=RMP_SEM_USED)
     {
         RMP_COV_MARKER();
+        
         return RMP_ERR_SEM;
     }
     else
@@ -2954,6 +3026,7 @@ rmp_ret_t RMP_Sem_Bcst_ISR(volatile struct RMP_Sem* Semaphore)
     if(RMP_Sched_Pend!=0U)
     {
         RMP_COV_MARKER();
+        
         /* Context switch will clear the pend flag */
         RMP_YIELD_ISR();
     }
@@ -2991,6 +3064,7 @@ static rmp_ret_t _RMP_Sem_Pend_Core(volatile struct RMP_Sem* Semaphore,
     if(Semaphore->State!=RMP_SEM_USED)
     {
         RMP_COV_MARKER();
+        
         RMP_Sched_Unlock();
         return RMP_ERR_SEM;
     }
@@ -3008,6 +3082,7 @@ static rmp_ret_t _RMP_Sem_Pend_Core(volatile struct RMP_Sem* Semaphore,
     if(Num_Cur!=0U)
     {
         RMP_COV_MARKER();
+        
         Num_Cur--;
         /* Put cached number back */
         Semaphore->Num_Cur=Num_Cur;
@@ -3022,12 +3097,14 @@ static rmp_ret_t _RMP_Sem_Pend_Core(volatile struct RMP_Sem* Semaphore,
         if(Slice==0U)
         {
             RMP_COV_MARKER();
+            
             RMP_Sched_Unlock();
             return RMP_ERR_OPER;
         }
         else
         {
             RMP_COV_MARKER();
+            
             /* When abort, an error code will be supplied instead */
             Thd_Cur->Retval=0;
         }
@@ -3043,12 +3120,14 @@ static rmp_ret_t _RMP_Sem_Pend_Core(volatile struct RMP_Sem* Semaphore,
         if(Slice<RMP_SLICE_MAX)
         {
             RMP_COV_MARKER();
+            
             _RMP_Dly_Ins(Thd_Cur,Slice);
             RMP_THD_STATE_SET(State,RMP_THD_SEMDLY);
         }
         else
         {
             RMP_COV_MARKER();
+            
             RMP_THD_STATE_SET(State,RMP_THD_SEMBLK);
         }
         
@@ -3078,6 +3157,7 @@ rmp_ret_t RMP_Sem_Pend(volatile struct RMP_Sem* Semaphore,
     if(Semaphore==RMP_NULL)
     {
         RMP_COV_MARKER();
+        
         return RMP_ERR_SEM;
     }
     else
@@ -3110,6 +3190,7 @@ rmp_ret_t RMP_Sem_Pend_Unlock(volatile struct RMP_Sem* Semaphore,
     if(Semaphore==RMP_NULL)
     {
         RMP_COV_MARKER();
+        
         RMP_Sched_Unlock();
         return RMP_ERR_SEM;
     }
@@ -3123,6 +3204,7 @@ rmp_ret_t RMP_Sem_Pend_Unlock(volatile struct RMP_Sem* Semaphore,
     if(RMP_Sched_Lock_Cnt!=1U)
     {
         RMP_COV_MARKER();
+        
         RMP_Sched_Unlock();
         return RMP_ERR_OPER;
     }
@@ -3153,6 +3235,7 @@ rmp_ret_t RMP_Sem_Abort(volatile struct RMP_Thd* Thread)
     if(Thread==RMP_NULL)
     {
         RMP_COV_MARKER();
+        
         return RMP_ERR_THD;
     }
     else
@@ -3174,6 +3257,7 @@ rmp_ret_t RMP_Sem_Abort(volatile struct RMP_Thd* Thread)
     if(Pure==RMP_THD_FREE)
     {
         RMP_COV_MARKER();
+        
         RMP_Sched_Unlock();
         return RMP_ERR_THD;
     }
@@ -3188,6 +3272,7 @@ rmp_ret_t RMP_Sem_Abort(volatile struct RMP_Thd* Thread)
     if((Pure!=RMP_THD_SEMBLK)&&(Pure!=RMP_THD_SEMDLY))
     {
         RMP_COV_MARKER();
+        
         RMP_Sched_Unlock();
         return RMP_ERR_STATE;
     }
@@ -3202,6 +3287,7 @@ rmp_ret_t RMP_Sem_Abort(volatile struct RMP_Thd* Thread)
     if(Pure==RMP_THD_SEMDLY)
     {
         RMP_COV_MARKER();
+        
         RMP_List_Del(Thread->Dly_Head.Prev,Thread->Dly_Head.Next);
     }
     else
@@ -3240,6 +3326,7 @@ rmp_ret_t RMP_Sem_Cnt(volatile struct RMP_Sem* Semaphore)
     if(Semaphore==RMP_NULL)
     {
         RMP_COV_MARKER();
+        
         return RMP_ERR_SEM;
     }
     else
@@ -3256,6 +3343,7 @@ rmp_ret_t RMP_Sem_Cnt(volatile struct RMP_Sem* Semaphore)
     if(Semaphore->State!=RMP_SEM_USED)
     {
         RMP_COV_MARKER();
+        
         RMP_Sched_Unlock();
         return RMP_ERR_SEM;
     }
@@ -3301,11 +3389,18 @@ Description : The entry of the operating system. This function is for
               compatibility with the toolchains.
 Input       : None.
 Output      : None.
-Return      : int - This function never returns.
+Return      : int - Dummy; this function never returns.
 ******************************************************************************/
 int main(void)
 {
     rmp_ptr_t Count;
+    
+    /* Initialize the low-level hardware first */
+    _RMP_Lowlvl_Init();
+    
+#ifdef RMP_START_HOOK
+    RMP_START_HOOK();
+#endif
 
 #ifdef RMP_COV_LINE_NUM
     /* Initialize coverage markers if coverage enabled */
@@ -3313,13 +3408,6 @@ int main(void)
     {
         RMP_Coverage[Count]=0U;
     }
-#endif
-    
-    /* Initialize the low-level hardware first */
-    _RMP_Lowlvl_Init();
-    
-#ifdef RMP_START_HOOK
-    RMP_START_HOOK();
 #endif
 
     /* Now initialize the kernel data structures */
@@ -3416,6 +3504,7 @@ rmp_ret_t RMP_Mem_Init(volatile void* Pool,
     if((Pool==RMP_NULL)||(Size<(1024U*sizeof(rmp_ptr_t)))||((((rmp_ptr_t)Pool)+Size)<Size))
     {
         RMP_COV_MARKER();
+        
         return RMP_ERR_MEM;
     }
     else
@@ -3428,6 +3517,7 @@ rmp_ret_t RMP_Mem_Init(volatile void* Pool,
     if(((((rmp_ptr_t)Pool)%sizeof(rmp_ptr_t))!=0U)||((Size%sizeof(rmp_ptr_t))!=0U))
     {
         RMP_COV_MARKER();
+        
         return RMP_ERR_MEM;
     }
     else
@@ -3535,6 +3625,7 @@ static void _RMP_Mem_Ins(volatile void* Pool,
     if(Slot==Slot->Next)
     {
         RMP_COV_MARKER();
+        
         /* Set the corresponding bit in the TLSF bitmap */
         Mem->Bitmap[Level>>RMP_WORD_ORDER]|=RMP_POW2(Level&RMP_WORD_MASK);
     }
@@ -3588,6 +3679,7 @@ static void _RMP_Mem_Del(volatile void* Pool,
     if(Slot==Slot->Next)
     {
         RMP_COV_MARKER();
+        
         /* Clear the corresponding bit in the TLSF bitmap */
         Mem->Bitmap[Level>>RMP_WORD_ORDER]&=~RMP_POW2(Level&RMP_WORD_MASK);
     }
@@ -3631,12 +3723,14 @@ static rmp_ret_t _RMP_Mem_Search(volatile void* Pool,
     if(Size!=(RMP_POW2(FLI_Search+3U)*(SLI_Search+8U)))
     {
         RMP_COV_MARKER();
+        
         SLI_Search++;
         
         /* If the SLI level is the largest of the SLI levels, then jump to the next FLI level */
         if(SLI_Search==8U)
         {
             RMP_COV_MARKER();
+            
             FLI_Search+=1U;
             SLI_Search=0U;
         }
@@ -3657,6 +3751,7 @@ static rmp_ret_t _RMP_Mem_Search(volatile void* Pool,
     if(FLI_Search>=Mem->FLI_Num)
     {
         RMP_COV_MARKER();
+        
         return -1;
     }
     else
@@ -3674,6 +3769,7 @@ static rmp_ret_t _RMP_Mem_Search(volatile void* Pool,
     if(Word!=0U)
     {
         RMP_COV_MARKER();
+        
         /* Also need to compensate for the lower levels that were shifted away; the following line is
          * simplified from "Level=(Level&(~RMP_WORD_MASK))+(RMP_LSB_GET(Word)+(Level&RMP_WORD_MASK))" */
         Level+=RMP_LSB_GET(Word);
@@ -3685,6 +3781,7 @@ static rmp_ret_t _RMP_Mem_Search(volatile void* Pool,
     else
     {
         RMP_COV_MARKER();
+        
         Limit=RMP_MEM_WORD_NUM(Mem->FLI_Num);
         /* From the next word, query one by one */
         for(Word=(Level>>RMP_WORD_ORDER)+1U;Word<Limit;Word++)
@@ -3693,6 +3790,7 @@ static rmp_ret_t _RMP_Mem_Search(volatile void* Pool,
             if(Mem->Bitmap[Word]!=0U)
             {
                 RMP_COV_MARKER();
+                
                 /* Find the actual level */ 
                 Level=RMP_LSB_GET(Mem->Bitmap[Word]);
                 *FLI_Level=((Word<<RMP_WORD_ORDER)+Level)>>3U;
@@ -3737,6 +3835,7 @@ void* RMP_Malloc(volatile void* Pool,
     if((Pool==RMP_NULL)||(Size==0U))
     {
         RMP_COV_MARKER();
+        
         return RMP_NULL;
     }
     else
@@ -3755,6 +3854,7 @@ void* RMP_Malloc(volatile void* Pool,
     if(_RMP_Mem_Search(Pool,Round_Size,&FLI_Level,&SLI_Level)!=0)
     {
         RMP_COV_MARKER();
+        
         return RMP_NULL;
     }
     else
@@ -3775,6 +3875,7 @@ void* RMP_Malloc(volatile void* Pool,
     if(New_Size>=RMP_MEM_SIZE2WHOLE(64U))
     {
         RMP_COV_MARKER();
+        
         Old_Size=RMP_MEM_SIZE2WHOLE(Round_Size);
         New=(volatile struct RMP_Mem_Head*)(((rmp_ptr_t)Head)+Old_Size);
 
@@ -3787,6 +3888,7 @@ void* RMP_Malloc(volatile void* Pool,
     else
     {
         RMP_COV_MARKER();
+        
         /* Residue too small, mark the whole block as in use */
         Head->State=RMP_MEM_USED;
     }
@@ -3817,6 +3919,7 @@ void RMP_Free(volatile void* Pool,
     if(Mem_Ptr==RMP_NULL)
     {
         RMP_COV_MARKER();
+        
         return;
     }
     else
@@ -3830,6 +3933,7 @@ void RMP_Free(volatile void* Pool,
     if(Pool==RMP_NULL)
     {
         RMP_COV_MARKER();
+        
         return;
     }
     else
@@ -3846,6 +3950,7 @@ void RMP_Free(volatile void* Pool,
     if((((rmp_ptr_t)Mem_Ptr)<=((rmp_ptr_t)Mem))||(((rmp_ptr_t)Mem_Ptr)>=(((rmp_ptr_t)Mem)+Mem->Size)))
     {
         RMP_COV_MARKER();
+        
         return;
     }
     else
@@ -3862,6 +3967,7 @@ void RMP_Free(volatile void* Pool,
     if(Head->State==RMP_MEM_FREE)
     {
         RMP_COV_MARKER();
+        
         return;
     }
     else
@@ -3879,10 +3985,12 @@ void RMP_Free(volatile void* Pool,
     if(((rmp_ptr_t)Right)!=(((rmp_ptr_t)Mem)+Mem->Size))
     {
         RMP_COV_MARKER();
+        
         /* If this one is unoccupied */
         if((Right->State)==RMP_MEM_FREE)
         {
             RMP_COV_MARKER();
+            
             /* Delete, merge */
             _RMP_Mem_Del(Pool,Right);
             _RMP_Mem_Block(Head,RMP_MEM_HEAD2END(Right)-(rmp_ptr_t)Head,RMP_MEM_FREE);
@@ -3910,6 +4018,7 @@ void RMP_Free(volatile void* Pool,
         if(Left->State==RMP_MEM_FREE)
         {
             RMP_COV_MARKER();
+            
             /* Delete, merge */
             _RMP_Mem_Del(Pool,Left);
             _RMP_Mem_Block(Left,RMP_MEM_HEAD2END(Head)-(rmp_ptr_t)Left,RMP_MEM_FREE);
@@ -3933,11 +4042,13 @@ void RMP_Free(volatile void* Pool,
     if(Merge_Left==0U)
     {
         RMP_COV_MARKER();
+        
         _RMP_Mem_Ins(Pool,Head);
     }
     else
     {
         RMP_COV_MARKER();
+        
         _RMP_Mem_Ins(Pool,Left);
     }
 }
@@ -3984,6 +4095,7 @@ void* RMP_Realloc(volatile void* Pool,
     if(Mem_Ptr==RMP_NULL)
     {
         RMP_COV_MARKER();
+        
         return RMP_Malloc(Pool, Size);
     }
     else
@@ -3997,6 +4109,7 @@ void* RMP_Realloc(volatile void* Pool,
     if(Size==0U)
     {
         RMP_COV_MARKER();
+        
         RMP_Free(Pool, Mem_Ptr);
         return RMP_NULL;
     }
@@ -4007,12 +4120,12 @@ void* RMP_Realloc(volatile void* Pool,
     }
     
     /* The real reallocation starts here */
-    
 #if(RMP_CHECK_ENABLE!=0U)
     /* Check if the pool pointer is valid */
     if(Pool==RMP_NULL)
     {
         RMP_COV_MARKER();
+        
         return RMP_NULL;
     }
     else
@@ -4029,6 +4142,7 @@ void* RMP_Realloc(volatile void* Pool,
     if((((rmp_ptr_t)Mem_Ptr)<=((rmp_ptr_t)Mem))||(((rmp_ptr_t)Mem_Ptr)>=(((rmp_ptr_t)Mem)+Mem->Size)))
     {
         RMP_COV_MARKER();
+        
         return RMP_NULL;
     }
     else
@@ -4046,6 +4160,7 @@ void* RMP_Realloc(volatile void* Pool,
     if(Head->State==RMP_MEM_FREE)
     {
         RMP_COV_MARKER();
+        
         return RMP_NULL;
     }
     else
@@ -4066,6 +4181,7 @@ void* RMP_Realloc(volatile void* Pool,
     if(((rmp_ptr_t)Right)==(((rmp_ptr_t)Mem)+Mem->Size))
     {
         RMP_COV_MARKER();
+        
         Right=RMP_NULL;
     }
     else
@@ -4077,21 +4193,24 @@ void* RMP_Realloc(volatile void* Pool,
     /* Are we gonna expand it? */
     if(Mem_Size<Round_Size)
     {
-        /* Expanding */
         RMP_COV_MARKER();
-        /* Does the right side exist at all? */
+        
+        /* Expanding - does the right side exist at all? */
         if(Right!=RMP_NULL)
         {
             RMP_COV_MARKER();
+            
             /* Is it allocated? */
             if(Right->State==RMP_MEM_FREE)
             {
                 RMP_COV_MARKER();
+                
                 /* Right-side exists and is free, need to see if it is big enough */
                 Res_Size=RMP_MEM_PTR_DIFF(Right->Tail,Mem_Ptr);
                 if(Res_Size>=Round_Size)
                 {
                     RMP_COV_MARKER();
+                    
                     /* Remove the right-side from the free list so we can operate on it */
                     _RMP_Mem_Del(Pool, Right);   
                     /* Allocate and calculate if the space left could be big enough to be a new 
@@ -4101,6 +4220,7 @@ void* RMP_Realloc(volatile void* Pool,
                     if(Res_Size>=RMP_MEM_SIZE2WHOLE(64U))
                     {
                         RMP_COV_MARKER();
+                        
                         Old_Size=RMP_MEM_SIZE2WHOLE(Round_Size);
                         Res=(volatile struct RMP_Mem_Head*)(((rmp_ptr_t)Head)+Old_Size);
 
@@ -4110,10 +4230,11 @@ void* RMP_Realloc(volatile void* Pool,
                         /* Put the residue block back */
                         _RMP_Mem_Ins(Pool, Res);
                     }
+                    /* Residue too small, merging the whole thing in is the only option */
                     else
                     {
-                        /* Residue too small, merging the whole thing in is the only option */
                         RMP_COV_MARKER();
+                        
                         Old_Size=RMP_MEM_PTR_DIFF(Right->Tail,Head)+sizeof(struct RMP_Mem_Tail);
                         _RMP_Mem_Block(Head,Old_Size,RMP_MEM_USED);
                     }
@@ -4147,6 +4268,7 @@ void* RMP_Realloc(volatile void* Pool,
         if(New==RMP_NULL)
         {
             RMP_COV_MARKER();
+            
             return RMP_NULL;
         }
         else
@@ -4171,6 +4293,7 @@ void* RMP_Realloc(volatile void* Pool,
     else if(Mem_Size==Round_Size)
     {
         RMP_COV_MARKER();
+        
         return Mem_Ptr;
     }
     else
@@ -4182,13 +4305,13 @@ void* RMP_Realloc(volatile void* Pool,
     /* Must be shrinking memory */
     if(Right!=RMP_NULL)
     {
-        /* Right side does exist */
         RMP_COV_MARKER();
-        /* Is it allocated? */
+        
+        /* Right side does exist and not allocated; need to merge the block */
         if(Right->State==RMP_MEM_FREE)
         {
-            /* Right-side not allocated. Need to merge the block */
             RMP_COV_MARKER();
+            
             /* Remove the right-side from the allocation list so we can operate on it */
             _RMP_Mem_Del(Pool, Right);
             Res_Size=RMP_MEM_PTR_DIFF(Right->Tail,Mem_Ptr)-Round_Size;
@@ -4222,6 +4345,7 @@ void* RMP_Realloc(volatile void* Pool,
     if(Res_Size<RMP_MEM_SIZE2WHOLE(64U))
     {
         RMP_COV_MARKER();
+        
         /* The residue block wouldn't even count as a small one, do nothing and quit */
         return Mem_Ptr;
     }
@@ -4259,6 +4383,7 @@ rmp_ret_t RMP_Fifo_Crt(volatile struct RMP_Fifo* Fifo)
     if(Fifo==RMP_NULL)
     {
         RMP_COV_MARKER();
+        
         return RMP_ERR_FIFO;
     }
     else
@@ -4275,6 +4400,7 @@ rmp_ret_t RMP_Fifo_Crt(volatile struct RMP_Fifo* Fifo)
     if(Fifo->State!=RMP_FIFO_FREE)
     {
         RMP_COV_MARKER();
+        
         RMP_Sched_Unlock();
         return RMP_ERR_FIFO;
     }
@@ -4308,6 +4434,7 @@ rmp_ret_t RMP_Fifo_Del(volatile struct RMP_Fifo* Fifo)
     if(Fifo==RMP_NULL)
     {
         RMP_COV_MARKER();
+        
         return RMP_ERR_FIFO;
     }
     else
@@ -4324,6 +4451,7 @@ rmp_ret_t RMP_Fifo_Del(volatile struct RMP_Fifo* Fifo)
     if(Fifo->State!=RMP_FIFO_USED)
     {
         RMP_COV_MARKER();
+        
         RMP_Sched_Unlock();
         return RMP_ERR_FIFO;
     }
@@ -4338,6 +4466,7 @@ rmp_ret_t RMP_Fifo_Del(volatile struct RMP_Fifo* Fifo)
     if(Fifo->Num_Cur!=0U)
     {
         RMP_COV_MARKER();
+        
         RMP_Sched_Unlock();
         return RMP_ERR_OPER;
     }
@@ -4369,6 +4498,7 @@ rmp_ret_t RMP_Fifo_Read(volatile struct RMP_Fifo* Fifo,
     if(Fifo==RMP_NULL)
     {
         RMP_COV_MARKER();
+        
         return RMP_ERR_FIFO;
     }
     else
@@ -4381,6 +4511,7 @@ rmp_ret_t RMP_Fifo_Read(volatile struct RMP_Fifo* Fifo,
     if(Node==RMP_NULL)
     {
         RMP_COV_MARKER();
+        
         return RMP_ERR_OPER;
     }
     else
@@ -4397,6 +4528,7 @@ rmp_ret_t RMP_Fifo_Read(volatile struct RMP_Fifo* Fifo,
     if(Fifo->State!=RMP_FIFO_USED)
     {
         RMP_COV_MARKER();
+        
         RMP_Sched_Unlock();
         return RMP_ERR_FIFO;
     }
@@ -4411,6 +4543,7 @@ rmp_ret_t RMP_Fifo_Read(volatile struct RMP_Fifo* Fifo,
     if(Fifo->Head.Next==&(Fifo->Head))
     {
         RMP_COV_MARKER();
+        
         RMP_Sched_Unlock();
         return RMP_ERR_OPER;
     }
@@ -4422,7 +4555,7 @@ rmp_ret_t RMP_Fifo_Read(volatile struct RMP_Fifo* Fifo,
     
     /* If not, grab one */
     *Node=Fifo->Head.Next;
-    RMP_List_Del((*Node)->Prev, (*Node)->Next);
+    RMP_List_Del((*Node)->Prev,(*Node)->Next);
     
     /* The count should not be zero, decrease it */
     RMP_ASSERT(Fifo->Num_Cur!=0U);
@@ -4448,6 +4581,7 @@ rmp_ret_t RMP_Fifo_Write(volatile struct RMP_Fifo* Fifo,
     if(Fifo==RMP_NULL)
     {
         RMP_COV_MARKER();
+        
         return RMP_ERR_FIFO;
     }
     else
@@ -4460,6 +4594,7 @@ rmp_ret_t RMP_Fifo_Write(volatile struct RMP_Fifo* Fifo,
     if(Node==RMP_NULL)
     {
         RMP_COV_MARKER();
+        
         return RMP_ERR_OPER;
     }
     else
@@ -4476,6 +4611,7 @@ rmp_ret_t RMP_Fifo_Write(volatile struct RMP_Fifo* Fifo,
     if(Fifo->State!=RMP_FIFO_USED)
     {
         RMP_COV_MARKER();
+        
         RMP_Sched_Unlock();
         return RMP_ERR_FIFO;
     }
@@ -4487,7 +4623,7 @@ rmp_ret_t RMP_Fifo_Write(volatile struct RMP_Fifo* Fifo,
 #endif
     
     /* Write to list and increase count */
-    RMP_List_Ins(Node, Fifo->Head.Prev, &(Fifo->Head));
+    RMP_List_Ins(Node,Fifo->Head.Prev,&(Fifo->Head));
     Fifo->Num_Cur++;
 
     RMP_Sched_Unlock();
@@ -4513,6 +4649,7 @@ rmp_ret_t RMP_Fifo_Write_ISR(volatile struct RMP_Fifo* Fifo,
     if(Fifo==RMP_NULL)
     {
         RMP_COV_MARKER();
+        
         return RMP_ERR_FIFO;
     }
     else
@@ -4525,6 +4662,7 @@ rmp_ret_t RMP_Fifo_Write_ISR(volatile struct RMP_Fifo* Fifo,
     if(Node==RMP_NULL)
     {
         RMP_COV_MARKER();
+        
         return RMP_ERR_OPER;
     }
     else
@@ -4537,6 +4675,7 @@ rmp_ret_t RMP_Fifo_Write_ISR(volatile struct RMP_Fifo* Fifo,
     if(Fifo->State!=RMP_FIFO_USED)
     {
         RMP_COV_MARKER();
+        
         return RMP_ERR_FIFO;
     }
     else
@@ -4569,6 +4708,7 @@ rmp_ret_t RMP_Fifo_Cnt(volatile struct RMP_Fifo* Fifo)
     if(Fifo==RMP_NULL)
     {
         RMP_COV_MARKER();
+        
         return RMP_ERR_FIFO;
     }
     else
@@ -4585,6 +4725,7 @@ rmp_ret_t RMP_Fifo_Cnt(volatile struct RMP_Fifo* Fifo)
     if(Fifo->State!=RMP_FIFO_USED)
     {
         RMP_COV_MARKER();
+        
         RMP_Sched_Unlock();
         return RMP_ERR_FIFO;
     }
@@ -4615,6 +4756,7 @@ rmp_ret_t RMP_Msgq_Crt(volatile struct RMP_Msgq* Queue)
     if(Queue==RMP_NULL)
     {
         RMP_COV_MARKER();
+        
         return RMP_ERR_MSGQ;
     }
     else
@@ -4631,6 +4773,7 @@ rmp_ret_t RMP_Msgq_Crt(volatile struct RMP_Msgq* Queue)
     if(Queue->State!=RMP_MSGQ_FREE)
     {
         RMP_COV_MARKER();
+        
         RMP_Sched_Unlock();
         return RMP_ERR_MSGQ;
     }
@@ -4665,6 +4808,7 @@ rmp_ret_t RMP_Msgq_Del(volatile struct RMP_Msgq* Queue)
     if(Queue==RMP_NULL)
     {
         RMP_COV_MARKER();
+        
         return RMP_ERR_MSGQ;
     }
     else
@@ -4681,6 +4825,7 @@ rmp_ret_t RMP_Msgq_Del(volatile struct RMP_Msgq* Queue)
     if(Queue->State!=RMP_MSGQ_USED)
     {
         RMP_COV_MARKER();
+        
         RMP_Sched_Unlock();
         return RMP_ERR_MSGQ;
     }
@@ -4695,6 +4840,7 @@ rmp_ret_t RMP_Msgq_Del(volatile struct RMP_Msgq* Queue)
     if(RMP_Fifo_Del(&(Queue->Fifo))<0)
     {
         RMP_COV_MARKER();
+        
         RMP_Sched_Unlock();
         return RMP_ERR_OPER;
     }
@@ -4727,6 +4873,7 @@ rmp_ret_t RMP_Msgq_Snd(volatile struct RMP_Msgq* Queue,
     if(Queue==RMP_NULL)
     {
         RMP_COV_MARKER();
+        
         return RMP_ERR_MSGQ;
     }
     else
@@ -4739,6 +4886,7 @@ rmp_ret_t RMP_Msgq_Snd(volatile struct RMP_Msgq* Queue,
     if(Node==RMP_NULL)
     {
         RMP_COV_MARKER();
+        
         return RMP_ERR_OPER;
     }
     else
@@ -4755,6 +4903,7 @@ rmp_ret_t RMP_Msgq_Snd(volatile struct RMP_Msgq* Queue,
     if(Queue->State!=RMP_MSGQ_USED)
     {
         RMP_COV_MARKER();
+        
         RMP_Sched_Unlock();
         return RMP_ERR_MSGQ;
     }
@@ -4772,6 +4921,7 @@ rmp_ret_t RMP_Msgq_Snd(volatile struct RMP_Msgq* Queue,
     if(RMP_Sem_Post(&(Queue->Sem), 1U)<0)
     {
         RMP_COV_MARKER();
+        
         RMP_Sched_Unlock();
         return RMP_ERR_OPER;
     }
@@ -4808,6 +4958,7 @@ rmp_ret_t RMP_Msgq_Snd_ISR(volatile struct RMP_Msgq* Queue,
     if(Queue==RMP_NULL)
     {
         RMP_COV_MARKER();
+        
         return RMP_ERR_MSGQ;
     }
     else
@@ -4820,6 +4971,7 @@ rmp_ret_t RMP_Msgq_Snd_ISR(volatile struct RMP_Msgq* Queue,
     if(Node==RMP_NULL)
     {
         RMP_COV_MARKER();
+        
         return RMP_ERR_OPER;
     }
     else
@@ -4832,6 +4984,7 @@ rmp_ret_t RMP_Msgq_Snd_ISR(volatile struct RMP_Msgq* Queue,
     if(Queue->State!=RMP_MSGQ_USED)
     {
         RMP_COV_MARKER();
+        
         return RMP_ERR_MSGQ;
     }
     else
@@ -4845,6 +4998,7 @@ rmp_ret_t RMP_Msgq_Snd_ISR(volatile struct RMP_Msgq* Queue,
     if(RMP_Sem_Post_ISR(&(Queue->Sem), 1U)<0)
     {
         RMP_COV_MARKER();
+        
         return RMP_ERR_OPER;
     }
     else
@@ -4877,6 +5031,7 @@ rmp_ret_t RMP_Msgq_Rcv(volatile struct RMP_Msgq* Queue,
     if(Queue==RMP_NULL)
     {
         RMP_COV_MARKER();
+        
         return RMP_ERR_MSGQ;
     }
     else
@@ -4889,6 +5044,7 @@ rmp_ret_t RMP_Msgq_Rcv(volatile struct RMP_Msgq* Queue,
     if(Node==RMP_NULL)
     {
         RMP_COV_MARKER();
+        
         return RMP_ERR_OPER;
     }
     else
@@ -4905,6 +5061,7 @@ rmp_ret_t RMP_Msgq_Rcv(volatile struct RMP_Msgq* Queue,
     if(Queue->State!=RMP_MSGQ_USED)
     {
         RMP_COV_MARKER();
+        
         RMP_Sched_Unlock();
         return RMP_ERR_MSGQ;
     }
@@ -4924,6 +5081,7 @@ rmp_ret_t RMP_Msgq_Rcv(volatile struct RMP_Msgq* Queue,
     if(RMP_Sem_Pend_Unlock(&(Queue->Sem), Slice)<0)
     {
         RMP_COV_MARKER();
+        
         return RMP_ERR_OPER;
     }
     else
@@ -4936,6 +5094,7 @@ rmp_ret_t RMP_Msgq_Rcv(volatile struct RMP_Msgq* Queue,
     if(RMP_Fifo_Read(&(Queue->Fifo), Node)<0)
     {
         RMP_COV_MARKER();
+        
         return RMP_ERR_OPER;
     }
     else
@@ -4963,6 +5122,7 @@ rmp_ret_t RMP_Msgq_Cnt(volatile struct RMP_Msgq* Queue)
     if(Queue==RMP_NULL)
     {
         RMP_COV_MARKER();
+        
         return RMP_ERR_MSGQ;
     }
     else
@@ -4979,6 +5139,7 @@ rmp_ret_t RMP_Msgq_Cnt(volatile struct RMP_Msgq* Queue)
     if(Queue->State!=RMP_MSGQ_USED)
     {
         RMP_COV_MARKER();
+        
         RMP_Sched_Unlock();
         return RMP_ERR_MSGQ;
     }
@@ -5023,6 +5184,7 @@ rmp_ret_t RMP_Bmq_Crt(volatile struct RMP_Bmq* Queue,
     if(Queue==RMP_NULL)
     {
         RMP_COV_MARKER();
+        
         return RMP_ERR_BMQ;
     }
     else
@@ -5039,6 +5201,7 @@ rmp_ret_t RMP_Bmq_Crt(volatile struct RMP_Bmq* Queue,
     if(Queue->State!=RMP_BMQ_FREE)
     {
         RMP_COV_MARKER();
+        
         RMP_Sched_Unlock();
         return RMP_ERR_BMQ;
     }
@@ -5052,6 +5215,7 @@ rmp_ret_t RMP_Bmq_Crt(volatile struct RMP_Bmq* Queue,
     if((Limit==0U)||(Limit>=RMP_SEM_CNT_MAX))
     {
         RMP_COV_MARKER();
+        
         RMP_Sched_Unlock();
         return RMP_ERR_OPER;
     }
@@ -5064,7 +5228,7 @@ rmp_ret_t RMP_Bmq_Crt(volatile struct RMP_Bmq* Queue,
     
     /* A blocking queue is just a message queue paired
      * with a number limiting semaphore */
-    RMP_ASSERT(RMP_Sem_Crt(&(Queue->Sem), Limit)==0);
+    RMP_ASSERT(RMP_Sem_Crt(&(Queue->Sem),Limit)==0);
     RMP_ASSERT(RMP_Msgq_Crt(&(Queue->Msgq))==0);
     Queue->State=RMP_BMQ_USED;
     
@@ -5087,6 +5251,7 @@ rmp_ret_t RMP_Bmq_Del(volatile struct RMP_Bmq* Queue)
     if(Queue==RMP_NULL)
     {
         RMP_COV_MARKER();
+        
         return RMP_ERR_MSGQ;
     }
     else
@@ -5103,6 +5268,7 @@ rmp_ret_t RMP_Bmq_Del(volatile struct RMP_Bmq* Queue)
     if(Queue->State!=RMP_BMQ_USED)
     {
         RMP_COV_MARKER();
+        
         RMP_Sched_Unlock();
         return RMP_ERR_BMQ;
     }
@@ -5117,6 +5283,7 @@ rmp_ret_t RMP_Bmq_Del(volatile struct RMP_Bmq* Queue)
     if(RMP_Msgq_Del(&(Queue->Msgq))<0)
     {
         RMP_COV_MARKER();
+        
         RMP_Sched_Unlock();
         return RMP_ERR_OPER;
     }
@@ -5151,6 +5318,7 @@ rmp_ret_t RMP_Bmq_Snd(volatile struct RMP_Bmq* Queue,
     if(Queue==RMP_NULL)
     {
         RMP_COV_MARKER();
+        
         return RMP_ERR_MSGQ;
     }
     else
@@ -5163,6 +5331,7 @@ rmp_ret_t RMP_Bmq_Snd(volatile struct RMP_Bmq* Queue,
     if(Node==RMP_NULL)
     {
         RMP_COV_MARKER();
+        
         return RMP_ERR_OPER;
     }
     else
@@ -5176,6 +5345,7 @@ rmp_ret_t RMP_Bmq_Snd(volatile struct RMP_Bmq* Queue,
     if(Queue->State!=RMP_BMQ_USED)
     {
         RMP_COV_MARKER();
+        
         return RMP_ERR_BMQ;
     }
     else
@@ -5189,6 +5359,7 @@ rmp_ret_t RMP_Bmq_Snd(volatile struct RMP_Bmq* Queue,
     if(RMP_Sem_Pend(&(Queue->Sem),Slice)<0)
     {
         RMP_COV_MARKER();
+        
         return RMP_ERR_OPER;
     }
     else
@@ -5204,11 +5375,13 @@ rmp_ret_t RMP_Bmq_Snd(volatile struct RMP_Bmq* Queue,
     if(RMP_Msgq_Snd(&(Queue->Msgq),Node)<0)
     {
         RMP_COV_MARKER();
+        
         /* Put the semaphore back - this is for handling aborts, and the user
          * is fully responsible for ABA issues that arise from deletion. */
         if(Queue->State==RMP_BMQ_USED)
         {
             RMP_COV_MARKER();
+            
             RMP_Sem_Post(&(Queue->Sem),1U);
         }
         else
@@ -5216,6 +5389,7 @@ rmp_ret_t RMP_Bmq_Snd(volatile struct RMP_Bmq* Queue,
             RMP_COV_MARKER();
             /* No action required */
         }
+        
         return RMP_ERR_OPER;
     }
     else
@@ -5247,6 +5421,7 @@ rmp_ret_t RMP_Bmq_Snd_ISR(volatile struct RMP_Bmq* Queue,
     if(Queue==RMP_NULL)
     {
         RMP_COV_MARKER();
+        
         return RMP_ERR_MSGQ;
     }
     else
@@ -5259,6 +5434,7 @@ rmp_ret_t RMP_Bmq_Snd_ISR(volatile struct RMP_Bmq* Queue,
     if(Node==RMP_NULL)
     {
         RMP_COV_MARKER();
+        
         return RMP_ERR_OPER;
     }
     else
@@ -5271,6 +5447,7 @@ rmp_ret_t RMP_Bmq_Snd_ISR(volatile struct RMP_Bmq* Queue,
     if(Queue->State!=RMP_BMQ_USED)
     {
         RMP_COV_MARKER();
+        
         return RMP_ERR_BMQ;
     }
     else
@@ -5283,6 +5460,7 @@ rmp_ret_t RMP_Bmq_Snd_ISR(volatile struct RMP_Bmq* Queue,
     if(Queue->Sem.Num_Cur==0U)
     {
         RMP_COV_MARKER();
+        
         return RMP_ERR_OPER;
     }
     else
@@ -5317,6 +5495,7 @@ rmp_ret_t RMP_Bmq_Rcv(volatile struct RMP_Bmq* Queue,
     if(Queue==RMP_NULL)
     {
         RMP_COV_MARKER();
+        
         return RMP_ERR_BMQ;
     }
     else
@@ -5329,6 +5508,7 @@ rmp_ret_t RMP_Bmq_Rcv(volatile struct RMP_Bmq* Queue,
     if(Node==RMP_NULL)
     {
         RMP_COV_MARKER();
+        
         return RMP_ERR_OPER;
     }
     else
@@ -5342,6 +5522,7 @@ rmp_ret_t RMP_Bmq_Rcv(volatile struct RMP_Bmq* Queue,
     if(Queue->State!=RMP_BMQ_USED)
     {
         RMP_COV_MARKER();
+        
         return RMP_ERR_BMQ;
     }
     else
@@ -5352,9 +5533,10 @@ rmp_ret_t RMP_Bmq_Rcv(volatile struct RMP_Bmq* Queue,
 #endif
     
     /* Attempt a message queue receive */
-    if(RMP_Msgq_Rcv(&(Queue->Msgq), Node, Slice)<0)
+    if(RMP_Msgq_Rcv(&(Queue->Msgq),Node,Slice)<0)
     {
         RMP_COV_MARKER();
+        
         return RMP_ERR_OPER;
     }
     else
@@ -5368,7 +5550,7 @@ rmp_ret_t RMP_Bmq_Rcv(volatile struct RMP_Bmq* Queue,
      * Also there is no possibility that the FIFO will (even transiently) contain
      * more elements than the limit: this only gets posted when the FIFO dequeue
      * is actually performed. */
-    RMP_Sem_Post(&(Queue->Sem), 1U);
+    RMP_Sem_Post(&(Queue->Sem),1U);
     
     return 0;
 }
@@ -5389,6 +5571,7 @@ rmp_ret_t RMP_Bmq_Cnt(volatile struct RMP_Bmq* Queue)
     if(Queue==RMP_NULL)
     {
         RMP_COV_MARKER();
+        
         return RMP_ERR_BMQ;
     }
     else
@@ -5405,6 +5588,7 @@ rmp_ret_t RMP_Bmq_Cnt(volatile struct RMP_Bmq* Queue)
     if(Queue->State!=RMP_MSGQ_USED)
     {
         RMP_COV_MARKER();
+        
         RMP_Sched_Unlock();
         return RMP_ERR_MSGQ;
     }
@@ -5456,12 +5640,14 @@ void RMP_Line(rmp_cnt_t Begin_X,
         if(Begin_Y>End_Y)
         {
             RMP_COV_MARKER();
+            
             Dir_Y=End_Y;
             Trav_Y=Begin_Y;
         }
         else
         {
             RMP_COV_MARKER();
+            
             Dir_Y=Begin_Y;
             Trav_Y=End_Y;
         }
@@ -5480,12 +5666,14 @@ void RMP_Line(rmp_cnt_t Begin_X,
         if(Begin_X>End_X)
         {
             RMP_COV_MARKER();
+            
             Dir_X=End_X;
             Trav_X=Begin_X;
         }
         else
         {
             RMP_COV_MARKER();
+            
             Dir_X=Begin_X;
             Trav_X=End_X;
         }
@@ -5511,22 +5699,26 @@ void RMP_Line(rmp_cnt_t Begin_X,
     if((End_X-Begin_X)>0)
     {
         RMP_COV_MARKER();
+        
         Dir_X=1;
     }
     else
     {
         RMP_COV_MARKER();
+        
         Dir_X=-1;
     }
 
     if((End_Y-Begin_Y)>0)
     {
         RMP_COV_MARKER();
+        
         Dir_Y=1;
     }
     else
     {
         RMP_COV_MARKER();
+        
         Dir_Y=-1;
     }
 
@@ -5542,6 +5734,7 @@ void RMP_Line(rmp_cnt_t Begin_X,
             if(RMP_SAL(Error,1)>=Trav_X)
             {
                 RMP_COV_MARKER();
+                
                 Cur_Y+=Dir_Y;
                 Error-=Trav_X;
             }
@@ -5564,6 +5757,7 @@ void RMP_Line(rmp_cnt_t Begin_X,
             if(RMP_SAL(Error,1)>=Trav_Y)
             {
                 RMP_COV_MARKER();
+                
                 Cur_X+=Dir_X;
                 Error-=Trav_Y;
             }
@@ -5612,22 +5806,26 @@ void RMP_Dot_Line(rmp_cnt_t Begin_X,
     if((End_X-Begin_X)>0)
     {
         RMP_COV_MARKER();
+        
         Dir_X=1;
     }
     else
     {
         RMP_COV_MARKER();
+        
         Dir_X=-1;
     }
 
     if((End_Y-Begin_Y)>0)
     {
         RMP_COV_MARKER();
+        
         Dir_Y=1;
     }
     else
     {
         RMP_COV_MARKER();
+        
         Dir_Y=-1;
     }
 
@@ -5642,6 +5840,7 @@ void RMP_Dot_Line(rmp_cnt_t Begin_X,
             if((Cur_X&0x01)!=0)
             {
                 RMP_COV_MARKER();
+                
                 RMP_POINT(Cur_X,Cur_Y,Dot);
             }
             else
@@ -5651,6 +5850,7 @@ void RMP_Dot_Line(rmp_cnt_t Begin_X,
                 if(Space!=RMP_TRANS)
                 {
                     RMP_COV_MARKER();
+                    
                     RMP_POINT(Cur_X,Cur_Y,Space);
                 }
                 else
@@ -5664,6 +5864,7 @@ void RMP_Dot_Line(rmp_cnt_t Begin_X,
             if(RMP_SAL(Error,1)>=Trav_X)
             {
                 RMP_COV_MARKER();
+                
                 Cur_Y+=Dir_Y;
                 Error-=Trav_X;
             }
@@ -5685,6 +5886,7 @@ void RMP_Dot_Line(rmp_cnt_t Begin_X,
             if((((rmp_ptr_t)Cur_Y)&0x01U)!=0U)
             {
                 RMP_COV_MARKER();
+                
                 RMP_POINT(Cur_X,Cur_Y,Dot);
             }
             else
@@ -5694,6 +5896,7 @@ void RMP_Dot_Line(rmp_cnt_t Begin_X,
                 if(Space!=RMP_TRANS)
                 {
                     RMP_COV_MARKER();
+                    
                     RMP_POINT(Cur_X,Cur_Y,Space);
                 }
                 else
@@ -5707,6 +5910,7 @@ void RMP_Dot_Line(rmp_cnt_t Begin_X,
             if(RMP_SAL(Error,1)>=Trav_Y)
             {
                 RMP_COV_MARKER();
+                
                 Cur_X+=Dir_X;
                 Error-=Trav_Y;
             }
@@ -5746,6 +5950,7 @@ void RMP_Rectangle(rmp_cnt_t Coord_X,
     if(Fill!=RMP_TRANS)
     {
         RMP_COV_MARKER();
+        
         for(Line_Cnt=0;Line_Cnt<Width;Line_Cnt++)
         {
             RMP_Line(Coord_X, Coord_Y+Line_Cnt, Coord_X+Length-1, Coord_Y+Line_Cnt, Fill);
@@ -5760,6 +5965,7 @@ void RMP_Rectangle(rmp_cnt_t Coord_X,
     if(Border!=RMP_TRANS)
     {
         RMP_COV_MARKER();
+        
         RMP_Line(Coord_X, Coord_Y, Coord_X+Length-1, Coord_Y, Border);
         RMP_Line(Coord_X+Length-1, Coord_Y, Coord_X+Length-1, Coord_Y+Width-1, Border);
         RMP_Line(Coord_X+Length-1, Coord_Y+Width-1, Coord_X, Coord_Y+Width-1, Border);
@@ -5871,6 +6077,7 @@ void RMP_Circle(rmp_cnt_t Center_X,
                     if(Fill_Y<Quick)
                     {
                         RMP_COV_MARKER();
+                        
                         continue;
                     }
                     else
@@ -5918,11 +6125,13 @@ void RMP_Circle(rmp_cnt_t Center_X,
             if(Error<0) 
             {
                 RMP_COV_MARKER();
+                
                 Error+=RMP_SAL(Cur_X,2)+6;
             }
             else 
             {  
                 RMP_COV_MARKER();
+                
                 Error+=RMP_SAL((rmp_ptr_t)Cur_X-(rmp_ptr_t)Cur_Y,2)+10;
                 Cur_Y--;  
             }
@@ -5949,11 +6158,13 @@ void RMP_Circle(rmp_cnt_t Center_X,
             if(Error<0)
             {
                 RMP_COV_MARKER();
+                
                 Error+=RMP_SAL(Cur_X,2)+6;
             }
             else 
             {
                 RMP_COV_MARKER();
+                
                 Error+=RMP_SAL((rmp_ptr_t)Cur_X-(rmp_ptr_t)Cur_Y,2);
                 Cur_Y--;
             }
@@ -5991,6 +6202,7 @@ void RMP_Matrix(rmp_cnt_t Coord_X,
     if((Matrix==RMP_NULL)||(Length==0)||(Width==0)||((((rmp_u8_t)Length)&0x07U)!=0U))
     {
         RMP_COV_MARKER();
+        
         return;
     }
     else
@@ -6012,6 +6224,7 @@ void RMP_Matrix(rmp_cnt_t Coord_X,
                 if(RMP_MAT_BPOS(Matrix,Mat_Pos)!=0U)
                 {
                     RMP_COV_MARKER();
+                    
                     RMP_POINT(Len_Cnt,Wid_Cnt,Color);
                 }
                 else
@@ -6036,6 +6249,7 @@ void RMP_Matrix(rmp_cnt_t Coord_X,
                 if(RMP_MAT_SPOS(Matrix,Mat_Pos)!=0U)
                 {
                     RMP_COV_MARKER();
+                    
                     RMP_POINT(Len_Cnt,Wid_Cnt,Color);
                 }
                 else
@@ -6089,6 +6303,7 @@ void RMP_Matrix_AA(rmp_cnt_t Coord_X,
     if((Matrix==RMP_NULL)||(Length==0)||(Width==0)||((((rmp_u8_t)Length)&0x07U)!=0U))
     {
         RMP_COV_MARKER();
+        
         return;
     }
     else
@@ -6115,6 +6330,7 @@ void RMP_Matrix_AA(rmp_cnt_t Coord_X,
                 if(RMP_MAT_BPOS(Matrix, Mat_Pos)!=0U)
                 {
                     RMP_COV_MARKER();
+                    
                     RMP_POINT(Len_Cnt, Wid_Cnt, Color);
                 }
                 else
@@ -6132,6 +6348,7 @@ void RMP_Matrix_AA(rmp_cnt_t Coord_X,
                         if((Len_Cnt!=Coord_X)&&(RMP_MAT_BPOS(Matrix, AA_Pos)!=0U))
                         {
                             RMP_COV_MARKER();
+                            
                             AA_Val++;
                         }
                         else
@@ -6144,6 +6361,7 @@ void RMP_Matrix_AA(rmp_cnt_t Coord_X,
                         if((AA_Pos>=0)&&(RMP_MAT_BPOS(Matrix, AA_Pos)!=0U))
                         {
                             RMP_COV_MARKER();
+                            
                             AA_Val++;
                         }
                         else
@@ -6166,6 +6384,7 @@ void RMP_Matrix_AA(rmp_cnt_t Coord_X,
                         if((Len_Cnt!=(Coord_X+Length-1))&&(RMP_MAT_BPOS(Matrix, AA_Pos)!=0U))
                         {
                             RMP_COV_MARKER();
+                            
                             AA_Val++;
                         }
                         else
@@ -6178,6 +6397,7 @@ void RMP_Matrix_AA(rmp_cnt_t Coord_X,
                         if((AA_Pos<Total)&&(RMP_MAT_BPOS(Matrix, AA_Pos)!=0U))
                         {
                             RMP_COV_MARKER();
+                            
                             AA_Val++;
                         }
                         else
@@ -6197,24 +6417,28 @@ void RMP_Matrix_AA(rmp_cnt_t Coord_X,
                         case 1:
                         {
                             RMP_COV_MARKER();
+                            
                             RMP_POINT(Len_Cnt, Wid_Cnt, Color_25);
                             break;
                         }
                         case 2:
                         {
                             RMP_COV_MARKER();
+                            
                             RMP_POINT(Len_Cnt, Wid_Cnt, Color_50);
                             break;
                         }
                         case 3:
                         {
                             RMP_COV_MARKER();
+                            
                             RMP_POINT(Len_Cnt, Wid_Cnt, Color_75);
                             break;
                         }
                         default:
                         {
                             RMP_COV_MARKER();
+                            
                             break;
                         }
                     }
@@ -6236,6 +6460,7 @@ void RMP_Matrix_AA(rmp_cnt_t Coord_X,
                 if(RMP_MAT_SPOS(Matrix, Mat_Pos)!=0U)
                 {
                     RMP_COV_MARKER();
+                    
                     RMP_POINT(Len_Cnt, Wid_Cnt, Color);
                 }
                 else
@@ -6253,6 +6478,7 @@ void RMP_Matrix_AA(rmp_cnt_t Coord_X,
                         if((Len_Cnt!=Coord_X)&&(RMP_MAT_SPOS(Matrix, AA_Pos)!=0U))
                         {
                             RMP_COV_MARKER();
+                            
                             AA_Val++;
                         }
                         else
@@ -6265,6 +6491,7 @@ void RMP_Matrix_AA(rmp_cnt_t Coord_X,
                         if((AA_Pos>=0)&&(RMP_MAT_SPOS(Matrix, AA_Pos)!=0U))
                         {
                             RMP_COV_MARKER();
+                            
                             AA_Val++;
                         }
                         else
@@ -6287,6 +6514,7 @@ void RMP_Matrix_AA(rmp_cnt_t Coord_X,
                         if((Len_Cnt!=(Coord_X+Length-1))&&(RMP_MAT_SPOS(Matrix, AA_Pos)!=0U))
                         {
                             RMP_COV_MARKER();
+                            
                             AA_Val++;
                         }
                         else
@@ -6299,6 +6527,7 @@ void RMP_Matrix_AA(rmp_cnt_t Coord_X,
                         if((AA_Pos<Total)&&(RMP_MAT_SPOS(Matrix, AA_Pos)!=0U))
                         {
                             RMP_COV_MARKER();
+                            
                             AA_Val++;
                         }
                         else
@@ -6318,24 +6547,28 @@ void RMP_Matrix_AA(rmp_cnt_t Coord_X,
                         case 1:
                         {
                             RMP_COV_MARKER();
+                            
                             RMP_POINT(Len_Cnt, Wid_Cnt, Color_25);
                             break;
                         }
                         case 2:
                         {
                             RMP_COV_MARKER();
+                            
                             RMP_POINT(Len_Cnt, Wid_Cnt, Color_50);
                             break;
                         }
                         case 3:
                         {
                             RMP_COV_MARKER();
+                            
                             RMP_POINT(Len_Cnt, Wid_Cnt, Color_75);
                             break;
                         }
                         default:
                         {
                             RMP_COV_MARKER();
+                            
                             break;
                         }
                     }
@@ -6547,6 +6780,7 @@ void RMP_Cursor(rmp_cnt_t Coord_X,
         case RMP_CUR_NORM:
         {
             RMP_COV_MARKER();
+            
             Size_B=sizeof(Arrow_B);
             Size_W=sizeof(Arrow_W);
             Black=Arrow_B;
@@ -6572,6 +6806,7 @@ void RMP_Cursor(rmp_cnt_t Coord_X,
             if(Style==RMP_CUR_BUSY)
             {
                 RMP_COV_MARKER();
+                
                 Size_B=sizeof(Busy_B);
                 Size_W=sizeof(Busy_W);
                 Black=Busy_B;
@@ -6580,16 +6815,19 @@ void RMP_Cursor(rmp_cnt_t Coord_X,
             else
             {
                 RMP_COV_MARKER();
+                
                 Size_B=sizeof(Question);
                 Size_W=0;
                 Black=Question;
                 White=RMP_NULL;
             }
+            
             break;
         }       
         case RMP_CUR_HAND:
         {
             RMP_COV_MARKER();
+            
             Size_B=sizeof(Hand_B);
             Size_W=sizeof(Hand_W);
             Black=Hand_B;
@@ -6599,6 +6837,7 @@ void RMP_Cursor(rmp_cnt_t Coord_X,
         case RMP_CUR_TEXT:
         {
             RMP_COV_MARKER();
+            
             Size_B=sizeof(Text);
             Size_W=0;
             Black=Text;
@@ -6608,6 +6847,7 @@ void RMP_Cursor(rmp_cnt_t Coord_X,
         case RMP_CUR_STOP:
         {
             RMP_COV_MARKER();
+            
             Size_B=sizeof(Stop_B);
             Size_W=sizeof(Stop_W);
             Black=Stop_B;
@@ -6617,6 +6857,7 @@ void RMP_Cursor(rmp_cnt_t Coord_X,
         case RMP_CUR_MOVE:
         {
             RMP_COV_MARKER();
+            
             Size_B=sizeof(Adj_ALL);
             Size_W=0;
             Black=Adj_ALL;
@@ -6626,6 +6867,7 @@ void RMP_Cursor(rmp_cnt_t Coord_X,
         case RMP_CUR_LR:
         {
             RMP_COV_MARKER();
+            
             Size_B=sizeof(Adj_LR);
             Size_W=0;
             Black=Adj_LR;
@@ -6635,6 +6877,7 @@ void RMP_Cursor(rmp_cnt_t Coord_X,
         case RMP_CUR_UD:
         {
             RMP_COV_MARKER();
+            
             Size_B=sizeof(Adj_UD);
             Size_W=0;
             Black=Adj_UD;
@@ -6644,6 +6887,7 @@ void RMP_Cursor(rmp_cnt_t Coord_X,
         case RMP_CUR_ULBR:
         {
             RMP_COV_MARKER();
+            
             Size_B=sizeof(Adj_ULBR);
             Size_W=0;
             Black=Adj_ULBR;
@@ -6653,6 +6897,7 @@ void RMP_Cursor(rmp_cnt_t Coord_X,
         case RMP_CUR_URBL:
         {
             RMP_COV_MARKER();
+            
             Size_B=sizeof(Adj_URBL);
             Size_W=0;
             Black=Adj_URBL;
@@ -6662,6 +6907,7 @@ void RMP_Cursor(rmp_cnt_t Coord_X,
         case RMP_CUR_CROSS:
         {
             RMP_COV_MARKER();
+            
             Size_B=sizeof(Cross);
             Size_W=0;
             Black=Cross;
@@ -6671,6 +6917,7 @@ void RMP_Cursor(rmp_cnt_t Coord_X,
         default:
         {
             RMP_COV_MARKER();
+            
             return;
         }
     }
@@ -6680,6 +6927,7 @@ void RMP_Cursor(rmp_cnt_t Coord_X,
         RMP_POINT(Coord_X+RMP_CUR_XPOS(Black,Count),
                   Coord_Y+RMP_CUR_YPOS(Black,Count),RMP_COLOR_BLACK);
     }
+    
     for(Count=0;Count<Size_W;Count++)
     {
         RMP_POINT(Coord_X+RMP_CUR_XPOS(White,Count),
@@ -6708,6 +6956,7 @@ void RMP_Checkbox_Set(rmp_cnt_t Coord_X,
         RMP_Line(Coord_X+(4*Length/13)+Count, Coord_Y+(6*Length/13)+Count,
                  Coord_X+(4*Length/13)+Count, Coord_Y+(8*Length/13)+Count, RMP_COLOR_BLACK);
     }
+    
     for(Count=0;Count<=(4*Length/13);Count++)
     {
         RMP_Line(Coord_X+(6*Length/13)+Count, Coord_Y+(8*Length/13)-Count,
@@ -6736,6 +6985,7 @@ void RMP_Checkbox_Clr(rmp_cnt_t Coord_X,
         RMP_Line(Coord_X+(4*Length/13)+Count, Coord_Y+(6*Length/13)+Count,
                  Coord_X+(4*Length/13)+Count, Coord_Y+(8*Length/13)+Count, RMP_COLOR_WHITE);
     }
+    
     for(Count=0;Count<=(4*Length/13);Count++)
     {
         RMP_Line(Coord_X+(6*Length/13)+Count, Coord_Y+(8*Length/13)-Count,
@@ -6775,6 +7025,7 @@ void RMP_Checkbox(rmp_cnt_t Coord_X,
     if(Status!=0U)
     {
         RMP_COV_MARKER();
+        
         RMP_Checkbox_Set(Coord_X, Coord_Y, Length);
     }
     else
@@ -6860,11 +7111,13 @@ void RMP_Cmdbtn(rmp_cnt_t Coord_X,
     if(Status!=0U)
     {
         RMP_COV_MARKER();
+        
         RMP_Cmdbtn_Down(Coord_X, Coord_Y, Length, Width);
     }
     else
     {
         RMP_COV_MARKER();
+        
         RMP_Cmdbtn_Up(Coord_X, Coord_Y, Length, Width);
     }
 }
@@ -6961,14 +7214,17 @@ void RMP_Radiobtn_Circle(rmp_cnt_t Coord_X,
         if(Error<0) 
         {
             RMP_COV_MARKER();
+            
             Error+=RMP_SAL(Cur_X,2)+6;
         }
         else 
         {
             RMP_COV_MARKER();
+            
             Error+=RMP_SAL((rmp_ptr_t)Cur_X-(rmp_ptr_t)Cur_Y,2);
             Cur_Y--;
         }
+        
         Cur_X++;
     } 
     
@@ -6994,14 +7250,17 @@ void RMP_Radiobtn_Circle(rmp_cnt_t Coord_X,
         if(Error<0) 
         {
             RMP_COV_MARKER();
+            
             Error+=RMP_SAL(Cur_X,2)+6;
         } 
         else 
         {
             RMP_COV_MARKER();
+            
             Error+=RMP_SAL((rmp_ptr_t)Cur_X-(rmp_ptr_t)Cur_Y,2);
             Cur_Y--;  
-        }  
+        }
+        
         Cur_X++;  
     } 
 }
@@ -7065,6 +7324,7 @@ void RMP_Radiobtn(rmp_cnt_t Coord_X,
     if(Status==RMP_RBTN_SEL)
     {
         RMP_COV_MARKER();
+        
         RMP_Radiobtn_Set(Coord_X, Coord_Y, Length);
     }
     else
@@ -7107,6 +7367,7 @@ void RMP_Progbar_Set(rmp_cnt_t Coord_X,
     if(Old_Prog==New_Prog)
     {
         RMP_COV_MARKER();
+        
         return;
     }
     else
@@ -7123,18 +7384,22 @@ void RMP_Progbar_Set(rmp_cnt_t Coord_X,
 
             Old_Pivot=(Length-2)*Old_Prog/100;
             New_Pivot=(Length-2)*New_Prog/100;
+            
             /* Progress decreased */
             if(Old_Pivot>New_Pivot)
             {
                 RMP_COV_MARKER();
+                
                 RMP_Rectangle(Coord_X+1+New_Pivot, Coord_Y+1, Old_Pivot-New_Pivot, Width-2, Back, Back);
             }
             /* Progress increased */
             else
             {
                 RMP_COV_MARKER();
+                
                 RMP_Rectangle(Coord_X+1+Old_Pivot, Coord_Y+1, New_Pivot-Old_Pivot, Width-2, Fore, Fore);
             }
+            
             break;
         }
         case RMP_PBAR_D2U:
@@ -7143,18 +7408,22 @@ void RMP_Progbar_Set(rmp_cnt_t Coord_X,
 
             Old_Pivot=(Width-2)*Old_Prog/100;
             New_Pivot=(Width-2)*New_Prog/100;
+            
             /* Progress decreased */
             if(Old_Pivot>New_Pivot)
             {
                 RMP_COV_MARKER();
+                
                 RMP_Rectangle(Coord_X+1, Coord_Y-1+Width-Old_Pivot, Length-2, Old_Pivot-New_Pivot, Back, Back);
             }
             /* Progress increased */
             else
             {
                 RMP_COV_MARKER();
+                
                 RMP_Rectangle(Coord_X+1, Coord_Y-1+Width-New_Pivot, Length-2, New_Pivot-Old_Pivot, Fore, Fore);
             }
+            
             break;
         }
         case RMP_PBAR_R2L:
@@ -7163,18 +7432,22 @@ void RMP_Progbar_Set(rmp_cnt_t Coord_X,
 
             Old_Pivot=(Length-2)*Old_Prog/100;
             New_Pivot=(Length-2)*New_Prog/100;
+            
             /* Progress decreased */
             if(Old_Pivot>New_Pivot)
             {
                 RMP_COV_MARKER();
+                
                 RMP_Rectangle(Coord_X-1+Length-Old_Pivot, Coord_Y+1, Old_Pivot-New_Pivot, Width-2, Back, Back);
             }
             /* Progress increased */
             else
             {
                 RMP_COV_MARKER();
+                
                 RMP_Rectangle(Coord_X-1+Length-New_Pivot, Coord_Y+1, New_Pivot-Old_Pivot, Width-2, Fore, Fore);
             }
+            
             break;
         }
         case RMP_PBAR_U2D:
@@ -7183,21 +7456,30 @@ void RMP_Progbar_Set(rmp_cnt_t Coord_X,
 
             Old_Pivot=(Width-2)*Old_Prog/100;
             New_Pivot=(Width-2)*New_Prog/100;
+            
             /* Progress decreased */
             if(Old_Pivot>New_Pivot)
             {
                 RMP_COV_MARKER();
+                
                 RMP_Rectangle(Coord_X+1, Coord_Y+1+New_Pivot, Length-2, Old_Pivot-New_Pivot, Back, Back);
             }
             /* Progress increased */
             else
             {
                 RMP_COV_MARKER();
+                
                 RMP_Rectangle(Coord_X+1, Coord_Y+1+Old_Pivot, Length-2, New_Pivot-Old_Pivot, Fore, Fore);
             }
+            
             break;
         }
-        default: break;
+        default:
+        {
+            RMP_COV_MARKER();
+            
+            break;
+        }
     }
 }
 /* End Function:RMP_Progbar_Set **********************************************/
@@ -7234,9 +7516,11 @@ void RMP_Progbar_Prog(rmp_cnt_t Coord_X,
             RMP_COV_MARKER();
 
             Pivot=Length*Prog/100;
+            
             if(Prog!=0)
             {
                 RMP_COV_MARKER();
+                
                 RMP_Rectangle(Coord_X, Coord_Y, Pivot, Width, Fore, Fore);
             }
             else
@@ -7248,6 +7532,7 @@ void RMP_Progbar_Prog(rmp_cnt_t Coord_X,
             if(Prog!=100)
             {
                 RMP_COV_MARKER();
+                
                 RMP_Rectangle(Coord_X+Pivot, Coord_Y, Length-Pivot, Width, Back, Back);
             }
             else
@@ -7255,6 +7540,7 @@ void RMP_Progbar_Prog(rmp_cnt_t Coord_X,
                 RMP_COV_MARKER();
                 /* No action required */
             }
+            
             break;
         }
         case RMP_PBAR_D2U:
@@ -7262,9 +7548,11 @@ void RMP_Progbar_Prog(rmp_cnt_t Coord_X,
             RMP_COV_MARKER();
 
             Pivot=Width*Prog/100;
+            
             if(Prog!=0)
             {
                 RMP_COV_MARKER();
+                
                 RMP_Rectangle(Coord_X, Coord_Y+Width-Pivot, Length, Pivot, Fore, Fore);
             }
             else
@@ -7276,6 +7564,7 @@ void RMP_Progbar_Prog(rmp_cnt_t Coord_X,
             if(Prog!=100)
             {
                 RMP_COV_MARKER();
+                
                 RMP_Rectangle(Coord_X, Coord_Y, Length, Width-Pivot, Back, Back);
             }
             else
@@ -7283,6 +7572,7 @@ void RMP_Progbar_Prog(rmp_cnt_t Coord_X,
                 RMP_COV_MARKER();
                 /* No action required */
             }
+            
             break;
         }
         case RMP_PBAR_R2L:
@@ -7290,9 +7580,11 @@ void RMP_Progbar_Prog(rmp_cnt_t Coord_X,
             RMP_COV_MARKER();
 
             Pivot=Length*Prog/100;
+            
             if(Prog!=0)
             {
                 RMP_COV_MARKER();
+                
                 RMP_Rectangle(Coord_X+Length-Pivot, Coord_Y, Pivot, Width, Fore, Fore);
             }
             else
@@ -7304,6 +7596,7 @@ void RMP_Progbar_Prog(rmp_cnt_t Coord_X,
             if(Prog!=100)
             {
                 RMP_COV_MARKER();
+                
                 RMP_Rectangle(Coord_X, Coord_Y, Length-Pivot, Width, Back, Back);
             }
             else
@@ -7311,6 +7604,7 @@ void RMP_Progbar_Prog(rmp_cnt_t Coord_X,
                 RMP_COV_MARKER();
                 /* No action required */
             }
+            
             break;
         }
         case RMP_PBAR_U2D:
@@ -7318,9 +7612,11 @@ void RMP_Progbar_Prog(rmp_cnt_t Coord_X,
             RMP_COV_MARKER();
 
             Pivot=Width*Prog/100;
+            
             if(Prog!=0)
             {
                 RMP_COV_MARKER();
+                
                 RMP_Rectangle(Coord_X, Coord_Y, Length, Pivot, Fore, Fore);
             }
             else
@@ -7332,6 +7628,7 @@ void RMP_Progbar_Prog(rmp_cnt_t Coord_X,
             if(Prog!=100)
             {
                 RMP_COV_MARKER();
+                
                 RMP_Rectangle(Coord_X, Coord_Y+Pivot, Length, Width-Pivot, Back, Back);
             }
             else
@@ -7341,7 +7638,12 @@ void RMP_Progbar_Prog(rmp_cnt_t Coord_X,
             }
             break;
         }
-        default: break;
+        default:
+        {
+            RMP_COV_MARKER();
+            
+            break;
+        }
     }
 }
 /* End Function:RMP_Progbar_Prog *********************************************/
