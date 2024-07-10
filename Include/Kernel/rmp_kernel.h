@@ -17,14 +17,18 @@ Description : The header file for the kernel.
 /* Dewarn compiler */
 #define RMP_USE(X)                  ((void)(X))
 
-/* Power, rounding and masking */
+/* Power of 2 */
 #define RMP_FIELD(VAL,POW)          (((rmp_ptr_t)(VAL))<<(POW))
 #define RMP_POW2(POW)               RMP_FIELD(1U,POW)
+/* Word size - RMP_WORD_BYTE != RMP_WORD_CHAR on word-addressing systems */
+#define RMP_WORD_BIT                RMP_POW2(RMP_WORD_ORDER)
+#define RMP_WORD_BYTE               (RMP_WORD_BIT>>3)
+#define RMP_WORD_CHAR               (sizeof(rmp_ptr_t)/sizeof(rmp_u8_t))
+/* Bit mask */
+#define RMP_ALLBITS                 (~((rmp_ptr_t)0U))
+#define RMP_WORD_MASK               (~(RMP_ALLBITS<<RMP_WORD_ORDER))
 #define RMP_ROUND_DOWN(NUM,POW)     (((NUM)>>(POW))<<(POW))
 #define RMP_ROUND_UP(NUM,POW)       RMP_ROUND_DOWN((NUM)+RMP_POW2(POW)-1U,POW)
-#define RMP_ALLBITS                 (~((rmp_ptr_t)0U))
-#define RMP_WORD_BITS               RMP_POW2(RMP_WORD_ORDER)
-#define RMP_WORD_MASK               (~(RMP_ALLBITS<<RMP_WORD_ORDER))
 
 /* Maximum logging length */
 #define RMP_DBGLOG_MAX              (255U)

@@ -156,7 +156,7 @@ rmp_cnt_t RMP_Hex_Print(rmp_ptr_t Uint)
     /* Filter out all the leading zeroes */
     Count=0U;
     Iter=Uint;
-    while((Iter>>(RMP_WORD_BITS-4U))==0U)
+    while((Iter>>(RMP_WORD_BIT-4U))==0U)
     {
         Iter<<=4U;
         Count++;
