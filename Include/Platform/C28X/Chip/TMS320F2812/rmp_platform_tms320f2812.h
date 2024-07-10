@@ -108,8 +108,7 @@ do \
     while(SciaRegs.SCIFFTX.bit.TXFFST!=0U);  \
     SciaRegs.SCITXBUF=(rmp_u8_t)(CHAR);  \
 } \
-while (0)
-
+while(0)
 /* End Define ****************************************************************/
 
 /* End Of File ***************************************************************/
