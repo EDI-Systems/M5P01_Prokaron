@@ -25,10 +25,15 @@ Description : The header file for the kernel.
 #define RMP_WORD_BYTE               (RMP_WORD_BIT>>3)
 #define RMP_WORD_CHAR               (sizeof(rmp_ptr_t)/sizeof(rmp_u8_t))
 /* Bit mask */
-#define RMP_ALLBITS                 (~((rmp_ptr_t)0U))
-#define RMP_WORD_MASK               (~(RMP_ALLBITS<<RMP_WORD_ORDER))
+#define RMP_MASK_FULL               (~((rmp_ptr_t)0U))
+#define RMP_MASK_WORD               (~(RMP_MASK_FULL<<RMP_WORD_ORDER))
+/* Rounding */
 #define RMP_ROUND_DOWN(NUM,POW)     (((NUM)>>(POW))<<(POW))
 #define RMP_ROUND_UP(NUM,POW)       RMP_ROUND_DOWN((NUM)+RMP_POW2(POW)-1U,POW)
+/* Bitmap */
+#define RMP_BITMAP_SET(BMP,POS)     ((BMP)[(POS)>>RMP_WORD_ORDER]|=RMP_POW2((POS)&RMP_MASK_WORD))
+#define RMP_BITMAP_CLR(BMP,POS)     ((BMP)[(POS)>>RMP_WORD_ORDER]&=~RMP_POW2((POS)&RMP_MASK_WORD))
+#define RMP_BITMAP_IS_SET(BMP,POS)  (((BMP)[(POS)>>RMP_WORD_ORDER]&RMP_POW2((POS)&RMP_MASK_WORD))!=0U)
 
 /* Maximum logging length */
 #define RMP_DBGLOG_MAX              (255U)
@@ -75,7 +80,7 @@ while(0)
 /* Coverage marker enabling */
 #ifdef RMP_COV_LINE_NUM
 #define RMP_COV_WORD_NUM            (RMP_ROUND_UP(RMP_COV_LINE_NUM,RMP_WORD_ORDER)>>RMP_WORD_ORDER)
-#define RMP_COV_MARKER()            (RMP_Cov[__LINE__>>RMP_WORD_ORDER]|=RMP_POW2(__LINE__&RMP_WORD_MASK))
+#define RMP_COV_MARKER()            RMP_BITMAP_SET(RMP_Cov,__LINE__)
 #else
 #define RMP_COV_MARKER()
 #endif
@@ -203,7 +208,7 @@ while(0)
 #define RMP_DLY2THD(X)              ((volatile struct RMP_Thd*)(((rmp_ptr_t)(X))-RMP_OFFSET(struct RMP_Thd,Dly_Head)))
 /* Detect timer overflow */
 #define RMP_DLY_DIFF(X)             ((X)-RMP_Timestamp)
-#define RMP_DIFF_OVF(X)             (((X)>(RMP_ALLBITS>>1U))||((X)==0U))
+#define RMP_DIFF_OVF(X)             (((X)>(RMP_MASK_FULL>>1U))||((X)==0U))
 
 /* Memory pool */
 /* Table */

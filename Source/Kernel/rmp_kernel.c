@@ -267,7 +267,7 @@ void RMP_Cov_Print(void)
     Next=0U;
     for(Count=0U;Count<RMP_COV_LINE_NUM;Count++)
     {
-        if((RMP_Cov[Count>>RMP_WORD_ORDER]&RMP_POW2(Count&RMP_WORD_MASK))!=0U)
+        if(RMP_BITMAP_IS_SET(RMP_Cov,Count))
         {
             RMP_COV_MARKER();
             
@@ -1236,7 +1236,7 @@ static void _RMP_Run_Ins(volatile struct RMP_Thd* Thread,
         /* Insert this into the corresponding runqueue's back */
         RMP_List_Ins(&(Thread->Run_Head),RMP_Run[Prio].Prev,&(RMP_Run[Prio]));
         /* Set this priority level as active */
-        RMP_Bitmap[Prio>>RMP_WORD_ORDER]|=RMP_POW2(Prio&RMP_WORD_MASK);
+        RMP_BITMAP_SET(RMP_Bitmap,Prio);
         
         /* Compare this with the current one to see if we need a context switch */
         if(Prio>RMP_Thd_Cur->Prio)
@@ -1286,7 +1286,7 @@ static void _RMP_Run_Del(volatile struct RMP_Thd* Thread,
             /* Cache volatile thread priority */
             Prio=Thread->Prio;
             /* If yes, set the priority level as inactive */
-            RMP_Bitmap[Prio>>RMP_WORD_ORDER]&=~RMP_POW2(Prio&RMP_WORD_MASK);
+            RMP_BITMAP_CLR(RMP_Bitmap,Prio);
         }
         else
         {
@@ -3627,7 +3627,7 @@ static void _RMP_Mem_Ins(volatile void* Pool,
         RMP_COV_MARKER();
         
         /* Set the corresponding bit in the TLSF bitmap */
-        Mem->Bitmap[Level>>RMP_WORD_ORDER]|=RMP_POW2(Level&RMP_WORD_MASK);
+        RMP_BITMAP_SET(Mem->Bitmap,Level);
     }
     else
     {
@@ -3681,7 +3681,7 @@ static void _RMP_Mem_Del(volatile void* Pool,
         RMP_COV_MARKER();
         
         /* Clear the corresponding bit in the TLSF bitmap */
-        Mem->Bitmap[Level>>RMP_WORD_ORDER]&=~RMP_POW2(Level&RMP_WORD_MASK);
+        RMP_BITMAP_CLR(Mem->Bitmap,Level);
     }
     else
     {
@@ -3763,7 +3763,7 @@ static rmp_ret_t _RMP_Mem_Search(volatile void* Pool,
     /* Try to find the word that contains this level, then right shift away the
      * lower levels to extract the ones that can satisfy this allocation request */
     Level=RMP_MEM_POS(FLI_Search,SLI_Search);
-    Word=Mem->Bitmap[Level>>RMP_WORD_ORDER]>>(Level&RMP_WORD_MASK);
+    Word=Mem->Bitmap[Level>>RMP_WORD_ORDER]>>(Level&RMP_MASK_WORD);
     
     /* If there's at least one block that matches the query, return the level */
     if(Word!=0U)
@@ -3771,7 +3771,7 @@ static rmp_ret_t _RMP_Mem_Search(volatile void* Pool,
         RMP_COV_MARKER();
         
         /* Also need to compensate for the lower levels that were shifted away; the following line is
-         * simplified from "Level=(Level&(~RMP_WORD_MASK))+(RMP_LSB_GET(Word)+(Level&RMP_WORD_MASK))" */
+         * simplified from "Level=(Level&(~RMP_MASK_WORD))+(RMP_LSB_GET(Word)+(Level&RMP_MASK_WORD))" */
         Level+=RMP_LSB_GET(Word);
         *FLI_Level=Level>>3U;
         *SLI_Level=Level&0x07U;
