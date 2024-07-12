@@ -299,6 +299,10 @@ struct RMP_Thd
     struct RMP_List Snd_List;
     /* The state of this thread */
     rmp_ptr_t State;
+#if(RMP_STKSEG_ENABLE!=0U)
+    /* The current stack segment */
+    rmp_ptr_t Segment;
+#endif
     /* The current stack address */
     rmp_ptr_t Stack;
     /* How many timeslices to replenish */
@@ -508,6 +512,10 @@ __RMP_EXTERN__ volatile rmp_ptr_t RMP_Sched_Pend;
  * at the beginning of every function that might use it to indicate that it
  * may have changed in the middle (even though it always changes back). */
 __RMP_EXTERN__ volatile struct RMP_Thd* volatile RMP_Thd_Cur;
+#if(RMP_STKSEG_ENABLE!=0U)
+/* Current thread's stack segment */
+__RMP_EXTERN__ volatile rmp_ptr_t RMP_SS_Cur;
+#endif
 /* Current thread's stack pointer */
 __RMP_EXTERN__ volatile rmp_ptr_t RMP_SP_Cur;
 /*****************************************************************************/
@@ -570,7 +578,10 @@ __RMP_EXTERN__ void RMP_Init(void);
 __RMP_EXTERN__ void RMP_Thd_Yield(void);
 __RMP_EXTERN__ rmp_ret_t RMP_Thd_Crt(volatile struct RMP_Thd* Thread, 
                                      void* Entry,
-                                     void* Param, 
+                                     void* Param,
+#if(RMP_STKSEG_ENABLE!=0U)
+                                    rmp_ptr_t Segment,
+#endif
                                      void* Stack,
                                      rmp_ptr_t Size,
                                      rmp_ptr_t Prio,

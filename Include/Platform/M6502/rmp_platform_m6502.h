@@ -213,6 +213,7 @@ typedef rmp_s16_t rmp_ret_t;
 /* The order of bits in one CPU machine word */
 #define RMP_WORD_ORDER                  (4U)
 /* Full descending stack of rmp_u8_t, no alignment */
+#define RMP_STKSEG_ENABLE               (0U)
 #define RMP_STACK_TYPE                  RMP_STACK_FULL_DESCEND
 #define RMP_STACK_ALIGN                 (0U)
 #define RMP_STACK_ELEM                  rmp_u8_t

@@ -48,18 +48,18 @@ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
     /* Pass entry */
     Ctx->PC=Entry;
     /* High 8bits-PSW; Low 8bits-PCH, all function stubs within first 64k */
-    Ctx->PSWPCH=0x0100U;
+    Ctx->PSWPCH=0x0100U|(_RMP_RL78_CSES_Kern>>8);
     /* Pass parameter */
     Ctx->AX=Param;
     Ctx->BC=0x0101U;
-    /* Initialize CS/ES with default parameters */
-    Ctx->CSES=0x000FU;
+    /* Initialize CS/ES with kernel values */
+    Ctx->CSES=_RMP_RL78_CSES_Kern;
     /* Fill the rest for ease of identification */
     Ctx->DE=0x0202U;
     Ctx->HL=0x0303U;
+    
     return Ptr;
 }
-
 /* End Function:_RMP_Stack_Init **********************************************/
 
 /* Function:_RMP_Lowlvl_Init **************************************************
