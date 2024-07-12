@@ -8,21 +8,23 @@
 ;*****************************************************************************/
 
 ;/* Import *******************************************************************/
-    ;The kernel stack
+    ;/* The kernel stack */
     .EXTERN             __RMP_RL78_SP_Kern
-    ;The current thread stack
+    ;/* The kernel CS/ES */
+    .EXTERN             __RMP_RL78_CSES_Kern
+    ;/* The current thread stack */
     .EXTERN             _RMP_SP_Cur
-    ;The yield pending flag
+    ;/* The yield pending flag */
     .EXTERN             _RMP_Sched_Pend
-    ;Extract highest priority running thread
+    ;/* Extract highest priority running thread */
     .EXTERN             __RMP_Run_High
-    ;Handler for RL78 timer interrupt
+    ;/* Handler for RL78 timer interrupt */
     .EXTERN             __RMP_RL78_Tim_Handler
 ;/* End Import ***************************************************************/
 
 ;/* Macro ********************************************************************/
 ;/* Push everything to stack *************************************************/
-RMP_RL78_INT_SAVE    .MACRO
+RMP_RL78_INT_SAVE       .MACRO
     PUSH                AX
     PUSH                BC
     PUSH                DE
@@ -33,6 +35,10 @@ RMP_RL78_INT_SAVE    .MACRO
     PUSH                AX
     MOVW                AX,SP
     MOVW                !_RMP_SP_Cur,AX
+    MOVW                AX,!__RMP_RL78_CSES_Kern
+    MOV                 CS,A
+    MOV                 A,X
+    MOV                 ES,A
     MOVW                AX,!__RMP_RL78_SP_Kern
     MOVW                SP,AX
     .ENDM

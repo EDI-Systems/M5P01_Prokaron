@@ -916,7 +916,10 @@ void _RMP_Run_High(void)
     /* Cache volatile current thread */
     Thd_Cur=RMP_Thd_Cur;
     
-    /* Save SP value to the old thread structure */
+    /* Save SS/SP value to the old thread structure */
+#if(RMP_STKSEG_ENABLE!=0U)
+    Thd_Cur->Segment=RMP_SS_Cur;
+#endif
     Thd_Cur->Stack=RMP_SP_Cur;
     
     /* No need to detect scheduler locks - if this function can be called,
@@ -967,7 +970,10 @@ void _RMP_Run_High(void)
     Thd_Cur->Slice_Left=Thd_Cur->Slice;
     Thd_Cur=(volatile struct RMP_Thd*)(RMP_Run[Prio].Next);
 
-    /* Restore SP value from the new thread structure */
+    /* Restore SS/SP value from the new thread structure */
+#if(RMP_STKSEG_ENABLE!=0U)
+    RMP_SS_Cur=Thd_Cur->Segment;
+#endif
     RMP_SP_Cur=Thd_Cur->Stack;
     
     /* Write cached current thread back */
@@ -1398,6 +1404,7 @@ Description : Create a real-time thread and put it into the runqueue.
 Input       : volatile struct RMP_Thd* Thread - The pointer to the thread.
               void* Entry - The entry of the thread.
               void* Param - The argument to pass to the thread.
+              rmp_ptr_t Segment - The stack segment of this thread.
               void* Stack - The stack base of this thread.
               rmp_ptr_t Size - The stack size of this thread.
               rmp_ptr_t Prio - The priority of the thread.
@@ -1408,6 +1415,9 @@ Return      : rmp_ret_t - If successful, 0. on error, return an error code.
 rmp_ret_t RMP_Thd_Crt(volatile struct RMP_Thd* Thread,
                       void* Entry,
                       void* Param,
+#if(RMP_STKSEG_ENABLE!=0U)
+                      rmp_ptr_t Segment,
+#endif
                       void* Stack,
                       rmp_ptr_t Size,
                       rmp_ptr_t Prio,
@@ -1485,15 +1495,21 @@ rmp_ret_t RMP_Thd_Crt(volatile struct RMP_Thd* Thread,
     }
 #endif
     
-    /* Create the thread and insert it into the list */
+    /* Initialize thread basic info */
     Thread->Prio=Prio;
     Thread->Slice=Slice;
     Thread->Slice_Left=Slice;
+    RMP_List_Crt(&(Thread->Snd_List));
     
-    /* Initialize its stack and sending list */
+    /* Initialize thread stack */
+#if(RMP_STKSEG_ENABLE!=0U)
+    Thread->Segment=Segment;
+    Thread->Stack=_RMP_Stack_Init(Segment,(rmp_ptr_t)Stack,Size, 
+                                  (rmp_ptr_t)Entry,(rmp_ptr_t)Param);
+#else
     Thread->Stack=_RMP_Stack_Init((rmp_ptr_t)Stack,Size, 
                                   (rmp_ptr_t)Entry,(rmp_ptr_t)Param);
-    RMP_List_Crt(&(Thread->Snd_List));
+#endif
     
     /* Thread is always set to ready on creation */
     Thread->State=RMP_THD_READY;

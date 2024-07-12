@@ -178,6 +178,7 @@ typedef rmp_s16_t rmp_ret_t;
 /* The order of bits in one CPU machine word */
 #define RMP_WORD_ORDER                  (4U)
 /* Empty descending stack of rmp_ptr_t, word-addressing with 1-word alignment */
+#define RMP_STKSEG_ENABLE               (0U)
 #define RMP_STACK_TYPE                  RMP_STACK_EMPTY_DESCEND
 #define RMP_STACK_ALIGN                 (0U)
 #define RMP_STACK_ELEM                  rmp_ptr_t

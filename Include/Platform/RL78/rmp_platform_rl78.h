@@ -70,6 +70,7 @@ typedef rmp_s16_t rmp_ret_t;
 /* The order of bits in one CPU machine word */
 #define RMP_WORD_ORDER                  (4U)
 /* Full descending stack of rmp_ptr_t, word-addressing with 2-byte alignment */
+#define RMP_STKSEG_ENABLE               (0U)
 #define RMP_STACK_TYPE                  RMP_STACK_FULL_DESCEND
 #define RMP_STACK_ALIGN                 (1U)
 #define RMP_STACK_ELEM                  rmp_ptr_t
@@ -157,6 +158,7 @@ struct RMP_RL78_Stack
 
 /*****************************************************************************/
 __RMP_EXTERN__ rmp_ptr_t _RMP_RL78_SP_Kern;
+__RMP_EXTERN__ rmp_ptr_t _RMP_RL78_CSES_Kern;
 /*****************************************************************************/
 
 /* End Public Variable *******************************************************/

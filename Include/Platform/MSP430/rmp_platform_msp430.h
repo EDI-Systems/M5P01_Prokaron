@@ -87,6 +87,7 @@ typedef rmp_s16_t rmp_ret_t;
 #define RMP_WORD_ORDER                  (4U)
 #endif
 /* Full descending stack of rmp_ptr_t, 4-byte alignment */
+#define RMP_STKSEG_ENABLE               (0U)
 #define RMP_STACK_TYPE                  RMP_STACK_FULL_DESCEND
 #define RMP_STACK_ALIGN                 (2U)
 #define RMP_STACK_ELEM                  rmp_ptr_t
@@ -114,7 +115,7 @@ typedef rmp_s16_t rmp_ret_t;
 #define RMP_MSP430_SR_CPUOFF            RMP_POW2(4U)
 #define RMP_MSP430_SR_GIE               RMP_POW2(3U)
 
-#define RMP_MSP430X_PCSR(PC,SR)         (((PC)<<16)|(((PC)>>4)&0xF000)|(SR))
+#define RMP_MSP430X_PCSR(PC,SR)         (((PC)<<16)|(((PC)>>4)&0xF000U)|(SR))
 /* End MSP430 Macro **********************************************************/
 /*****************************************************************************/
 /* __RMP_PLATFORM_MSP430_DEF__ */

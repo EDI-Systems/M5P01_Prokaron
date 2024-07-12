@@ -63,54 +63,55 @@ typedef rmp_s32_t rmp_ret_t;
 
 /* System Macro **************************************************************/
 /* Compiler "extern" keyword setting */
-#define RMP_EXTERN                  extern
-#define RMP_WORD_ORDER              (4U)
+#define RMP_EXTERN                      extern
+#define RMP_WORD_ORDER                  (4U)
 /* Full descending stack of rmp_ptr_t, 4-byte alignment */
-#define RMP_STACK_TYPE              RMP_STACK_FULL_DESCEND
-#define RMP_STACK_ALIGN             (2U)
-#define RMP_STACK_ELEM              rmp_ptr_t
-#define RMP_STACK_STRUCT            struct RMP_LINT_Stack
+#define RMP_STKSEG_ENABLE               (0U)
+#define RMP_STACK_TYPE                  RMP_STACK_FULL_DESCEND
+#define RMP_STACK_ALIGN                 (2U)
+#define RMP_STACK_ELEM                  rmp_ptr_t
+#define RMP_STACK_STRUCT                struct RMP_LINT_Stack
 /* MSB/LSB extraction */
-#define RMP_MSB_GET(VAL)            RMP_MSB_Generic(VAL)
-#define RMP_LSB_GET(VAL)            RMP_LSB_Generic(VAL)
+#define RMP_MSB_GET(VAL)                RMP_MSB_Generic(VAL)
+#define RMP_LSB_GET(VAL)                RMP_LSB_Generic(VAL)
 
 /* The mask/unmask interrupt operations */
-#define RMP_INT_MASK()              RMP_Int_Disable()
-#define RMP_INT_UNMASK()            RMP_Int_Enable()
+#define RMP_INT_MASK()                  RMP_Int_Disable()
+#define RMP_INT_UNMASK()                RMP_Int_Enable()
 /* Yield operation */
-#define RMP_YIELD()                 while(0)
+#define RMP_YIELD()                     while(0)
 /* #define RMP_YIELD_ISR() */
 
 /* Debugging */
 /* Assertion */
-#define RMP_ASSERT_ENABLE           (1U)
+#define RMP_ASSERT_ENABLE               (1U)
 /* Invalid parameter checking */
-#define RMP_CHECK_ENABLE            (1U)
+#define RMP_CHECK_ENABLE                (1U)
 /* Debug logging */
-#define RMP_DBGLOG_ENABLE           (1U)
+#define RMP_DBGLOG_ENABLE               (1U)
 
 /* System */
 /* The maximum number of preemption priorities */
-#define RMP_PREEMPT_PRIO_NUM        (32U)
+#define RMP_PREEMPT_PRIO_NUM            (32U)
 /* The maximum number of slices allowed */
-#define RMP_SLICE_MAX               (10000U)
+#define RMP_SLICE_MAX                   (10000U)
 /* The maximum number of semaphore counts allowed */
-#define RMP_SEM_CNT_MAX             (1000U)
+#define RMP_SEM_CNT_MAX                 (1000U)
 /* The stack size of the init thread */
-#define RMP_INIT_STACK_SIZE         (512U)
+#define RMP_INIT_STACK_SIZE             (512U)
 
 /* GUI */
-#define RMP_GUI_ENABLE              (0U)
+#define RMP_GUI_ENABLE                  (0U)
 /* Anti-aliasing */
-#define RMP_GUI_ANTIALIAS_ENABLE    (0U)
+#define RMP_GUI_ANTIALIAS_ENABLE        (0U)
 /* Widgets */
-#define RMP_GUI_WIDGET_ENABLE       (0U)
+#define RMP_GUI_WIDGET_ENABLE           (0U)
 
 /* Other low-level initialization stuff */
-#define RMP_LINT_LOWLVL_INIT()      while(0)
+#define RMP_LINT_LOWLVL_INIT()          while(0)
 
 /* This is for debugging output */
-#define RMP_LINT_PUTCHAR(CHAR)      while(0)
+#define RMP_LINT_PUTCHAR(CHAR)          while(0)
 /* End System Macro **********************************************************/
 
 /* LINT specific macros ****************************************************/
