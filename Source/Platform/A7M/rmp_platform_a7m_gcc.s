@@ -42,6 +42,8 @@ The ARM Cortex-M4/7 also include a FPU.
     .global             _RMP_A7M_LSB_Get
     /* Start the first thread */
     .global             _RMP_Start
+    /* Yield to another thread */
+    .global             _RMP_A7M_Yield
     /* The system pending service routine */
     .global             PendSV_Handler
     /* The systick timer routine */
@@ -135,14 +137,23 @@ _RMP_Start:
     BLX                 R0                  /* Branch to our target */
 /* End Function:_RMP_Start ***************************************************/
 
+/* Function:_RMP_A7M_Yield ****************************************************
+Description : Trigger a yield to another thread.
+Input       : None.
+Output      : None.
+Return      : None.
+******************************************************************************/
+    .thumb_func
+_RMP_A7M_Yield:
+    LDR                 R0,=0xE000ED04      /* The NVIC_INT_CTRL register */
+    LDR                 R1,=0x10000000      /* Trigger the PendSV */
+    STR                 R1,[R0]
+    DSB
+    BX                  LR
+/* End Function:_RMP_A7M_Yield ***********************************************/
+
 /* Function:PendSV_Handler ****************************************************
-Description : The PendSV interrupt routine. In fact, it will call a C function
-              directly. The reason why the interrupt routine must be an assembly
-              function is that the compiler may deal with the stack in a different
-              way when different optimization level is chosen. An assembly function
-              can make way around this problem.
-              However, if your compiler support inline assembly functions, this
-              can also be written in C.
+Description : The PendSV interrupt handler.
 Input       : None.
 Output      : None.
 Return      : None.
@@ -175,13 +186,7 @@ PendSV_Handler:
 /* End Function:PendSV_Handler ***********************************************/
 
 /* Function:SysTick_Handler ***************************************************
-Description : The SysTick interrupt routine. In fact, it will call a C function
-              directly. The reason why the interrupt routine must be an assembly
-              function is that the compiler may deal with the stack in a different
-              way when different optimization level is chosen. An assembly function
-              can make way around this problem.
-              However, if your compiler support inline assembly functions, this
-              can also be written in C.
+Description : The SysTick interrupt handler.
 Input       : None.
 Output      : None.
 Return      : None.
