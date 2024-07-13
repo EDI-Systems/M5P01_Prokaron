@@ -85,7 +85,7 @@ typedef rmp_s32_t rmp_ret_t;
 #define RMP_INT_MASK()                  RMP_Int_Mask(RMP_A7M_INT_MASK_LVL)
 #define RMP_INT_UNMASK()                RMP_Int_Mask(0x00U)
 /* Yield operation */
-#define RMP_YIELD()                     (RMP_A7M_NVIC_INT_CTRL=RMP_A7M_NVIC_PENDSVSET)
+#define RMP_YIELD()                     _RMP_A7M_Yield()
 #define RMP_YIELD_ISR()                 RMP_YIELD()
 /* End System Macro **********************************************************/
 
@@ -104,10 +104,6 @@ typedef rmp_s32_t rmp_ret_t;
 #define RMP_A7M_NVIC_GROUPING_P2S6      (5U)
 #define RMP_A7M_NVIC_GROUPING_P1S7      (6U)
 #define RMP_A7M_NVIC_GROUPING_P0S8      (7U)
-
-/* PendSV trigger */
-#define RMP_A7M_NVIC_INT_CTRL           (*((volatile rmp_ptr_t*)0xE000ED04U))
-#define RMP_A7M_NVIC_PENDSVSET          (0x10000000U)
 /* End ARMv7-M Macro *********************************************************/
 /*****************************************************************************/
 /* __RMP_PLATFORM_A7M_DEF__ */
@@ -203,7 +199,9 @@ RMP_EXTERN void RMP_Int_Mask(rmp_ptr_t Level);
 
 RMP_EXTERN rmp_ptr_t _RMP_A7M_MSB_Get(rmp_ptr_t Value);
 RMP_EXTERN rmp_ptr_t _RMP_A7M_LSB_Get(rmp_ptr_t Value);
-RMP_EXTERN void _RMP_Start(rmp_ptr_t Entry, rmp_ptr_t Stack);
+RMP_EXTERN void _RMP_Start(rmp_ptr_t Entry,
+                           rmp_ptr_t Stack);
+RMP_EXTERN void _RMP_A7M_Yield(void);
 
 /* Initialization */
 __RMP_EXTERN__ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,

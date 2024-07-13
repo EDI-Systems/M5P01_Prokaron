@@ -85,15 +85,9 @@ typedef rmp_s32_t rmp_ret_t;
 #define RMP_INT_MASK()                  RMP_Int_Disable()
 #define RMP_INT_UNMASK()                RMP_Int_Enable()
 /* Yield operation */
-#define RMP_YIELD()                     (RMP_A6M_NVIC_INT_CTRL=RMP_A6M_NVIC_PENDSVSET)
+#define RMP_YIELD()                     _RMP_A6M_Yield()
 #define RMP_YIELD_ISR()                 RMP_YIELD()
 /* End System Macro **********************************************************/
-
-/* ARMv6-M Macro *************************************************************/
-/* PendSV trigger */
-#define RMP_A6M_NVIC_INT_CTRL           (*((volatile rmp_ptr_t*)0xE000ED04U))
-#define RMP_A6M_NVIC_PENDSVSET          (0x10000000U)
-/* End ARMv6-M Macro *********************************************************/
 /*****************************************************************************/
 /* __RMP_PLATFORM_A6M_DEF__ */
 #endif
@@ -188,6 +182,8 @@ RMP_EXTERN void RMP_Int_Enable(void);
 
 RMP_EXTERN void _RMP_Start(rmp_ptr_t Entry,
                            rmp_ptr_t Stack);
+
+RMP_EXTERN void _RMP_A6M_Yield(void);
 
 /* Initialization */
 __RMP_EXTERN__ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
