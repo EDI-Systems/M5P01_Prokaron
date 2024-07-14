@@ -1,10 +1,14 @@
 /******************************************************************************
-Filename   : rmp_platform_stm32f405rg_rvm.h
+Filename   : rmp_platform_a6m_chip_rvm.h
 Author     : pry
 Date       : 24/06/2017
 Licence    : The Unlicense; see LICENSE for details.
-Description: The configuration file for STM32F405RG.
+Description: The configuration file for any virtualized ARMv6-M chip.
 ******************************************************************************/
+
+/* Include *******************************************************************/
+#include "rvm_guest.h"
+/* End Include ***************************************************************/
 
 /* Define ********************************************************************/
 /* Debugging */
@@ -32,12 +36,8 @@ Description: The configuration file for STM32F405RG.
 /* Widgets */
 #define RMP_GUI_WIDGET_ENABLE       (0U)
 
-/* What is the FPU type? */
-#define RMP_A7M_RVM_COP_FPV4_SP     (1U)
-#define RMP_A7M_RVM_COP_FPV5_SP     (0U)
-#define RMP_A7M_RVM_COP_FPV5_DP     (0U)
 /* Whether to use fast yield routine */
-#define RMP_A7M_RVM_FAST_YIELD      (1U)
+#define RMP_A6M_RVM_FAST_YIELD      (1U)
 /* End Define ****************************************************************/
 
 /* End Of File ***************************************************************/

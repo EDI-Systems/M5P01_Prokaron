@@ -119,7 +119,7 @@ Return      : None.
 ******************************************************************************/
 void RMP_Putchar(char Char)
 {
-#if(RVM_DEBUG_PRINT!=0U)
+#if(RVM_DBGLOG_ENABLE!=0U)
     RVM_Putchar(Char);
 #endif
 }

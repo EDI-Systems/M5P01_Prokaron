@@ -1,10 +1,14 @@
 /******************************************************************************
-Filename   : rmp_platform_stm32f767ig_rvm.h
-Author     : pry
-Date       : 24/06/2017
-Licence    : The Unlicense; see LICENSE for details.
-Description: The configuration file for STM32F767IG, on RVM.
+Filename    : rmp_platform_rv32p_chip_rvm.h
+Author      : pry
+Date        : 24/06/2017
+Licence     : The Unlicense; see LICENSE for details.
+Description: The configuration file for any virtualized RISC-V 32-bit chip.
 ******************************************************************************/
+
+/* Include *******************************************************************/
+#include "rvm_guest.h"
+/* End Include ***************************************************************/
 
 /* Define ********************************************************************/
 /* Debugging */
@@ -21,11 +25,9 @@ Description: The configuration file for STM32F767IG, on RVM.
 /* The maximum number of slices allowed */
 #define RMP_SLICE_MAX               (100000U)
 /* The maximum number of semaphore counts allowed */
-#define RMP_SEM_CNT_MAX             (1000)
-/* Are we using custom hooks? */
-#define RMP_HOOK_EXTRA              (0U)
+#define RMP_SEM_CNT_MAX             (1000U)
 /* The stack size of the init thread */
-#define RMP_INIT_STACK_SIZE         (1024U)
+#define RMP_INIT_STACK_SIZE         (256U)
 
 /* GUI */
 #define RMP_GUI_ENABLE              (0U)
@@ -35,11 +37,11 @@ Description: The configuration file for STM32F767IG, on RVM.
 #define RMP_GUI_WIDGET_ENABLE       (0U)
 
 /* What is the FPU type? */
-#define RMP_A7M_RVM_COP_FPV4_SP     (1U)
-#define RMP_A7M_RVM_COP_FPV5_SP     (1U)
-#define RMP_A7M_RVM_COP_FPV5_DP     (1U)
+#define RMP_RV32P_RVM_COP_RVF       RVM_RV32P_COP_RVF
+#define RMP_RV32P_RVM_COP_RVD       RVM_RV32P_COP_RVD
+
 /* Whether to use fast yield routine */
-#define RMP_A7M_RVM_FAST_YIELD      (1U)
+#define RMP_RV32P_RVM_FAST_YIELD    (1U)
 /* End Define ****************************************************************/
 
 /* End Of File ***************************************************************/
