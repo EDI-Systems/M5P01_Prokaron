@@ -198,7 +198,7 @@ void RMP_PendSV_Handler(void)
     *(--SP)=RVM_REG->Reg.R5;
     *(--SP)=RVM_REG->Reg.R4;
 
-    /* Save all the user-accessible hypercall structure to stack */
+    /* Save hypercall parameter to stack */
     *(--SP)=RVM_STATE->Usr.Param[3];
     *(--SP)=RVM_STATE->Usr.Param[2];
     *(--SP)=RVM_STATE->Usr.Param[1];
@@ -216,7 +216,7 @@ void RMP_PendSV_Handler(void)
      * LDR      R0,[R1] */
     SP=(rmp_ptr_t*)RMP_SP_Cur;
 
-    /* Restore the user-accessible hypercall structure to stack */
+    /* Restore hypercall parameter from stack */
     RVM_STATE->Usr.Number=*(SP++);
     RVM_STATE->Usr.Param[0]=*(SP++);
     RVM_STATE->Usr.Param[1]=*(SP++);
