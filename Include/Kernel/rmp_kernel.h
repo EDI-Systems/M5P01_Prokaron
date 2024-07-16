@@ -26,6 +26,7 @@ Description : The header file for the kernel.
 #define RMP_WORD_CHAR               (sizeof(rmp_ptr_t)/sizeof(rmp_u8_t))
 /* Bit mask */
 #define RMP_MASK_FULL               (~((rmp_ptr_t)0U))
+#define RMP_MASK_INTMAX             (RMP_MASK_FULL>>1)
 #define RMP_MASK_WORD               (~(RMP_MASK_FULL<<RMP_WORD_ORDER))
 /* Rounding */
 #define RMP_ROUND_DOWN(NUM,POW)     (((NUM)>>(POW))<<(POW))
@@ -85,10 +86,10 @@ while(0)
 #define RMP_COV_MARKER()
 #endif
 
-/* States of threads */
+/* Thread state */
 #define RMP_THD_STATE(X)            ((X)&((rmp_ptr_t)0xFFU))
 #define RMP_THD_FLAG(X)             ((X)&~((rmp_ptr_t)0xFFU))
-#define RMP_THD_STATE_SET(X, S)     ((X)=(RMP_THD_FLAG(X)|(S)))
+#define RMP_THD_STATE_SET(X,S)      ((X)=(RMP_THD_FLAG(X)|(S)))
 
 /* Thread structure is unused */
 #define RMP_THD_FREE                (0U)
@@ -113,25 +114,39 @@ while(0)
 /* Mailbox valid */
 #define RMP_THD_MBOXFUL             RMP_POW2(9U)
     
-/* States of semaphores */
+/* Semaphore state */
 #define RMP_SEM_FREE                (0U)
 #define RMP_SEM_USED                (1U)
 
-/* States of memory blocks */
+/* Memory block state */
 #define RMP_MEM_FREE                (0U)
 #define RMP_MEM_USED                (1U)
 
-/* States of FIFOs */
+/* FIFO state */
 #define RMP_FIFO_FREE               (0U)
 #define RMP_FIFO_USED               (1U)
 
-/* States of message queues */
+/* Message queue state */
 #define RMP_MSGQ_FREE               (0U)
 #define RMP_MSGQ_USED               (1U)
 
-/* States of blocking message queues */
+/* Blocking message queue state */
 #define RMP_BMQ_FREE                (0U)
 #define RMP_BMQ_USED                (1U)
+
+/* Alarm manager state */
+#define RMP_AMGR_FREE               (0U)
+#define RMP_AMGR_USED               (1U)
+
+/* Alarm state */
+#define RMP_ALRM_STATE(X)           ((X)&((rmp_ptr_t)0x01U))
+#define RMP_ALRM_FLAG(X)            ((X)&~((rmp_ptr_t)0x01U))
+#define RMP_ALRM_STATE_SET(X,S)     ((X)=(RMP_ALRM_FLAG(X)|(S)))
+
+#define RMP_ALRM_FREE               (0U)
+#define RMP_ALRM_USED               (1U)
+#define RMP_ALRM_AUTORLD            (0U)
+#define RMP_ALRM_ONESHOT            RMP_POW2(1U)
 
 /* Error codes */
 /* This error is thread related */
@@ -158,6 +173,8 @@ while(0)
 #define RMP_ERR_MSGQ                (-10)
 /* This error is blocking message queue related */
 #define RMP_ERR_BMQ                 (-11)
+/* This error is alarm related */
+#define RMP_ERR_ALRM                (-12)
 
 /* Scheduler bitmap */
 #define RMP_PRIO_WORD_NUM           (RMP_ROUND_UP(RMP_PREEMPT_PRIO_NUM,RMP_WORD_ORDER)>>RMP_WORD_ORDER)
@@ -206,9 +223,10 @@ while(0)
  * from struct packing at the head, though this is unlikely */
 #define RMP_OFFSET(T,M)             ((rmp_ptr_t)&(((T*)RMP_NULL)->M))
 #define RMP_DLY2THD(X)              ((volatile struct RMP_Thd*)(((rmp_ptr_t)(X))-RMP_OFFSET(struct RMP_Thd,Dly_Head)))
-/* Detect timer overflow */
-#define RMP_DLY_DIFF(X)             ((X)-RMP_Timestamp)
-#define RMP_DIFF_OVF(X)             (((X)>(RMP_MASK_FULL>>1U))||((X)==0U))
+/* Detect overflow */
+#define RMP_DIFF(X,T)               ((X)-(T))
+#define RMP_DLY_DIFF(X)             RMP_DIFF(X,RMP_Timestamp)
+#define RMP_DIFF_OVF(X)             (((X)>RMP_MASK_INTMAX)||((X)==0U))
 
 /* Memory pool */
 /* Table */
@@ -331,10 +349,44 @@ struct RMP_Sem
     rmp_ptr_t Num_Cur;
 };
 
+/* The head struct of a memory block */
+struct RMP_Mem_Head
+{
+    /* This is what is used in TLSF LUT */
+    struct RMP_List Head;
+    /* Is this block used at the moment? */
+    rmp_ptr_t State;
+    /* The pointer to the tail */
+    volatile struct RMP_Mem_Tail* Tail;
+};
+
+/* The tail struct of a memory block */
+struct RMP_Mem_Tail
+{
+    /* Pointer to the memory header */
+    volatile struct RMP_Mem_Head* Head;
+};
+
+/* The memory control header block structure */
+struct RMP_Mem
+{
+    /* The number of FLIs in the system */
+    rmp_ptr_t FLI_Num;
+    /* The base address of the actual memory pool */
+    rmp_ptr_t Base;
+    /* The total size of this pool, including the header, bitmap and list table */
+    rmp_ptr_t Size;
+    /* The location of the list table itself */
+    struct RMP_List* Table;
+    /* The bitmap - This is actually an array that have an indefinite length, and will
+     * be decided at runtime. Don't fuss if lint says that this can overflow; it is safe. */
+    rmp_ptr_t Bitmap[1];
+};
+
+
 /* The FIFO structure */
 struct RMP_Fifo
 {
-    /* The datablocks */
     struct RMP_List Head;
     /* The current number of datablocks */
     rmp_ptr_t Num_Cur;
@@ -360,38 +412,32 @@ struct RMP_Bmq
     rmp_ptr_t State;
 };
 
-/* The head struct of a memory block */
-struct RMP_Mem_Head
+/* The alarm manager structure */
+struct RMP_Amgr
 {
-    /* This is what is used in TLSF LUT */
-    struct RMP_List Head;
-    /* Is this block used at the moment? */
+    struct RMP_Sem Mutex;
+    /* The state of the alarm manager */
     rmp_ptr_t State;
-    /* The pointer to the tail */
-    volatile struct RMP_Mem_Tail* Tail;
+    /* Current timestamp */
+    rmp_ptr_t Timestamp;
+    /* Current number of alarms */
+    rmp_ptr_t Num_Cur;
+    /* The alarms, in a timeout ascending order */
+    struct RMP_List Alrm;
 };
 
-/* The tail struct of a memory block */
-struct RMP_Mem_Tail
+/* The alarm structure */
+struct RMP_Alrm
 {
-    /* This is for tailing the memory */
-    volatile struct RMP_Mem_Head* Head;
-};
-
-/* The memory control header block structure */
-struct RMP_Mem
-{
-    /* The number of FLIs in the system */
-    rmp_ptr_t FLI_Num;
-    /* The base address of the actual memory pool */
-    rmp_ptr_t Base;
-    /* The total size of this pool, including the header, bitmap and list table */
-    rmp_ptr_t Size;
-    /* The location of the list table itself */
-    struct RMP_List* Table;
-    /* The bitmap - This is actually an array that have an indefinite length, and will
-     * be decided at runtime. Don't fuss if lint says that this can overflow; it is safe. */
-    rmp_ptr_t Bitmap[1];
+    struct RMP_List Head;
+    /* The state of the alarm */
+    rmp_ptr_t State;
+    /* The actual delay time of the alarm */
+    rmp_ptr_t Delay;
+    /* The timeout moment */
+    rmp_ptr_t Timeout;
+    /* Timeout callback hook */
+    void (*Hook)(volatile struct RMP_Alrm*,rmp_cnt_t);
 };
 /*****************************************************************************/
 /* __RMP_KERNEL_STRUCT__ */
@@ -444,7 +490,6 @@ static void _RMP_Run_Del(volatile struct RMP_Thd* Thread,
 static void _RMP_Dly_Ins(volatile struct RMP_Thd* Thread,
                          rmp_ptr_t Slice);
 
-static void _RMP_Tim_Proc(void);
 static void _RMP_Thd_Remove(volatile struct RMP_Thd* Thread,
                             rmp_ptr_t Delay_Queue);
 static rmp_ptr_t _RMP_Thd_Unblock(volatile struct RMP_Thd* Thd_Cur,
@@ -452,6 +497,15 @@ static rmp_ptr_t _RMP_Thd_Unblock(volatile struct RMP_Thd* Thd_Cur,
                                   rmp_ptr_t State);
 static rmp_ret_t _RMP_Sem_Pend_Core(volatile struct RMP_Sem* Semaphore,
                                     rmp_ptr_t Slice);
+
+static void _RMP_Amgr_Ins(volatile struct RMP_Amgr* Amgr,
+                          volatile struct RMP_Alrm* Alrm,
+                          rmp_ptr_t Timestamp);
+static void _RMP_Amgr_Expire(volatile struct RMP_Amgr* Amgr,
+                             volatile struct RMP_Alrm* Alrm,
+                             rmp_cnt_t Overdue,
+                             rmp_ptr_t Timestamp);
+                          
 static void _RMP_Mem_Block(volatile struct RMP_Mem_Head* Head,
                            rmp_ptr_t Size,
                            rmp_ptr_t State);
@@ -575,7 +629,6 @@ __RMP_EXTERN__ void RMP_Sched_Unlock(void);
 __RMP_EXTERN__ void RMP_Init(void);
 
 /* Basic thread interface */
-__RMP_EXTERN__ void RMP_Thd_Yield(void);
 __RMP_EXTERN__ rmp_ret_t RMP_Thd_Crt(volatile struct RMP_Thd* Thread, 
                                      void* Entry,
                                      void* Param,
@@ -591,6 +644,7 @@ __RMP_EXTERN__ rmp_ret_t RMP_Thd_Set(volatile struct RMP_Thd* Thread,
                                      rmp_ptr_t Prio,
                                      rmp_ptr_t Slice);
 
+__RMP_EXTERN__ void RMP_Thd_Yield(void);
 __RMP_EXTERN__ rmp_ret_t RMP_Thd_Suspend(volatile struct RMP_Thd* Thread);
 __RMP_EXTERN__ rmp_ret_t RMP_Thd_Resume(volatile struct RMP_Thd* Thread);
 
@@ -621,17 +675,6 @@ __RMP_EXTERN__ rmp_ret_t RMP_Sem_Pend_Unlock(volatile struct RMP_Sem* Semaphore,
                                              rmp_ptr_t Slice);
 __RMP_EXTERN__ rmp_ret_t RMP_Sem_Abort(volatile struct RMP_Thd* Thread);
 __RMP_EXTERN__ rmp_ret_t RMP_Sem_Cnt(volatile struct RMP_Sem* Semaphore);
-
-/* Memory interface */
-__RMP_EXTERN__ rmp_ret_t RMP_Mem_Init(volatile void* Pool,
-                                      rmp_ptr_t Size);
-__RMP_EXTERN__ void* RMP_Malloc(volatile void* Pool,
-                                rmp_ptr_t Size);
-__RMP_EXTERN__ void RMP_Free(volatile void* Pool,
-                             void* Mem_Ptr);
-__RMP_EXTERN__ void* RMP_Realloc(volatile void* Pool,
-                                 void* Mem_Ptr,
-                                 rmp_ptr_t Size);
                              
 /* Extended queue interface - not atomic */
 __RMP_EXTERN__ rmp_ret_t RMP_Fifo_Crt(volatile struct RMP_Fifo* Fifo);
@@ -667,7 +710,35 @@ __RMP_EXTERN__ rmp_ret_t RMP_Bmq_Rcv(volatile struct RMP_Bmq* Queue,
                                      volatile struct RMP_List** Node,
                                      rmp_ptr_t Slice);
 __RMP_EXTERN__ rmp_ret_t RMP_Bmq_Cnt(volatile struct RMP_Bmq* Queue);
+                                     
+/* Alarm manager interface - not atomic */
+__RMP_EXTERN__ rmp_ret_t RMP_Amgr_Crt(volatile struct RMP_Amgr* Amgr);
+__RMP_EXTERN__ rmp_ret_t RMP_Amgr_Del(volatile struct RMP_Amgr* Amgr);
+__RMP_EXTERN__ rmp_ret_t RMP_Amgr_Proc(volatile struct RMP_Amgr* Amgr,
+                                       rmp_ptr_t Tick);
+__RMP_EXTERN__ rmp_ret_t RMP_Amgr_Cnt(volatile struct RMP_Amgr* Amgr);
+__RMP_EXTERN__ rmp_ret_t RMP_Alrm_Init(volatile struct RMP_Alrm* Alrm,
+                                       rmp_ptr_t Delay,
+                                       rmp_ptr_t Mode,
+                                       void (*Hook)(volatile struct RMP_Alrm*,rmp_cnt_t));
+__RMP_EXTERN__ rmp_ret_t RMP_Alrm_Set(volatile struct RMP_Amgr* Amgr,
+                                      volatile struct RMP_Alrm* Alrm);
+__RMP_EXTERN__ rmp_ret_t RMP_Alrm_Trig(volatile struct RMP_Amgr* Amgr,
+                                       volatile struct RMP_Alrm* Alrm);
+__RMP_EXTERN__ rmp_ret_t RMP_Alrm_Clr(volatile struct RMP_Amgr* Amgr,
+                                      volatile struct RMP_Alrm* Alrm);
 
+/* Memory interface - not atomic */
+__RMP_EXTERN__ rmp_ret_t RMP_Mem_Init(volatile void* Pool,
+                                      rmp_ptr_t Size);
+__RMP_EXTERN__ void* RMP_Malloc(volatile void* Pool,
+                                rmp_ptr_t Size);
+__RMP_EXTERN__ void RMP_Free(volatile void* Pool,
+                             void* Mem_Ptr);
+__RMP_EXTERN__ void* RMP_Realloc(volatile void* Pool,
+                                 void* Mem_Ptr,
+                                 rmp_ptr_t Size);
+                                 
 /* Mandatory external hook */
 RMP_EXTERN void RMP_Init_Hook(void);
 RMP_EXTERN void RMP_Init_Idle(void);

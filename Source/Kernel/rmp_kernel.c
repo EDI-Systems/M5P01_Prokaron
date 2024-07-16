@@ -810,83 +810,6 @@ void RMP_Sched_Unlock(void)
 }
 /* End Function:RMP_Sched_Unlock *********************************************/
 
-/* Function:_RMP_Tim_Proc *****************************************************
-Description : Process RMP timer events.
-Input       : None.
-Output      : None.
-Return      : None.
-******************************************************************************/
-static void _RMP_Tim_Proc(void)
-{
-    rmp_ptr_t State;
-    rmp_ptr_t Pure;
-    rmp_ptr_t Diff;
-    volatile struct RMP_Thd* Thread;
-    
-    /* Process the timer events, if there are any of them */
-    while((&RMP_Delay)!=RMP_Delay.Next)
-    {
-        Thread=RMP_DLY2THD(RMP_Delay.Next);
-        
-        /* This thread is overflown */
-        Diff=RMP_DLY_DIFF(Thread->Timeout);
-        if(RMP_DIFF_OVF(Diff))
-        {
-            RMP_COV_MARKER();
-            
-            /* Remove it from delay queue */
-            RMP_List_Del(Thread->Dly_Head.Prev, Thread->Dly_Head.Next);
-            /* Cache volatile thread state */
-            State=Thread->State;
-            /* Extract pure state */
-            Pure=RMP_THD_STATE(State);
-            
-            /* See what state the thread is in */
-            if((Pure==RMP_THD_SNDDLY)||(Pure==RMP_THD_SEMDLY))
-            {
-                RMP_COV_MARKER();
-                
-                RMP_List_Del(Thread->Run_Head.Prev, Thread->Run_Head.Next);
-                /* Supply timeout error code */
-                Thread->Retval=RMP_ERR_OPER;
-            }
-            else if(Pure==RMP_THD_RCVDLY)
-            {
-                RMP_COV_MARKER();
-                
-                /* Supply timeout error code */
-                Thread->Retval=RMP_ERR_OPER;
-            }
-            else if(Pure==RMP_THD_DELAY)
-            {
-                RMP_COV_MARKER();
-                
-                /* No action required */
-            }
-            /* Impossible: thread in the waiting list but not in delay */
-            else
-            {
-                RMP_ASSERT(0);
-            }
-
-            /* Set to ready if not suspended */
-            RMP_THD_STATE_SET(State,RMP_THD_READY);
-            /* Put cached thread state back */
-            Thread->State=State;
-            /* Insert into runqueue if not suspended */
-            _RMP_Run_Ins(Thread,State);
-        }
-        /* Stop when we find a timer that is not overflown */
-        else
-        {
-            RMP_COV_MARKER();
-            
-            break;
-        }
-    }
-}
-/* Function:_RMP_Tim_Proc ****************************************************/
-
 /* Function:_RMP_Run_High *****************************************************
 Description : Get the highest priority thread that is ready. The return value
               will be written into the global variables. Note that providing a
@@ -991,16 +914,21 @@ void _RMP_Run_High(void)
 
 /* Function:_RMP_Tim_Handler **************************************************
 Description : The system tick timer interrupt routine.
-Input       : rmp_ptr_t Slice - How many timeslices have passed.
+Input       : rmp_ptr_t Slice - Number of slices passed since last call of
+                                _RMP_Tim_Handler or _RMP_Tim_Elapse. This shall
+                                not exceed RMP_MASK_INTMAX.
 Output      : None.
 Return      : None.
 ******************************************************************************/
 void _RMP_Tim_Handler(rmp_ptr_t Slice)
 {
+    rmp_ptr_t State;
+    rmp_ptr_t Pure;
     rmp_ptr_t Diff;
     volatile struct RMP_Thd* Thread;
     
     /* Increase the timestamp as always */
+    RMP_ASSERT(Slice<=RMP_MASK_INTMAX);
     RMP_Timestamp+=Slice;
     
     /* Cache volatile current thread */
@@ -1020,32 +948,66 @@ void _RMP_Tim_Handler(rmp_ptr_t Slice)
         Thread->Slice_Left-=Slice;
     }
     
-    /* Check if there are any timer events */
-    if((&RMP_Delay)!=RMP_Delay.Next)
+    /* Process the thread delays if there are any of them */
+    while((&RMP_Delay)!=RMP_Delay.Next)
     {
-        RMP_COV_MARKER();
-        
         Thread=RMP_DLY2THD(RMP_Delay.Next);
-        /* If there are overflows, process all pending timers */
         Diff=RMP_DLY_DIFF(Thread->Timeout);
+        
+        /* Check if this thread is overflown */
         if(RMP_DIFF_OVF(Diff))
         {
             RMP_COV_MARKER();
             
-            /* No need to care about scheduler locks if this interrupt can be entered
-             * - we have disabled timer and scheduler interrupts in scheduler lock */
-            _RMP_Tim_Proc();
+            /* Remove it from delay queue */
+            RMP_List_Del(Thread->Dly_Head.Prev,Thread->Dly_Head.Next);
+            /* Cache volatile thread state */
+            State=Thread->State;
+            /* Extract pure state */
+            Pure=RMP_THD_STATE(State);
+            
+            /* See what state the thread is in */
+            if((Pure==RMP_THD_SNDDLY)||(Pure==RMP_THD_SEMDLY))
+            {
+                RMP_COV_MARKER();
+                
+                RMP_List_Del(Thread->Run_Head.Prev,Thread->Run_Head.Next);
+                /* Supply timeout error code */
+                Thread->Retval=RMP_ERR_OPER;
+            }
+            else if(Pure==RMP_THD_RCVDLY)
+            {
+                RMP_COV_MARKER();
+                
+                /* Supply timeout error code */
+                Thread->Retval=RMP_ERR_OPER;
+            }
+            else if(Pure==RMP_THD_DELAY)
+            {
+                RMP_COV_MARKER();
+                
+                /* No action required */
+            }
+            /* Impossible: thread in the waiting list but not in delay */
+            else
+            {
+                RMP_ASSERT(0);
+            }
+
+            /* Set to ready if not suspended */
+            RMP_THD_STATE_SET(State,RMP_THD_READY);
+            /* Put cached thread state back */
+            Thread->State=State;
+            /* Insert into runqueue if not suspended */
+            _RMP_Run_Ins(Thread,State);
         }
+        /* Stop when we find a timer that is not overflown */
         else
         {
             RMP_COV_MARKER();
-            /* No action required */
+            
+            break;
         }
-    }
-    else
-    {
-        RMP_COV_MARKER();
-        /* No action required */
     }
     
     /* Trigger a context switch if required */
@@ -1076,13 +1038,15 @@ Description : Honor the elapse of time from the last timer firing. This is to be
               account for the time elapsed before a context switch.
               If a tickless kernel is not desired, this function can be ignored.
 Input       : rmp_ptr_t Slice - Number of slices passed since last call of
-                                _RMP_Tim_Elapse or _RMP_Tim_Handler.
+                                _RMP_Tim_Handler or _RMP_Tim_Elapse. This shall
+                                not exceed RMP_MASK_INTMAX.
 Output      : None.
 Return      : None.
 ******************************************************************************/
 void _RMP_Tim_Elapse(rmp_ptr_t Slice)
 {
     /* Increase the timestamp as always */
+    RMP_ASSERT(Slice<=RMP_MASK_INTMAX);
     RMP_Timestamp+=Slice;
 
     /* When calculating the next timer interrupt with _RMP_Tim_Future
@@ -1104,6 +1068,14 @@ void _RMP_Tim_Elapse(rmp_ptr_t Slice)
      * We note that there are two usecases for _RMP_Tim_Elapse: (1) in context
      * switch hooks and (2) in delay hooks, and both will always follow a 
      * context switch. Thus the optimization is valid. */
+     
+    /* The actual limit of the Slice is INT_MAX+3, that is, 0x80000002 under
+     * 32-bit systems. In the worst case, the pending Timeout is 1 slice higher
+     * than the previous timestamp. Therefore the previous Timestamp has to
+     * increase by INT_MAX+1+1 to make the Timeout-Timestamp (which should be
+     * negative to indicate that the pending delay should be processed) become
+     * positive again. 1-(INT_MAX+3) = -(INT_MAX+2) = INT_MAX. Here we chose
+     * INT_MAX artifically to simplify the code as well as the mental model. */
 }
 /* End Function:_RMP_Tim_Elapse **********************************************/
 
@@ -1345,59 +1317,36 @@ static void _RMP_Dly_Ins(volatile struct RMP_Thd* Thread,
     RMP_DLY_HOOK(Slice);
 #endif
     
-    /* Find a place to insert this timer */
-    Trav_Ptr=RMP_Delay.Next;
+    /* Find a place to insert this timer - traverse the list from back to front
+     * because delays added later are also likely to have a later timeout */
+    Trav_Ptr=RMP_Delay.Prev;
     while(Trav_Ptr!=&RMP_Delay)
     {
         Trav_Thd=RMP_DLY2THD(Trav_Ptr);
         
         /* Overflow possible due to bumpy timestamp updates in tickless kernel - 
-         * we need to find one that is greater than us yet is not overflown */
+         * we need to find one pivot that is overflown or smaller than or equal
+         * to us, and we insert ourselves just behind the pivot. */
         Diff=RMP_DLY_DIFF(Trav_Thd->Timeout);
-        if(RMP_DIFF_OVF(Diff)||(Diff<Slice))
-        {
-            RMP_COV_MARKER();
-            
-            Trav_Ptr=Trav_Ptr->Next;
-        }
-        else
+        if(RMP_DIFF_OVF(Diff)||(Diff<=Slice))
         {
             RMP_COV_MARKER();
             
             break;
         }
+        else
+        {
+            RMP_COV_MARKER();
+            
+            Trav_Ptr=Trav_Ptr->Prev;
+        }
     }
 
     /* Insert this into the list */
     Thread->Timeout=RMP_Timestamp+Slice;
-    RMP_List_Ins(&(Thread->Dly_Head),Trav_Ptr->Prev,Trav_Ptr);
+    RMP_List_Ins(&(Thread->Dly_Head),Trav_Ptr,Trav_Ptr->Next);
 }
 /* End Function:_RMP_Dly_Ins *************************************************/
-
-/* Function:RMP_Thd_Yield *****************************************************
-Description : Yield to another thread.
-Input       : None.
-Output      : None.
-Return      : None.
-******************************************************************************/
-void RMP_Thd_Yield(void)
-{
-    /* Scheduler not locked, perform a schedule immediately */
-    if(RMP_Sched_Lock_Cnt==0U)
-    {
-        RMP_COV_MARKER();
-        
-        RMP_YIELD();
-    }
-    /* Scheduler locked, have to pend the flag to schedule later */
-    else
-    {
-        RMP_COV_MARKER();
-        
-        RMP_Sched_Pend=1U;
-    }
-}
-/* End Function:RMP_Thd_Yield ************************************************/
 
 /* Function:RMP_Thd_Crt *******************************************************
 Description : Create a real-time thread and put it into the runqueue.
@@ -1709,8 +1658,21 @@ rmp_ret_t RMP_Thd_Set(volatile struct RMP_Thd* Thread,
         /* No action required */
     }
     
+    /* Check if the priority is valid */
+    if(Prio>RMP_PREEMPT_PRIO_NUM)
+    {
+        RMP_COV_MARKER();
+        
+        return RMP_ERR_PRIO;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+    
     /* Check if the slice is valid */
-    if(Slice==0U)
+    if((Slice==0U)||(Slice>RMP_SLICE_MAX))
     {
         RMP_COV_MARKER();
         
@@ -1746,84 +1708,77 @@ rmp_ret_t RMP_Thd_Set(volatile struct RMP_Thd* Thread,
     }
 #endif
     
-    /* See if the thread is in ready state */
-    if(Pure==RMP_THD_READY)
+    /* See if we're changing priority */
+    if((Prio<RMP_PREEMPT_PRIO_NUM)&&(Thread->Prio!=Prio))
     {
-        RMP_COV_MARKER();
-        
-        /* See if we are gonna change one of it or both */
-        if(Prio<RMP_PREEMPT_PRIO_NUM)
+        /* See if the thread is in ready state */
+        if(Pure==RMP_THD_READY)
         {
             RMP_COV_MARKER();
             
-            if(Thread->Prio!=Prio)
-            {
-                RMP_COV_MARKER();
-                
-                /* Delete from runqueue if not suspended */
-                _RMP_Run_Del(Thread,State);
-                /* Change priority */
-                Thread->Prio=Prio;
-                /* Insert into runqueue if not suspended */
-                _RMP_Run_Ins(Thread,State);
-            }
-            else
-            {
-                RMP_COV_MARKER();
-                /* No action required */
-            }
+            /* Delete from runqueue if not suspended */
+            _RMP_Run_Del(Thread,State);
+            /* Change priority */
+            Thread->Prio=Prio;
+            /* Insert into runqueue if not suspended */
+            _RMP_Run_Ins(Thread,State);
         }
+        /* Not ready, just changing the number will suffice */
         else
-        {
-            RMP_COV_MARKER();
-            /* No action required */
-        }
-        
-        if(Slice<RMP_SLICE_MAX)
-        {
-            RMP_COV_MARKER();
-            
-            Thread->Slice=Slice;
-        }
-        else
-        {
-            RMP_COV_MARKER();
-            /* No action required */
-        }
-    }
-    else
-    {
-        RMP_COV_MARKER();
-        
-        if(Prio<RMP_PREEMPT_PRIO_NUM)
         {
             RMP_COV_MARKER();
             
             Thread->Prio=Prio;
         }
-        else
-        {
-            RMP_COV_MARKER();
-            /* No action required */
-        }
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+    
+    /* See if we're changing timeslice */
+    if(Slice<RMP_SLICE_MAX)
+    {
+        RMP_COV_MARKER();
         
-        if(Slice<RMP_SLICE_MAX)
-        {
-            RMP_COV_MARKER();
-            
-            Thread->Slice=Slice;
-        }
-        else
-        {
-            RMP_COV_MARKER();
-            /* No action required */
-        }
+        Thread->Slice=Slice;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
     }
     
     RMP_Sched_Unlock();
     return 0;
 }
 /* End Function:RMP_Thd_Set **************************************************/
+
+/* Function:RMP_Thd_Yield *****************************************************
+Description : Yield to another thread.
+Input       : None.
+Output      : None.
+Return      : None.
+******************************************************************************/
+void RMP_Thd_Yield(void)
+{
+    /* Scheduler not locked, perform a schedule immediately */
+    if(RMP_Sched_Lock_Cnt==0U)
+    {
+        RMP_COV_MARKER();
+        
+        RMP_YIELD();
+    }
+    /* Scheduler locked, set the pend flag to schedule later */
+    else
+    {
+        RMP_COV_MARKER();
+        
+        RMP_Sched_Pend=1U;
+    }
+}
+/* End Function:RMP_Thd_Yield ************************************************/
 
 /* Function:RMP_Thd_Suspend ***************************************************
 Description : Suspend the execution of a real-time thread.
@@ -3471,6 +3426,2102 @@ int main(void)
 }
 /* End Function:main *********************************************************/
 
+/* Function:RMP_Fifo_Crt ******************************************************
+Description : Create a FIFO.
+Input       : volatile struct RMP_Fifo* Fifo - The pointer to the FIFO.
+Output      : None.
+Return      : rmp_ret_t - If successful, 0; or an error code.
+******************************************************************************/
+rmp_ret_t RMP_Fifo_Crt(volatile struct RMP_Fifo* Fifo)
+{
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the FIFO pointer is valid */
+    if(Fifo==RMP_NULL)
+    {
+        RMP_COV_MARKER();
+        
+        return RMP_ERR_FIFO;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+#endif
+    
+    RMP_Sched_Lock();
+
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the FIFO structure is in use */
+    if(Fifo->State!=RMP_FIFO_FREE)
+    {
+        RMP_COV_MARKER();
+        
+        RMP_Sched_Unlock();
+        return RMP_ERR_FIFO;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+#endif
+    
+    /* Create linked list */
+    RMP_List_Crt(&(Fifo->Head));
+    Fifo->Num_Cur=0U;
+    Fifo->State=RMP_FIFO_USED;
+    
+    RMP_Sched_Unlock();
+    return 0;
+}
+/* End Function:RMP_Fifo_Crt *************************************************/
+
+/* Function:RMP_Fifo_Del ******************************************************
+Description : Delete a FIFO.
+Input       : volatile struct RMP_Fifo* Fifo - The pointer to the FIFO.
+Output      : None.
+Return      : rmp_ret_t - If successful, 0; or an error code.
+******************************************************************************/
+rmp_ret_t RMP_Fifo_Del(volatile struct RMP_Fifo* Fifo)
+{
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the FIFO pointer is valid */
+    if(Fifo==RMP_NULL)
+    {
+        RMP_COV_MARKER();
+        
+        return RMP_ERR_FIFO;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+#endif
+    
+    RMP_Sched_Lock();
+    
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the FIFO structure is in use */
+    if(Fifo->State!=RMP_FIFO_USED)
+    {
+        RMP_COV_MARKER();
+        
+        RMP_Sched_Unlock();
+        return RMP_ERR_FIFO;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+#endif
+    
+    /* Check if the FIFO have any elements */
+    if(Fifo->Num_Cur!=0U)
+    {
+        RMP_COV_MARKER();
+        
+        RMP_Sched_Unlock();
+        return RMP_ERR_OPER;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+    
+    /* Mark as free */
+    Fifo->State=RMP_FIFO_FREE;
+    
+    RMP_Sched_Unlock();
+    return 0;
+}
+/* End Function:RMP_Fifo_Del *************************************************/
+
+/* Function:RMP_Fifo_Read *****************************************************
+Description : Read an element from a FIFO.
+Input       : volatile struct RMP_Fifo* Fifo - The pointer to the FIFO.
+Output      : struct RMP_List** Node - The node read.
+Return      : rmp_ret_t - If successful, 0; or an error code.
+******************************************************************************/
+rmp_ret_t RMP_Fifo_Read(volatile struct RMP_Fifo* Fifo,
+                        volatile struct RMP_List** Node)
+{
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the FIFO pointer is valid */
+    if(Fifo==RMP_NULL)
+    {
+        RMP_COV_MARKER();
+        
+        return RMP_ERR_FIFO;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+    
+    /* Check if the node pointer is valid */
+    if(Node==RMP_NULL)
+    {
+        RMP_COV_MARKER();
+        
+        return RMP_ERR_OPER;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+#endif
+    
+    RMP_Sched_Lock();
+    
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the FIFO structure is in use */
+    if(Fifo->State!=RMP_FIFO_USED)
+    {
+        RMP_COV_MARKER();
+        
+        RMP_Sched_Unlock();
+        return RMP_ERR_FIFO;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+#endif
+    
+    /* See if the FIFO is empty */
+    if(Fifo->Head.Next==&(Fifo->Head))
+    {
+        RMP_COV_MARKER();
+        
+        RMP_Sched_Unlock();
+        return RMP_ERR_OPER;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+    
+    /* If not, grab one */
+    *Node=Fifo->Head.Next;
+    RMP_List_Del((*Node)->Prev,(*Node)->Next);
+    
+    /* The count should not be zero, decrease it */
+    RMP_ASSERT(Fifo->Num_Cur!=0U);
+    Fifo->Num_Cur--;
+    
+    RMP_Sched_Unlock();
+    return 0;
+}
+/* End Function:RMP_Fifo_Read ************************************************/
+
+/* Function:RMP_Fifo_Write ****************************************************
+Description : Write an element to a FIFO.
+Input       : volatile struct RMP_Fifo* Fifo - The pointer to the FIFO.
+              volatile struct RMP_List* Node - The node to put into the FIFO.
+Output      : None.
+Return      : rmp_ret_t - If successful, 0; or an error code.
+******************************************************************************/
+rmp_ret_t RMP_Fifo_Write(volatile struct RMP_Fifo* Fifo,
+                         volatile struct RMP_List* Node)
+{
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the FIFO pointer is valid */
+    if(Fifo==RMP_NULL)
+    {
+        RMP_COV_MARKER();
+        
+        return RMP_ERR_FIFO;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+
+    /* Check if the data pointer is valid */
+    if(Node==RMP_NULL)
+    {
+        RMP_COV_MARKER();
+        
+        return RMP_ERR_OPER;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+#endif
+    
+    RMP_Sched_Lock();
+    
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the FIFO structure is in use */
+    if(Fifo->State!=RMP_FIFO_USED)
+    {
+        RMP_COV_MARKER();
+        
+        RMP_Sched_Unlock();
+        return RMP_ERR_FIFO;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+#endif
+    
+    /* Write to list and increase count */
+    RMP_List_Ins(Node,Fifo->Head.Prev,&(Fifo->Head));
+    Fifo->Num_Cur++;
+
+    RMP_Sched_Unlock();
+    return 0;
+}
+/* End Function:RMP_Fifo_Write ***********************************************/
+
+/* Function:RMP_Fifo_Write_ISR ************************************************
+Description : Write an element to a FIFO, from the ISR. This function can only be
+              called from an ISR whose priority is below or equal to the context
+              switch handler's. We do not check whether the scheduler is locked;
+              if we are calling this function, we're pretty sure that it's not.
+Input       : volatile struct RMP_Fifo* Fifo - The pointer to the FIFO.
+              volatile struct RMP_List* Node - The node to put into the FIFO.
+Output      : None.
+Return      : rmp_ret_t - If successful, 0; or an error code.
+******************************************************************************/
+rmp_ret_t RMP_Fifo_Write_ISR(volatile struct RMP_Fifo* Fifo,
+                             volatile struct RMP_List* Node)
+{
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the FIFO pointer is valid */
+    if(Fifo==RMP_NULL)
+    {
+        RMP_COV_MARKER();
+        
+        return RMP_ERR_FIFO;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+
+    /* Check if the data pointer is valid */
+    if(Node==RMP_NULL)
+    {
+        RMP_COV_MARKER();
+        
+        return RMP_ERR_OPER;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+    
+    /* Check if the FIFO structure is in use */
+    if(Fifo->State!=RMP_FIFO_USED)
+    {
+        RMP_COV_MARKER();
+        
+        return RMP_ERR_FIFO;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+#endif
+    
+    /* Write to list and increase count */
+    RMP_List_Ins(Node,Fifo->Head.Prev,&(Fifo->Head));
+    Fifo->Num_Cur++;
+
+    return 0;
+}
+/* End Function:RMP_Fifo_Write_ISR *******************************************/
+
+/* Function:RMP_Fifo_Cnt ******************************************************
+Description : Get the number of elements in the FIFO.
+Input       : volatile struct RMP_Fifo* Fifo - The pointer to the FIFO.
+Output      : None.
+Return      : rmp_ret_t - If successful, the number of nodes; or an error code.
+******************************************************************************/
+rmp_ret_t RMP_Fifo_Cnt(volatile struct RMP_Fifo* Fifo)
+{
+    rmp_ret_t Count;
+
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the FIFO pointer is valid */
+    if(Fifo==RMP_NULL)
+    {
+        RMP_COV_MARKER();
+        
+        return RMP_ERR_FIFO;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+#endif
+    
+    RMP_Sched_Lock();
+    
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the FIFO structure is in use */
+    if(Fifo->State!=RMP_FIFO_USED)
+    {
+        RMP_COV_MARKER();
+        
+        RMP_Sched_Unlock();
+        return RMP_ERR_FIFO;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+#endif
+    
+    Count=(rmp_ret_t)(Fifo->Num_Cur);
+    
+    RMP_Sched_Unlock();
+    return Count;
+}
+/* End Function:RMP_Fifo_Cnt *************************************************/
+
+/* Function:RMP_Msgq_Crt ******************************************************
+Description : Create a message queue.
+Input       : volatile struct RMP_Msgq* Queue - The pointer to the queue.
+Output      : None.
+Return      : rmp_ret_t - If successful, 0; or an error code.
+******************************************************************************/
+rmp_ret_t RMP_Msgq_Crt(volatile struct RMP_Msgq* Queue)
+{
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the queue pointer is valid */
+    if(Queue==RMP_NULL)
+    {
+        RMP_COV_MARKER();
+        
+        return RMP_ERR_MSGQ;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+#endif
+    
+    RMP_Sched_Lock();
+    
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the queue structure is in use */
+    if(Queue->State!=RMP_MSGQ_FREE)
+    {
+        RMP_COV_MARKER();
+        
+        RMP_Sched_Unlock();
+        return RMP_ERR_MSGQ;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+#endif
+    
+    /* A queue is just a FIFO paired with a counting semaphore */
+    RMP_ASSERT(RMP_Sem_Crt(&(Queue->Sem),0U)==0);
+    RMP_ASSERT(RMP_Fifo_Crt(&(Queue->Fifo))==0);
+    Queue->State=RMP_MSGQ_USED;
+    
+    RMP_Sched_Unlock();
+    return 0;
+}
+/* End Function:RMP_Msgq_Crt *************************************************/
+
+/* Function:RMP_Msgq_Del ******************************************************
+Description : Delete a message queue. Only message queues that are empty may be
+              deleted.
+Input       : volatile struct RMP_Msgq* Queue - The pointer to the queue.
+Output      : None.
+Return      : rmp_ret_t - If successful, 0; or an error code.
+******************************************************************************/
+rmp_ret_t RMP_Msgq_Del(volatile struct RMP_Msgq* Queue)
+{
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the queue pointer is valid */
+    if(Queue==RMP_NULL)
+    {
+        RMP_COV_MARKER();
+        
+        return RMP_ERR_MSGQ;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+#endif
+    
+    RMP_Sched_Lock();
+
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the queue structure is in use */
+    if(Queue->State!=RMP_MSGQ_USED)
+    {
+        RMP_COV_MARKER();
+        
+        RMP_Sched_Unlock();
+        return RMP_ERR_MSGQ;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+#endif
+    
+    /* See if the FIFO could be deleted */
+    if(RMP_Fifo_Del(&(Queue->Fifo))<0)
+    {
+        RMP_COV_MARKER();
+        
+        RMP_Sched_Unlock();
+        return RMP_ERR_OPER;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+    
+    /* Proceed to delete the companion semaphore */
+    RMP_ASSERT(RMP_Sem_Del(&(Queue->Sem))==0);
+    Queue->State=RMP_MSGQ_FREE;
+    
+    RMP_Sched_Unlock();
+    return 0;
+}
+/* End Function:RMP_Msgq_Del *************************************************/
+
+/* Function:RMP_Msgq_Snd ******************************************************
+Description : Send a message to the message queue.
+Input       : volatile struct RMP_Msgq* Queue - The pointer to the queue.
+Output      : None.
+Return      : rmp_ret_t - If successful, 0; or an error code.
+******************************************************************************/
+rmp_ret_t RMP_Msgq_Snd(volatile struct RMP_Msgq* Queue,
+                       volatile struct RMP_List* Node)
+{
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the queue pointer is valid */
+    if(Queue==RMP_NULL)
+    {
+        RMP_COV_MARKER();
+        
+        return RMP_ERR_MSGQ;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+    
+    /* Check if the data pointer is valid */
+    if(Node==RMP_NULL)
+    {
+        RMP_COV_MARKER();
+        
+        return RMP_ERR_OPER;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+#endif
+    
+    RMP_Sched_Lock();
+    
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the queue structure is in use */
+    if(Queue->State!=RMP_MSGQ_USED)
+    {
+        RMP_COV_MARKER();
+        
+        RMP_Sched_Unlock();
+        return RMP_ERR_MSGQ;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+#endif
+    
+    /* Note the trick here: we have locked the scheduler, so we're safe to 
+     * post the semaphore first. We do this lest the semaphore post may fail
+     * due to maximum number limit. Semaphore post is in fact safe to use
+     * when inside a critical section. */
+    if(RMP_Sem_Post(&(Queue->Sem), 1U)<0)
+    {
+        RMP_COV_MARKER();
+        
+        RMP_Sched_Unlock();
+        return RMP_ERR_OPER;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+    
+    /* Insert the node */
+    RMP_ASSERT(RMP_Fifo_Write(&(Queue->Fifo), Node)==0);
+    
+    RMP_Sched_Unlock();
+    return 0;
+}
+/* End Function:RMP_Msgq_Snd *************************************************/
+
+/* Function:RMP_Msgq_Snd_ISR **************************************************
+Description : Send a message to the message queue. This function can only be
+              called from an ISR whose priority is below or equal to the context
+              switch handler's. We do not check whether the scheduler is locked;
+              if we are calling this function, we're pretty sure that it's not.
+              We do not check whether the scheduler is locked; if we are calling
+              this function, we're pretty sure that it's not.
+Input       : volatile struct RMP_Msgq* Queue - The pointer to the queue.
+Output      : None.
+Return      : rmp_ret_t - If successful, 0; or an error code.
+******************************************************************************/
+rmp_ret_t RMP_Msgq_Snd_ISR(volatile struct RMP_Msgq* Queue,
+                           volatile struct RMP_List* Node)
+{
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the the queue pointer is valid */
+    if(Queue==RMP_NULL)
+    {
+        RMP_COV_MARKER();
+        
+        return RMP_ERR_MSGQ;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+    
+    /* Check if the data pointer is valid */
+    if(Node==RMP_NULL)
+    {
+        RMP_COV_MARKER();
+        
+        return RMP_ERR_OPER;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+    
+    /* Check if the queue structure is in use */
+    if(Queue->State!=RMP_MSGQ_USED)
+    {
+        RMP_COV_MARKER();
+        
+        return RMP_ERR_MSGQ;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+#endif
+    
+    /* Notify the receiver(s) first */
+    if(RMP_Sem_Post_ISR(&(Queue->Sem), 1U)<0)
+    {
+        RMP_COV_MARKER();
+        
+        return RMP_ERR_OPER;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+    
+    /* Then insert node - must be successful */
+    RMP_ASSERT(RMP_Fifo_Write_ISR(&(Queue->Fifo), Node)==0);
+
+    return 0;
+}
+/* End Function:RMP_Msgq_Snd_ISR *********************************************/
+
+/* Function:RMP_Msgq_Rcv ******************************************************
+Description : Receive a message from a message queue.
+Input       : volatile struct RMP_Msgq* Queue - The pointer to the queue.
+              rmp_ptr_t Slice - The number of slices to wait.
+Output      : volatile struct RMP_List** Node - The node received.
+Output      : None.
+Return      : rmp_ret_t - If successful, 0; or an error code.
+******************************************************************************/
+rmp_ret_t RMP_Msgq_Rcv(volatile struct RMP_Msgq* Queue,
+                       volatile struct RMP_List** Node,
+                       rmp_ptr_t Slice)
+{
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the queue pointer is valid */
+    if(Queue==RMP_NULL)
+    {
+        RMP_COV_MARKER();
+        
+        return RMP_ERR_MSGQ;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+    
+    /* Check if the data pointer is valid */
+    if(Node==RMP_NULL)
+    {
+        RMP_COV_MARKER();
+        
+        return RMP_ERR_OPER;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+#endif
+    
+    RMP_Sched_Lock();
+
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the queue structure is in use */
+    if(Queue->State!=RMP_MSGQ_USED)
+    {
+        RMP_COV_MARKER();
+        
+        RMP_Sched_Unlock();
+        return RMP_ERR_MSGQ;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+#endif
+    
+    /* Try to grab a semaphore, and only when we succeed do we proceed - 
+     * there is the possibility that the whole queue gets deleted, so
+     * we need to take that into account. Note that the potential 
+     * semaphore-FIFO race here is impossible: unlike condition variables,
+     * semaphore is counting, so if a thread grabs a semaphore it is 
+     * guaranteed that something is in the FIFO. */
+    if(RMP_Sem_Pend_Unlock(&(Queue->Sem), Slice)<0)
+    {
+        RMP_COV_MARKER();
+        
+        return RMP_ERR_OPER;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+    
+    /* Grab the data then - we could have a delete race here */
+    if(RMP_Fifo_Read(&(Queue->Fifo), Node)<0)
+    {
+        RMP_COV_MARKER();
+        
+        return RMP_ERR_OPER;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+    
+    return 0;
+}
+/* End Function:RMP_Msgq_Rcv *************************************************/
+
+/* Function:RMP_Msgq_Cnt ******************************************************
+Description : Get the number of nodes in the message queue.
+Input       : volatile struct RMP_Msgq* Queue - The pointer to the message queue.
+Output      : None.
+Return      : rmp_ret_t - If successful, the number of nodes; or an error code.
+******************************************************************************/
+rmp_ret_t RMP_Msgq_Cnt(volatile struct RMP_Msgq* Queue)
+{
+    rmp_ret_t Count;
+    
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the queue pointer is valid */
+    if(Queue==RMP_NULL)
+    {
+        RMP_COV_MARKER();
+        
+        return RMP_ERR_MSGQ;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+#endif
+    
+    RMP_Sched_Lock();
+    
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the queue structure is in use */
+    if(Queue->State!=RMP_MSGQ_USED)
+    {
+        RMP_COV_MARKER();
+        
+        RMP_Sched_Unlock();
+        return RMP_ERR_MSGQ;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+#endif
+    
+    Count=RMP_Fifo_Cnt(&(Queue->Fifo));
+    
+    RMP_Sched_Unlock();
+    return Count;
+}
+/* End Function:RMP_Msgq_Cnt *************************************************/
+
+/* Function:RMP_Bmq_Crt *******************************************************
+Description : Create a blocking message queue. A blocking message queue is a
+              queue that may block senders in addition to receivers.
+              It must be pointed out that providing a core-level semaphore
+              variant that will block senders if it reaches limit does NOT help
+              implementation of this type of queue. A race between (1) mounting
+              the actual info block and (2) notifying the receiver will race no
+              matter how they are arranged relative to each other. If (1) is 
+              before (2), the actual number of messages on the queue may exceed
+              limit when multiple senders are present. If (2) is before (1),
+              the receiver may be notified before the actual block is mounted.
+              Using normal semaphores do not have this issue because a mounting
+              permission is always granted before the actual mounting, and the
+              notification of the receiver will follow the actual mounting.
+Input       : volatile struct RMP_Bmq* Queue - The pointer to the queue.
+              rmp_ptr_t Limit - The message number limit.
+Output      : None.
+Return      : rmp_ret_t - If successful, 0; or an error code.
+******************************************************************************/
+rmp_ret_t RMP_Bmq_Crt(volatile struct RMP_Bmq* Queue,
+                      rmp_ptr_t Limit)
+{
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the queue pointer is valid */
+    if(Queue==RMP_NULL)
+    {
+        RMP_COV_MARKER();
+        
+        return RMP_ERR_BMQ;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+    
+    /* Check if the limit is valid */
+    if((Limit==0U)||(Limit>=RMP_SEM_CNT_MAX))
+    {
+        RMP_COV_MARKER();
+        
+        return RMP_ERR_OPER;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+#endif
+    
+    RMP_Sched_Lock();
+
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the queue pointer is in use */
+    if(Queue->State!=RMP_BMQ_FREE)
+    {
+        RMP_COV_MARKER();
+        
+        RMP_Sched_Unlock();
+        return RMP_ERR_BMQ;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+#endif
+    
+    /* A blocking queue is a message queue paired with a limiting semaphore */
+    RMP_ASSERT(RMP_Sem_Crt(&(Queue->Sem),Limit)==0);
+    RMP_ASSERT(RMP_Msgq_Crt(&(Queue->Msgq))==0);
+    Queue->State=RMP_BMQ_USED;
+    
+    RMP_Sched_Unlock();
+    return 0;
+}
+/* End Function:RMP_Bmq_Crt **************************************************/
+
+/* Function:RMP_Bmq_Del *******************************************************
+Description : Delete a blocking message queue. Only blocking message queues that
+              are empty may be deleted.
+Input       : volatile struct RMP_Bmq* Queue - The pointer to the queue.
+Output      : None.
+Return      : rmp_ret_t - If successful, 0; or an error code.
+******************************************************************************/
+rmp_ret_t RMP_Bmq_Del(volatile struct RMP_Bmq* Queue)
+{
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the queue pointer is valid */
+    if(Queue==RMP_NULL)
+    {
+        RMP_COV_MARKER();
+        
+        return RMP_ERR_MSGQ;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+#endif
+    
+    RMP_Sched_Lock();
+    
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the queue structure is in use */
+    if(Queue->State!=RMP_BMQ_USED)
+    {
+        RMP_COV_MARKER();
+        
+        RMP_Sched_Unlock();
+        return RMP_ERR_BMQ;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+#endif
+    
+    /* Attempt to delete the message queue first */
+    if(RMP_Msgq_Del(&(Queue->Msgq))<0)
+    {
+        RMP_COV_MARKER();
+        
+        RMP_Sched_Unlock();
+        return RMP_ERR_OPER;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+    
+    /* Proceed to delete the companion semaphore */
+    RMP_ASSERT(RMP_Sem_Del(&(Queue->Sem))==0);
+    Queue->State=RMP_BMQ_FREE;
+    
+    RMP_Sched_Unlock();
+    return 0;
+}
+/* End Function:RMP_Bmq_Del **************************************************/
+
+/* Function:RMP_Bmq_Snd *******************************************************
+Description : Send to a blocking message queue.
+Input       : volatile struct RMP_Bmq* Queue - The pointer to the queue.
+              rmp_ptr_t Slice - The number of slices to wait.
+Output      : None.
+Return      : rmp_ret_t - If successful, 0; or an error code.
+******************************************************************************/
+rmp_ret_t RMP_Bmq_Snd(volatile struct RMP_Bmq* Queue,
+                      volatile struct RMP_List* Node,
+                      rmp_ptr_t Slice)
+{
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the queue pointer is valid */
+    if(Queue==RMP_NULL)
+    {
+        RMP_COV_MARKER();
+        
+        return RMP_ERR_MSGQ;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+    
+    /* Check if the data pointer is valid */
+    if(Node==RMP_NULL)
+    {
+        RMP_COV_MARKER();
+        
+        return RMP_ERR_OPER;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+    
+    /* Check if the queue structure is in use - no lock needed cause we have 
+     * deletion race protection below: assuming the operations can fail. */
+    if(Queue->State!=RMP_BMQ_USED)
+    {
+        RMP_COV_MARKER();
+        
+        return RMP_ERR_BMQ;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+#endif
+    
+    /* Grab a slot first. If we're unable to do this, we need to exit */
+    if(RMP_Sem_Pend(&(Queue->Sem),Slice)<0)
+    {
+        RMP_COV_MARKER();
+        
+        return RMP_ERR_OPER;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+
+    /* Do the message queue send. This can't fail due to semaphore limit
+     * because if it was the case the creation of the blocking message queue
+     * won't succeed at first. However, if the message queue is deleted, or
+     * the wait is aborted, then this could fail somewhere in the middle. */
+    if(RMP_Msgq_Snd(&(Queue->Msgq),Node)<0)
+    {
+        RMP_COV_MARKER();
+        
+        /* Put the semaphore back - this is for handling aborts, and the user
+         * is fully responsible for ABA issues that arise from deletion. */
+        if(Queue->State==RMP_BMQ_USED)
+        {
+            RMP_COV_MARKER();
+            
+            RMP_Sem_Post(&(Queue->Sem),1U);
+        }
+        else
+        {
+            RMP_COV_MARKER();
+            /* No action required */
+        }
+        
+        return RMP_ERR_OPER;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+    
+    return 0;
+}
+/* End Function:RMP_Bmq_Snd **************************************************/
+
+/* Function:RMP_Bmq_Snd_ISR ***************************************************
+Description : Send to a blocking message queue. Different from the normal 
+              version, This function does not block (and instead return failure
+              when the queue is full) and can only be called from an ISR whose
+              priority is below or equal to the context switch handler's. We do
+              not check whether the scheduler is locked; if we are calling this
+              function, we're pretty sure that it's not.
+Input       : volatile struct RMP_Bmq* Queue - The pointer to the queue.
+Output      : None.
+Return      : rmp_ret_t - If successful, 0; or an error code.
+******************************************************************************/
+rmp_ret_t RMP_Bmq_Snd_ISR(volatile struct RMP_Bmq* Queue,
+                          volatile struct RMP_List* Node)
+{
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the queue pointer is valid */
+    if(Queue==RMP_NULL)
+    {
+        RMP_COV_MARKER();
+        
+        return RMP_ERR_MSGQ;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+    
+    /* Check if the data pointer is valid */
+    if(Node==RMP_NULL)
+    {
+        RMP_COV_MARKER();
+        
+        return RMP_ERR_OPER;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+    
+    /* Check if the queue structure is in use */
+    if(Queue->State!=RMP_BMQ_USED)
+    {
+        RMP_COV_MARKER();
+        
+        return RMP_ERR_BMQ;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+    
+    /* Check if we have used the queue up */
+    if(Queue->Sem.Num_Cur==0U)
+    {
+        RMP_COV_MARKER();
+        
+        return RMP_ERR_OPER;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+#endif
+    
+    /* Manually operate the semaphore, then send to message queue */
+    Queue->Sem.Num_Cur--;
+    RMP_Msgq_Snd_ISR(&(Queue->Msgq), Node);
+
+    return 0;
+}
+/* End Function:RMP_Bmq_Snd_ISR **********************************************/
+
+/* Function:RMP_Bmq_Rcv *******************************************************
+Description : Receive from a blocking message queue.
+Input       : volatile struct RMP_Bmq* Queue - The pointer to the queue.
+              rmp_ptr_t Slice - The number of slices to wait.
+Output      : volatile struct RMP_List** Node - The node received.
+Output      : None.
+Return      : rmp_ret_t - If successful, 0; or an error code.
+******************************************************************************/
+rmp_ret_t RMP_Bmq_Rcv(volatile struct RMP_Bmq* Queue,
+                      volatile struct RMP_List** Node,
+                      rmp_ptr_t Slice)
+{
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the queue pointer is valid */
+    if(Queue==RMP_NULL)
+    {
+        RMP_COV_MARKER();
+        
+        return RMP_ERR_BMQ;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+    
+    /* Check if the data pointer is valid */
+    if(Node==RMP_NULL)
+    {
+        RMP_COV_MARKER();
+        
+        return RMP_ERR_OPER;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+    
+    /* Check if the queue structure is in use - no lock needed cause we have 
+     * deletion race protection below: assuming the operations can fail */
+    if(Queue->State!=RMP_BMQ_USED)
+    {
+        RMP_COV_MARKER();
+        
+        return RMP_ERR_BMQ;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+#endif
+    
+    /* Attempt a message queue receive */
+    if(RMP_Msgq_Rcv(&(Queue->Msgq),Node,Slice)<0)
+    {
+        RMP_COV_MARKER();
+        
+        return RMP_ERR_OPER;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+                          
+    /* If we're successful, wake up one guy on the send wait list. We don't care 
+     * if this fails: if this fails due to queue deletion, that's totally fine.
+     * Also there is no possibility that the FIFO will (even transiently) contain
+     * more elements than the limit: this only gets posted when the FIFO dequeue
+     * is actually performed. */
+    RMP_Sem_Post(&(Queue->Sem),1U);
+    
+    return 0;
+}
+/* End Function:RMP_Bmq_Rcv **************************************************/
+
+/* Function:RMP_Bmq_Cnt *******************************************************
+Description : Get the number of nodes in the blocking message queue.
+Input       : volatile struct RMP_Bmq* Queue - The pointer to the message queue.
+Output      : None.
+Return      : rmp_ret_t - If successful, the number of nodes; or an error code.
+******************************************************************************/
+rmp_ret_t RMP_Bmq_Cnt(volatile struct RMP_Bmq* Queue)
+{
+    rmp_ret_t Count;
+
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the queue pointer is valid */
+    if(Queue==RMP_NULL)
+    {
+        RMP_COV_MARKER();
+        
+        return RMP_ERR_BMQ;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+#endif
+    
+    RMP_Sched_Lock();
+    
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the queue structure is in use */
+    if(Queue->State!=RMP_BMQ_USED)
+    {
+        RMP_COV_MARKER();
+        
+        RMP_Sched_Unlock();
+        return RMP_ERR_BMQ;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+#endif
+    
+    Count=RMP_Msgq_Cnt(&(Queue->Msgq));
+    
+    RMP_Sched_Unlock();
+    return Count;
+}
+/* End Function:RMP_Bmq_Cnt **************************************************/
+
+/* Function:RMP_Amgr_Crt ******************************************************
+Description : Set up an alarm manager. Different from thread delay, alarm
+              manager won't lock the scheduler when doing the bulk of the 
+              processing, thus the systems at different criticalities won't
+              share the same alarm manager and won't interfere with each other.
+              How many alarm managers are used and at what priority/tick
+              granularity they run is totally up to the user.
+              A lack of scheduler locks means that we have a much larger chance
+              of deletion races should the application is poorly written, hence
+              the alarm operations should assume that the mutex operations can
+              fail.
+Input       : volatile struct RMP_Amgr* Amgr - The alarm manager.
+Output      : None.
+Return      : rmp_ret_t - If successful, 0; or an error code.
+******************************************************************************/
+rmp_ret_t RMP_Amgr_Crt(volatile struct RMP_Amgr* Amgr)
+{
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the alarm manager pointer is valid */
+    if(Amgr==RMP_NULL)
+    {
+        RMP_COV_MARKER();
+        
+        return RMP_ERR_ALRM;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+#endif
+    
+    RMP_Sched_Lock();
+    
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the alarm manager structure is in use */
+    if(Amgr->State!=RMP_AMGR_FREE)
+    {
+        RMP_COV_MARKER();
+        
+        RMP_Sched_Unlock();
+        return RMP_ERR_ALRM;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+#endif
+    
+    /* An alarm manager is just a protecting mutex paired with a queue */
+    RMP_ASSERT(RMP_Sem_Crt(&(Amgr->Mutex),1U)==0);
+    Amgr->Timestamp=0U;
+    Amgr->Num_Cur=0U;
+    RMP_List_Crt(&(Amgr->Alrm));
+    Amgr->State=RMP_AMGR_USED;
+    
+    RMP_Sched_Unlock();
+    return 0;
+}
+/* End Function:RMP_Amgr_Crt *************************************************/
+
+/* Function:RMP_Amgr_Del ******************************************************
+Description : Delete an alarm manager. Alarm manager could only be deleted if
+              it does not currently contain alarms.
+              Considering the fact that the threads might be killed while
+              holding the mutex, this function won't respect the mutex and will
+              proceed to deletion checking directly. For the same reason, we
+              want to check the actual list instead of the current alarm count.
+Input       : volatile struct RMP_Amgr* Amgr - The alarm manager.
+Output      : None.
+Return      : rmp_ret_t - If successful, 0; or an error code.
+******************************************************************************/
+rmp_ret_t RMP_Amgr_Del(volatile struct RMP_Amgr* Amgr)
+{
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the alarm manager pointer is valid */
+    if(Amgr==RMP_NULL)
+    {
+        RMP_COV_MARKER();
+        
+        return RMP_ERR_ALRM;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+#endif
+    
+    RMP_Sched_Lock();
+    
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the alarm manager structure is in use */
+    if(Amgr->State!=RMP_AMGR_USED)
+    {
+        RMP_COV_MARKER();
+        
+        RMP_Sched_Unlock();
+        return RMP_ERR_ALRM;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+#endif
+    
+    /* Disrespect the semaphore and go check the datastructure */
+    if(&(Amgr->Alrm)!=Amgr->Alrm.Next)
+    {
+        RMP_COV_MARKER();
+        
+        RMP_Sched_Unlock();
+        return RMP_ERR_OPER;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+    
+    /* Proceed to delete the companion mutex */
+    RMP_ASSERT(RMP_Sem_Del(&(Amgr->Mutex))==0);
+    Amgr->State=RMP_AMGR_FREE;
+    
+    RMP_Sched_Unlock();
+    return 0;
+}
+/* End Function:RMP_Amgr_Del *************************************************/
+
+/* Function:RMP_Amgr_Pop ******************************************************
+Description : Pop an alarm from the alarm manager queue. This is useful for
+              dumping all the alarms one by one before deleting the alarm
+              manager so that the alarm data structure can be freed. For the
+              same reason as above, this does not respect the mutex.
+Input       : volatile struct RMP_Amgr* Amgr - The alarm manager.
+Output      : volatile struct RMP_Alrm** Alrm - The alarm popped out.
+Return      : rmp_ret_t - If successful, 0; or an error code.
+******************************************************************************/
+rmp_ret_t RMP_Amgr_Pop(volatile struct RMP_Amgr* Amgr,
+                       volatile struct RMP_Alrm** Alrm)
+{
+    volatile struct RMP_Alrm* Trav_Alrm;
+    
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the alarm manager pointer is valid */
+    if(Amgr==RMP_NULL)
+    {
+        RMP_COV_MARKER();
+        
+        return RMP_ERR_ALRM;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+    
+    /* Check if the alarm pointer is valid */
+    if(Alrm==RMP_NULL)
+    {
+        RMP_COV_MARKER();
+        
+        return RMP_ERR_OPER;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+#endif
+    
+    RMP_Sched_Lock();
+    
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the alarm manager structure is in use */
+    if(Amgr->State!=RMP_AMGR_USED)
+    {
+        RMP_COV_MARKER();
+        
+        RMP_Sched_Unlock();
+        return RMP_ERR_ALRM;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+#endif
+    
+    /* There are alarms in the queue */
+    if(&(Amgr->Alrm)!=Amgr->Alrm.Next)
+    {
+        RMP_COV_MARKER();
+        
+        Trav_Alrm=(volatile struct RMP_Alrm*)(Amgr->Alrm.Next);
+        
+        /* Remove it from the queue; the queue data structure is always intact
+         * even when the thread is killed in the middle of an alarm operation
+         * because scheduler locks are always applied around it */
+        RMP_List_Del(Trav_Alrm->Head.Prev,Trav_Alrm->Head.Next);
+        
+        /* No need to decrease current count as the manager is being deleted */
+        
+        /* Mark the alarm as unused */
+        RMP_ALRM_STATE_SET(Trav_Alrm->State,RMP_ALRM_FREE);
+        *Alrm=Trav_Alrm;
+        
+        RMP_Sched_Unlock();
+        return 0;
+    }
+    /* Nothing to dump */
+    else
+    {
+        RMP_COV_MARKER();
+        
+        *Alrm=RMP_NULL;
+    }
+    
+    RMP_Sched_Unlock();
+    return RMP_ERR_OPER;
+}
+/* End Function:RMP_Amgr_Pop *************************************************/
+
+/* Function:_RMP_Amgr_Ins *****************************************************
+Description : Insert a given alarm into the alarm manager.
+Input       : volatile struct RMP_Amgr* Amgr - The alarm manager.
+              volatile struct RMP_Alrm* Alrm - The alarm.
+              rmp_ptr_t Timestamp - The timstamp to use in comparison.
+Output      : None.
+Return      : None.
+******************************************************************************/
+static void _RMP_Amgr_Ins(volatile struct RMP_Amgr* Amgr,
+                          volatile struct RMP_Alrm* Alrm,
+                          rmp_ptr_t Timestamp)
+{
+    rmp_ptr_t Delay;
+    rmp_ptr_t Timeout;
+    rmp_ptr_t Diff;
+    volatile struct RMP_List* Trav_Ptr;
+    volatile struct RMP_Alrm* Trav_Alrm;
+    
+    /* Cache volatile delay and timeout */
+    Delay=Alrm->Delay;
+    Timeout=Timestamp+Delay;
+    
+    /* Find a place to insert this alarm */
+    Trav_Ptr=Amgr->Alrm.Prev;
+    while(Trav_Ptr!=&(Amgr->Alrm))
+    {
+        Trav_Alrm=(volatile struct RMP_Alrm*)Trav_Ptr;
+        
+        /* Find a position from back to insert this alarm */
+        Diff=RMP_DIFF(Trav_Alrm->Timeout,Timestamp);
+        if(RMP_DIFF_OVF(Diff)||(Diff<=Delay))
+        {
+            RMP_COV_MARKER();
+            
+            break;
+        }
+        else
+        {
+            RMP_COV_MARKER();
+            
+            Trav_Ptr=Trav_Ptr->Prev;
+        }
+    }
+    
+    /* Write cached timeout and delay back */
+    Alrm->Timeout=Timeout;
+    RMP_ALRM_STATE_SET(Alrm->State,RMP_ALRM_USED);
+
+    /* Insert this into the queue atomically */
+    RMP_Sched_Lock();
+    RMP_List_Ins(&(Alrm->Head),Trav_Ptr,Trav_Ptr->Next);
+    Amgr->Num_Cur++;
+    RMP_Sched_Unlock();
+}
+/* End Function:_RMP_Amgr_Ins ************************************************/
+
+/* Function:_RMP_Amgr_Expire **************************************************
+Description : Process expiration of a certain alarm.
+Input       : volatile struct RMP_Amgr* Amgr - The alarm manager.
+              volatile struct RMP_Alrm* Alrm - The alarm.
+              rmp_cnt_t Overdue - The overdue value to use in callback call.
+              rmp_ptr_t Timestamp - The timstamp to use in comparison.
+Output      : None.
+Return      : None.
+******************************************************************************/
+static void _RMP_Amgr_Expire(volatile struct RMP_Amgr* Amgr,
+                             volatile struct RMP_Alrm* Alrm,
+                             rmp_cnt_t Overdue,
+                             rmp_ptr_t Timestamp)
+{
+    /* Remove it from delay queue atomically - do note that if a thread is killed
+     * in the middle of this deletion and the subsequent insertion, the alarm
+     * might be leaked, and the application is responsible for recovering it */
+    RMP_Sched_Lock();
+    RMP_List_Del(Alrm->Head.Prev,Alrm->Head.Next);
+    Amgr->Num_Cur--;
+    RMP_Sched_Unlock();
+    
+    /* Call its callback hook function with the current
+     * alarm structure and the possible overdue amount */
+    Alrm->Hook(Alrm,Overdue);
+    
+    /* See if we need to put it back to the delay queue */
+    if((Alrm->State&RMP_ALRM_ONESHOT)!=0U)
+    {
+        RMP_COV_MARKER();
+        
+        /* One-shot, mark it as inactive and don't insert it back */
+        RMP_ALRM_STATE_SET(Alrm->State,RMP_ALRM_FREE);
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        
+        /* Need to insert it back into the queue */
+        _RMP_Amgr_Ins(Amgr,Alrm,Timestamp);
+    }
+}
+/* End Function:_RMP_Amgr_Expire *********************************************/
+
+/* Function:RMP_Amgr_Proc *****************************************************
+Description : Increase timestamp by a certain number of ticks and process alarms
+              registered with this alarm manager. A tick is not necessarily a 
+              timeslice and could be any unit, but the parameter itself is bound
+              to the RMP_MASK_INTMAX.
+Input       : volatile struct RMP_Amgr* Amgr - The alarm manager.
+              rmp_ptr_t Tick - The number of ticks that passes.
+Output      : None.
+Return      : rmp_ret_t - If successful, 0; or an error code.
+******************************************************************************/
+rmp_ret_t RMP_Amgr_Proc(volatile struct RMP_Amgr* Amgr,
+                        rmp_ptr_t Tick)
+{
+    rmp_ptr_t Diff;
+    rmp_ptr_t Timestamp;
+    volatile struct RMP_Alrm* Alrm;
+
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the alarm manager pointer is valid */
+    if(Amgr==RMP_NULL)
+    {
+        RMP_COV_MARKER();
+        
+        return RMP_ERR_ALRM;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+    
+    /* Check if the tick increment is valid */
+    if((Tick==0U)||(Tick>RMP_MASK_INTMAX))
+    {
+        RMP_COV_MARKER();
+        
+        return RMP_ERR_OPER;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+    
+    /* Check if the alarm manager structure is in use - no lock needed cause we
+     * have deletion race protection below: assuming the operations can fail */
+    if(Amgr->State!=RMP_AMGR_USED)
+    {
+        RMP_COV_MARKER();
+        
+        return RMP_ERR_ALRM;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+#endif
+    
+    /* Need to obtain mutex to proceed */
+    if(RMP_Sem_Pend(&(Amgr->Mutex),RMP_SLICE_MAX)<0)
+    {
+        RMP_COV_MARKER();
+        
+        return RMP_ERR_OPER;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+    
+    /* Cache volatile timestamp */
+    Timestamp=Amgr->Timestamp;
+    
+    /* Increase the tick */
+    Timestamp+=Tick;
+    
+    /* Deal with all alarms that have expired */
+    while(&(Amgr->Alrm)!=Amgr->Alrm.Next)
+    {
+        Alrm=(volatile struct RMP_Alrm*)(RMP_Delay.Next);
+        Diff=RMP_DIFF(Alrm->Timeout,Timestamp);
+        
+        /* Check if this alarm is overflown */
+        if(RMP_DIFF_OVF(Diff))
+        {
+            RMP_COV_MARKER();
+            
+            /* Process alarm expiration with non-negative overdue */
+            _RMP_Amgr_Expire(Amgr,
+                             Alrm,
+                             (rmp_cnt_t)(((rmp_ptr_t)0U)-Diff),
+                             Timestamp);
+        }
+        /* Stop when we find a alarm that is not overflown */
+        else
+        {
+            RMP_COV_MARKER();
+            
+            break;
+        }
+    }
+    
+    /* Put cached timestamp back */
+    Amgr->Timestamp=Timestamp;
+    
+    /* Don't care if this fails - possible deletion race */
+    RMP_Sem_Post(&(Amgr->Mutex),1U);
+    return 0;
+}
+/* End Function:RMP_Amgr_Proc ************************************************/
+
+/* Function:RMP_Amgr_Cnt ******************************************************
+Description : Get the number of alarms managed by the alarm manager.
+Input       : volatile struct RMP_Amgr* Amgr - The alarm manager.
+Output      : None.
+Return      : rmp_ret_t - If successful, the number of alarms; or an error code.
+******************************************************************************/
+rmp_ret_t RMP_Amgr_Cnt(volatile struct RMP_Amgr* Amgr)
+{
+    rmp_ret_t Count;
+
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the alarm manager pointer is valid */
+    if(Amgr==RMP_NULL)
+    {
+        RMP_COV_MARKER();
+        
+        return RMP_ERR_ALRM;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+#endif
+    
+    RMP_Sched_Lock();
+    
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the alarm manager structure is in use */
+    if(Amgr->State!=RMP_AMGR_USED)
+    {
+        RMP_COV_MARKER();
+        
+        RMP_Sched_Unlock();
+        return RMP_ERR_ALRM;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+#endif
+
+    /* Disrespect mutex as the scheduler is locked; this is faster */
+    Count=Amgr->Num_Cur;
+    
+    RMP_Sched_Unlock();
+    return Count;
+}
+/* End Function:RMP_Amgr_Cnt *************************************************/
+
+/* Function:RMP_Alrm_Init *****************************************************
+Description : Initialize an alarm structure. The alarm structures are assumed
+              to be thread-local and is never guarded by any locks.
+Input       : volatile struct RMP_Alrm* Alrm - The alarm to initialize.
+              rmp_ptr_t Delay - The delay value of this alarm, shall not exceed
+                                RMP_MASK_INTMAX.
+              rmp_ptr_t Mode - The mode of the alarm, one-shot or autoreloading.
+              void (*Hook)(volatile struct RMP_Alrm*,rmp_cnt_t) - The callback.
+Output      : None.
+Return      : rmp_ret_t - If successful, 0; or an error code.
+******************************************************************************/
+rmp_ret_t RMP_Alrm_Init(volatile struct RMP_Alrm* Alrm,
+                        rmp_ptr_t Delay,
+                        rmp_ptr_t Mode,
+                        void (*Hook)(volatile struct RMP_Alrm*,rmp_cnt_t))
+{
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the alarm pointer is valid */
+    if(Alrm==RMP_NULL)
+    {
+        RMP_COV_MARKER();
+        
+        return RMP_ERR_ALRM;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+    
+    /* Check if the delay is valid */
+    if((Delay==0U)||(Delay>RMP_MASK_INTMAX))
+    {
+        RMP_COV_MARKER();
+        
+        return RMP_ERR_OPER;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+    
+    /* Check if the mode is valid */
+    if((Mode!=RMP_ALRM_AUTORLD)&&(Mode!=RMP_ALRM_ONESHOT))
+    {
+        RMP_COV_MARKER();
+        
+        return RMP_ERR_OPER;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+    
+    /* Check if the hook is valid */
+    if(Hook==RMP_NULL)
+    {
+        RMP_COV_MARKER();
+        
+        return RMP_ERR_OPER;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+    
+    /* Check if the alarm structure is in use */
+    if(RMP_ALRM_STATE(Alrm->State)!=RMP_ALRM_FREE)
+    {
+        RMP_COV_MARKER();
+        
+        return RMP_ERR_ALRM;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+#endif
+    
+    /* Initialize the alarm structure */
+    Alrm->State=Mode;
+    Alrm->Delay=Delay;
+    Alrm->Hook=Hook;
+    
+    return 0;
+}
+/* End Function:RMP_Alrm_Init ************************************************/
+
+/* Function:RMP_Alrm_Set ******************************************************
+Description : Set up an alarm with a certain alarm manager. If an alarm is set
+              again before it expires, then the previous alarm is automatically
+              cancelled. When this is the case, this function does not check
+              whether the alarm really belongs to the alarm manager.
+              Alarms are processed in chronological order with which they were
+              registered. Even if two of them were registered at the same alarm
+              manager timestamp, the one registered earlier will come first.
+Input       : volatile struct RMP_Amgr* Amgr - The alarm manager to use.
+              volatile struct RMP_Amgr* Alrm - The alarm to set up.
+Output      : None.
+Return      : rmp_ret_t - If successful, 0; or an error code.
+******************************************************************************/
+rmp_ret_t RMP_Alrm_Set(volatile struct RMP_Amgr* Amgr,
+                       volatile struct RMP_Alrm* Alrm)
+{
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the alarm pointer is valid */
+    if(Alrm==RMP_NULL)
+    {
+        RMP_COV_MARKER();
+        
+        return RMP_ERR_ALRM;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+    
+    /* Check if the alarm manager pointer is valid */
+    if(Amgr==RMP_NULL)
+    {
+        RMP_COV_MARKER();
+        
+        return RMP_ERR_ALRM;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+    
+    /* Check if the alarm manager structure is in use - no lock needed cause we
+     * have deletion race protection below: assuming the operations can fail */
+    if(Amgr->State!=RMP_AMGR_USED)
+    {
+        RMP_COV_MARKER();
+        
+        return RMP_ERR_ALRM;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+#endif
+    
+    /* Need to obtain mutex to proceed */
+    if(RMP_Sem_Pend(&(Amgr->Mutex),RMP_SLICE_MAX)<0)
+    {
+        RMP_COV_MARKER();
+        
+        return RMP_ERR_OPER;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+    
+    /* Check if the alarm structure is in use */
+    if(RMP_ALRM_STATE(Alrm->State)!=RMP_ALRM_FREE)
+    {
+        RMP_COV_MARKER();
+        
+        /* Need to pull it from queue first */
+        RMP_Sched_Lock();
+        RMP_List_Del(Alrm->Head.Prev,Alrm->Head.Next);
+        Amgr->Num_Cur--;
+        RMP_Sched_Unlock();
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+    
+    /* Insert into the queue */
+    _RMP_Amgr_Ins(Amgr,Alrm,Amgr->Timestamp);
+    
+    /* Don't care if this fails - possible deletion race */
+    RMP_Sem_Post(&(Amgr->Mutex),1U);
+    return 0;
+}
+/* End Function:RMP_Alrm_Set *************************************************/
+
+/* Function:RMP_Alrm_Trig *****************************************************
+Description : Trigger an alarm prematurely as if it expired already. If it is
+              one-shot, it will be removed from the queue. This function does
+              not check whether the alarm really belongs to the alarm manager.
+Input       : volatile struct RMP_Amgr* Amgr - The alarm manager to use.
+              volatile struct RMP_Amgr* Alrm - The alarm to prematurely trigger.
+Output      : None.
+Return      : rmp_ret_t - If successful, 0; or an error code.
+******************************************************************************/
+rmp_ret_t RMP_Alrm_Trig(volatile struct RMP_Amgr* Amgr,
+                        volatile struct RMP_Alrm* Alrm)
+{
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the alarm pointer is valid */
+    if(Alrm==RMP_NULL)
+    {
+        RMP_COV_MARKER();
+        
+        return RMP_ERR_ALRM;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+    
+    /* Check if the alarm structure is in use */
+    if(RMP_ALRM_STATE(Alrm->State)!=RMP_ALRM_USED)
+    {
+        RMP_COV_MARKER();
+        
+        return RMP_ERR_ALRM;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+    
+    /* Check if the alarm manager pointer is valid */
+    if(Amgr==RMP_NULL)
+    {
+        RMP_COV_MARKER();
+        
+        return RMP_ERR_ALRM;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+    
+    /* Check if the alarm manager structure is in use - no lock needed cause we
+     * have deletion race protection below: assuming the operations can fail */
+    if(Amgr->State!=RMP_AMGR_USED)
+    {
+        RMP_COV_MARKER();
+        
+        return RMP_ERR_ALRM;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+#endif
+    
+    /* Need to obtain mutex to proceed */
+    if(RMP_Sem_Pend(&(Amgr->Mutex),RMP_SLICE_MAX)<0)
+    {
+        RMP_COV_MARKER();
+        
+        return RMP_ERR_OPER;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+    
+    /* Process alarm expiration with negative overdue */
+    _RMP_Amgr_Expire(Amgr,
+                     Alrm,
+                     (rmp_cnt_t)(Amgr->Timestamp-Alrm->Timeout),
+                     Amgr->Timestamp);
+    
+    /* Don't care if this fails - possible deletion race */
+    RMP_Sem_Post(&(Amgr->Mutex),1U);
+    return 0;
+}
+/* End Function:RMP_Alrm_Trig ************************************************/
+
+/* Function:RMP_Alrm_Clr ******************************************************
+Description : Cancel an alarm before it expires. The alarm will not go back into
+              the queue anymore. This function does not check whether the alarm
+              really belongs to the alarm manager.
+Input       : volatile struct RMP_Amgr* Amgr - The alarm manager to use.
+              volatile struct RMP_Amgr* Alrm - The alarm to cancel.
+Output      : None.
+Return      : rmp_ret_t - If successful, 0; or an error code.
+******************************************************************************/
+rmp_ret_t RMP_Alrm_Clr(volatile struct RMP_Amgr* Amgr,
+                       volatile struct RMP_Alrm* Alrm)
+{
+#if(RMP_CHECK_ENABLE!=0U)
+    /* Check if the alarm pointer is valid */
+    if(Alrm==RMP_NULL)
+    {
+        RMP_COV_MARKER();
+        
+        return RMP_ERR_ALRM;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+    
+    /* Check if the alarm structure is in use */
+    if(RMP_ALRM_STATE(Alrm->State)==RMP_ALRM_FREE)
+    {
+        RMP_COV_MARKER();
+        
+        return RMP_ERR_ALRM;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+    
+    /* Check if the alarm manager pointer is valid */
+    if(Amgr==RMP_NULL)
+    {
+        RMP_COV_MARKER();
+        
+        return RMP_ERR_ALRM;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+    
+    /* Check if the alarm manager structure is in use - no lock needed cause we
+     * have deletion race protection below: assuming the operations can fail */
+    if(Amgr->State!=RMP_AMGR_USED)
+    {
+        RMP_COV_MARKER();
+        
+        return RMP_ERR_ALRM;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+#endif
+    
+    /* Need to obtain mutex to proceed */
+    if(RMP_Sem_Pend(&(Amgr->Mutex),RMP_SLICE_MAX)<0)
+    {
+        RMP_COV_MARKER();
+        
+        return RMP_ERR_OPER;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+        
+    /* Pull it from queue and we're done */
+    RMP_Sched_Lock();
+    RMP_List_Del(Alrm->Head.Prev,Alrm->Head.Next);
+    Amgr->Num_Cur--;
+    RMP_Sched_Unlock();
+    
+    /* Don't care if this fails - possible deletion race */
+    RMP_Sem_Post(&(Amgr->Mutex),1U);
+    return 0;
+}
+/* End Function:RMP_Alrm_Clr *************************************************/
+
 /* Function:RMP_Mem_Init ******************************************************
 Description : Initialize a trunk of memory as the memory pool. The TLSF allocator's
               FLI will be decided upon the memory block size. Memory allocation does
@@ -3964,7 +6015,8 @@ void RMP_Free(volatile void* Pool,
     
 #if(RMP_CHECK_ENABLE!=0U)
     /* Check if the address is within the allocatable address range */
-    if((((rmp_ptr_t)Mem_Ptr)<=((rmp_ptr_t)Mem))||(((rmp_ptr_t)Mem_Ptr)>=(((rmp_ptr_t)Mem)+Mem->Size)))
+    if((((rmp_ptr_t)Mem_Ptr)<=((rmp_ptr_t)Mem))||
+       (((rmp_ptr_t)Mem_Ptr)>=(((rmp_ptr_t)Mem)+Mem->Size)))
     {
         RMP_COV_MARKER();
         
@@ -4080,7 +6132,7 @@ Input       : volatile void* Pool - The pool to reallocate from.
               rmp_ptr_t Size - The size of the RAM needed to resize to.
 Output      : None.
 Return      : void* - The pointer to the memory. If no memory available or an
-                      error occurred, 0 is returned.
+                      error occurred, NULL is returned.
 ******************************************************************************/
 void* RMP_Realloc(volatile void* Pool,
                   void* Mem_Ptr,
@@ -4156,7 +6208,8 @@ void* RMP_Realloc(volatile void* Pool,
     
 #if(RMP_CHECK_ENABLE!=0U)
     /* Check if the address is within the allocatable address range */
-    if((((rmp_ptr_t)Mem_Ptr)<=((rmp_ptr_t)Mem))||(((rmp_ptr_t)Mem_Ptr)>=(((rmp_ptr_t)Mem)+Mem->Size)))
+    if((((rmp_ptr_t)Mem_Ptr)<=((rmp_ptr_t)Mem))||
+       (((rmp_ptr_t)Mem_Ptr)>=(((rmp_ptr_t)Mem)+Mem->Size)))
     {
         RMP_COV_MARKER();
         
@@ -4229,7 +6282,7 @@ void* RMP_Realloc(volatile void* Pool,
                     RMP_COV_MARKER();
                     
                     /* Remove the right-side from the free list so we can operate on it */
-                    _RMP_Mem_Del(Pool, Right);   
+                    _RMP_Mem_Del(Pool,Right);   
                     /* Allocate and calculate if the space left could be big enough to be a new 
                      * block. If so, we will put the block back into the TLSF table. */
                     Res_Size-=Round_Size;
@@ -4386,1242 +6439,6 @@ void* RMP_Realloc(volatile void* Pool,
     return Mem_Ptr;
 }
 /* End Function:RMP_Realloc **************************************************/
-
-/* Function:RMP_Fifo_Crt ******************************************************
-Description : Create a FIFO.
-Input       : volatile struct RMP_Fifo* Fifo - The pointer to the FIFO.
-Output      : None.
-Return      : rmp_ret_t - If successful, 0; or an error code.
-******************************************************************************/
-rmp_ret_t RMP_Fifo_Crt(volatile struct RMP_Fifo* Fifo)
-{
-#if(RMP_CHECK_ENABLE!=0U)
-    /* Check if the FIFO pointer is valid */
-    if(Fifo==RMP_NULL)
-    {
-        RMP_COV_MARKER();
-        
-        return RMP_ERR_FIFO;
-    }
-    else
-    {
-        RMP_COV_MARKER();
-        /* No action required */
-    }
-#endif
-    
-    RMP_Sched_Lock();
-
-#if(RMP_CHECK_ENABLE!=0U)
-    /* Check if the FIFO structure is in use */
-    if(Fifo->State!=RMP_FIFO_FREE)
-    {
-        RMP_COV_MARKER();
-        
-        RMP_Sched_Unlock();
-        return RMP_ERR_FIFO;
-    }
-    else
-    {
-        RMP_COV_MARKER();
-        /* No action required */
-    }
-#endif
-    
-    /* Create linked list */
-    RMP_List_Crt(&(Fifo->Head));
-    Fifo->Num_Cur=0U;
-    Fifo->State=RMP_FIFO_USED;
-    
-    RMP_Sched_Unlock();
-    return 0;
-}
-/* End Function:RMP_Fifo_Crt *************************************************/
-
-/* Function:RMP_Fifo_Del ******************************************************
-Description : Delete a FIFO.
-Input       : volatile struct RMP_Fifo* Fifo - The pointer to the FIFO.
-Output      : None.
-Return      : rmp_ret_t - If successful, 0; or an error code.
-******************************************************************************/
-rmp_ret_t RMP_Fifo_Del(volatile struct RMP_Fifo* Fifo)
-{
-#if(RMP_CHECK_ENABLE!=0U)
-    /* Check if the FIFO pointer is valid */
-    if(Fifo==RMP_NULL)
-    {
-        RMP_COV_MARKER();
-        
-        return RMP_ERR_FIFO;
-    }
-    else
-    {
-        RMP_COV_MARKER();
-        /* No action required */
-    }
-#endif
-    
-    RMP_Sched_Lock();
-    
-#if(RMP_CHECK_ENABLE!=0U)
-    /* Check if the FIFO structure is in use */
-    if(Fifo->State!=RMP_FIFO_USED)
-    {
-        RMP_COV_MARKER();
-        
-        RMP_Sched_Unlock();
-        return RMP_ERR_FIFO;
-    }
-    else
-    {
-        RMP_COV_MARKER();
-        /* No action required */
-    }
-#endif
-    
-    /* Check if the FIFO have any elements */
-    if(Fifo->Num_Cur!=0U)
-    {
-        RMP_COV_MARKER();
-        
-        RMP_Sched_Unlock();
-        return RMP_ERR_OPER;
-    }
-    else
-    {
-        RMP_COV_MARKER();
-        /* No action required */
-    }
-    
-    /* Mark as free */
-    Fifo->State=RMP_FIFO_FREE;
-    
-    RMP_Sched_Unlock();
-    return 0;
-}
-/* End Function:RMP_Fifo_Del *************************************************/
-
-/* Function:RMP_Fifo_Read *****************************************************
-Description : Read an element from a FIFO.
-Input       : volatile struct RMP_Fifo* Fifo - The pointer to the FIFO.
-Output      : struct RMP_List** Node - The node read.
-Return      : rmp_ret_t - If successful, 0; or an error code.
-******************************************************************************/
-rmp_ret_t RMP_Fifo_Read(volatile struct RMP_Fifo* Fifo,
-                        volatile struct RMP_List** Node)
-{
-#if(RMP_CHECK_ENABLE!=0U)
-    /* Check if the FIFO pointer is valid */
-    if(Fifo==RMP_NULL)
-    {
-        RMP_COV_MARKER();
-        
-        return RMP_ERR_FIFO;
-    }
-    else
-    {
-        RMP_COV_MARKER();
-        /* No action required */
-    }
-    
-    /* Check if the node pointer is valid */
-    if(Node==RMP_NULL)
-    {
-        RMP_COV_MARKER();
-        
-        return RMP_ERR_OPER;
-    }
-    else
-    {
-        RMP_COV_MARKER();
-        /* No action required */
-    }
-#endif
-    
-    RMP_Sched_Lock();
-    
-#if(RMP_CHECK_ENABLE!=0U)
-    /* Check if the FIFO structure is in use */
-    if(Fifo->State!=RMP_FIFO_USED)
-    {
-        RMP_COV_MARKER();
-        
-        RMP_Sched_Unlock();
-        return RMP_ERR_FIFO;
-    }
-    else
-    {
-        RMP_COV_MARKER();
-        /* No action required */
-    }
-#endif
-    
-    /* See if the FIFO is empty */
-    if(Fifo->Head.Next==&(Fifo->Head))
-    {
-        RMP_COV_MARKER();
-        
-        RMP_Sched_Unlock();
-        return RMP_ERR_OPER;
-    }
-    else
-    {
-        RMP_COV_MARKER();
-        /* No action required */
-    }
-    
-    /* If not, grab one */
-    *Node=Fifo->Head.Next;
-    RMP_List_Del((*Node)->Prev,(*Node)->Next);
-    
-    /* The count should not be zero, decrease it */
-    RMP_ASSERT(Fifo->Num_Cur!=0U);
-    Fifo->Num_Cur--;
-    
-    RMP_Sched_Unlock();
-    return 0;
-}
-/* End Function:RMP_Fifo_Read ************************************************/
-
-/* Function:RMP_Fifo_Write ****************************************************
-Description : Write an element to a FIFO.
-Input       : volatile struct RMP_Fifo* Fifo - The pointer to the FIFO.
-              volatile struct RMP_List* Node - The node to put into the FIFO.
-Output      : None.
-Return      : rmp_ret_t - If successful, 0; or an error code.
-******************************************************************************/
-rmp_ret_t RMP_Fifo_Write(volatile struct RMP_Fifo* Fifo,
-                         volatile struct RMP_List* Node)
-{
-#if(RMP_CHECK_ENABLE!=0U)
-    /* Check if the FIFO pointer is valid */
-    if(Fifo==RMP_NULL)
-    {
-        RMP_COV_MARKER();
-        
-        return RMP_ERR_FIFO;
-    }
-    else
-    {
-        RMP_COV_MARKER();
-        /* No action required */
-    }
-
-    /* Check if the data pointer is valid */
-    if(Node==RMP_NULL)
-    {
-        RMP_COV_MARKER();
-        
-        return RMP_ERR_OPER;
-    }
-    else
-    {
-        RMP_COV_MARKER();
-        /* No action required */
-    }
-#endif
-    
-    RMP_Sched_Lock();
-    
-#if(RMP_CHECK_ENABLE!=0U)
-    /* Check if the FIFO structure is in use */
-    if(Fifo->State!=RMP_FIFO_USED)
-    {
-        RMP_COV_MARKER();
-        
-        RMP_Sched_Unlock();
-        return RMP_ERR_FIFO;
-    }
-    else
-    {
-        RMP_COV_MARKER();
-        /* No action required */
-    }
-#endif
-    
-    /* Write to list and increase count */
-    RMP_List_Ins(Node,Fifo->Head.Prev,&(Fifo->Head));
-    Fifo->Num_Cur++;
-
-    RMP_Sched_Unlock();
-    return 0;
-}
-/* End Function:RMP_Fifo_Write ***********************************************/
-
-/* Function:RMP_Fifo_Write_ISR ************************************************
-Description : Write an element to a FIFO, from the ISR. This function can only be
-              called from an ISR whose priority is below or equal to the context
-              switch handler's. We do not check whether the scheduler is locked;
-              if we are calling this function, we're pretty sure that it's not.
-Input       : volatile struct RMP_Fifo* Fifo - The pointer to the FIFO.
-              volatile struct RMP_List* Node - The node to put into the FIFO.
-Output      : None.
-Return      : rmp_ret_t - If successful, 0; or an error code.
-******************************************************************************/
-rmp_ret_t RMP_Fifo_Write_ISR(volatile struct RMP_Fifo* Fifo,
-                             volatile struct RMP_List* Node)
-{
-#if(RMP_CHECK_ENABLE!=0U)
-    /* Check if the FIFO pointer is valid */
-    if(Fifo==RMP_NULL)
-    {
-        RMP_COV_MARKER();
-        
-        return RMP_ERR_FIFO;
-    }
-    else
-    {
-        RMP_COV_MARKER();
-        /* No action required */
-    }
-
-    /* Check if the data pointer is valid */
-    if(Node==RMP_NULL)
-    {
-        RMP_COV_MARKER();
-        
-        return RMP_ERR_OPER;
-    }
-    else
-    {
-        RMP_COV_MARKER();
-        /* No action required */
-    }
-    
-    /* Check if the FIFO structure is in use */
-    if(Fifo->State!=RMP_FIFO_USED)
-    {
-        RMP_COV_MARKER();
-        
-        return RMP_ERR_FIFO;
-    }
-    else
-    {
-        RMP_COV_MARKER();
-        /* No action required */
-    }
-#endif
-    
-    /* Write to list and increase count */
-    RMP_List_Ins(Node, Fifo->Head.Prev, &(Fifo->Head));
-    Fifo->Num_Cur++;
-
-    return 0;
-}
-/* End Function:RMP_Fifo_Write_ISR *******************************************/
-
-/* Function:RMP_Fifo_Cnt ******************************************************
-Description : Get the number of elements in the FIFO.
-Input       : volatile struct RMP_Fifo* Fifo - The pointer to the FIFO.
-Output      : None.
-Return      : rmp_ret_t - If successful, the number of nodes; or an error code.
-******************************************************************************/
-rmp_ret_t RMP_Fifo_Cnt(volatile struct RMP_Fifo* Fifo)
-{
-    rmp_ret_t Count;
-
-#if(RMP_CHECK_ENABLE!=0U)
-    /* Check if the FIFO pointer is valid */
-    if(Fifo==RMP_NULL)
-    {
-        RMP_COV_MARKER();
-        
-        return RMP_ERR_FIFO;
-    }
-    else
-    {
-        RMP_COV_MARKER();
-        /* No action required */
-    }
-#endif
-    
-    RMP_Sched_Lock();
-    
-#if(RMP_CHECK_ENABLE!=0U)
-    /* Check if the FIFO structure is in use */
-    if(Fifo->State!=RMP_FIFO_USED)
-    {
-        RMP_COV_MARKER();
-        
-        RMP_Sched_Unlock();
-        return RMP_ERR_FIFO;
-    }
-    else
-    {
-        RMP_COV_MARKER();
-        /* No action required */
-    }
-#endif
-    
-    Count=(rmp_ret_t)(Fifo->Num_Cur);
-    
-    RMP_Sched_Unlock();
-    return Count;
-}
-/* End Function:RMP_Fifo_Cnt *************************************************/
-
-/* Function:RMP_Msgq_Crt ******************************************************
-Description : Create a message queue.
-Input       : volatile struct RMP_Msgq* Queue - The pointer to the queue.
-Output      : None.
-Return      : rmp_ret_t - If successful, 0; or an error code.
-******************************************************************************/
-rmp_ret_t RMP_Msgq_Crt(volatile struct RMP_Msgq* Queue)
-{
-#if(RMP_CHECK_ENABLE!=0U)
-    /* Check if the queue pointer is valid */
-    if(Queue==RMP_NULL)
-    {
-        RMP_COV_MARKER();
-        
-        return RMP_ERR_MSGQ;
-    }
-    else
-    {
-        RMP_COV_MARKER();
-        /* No action required */
-    }
-#endif
-    
-    RMP_Sched_Lock();
-    
-#if(RMP_CHECK_ENABLE!=0U)
-    /* Check if the queue structure is in use */
-    if(Queue->State!=RMP_MSGQ_FREE)
-    {
-        RMP_COV_MARKER();
-        
-        RMP_Sched_Unlock();
-        return RMP_ERR_MSGQ;
-    }
-    else
-    {
-        RMP_COV_MARKER();
-        /* No action required */
-    }
-#endif
-    
-    /* A queue is just a FIFO paired with a counting semaphore */
-    RMP_ASSERT(RMP_Sem_Crt(&(Queue->Sem), 0U)==0);
-    RMP_ASSERT(RMP_Fifo_Crt(&(Queue->Fifo))==0);
-    Queue->State=RMP_MSGQ_USED;
-    
-    RMP_Sched_Unlock();
-    return 0;
-}
-/* End Function:RMP_Msgq_Crt *************************************************/
-
-/* Function:RMP_Msgq_Del ******************************************************
-Description : Delete a message queue. Only message queues that are empty may be
-              deleted.
-Input       : volatile struct RMP_Msgq* Queue - The pointer to the queue.
-Output      : None.
-Return      : rmp_ret_t - If successful, 0; or an error code.
-******************************************************************************/
-rmp_ret_t RMP_Msgq_Del(volatile struct RMP_Msgq* Queue)
-{
-#if(RMP_CHECK_ENABLE!=0U)
-    /* Check if the queue pointer is valid */
-    if(Queue==RMP_NULL)
-    {
-        RMP_COV_MARKER();
-        
-        return RMP_ERR_MSGQ;
-    }
-    else
-    {
-        RMP_COV_MARKER();
-        /* No action required */
-    }
-#endif
-    
-    RMP_Sched_Lock();
-
-#if(RMP_CHECK_ENABLE!=0U)
-    /* Check if the queue structure is in use */
-    if(Queue->State!=RMP_MSGQ_USED)
-    {
-        RMP_COV_MARKER();
-        
-        RMP_Sched_Unlock();
-        return RMP_ERR_MSGQ;
-    }
-    else
-    {
-        RMP_COV_MARKER();
-        /* No action required */
-    }
-#endif
-    
-    /* See if the FIFO could be deleted */
-    if(RMP_Fifo_Del(&(Queue->Fifo))<0)
-    {
-        RMP_COV_MARKER();
-        
-        RMP_Sched_Unlock();
-        return RMP_ERR_OPER;
-    }
-    else
-    {
-        RMP_COV_MARKER();
-        /* No action required */
-    }
-    
-    /* Proceed to delete the companion semaphore */
-    RMP_ASSERT(RMP_Sem_Del(&(Queue->Sem))==0);
-    Queue->State=RMP_MSGQ_FREE;
-    
-    RMP_Sched_Unlock();
-    return 0;
-}
-/* End Function:RMP_Msgq_Del *************************************************/
-
-/* Function:RMP_Msgq_Snd ******************************************************
-Description : Send a message to the message queue.
-Input       : volatile struct RMP_Msgq* Queue - The pointer to the queue.
-Output      : None.
-Return      : rmp_ret_t - If successful, 0; or an error code.
-******************************************************************************/
-rmp_ret_t RMP_Msgq_Snd(volatile struct RMP_Msgq* Queue,
-                       volatile struct RMP_List* Node)
-{
-#if(RMP_CHECK_ENABLE!=0U)
-    /* Check if the queue pointer is valid */
-    if(Queue==RMP_NULL)
-    {
-        RMP_COV_MARKER();
-        
-        return RMP_ERR_MSGQ;
-    }
-    else
-    {
-        RMP_COV_MARKER();
-        /* No action required */
-    }
-    
-    /* Check if the data pointer is valid */
-    if(Node==RMP_NULL)
-    {
-        RMP_COV_MARKER();
-        
-        return RMP_ERR_OPER;
-    }
-    else
-    {
-        RMP_COV_MARKER();
-        /* No action required */
-    }
-#endif
-    
-    RMP_Sched_Lock();
-    
-#if(RMP_CHECK_ENABLE!=0U)
-    /* Check if the queue structure is in use */
-    if(Queue->State!=RMP_MSGQ_USED)
-    {
-        RMP_COV_MARKER();
-        
-        RMP_Sched_Unlock();
-        return RMP_ERR_MSGQ;
-    }
-    else
-    {
-        RMP_COV_MARKER();
-        /* No action required */
-    }
-#endif
-    
-    /* Note the trick here: we have locked the scheduler, so we're safe to 
-     * post the semaphore first. We do this lest the semaphore post may fail
-     * due to maximum number limit. Semaphore post is in fact safe to use
-     * when inside a critical section. */
-    if(RMP_Sem_Post(&(Queue->Sem), 1U)<0)
-    {
-        RMP_COV_MARKER();
-        
-        RMP_Sched_Unlock();
-        return RMP_ERR_OPER;
-    }
-    else
-    {
-        RMP_COV_MARKER();
-        /* No action required */
-    }
-    
-    /* Insert the node */
-    RMP_ASSERT(RMP_Fifo_Write(&(Queue->Fifo), Node)==0);
-    
-    RMP_Sched_Unlock();
-    return 0;
-}
-/* End Function:RMP_Msgq_Snd *************************************************/
-
-/* Function:RMP_Msgq_Snd_ISR **************************************************
-Description : Send a message to the message queue. This function can only be
-              called from an ISR whose priority is below or equal to the context
-              switch handler's. We do not check whether the scheduler is locked;
-              if we are calling this function, we're pretty sure that it's not.
-              We do not check whether the scheduler is locked; if we are calling
-              this function, we're pretty sure that it's not.
-Input       : volatile struct RMP_Msgq* Queue - The pointer to the queue.
-Output      : None.
-Return      : rmp_ret_t - If successful, 0; or an error code.
-******************************************************************************/
-rmp_ret_t RMP_Msgq_Snd_ISR(volatile struct RMP_Msgq* Queue,
-                           volatile struct RMP_List* Node)
-{
-#if(RMP_CHECK_ENABLE!=0U)
-    /* Check if the the queue pointer is valid */
-    if(Queue==RMP_NULL)
-    {
-        RMP_COV_MARKER();
-        
-        return RMP_ERR_MSGQ;
-    }
-    else
-    {
-        RMP_COV_MARKER();
-        /* No action required */
-    }
-    
-    /* Check if the data pointer is valid */
-    if(Node==RMP_NULL)
-    {
-        RMP_COV_MARKER();
-        
-        return RMP_ERR_OPER;
-    }
-    else
-    {
-        RMP_COV_MARKER();
-        /* No action required */
-    }
-    
-    /* Check if the queue structure is in use */
-    if(Queue->State!=RMP_MSGQ_USED)
-    {
-        RMP_COV_MARKER();
-        
-        return RMP_ERR_MSGQ;
-    }
-    else
-    {
-        RMP_COV_MARKER();
-        /* No action required */
-    }
-#endif
-    
-    /* Notify the receiver(s) first */
-    if(RMP_Sem_Post_ISR(&(Queue->Sem), 1U)<0)
-    {
-        RMP_COV_MARKER();
-        
-        return RMP_ERR_OPER;
-    }
-    else
-    {
-        RMP_COV_MARKER();
-        /* No action required */
-    }
-    
-    /* Then insert node - must be successful */
-    RMP_ASSERT(RMP_Fifo_Write_ISR(&(Queue->Fifo), Node)==0);
-
-    return 0;
-}
-/* End Function:RMP_Msgq_Snd_ISR *********************************************/
-
-/* Function:RMP_Msgq_Rcv ******************************************************
-Description : Receive a message from a message queue.
-Input       : volatile struct RMP_Msgq* Queue - The pointer to the queue.
-              rmp_ptr_t Slice - The number of slices to wait.
-Output      : volatile struct RMP_List** Node - The node received.
-Output      : None.
-Return      : rmp_ret_t - If successful, 0; or an error code.
-******************************************************************************/
-rmp_ret_t RMP_Msgq_Rcv(volatile struct RMP_Msgq* Queue,
-                       volatile struct RMP_List** Node,
-                       rmp_ptr_t Slice)
-{
-#if(RMP_CHECK_ENABLE!=0U)
-    /* Check if the queue pointer is valid */
-    if(Queue==RMP_NULL)
-    {
-        RMP_COV_MARKER();
-        
-        return RMP_ERR_MSGQ;
-    }
-    else
-    {
-        RMP_COV_MARKER();
-        /* No action required */
-    }
-    
-    /* Check if the data pointer is valid */
-    if(Node==RMP_NULL)
-    {
-        RMP_COV_MARKER();
-        
-        return RMP_ERR_OPER;
-    }
-    else
-    {
-        RMP_COV_MARKER();
-        /* No action required */
-    }
-#endif
-    
-    RMP_Sched_Lock();
-
-#if(RMP_CHECK_ENABLE!=0U)
-    /* Check if the queue structure is in use */
-    if(Queue->State!=RMP_MSGQ_USED)
-    {
-        RMP_COV_MARKER();
-        
-        RMP_Sched_Unlock();
-        return RMP_ERR_MSGQ;
-    }
-    else
-    {
-        RMP_COV_MARKER();
-        /* No action required */
-    }
-#endif
-    
-    /* Try to grab a semaphore, and only when we succeed do we proceed - 
-     * there is the possibility that the whole queue gets deleted, so
-     * we need to take that into account. Note that the potential 
-     * semaphore-FIFO race here is impossible: unlike condition variables,
-     * semaphore is counting, so if a thread grabs a semaphore it is 
-     * guaranteed that something is in the FIFO. */
-    if(RMP_Sem_Pend_Unlock(&(Queue->Sem), Slice)<0)
-    {
-        RMP_COV_MARKER();
-        
-        return RMP_ERR_OPER;
-    }
-    else
-    {
-        RMP_COV_MARKER();
-        /* No action required */
-    }
-    
-    /* Grab the data then - we could have a delete race here */
-    if(RMP_Fifo_Read(&(Queue->Fifo), Node)<0)
-    {
-        RMP_COV_MARKER();
-        
-        return RMP_ERR_OPER;
-    }
-    else
-    {
-        RMP_COV_MARKER();
-        /* No action required */
-    }
-    
-    return 0;
-}
-/* End Function:RMP_Msgq_Rcv *************************************************/
-
-/* Function:RMP_Msgq_Cnt ******************************************************
-Description : Get the number of nodes in the message queue.
-Input       : volatile struct RMP_Msgq* Queue - The pointer to the message queue.
-Output      : None.
-Return      : rmp_ret_t - If successful, the number of nodes; or an error code.
-******************************************************************************/
-rmp_ret_t RMP_Msgq_Cnt(volatile struct RMP_Msgq* Queue)
-{
-    rmp_ret_t Count;
-    
-#if(RMP_CHECK_ENABLE!=0U)
-    /* Check if the queue pointer is valid */
-    if(Queue==RMP_NULL)
-    {
-        RMP_COV_MARKER();
-        
-        return RMP_ERR_MSGQ;
-    }
-    else
-    {
-        RMP_COV_MARKER();
-        /* No action required */
-    }
-#endif
-    
-    RMP_Sched_Lock();
-    
-#if(RMP_CHECK_ENABLE!=0U)
-    /* Check if the queue structure is in use */
-    if(Queue->State!=RMP_MSGQ_USED)
-    {
-        RMP_COV_MARKER();
-        
-        RMP_Sched_Unlock();
-        return RMP_ERR_MSGQ;
-    }
-    else
-    {
-        RMP_COV_MARKER();
-        /* No action required */
-    }
-#endif
-    
-    Count=RMP_Fifo_Cnt(&(Queue->Fifo));
-    
-    RMP_Sched_Unlock();
-    return Count;
-}
-/* End Function:RMP_Msgq_Cnt *************************************************/
-
-/* Function:RMP_Bmq_Crt *******************************************************
-Description : Create a blocking message queue. A blocking message queue is a
-              queue that may block senders in addition to receivers.
-              It must be pointed out that providing a core-level semaphore
-              variant that will block senders if it reaches limit does NOT help
-              implementation of this type of queue. A race between (1) mounting
-              the actual info block and (2) notifying the receiver will race no
-              matter how they are arranged relative to each other. If (1) is 
-              before (2), the actual number of messages on the queue may exceed
-              limit when multiple senders are present. If (2) is before (1),
-              the receiver may be notified before the actual block is mounted.
-              Using normal semaphores do not have this issue because a mounting
-              permission is always granted before the actual mounting, and the
-              notification of the receiver will follow the actual mounting.
-Input       : volatile struct RMP_Bmq* Queue - The pointer to the queue.
-              rmp_ptr_t Limit - The message number limit.
-Output      : None.
-Return      : rmp_ret_t - If successful, 0; or an error code.
-******************************************************************************/
-rmp_ret_t RMP_Bmq_Crt(volatile struct RMP_Bmq* Queue,
-                      rmp_ptr_t Limit)
-{
-#if(RMP_CHECK_ENABLE!=0U)
-    /* Check if the queue pointer is valid */
-    if(Queue==RMP_NULL)
-    {
-        RMP_COV_MARKER();
-        
-        return RMP_ERR_BMQ;
-    }
-    else
-    {
-        RMP_COV_MARKER();
-        /* No action required */
-    }
-#endif
-    
-    RMP_Sched_Lock();
-
-#if(RMP_CHECK_ENABLE!=0U)
-    /* Check if the queue pointer is in use */
-    if(Queue->State!=RMP_BMQ_FREE)
-    {
-        RMP_COV_MARKER();
-        
-        RMP_Sched_Unlock();
-        return RMP_ERR_BMQ;
-    }
-    else
-    {
-        RMP_COV_MARKER();
-        /* No action required */
-    }
-    
-    /* Check if the limit is valid */
-    if((Limit==0U)||(Limit>=RMP_SEM_CNT_MAX))
-    {
-        RMP_COV_MARKER();
-        
-        RMP_Sched_Unlock();
-        return RMP_ERR_OPER;
-    }
-    else
-    {
-        RMP_COV_MARKER();
-        /* No action required */
-    }
-#endif
-    
-    /* A blocking queue is just a message queue paired
-     * with a number limiting semaphore */
-    RMP_ASSERT(RMP_Sem_Crt(&(Queue->Sem),Limit)==0);
-    RMP_ASSERT(RMP_Msgq_Crt(&(Queue->Msgq))==0);
-    Queue->State=RMP_BMQ_USED;
-    
-    RMP_Sched_Unlock();
-    return 0;
-}
-/* End Function:RMP_Bmq_Crt **************************************************/
-
-/* Function:RMP_Bmq_Del *******************************************************
-Description : Delete a blocking message queue. Only blocking message queues that
-              are empty may be deleted.
-Input       : volatile struct RMP_Bmq* Queue - The pointer to the queue.
-Output      : None.
-Return      : rmp_ret_t - If successful, 0; or an error code.
-******************************************************************************/
-rmp_ret_t RMP_Bmq_Del(volatile struct RMP_Bmq* Queue)
-{
-#if(RMP_CHECK_ENABLE!=0U)
-    /* Check if the queue pointer is valid */
-    if(Queue==RMP_NULL)
-    {
-        RMP_COV_MARKER();
-        
-        return RMP_ERR_MSGQ;
-    }
-    else
-    {
-        RMP_COV_MARKER();
-        /* No action required */
-    }
-#endif
-    
-    RMP_Sched_Lock();
-    
-#if(RMP_CHECK_ENABLE!=0U)
-    /* Check if the queue structure is in use */
-    if(Queue->State!=RMP_BMQ_USED)
-    {
-        RMP_COV_MARKER();
-        
-        RMP_Sched_Unlock();
-        return RMP_ERR_BMQ;
-    }
-    else
-    {
-        RMP_COV_MARKER();
-        /* No action required */
-    }
-#endif
-    
-    /* Attempt to delete the message queue first */
-    if(RMP_Msgq_Del(&(Queue->Msgq))<0)
-    {
-        RMP_COV_MARKER();
-        
-        RMP_Sched_Unlock();
-        return RMP_ERR_OPER;
-    }
-    else
-    {
-        RMP_COV_MARKER();
-        /* No action required */
-    }
-    
-    /* Proceed to delete the companion semaphore */
-    RMP_ASSERT(RMP_Sem_Del(&(Queue->Sem))==0);
-    Queue->State=RMP_BMQ_FREE;
-    
-    RMP_Sched_Unlock();
-    return 0;
-}
-/* End Function:RMP_Bmq_Del **************************************************/
-
-/* Function:RMP_Bmq_Snd *******************************************************
-Description : Send to a blocking message queue.
-Input       : volatile struct RMP_Bmq* Queue - The pointer to the queue.
-              rmp_ptr_t Slice - The number of slices to wait.
-Output      : None.
-Return      : rmp_ret_t - If successful, 0; or an error code.
-******************************************************************************/
-rmp_ret_t RMP_Bmq_Snd(volatile struct RMP_Bmq* Queue,
-                      volatile struct RMP_List* Node,
-                      rmp_ptr_t Slice)
-{
-#if(RMP_CHECK_ENABLE!=0U)
-    /* Check if the queue pointer is valid */
-    if(Queue==RMP_NULL)
-    {
-        RMP_COV_MARKER();
-        
-        return RMP_ERR_MSGQ;
-    }
-    else
-    {
-        RMP_COV_MARKER();
-        /* No action required */
-    }
-    
-    /* Check if the data pointer is valid */
-    if(Node==RMP_NULL)
-    {
-        RMP_COV_MARKER();
-        
-        return RMP_ERR_OPER;
-    }
-    else
-    {
-        RMP_COV_MARKER();
-        /* No action required */
-    }
-    
-    /* Check if the queue structure is in use - no lock needed cause we have 
-     * deletion race protection below: assuming the operations can fail. */
-    if(Queue->State!=RMP_BMQ_USED)
-    {
-        RMP_COV_MARKER();
-        
-        return RMP_ERR_BMQ;
-    }
-    else
-    {
-        RMP_COV_MARKER();
-        /* No action required */
-    }
-#endif
-    
-    /* Grab a slot first. If we're unable to do this, we need to exit */
-    if(RMP_Sem_Pend(&(Queue->Sem),Slice)<0)
-    {
-        RMP_COV_MARKER();
-        
-        return RMP_ERR_OPER;
-    }
-    else
-    {
-        RMP_COV_MARKER();
-        /* No action required */
-    }
-
-    /* Do the message queue send. This can't fail due to semaphore limit
-     * because if it was the case the creation of the blocking message queue
-     * won't succeed at first. However, if the message queue is deleted, or
-     * the wait is aborted, then this could fail somewhere in the middle. */
-    if(RMP_Msgq_Snd(&(Queue->Msgq),Node)<0)
-    {
-        RMP_COV_MARKER();
-        
-        /* Put the semaphore back - this is for handling aborts, and the user
-         * is fully responsible for ABA issues that arise from deletion. */
-        if(Queue->State==RMP_BMQ_USED)
-        {
-            RMP_COV_MARKER();
-            
-            RMP_Sem_Post(&(Queue->Sem),1U);
-        }
-        else
-        {
-            RMP_COV_MARKER();
-            /* No action required */
-        }
-        
-        return RMP_ERR_OPER;
-    }
-    else
-    {
-        RMP_COV_MARKER();
-        /* No action required */
-    }
-    
-    return 0;
-}
-/* End Function:RMP_Bmq_Snd **************************************************/
-
-/* Function:RMP_Bmq_Snd_ISR ***************************************************
-Description : Send to a blocking message queue. Different from the normal 
-              version, This function does not block (and instead return failure
-              when the queue is full) and can only be called from an ISR whose
-              priority is below or equal to the context switch handler's. We do
-              not check whether the scheduler is locked; if we are calling this
-              function, we're pretty sure that it's not.
-Input       : volatile struct RMP_Bmq* Queue - The pointer to the queue.
-Output      : None.
-Return      : rmp_ret_t - If successful, 0; or an error code.
-******************************************************************************/
-rmp_ret_t RMP_Bmq_Snd_ISR(volatile struct RMP_Bmq* Queue,
-                          volatile struct RMP_List* Node)
-{
-#if(RMP_CHECK_ENABLE!=0U)
-    /* Check if the queue pointer is valid */
-    if(Queue==RMP_NULL)
-    {
-        RMP_COV_MARKER();
-        
-        return RMP_ERR_MSGQ;
-    }
-    else
-    {
-        RMP_COV_MARKER();
-        /* No action required */
-    }
-    
-    /* Check if the data pointer is valid */
-    if(Node==RMP_NULL)
-    {
-        RMP_COV_MARKER();
-        
-        return RMP_ERR_OPER;
-    }
-    else
-    {
-        RMP_COV_MARKER();
-        /* No action required */
-    }
-    
-    /* Check if the queue structure is in use */
-    if(Queue->State!=RMP_BMQ_USED)
-    {
-        RMP_COV_MARKER();
-        
-        return RMP_ERR_BMQ;
-    }
-    else
-    {
-        RMP_COV_MARKER();
-        /* No action required */
-    }
-    
-    /* Check if we have used the queue up */
-    if(Queue->Sem.Num_Cur==0U)
-    {
-        RMP_COV_MARKER();
-        
-        return RMP_ERR_OPER;
-    }
-    else
-    {
-        RMP_COV_MARKER();
-        /* No action required */
-    }
-#endif
-    
-    /* Manually operate the semaphore, then send to message queue */
-    Queue->Sem.Num_Cur--;
-    RMP_Msgq_Snd_ISR(&(Queue->Msgq), Node);
-
-    return 0;
-}
-/* End Function:RMP_Bmq_Snd_ISR **********************************************/
-
-/* Function:RMP_Bmq_Rcv *******************************************************
-Description : Receive from a blocking message queue.
-Input       : volatile struct RMP_Bmq* Queue - The pointer to the queue.
-              rmp_ptr_t Slice - The number of slices to wait.
-Output      : volatile struct RMP_List** Node - The node received.
-Output      : None.
-Return      : rmp_ret_t - If successful, 0; or an error code.
-******************************************************************************/
-rmp_ret_t RMP_Bmq_Rcv(volatile struct RMP_Bmq* Queue,
-                      volatile struct RMP_List** Node,
-                      rmp_ptr_t Slice)
-{
-#if(RMP_CHECK_ENABLE!=0U)
-    /* Check if the queue pointer is valid */
-    if(Queue==RMP_NULL)
-    {
-        RMP_COV_MARKER();
-        
-        return RMP_ERR_BMQ;
-    }
-    else
-    {
-        RMP_COV_MARKER();
-        /* No action required */
-    }
-    
-    /* Check if the data pointer is valid */
-    if(Node==RMP_NULL)
-    {
-        RMP_COV_MARKER();
-        
-        return RMP_ERR_OPER;
-    }
-    else
-    {
-        RMP_COV_MARKER();
-        /* No action required */
-    }
-    
-    /* Check if the queue structure is in use - no lock needed cause we have 
-     * deletion race protection below: assuming the operations can fail */
-    if(Queue->State!=RMP_BMQ_USED)
-    {
-        RMP_COV_MARKER();
-        
-        return RMP_ERR_BMQ;
-    }
-    else
-    {
-        RMP_COV_MARKER();
-        /* No action required */
-    }
-#endif
-    
-    /* Attempt a message queue receive */
-    if(RMP_Msgq_Rcv(&(Queue->Msgq),Node,Slice)<0)
-    {
-        RMP_COV_MARKER();
-        
-        return RMP_ERR_OPER;
-    }
-    else
-    {
-        RMP_COV_MARKER();
-        /* No action required */
-    }
-                          
-    /* If we're successful, wake up one guy on the send wait list. We don't care 
-     * if this fails: if this fails due to queue deletion, that's totally fine.
-     * Also there is no possibility that the FIFO will (even transiently) contain
-     * more elements than the limit: this only gets posted when the FIFO dequeue
-     * is actually performed. */
-    RMP_Sem_Post(&(Queue->Sem),1U);
-    
-    return 0;
-}
-/* End Function:RMP_Bmq_Rcv **************************************************/
-
-/* Function:RMP_Bmq_Cnt *******************************************************
-Description : Get the number of nodes in the blocking message queue.
-Input       : volatile struct RMP_Bmq* Queue - The pointer to the message queue.
-Output      : None.
-Return      : rmp_ret_t - If successful, the number of nodes; or an error code.
-******************************************************************************/
-rmp_ret_t RMP_Bmq_Cnt(volatile struct RMP_Bmq* Queue)
-{
-    rmp_ret_t Count;
-
-#if(RMP_CHECK_ENABLE!=0U)
-    /* Check if the queue pointer is valid */
-    if(Queue==RMP_NULL)
-    {
-        RMP_COV_MARKER();
-        
-        return RMP_ERR_BMQ;
-    }
-    else
-    {
-        RMP_COV_MARKER();
-        /* No action required */
-    }
-#endif
-    
-    RMP_Sched_Lock();
-    
-#if(RMP_CHECK_ENABLE!=0U)
-    /* Check if the queue structure is in use */
-    if(Queue->State!=RMP_MSGQ_USED)
-    {
-        RMP_COV_MARKER();
-        
-        RMP_Sched_Unlock();
-        return RMP_ERR_MSGQ;
-    }
-    else
-    {
-        RMP_COV_MARKER();
-        /* No action required */
-    }
-#endif
-    
-    Count=RMP_Msgq_Cnt(&(Queue->Msgq));
-    
-    RMP_Sched_Unlock();
-    return Count;
-}
-/* End Function:RMP_Bmq_Cnt **************************************************/
 
 /* Function:RMP_Line **********************************************************
 Description : Draw a line given the start and end coordinates.

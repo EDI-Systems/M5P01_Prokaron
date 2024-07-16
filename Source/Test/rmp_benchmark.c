@@ -110,14 +110,25 @@ volatile rmp_tim_t Msgq_ISR_Max=0U;
 volatile rmp_tim_t Msgq_ISR_Min=0U;
 volatile rmp_tim_t Bmq_ISR_Max=0U;
 volatile rmp_tim_t Bmq_ISR_Min=0U;
-/* Kernel objects */
+volatile rmp_ptr_t Alrm_1_Cnt=0U;
+volatile rmp_ptr_t Alrm_2_Cnt=0U;
+volatile rmp_ptr_t Alrm_3_Cnt=0U;
+volatile rmp_ptr_t Alrm_5_Cnt=0U;
+volatile rmp_ptr_t Alrm_7_Cnt=0U;
+/* Kernel object */
 volatile struct RMP_Thd Thd_1;
 volatile struct RMP_Thd Thd_2;
 volatile struct RMP_Sem Sem_1;
-/* Extended kernel objects */
+/* Extended kernel object */
 volatile struct RMP_Fifo Fifo_1;
 volatile struct RMP_Msgq Msgq_1;
 volatile struct RMP_Bmq Bmq_1;
+volatile struct RMP_Amgr Amgr;
+volatile struct RMP_Alrm Alrm_1;
+volatile struct RMP_Alrm Alrm_2;
+volatile struct RMP_Alrm Alrm_3;
+volatile struct RMP_Alrm Alrm_5;
+volatile struct RMP_Alrm Alrm_7;
 /* Memory pool */
 #ifdef TEST_MEM_POOL
 /* In case some stupid toolchain emits this into data section */
@@ -146,16 +157,19 @@ void Test_Sem_2(void);
 void Test_Fifo(void);
 void Test_Msgq_2(void);
 void Test_Bmq_2(void);
-void Test_Mail_ISR(void);
-void Test_Sem_ISR(void);
-void Test_Msgq_ISR(void);
-void Test_Bmq_ISR(void);
 
 #ifdef TEST_MEM_POOL
 rmp_ptr_t Rand(void);
 void Swap(rmp_ptr_t* Arg1, rmp_ptr_t* Arg2);
 void Test_Mem_Pool(void);
 #endif
+void Test_Alrm_Hook(volatile struct RMP_Alrm* Alrm, rmp_cnt_t Overdue);
+void Test_Alrm(void);
+
+void Test_Mail_ISR(void);
+void Test_Sem_ISR(void);
+void Test_Msgq_ISR(void);
+void Test_Bmq_ISR(void);
 
 void Func_2(void);
 /* End Global ****************************************************************/
@@ -192,7 +206,7 @@ void Test_Mail_1(void)
     {
         /* Read counter here */
         Start=RMP_CNT_READ();
-        RMP_Thd_Snd(&Thd_2, 1U, RMP_SLICE_MAX);
+        RMP_Thd_Snd(&Thd_2,1U,RMP_SLICE_MAX);
     }
 }
 
@@ -203,7 +217,7 @@ void Test_Sem_1(void)
     {
         /* Read counter here */
         Start=RMP_CNT_READ();
-        RMP_Sem_Post(&Sem_1, 1U);
+        RMP_Sem_Post(&Sem_1,1U);
     }
 }
 
@@ -215,7 +229,7 @@ void Test_Msgq_1(void)
     {
         /* Read counter here */
         Start=RMP_CNT_READ();
-        RMP_Msgq_Snd(&Msgq_1, &Node);
+        RMP_Msgq_Snd(&Msgq_1,&Node);
     }
 }
 
@@ -227,7 +241,7 @@ void Test_Bmq_1(void)
     {
         /* Read counter here */
         Start=RMP_CNT_READ();
-        RMP_Bmq_Snd(&Bmq_1, &Node, RMP_SLICE_MAX);
+        RMP_Bmq_Snd(&Bmq_1,&Node,RMP_SLICE_MAX);
     }
 }
 
@@ -239,7 +253,7 @@ void Func_1(void)
 
     Test_Yield_1();
     /* Change priority of thread 2 */
-    RMP_Thd_Set(&Thd_2, 2U, RMP_SLICE_MAX);
+    RMP_Thd_Set(&Thd_2,2U,RMP_SLICE_MAX);
     Test_Mail_1();
     Test_Sem_1();
     Test_Msgq_1();
@@ -284,7 +298,7 @@ void Test_Mail_2(void)
     rmp_cnt_t Count;
     for(Count=0;Count<ROUND_NUM;Count++)
     {
-        RMP_Thd_Rcv(&Data, RMP_SLICE_MAX);
+        RMP_Thd_Rcv(&Data,RMP_SLICE_MAX);
         /* Read counter here */
         End=RMP_CNT_READ();
         RMP_DATA();
@@ -296,7 +310,7 @@ void Test_Sem_2(void)
     rmp_cnt_t Count;
     for(Count=0;Count<ROUND_NUM;Count++)
     {
-        RMP_Sem_Pend(&Sem_1, RMP_SLICE_MAX);
+        RMP_Sem_Pend(&Sem_1,RMP_SLICE_MAX);
         /* Read counter here */
         End=RMP_CNT_READ();
         RMP_DATA();
@@ -313,8 +327,8 @@ void Test_Fifo(void)
     {
         /* FIFO is different in that it is non-blocking */
         Start=RMP_CNT_READ();
-        RMP_Fifo_Write(&Fifo_1, &Node);
-        RMP_Fifo_Read(&Fifo_1, &Receive);
+        RMP_Fifo_Write(&Fifo_1,&Node);
+        RMP_Fifo_Read(&Fifo_1,&Receive);
         End=RMP_CNT_READ();
         RMP_DATA();
         /* This must be the same thing */
@@ -330,7 +344,7 @@ void Test_Msgq_2(void)
     
     for(Count=0;Count<ROUND_NUM;Count++)
     {
-        RMP_Msgq_Rcv(&Msgq_1, &Receive, RMP_SLICE_MAX);
+        RMP_Msgq_Rcv(&Msgq_1,&Receive,RMP_SLICE_MAX);
         /* Read counter here */
         End=RMP_CNT_READ();
         RMP_DATA();
@@ -344,11 +358,50 @@ void Test_Bmq_2(void)
     
     for(Count=0;Count<ROUND_NUM;Count++)
     {
-        RMP_Bmq_Rcv(&Bmq_1, &Receive, RMP_SLICE_MAX);
+        RMP_Bmq_Rcv(&Bmq_1,&Receive,RMP_SLICE_MAX);
         /* Read counter here */
         End=RMP_CNT_READ();
         RMP_DATA();
     }
+}
+
+void Test_Alrm_Hook(volatile struct RMP_Alrm* Alrm, rmp_cnt_t Overdue)
+{
+    switch(Alrm->Delay)
+    {
+        case 1U:Alrm_1_Cnt++;break;
+        case 2U:Alrm_2_Cnt++;break;
+        case 3U:Alrm_3_Cnt++;break;
+        case 5U:Alrm_5_Cnt++;break;
+        case 7U:Alrm_7_Cnt++;break;
+        default:RMP_ASSERT(0);
+    }
+}
+
+void Test_Alrm(void)
+{
+    rmp_cnt_t Count;
+    
+    for(Count=0;Count<ROUND_NUM;Count++)
+    {
+        Start=RMP_CNT_READ();
+        RMP_Amgr_Proc(&Amgr,1U);
+        /* Read counter here */
+        End=RMP_CNT_READ();
+        RMP_DATA();
+    }
+    
+    /* The callbacks must be triggered for a fixed number of times */
+    RMP_ASSERT(Alrm_1_Cnt==ROUND_NUM);
+    RMP_ASSERT(Alrm_2_Cnt==(ROUND_NUM/2U));
+    RMP_ASSERT(Alrm_3_Cnt==(ROUND_NUM/3U));
+    RMP_ASSERT(Alrm_5_Cnt==(ROUND_NUM/5U));
+    RMP_ASSERT(Alrm_7_Cnt==(ROUND_NUM/7U));
+    
+    /* The maximum will be encountered when all five alarms trigger together */
+    Max/=5U;
+    /* 1 + 1/2 + 1/3 + 1/5 + 1/7 is roughly equal to 37/17 */
+    Total=Total*17U/37U;
 }
 
 void Test_Mail_ISR(void)
@@ -357,7 +410,7 @@ void Test_Mail_ISR(void)
     static rmp_cnt_t Count;
     for(Count=0;Count<ROUND_NUM;Count++)
     {
-        RMP_Thd_Rcv(&Data, RMP_SLICE_MAX);
+        RMP_Thd_Rcv(&Data,RMP_SLICE_MAX);
         /* Read counter here */
         End=RMP_CNT_READ();
         RMP_DATA();
@@ -370,7 +423,7 @@ void Test_Sem_ISR(void)
     static rmp_cnt_t Count;
     for(Count=0;Count<ROUND_NUM;Count++)
     {
-        RMP_Sem_Pend(&Sem_1, RMP_SLICE_MAX);
+        RMP_Sem_Pend(&Sem_1,RMP_SLICE_MAX);
         /* Read counter here */
         End=RMP_CNT_READ();
         RMP_DATA();
@@ -385,7 +438,7 @@ void Test_Msgq_ISR(void)
     
     for(Count=0;Count<ROUND_NUM;Count++)
     {
-        RMP_Msgq_Rcv(&Msgq_1, &Receive, RMP_SLICE_MAX);
+        RMP_Msgq_Rcv(&Msgq_1,&Receive,RMP_SLICE_MAX);
         /* Read counter here */
         End=RMP_CNT_READ();
         RMP_DATA();
@@ -400,7 +453,7 @@ void Test_Bmq_ISR(void)
     
     for(Count=0;Count<ROUND_NUM;Count++)
     {
-        RMP_Bmq_Rcv(&Bmq_1, &Receive, RMP_SLICE_MAX);
+        RMP_Bmq_Rcv(&Bmq_1,&Receive,RMP_SLICE_MAX);
         /* Read counter here */
         End=RMP_CNT_READ();
         RMP_DATA();
@@ -460,7 +513,7 @@ void Test_Mem_Pool(void)
     Pool_Align=(rmp_ptr_t*)Pool_Addr;
 
     /* Initialize the pool */
-    RMP_ASSERT(RMP_Mem_Init(Pool_Align, (TEST_MEM_POOL-1U)*sizeof(rmp_ptr_t))==0);
+    RMP_ASSERT(RMP_Mem_Init(Pool_Align,(TEST_MEM_POOL-1U)*sizeof(rmp_ptr_t))==0);
     for(Test_Cnt=0;Test_Cnt<ROUND_NUM;Test_Cnt++)
     {
         /* Random sequence and number generation */
@@ -473,26 +526,26 @@ void Test_Mem_Pool(void)
         
         for(Case_Cnt=7;Case_Cnt>0;Case_Cnt--)
         {
-            Swap(&Alloc[Case_Cnt], &Alloc[Rand()%((rmp_ptr_t)Case_Cnt+1U)]);
-            Swap(&Free[Case_Cnt], &Free[Rand()%((rmp_ptr_t)Case_Cnt+1U)]);
-            Swap(&Size[Case_Cnt], &Size[Rand()%((rmp_ptr_t)Case_Cnt+1U)]);
+            Swap(&Alloc[Case_Cnt],&Alloc[Rand()%((rmp_ptr_t)Case_Cnt+1U)]);
+            Swap(&Free[Case_Cnt],&Free[Rand()%((rmp_ptr_t)Case_Cnt+1U)]);
+            Swap(&Size[Case_Cnt],&Size[Rand()%((rmp_ptr_t)Case_Cnt+1U)]);
         }
         
         Start=RMP_CNT_READ();
         /* Allocation tests - one of the mallocs may fail if because the management data
          * structure takes up some space. However, the first four must be successful. */
-        Mem[Alloc[0]]=RMP_Malloc(Pool_Align, Amount[Size[0]]);
+        Mem[Alloc[0]]=RMP_Malloc(Pool_Align,Amount[Size[0]]);
         RMP_ASSERT(Mem[Alloc[0]]!=RMP_NULL);
-        Mem[Alloc[1]]=RMP_Malloc(Pool_Align, Amount[Size[1]]);
+        Mem[Alloc[1]]=RMP_Malloc(Pool_Align,Amount[Size[1]]);
         RMP_ASSERT(Mem[Alloc[1]]!=RMP_NULL);
-        Mem[Alloc[2]]=RMP_Malloc(Pool_Align, Amount[Size[2]]);
+        Mem[Alloc[2]]=RMP_Malloc(Pool_Align,Amount[Size[2]]);
         RMP_ASSERT(Mem[Alloc[2]]!=RMP_NULL);
-        Mem[Alloc[3]]=RMP_Malloc(Pool_Align, Amount[Size[3]]);
+        Mem[Alloc[3]]=RMP_Malloc(Pool_Align,Amount[Size[3]]);
         RMP_ASSERT(Mem[Alloc[3]]!=RMP_NULL);
-        Mem[Alloc[4]]=RMP_Malloc(Pool_Align, Amount[Size[4]]);
-        Mem[Alloc[5]]=RMP_Malloc(Pool_Align, Amount[Size[5]]);
-        Mem[Alloc[6]]=RMP_Malloc(Pool_Align, Amount[Size[6]]);
-        Mem[Alloc[7]]=RMP_Malloc(Pool_Align, Amount[Size[7]]);
+        Mem[Alloc[4]]=RMP_Malloc(Pool_Align,Amount[Size[4]]);
+        Mem[Alloc[5]]=RMP_Malloc(Pool_Align,Amount[Size[5]]);
+        Mem[Alloc[6]]=RMP_Malloc(Pool_Align,Amount[Size[6]]);
+        Mem[Alloc[7]]=RMP_Malloc(Pool_Align,Amount[Size[7]]);
 
         /* Deallocation tests */
         RMP_Free(Pool_Align,Mem[Free[0]]);
@@ -508,7 +561,7 @@ void Test_Mem_Pool(void)
 
         /* This should always be successful because we deallocated everything else, and
          * management data structure should never take up more than 1/8 of the pool. */
-        Mem[0]=RMP_Malloc(Pool_Align, TEST_MEM_POOL*sizeof(rmp_ptr_t)*7U/8U);
+        Mem[0]=RMP_Malloc(Pool_Align,TEST_MEM_POOL*sizeof(rmp_ptr_t)*7U/8U);
         if(Mem[0]==RMP_NULL)
         {
             RMP_DBG_S("Memory test failure: ");
@@ -516,7 +569,7 @@ void Test_Mem_Pool(void)
             RMP_DBG_S(" runs.\r\n");
             while(1);
         }
-        RMP_Free(Pool_Align, Mem[0]); 
+        RMP_Free(Pool_Align,Mem[0]); 
     }
     
     Total/=8U;
@@ -530,7 +583,7 @@ void Func_2(void)
     /* Print table header */
     RMP_DBG_S("\r\n");
 #ifndef SMALL_TERMINAL
-    /* Standard display assumes a standard 52-character terminal */
+    /* Standard display assumes a standard 52/80-character terminal */
     RMP_DBG_S("    ___   __  ___ ___\r\n");
     RMP_DBG_S("   / _ \\ /  |/  // _ \\       Simple real-time kernel\r\n");
     RMP_DBG_S("  / , _// /|_/ // ___/       Standard benchmark test\r\n");
@@ -563,7 +616,6 @@ void Func_2(void)
     RMP_LIST("Y ");
 #endif
 
-    
     /* Elevate priority of thread 2 for IPC tests */
     RMP_Thd_Set(&Thd_2,2U,RMP_SLICE_MAX);
     
@@ -610,6 +662,15 @@ void Func_2(void)
     RMP_LIST("Blocking message queue            ");
 #else
     RMP_LIST("B ");
+#endif
+
+    /* Alarm tests */
+    RMP_INIT();
+    Test_Alrm();
+#ifndef SMALL_TERMINAL
+    RMP_LIST("Alarm                             ");
+#else
+    RMP_LIST("A ");
 #endif
     
     /* Memory pool tests */
@@ -814,20 +875,34 @@ Return      : None.
 void RMP_Init_Hook(void)
 {
 #ifndef MINIMAL_SIZE
-    /* Init the timer */
+    /* Initialize the performance monitoring timer */
     Timer_Init();
+    
     /* Clean up the structures */
-    RMP_Clear(&Thd_1, sizeof(struct RMP_Thd));
-    RMP_Clear(&Thd_2, sizeof(struct RMP_Thd));
-    RMP_Clear(&Sem_1, sizeof(struct RMP_Sem));
-    RMP_Clear(&Fifo_1, sizeof(struct RMP_Fifo));
-    RMP_Clear(&Msgq_1, sizeof(struct RMP_Msgq));
-    RMP_Clear(&Bmq_1, sizeof(struct RMP_Bmq));
+    RMP_Clear(&Thd_1,sizeof(struct RMP_Thd));
+    RMP_Clear(&Thd_2,sizeof(struct RMP_Thd));
+    RMP_Clear(&Sem_1,sizeof(struct RMP_Sem));
+    RMP_Clear(&Fifo_1,sizeof(struct RMP_Fifo));
+    RMP_Clear(&Msgq_1,sizeof(struct RMP_Msgq));
+    RMP_Clear(&Bmq_1,sizeof(struct RMP_Bmq));
+    RMP_Clear(&Amgr,sizeof(struct RMP_Amgr));
+    RMP_Clear(&Alrm_1,sizeof(struct RMP_Alrm));
+    RMP_Clear(&Alrm_2,sizeof(struct RMP_Alrm));
+    RMP_Clear(&Alrm_3,sizeof(struct RMP_Alrm));
+    RMP_Clear(&Alrm_5,sizeof(struct RMP_Alrm));
+    RMP_Clear(&Alrm_7,sizeof(struct RMP_Alrm));
+    
     /* Create kernel objects */
-    RMP_Sem_Crt(&Sem_1, 0U);
+    RMP_Sem_Crt(&Sem_1,0U);
     RMP_Fifo_Crt(&Fifo_1);
     RMP_Msgq_Crt(&Msgq_1);
-    RMP_Bmq_Crt(&Bmq_1, 1U);
+    RMP_Bmq_Crt(&Bmq_1,1U);
+    RMP_Amgr_Crt(&Amgr);
+    RMP_Alrm_Init(&Alrm_1,1U,RMP_ALRM_AUTORLD,Test_Alrm_Hook);
+    RMP_Alrm_Init(&Alrm_2,2U,RMP_ALRM_AUTORLD,Test_Alrm_Hook);
+    RMP_Alrm_Init(&Alrm_3,3U,RMP_ALRM_AUTORLD,Test_Alrm_Hook);
+    RMP_Alrm_Init(&Alrm_5,5U,RMP_ALRM_AUTORLD,Test_Alrm_Hook);
+    RMP_Alrm_Init(&Alrm_7,7U,RMP_ALRM_AUTORLD,Test_Alrm_Hook);
     
     /* Start threads - thread 2 is added at first so it will be scheduled first */
     RMP_Thd_Crt(&Thd_2,
