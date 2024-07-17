@@ -23,9 +23,9 @@ MEMORY {
     # - rodata
     # - data (load)
     #ROM0:   file = %O, start = $8000, size = $7FFA, fill = yes, define = yes;
-    ROM0:   file = %O, start = $8000, size = $7C00, fill = yes, define = yes;
+    ROM0:   file = %O, start = $8000, size = $7E00, fill = yes, define = yes;
     # Common ROM section for OS context switching and banking, etc; just don't bank the last section
-    ROMS:   file = %O, start = $FC00, size = $3FA, fill = yes, define = yes;
+    ROMS:   file = %O, start = $FE00, size = $01FA, fill = yes, define = yes;
 
     # Hardware Vectors at End of 2nd 8K ROM
     ROMV:   file = %O, start = $FFFA, size = $0006, fill = yes;

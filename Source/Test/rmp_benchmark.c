@@ -367,6 +367,8 @@ void Test_Bmq_2(void)
 
 void Test_Alrm_Hook(volatile struct RMP_Alrm* Alrm, rmp_cnt_t Overdue)
 {
+    RMP_ASSERT(Overdue==0);
+
     switch(Alrm->Delay)
     {
         case 1U:Alrm_1_Cnt++;break;
@@ -903,6 +905,11 @@ void RMP_Init_Hook(void)
     RMP_Alrm_Init(&Alrm_3,3U,RMP_ALRM_AUTORLD,Test_Alrm_Hook);
     RMP_Alrm_Init(&Alrm_5,5U,RMP_ALRM_AUTORLD,Test_Alrm_Hook);
     RMP_Alrm_Init(&Alrm_7,7U,RMP_ALRM_AUTORLD,Test_Alrm_Hook);
+    RMP_Alrm_Set(&Amgr,&Alrm_1);
+    RMP_Alrm_Set(&Amgr,&Alrm_2);
+    RMP_Alrm_Set(&Amgr,&Alrm_3);
+    RMP_Alrm_Set(&Amgr,&Alrm_5);
+    RMP_Alrm_Set(&Amgr,&Alrm_7);
     
     /* Start threads - thread 2 is added at first so it will be scheduled first */
     RMP_Thd_Crt(&Thd_2,
