@@ -138,15 +138,10 @@ while(0)
 #define RMP_AMGR_FREE               (0U)
 #define RMP_AMGR_USED               (1U)
 
-/* Alarm state */
-#define RMP_ALRM_STATE(X)           ((X)&((rmp_ptr_t)0x01U))
-#define RMP_ALRM_FLAG(X)            ((X)&~((rmp_ptr_t)0x01U))
-#define RMP_ALRM_STATE_SET(X,S)     ((X)=(RMP_ALRM_FLAG(X)|(S)))
-
-#define RMP_ALRM_FREE               (0U)
-#define RMP_ALRM_USED               (1U)
+/* Alarm delay mode & value */
+#define RMP_ALRM_DELAY(X)           ((X)&RMP_MASK_INTMAX)
 #define RMP_ALRM_AUTORLD            (0U)
-#define RMP_ALRM_ONESHOT            RMP_POW2(1U)
+#define RMP_ALRM_ONESHOT            RMP_POW2(RMP_WORD_ORDER-1U)
 
 /* Error codes */
 /* This error is thread related */
@@ -349,41 +344,6 @@ struct RMP_Sem
     rmp_ptr_t Num_Cur;
 };
 
-/* The head struct of a memory block */
-struct RMP_Mem_Head
-{
-    /* This is what is used in TLSF LUT */
-    struct RMP_List Head;
-    /* Is this block used at the moment? */
-    rmp_ptr_t State;
-    /* The pointer to the tail */
-    volatile struct RMP_Mem_Tail* Tail;
-};
-
-/* The tail struct of a memory block */
-struct RMP_Mem_Tail
-{
-    /* Pointer to the memory header */
-    volatile struct RMP_Mem_Head* Head;
-};
-
-/* The memory control header block structure */
-struct RMP_Mem
-{
-    /* The number of FLIs in the system */
-    rmp_ptr_t FLI_Num;
-    /* The base address of the actual memory pool */
-    rmp_ptr_t Base;
-    /* The total size of this pool, including the header, bitmap and list table */
-    rmp_ptr_t Size;
-    /* The location of the list table itself */
-    struct RMP_List* Table;
-    /* The bitmap - This is actually an array that have an indefinite length, and will
-     * be decided at runtime. Don't fuss if lint says that this can overflow; it is safe. */
-    rmp_ptr_t Bitmap[1];
-};
-
-
 /* The FIFO structure */
 struct RMP_Fifo
 {
@@ -430,14 +390,50 @@ struct RMP_Amgr
 struct RMP_Alrm
 {
     struct RMP_List Head;
-    /* The state of the alarm */
-    rmp_ptr_t State;
-    /* The actual delay time of the alarm */
+    /* The delay time and mode of the alarm */
     rmp_ptr_t Delay;
     /* The timeout moment */
     rmp_ptr_t Timeout;
+    /* The manager of the alarm */
+    volatile struct RMP_Amgr* Amgr;
     /* Timeout callback hook */
-    void (*Hook)(volatile struct RMP_Alrm*,rmp_cnt_t);
+    void (*Hook)(volatile struct RMP_Amgr*,
+                 volatile struct RMP_Alrm*,
+                 rmp_cnt_t);
+};
+
+/* The head struct of a memory block */
+struct RMP_Mem_Head
+{
+    /* This is what is used in TLSF LUT */
+    struct RMP_List Head;
+    /* Is this block used at the moment? */
+    rmp_ptr_t State;
+    /* The pointer to the tail */
+    volatile struct RMP_Mem_Tail* Tail;
+};
+
+/* The tail struct of a memory block */
+struct RMP_Mem_Tail
+{
+    /* Pointer to the memory header */
+    volatile struct RMP_Mem_Head* Head;
+};
+
+/* The memory control header block structure */
+struct RMP_Mem
+{
+    /* The number of FLIs in the system */
+    rmp_ptr_t FLI_Num;
+    /* The base address of the actual memory pool */
+    rmp_ptr_t Base;
+    /* The total size of this pool, including the header, bitmap and list table */
+    rmp_ptr_t Size;
+    /* The location of the list table itself */
+    struct RMP_List* Table;
+    /* The bitmap - This is actually an array that have an indefinite length, and will
+     * be decided at runtime. Don't fuss if lint says that this can overflow; it is safe. */
+    rmp_ptr_t Bitmap[1];
 };
 /*****************************************************************************/
 /* __RMP_KERNEL_STRUCT__ */
@@ -717,10 +713,13 @@ __RMP_EXTERN__ rmp_ret_t RMP_Amgr_Del(volatile struct RMP_Amgr* Amgr);
 __RMP_EXTERN__ rmp_ret_t RMP_Amgr_Proc(volatile struct RMP_Amgr* Amgr,
                                        rmp_ptr_t Tick);
 __RMP_EXTERN__ rmp_ret_t RMP_Amgr_Cnt(volatile struct RMP_Amgr* Amgr);
+
 __RMP_EXTERN__ rmp_ret_t RMP_Alrm_Init(volatile struct RMP_Alrm* Alrm,
                                        rmp_ptr_t Delay,
                                        rmp_ptr_t Mode,
-                                       void (*Hook)(volatile struct RMP_Alrm*,rmp_cnt_t));
+                                       void (*Hook)(volatile struct RMP_Amgr*,
+                                                    volatile struct RMP_Alrm*,
+                                                    rmp_cnt_t));
 __RMP_EXTERN__ rmp_ret_t RMP_Alrm_Set(volatile struct RMP_Amgr* Amgr,
                                       volatile struct RMP_Alrm* Alrm);
 __RMP_EXTERN__ rmp_ret_t RMP_Alrm_Trig(volatile struct RMP_Amgr* Amgr,

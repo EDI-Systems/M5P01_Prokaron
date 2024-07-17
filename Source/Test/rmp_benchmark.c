@@ -160,10 +160,13 @@ void Test_Bmq_2(void);
 
 #ifdef TEST_MEM_POOL
 rmp_ptr_t Rand(void);
-void Swap(rmp_ptr_t* Arg1, rmp_ptr_t* Arg2);
+void Swap(rmp_ptr_t* Arg1,
+          rmp_ptr_t* Arg2);
 void Test_Mem_Pool(void);
 #endif
-void Test_Alrm_Hook(volatile struct RMP_Alrm* Alrm, rmp_cnt_t Overdue);
+void Test_Alrm_Hook(volatile struct RMP_Amgr* Amgr,
+                    volatile struct RMP_Alrm* Alrm,
+                    rmp_cnt_t Overdue);
 void Test_Alrm(void);
 
 void Test_Mail_ISR(void);
@@ -365,8 +368,11 @@ void Test_Bmq_2(void)
     }
 }
 
-void Test_Alrm_Hook(volatile struct RMP_Alrm* Alrm, rmp_cnt_t Overdue)
+void Test_Alrm_Hook(volatile struct RMP_Amgr* Amgr,
+                    volatile struct RMP_Alrm* Alrm,
+                    rmp_cnt_t Overdue)
 {
+    RMP_USE(Amgr);
     RMP_ASSERT(Overdue==0);
 
     switch(Alrm->Delay)
@@ -399,11 +405,6 @@ void Test_Alrm(void)
     RMP_ASSERT(Alrm_3_Cnt==(ROUND_NUM/3U));
     RMP_ASSERT(Alrm_5_Cnt==(ROUND_NUM/5U));
     RMP_ASSERT(Alrm_7_Cnt==(ROUND_NUM/7U));
-    
-    /* The maximum will be encountered when all five alarms trigger together */
-    Max/=5U;
-    /* 1 + 1/2 + 1/3 + 1/5 + 1/7 is roughly equal to 37/17 */
-    Total=Total*17U/37U;
 }
 
 void Test_Mail_ISR(void)
@@ -479,7 +480,8 @@ rmp_ptr_t Rand(void)
     return LFSR;
 }
 
-void Swap(rmp_ptr_t* Arg1, rmp_ptr_t* Arg2)
+void Swap(rmp_ptr_t* Arg1,
+          rmp_ptr_t* Arg2)
 {
     rmp_ptr_t Temp;
     
@@ -670,7 +672,7 @@ void Func_2(void)
     RMP_INIT();
     Test_Alrm();
 #ifndef SMALL_TERMINAL
-    RMP_LIST("Alarm                             ");
+    RMP_LIST("Alarm combination (1/2/3/5/7)     ");
 #else
     RMP_LIST("A ");
 #endif

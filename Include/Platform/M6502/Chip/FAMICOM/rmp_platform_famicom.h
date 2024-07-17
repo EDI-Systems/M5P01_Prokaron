@@ -11,8 +11,10 @@ Description: The configuration file for FAMICOM.
 #include <conio.h>
 
 /* Debugging */
-/* Assertion - has to disable or we have ROM overflow */
-#define RMP_ASSERT_ENABLE           (0U)
+/* Assertion */
+#define RMP_ASSERT_ENABLE           (1U)
+/* Use minimal logging or we have ROM overflow */
+#define RMP_LOG(F,L,D,T)            RMP_DBG_I(L)
 /* Invalid parameter checking */
 #define RMP_CHECK_ENABLE            (1U)
 /* Debug logging */
