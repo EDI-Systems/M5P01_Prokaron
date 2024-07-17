@@ -4865,8 +4865,8 @@ rmp_ret_t RMP_Amgr_Pop(volatile struct RMP_Amgr* Amgr,
         
         /* No need to decrease current count as the manager is being deleted */
         
-        /* Mark the alarm as unused */
-        RMP_ALRM_STATE_SET(Trav_Alrm->State,RMP_ALRM_FREE);
+        /* Mark the alarm as free */
+        Trav_Alrm->Amgr=RMP_NULL;
         *Alrm=Trav_Alrm;
         
         RMP_Sched_Unlock();
@@ -4904,7 +4904,7 @@ static void _RMP_Amgr_Ins(volatile struct RMP_Amgr* Amgr,
     volatile struct RMP_Alrm* Trav_Alrm;
     
     /* Cache volatile delay and timeout */
-    Delay=Alrm->Delay;
+    Delay=RMP_ALRM_DELAY(Alrm->Delay);
     Timeout=Timestamp+Delay;
     
     /* Find a place to insert this alarm */
@@ -4929,9 +4929,10 @@ static void _RMP_Amgr_Ins(volatile struct RMP_Amgr* Amgr,
         }
     }
     
-    /* Write cached timeout and delay back */
+    /* Write cached timeout back */
     Alrm->Timeout=Timeout;
-    RMP_ALRM_STATE_SET(Alrm->State,RMP_ALRM_USED);
+    /* Register with this manager */
+    Alrm->Amgr=Amgr;
 
     /* Insert this into the queue atomically */
     RMP_Sched_Lock();
@@ -4965,15 +4966,15 @@ static void _RMP_Amgr_Expire(volatile struct RMP_Amgr* Amgr,
     
     /* Call its callback hook function with the current
      * alarm structure and the possible overdue amount */
-    Alrm->Hook(Alrm,Overdue);
+    Alrm->Hook(Amgr,Alrm,Overdue);
     
     /* See if we need to put it back to the delay queue */
-    if((Alrm->State&RMP_ALRM_ONESHOT)!=0U)
+    if((Alrm->Delay&RMP_ALRM_ONESHOT)!=0U)
     {
         RMP_COV_MARKER();
         
-        /* One-shot, mark it as inactive and don't insert it back */
-        RMP_ALRM_STATE_SET(Alrm->State,RMP_ALRM_FREE);
+        /* One-shot, mark it as free and don't insert it back */
+        Alrm->Amgr=RMP_NULL;
     }
     else
     {
@@ -5150,20 +5151,30 @@ rmp_ret_t RMP_Amgr_Cnt(volatile struct RMP_Amgr* Amgr)
 /* End Function:RMP_Amgr_Cnt *************************************************/
 
 /* Function:RMP_Alrm_Init *****************************************************
-Description : Initialize an alarm structure. The alarm structures are assumed
-              to be thread-local and is never guarded by any locks.
+Description : Initialize an alarm structure. Unlike alarm managers, the alarms
+              are not guarded by mutexs and are assumed to be (1) thread-local
+              in initialization and (2) thread- or manager-local in operation.
+              If two threads try to initialize the same alarm at the same time,
+              or try to register the same alarm with different managers at the
+              same time, correct operation is not guaranteed.
+              It is recommended to make each alarm thread- and manager-local;
+              this also makes application development easier.
 Input       : volatile struct RMP_Alrm* Alrm - The alarm to initialize.
               rmp_ptr_t Delay - The delay value of this alarm, shall not exceed
                                 RMP_MASK_INTMAX.
               rmp_ptr_t Mode - The mode of the alarm, one-shot or autoreloading.
-              void (*Hook)(volatile struct RMP_Alrm*,rmp_cnt_t) - The callback.
+              void (*Hook)(volatile struct RMP_Amgr*,
+                           volatile struct RMP_Alrm*,
+                           rmp_cnt_t) - The callback hook upon alarm expiration.
 Output      : None.
 Return      : rmp_ret_t - If successful, 0; or an error code.
 ******************************************************************************/
 rmp_ret_t RMP_Alrm_Init(volatile struct RMP_Alrm* Alrm,
                         rmp_ptr_t Delay,
                         rmp_ptr_t Mode,
-                        void (*Hook)(volatile struct RMP_Alrm*,rmp_cnt_t))
+                        void (*Hook)(volatile struct RMP_Amgr*,
+                                     volatile struct RMP_Alrm*,
+                                     rmp_cnt_t))
 {
 #if(RMP_CHECK_ENABLE!=0U)
     /* Check if the alarm pointer is valid */
@@ -5219,7 +5230,7 @@ rmp_ret_t RMP_Alrm_Init(volatile struct RMP_Alrm* Alrm,
     }
     
     /* Check if the alarm structure is in use */
-    if(RMP_ALRM_STATE(Alrm->State)!=RMP_ALRM_FREE)
+    if(Alrm->Amgr!=RMP_NULL)
     {
         RMP_COV_MARKER();
         
@@ -5233,8 +5244,7 @@ rmp_ret_t RMP_Alrm_Init(volatile struct RMP_Alrm* Alrm,
 #endif
     
     /* Initialize the alarm structure */
-    Alrm->State=Mode;
-    Alrm->Delay=Delay;
+    Alrm->Delay=Mode|Delay;
     Alrm->Hook=Hook;
     
     return 0;
@@ -5244,8 +5254,7 @@ rmp_ret_t RMP_Alrm_Init(volatile struct RMP_Alrm* Alrm,
 /* Function:RMP_Alrm_Set ******************************************************
 Description : Set up an alarm with a certain alarm manager. If an alarm is set
               again before it expires, then the previous alarm is automatically
-              cancelled. When this is the case, this function does not check
-              whether the alarm really belongs to the alarm manager.
+              cancelled.
               Alarms are processed in chronological order with which they were
               registered. Even if two of them were registered at the same alarm
               manager timestamp, the one registered earlier will come first.
@@ -5312,8 +5321,8 @@ rmp_ret_t RMP_Alrm_Set(volatile struct RMP_Amgr* Amgr,
         /* No action required */
     }
     
-    /* Check if the alarm structure is in use */
-    if(RMP_ALRM_STATE(Alrm->State)!=RMP_ALRM_FREE)
+    /* Check if the alarm is indeed mounted on this manager */
+    if(Alrm->Amgr==Amgr)
     {
         RMP_COV_MARKER();
         
@@ -5323,10 +5332,20 @@ rmp_ret_t RMP_Alrm_Set(volatile struct RMP_Amgr* Amgr,
         Amgr->Num_Cur--;
         RMP_Sched_Unlock();
     }
-    else
+    /* The alarm is not mounted on any manager */
+    else if(Alrm->Amgr==RMP_NULL)
     {
         RMP_COV_MARKER();
         /* No action required */
+    }
+    /* The alarm is mounted on someone else */
+    else
+    {
+        RMP_COV_MARKER();
+        
+        /* Don't care if this fails - possible deletion race */
+        RMP_Sem_Post(&(Amgr->Mutex),1U);
+        return RMP_ERR_OPER;
     }
     
     /* Insert into the queue */
@@ -5340,8 +5359,7 @@ rmp_ret_t RMP_Alrm_Set(volatile struct RMP_Amgr* Amgr,
 
 /* Function:RMP_Alrm_Trig *****************************************************
 Description : Trigger an alarm prematurely as if it expired already. If it is
-              one-shot, it will be removed from the queue. This function does
-              not check whether the alarm really belongs to the alarm manager.
+              one-shot, it will be removed from the queue.
 Input       : volatile struct RMP_Amgr* Amgr - The alarm manager to use.
               volatile struct RMP_Amgr* Alrm - The alarm to prematurely trigger.
 Output      : None.
@@ -5364,19 +5382,6 @@ rmp_ret_t RMP_Alrm_Trig(volatile struct RMP_Amgr* Amgr,
         /* No action required */
     }
     
-    /* Check if the alarm structure is in use */
-    if(RMP_ALRM_STATE(Alrm->State)!=RMP_ALRM_USED)
-    {
-        RMP_COV_MARKER();
-        
-        return RMP_ERR_ALRM;
-    }
-    else
-    {
-        RMP_COV_MARKER();
-        /* No action required */
-    }
-    
     /* Check if the alarm manager pointer is valid */
     if(Amgr==RMP_NULL)
     {
@@ -5418,6 +5423,21 @@ rmp_ret_t RMP_Alrm_Trig(volatile struct RMP_Amgr* Amgr,
         /* No action required */
     }
     
+    /* Check if the alarm is indeed mounted on this manager */
+    if(Alrm->Amgr!=Amgr)
+    {
+        RMP_COV_MARKER();
+        
+        /* Don't care if this fails - possible deletion race */
+        RMP_Sem_Post(&(Amgr->Mutex),1U);
+        return RMP_ERR_ALRM;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+    
     /* Process alarm expiration with negative overdue */
     _RMP_Amgr_Expire(Amgr,
                      Alrm,
@@ -5431,9 +5451,8 @@ rmp_ret_t RMP_Alrm_Trig(volatile struct RMP_Amgr* Amgr,
 /* End Function:RMP_Alrm_Trig ************************************************/
 
 /* Function:RMP_Alrm_Clr ******************************************************
-Description : Cancel an alarm before it expires. The alarm will not go back into
-              the queue anymore. This function does not check whether the alarm
-              really belongs to the alarm manager.
+Description : Cancel an alarm before it expires. The alarm will not go back
+              into the queue anymore.
 Input       : volatile struct RMP_Amgr* Amgr - The alarm manager to use.
               volatile struct RMP_Amgr* Alrm - The alarm to cancel.
 Output      : None.
@@ -5456,19 +5475,6 @@ rmp_ret_t RMP_Alrm_Clr(volatile struct RMP_Amgr* Amgr,
         /* No action required */
     }
     
-    /* Check if the alarm structure is in use */
-    if(RMP_ALRM_STATE(Alrm->State)==RMP_ALRM_FREE)
-    {
-        RMP_COV_MARKER();
-        
-        return RMP_ERR_ALRM;
-    }
-    else
-    {
-        RMP_COV_MARKER();
-        /* No action required */
-    }
-    
     /* Check if the alarm manager pointer is valid */
     if(Amgr==RMP_NULL)
     {
@@ -5509,7 +5515,22 @@ rmp_ret_t RMP_Alrm_Clr(volatile struct RMP_Amgr* Amgr,
         RMP_COV_MARKER();
         /* No action required */
     }
+    
+    /* Check if the alarm is indeed mounted on this manager */
+    if(Alrm->Amgr!=Amgr)
+    {
+        RMP_COV_MARKER();
         
+        /* Don't care if this fails - possible deletion race */
+        RMP_Sem_Post(&(Amgr->Mutex),1U);
+        return RMP_ERR_ALRM;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+        /* No action required */
+    }
+    
     /* Pull it from queue and we're done */
     RMP_Sched_Lock();
     RMP_List_Del(Alrm->Head.Prev,Alrm->Head.Next);
