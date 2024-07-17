@@ -5066,7 +5066,7 @@ rmp_ret_t RMP_Amgr_Proc(volatile struct RMP_Amgr* Amgr,
     /* Deal with all alarms that have expired */
     while(&(Amgr->Alrm)!=Amgr->Alrm.Next)
     {
-        Alrm=(volatile struct RMP_Alrm*)(RMP_Delay.Next);
+        Alrm=(volatile struct RMP_Alrm*)(Amgr->Alrm.Next);
         Diff=RMP_DIFF(Alrm->Timeout,Timestamp);
         
         /* Check if this alarm is overflown */
