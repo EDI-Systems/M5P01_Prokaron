@@ -25,6 +25,85 @@ Description : The platform specific file for AVR.
 #undef __HDR_PUBLIC__
 /* End Include ***************************************************************/
 
+/* Function:_RMP_AVR_MSB_Get **************************************************
+Description : Get the MSB of the word. AVR is slow anyway, so we avoid the
+              generic version to save up some code and data space.
+Input       : rmp_ptr_t Value - The value.
+Output      : None.
+Return      : rmp_ptr_t - The MSB position.
+******************************************************************************/
+rmp_ptr_t _RMP_AVR_MSB_Get(rmp_ptr_t Value)
+{
+    rmp_u8_t Half;
+    rmp_u8_t Pos;
+    
+    Pos=0U;
+    Half=Value>>8;
+    
+    if(Half!=0U)
+        Pos+=8U;
+    else
+        Half=(rmp_u8_t)Value;
+    
+    if(Half>0x0FU)
+    {
+        Half>>=4U;
+        Pos+=4U;
+    }
+    
+    if(Half>0x03U)
+    {
+        Half>>=2U;
+        Pos+=2U;
+    }
+    
+    if(Half>0x01U)
+        Pos++;
+    
+    return (rmp_ptr_t)Pos;
+}
+/* End Function:_RMP_AVR_MSB_Get *********************************************/
+
+/* Function:_RMP_AVR_LSB_Get **************************************************
+Description : Get the LSB of the word. AVR is slow anyway, so we avoid the 
+              generic version to save up some code and data space.
+Input       : rmp_ptr_t Value - The value.
+Output      : None.
+Return      : rmp_ptr_t - The LSB position.
+******************************************************************************/
+rmp_ptr_t _RMP_AVR_LSB_Get(rmp_ptr_t Value)
+{
+    rmp_u8_t Half;
+    rmp_u8_t Pos;
+    
+    Pos=0U;
+    Half=(rmp_u8_t)Value;
+    
+    if(Half==0U)
+    {
+        Half=Value>>8;
+        Pos+=8U;
+    }
+    
+    if((Half&0x0FU)==0U)
+    {
+        Half>>=4U;
+        Pos+=4U;
+    }
+    
+    if((Half&0x03U)==0U)
+    {
+        Half>>=2U;
+        Pos+=2U;
+    }
+    
+    if((Half&0x01U)==0U)
+        Pos++;
+    
+    return (rmp_ptr_t)Pos;
+}
+/* End Function:_RMP_AVR_LSB_Get *********************************************/
+
 /* Function:_RMP_Stack_Init ***************************************************
 Description : Initiate the process stack when trying to start a process. Never
               call this function in user application.
