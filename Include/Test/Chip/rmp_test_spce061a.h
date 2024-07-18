@@ -70,8 +70,9 @@ ISR Blocking message queue         : 3504 / 3772 / 3456
 typedef rmp_u16_t rmp_tim_t;
 /* The pointer is also 16-bit, resort to 32-bit accumulators */
 #define PTR_16_BIT
-/* Sunplus special - whether to play music */
-#define PLAY_MUSIC
+/* Sunplus special - whether to play music -disabled by default; if this is
+ * enabled, the compilation must optimize for size to avoid a flash overflow. */
+/* #define PLAY_MUSIC */
 /* End Define ****************************************************************/
 
 /* Global ********************************************************************/
