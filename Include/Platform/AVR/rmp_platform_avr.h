@@ -93,8 +93,8 @@ typedef rmp_s16_t rmp_ret_t;
 #define RMP_STACK_ELEM                  rmp_u8_t
 #define RMP_STACK_STRUCT                struct RMP_AVR_Stack
 /* MSB/LSB extraction */
-#define RMP_MSB_GET(VAL)                RMP_MSB_Generic(VAL)
-#define RMP_LSB_GET(VAL)                RMP_LSB_Generic(VAL)
+#define RMP_MSB_GET(VAL)                _RMP_AVR_MSB_Get(VAL)
+#define RMP_LSB_GET(VAL)                _RMP_AVR_LSB_Get(VAL)
 
 /* The CPU and application specific macros are here */
 #include "rmp_platform_avr_conf.h"
@@ -261,6 +261,10 @@ RMP_EXTERN void _RMP_AVR_Yield_MEGA_EIND(void);
 RMP_EXTERN void _RMP_AVR_Yield_XMEGA(void);
 RMP_EXTERN void _RMP_AVR_Yield_XMEGA_RAMP(void);
 RMP_EXTERN void _RMP_AVR_Yield_XMEGA_EIND(void);
+
+/* Bit manipulation */
+__RMP_EXTERN__ rmp_ptr_t _RMP_AVR_MSB_Get(rmp_ptr_t Value);
+__RMP_EXTERN__ rmp_ptr_t _RMP_AVR_LSB_Get(rmp_ptr_t Value);
 
 /* Initialization */
 __RMP_EXTERN__ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,

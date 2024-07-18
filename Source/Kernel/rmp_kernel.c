@@ -3541,7 +3541,9 @@ rmp_ret_t RMP_Fifo_Del(volatile struct RMP_Fifo* Fifo)
 /* End Function:RMP_Fifo_Del *************************************************/
 
 /* Function:RMP_Fifo_Read *****************************************************
-Description : Read an element from a FIFO.
+Description : Read an element from a FIFO. All messages are assumed to be 
+              thread-local; this also applies to other queues that are built
+              upon this FIFO.
 Input       : volatile struct RMP_Fifo* Fifo - The pointer to the FIFO.
 Output      : struct RMP_List** Node - The node read.
 Return      : rmp_ret_t - If successful, 0; or an error code.

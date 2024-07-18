@@ -71,8 +71,8 @@ typedef rmp_u16_t rmp_tim_t;
 /* Global ********************************************************************/
 #ifndef MINIMAL_SIZE
 void Int_Handler(void);
-rmp_ptr_t Stack_1[80];
-rmp_ptr_t Stack_2[80];
+rmp_ptr_t Stack_1[96];
+rmp_ptr_t Stack_2[96];
 
 void Timer_Init(void);
 void Int_Init(void);
