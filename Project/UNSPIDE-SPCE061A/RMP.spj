@@ -8,7 +8,7 @@ CFG=Debug
 #Name Begin SPCE061A-Debug
 # Begin SubItem "UNSPIDE-SPCE061A  files"
 # Begin Group "Source Files"
-#PROP Default_Filter=;rc;def;r;odl;idl;hpj;bat
+#PROP Default_Filter=rc;def;r;odl;idl;hpj;bat
 USEPARAM=FALSE
 PARAM=
 EXPORT=3
@@ -74,7 +74,7 @@ EXPORT=3
 # End Group
 # End Group
 # Begin Group "Head Files"
-#PROP Default_Filter=;hm;inl
+#PROP Default_Filter=hm;inl
 USEPARAM=FALSE
 PARAM=
 EXPORT=3
@@ -87,7 +87,7 @@ EXPORT=3
 # End Source File
 # End Group
 # Begin Group "External Dependencies"
-#PROP Default_Filter=mp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe
+#PROP Default_Filter=p;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe
 USEPARAM=FALSE
 PARAM=
 EXPORT=3
@@ -104,7 +104,7 @@ EXPORT=3
 #Name Begin SPCE061A-Release
 # Begin SubItem "UNSPIDE-SPCE061A  files"
 # Begin Group "Source Files"
-#PROP Default_Filter=;rc;def;r;odl;idl;hpj;bat
+#PROP Default_Filter=rc;def;r;odl;idl;hpj;bat
 USEPARAM=FALSE
 PARAM=
 EXPORT=3
@@ -170,7 +170,7 @@ EXPORT=3
 # End Group
 # End Group
 # Begin Group "Head Files"
-#PROP Default_Filter=;hm;inl
+#PROP Default_Filter=hm;inl
 USEPARAM=FALSE
 PARAM=
 EXPORT=3
@@ -183,7 +183,7 @@ EXPORT=3
 # End Source File
 # End Group
 # Begin Group "External Dependencies"
-#PROP Default_Filter=mp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe
+#PROP Default_Filter=p;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe
 USEPARAM=FALSE
 PARAM=
 EXPORT=3
