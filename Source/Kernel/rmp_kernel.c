@@ -4459,9 +4459,7 @@ rmp_ret_t RMP_Fifo_Del(volatile struct RMP_Fifo* Fifo)
 /* End Function:RMP_Fifo_Del *************************************************/
 
 /* Function:RMP_Fifo_Read *****************************************************
-Description : Read an element from a FIFO. All messages are assumed to be 
-              thread-local; this also applies to other queues that are built
-              upon this FIFO.
+Description : Read an element from a FIFO.
 Input       : volatile struct RMP_Fifo* Fifo - The pointer to the FIFO.
 Output      : struct RMP_List** Node - The node read.
 Return      : rmp_ret_t - If successful, 0; or an error code.
@@ -4543,7 +4541,13 @@ rmp_ret_t RMP_Fifo_Read(volatile struct RMP_Fifo* Fifo,
 /* End Function:RMP_Fifo_Read ************************************************/
 
 /* Function:RMP_Fifo_Write ****************************************************
-Description : Write an element to a FIFO.
+Description : Write an element to a FIFO. Unlike the FIFO itself, the messages
+              are not guarded by scheduler locks and are assumed to be thread-
+              and queue-local in operation. No two threads shall operate on the
+              same message, and no messages shall be inserted into two queues;
+              once a message is inserted, no further modification shall be
+              performed.
+              Msgq and Bmq is built upon FIFO and the rules above also apply.
 Input       : volatile struct RMP_Fifo* Fifo - The pointer to the FIFO.
               volatile struct RMP_List* Node - The node to put into the FIFO.
 Output      : None.
@@ -6076,13 +6080,16 @@ rmp_ret_t RMP_Amgr_Cnt(volatile struct RMP_Amgr* Amgr)
 
 /* Function:RMP_Alrm_Init *****************************************************
 Description : Initialize an alarm structure. Unlike alarm managers, the alarms
-              are not guarded by mutexs and are assumed to be (1) thread-local
-              in initialization and (2) thread- or manager-local in operation.
-              If two threads try to initialize the same alarm at the same time,
-              or try to register the same alarm with different managers at the
-              same time, correct operation is not guaranteed.
-              It is recommended to make each alarm thread- and manager-local;
-              this also makes application development easier.
+              are not guarded by mutexs and are assumed to be thread- and
+              manager-local in operation. No two threads shall operate on the
+              same alarm, and no alarms shall be registered with two alarm
+              managers; once an alarm is registered, no reinitialization shall
+              be performed. Exception: it is permitted to have when two threads
+              operate on the same alarm as long as they always specify the same
+              alarm manager, because the alarm manager mutex will assure mutual
+              exclusion.
+              It is however still recommended to make each alarm thread- and 
+              manager-local, as this makes application development easier.
 Input       : volatile struct RMP_Alrm* Alrm - The alarm to initialize.
               rmp_ptr_t Delay - The delay value of this alarm, shall not exceed
                                 RMP_MASK_INTMAX.

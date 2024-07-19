@@ -631,7 +631,7 @@ __RMP_EXTERN__ rmp_ret_t RMP_Thd_Crt(volatile struct RMP_Thd* Thread,
                                      void* Entry,
                                      void* Param,
 #if(RMP_STKSEG_ENABLE!=0U)
-                                    rmp_ptr_t Segment,
+                                     rmp_ptr_t Segment,
 #endif
                                      void* Stack,
                                      rmp_ptr_t Size,
