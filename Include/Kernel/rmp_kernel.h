@@ -168,8 +168,10 @@ while(0)
 #define RMP_ERR_MSGQ                (-10)
 /* This error is blocking message queue related */
 #define RMP_ERR_BMQ                 (-11)
+/* This error is alarm manager related */
+#define RMP_ERR_AMGR                (-12)
 /* This error is alarm related */
-#define RMP_ERR_ALRM                (-12)
+#define RMP_ERR_ALRM                (-13)
 
 /* Scheduler bitmap */
 #define RMP_PRIO_WORD_NUM           (RMP_ROUND_UP(RMP_PREEMPT_PRIO_NUM,RMP_WORD_ORDER)>>RMP_WORD_ORDER)
@@ -494,14 +496,6 @@ static rmp_ptr_t _RMP_Thd_Unblock(volatile struct RMP_Thd* Thd_Cur,
 static rmp_ret_t _RMP_Sem_Pend_Core(volatile struct RMP_Sem* Semaphore,
                                     rmp_ptr_t Slice);
 
-static void _RMP_Amgr_Ins(volatile struct RMP_Amgr* Amgr,
-                          volatile struct RMP_Alrm* Alrm,
-                          rmp_ptr_t Timestamp);
-static void _RMP_Amgr_Expire(volatile struct RMP_Amgr* Amgr,
-                             volatile struct RMP_Alrm* Alrm,
-                             rmp_cnt_t Overdue,
-                             rmp_ptr_t Timestamp);
-                          
 static void _RMP_Mem_Block(volatile struct RMP_Mem_Head* Head,
                            rmp_ptr_t Size,
                            rmp_ptr_t State);
@@ -513,6 +507,14 @@ static rmp_ret_t _RMP_Mem_Search(volatile void* Pool,
                                  rmp_ptr_t Size,
                                  rmp_ptr_t* FLI_Level,
                                  rmp_ptr_t* SLI_Level);
+
+static void _RMP_Amgr_Ins(volatile struct RMP_Amgr* Amgr,
+                          volatile struct RMP_Alrm* Alrm,
+                          rmp_ptr_t Timestamp);
+static void _RMP_Amgr_Expire(volatile struct RMP_Amgr* Amgr,
+                             volatile struct RMP_Alrm* Alrm,
+                             rmp_cnt_t Overdue,
+                             rmp_ptr_t Timestamp);
 
 #if(RMP_GUI_WIDGET_ENABLE!=0U)
 static void RMP_Radiobtn_Circle(rmp_cnt_t Coord_X,
@@ -671,6 +673,17 @@ __RMP_EXTERN__ rmp_ret_t RMP_Sem_Pend_Unlock(volatile struct RMP_Sem* Semaphore,
                                              rmp_ptr_t Slice);
 __RMP_EXTERN__ rmp_ret_t RMP_Sem_Abort(volatile struct RMP_Thd* Thread);
 __RMP_EXTERN__ rmp_ret_t RMP_Sem_Cnt(volatile struct RMP_Sem* Semaphore);
+
+/* Memory interface - not protected at all */
+__RMP_EXTERN__ rmp_ret_t RMP_Mem_Init(volatile void* Pool,
+                                      rmp_ptr_t Size);
+__RMP_EXTERN__ void* RMP_Malloc(volatile void* Pool,
+                                rmp_ptr_t Size);
+__RMP_EXTERN__ void RMP_Free(volatile void* Pool,
+                             void* Mem_Ptr);
+__RMP_EXTERN__ void* RMP_Realloc(volatile void* Pool,
+                                 void* Mem_Ptr,
+                                 rmp_ptr_t Size);
                              
 /* Extended queue interface - not atomic */
 __RMP_EXTERN__ rmp_ret_t RMP_Fifo_Crt(volatile struct RMP_Fifo* Fifo);
@@ -722,21 +735,10 @@ __RMP_EXTERN__ rmp_ret_t RMP_Alrm_Init(volatile struct RMP_Alrm* Alrm,
                                                     rmp_cnt_t));
 __RMP_EXTERN__ rmp_ret_t RMP_Alrm_Set(volatile struct RMP_Amgr* Amgr,
                                       volatile struct RMP_Alrm* Alrm);
-__RMP_EXTERN__ rmp_ret_t RMP_Alrm_Trig(volatile struct RMP_Amgr* Amgr,
-                                       volatile struct RMP_Alrm* Alrm);
 __RMP_EXTERN__ rmp_ret_t RMP_Alrm_Clr(volatile struct RMP_Amgr* Amgr,
                                       volatile struct RMP_Alrm* Alrm);
-
-/* Memory interface - not atomic */
-__RMP_EXTERN__ rmp_ret_t RMP_Mem_Init(volatile void* Pool,
-                                      rmp_ptr_t Size);
-__RMP_EXTERN__ void* RMP_Malloc(volatile void* Pool,
-                                rmp_ptr_t Size);
-__RMP_EXTERN__ void RMP_Free(volatile void* Pool,
-                             void* Mem_Ptr);
-__RMP_EXTERN__ void* RMP_Realloc(volatile void* Pool,
-                                 void* Mem_Ptr,
-                                 rmp_ptr_t Size);
+__RMP_EXTERN__ rmp_ret_t RMP_Alrm_Trg(volatile struct RMP_Amgr* Amgr,
+                                      volatile struct RMP_Alrm* Alrm);
                                  
 /* Mandatory external hook */
 RMP_EXTERN void RMP_Init_Hook(void);
