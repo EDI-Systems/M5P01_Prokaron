@@ -102,11 +102,11 @@ f31    $ft11      temporary (caller-save)
     .extern             _RMP_Run_High
     /* The stack address of current thread */
     .extern             RMP_SP_Cur
-    /* Mask/unmask interrupts */
-    .extern             RMP_Int_Mask
-    .extern             RMP_Int_Unmask
     /* Hypercall parameter space */
-    .extern             RMP_RV32P_RVM_Usr_Param
+    .extern             RVM_Usr_Param
+    /* Mask/unmask interrupts */
+    .extern             RVM_Virt_Int_Mask
+    .extern             RVM_Virt_Int_Unmask
 /* End Import ****************************************************************/
 
 /* Export ********************************************************************/
@@ -187,7 +187,7 @@ Return      : None.
     SW                  x1,1*4(sp)
     LA                  a0,\LABEL           /* Save pc - use exit address */
     SW                  a0,0*4(sp)
-    CALL                RMP_Int_Mask        /* Disable interrupts */
+    CALL                RVM_Virt_Int_Mask   /* Disable interrupts */
     CSRR                a0,mstatus          /* Read mstatus to decide FPU status, but don't save yet */
     .endm
 
@@ -196,7 +196,7 @@ Return      : None.
     ADDI                sp,sp,-4            /* Save mstatus */
     SW                  a0,0*4(sp)
     ADDI                sp,sp,-5*4          /* Push hypercall parameters */
-    LA                  a0,RMP_RV32P_RVM_Usr_Param
+    LA                  a0,RVM_Usr_Param
     LW                  a0,(a0)
     LW                  a1,4*4(a0)
     SW                  a1,4*4(sp)
@@ -217,7 +217,7 @@ Return      : None.
     CALL                _RMP_Run_High       /* Get the highest ready task */
     LA                  a0,RMP_SP_Cur       /* Load the sp from control block */
     LW                  sp,(a0)
-    LA                  a0,RMP_RV32P_RVM_Usr_Param
+    LA                  a0,RVM_Usr_Param
     LW                  a0,(a0)             /* Pop hypercall parameters */
     LW                  a1,0*4(sp)
     SW                  a1,0*4(a0)
@@ -239,7 +239,7 @@ Return      : None.
     LI                  a1,0x1880           /* Load mstatus - force M mode with enabled interrupt */
     OR                  a0,a0,a1
     CSRW                mstatus,a0
-    CALL                RMP_Int_Unmask      /* Enable interrupts */
+    CALL                RVM_Virt_Int_Unmask /* Enable interrupts */
     LW                  a0,0*4(sp)          /* Load pc */
     CSRW                mepc,a0
     LW                  x1,1*4(sp)          /* Load registers */

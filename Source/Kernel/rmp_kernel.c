@@ -4547,7 +4547,7 @@ Description : Write an element to a FIFO. Unlike the FIFO itself, the messages
               same message, and no messages shall be inserted into two queues;
               once a message is inserted, no further modification shall be
               performed.
-              Msgq and Bmq is built upon FIFO and the rules above also apply.
+              Msgq and Bmq are built upon FIFO and the rules above also apply.
 Input       : volatile struct RMP_Fifo* Fifo - The pointer to the FIFO.
               volatile struct RMP_List* Node - The node to put into the FIFO.
 Output      : None.
