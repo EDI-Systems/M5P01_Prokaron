@@ -6071,7 +6071,7 @@ rmp_ret_t RMP_Amgr_Cnt(volatile struct RMP_Amgr* Amgr)
 #endif
 
     /* Disrespect mutex as the scheduler is locked; this is faster */
-    Count=Amgr->Num_Cur;
+    Count=(rmp_ret_t)(Amgr->Num_Cur);
     
     RMP_Sched_Unlock();
     return Count;

@@ -723,6 +723,8 @@ __RMP_EXTERN__ rmp_ret_t RMP_Bmq_Cnt(volatile struct RMP_Bmq* Queue);
 /* Alarm manager interface - not atomic */
 __RMP_EXTERN__ rmp_ret_t RMP_Amgr_Crt(volatile struct RMP_Amgr* Amgr);
 __RMP_EXTERN__ rmp_ret_t RMP_Amgr_Del(volatile struct RMP_Amgr* Amgr);
+__RMP_EXTERN__ rmp_ret_t RMP_Amgr_Pop(volatile struct RMP_Amgr* Amgr,
+                                      volatile struct RMP_Alrm** Alrm);
 __RMP_EXTERN__ rmp_ret_t RMP_Amgr_Proc(volatile struct RMP_Amgr* Amgr,
                                        rmp_ptr_t Tick);
 __RMP_EXTERN__ rmp_ret_t RMP_Amgr_Cnt(volatile struct RMP_Amgr* Amgr);
