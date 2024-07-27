@@ -167,36 +167,6 @@ void RMP_Int_Disable(void)
 }
 /* End Function:RMP_Int_Disable **********************************************/
 
-/* Function:_RMP_Yield ********************************************************
-Description : Trigger a yield to another thread. This will trigger the software
-              interrupt in RISC-V.
-Input       : None.
-Output      : None.
-Return      : None.
-******************************************************************************/
-/* Use "const" to make sure this initializer is in code flash - this will
- * be optimized out when fast context switching is not enabled */
-volatile struct RVM_Param* const RMP_RV32P_RVM_Usr_Param=&(RVM_STATE->Usr);
-void _RMP_Yield(void)
-{
-#if(RMP_RV32P_RVM_FAST_YIELD!=0U)
-    if(RVM_STATE->Vct_Act!=0U)
-        RVM_Virt_Yield();
-    else
-    /* Selecting TVD implies RVF */
-#if(RMP_RV32P_RVM_COP_RVD!=0U)
-        _RMP_RV32P_RVM_Yield_RVD();
-#elif(RMP_RV32P_RVM_COP_RVF!=0U)
-        _RMP_RV32P_RVM_Yield_RVF();
-#else
-        _RMP_RV32P_RVM_Yield_NONE();
-#endif
-#else
-    RVM_Virt_Yield();
-#endif
-}
-/* End Function:_RMP_Yield ***************************************************/
-
 /* Function:RMP_Ctx_Handler ***************************************************
 Description : The context switch interrupt routine.
 Input       : None.
