@@ -69,7 +69,7 @@ typedef rmp_s16_t rmp_ret_t;
 #define RMP_EXTERN                      extern
 /* The order of bits in one CPU machine word */
 #define RMP_WORD_ORDER                  (4U)
-/* Full descending stack of rmp_ptr_t, word-addressing with 2-byte alignment */
+/* Full descending stack of rmp_ptr_t, 2-byte alignment */
 #define RMP_STKSEG_ENABLE               (0U)
 #define RMP_STACK_TYPE                  RMP_STACK_FULL_DESCEND
 #define RMP_STACK_ALIGN                 (1U)

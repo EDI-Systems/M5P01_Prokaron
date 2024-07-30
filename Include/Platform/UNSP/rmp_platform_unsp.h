@@ -4,6 +4,10 @@ Author      : pry
 Date        : 25/05/2024
 Licence     : The Unlicense; see LICENSE for details.
 Description : The header of "rmp_platform_unsp.c".
+              -----------------------------------------------------------------
+                              Sunplus u'nSP Monumental Port
+                      The Golden Age of Microcontroller Innovation
+              -----------------------------------------------------------------
               This port supports both unSP 1.2 and 2.0 (2.0 has 8 extra regs).
               The only chip that this port plans to test is the SPCE061A, an
               obsolete microcontroller at the heart of the Sunplus University
@@ -78,7 +82,8 @@ Description : The header of "rmp_platform_unsp.c".
                  products. This makes them essentially impossible to use in 
                  startups that struggle to become NDA eligible. Like many ASSP
                  providers at that time, Sunplus would (probably) just shun you
-                 off if your volume is less than 1k/month. While it may seem
+                 off if your volume is less than 1k/month, and even that amount
+                 generates negligible revenue for Sunplus. While it may seem
                  reasonable to cater big customers only, it is important to see
                  that all companies start small and will grow bigger overtime.
                  When all open market "small" customers are captured by your
@@ -97,8 +102,8 @@ Description : The header of "rmp_platform_unsp.c".
               ill-prepared to win an open battle. Even if you'd overcome them,
               (1) your big customers will consistently try finding open market
               second sources just to prevent you from ransoming them, and (2)
-              any sufficiently big customer can develop in-house replacements
-              to bring production costs down.
+              any sufficiently big customer can and will develop some in-house
+              replacements to bring production costs down.
               -----------------------------------------------------------------
               As a retro port, this targets the unSPIDE V1.8.4 with GCC 1.0.10,
               (based on vanilla GCC 2.95.2, open sourced nearly a decade after

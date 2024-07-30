@@ -4,6 +4,10 @@ Author      : pry
 Date        : 23/02/2018
 Licence     : The Unlicense; see LICENSE for details.
 Description : The header of "rmp_platform_mp32p.c".
+              -----------------------------------------------------------------
+                                   MIPS Monumental Port
+                  Those Who do not Learn History are Doomed to Repeat It
+              -----------------------------------------------------------------
               This monumental port supports MIPS 32 (Microprocessor without
               Interlocked Pipelined Stages) version I-V, with DSPASE and
               FR32/FR64, while assuming a physical memory model. This port
@@ -23,7 +27,7 @@ Description : The header of "rmp_platform_mp32p.c".
               further platforms except for Sony PLAYSTATION 1 will be added to
               this port.
               -----------------------------------------------------------------
-              MIPS in terms of microcontrollers is pretty dead by now mainly due
+              MIPS in terms of almost anything is pretty dead by now mainly due
               to its fragmented ecosystem. Different from other licensors that
               restrict or even disallow modifications to the ISA, MIPS actively
               encouraged such customizations without due administration. As a 
@@ -55,7 +59,8 @@ Description : The header of "rmp_platform_mp32p.c".
               'nuff said, for language/ISA/API standards, we are basically
               PAYING the standard vendor to restrict our FREEDOM TO diverge so
               we can have FREEDOM FROM a fragmented ecosystem. As a matter of
-              fact, a more generalized form of this paradox exists in ubiquity.
+              fact, a more generalized form of this paradox exists in ubiquity:
+              a bad standard is better than no standard at all.
 ******************************************************************************/
 
 /* Define ********************************************************************/

@@ -4,6 +4,10 @@ Author      : pry
 Date        : 10/06/2024
 Licence     : The Unlicense; see LICENSE for details.
 Description : The header of "rmp_platform_m6502.c".
+              -----------------------------------------------------------------
+                                MOS6502 Monumental Port
+                          The Least Complex Yet the Most Sold
+              -----------------------------------------------------------------
               This is a retro port paying tribute to the legendary MOS 6502
               processor, whose existence made personal computers affordable.
               The only supported console of this port will be the Nintendo
@@ -15,7 +19,7 @@ Description : The header of "rmp_platform_m6502.c".
               decimal mode removed to avoid MOS patent issues. Throughout the
               entire 80's and 90's, owning such a console was the dream of
               many children.
-              Following the video game crash (a.k.a Atari Shock) of 1983,
+              Following the video game crash (a.k.a. Atari Shock) of 1983,
               Nintendo attached much importance to the game quality, and each
               FAMICOM game release must be inspected then preapproved by 
               Nintendo. The cartridges were also exclusively supplied by
@@ -24,14 +28,14 @@ Description : The header of "rmp_platform_m6502.c".
               is more pronounced; the Nintendo officially called them Memory
               Management Controllers, a.k.a. MMCs).
               Released on 15 July 1983 with the "Mario Bros." (not the "Super
-              Mario Bros." that released two years later, FAMICOM was regarded
+              Mario Bros." that released two years later), the FAMICOM is seen
               as the most iconic and influential console of all time. It was
               finally superseded by Super FAMICOM in 1990 which continued its
               success story. Both were discontinued by Nintendo on May 30, 2003.
-              Due to the large number of NES fans, Nintendo replicated the
+              Due to the large number of FAMICOM fans, Nintendo refreshed the
               console in 2016 as the "NES Classic Edition", which came bundled
               with some games. The replica is not powered by the original chips
-              but by a modern emulator.
+              but by a modern emulator instead.
               According to WikiPedia, a total of 1386 official games (including
               all regional versions) summing up to less than 300MiB were released
               for FAMICOM, with the last one being the "Lion King" on 25 May 1995.
@@ -44,8 +48,8 @@ Description : The header of "rmp_platform_m6502.c".
               FAMICOM consists of a CPU, a PPU, 2KiB PRG RAM and 2KiB CHR RAM,
               and could only address 64KiB of total memory. This was clearly
               insufficient for larger games. The built-in sound generators were
-              capable of generating simple waveforms but could not play sampled
-              datapoints, which is unsuitable for RPG or SLG games that aimed to
+              capable of generating simple waveforms but only one played sampled
+              datapoints, which was unsuitable for RPG or SLG games that aimed to
               provide an immersive experience. To these ends, the mappers were
               born. The mappers were circuits that (1) switch PRG/CHR ROM banks,
               (2) supply more working RAM, (3) allow to save games in battery-
@@ -79,18 +83,18 @@ Description : The header of "rmp_platform_m6502.c".
               by a standalone port.
               ------------------------------------------------------------------
               The 6502 presents multiple unique technical challenges.
-              1. Return stack size issue: 6502 only had a 8-bit pointer, hence the
+              1. Return stack size issue: 6502 only has a 8-bit pointer, hence the
                  total stack size is 256B. This means that we won't be able to
                  allocate such a stack for each thread, and will have to spill it
                  to software stack before we can do anything. The call stack is an
                  EMPTY descending one.
               2. Zero page register issue: some zero-page registers are used by
-                 compilers, and we'd have to save and restore that part as well.
+                 compilers, and we'd have to save and restore these as well.
               3. Independent parameter stack issue: the parameter is not on the
                  call stack because it is way too small. Instead, they are placed
                  onto an independent software-emulated stack. Luckily, this stack
                  is large enough for us, so we're using it to save everything. The
-                 software stack is a FULL descending one.
+                 software stack is a FULL descending one, at least in CC65.
               The difficulties (and full context switch overheads) essentially
               force us to write the most unusual switching code in RMP: the code
               (1) only does full pushes and pops when a context switch is actually
@@ -135,7 +139,7 @@ Description : The header of "rmp_platform_m6502.c".
               programmer to bank code heavily with the last available bank. The
               mapper banking registers could count as segment registers, and the
               system should save and restore them in theory, however there are
-              simply too many mappers to suooprt one by one. If you need some
+              simply too many mappers to support one by one. If you need some
               banking, you can enable extra hooks and save/restore them there.
               Also, because we use 16-bit pointers, all function pointer entries
               are supposed to be in the first (or last, depending on the mapper)
@@ -330,7 +334,6 @@ RMP_EXTERN void RMP_Int_Mask(rmp_u8_t Level);
 RMP_EXTERN void _RMP_Start(rmp_ptr_t Entry,
                            rmp_ptr_t Stack);
 RMP_EXTERN void _RMP_M6502_Yield(void);
-
 
 /* Initialization */
 __RMP_EXTERN__ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
