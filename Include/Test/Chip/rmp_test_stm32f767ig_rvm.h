@@ -185,14 +185,14 @@ Return      : None.
 void Int_Init(void)
 {
     /* Connect the physical interrupt to our machine */
-    RMP_ASSERT(RVM_Hyp_Vct_Phys(30U, 2U)==0U);
+    RMP_ASSERT(RVM_Hyp_Vct_Phys(30U,2U)==0U);
     /* Set the priority of the physical interrupt and enable it */
     RMP_ASSERT(RVM_A7M_Int_Local_Mod(KFN_INT_LOCAL_MOD,30U,
-               RVM_A7M_KFN_INT_LOCAL_MOD_STATE_SET,1U)==0);
+                                     RVM_A7M_KFN_INT_LOCAL_MOD_STATE_SET,1U)==0);
     RMP_ASSERT(RVM_A7M_Int_Local_Mod(KFN_INT_LOCAL_MOD,30U,
-               RVM_A7M_KFN_INT_LOCAL_MOD_PRIO_SET,0xFFU)==0);
+                                     RVM_A7M_KFN_INT_LOCAL_MOD_PRIO_SET,0xFFU)==0);
     /* Interrupt generation is initialized too, here we only register our handler */
-    RVM_Virt_Vct_Reg(2U, Int_Handler);
+    RVM_Virt_Vct_Reg(2U,Int_Handler);
     
     /* TIM4 clock = 1/2 CPU clock */
     TIM4_CR1=TIM_COUNTERMODE_DOWN|TIM_CLOCKDIVISION_DIV1;

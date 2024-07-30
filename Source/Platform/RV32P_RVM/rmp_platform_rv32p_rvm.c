@@ -55,14 +55,23 @@ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
 
     /* This is where PC is saved */
     Ctx->PC=Entry;
-    /* We always initialize the mstatus register to initialize
-     * the FPU, but whether it is present depends on the processor */
-    Ctx->MSTATUS=0x1880U|0x2000U;
+    /* We always initialize the mstatus register for FPU when it has one; note
+     * that we force U mode instead of M mode here, this is different from the
+     * original port. It is actually fine to force M mode here, because the
+     * RME kernel won't trust this value and will fix this anyway. */
+#if((RMP_RV32P_COP_RVF!=0U)||(RMP_RV32P_COP_RVD!=0U))
+    Ctx->MSTATUS=0x0080U|0x2000U;
+#else
+    Ctx->MSTATUS=0x0080U;
+#endif
     /* We always initialize GP to a known value.
      * If a thread modifies this later (by itself), it is fine */
-    Ctx->X3_GP=(rmp_ptr_t)(&_RMP_Global);
+    Ctx->X3_GP=(rmp_ptr_t)(&_RVM_Global);
     /* x10 for arguments */
     Ctx->X10_A0=Param;
+    
+    /* Hypercall not active */
+    Ctx->Number=RVM_HYP_INVALID;
 
     /* Fill the rest for ease of identification */
     Ctx->X1_RA=0x01010101U;
@@ -99,8 +108,7 @@ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
 /* End Function:_RMP_Stack_Init **********************************************/
 
 /* Function:_RMP_Lowlvl_Init **************************************************
-Description : Initialize the low level hardware of the system. This is adapted from
-              Arduino and FE310 examples.
+Description : Initialize the low level hardware of the system.
 Input       : None
 Output      : None.
 Return      : None.
@@ -137,7 +145,7 @@ Return      : None.
 ******************************************************************************/
 void RMP_Putchar(char Char)
 {
-#if(RVM_DEBUG_PRINT!=0U)
+#if(RVM_DBGLOG_ENABLE!=0U)
     RVM_Putchar(Char);
 #endif
 }
@@ -250,7 +258,7 @@ void RMP_Ctx_Handler(void)
     /* LUI      a1,4                See if FPU is used (mstatus.fs[1]==1)
      * AND      a1,a1,a0
      * BEQZ     a1,_RMP_RV32P_Yield_Save_Skip */
-    if(MSTATUS)
+    if(MSTATUS&RMP_POW2(14U)!=0U)
     {
 #endif
 #if(RMP_RV32P_RVM_COP_RVD!=0U)
@@ -477,7 +485,7 @@ void RMP_Ctx_Handler(void)
     /* LUI      a1,4                See if FPU is used (mstatus.fs[1]==1)
      * AND      a1,a1,a0
      * BEQZ     a1,_RMP_RV32P_Yield_Load_Skip */
-    if(MSTATUS)
+    if(MSTATUS&RMP_POW2(14U)!=0U)
     {
 #endif
 #if(RMP_RV32P_RVM_COP_RVD!=0U)
@@ -660,7 +668,8 @@ void RMP_Ctx_Handler(void)
     /* 
      * LI       a1,0x1880           Load mstatus - force M mode with enabled interrupt
      * OR       a0,a0,a1
-     * CSRW     mstatus,a0 */
+     * CSRW     mstatus,a0
+     * The RVM port is actually forcing U mode; we keep the original for reference */
     RVM_REG->Reg.MSTATUS=MSTATUS;
 
     /* LW       a0,0*4(sp)          Load pc
@@ -696,37 +705,37 @@ void RMP_Ctx_Handler(void)
      * LW       x30,29*4(sp)
      * LW       x31,30*4(sp)
      * ADDI     sp,sp,31*4 */
-    SP[0U]=RVM_REG->Reg.PC;
-    SP[1U]=RVM_REG->Reg.X1_RA;
-    SP[2U]=RVM_REG->Reg.X3_GP;
-    SP[3U]=RVM_REG->Reg.X4_TP;
-    SP[4U]=RVM_REG->Reg.X5_T0;
-    SP[5U]=RVM_REG->Reg.X6_T1;
-    SP[6U]=RVM_REG->Reg.X7_T2;
-    SP[7U]=RVM_REG->Reg.X8_S0_FP;
-    SP[8U]=RVM_REG->Reg.X9_S1;
-    SP[9U]=RVM_REG->Reg.X10_A0;
-    SP[10U]=RVM_REG->Reg.X11_A1;
-    SP[11U]=RVM_REG->Reg.X12_A2;
-    SP[12U]=RVM_REG->Reg.X13_A3;
-    SP[13U]=RVM_REG->Reg.X14_A4;
-    SP[14U]=RVM_REG->Reg.X15_A5;
-    SP[15U]=RVM_REG->Reg.X16_A6;
-    SP[16U]=RVM_REG->Reg.X17_A7;
-    SP[17U]=RVM_REG->Reg.X18_S2;
-    SP[18U]=RVM_REG->Reg.X19_S3;
-    SP[19U]=RVM_REG->Reg.X20_S4;
-    SP[20U]=RVM_REG->Reg.X21_S5;
-    SP[21U]=RVM_REG->Reg.X22_S6;
-    SP[22U]=RVM_REG->Reg.X23_S7;
-    SP[23U]=RVM_REG->Reg.X24_S8;
-    SP[24U]=RVM_REG->Reg.X25_S9;
-    SP[25U]=RVM_REG->Reg.X26_S10;
-    SP[26U]=RVM_REG->Reg.X27_S11;
-    SP[27U]=RVM_REG->Reg.X28_T3;
-    SP[28U]=RVM_REG->Reg.X29_T4;
-    SP[29U]=RVM_REG->Reg.X30_T5;
-    SP[30U]=RVM_REG->Reg.X31_T6;
+    RVM_REG->Reg.PC=SP[0U];
+    RVM_REG->Reg.X1_RA=SP[1U];
+    RVM_REG->Reg.X3_GP=SP[2U];
+    RVM_REG->Reg.X4_TP=SP[3U];
+    RVM_REG->Reg.X5_T0=SP[4U];
+    RVM_REG->Reg.X6_T1=SP[5U];
+    RVM_REG->Reg.X7_T2=SP[6U];
+    RVM_REG->Reg.X8_S0_FP=SP[7U];
+    RVM_REG->Reg.X9_S1=SP[8U];
+    RVM_REG->Reg.X10_A0=SP[9U];
+    RVM_REG->Reg.X11_A1=SP[10U];
+    RVM_REG->Reg.X12_A2=SP[11U];
+    RVM_REG->Reg.X13_A3=SP[12U];
+    RVM_REG->Reg.X14_A4=SP[13U];
+    RVM_REG->Reg.X15_A5=SP[14U];
+    RVM_REG->Reg.X16_A6=SP[15U];
+    RVM_REG->Reg.X17_A7=SP[16U];
+    RVM_REG->Reg.X18_S2=SP[17U];
+    RVM_REG->Reg.X19_S3=SP[18U];
+    RVM_REG->Reg.X20_S4=SP[19U];
+    RVM_REG->Reg.X21_S5=SP[20U];
+    RVM_REG->Reg.X22_S6=SP[21U];
+    RVM_REG->Reg.X23_S7=SP[22U];
+    RVM_REG->Reg.X24_S8=SP[23U];
+    RVM_REG->Reg.X25_S9=SP[24U];
+    RVM_REG->Reg.X26_S10=SP[25U];
+    RVM_REG->Reg.X27_S11=SP[26U];
+    RVM_REG->Reg.X28_T3=SP[27U];
+    RVM_REG->Reg.X29_T4=SP[28U];
+    RVM_REG->Reg.X30_T5=SP[29U];
+    RVM_REG->Reg.X31_T6=SP[30U];
     RVM_REG->Reg.X2_SP=(rmp_ptr_t)(SP+31U);
 
     /* MRET */

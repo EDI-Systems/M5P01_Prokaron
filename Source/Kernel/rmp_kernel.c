@@ -773,7 +773,7 @@ void RMP_Sched_Unlock(void)
         {
             RMP_COV_MARKER();
             
-             /* Context switch will clear the pend flag */
+            /* Context switch will clear the pend flag */
             RMP_YIELD();
         }
         else
@@ -3347,7 +3347,7 @@ void RMP_Init(void)
     /* Create all other kernel objects here */
     RMP_Init_Hook();
     RMP_Sched_Unlock();
-    
+
     while(1)
     {
         RMP_Init_Idle();
@@ -3365,10 +3365,10 @@ Return      : int - Dummy; this function never returns.
 int main(void)
 {
     rmp_ptr_t Count;
-    
+
     /* Initialize the low-level hardware first */
     _RMP_Lowlvl_Init();
-    
+
 #ifdef RMP_START_HOOK
     RMP_START_HOOK();
 #endif
@@ -3416,7 +3416,7 @@ int main(void)
     /* Set current thread and stack */
     RMP_Thd_Cur=(volatile struct RMP_Thd*)&RMP_Init_Thd;
     RMP_SP_Cur=RMP_Init_Thd.Stack;
-    
+
     /* Now jump to the init thread and never return; stack initialization
      * is unnecessary for the first thread, and we always inherit the stack
      * segment of the kernel when stack segment register exists */

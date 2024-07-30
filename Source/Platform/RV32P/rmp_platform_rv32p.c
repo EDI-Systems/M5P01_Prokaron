@@ -100,8 +100,7 @@ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
 /* End Function:_RMP_Stack_Init **********************************************/
 
 /* Function:_RMP_Lowlvl_Init **************************************************
-Description : Initialize the low level hardware of the system. This is adapted from
-              Arduino and FE310 examples.
+Description : Initialize the low level hardware of the system.
 Input       : None
 Output      : None.
 Return      : None.
