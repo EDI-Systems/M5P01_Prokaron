@@ -258,7 +258,7 @@ void RMP_Ctx_Handler(void)
     /* LUI      a1,4                See if FPU is used (mstatus.fs[1]==1)
      * AND      a1,a1,a0
      * BEQZ     a1,_RMP_RV32P_Yield_Save_Skip */
-    if(MSTATUS&RMP_POW2(14U)!=0U)
+    if((MSTATUS&RMP_POW2(14U))!=0U)
     {
 #endif
 #if(RMP_RV32P_RVM_COP_RVD!=0U)
@@ -363,7 +363,7 @@ void RMP_Ctx_Handler(void)
         SP[2U]=RMP_FPU_RVD->F1[0U];
         SP[1U]=RMP_FPU_RVD->F0[1U];
         SP[0U]=RMP_FPU_RVD->F0[0U];
-#elif(RMP_RV32P_COP_RVF!=0U)
+#elif(RMP_RV32P_RVM_COP_RVF!=0U)
         /* ADDI    sp,sp,-33*4      FPU active, saving context
          * FRCSR   a1
          * SW      a1,32*4(sp)
@@ -459,7 +459,6 @@ void RMP_Ctx_Handler(void)
      * SW       sp,(a0) */
     RMP_SP_Cur=(rmp_ptr_t)SP;
 
-
     /* LA       sp,_RMP_Stack       Load sp for kernel - defined by linker script
      * CALL     _RMP_Run_High       Get the highest ready task */
     _RMP_Run_High();
@@ -485,7 +484,7 @@ void RMP_Ctx_Handler(void)
     /* LUI      a1,4                See if FPU is used (mstatus.fs[1]==1)
      * AND      a1,a1,a0
      * BEQZ     a1,_RMP_RV32P_Yield_Load_Skip */
-    if(MSTATUS&RMP_POW2(14U)!=0U)
+    if((MSTATUS&RMP_POW2(14U))!=0U)
     {
 #endif
 #if(RMP_RV32P_RVM_COP_RVD!=0U)
@@ -590,7 +589,7 @@ void RMP_Ctx_Handler(void)
         RMP_FPU_RVD->F31[1U]=SP[63U];
         RMP_FPU_RVD->FCSR=SP[64U];
         SP+=65U;
-#elif(RMP_RV32P_COP_RVF!=0U)
+#elif(RMP_RV32P_RVM_COP_RVF!=0U)
         /* FLW      f0,0*4(sp)      FPU active, loading context
          * FLW      f1,1*4(sp)
          * FLW      f2,2*4(sp)
@@ -665,8 +664,7 @@ void RMP_Ctx_Handler(void)
     }
 #endif
 
-    /* 
-     * LI       a1,0x1880           Load mstatus - force M mode with enabled interrupt
+    /* LI       a1,0x1880           Load mstatus - force M mode with enabled interrupt
      * OR       a0,a0,a1
      * CSRW     mstatus,a0
      * The RVM port is actually forcing U mode; we keep the original for reference */
