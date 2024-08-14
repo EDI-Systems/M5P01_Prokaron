@@ -790,7 +790,7 @@ void Int_Handler(void)
     rmp_ret_t Retval;
     static rmp_ptr_t Count=0U;
     static struct RMP_List Node;
-    
+        
     if(Flip!=0U)
     {
         RMP_DBG_S("Interrupt reentered.\r\n");
@@ -801,7 +801,7 @@ void Int_Handler(void)
     {
         Count++;
         Start=RMP_CNT_READ();
-        Retval=RMP_Thd_Snd_ISR(&Thd_2, 1U);
+        Retval=RMP_Thd_Snd_ISR(&Thd_2,1U);
         if(Retval<0)
         {
             RMP_DBG_S("ISR Mailbox send failed with code ");
@@ -815,7 +815,7 @@ void Int_Handler(void)
     {
         Count++;
         Start=RMP_CNT_READ();
-        Retval=RMP_Sem_Post_ISR(&Sem_1, 1U);
+        Retval=RMP_Sem_Post_ISR(&Sem_1,1U);
         if(Retval<0)
         {
             RMP_DBG_S("ISR semaphore post failed with code ");
@@ -829,7 +829,7 @@ void Int_Handler(void)
     {
         Count++;
         Start=RMP_CNT_READ();
-        Retval=RMP_Msgq_Snd_ISR(&Msgq_1, &Node);
+        Retval=RMP_Msgq_Snd_ISR(&Msgq_1,&Node);
         if(Retval<0)
         {
             RMP_DBG_S("ISR msgq message send failed with code ");
@@ -843,7 +843,7 @@ void Int_Handler(void)
     {
         Count++;
         Start=RMP_CNT_READ();
-        Retval=RMP_Bmq_Snd_ISR(&Bmq_1, &Node);
+        Retval=RMP_Bmq_Snd_ISR(&Bmq_1,&Node);
         if(Retval<0)
         {
             RMP_DBG_S("ISR bmq message send failed with code ");
