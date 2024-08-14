@@ -96,6 +96,10 @@ f31    $ft11      temporary (caller-save)
 ******************************************************************************/
 
 /* Import ********************************************************************/
+    /* Linker-provided global data address */
+    .extern             _RMP_Global
+    /* Linker-provided global data address */
+    .extern             _RMP_Stack
     /* The real task switch handling function */
     .extern             _RMP_Run_High
     /* The stack address of current thread */
