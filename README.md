@@ -231,16 +231,18 @@ This software is an official work of EDI, and thus belongs to the **public domai
 |Xeon 6326    |X86-LINUX   |...   |24k  |24k  |24k  |46   |24k  |24k  |31k   |30k  |34k    |53k   |159  |TBD  |
 
 &ensp;&ensp;**[RVM](https://github.com/EDI-Systems/M7M02_Ammonite)** **Virtualized Ports**:
+- S        : Extra cost of normal operations.
+- S/I      : Extra cost of interrupt operations.
 
-|Chipname     |Platform    |Build |Yield|Mail |Sem  |FIFO |Msgq |Bmq  |Mail/I|Sem/I|Msgq/I |Bmq/I |Mem  |Alrm |
-|:-----------:|:----------:|:----:|:---:|:---:|:---:|:---:|:---:|:---:|:----:|:---:|:-----:|:----:|:---:|:---:|
-|STM32L071CB  |Cortex-M0+  |Keil  |382  |701  |609  |302  |1007 |1347 |1370  |1292 |1545   |1741  |N/A  |1216 |
-|...          |...         |GCC   |400  |751  |649  |321  |1064 |1420 |1424  |1341 |1603   |1796  |N/A  |1291 |
-|STM32F405RG  |Cortex-M4   |Keil  |252  |432  |372  |200  |704  |924  |1428  |1328 |1528   |1688  |383  |798  |
-|...          |...         |GCC   |312  |540  |448  |204  |656  |1008 |1732  |1648 |1804   |1976  |380  |739  |
-|STM32F767IG  |Cortex-M7   |Keil  |184  |290  |289  |144  |513  |716  |896   |830  |939    |1040  |275  |578  |
-|...          |...         |GCC   |192  |357  |288  |148  |486  |651  |872   |824  |1002   |1062  |272  |510  |
-|CH32V307VC   |RV32IMAFC   |GCC   |326  |494  |432  |165  |611  |758  |1973  |1917 |2028   |2124  |390  |593  |
+|Chipname     |Platform    |Build |Yield |Mail |Sem  |FIFO |Msgq |Bmq |S   |Mail/I|Sem/I|Msgq/I |Bmq/I |S/I |Mem  |Alrm |
+|:-----------:|:----------:|:----:|:---:|:---:|:---:|:---:|:---:|:---:|:--:|:----:|:---:|:-----:|:----:|:--:|:---:|:---:|
+|STM32L071CB  |Cortex-M0+  |Keil  |382  |701  |609  |302  |1007 |1347 |14% |1370  |1292 |1545   |1741  |147%|N/A  |1216 |
+|...          |...         |GCC   |400  |751  |649  |321  |1064 |1420 |19% |1424  |1341 |1603   |1796  |210%|N/A  |1291 |
+|STM32F405RG  |Cortex-M4   |Keil  |252  |432  |372  |200  |704  |924  |40% |1428  |1328 |1528   |1688  |273%|383  |798  |
+|...          |...         |GCC   |312  |540  |448  |204  |656  |1008 |59% |1732  |1648 |1804   |1976  |354%|380  |739  |
+|STM32F767IG  |Cortex-M7   |Keil  |184  |290  |289  |144  |513  |716  |6%  |896   |830  |939    |1040  |173%|275  |578  |
+|...          |...         |GCC   |192  |357  |288  |148  |486  |651  |6%  |872   |824  |1002   |1062  |239%|272  |510  |
+|CH32V307VC   |RV32IMAFC   |GCC   |326  |494  |432  |165  |611  |758  |50% |1973  |1917 |2028   |2124  |451%|390  |593  |
 
 &ensp;&ensp;In contrast, RT-Linux 4.12's best context switch time on Cortex-M7 is bigger than 25000 cycles (it has to run from FMC SDRAM due to its sheer size, so this is not a fair comparison). This is measured with futex; if other forms of IPC such as pipes are used, this time is even longer.
 
