@@ -98,6 +98,8 @@ f31    $ft11      temporary (caller-save)
 /* Import ********************************************************************/
     /* Linker-provided global data address */
     .extern             _RVM_Global
+    /* Linker-provided kernel stack address */
+    .extern             _RVM_Stack
     /* The real task switch handling function */
     .extern             _RMP_Run_High
     /* The stack address of current thread */
@@ -147,13 +149,23 @@ Description : Yield from one thread to another without an interrupt.
               RMP_Ctx_Save and RMP_Ctx_Load does not save extra coprocessor
               context on thread stack, but in extra structures coallocated with
               the thread structure.
+              The mstatus needs to be treated very carefully here: it does not
+              contain any flags, but contains FPU state, and is not accessible
+              from user mode. We're reading the mstatus on the stack when we
+              return to decide whether the stack contains FPU state, and are
+              trashing register tp (x4; which GCC/LLVM does not allocate anyway)
+              to hold the return address (because we're unable to use mepc).
+              The RISC-V calling convention requires that the stack be 16-byte
+              aligned at all times. However, this is only relevant when we pass
+              doubleword parameters, thus we are safe to ignore that convention
+              when calling RVM_Virt_Int_Mask and RVM_Virt_Int_Unmask whose call
+              chain never does that.
 Input       : None.
 Output      : None.
 Return      : None.
 ******************************************************************************/
 /* Save all GP regs **********************************************************/
     .macro              RMP_RV32P_RVM_SAVE LABEL
-    CSRCI               mstatus,8           /* Disable interrupt */
     ADDI                sp,sp,-31*4         /* Save registers */
     SW                  x31,30*4(sp)
     SW                  x30,29*4(sp)
@@ -188,7 +200,6 @@ Return      : None.
     LA                  a0,\LABEL           /* Save pc - use exit address */
     SW                  a0,0*4(sp)
     CALL                RVM_Virt_Int_Mask   /* Disable interrupts */
-    CSRR                a0,mstatus          /* Read mstatus to decide FPU status, but don't save yet */
     .endm
 
     /* Actual context switch */
@@ -214,6 +225,7 @@ Return      : None.
     .option             pop
     LA                  a0,RMP_SP_Cur       /* Save the sp to control block */
     SW                  sp,(a0)
+    LA                  sp,_RVM_Stack       /* Load sp for kernel - defined by linker script */
     CALL                _RMP_Run_High       /* Get the highest ready task */
     LA                  a0,RMP_SP_Cur       /* Load the sp from control block */
     LW                  sp,(a0)
@@ -236,15 +248,11 @@ Return      : None.
 
 /* Restore all GP regs and simulate a MRET ***********************************/
     .macro              RMP_RV32P_RVM_LOAD
-    LI                  a1,0x1880           /* Load mstatus - force M mode with enabled interrupt */
-    OR                  a0,a0,a1
-    CSRW                mstatus,a0
     CALL                RVM_Virt_Int_Unmask /* Enable interrupts */
-    LW                  a0,0*4(sp)          /* Load pc */
-    CSRW                mepc,a0
-    LW                  x1,1*4(sp)          /* Load registers */
+    LW                  tp,0*4(sp)          /* Load pc - have to trash x4 (tp) for this purpose */
+    LW                  x1,1*4(sp)          /* Load registers, but skip x4 (tp) */
     LW                  x3,2*4(sp)
-    LW                  x4,3*4(sp)
+    /* x4 (tp) intentionally skipped */
     LW                  x5,4*4(sp)
     LW                  x6,5*4(sp)
     LW                  x7,6*4(sp)
@@ -273,7 +281,7 @@ Return      : None.
     LW                  x30,29*4(sp)
     LW                  x31,30*4(sp)
     ADDI                sp,sp,31*4
-    MRET
+    JALR                zero,tp
     .endm
 
 /* No coprocessor ************************************************************/
@@ -282,8 +290,9 @@ Return      : None.
 
 _RMP_RV32P_RVM_Yield_NONE:                  /* Disable interrupts and save registers */
     RMP_RV32P_RVM_SAVE  _RMP_RV32P_RVM_Yield_NONE_Exit
+    LI                  a0,0x0088           /* mstatus for no FPU, back to U-mode */
     RMP_RV32P_RVM_SWITCH                    /* Do context switch */
-    RMP_RV32P_RVM_LOAD                   /* Enable interrupts and restore registers */
+    RMP_RV32P_RVM_LOAD                      /* Enable interrupts and restore registers */
 _RMP_RV32P_RVM_Yield_NONE_Exit:
     RET
 
@@ -293,9 +302,6 @@ _RMP_RV32P_RVM_Yield_NONE_Exit:
 
 _RMP_RV32P_RVM_Yield_RVF:                   /* Disable interrupts and save registers */
     RMP_RV32P_RVM_SAVE  _RMP_RV32P_RVM_Yield_RVF_Exit
-    LUI                 a1,4                /* See if FPU is used (mstatus.fs[1]==1) */
-    AND                 a1,a1,a0
-    BEQZ                a1,_RMP_RV32P_RVM_Yield_RVF_Save_Skip
     ADDI                sp,sp,-33*4         /* FPU active, saving context - .hword for compatibility */
     .hword              0x25F3              /* FRCSR   a1 */
     .hword              0x0030
@@ -332,7 +338,7 @@ _RMP_RV32P_RVM_Yield_RVF:                   /* Disable interrupts and save regis
     .hword              0xE40A              /* FSW     f2, 2*4(sp) */
     .hword              0xE206              /* FSW     f1, 1*4(sp) */
     .hword              0xE002              /* FSW     f0, 0*4(sp) */
-_RMP_RV32P_RVM_Yield_RVF_Save_Skip:
+    LI                  a0,0x6088           /* mstatus for FPU presense, back to U-mode, dirty */
     RMP_RV32P_RVM_SWITCH                    /* Do context switch */
     LUI                 a1,4                /* See if FPU is used (mstatus.fs[1]==1) */
     AND                 a1,a1,a0            /* FPU active, saving context - .hword for compatibility */
@@ -384,9 +390,6 @@ _RMP_RV32P_RVM_Yield_RVF_Exit:
 
 _RMP_RV32P_RVM_Yield_RVD:                   /* Disable interrupts and save registers */
     RMP_RV32P_RVM_SAVE  _RMP_RV32P_RVM_Yield_RVD_Exit
-    LUI                 a1,4                /* See if FPU is used (mstatus.fs[1]==1) */
-    AND                 a1,a1,a0
-    BEQZ                a1,_RMP_RV32P_RVM_Yield_RVD_Save_Skip
     ADDI                sp,sp,-65*4         /* FPU active, saving context - .hword for compatibility */
     .hword              0x25F3              /* FRCSR   a1 */
     .hword              0x0030
@@ -455,7 +458,7 @@ _RMP_RV32P_RVM_Yield_RVD:                   /* Disable interrupts and save regis
     .hword              0x0011
     .hword              0x3027              /* FSD     f0,0*8(sp) */
     .hword              0x0001
-_RMP_RV32P_RVM_Yield_RVD_Save_Skip:
+    LI                  a0,0x6088           /* mstatus for FPU presense, back to U-mode, dirty */
     RMP_RV32P_RVM_SWITCH                    /* Do context switch */
     LUI                 a1,4                /* See if this task uses FPU */
     AND                 a1,a1,a0            /* FPU active, saving context - .hword for compatibility */
