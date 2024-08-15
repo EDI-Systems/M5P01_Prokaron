@@ -98,7 +98,7 @@ typedef rmp_s32_t rmp_ret_t;
 #elif(RMP_RV32P_RVM_COP_RVF!=0U)
 #define RMP_YIELD()                     _RMP_RV32P_RVM_Yield_RVF()
 #else
- #define RMP_YIELD()                    _RMP_RV32P_RVM_Yield_NONE()
+#define RMP_YIELD()                     _RMP_RV32P_RVM_Yield_NONE()
 #endif
 #define RMP_YIELD_ISR()                 RVM_Virt_Yield()
 #else

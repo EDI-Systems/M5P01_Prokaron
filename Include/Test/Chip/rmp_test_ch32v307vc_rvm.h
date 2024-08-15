@@ -29,43 +29,46 @@ Description : The testbench for CH32V307VC, running in the RVM.
                  TIM4_INTFR=0U;
                  return RME_RVM_VCT_SIG_INIT;
               
-GCC 12.2.0 -O3 (FPU disabled)
+GCC 12.2.0 -O3 (FPU disabled, fastpath turned on)
     ___   __  ___ ___
    / _ \ /  |/  // _ \       Simple real-time kernel
   / , _// /|_/ // ___/       Standard benchmark test
  /_/|_|/_/  /_//_/
 ====================================================
 Test (number in CPU cycles)        : AVG / MAX / MIN
-Yield                              : 209 / 396 / 209
-Mailbox                            : 386 / 592 / 386
-Semaphore                          : 336 / 517 / 333
-FIFO                               : 172 / 363 / 172
-Message queue                      : 538 / 738 / 537
-Blocking message queue             : 698 / 895 / 692
-Memory allocation/free pair        : 433 / 460 / 428
-ISR Mailbox                        : 350 / 379 / 287
-ISR Semaphore                      : 306 / 336 / 305
-ISR Message queue                  : 436 / 484 / 436
-ISR Blocking message queue         : 555 / 752 / 551
+Yield                              : 247 / 255 / 247
+Mailbox                            : 419 / 457 / 419
+Semaphore                          : 361 / 376 / 361
+FIFO                               : 169 / 195 / 169
+Message queue                      : 538 / 585 / 538
+Blocking message queue             : 689 / 738 / 689
+Alarm combination (1/2/3/5/7)      : 605 / 1135 / 364
+Memory allocation/free pair        : 390 / 400 / 379
+ISR Mailbox                        : 1399 / 1436 / 994
+ISR Semaphore                      : 1328 / 1349 / 1328
+ISR Message queue                  : 1437 / 1451 / 1437
+ISR Blocking message queue         : 1545 / 1553 / 1545
 
-GCC 12.2.0 -O3 (FPU context active)
+
+GCC 12.2.0 -O3 (FPU enabled, fastpath turned on)
     ___   __  ___ ___
    / _ \ /  |/  // _ \       Simple real-time kernel
   / , _// /|_/ // ___/       Standard benchmark test
  /_/|_|/_/  /_//_/
 ====================================================
 Test (number in CPU cycles)        : AVG / MAX / MIN
-Yield                              : 217 / 410 / 217
-Mailbox                            : 398 / 601 / 394
-Semaphore                          : 341 / 531 / 341
-FIFO                               : 172 / 379 / 172
-Message queue                      : 557 / 758 / 554
-Blocking message queue             : 705 / 913 / 703
-Memory allocation/free pair        : 433 / 461 / 428
-ISR Mailbox                        : 358 / 556 / 294
-ISR Semaphore                      : 307 / 335 / 306
-ISR Message queue                  : 444 / 469 / 443
-ISR Blocking message queue         : 556 / 582 / 555
+Yield                              : 325 / 340 / 325
+Mailbox                            : 497 / 537 / 497
+Semaphore                          : 436 / 457 / 436
+FIFO                               : 169 / 185 / 169
+Message queue                      : 616 / 668 / 616
+Blocking message queue             : 767 / 816 / 767
+Alarm combination (1/2/3/5/7)      : 608 / 1149 / 367
+Memory allocation/free pair        : 390 / 405 / 379
+ISR Mailbox                        : 1789 / 1825 / 1162
+ISR Semaphore                      : 1742 / 1756 / 1740
+ISR Message queue                  : 1857 / 1883 / 1855
+ISR Blocking message queue         : 1951 / 1967 / 1951
 ******************************************************************************/
 
 /* Include *******************************************************************/
