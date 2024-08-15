@@ -21,7 +21,7 @@
 
 点击 **[这里](README_CN.md)** 查看中文版。
 
-&ensp;&ensp;**RMP** is a small real-time operating system which focuses on formal reliability and simplicity. It achieves reliability by deployment of formal techniques(**not completed yet**; only whitebox testing with 100% branch coverage done. The kernel can be regarded as pre-certified IEC 61508 SIL2, or EAL 4). All the basic functionalities that are necessary for RTOSes are provided, but nothing more. This guarantees that the system is the minimum possible kernel and is also suitable to be used as a guest operating system when hosted on virtual machine monitors.  
+&ensp;&ensp;**RMP** is a small **hobbyist** real-time operating system which focuses on formal reliability and simplicity. It achieves reliability by deployment of formal techniques(**not completed yet**; only whitebox testing with 100% branch coverage done. The kernel can be regarded as pre-certified IEC 61508 SIL2, or EAL 4). All the basic functionalities that are necessary for RTOSes are provided, but nothing more. This guarantees that the system is the minimum possible kernel and is also suitable to be used as a guest operating system when hosted on virtual machine monitors.  
 
 &ensp;&ensp;This operating system is much **leaner** than any other RTOSes, especially when compared to _FreeRTOS_ or _RT-Thread_, and understanding it should be simple enough. Yet it provides a complete set of functions that you may need during resource-constrained microcontroller development, such as **efficient memory management**, **anti-aliasing graphics**, and **various helper functions**. All these features come in a **single .C** file, and are **without any extra RAM consumption**!
 
@@ -31,6 +31,15 @@
 This software is an official work of EDI, and thus belongs to the **public domain**. All copyrights reserved by EDI are granted to all entities under all applicable laws to the maximum extent.
 
 &ensp;&ensp;For vendor-supplied packages and hardware abstraction libraries, please refer to the **[M0A00_Library](https://github.com/EDI-Systems/M0A00_Library)** repo to download and use them properly.
+
+## Why a New Hobbyist System?
+&ensp;&ensp;Existing RTOSes can be divided into three categories: **enterprise**, **hobbyist** and **teaching**. Enterprise systems are usually developed for real-world deployment and are great all-round, yet they at least **put all verification documents and techniques behind a paywall**, if code itself is free. Hobbyist systems are numerous with new repositories created nearly every day, but they lack long-term commitment and are **frequently abandoned after a while**. Teaching systems are built for college students, and **lack depth when it comes to advanced topics** such as verification.
+
+&ensp;&ensp;To this end, RMP seeks to build a **fully open, capable and understandable** system that is certified to the teeth. You can use the repository in three ways: (1) modify and deploy it in real-world environments, (2) follow its code and documents to get a full understanding of all details of the technologies involved, and (3) throw the system away and roll your own with the knowledge gained from this project.
+
+&ensp;&ensp;The construction of the system will proceed in three stages. In the first stage, we refrain from writing a formal specification beforehand but develop the system like any other hobbyist system. We port the system to as many architectures as possible to **validate the flexibility** of its abstraction, and run as many application classes as possible to **guarantee the usability** of its interface. In the second stage, we use the first implementation as a guide to **retrovert a formal specification** of the system, and prove the system model have certain desirable properties. In the last stage, we develop a formal semantics of the chosen C subset and **rewrite the entire kernel** according to the formal model while producing the required documents for functional safety (specifically, **IEC 61508 SIL 4 and ISO 26262 ASIL D, maybe EAL as well**, and we focus on the former first), and put the entire process (excluding those that we don't have copyright on, i.e. the standards) **in public domain**.
+
+&ensp;&ensp;No specific timetables are set for the development of the system. Currently the first stage is currently considered complete, and the second stage is a ongoing process. If you are interested in the project, please feel free to join; unlike other projects, **beginners are welcome here**.
 
 ## Quick Demo
 ### Linux minimal runnable binary
