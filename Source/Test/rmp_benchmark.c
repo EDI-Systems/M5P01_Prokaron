@@ -368,14 +368,14 @@ void Test_Bmq_2(void)
     }
 }
 
-void Test_Alrm_Hook(volatile struct RMP_Amgr* Amgr,
-                    volatile struct RMP_Alrm* Alrm,
+void Test_Alrm_Hook(volatile struct RMP_Amgr* This_Amgr,
+                    volatile struct RMP_Alrm* This_Alrm,
                     rmp_cnt_t Overdue)
 {
-    RMP_USE(Amgr);
+    RMP_USE(This_Amgr);
     RMP_ASSERT(Overdue==0);
 
-    switch(Alrm->Delay)
+    switch(This_Alrm->Delay)
     {
         case 1U:Alrm_1_Cnt++;break;
         case 2U:Alrm_2_Cnt++;break;
