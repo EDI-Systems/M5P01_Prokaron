@@ -49,7 +49,6 @@ ISR Semaphore                      : 1328 / 1349 / 1328
 ISR Message queue                  : 1437 / 1451 / 1437
 ISR Blocking message queue         : 1545 / 1553 / 1545
 
-
 GCC 12.2.0 -O3 (FPU enabled, fastpath turned on)
     ___   __  ___ ___
    / _ \ /  |/  // _ \       Simple real-time kernel
