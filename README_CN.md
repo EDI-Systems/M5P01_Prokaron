@@ -292,7 +292,7 @@ Click **[HERE](README.md)** for English version.
 
 ### 编译指南
 
-&emsp;&emsp;在 **_Project_** 文件夹下能够找到各种微控制器的移植好的 **Makefile** 、 **Keil** 、 **CCS** 和 **MPLAB** 的工程样板。参看各个工程文件夹下的自述文件以获取更多关于如何编译和运行该工程的信息。某些工程需要额外的厂商硬件抽象层库的支持，它们可以在 **[M0A00_Library](https://github.com/EDI-Systems/M0A00_Library)** 软件仓库被找到。
+&emsp;&emsp;在 **[Project](Project)** 文件夹下能够找到各种微控制器的移植好的 **Makefile** 、 **Keil** 、 **CCS** 和 **MPLAB** 的工程样板。参看各个工程文件夹下的自述文件以获取更多关于如何编译和运行该工程的信息。某些工程需要额外的厂商硬件抽象层库的支持，它们可以在 **[M0A00_Library](https://github.com/EDI-Systems/M0A00_Library)** 软件仓库被找到。
 
 ### 运行测试
 
@@ -302,7 +302,7 @@ Click **[HERE](README.md)** for English version.
 
 ### 生产部署
 
-&emsp;&emsp;当部署本系统到生产环境时，请仔细阅读本系统自带的手册，以确保各项配置正确。本系统的手册可以在 **_Documents_** 文件夹下找到。
+&emsp;&emsp;当部署本系统到生产环境时，请仔细阅读本系统自带的手册，以确保各项配置正确。本系统的手册可以在 **[Document](Document)** 文件夹下找到。
 
 ### 支持的工具链
 

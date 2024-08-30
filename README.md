@@ -292,7 +292,7 @@ This software is an official work of EDI, and thus belongs to the **public domai
 
 ### Compilation
 
-&ensp;&ensp;The **Makefile**, **Keil**, **CCS** and **MPLAB** projects for various microcontrollers are available in the **Project** folder. Refer to the readme files in each folder for specific instructions about how to run them. However, keep in mind that some examples may need vendor-specific libraries such as the STMicroelectronics HAL. Some additional drivers may be required too. These can be found in **[M0A00_Library](https://github.com/EDI-Systems/M0A00_Library)** repo.
+&ensp;&ensp;The **Makefile**, **Keil**, **CCS** and **MPLAB** projects for various microcontrollers are available in the **[Project](Project)** folder. Refer to the readme files in each folder for specific instructions about how to run them. However, keep in mind that some examples may need vendor-specific libraries such as the STMicroelectronics HAL. Some additional drivers may be required too. These can be found in **[M0A00_Library](https://github.com/EDI-Systems/M0A00_Library)** repo.
 
 ### Running the Tests
 
@@ -302,7 +302,7 @@ This software is an official work of EDI, and thus belongs to the **public domai
 
 ### Deployment
 
-&ensp;&ensp;&ensp;When deploying this into a production system, it is recommended that you read the manual in the **Document** folder carefully to configure all macros correctly.
+&ensp;&ensp;&ensp;When deploying this into a production system, it is recommended that you read the manual in the **[Document](Document)** folder carefully to configure all macros correctly.
 
 ### Supported Toolchains
 
