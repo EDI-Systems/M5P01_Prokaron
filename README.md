@@ -276,21 +276,23 @@ This software is an official work of EDI, and thus belongs to the **public domai
 |Tricore        |Rarely used           |Use more popular Cortex-M and RISC-Vs                                        |
 |MB91460        |Rarely used           |Use more popular Cortex-M and RISC-Vs                                        |
 
+&ensp;&ensp;This RTOS focuses on microcontrollers and will never support microprocessors. Multi-core support is also considered out of scope, because most multi-core microcontrollers are not symmetric, and have neither atomic instructions nor no cache coherency; even if RMP would support them, they pose challenges for unaware programmers. For multi-core microcontrollers, it is recommended to boot one RMP instance on each core, and the different instances may communicate with each other through Inter-Processor Interrupts (IPIs).
+ 
 ## Getting Started
 
-&ensp;&ensp;These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+&ensp;&ensp;These instructions will get you a copy of the project up and running on your board for development and testing purposes.
 
 ### Prerequisites
 
-&ensp;&ensp;You need **_Cortex-M or RISC-V or MIPS or MSP430_** microcontroller development kits to run the system. This RTOS focuses on value-line MCUs and do not concentrate on high-end MCUs or MPUs. Do not use QEMU to test the projects because they do not behave correctly in many scenarios.  
+&ensp;&ensp;You need a microcontroller development kit containing on of the chips above to run the system. STM32 Nucleo boards and MSP430 Launchpad boards are recommended. Do not use QEMU to test the projects because they do not behave correctly in many scenarios.  
 
-&ensp;&ensp;If you don't have a development board, a **_x86-based Linux port_** of RMP is also available. However, running RMP on top of linux uses the [ptrace](https://en.wikipedia.org/wiki/Ptrace) system call and [signal](https://en.wikipedia.org/wiki/Signal_(IPC)) system, thus it is not particularly fast. Just run the example and observe benchmark output.  
+&ensp;&ensp;If you don't have a development board, a **x86-based Linux port** of RMP is also available. However, running RMP on top of linux uses the [ptrace](https://en.wikipedia.org/wiki/Ptrace) system call and [signal](https://en.wikipedia.org/wiki/Signal_(IPC)) system, thus it is not particularly fast. Just run the example and observe benchmark output.  
 
-&ensp;&ensp;Other platform supports should be simple to implement, however they are not scheduled yet. For Cortex-A and other CPUs with a memory management unit ([MMU](https://en.wikipedia.org/wiki/Memory_management_unit)), use [RME](https://github.com/EDI-Systems/M7M01_Eukaron) _Real-Time Multi-Core Microkernel_ instead; RME supports some microcontrollers as well.
+&ensp;&ensp;Other platform supports should be simple to implement, however they are not scheduled yet. For Cortex-A and other CPUs with a memory management unit ([MMU](https://en.wikipedia.org/wiki/Memory_management_unit)), use [RME](https://github.com/EDI-Systems/M7M01_Eukaron) Real-Time Multi-Core Microkernel instead; RME supports some microcontrollers as well.
 
 ### Compilation
 
-&ensp;&ensp;The **Makefile**, **Keil**, **CCS** and **MPLAB** projects for various microcontrollers are available in the **_Project_** folder. Refer to the readme files in each folder for specific instructions about how to run them. However, keep in mind that some examples may need vendor-specific libraries such as the STMicroelectronics HAL. Some additional drivers may be required too. These can be found in **[M0A00_Library](https://github.com/EDI-Systems/M0A00_Library)** repo.
+&ensp;&ensp;The **Makefile**, **Keil**, **CCS** and **MPLAB** projects for various microcontrollers are available in the **Project** folder. Refer to the readme files in each folder for specific instructions about how to run them. However, keep in mind that some examples may need vendor-specific libraries such as the STMicroelectronics HAL. Some additional drivers may be required too. These can be found in **[M0A00_Library](https://github.com/EDI-Systems/M0A00_Library)** repo.
 
 ### Running the Tests
 
@@ -300,7 +302,7 @@ This software is an official work of EDI, and thus belongs to the **public domai
 
 ### Deployment
 
-&ensp;&ensp;&ensp;When deploying this into a production system, it is recommended that you read the manual in the **_Documents_** folder carefully to configure all macros correctly.
+&ensp;&ensp;&ensp;When deploying this into a production system, it is recommended that you read the manual in the **Document** folder carefully to configure all macros correctly.
 
 ### Supported Toolchains
 
