@@ -42,22 +42,22 @@ This software is an official work of EDI, and thus belongs to the **public domai
 &ensp;&ensp;No specific timetables are set for the development of the system. Currently the first stage is currently considered complete, and the second stage is a ongoing process. If you are interested in the project, please feel free to join; unlike other projects, **beginners are welcome here**.
 
 ## Quick Demo
-### Linux minimal runnable binary
+### Linux Minimal Runnable Binary
 &ensp;&ensp;Compile the 32-bit linux binary **[here](/Project/GCCMF-X86L)** and watch the benchmark results!
 
-### NES (FAMICOM) minimal runnable binary
+### NES (FAMICOM) Minimal Runnable Binary
 &ensp;&ensp;Download the precompiled "game" **[here](/Document/Public/Demo/RMP.nes)**, load it into your favorite emulator (or a flashable Namco 163 mapper cartridge and plug it into the real console), and watch the benchmark results!
 
 ![FAMICOM](/Document/Public/Demo/FAMICOM.png)
 
 &ensp;&ensp;The Namco 163 is not optional, as the system relies on it to provide IRQ timers for performance measurement. Namco 163 is the only mapper that featured a readable timestamp counter, and can be found on cartridges that also originally host famous games such as "Star Wars" and "Sangokushi II: Hanou no Tairiku (三国志II 覇王の大陸)". The chip is sometimes also known as Namcot 163, or iNES mapper 019.
 
-### Built-in graphics : widgets, example and FXAA anti-aliasing
+### Built-in Graphics : Widgets, Example and FXAA Anti-Aliasing
 ![Controls](/Document/Public/Demo/Controls.png)
 ![Calculator](/Document/Public/Demo/Calc.png)
 ![FXAA](/Document/Public/Demo/FXAA.png)
 
-### Basic thread operations
+### Basic Thread Operations
 **Create a thread**
 ```C
     RMP_Thd_Crt(&Thd_1            /* Thread control block */,
@@ -81,7 +81,7 @@ This software is an official work of EDI, and thus belongs to the **public domai
     RMP_Thd_Resume(&Thd_1         /* Thread control block */);
 ```
 
-### Delaying a thread
+### Delaying a Thread
 ![Delay](/Document/Public/Demo/Delay.gif)
 ```C
     void Func_1(void* Param)
@@ -101,7 +101,7 @@ This software is an official work of EDI, and thus belongs to the **public domai
         RMP_Thd_Crt(&Thd_1, Func_1, &Stack_1, sizeof(Stack_1), (void*)0x12345678, 1, 5);
     }
 ```
-### Send from one thread to another
+### Send from One Thread to Another
 ![Send](/Document/Public/Demo/Send.gif)
 ```C
     void Func_1(void* Param)
@@ -134,7 +134,7 @@ This software is an official work of EDI, and thus belongs to the **public domai
     }
 ```
 
-### Counting semaphores
+### Counting Semaphores
 ![Semaphore](/Document/Public/Demo/Semaphore.gif)
 ```C
     void Func_1(void* Param)
@@ -164,7 +164,7 @@ This software is an official work of EDI, and thus belongs to the **public domai
     }
 ```
 
-### Memory pool operations
+### Memory Pool Operations
 ```C
     /* Initialize memory pool */
     RMP_Mem_Init(Pool, Pool_Size);
@@ -176,7 +176,7 @@ This software is an official work of EDI, and thus belongs to the **public domai
     RMP_Free(Pool, Mem);
 ```
 
-### Typical performance figures for all supported architectures
+## Performance on all Supported Architectures
 
 &ensp;&ensp;The **absolute minimum** value for RMP is about **1.6k ROM and 432 byte RAM**, which is reached on the STM32F030F4 (Cortex-M0) port, and this number even included the 60-byte thread control block and 256-byte stack of the first thread, and a 64-byte kernel interrupt response stack. The OS kernel and the stripped down HAL only consumes **52 bytes** of memory combined. If you are willing to push this limit even further, then the **manufacturer HAL is a rip-off for you** and you can roll your own.
 
@@ -198,7 +198,7 @@ This software is an official work of EDI, and thus belongs to the **public domai
 
 &ensp;&ensp;The difference between `Msgq` and `Bmq` is, in `Msgq`, only the receiver may block, whereas in `Bmq` both may block.
 
-&ensp;&ensp;**Monumental Ports**:
+### Monumental ports
 
 |Chipname     |Platform    |Build |Yield|Mail |Sem  |FIFO |Msgq |Bmq  |Mail/I|Sem/I|Msgq/I |Bmq/I |Mem  |Alrm |
 |:-----------:|:----------:|:----:|:---:|:---:|:---:|:---:|:---:|:---:|:----:|:---:|:-----:|:----:|:---:|:---:|
@@ -208,7 +208,7 @@ This software is an official work of EDI, and thus belongs to the **public domai
 |PIC32MZ2048  |MIPS        |XC32  |190  |345  |305  |150  |475  |620  |295   |260  |370    |465   |365  |TBD  |
 |...          |MIPS-FR64   |..    |475  |630  |585  |160  |775  |935  |400   |360  |490    |585   |371  |TBD  |
 
-&ensp;&ensp;**Useful Ports**:
+### Useful ports
 
 |Chipname     |Platform    |Build |Yield|Mail |Sem  |FIFO |Msgq |Bmq  |Mail/I|Sem/I|Msgq/I |Bmq/I |Mem  |Alrm |
 |:-----------:|:----------:|:----:|:---:|:---:|:---:|:---:|:---:|:---:|:----:|:---:|:-----:|:----:|:---:|:---:|
@@ -239,7 +239,7 @@ This software is an official work of EDI, and thus belongs to the **public domai
 |...          |RV32IMAFC   |...   |217  |398  |341  |172  |557  |705  |358   |307  |444    |556   |433  |TBD  |
 |Xeon 6326    |X86-LINUX   |...   |24k  |24k  |24k  |46   |24k  |24k  |31k   |30k  |34k    |53k   |159  |TBD  |
 
-&ensp;&ensp;**[RVM](https://github.com/EDI-Systems/M7M02_Ammonite)** **Virtualized Ports**:
+### [RVM](https://github.com/EDI-Systems/M7M02_Ammonite) virtualized ports
 - V        : Virtualization overhead of normal operations.
 - V/I      : Virtualization overhead of interrupt operations.
 
@@ -282,32 +282,32 @@ This software is an official work of EDI, and thus belongs to the **public domai
 
 ### Prerequisites
 
-&ensp;&ensp;You need **_Cortex-M or RISC-V or MIPS or MSP430_** microcontroller development kits to run the tests. This RTOS focuses on value-line MCUs and do not concentrate on high-end MCUs or MPUs. Do not use QEMU simulator to test the projects because they do not behave correctly in many scenarios.  
+&ensp;&ensp;You need **_Cortex-M or RISC-V or MIPS or MSP430_** microcontroller development kits to run the system. This RTOS focuses on value-line MCUs and do not concentrate on high-end MCUs or MPUs. Do not use QEMU to test the projects because they do not behave correctly in many scenarios.  
 
 &ensp;&ensp;If you don't have a development board, a **_x86-based Linux port_** of RMP is also available. However, running RMP on top of linux uses the [ptrace](https://en.wikipedia.org/wiki/Ptrace) system call and [signal](https://en.wikipedia.org/wiki/Signal_(IPC)) system, thus it is not particularly fast. Just run the example and observe benchmark output.  
 
-&ensp;&ensp;Other platform supports should be simple to implement, however they are not scheduled yet. For Cortex-A and other CPUs with a memory management unit ([MMU](https://en.wikipedia.org/wiki/Memory_management_unit)), go [M7M01_Eukaron](https://github.com/EDI-Systems/M7M01_Eukaron) _Real-Time Multi-Core Microkernel_ instead; M7M01 supports some microcontrollers as well.
+&ensp;&ensp;Other platform supports should be simple to implement, however they are not scheduled yet. For Cortex-A and other CPUs with a memory management unit ([MMU](https://en.wikipedia.org/wiki/Memory_management_unit)), use [RME](https://github.com/EDI-Systems/M7M01_Eukaron) _Real-Time Multi-Core Microkernel_ instead; RME supports some microcontrollers as well.
 
 ### Compilation
 
-&ensp;&ensp;The **Vendor Toolchain** or **Eclipse** projects for various microcontrollers are available in the **_Project_** folder. Refer to the readme files in each folder for specific instructions about how to run them. However, keep in mind that some examples may need vendor-specific libraries such as the STMicroelectronics HAL. Some additional drivers may be required too. These can be found in **[M0A00_Library](https://github.com/EDI-Systems/M0A00_Library)** repo.
+&ensp;&ensp;The **Makefile**, **Keil**, **CCS** and **MPLAB** projects for various microcontrollers are available in the **_Project_** folder. Refer to the readme files in each folder for specific instructions about how to run them. However, keep in mind that some examples may need vendor-specific libraries such as the STMicroelectronics HAL. Some additional drivers may be required too. These can be found in **[M0A00_Library](https://github.com/EDI-Systems/M0A00_Library)** repo.
 
-## Running the Tests
+### Running the Tests
 
 &ensp;&ensp;To run the sample programs, simply download them into the development board and start step-by-step debugging. Some examples will use one or two LEDs to indicate the system status. In that case, it is necessary to fill the LED blinking wrapper functions.  
 
 &ensp;&ensp;To use the graphics library and other advanced features, please refer to the user manual.
 
-## Deployment
+### Deployment
 
 &ensp;&ensp;&ensp;When deploying this into a production system, it is recommended that you read the manual in the **_Documents_** folder carefully to configure all macros correctly.
 
-## Built With
+### Supported Toolchains
 
+- GCC/Clang-LLVM
 - Keil uVision (ARMCC/ARMCLANG)
 - Code Composer Studio
 - MPLAB X XC16/XC32
-- GCC/Clang-LLVM
 
 &ensp;&ensp;Other toolchains are not recommended nor supported at this point, though it might be possible to support them later on.
 
@@ -315,10 +315,10 @@ This software is an official work of EDI, and thus belongs to the **public domai
 
 &ensp;&ensp;Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
 
-## EDI Project Information
-- M5P01 R5T2
+### EDI Project Information
+- M5P01 R6T1
 
-## Starring Contributors
+### Starring Contributors
 - Leifeng Song - ARM Cortex-M3/4/7 assembly port.
 - Runsheng Hou - ARM Cortex-M4/7 RVM port and lwIP demo.
 - Yihe Wang - Stable x86/linux/ptrace port.
