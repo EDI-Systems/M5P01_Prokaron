@@ -251,7 +251,7 @@ This software is an official work of EDI, and thus belongs to the **public domai
 |...          |...         |GCC   |312  |540  |448  |204  |656  |1008 |59% |1336  |1252 |1404   |1572  |250%|380  |739  |
 |STM32F767IG  |Cortex-M7F  |Keil  |184  |293  |275  |144  |504  |705  |6%  |772   |742  |899    |983   |135%|275  |578  |
 |...          |...         |GCC   |192  |352  |292  |148  |466  |650  |6%  |903   |853  |1001   |1119  |239%|270  |508  |
-|CH32V307VC   |RV32IMAC    |GCC   |247  |419  |361  |169  |538  |689  |17% |1399  |1328 |1437   |1545  |299%|390  |605  |
+|CH32V307VC   |RV32IMAC    |GCC   |233  |384  |336  |148  |489  |629  |17% |1287  |1239 |1340   |1421  |267%|390  |605  |
 |...          |RV32IMAFC   |...   |325  |497  |436  |169  |616  |767  |50% |1789  |1742 |1857   |1951  |399%|390  |608  |
 
 &ensp;&ensp;In contrast, RT-Linux 4.12's best context switch time on Cortex-M7 is bigger than 25000 cycles (it has to run from FMC SDRAM due to its sheer size, so this is not a fair comparison). This is measured with futex; if other forms of IPC such as pipes are used, this time is even longer.
