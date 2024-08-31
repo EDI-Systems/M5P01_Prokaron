@@ -176,7 +176,7 @@ Click **[HERE](README.md)** for English version.
     RMP_Free(Pool, Mem);
 ```
 
-### 所有支持架构上的典型性能数据
+## 所有支持架构上的典型性能数据
 
 &emsp;&emsp;本系统的**绝对最小值**在**1.6k ROM和432Byte RAM**左右，这个大小是在STM32F030F4（Cortex-M0+）的移植上达到的，并包括了第一个线程的60Byte的线程控制块和256Byte的线程栈，以及64Byte的内核中断响应用栈。操作系统内核和最精简的HAL库一共仅占用了**52Byte**存储。如果你对这个数字仍不满意，那么可以**不使用厂商提供的HAL库**而自己写一个版本。
 
@@ -198,7 +198,7 @@ Click **[HERE](README.md)** for English version.
 
 &ensp;&ensp;`Msgq`和`Bmq`的区别在于前者只有接收方可以阻塞，后者双方都可以阻塞。
 
-&ensp;&ensp;**纪念性移植**：
+### 纪念性移植
 
 |芯片          |架构        |工具链  |Yield|Mail |Sem  |FIFO |Msgq |Bmq  |Mail/I|Sem/I|Msgq/I |Bmq/I |Mem  |Alrm |
 |:-----------:|:----------:|:----:|:---:|:---:|:---:|:---:|:---:|:---:|:----:|:---:|:-----:|:----:|:---:|:---:|
@@ -208,7 +208,7 @@ Click **[HERE](README.md)** for English version.
 |PIC32MZ2048  |MIPS        |XC32  |190  |345  |305  |150  |475  |620  |295   |260  |370    |465   |365  |TBD  |
 |...          |MIPS-FR64   |..    |475  |630  |585  |160  |775  |935  |400   |360  |490    |585   |371  |TBD  |
 
-&ensp;&ensp;**实用性移植**：
+### 实用性移植
 
 |芯片          |架构        |工具链  |Yield|Mail |Sem  |FIFO |Msgq |Bmq  |Mail/I|Sem/I|Msgq/I |Bmq/I |Mem  |Alrm |
 |:-----------:|:----------:|:----:|:---:|:---:|:---:|:---:|:---:|:---:|:----:|:---:|:-----:|:----:|:---:|:---:|
@@ -239,7 +239,7 @@ Click **[HERE](README.md)** for English version.
 |...          |RV32IMAFC   |...   |217  |398  |341  |172  |557  |705  |358   |307  |444    |556   |433  |TBD  |
 |Xeon 6326    |X86-LINUX   |...   |24k  |24k  |24k  |46   |24k  |24k  |31k   |30k  |34k    |53k   |159  |TBD  |
 
-&ensp;&ensp;**[RVM](https://github.com/EDI-Systems/M7M02_Ammonite)** **虚拟化移植**：
+### [RVM](https://github.com/EDI-Systems/M7M02_Ammonite) 虚拟化移植
 - V        : 普通操作的虚拟化开销。
 - V/I      : 中断操作的虚拟化开销。
 
@@ -276,38 +276,40 @@ Click **[HERE](README.md)** for English version.
 |Tricore        |小众架构       |使用大众化的Cortex-M和Cortex-R                                        |
 |MB91460        |小众架构       |使用大众化的Cortex-M和Cortex-R                                        |
 
+&emsp;&emsp;本RTOS主要面向资源受限的微控制器，不会提供对微处理器的支持。本项目也不考虑多核支持，因为多核微控制器很少是对称的，而且各核之间既无原子操作支持又无缓存一致性，即便RMP支持它们，其上的并行编程也极具挑战性。对于多核微控制器，推荐在每个核上起一个RMP实例，实例之间则可以用处理器间中断（Inter-Processor Interrupts，IPIs）互相通信。
+
 ## 新手上路
 
 &emsp;&emsp;下面的说明会帮助你在本地快速建立一个可用来评估测试本系统的工程。请参看系统的中文文档以获取更多信息。
 
 ### 准备工作
 
-&emsp;&emsp;要运行测试，你需要一块基于 **_Cortex-M或RISC-V或MIPS或MSP430_** 的开发板。本RTOS主要面向资源受限的MCU，不提供对高端MCU，MPU和CPU的特别支持。不要使用QEMU模拟器来测试本系统，因为QEMU有很多不完善之处，与真正的硬件行为并不一致。
+&emsp;&emsp;要运行测试，你需要一块含有上述所列的微控制器的开发板。推荐使用 **STM32 Nucleo** 系列开发板或 **MSP430 Launchpad** 系列开发板。不要使用QEMU模拟器来测试本系统，因为QEMU有很多不完善之处，与真正的硬件行为并不一致。
 
-&emsp;&emsp;如果你没有开发板，那么RMP也有一个 **_基于x86处理器的Linux移植_** 。然而，该移植使用了[ptrace](https://en.wikipedia.org/wiki/Ptrace)系统调用和[信号](https://en.wikipedia.org/wiki/Signal_(IPC))系统，因此并不很快，这一点可以从性能测试的数据看出。
+&emsp;&emsp;如果你没有开发板，那么RMP也有一个 **[基于x86处理器的Linux移植](/Project/GCCMF-X86L)** 。然而，该移植使用了[ptrace](https://en.wikipedia.org/wiki/Ptrace)系统调用和[信号](https://en.wikipedia.org/wiki/Signal_(IPC))系统，因此性能较差，这一点可以从性能测试的数据看出。
 
-&emsp;&emsp;对于其他平台的支持应该也是容易实现的，但是当前并没有支持计划。对于那些Cortex-A和具备内存管理单元（[MMU](https://en.wikipedia.org/wiki/Memory_management_unit)）的其他处理器，可以使用[M7M1_MuEukaron](https://github.com/EDI-Systems/M7M1_MuEukaron) _实时多核心微内核_；M7M1也支持一部分的Cortex-M和全部的Cortex-R。
+&emsp;&emsp;对于其他平台的支持应该也是容易实现的，但是当前并没有支持计划。对于那些Cortex-A和具备内存管理单元（[MMU](https://en.wikipedia.org/wiki/Memory_management_unit)）的其他处理器，可以使用[RME](https://github.com/EDI-Systems/M7M01_Eukaron) 实时多核心微内核；RME也支持一部分的Cortex-M和全部的Cortex-R。
 
 ### 编译指南
 
-&emsp;&emsp;在 **_Project_** 文件夹下能够找到多种微控制器的移植好的 **厂商集成开发环境** 或 **Eclipse** 的工程样板。参看各个工程文件夹下的自述文件以获取更多关于如何编译和运行该工程的信息。某些工程需要额外的厂商硬件抽象层库的支持，它们可以在 **[M0A00_Library](https://github.com/EDI-Systems/M0A00_Library)** 软件仓库被找到。
+&emsp;&emsp;在 **[Project](Project)** 文件夹下能够找到各种微控制器的移植好的 **Makefile** 、 **Keil** 、 **CCS** 和 **MPLAB** 的工程样板。参看各个工程文件夹下的自述文件以获取更多关于如何编译和运行该工程的信息。某些工程需要额外的厂商硬件抽象层库的支持，它们可以在 **[M0A00_Library](https://github.com/EDI-Systems/M0A00_Library)** 软件仓库被找到。
 
-## 运行测试
+### 运行测试
 
 &emsp;&emsp;要运行测试，只要将测试下载到对应的开发板并开始单步调试即可。某些例子会采用两个LED来指示系统当前的状态，此时要填充LED的点亮和熄灭函数来运行该示例。
 
 &emsp;&emsp;要使用本系统内建的图形库，请参考用户手册的相关章节。
 
-## 生产部署
+### 生产部署
 
-&emsp;&emsp;当部署本系统到生产环境时，请仔细阅读本系统自带的手册，以确保各项配置正确。本系统的手册可以在 **_Documents_** 文件夹下找到。
+&emsp;&emsp;当部署本系统到生产环境时，请仔细阅读本系统自带的手册，以确保各项配置正确。本系统的手册可以在 **[Document](Document)** 文件夹下找到。
 
-## 支持的工具链
+### 支持的工具链
 
+- GCC/CLANG
 - Keil uVision (ARMCC/ARMCLANG)
 - Code Composer Studio
 - MPLAB X XC16/XC32
-- GCC/Clang-LLVM
 
 &emsp;&emsp;其他的工具链现在不推荐或者当前不受支持，虽然要增加新的支持应该也很简单。
 
@@ -315,10 +317,10 @@ Click **[HERE](README.md)** for English version.
 
 &emsp;&emsp;请阅读[CONTRIBUTING.md](CONTRIBUTING.md)文档来获得关于行为规范和提交代码的相关信息。
 
-## EDI 工程信息
-- M5P01 R5T2
+### EDI 工程信息
+- M5P01 R6T1
 
-## 杰出贡献者
+### 杰出贡献者
 - 宋磊锋 - ARM Cortex-M3/4/7 的GCC汇编支持。
 - 侯润升 - ARM Cortex-M4/7 的RVM支持，以及lwIP示例。
 - 王逸鹤 - 稳定的x86/linux/ptrace移植。
