@@ -284,9 +284,9 @@ Click **[HERE](README.md)** for English version.
 
 ### 准备工作
 
-&emsp;&emsp;要运行测试，你需要一块含有上述所列的微控制器的开发板。推荐使用STM32 Nucleo系列开发板或MSP430 Launchpad系列开发板。不要使用QEMU模拟器来测试本系统，因为QEMU有很多不完善之处，与真正的硬件行为并不一致。
+&emsp;&emsp;要运行测试，你需要一块含有上述所列的微控制器的开发板。推荐使用 **STM32 Nucleo** 系列开发板或 **MSP430 Launchpad** 系列开发板。不要使用QEMU模拟器来测试本系统，因为QEMU有很多不完善之处，与真正的硬件行为并不一致。
 
-&emsp;&emsp;如果你没有开发板，那么RMP也有一个 **基于x86处理器的Linux移植** 。然而，该移植使用了[ptrace](https://en.wikipedia.org/wiki/Ptrace)系统调用和[信号](https://en.wikipedia.org/wiki/Signal_(IPC))系统，因此性能较差，这一点可以从性能测试的数据看出。
+&emsp;&emsp;如果你没有开发板，那么RMP也有一个 **[基于x86处理器的Linux移植](/Project/GCCMF-X86L)** 。然而，该移植使用了[ptrace](https://en.wikipedia.org/wiki/Ptrace)系统调用和[信号](https://en.wikipedia.org/wiki/Signal_(IPC))系统，因此性能较差，这一点可以从性能测试的数据看出。
 
 &emsp;&emsp;对于其他平台的支持应该也是容易实现的，但是当前并没有支持计划。对于那些Cortex-A和具备内存管理单元（[MMU](https://en.wikipedia.org/wiki/Memory_management_unit)）的其他处理器，可以使用[RME](https://github.com/EDI-Systems/M7M01_Eukaron) 实时多核心微内核；RME也支持一部分的Cortex-M和全部的Cortex-R。
 
