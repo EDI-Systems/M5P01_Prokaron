@@ -258,11 +258,6 @@ This software is an official work of EDI, and thus belongs to the **public domai
 
 &ensp;&ensp;**No cheating methods** (such as toolchain-specific peephole optimizations that harm portability, cooperative switches that don't invoke the scheduler, scheduler designs that are fast in average case but have unbounded WCET, or even RMS-style stackless coroutine switches) are used in the experiments, and the reported WCETs in test headers are real. Despite the fact that we list the average case values for generic comparisons, it is important to realize that **only WCETs matter** in a RTOS; optimizations that help the average case but hurt the worst-case are never suitable for such kernels. If maximum speed is your utmost goal, **no system is faster than RMS or DOS**; the theoretical context switch time of the RMS is zero (when all tasks have a single state and are inlined), while DOS does not need context switches altogether because it only allows one execution flow.
 
-### Possible new platform supports
-|Platform   |Reason                 |Priority            |
-|:---------:|:---------------------:|:------------------:|
-|RL78       |Largely used 16-bit MCU|:star: :star: :star:|
-
 ### Architectures NOT Supported
 |Architecture   |Reason                |Workaround                                                                     |
 |:-------------:|:--------------------:|:-----------------------------------------------------------------------------:|
