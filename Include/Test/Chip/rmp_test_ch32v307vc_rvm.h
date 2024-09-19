@@ -28,6 +28,7 @@ Description : The testbench for CH32V307VC, running in the RVM.
                  #define TIM4_INTFR     *((volatile rme_u16_t*)(0x40000810U))
                  TIM4_INTFR=0U;
                  return RME_RVM_VCT_SIG_INIT;
+              These steps can be automatically completed by the RVM generator.
               
 GCC 12.2.0 -O3 (FPU disabled, fastpath turned on)
     ___   __  ___ ___
@@ -72,6 +73,15 @@ ISR Blocking message queue         : 1951 / 1967 / 1951
 
 /* Include *******************************************************************/
 #include "rmp.h"
+#include "rvm_guest.h"
+
+#define RVM_TEST_VIRTUAL_INC
+#include "rvm_test.h"
+#undef RVM_TEST_VIRTUAL_INC
+
+#define RVM_BENCHMARK_VIRTUAL_INC
+#include "Test/rvm_benchmark.h"
+#undef RVM_BENCHMARK_VIRTUAL_INC
 /* End Include ***************************************************************/
 
 /* Define ********************************************************************/

@@ -26,6 +26,7 @@ Description : The testbench for STM32L071CB, running in the RVM. Takes ~3min.
                  #define TIM21_SR    *((volatile rme_u32_t*)(0x40010810U))
                  TIM21_SR=0U;
                  return RME_RVM_VCT_SIG_INIT;
+              These steps can be automatically completed by the RVM generator.
 
 ARMCC 6.18 -O3  (SysTick turned off to avoid spurious interrupts)
     ___   __  ___ ___
@@ -85,6 +86,14 @@ ISR Blocking message queue         : 1867 / 4979 / 1859
 /* Include *******************************************************************/
 #include "rmp.h"
 #include "rvm_guest.h"
+
+#define RVM_TEST_VIRTUAL_INC
+#include "rvm_test.h"
+#undef RVM_TEST_VIRTUAL_INC
+
+#define RVM_BENCHMARK_VIRTUAL_INC
+#include "Test/rvm_benchmark.h"
+#undef RVM_BENCHMARK_VIRTUAL_INC
 /* End Include ***************************************************************/
 
 /* Define ********************************************************************/

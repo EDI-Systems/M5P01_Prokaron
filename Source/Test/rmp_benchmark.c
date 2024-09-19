@@ -102,6 +102,11 @@ volatile rmp_ptr_t Sem_ISR_Total=0U;
 volatile rmp_ptr_t Msgq_ISR_Total=0U;
 volatile rmp_ptr_t Bmq_ISR_Total=0U;
 #endif
+#ifdef RVM_MAGIC_VIRTUAL
+volatile rmp_ptr_t Guest_ISR_Total=0U;
+volatile rmp_tim_t Guest_ISR_Max=0U;
+volatile rmp_tim_t Guest_ISR_Min=((rmp_tim_t)-1U);
+#endif
 volatile rmp_tim_t Mail_ISR_Max=0U;
 volatile rmp_tim_t Mail_ISR_Min=0U;
 volatile rmp_tim_t Sem_ISR_Max=0U;
@@ -755,6 +760,18 @@ void Func_2(void)
 #else
     RMP_LIST("BI");
 #endif
+
+    /* RVM needs to divide by 4 due to 4x accumulation */
+#ifdef RVM_MAGIC_VIRTUAL
+    Total=Guest_ISR_Total/4;
+    Max=Guest_ISR_Max;
+    Min=Guest_ISR_Min;
+#ifndef SMALL_TERMINAL
+    RMP_LIST("ISR RVM activation relay          ");
+#else
+    RMP_LIST("RI");
+#endif
+#endif
     
     /* Test stop - Decide whether to exit, or keep dumping counter values
      * to detect potentially wrong timer clock rate configurations */
@@ -790,13 +807,23 @@ void Int_Handler(void)
     rmp_ret_t Retval;
     static rmp_ptr_t Count=0U;
     static struct RMP_List Node;
-        
+    
+    /* Deal with RVM if there is; this won't interfere with RMP data
+     * because the RMP timers are read just before its ISR sends */
+#ifdef RVM_MAGIC_VIRTUAL
+    rvm_tim_t Guest_Diff;
+    
+    RVM_DATA();
+#endif
+    
+    /* Interrupt reentry - if this happens, increase interrupt interval */
     if(Flip!=0U)
     {
         RMP_DBG_S("Interrupt reentered.\r\n");
     }
     Flip=1U;
     
+    /* Deal with the real benchmark */
     if(Count<ROUND_NUM)
     {
         Count++;

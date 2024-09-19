@@ -26,6 +26,7 @@ Description : The testbench for STM32F767IG, running in the RVM.
                  #define TIM4_SR    *((volatile rme_u32_t*)(0x40000810U))
                  TIM4_SR=0U;
                  return RME_RVM_VCT_SIG_INIT;
+              These steps can be automatically completed by the RVM generator.
 
 ARMCC 6.18 -O3 (SysTick turned off)
     ___   __  ___ ___
@@ -108,6 +109,14 @@ ISR Blocking message queue         : 1227 / 2444 / 1128
 /* Include *******************************************************************/
 #include "rmp.h"
 #include "rvm_guest.h"
+
+#define RVM_TEST_VIRTUAL_INC
+#include "rvm_test.h"
+#undef RVM_TEST_VIRTUAL_INC
+
+#define RVM_BENCHMARK_VIRTUAL_INC
+#include "Test/rvm_benchmark.h"
+#undef RVM_BENCHMARK_VIRTUAL_INC
 /* End Include ***************************************************************/
 
 /* Define ********************************************************************/
