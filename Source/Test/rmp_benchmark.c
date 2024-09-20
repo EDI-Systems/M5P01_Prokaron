@@ -105,7 +105,7 @@ volatile rmp_ptr_t Bmq_ISR_Total=0U;
 #ifdef RVM_MAGIC_VIRTUAL
 volatile rmp_ptr_t Guest_ISR_Total=0U;
 volatile rmp_tim_t Guest_ISR_Max=0U;
-volatile rmp_tim_t Guest_ISR_Min=((rmp_tim_t)-1U);
+volatile rmp_tim_t Guest_ISR_Min=0U;
 #endif
 volatile rmp_tim_t Mail_ISR_Max=0U;
 volatile rmp_tim_t Mail_ISR_Min=0U;
@@ -691,6 +691,11 @@ void Func_2(void)
 #else
     RMP_LIST("MM");
 #endif
+#endif
+
+    /* Clear RVM test variable if there is */
+#ifdef RVM_MAGIC_VIRTUAL
+    Guest_ISR_Min=((rmp_tim_t)-1U);
 #endif
 
     /* Prepare interrupt tests */
