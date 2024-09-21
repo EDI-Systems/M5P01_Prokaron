@@ -766,9 +766,8 @@ void Func_2(void)
     RMP_LIST("BI");
 #endif
 
-    /* RVM needs to divide by 4 due to 4x accumulation */
 #ifdef RVM_MAGIC_VIRTUAL
-    Total=Guest_ISR_Total/4;
+    Total=Guest_ISR_Total;
     Max=Guest_ISR_Max;
     Min=Guest_ISR_Min;
 #ifndef SMALL_TERMINAL
@@ -818,7 +817,11 @@ void Int_Handler(void)
 #ifdef RVM_MAGIC_VIRTUAL
     rvm_tim_t Guest_Diff;
     
-    RVM_DATA();
+    /* Only measure first 10000 rounds */
+    if(Count<ROUND_NUM)
+    {
+        RVM_DATA();
+    }
 #endif
     
     /* Interrupt reentry - if this happens, increase interrupt interval */

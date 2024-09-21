@@ -28,59 +28,45 @@ Description : The testbench for STM32L071CB, running in the RVM. Takes ~3min.
                  return RME_RVM_VCT_SIG_INIT;
               These steps can be automatically completed by the RVM generator.
 
-ARMCC 6.18 -O3  (SysTick turned off to avoid spurious interrupts)
+ARMCC 6.19 -Oz (SysTick turned on)
     ___   __  ___ ___
    / _ \ /  |/  // _ \       Simple real-time kernel
   / , _// /|_/ // ___/       Standard benchmark test
  /_/|_|/_/  /_//_/
 ====================================================
 Test (number in CPU cycles)        : AVG / MAX / MIN
-Yield                              : 1708 / 1708 / 1708
-Mailbox                            : 2030 / 2030 / 2030
-Semaphore                          : 1931 / 1931 / 1931
-FIFO                               : 325 / 326 / 325
-Message queue                      : 2318 / 2318 / 2318
-Blocking message queue             : 2661 / 2661 / 2661
-ISR Mailbox                        : 1372 / 1372 / 1372
-ISR Semaphore                      : 1289 / 1289 / 1289
-ISR Message queue                  : 1528 / 1528 / 1528
-ISR Blocking message queue         : 1735 / 1735 / 1735
+Yield                              : 384 / 2603 / 382
+Mailbox                            : 706 / 2953 / 701
+Semaphore                          : 613 / 2866 / 609
+FIFO                               : 304 / 2552 / 302
+Message queue                      : 1013 / 3261 / 1007
+Blocking message queue             : 1356 / 5102 / 1347
+Alarm combination (1/2/3/5/7)      : 1224 / 4156 / 735
+ISR Mailbox                        : 1401 / 5128 / 1391
+ISR Semaphore                      : 1323 / 3551 / 1314
+ISR Message queue                  : 1576 / 3819 / 1566
+ISR Blocking message queue         : 1772 / 4015 / 1760
+ISR RVM activation relay           : 2632 / 5354 / 2466
 
-ARMCC 6.18 -O3 (SysTick turned on, may kick in between)
+GCC 13.2.1 -Os (SysTick turned on)
     ___   __  ___ ___
    / _ \ /  |/  // _ \       Simple real-time kernel
   / , _// /|_/ // ___/       Standard benchmark test
  /_/|_|/_/  /_//_/
 ====================================================
 Test (number in CPU cycles)        : AVG / MAX / MIN
-Yield                              : 1713 / 3448 / 1712
-Mailbox                            : 2037 / 3772 / 2036
-Semaphore                          : 1937 / 3673 / 1936
-FIFO                               : 327 / 2007 / 327
-Message queue                      : 2325 / 4075 / 2324
-Blocking message queue             : 2670 / 4351 / 2669
-ISR Mailbox                        : 1377 / 3040 / 1377
-ISR Semaphore                      : 1293 / 2956 / 1293
-ISR Message queue                  : 1533 / 3196 / 1533
-ISR Blocking message queue         : 1741 / 3477 / 1741
-
-ARMCC 6.18 -O3 (SysTick turned on, fastpath enabled)
-    ___   __  ___ ___
-   / _ \ /  |/  // _ \       Simple real-time kernel
-  / , _// /|_/ // ___/       Standard benchmark test
- /_/|_|/_/  /_//_/
-====================================================
-Test (number in CPU cycles)        : AVG / MAX / MIN
-Yield                              : 469 / 2145 / 467
-Mailbox                            : 841 / 2569 / 837
-Semaphore                          : 717 / 5154 / 711
-FIFO                               : 391 / 2121 / 389
-Message queue                      : 1143 / 2870 / 1138
-Blocking message queue             : 1529 / 3257 / 1521
-ISR Mailbox                        : 1484 / 5909 / 1476
-ISR Semaphore                      : 1376 / 3104 / 1371
-ISR Message queue                  : 1646 / 4815 / 1638
-ISR Blocking message queue         : 1867 / 4979 / 1859
+Yield                              : 401 / 2241 / 400
+Mailbox                            : 756 / 2624 / 751
+Semaphore                          : 653 / 2521 / 649
+FIFO                               : 322 / 2192 / 321
+Message queue                      : 1070 / 2937 / 1064
+Blocking message queue             : 1427 / 3293 / 1420
+Alarm combination (1/2/3/5/7)      : 1299 / 6105 / 770
+ISR Mailbox                        : 1458 / 4850 / 1450
+ISR Semaphore                      : 1375 / 3241 / 1368
+ISR Message queue                  : 1638 / 3502 / 1629
+ISR Blocking message queue         : 1833 / 5236 / 1823
+ISR RVM activation relay           : 2636 / 4953 / 2541
 ******************************************************************************/
 
 /* Include *******************************************************************/
