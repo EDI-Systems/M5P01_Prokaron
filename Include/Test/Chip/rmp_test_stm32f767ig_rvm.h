@@ -28,82 +28,89 @@ Description : The testbench for STM32F767IG, running in the RVM.
                  return RME_RVM_VCT_SIG_INIT;
               These steps can be automatically completed by the RVM generator.
 
-ARMCC 6.18 -O3 (SysTick turned off)
+ARMCC 6.19 -O3 (SysTick turned on, w/FPU context)
     ___   __  ___ ___
    / _ \ /  |/  // _ \       Simple real-time kernel
   / , _// /|_/ // ___/       Standard benchmark test
  /_/|_|/_/  /_//_/
 ====================================================
 Test (number in CPU cycles)        : AVG / MAX / MIN
-Yield                              : 1446 / 1520 / 1412
-Mailbox                            : 1636 / 1752 / 1624
-Semaphore                          : 1594 / 1760 / 1560
-FIFO                               : 156 / 272 / 156
-Message queue                      : 1862 / 2064 / 1816
-Blocking message queue             : 2092 / 2180 / 2060
-Memory allocation/free pair        : 338 / 404 / 330
-ISR Mailbox                        : 1314 / 1456 / 1224
-ISR Semaphore                      : 1210 / 1316 / 1160
-ISR Message queue                  : 1418 / 1496 / 1340
-ISR Blocking message queue         : 1601 / 1716 / 1488
+Yield                              : 178 / 1488 / 176
+Mailbox                            : 305 / 1692 / 284
+Semaphore                          : 267 / 1536 / 256
+FIFO                               : 148 / 1484 / 148
+Message queue                      : 509 / 1760 / 480
+Blocking message queue             : 722 / 748 / 696
+Alarm combination (1/2/3/5/7)      : 571 / 2128 / 340
+Memory allocation/free pair        : 275 / 521 / 263
+ISR Mailbox                        : 864 / 2228 / 824
+ISR Semaphore                      : 802 / 892 / 768
+ISR Message queue                  : 928 / 2292 / 876
+ISR Blocking message queue         : 1021 / 2324 / 984
+ISR RVM activation relay           : 1846 / 3124 / 1776
 
-ARMCC 6.18 -O3 (SysTick turned on)
+GCC 13.2.1 -O3 (SysTick turned on, w/FPU context)
     ___   __  ___ ___
    / _ \ /  |/  // _ \       Simple real-time kernel
   / , _// /|_/ // ___/       Standard benchmark test
  /_/|_|/_/  /_//_/
 ====================================================
 Test (number in CPU cycles)        : AVG / MAX / MIN
-Yield                              : 1341 / 2548 / 1296
-Mailbox                            : 1523 / 2732 / 1496
-Semaphore                          : 1458 / 2716 / 1444
-FIFO                               : 170 / 236 / 160
-Message queue                      : 1749 / 2972 / 1684
-Blocking message queue             : 1987 / 3300 / 1924
-Memory allocation/free pair        : 339 / 546 / 332
-ISR Mailbox                        : 1079 / 2292 / 1040
-ISR Semaphore                      : 1032 / 3468 / 988
-ISR Message queue                  : 1236 / 2456 / 1164
-ISR Blocking message queue         : 1424 / 2616 / 1332
+Yield                              : 184 / 1464 / 184
+Mailbox                            : 366 / 1860 / 316
+Semaphore                          : 308 / 1740 / 292
+FIFO                               : 157 / 364 / 148
+Message queue                      : 470 / 1908 / 444
+Blocking message queue             : 644 / 2032 / 608
+Alarm combination (1/2/3/5/7)      : 523 / 1912 / 304
+Memory allocation/free pair        : 271 / 543 / 259
+ISR Mailbox                        : 957 / 1164 / 872
+ISR Semaphore                      : 951 / 2372 / 848
+ISR Message queue                  : 1083 / 1220 / 992
+ISR Blocking message queue         : 1166 / 2612 / 1072
+ISR RVM activation relay           : 1797 / 2144 / 1720
 
-
-ARMCC 6.18 -O3 (SysTick turned on, w/FPU context)
+ARMCC 6.19 -O3 (SysTick turned on, w/o FPU context)
     ___   __  ___ ___
    / _ \ /  |/  // _ \       Simple real-time kernel
   / , _// /|_/ // ___/       Standard benchmark test
  /_/|_|/_/  /_//_/
 ====================================================
 Test (number in CPU cycles)        : AVG / MAX / MIN
-Yield                              : 1667 / 2988 / 1640
-Mailbox                            : 1850 / 3068 / 1804
-Semaphore                          : 1777 / 3104 / 1748
-FIFO                               : 160 / 1612 / 160
-Message queue                      : 2046 / 3340 / 2004
-Blocking message queue             : 2344 / 3692 / 2264
-Memory allocation/free pair        : 339 / 692 / 331
-ISR Mailbox                        : 1380 / 2688 / 1296
-ISR Semaphore                      : 1322 / 2604 / 1256
-ISR Message queue                  : 1461 / 2708 / 1384
-ISR Blocking message queue         : 1644 / 2976 / 1560
+Yield                              : 179 / 1400 / 176
+Mailbox                            : 315 / 1508 / 284
+Semaphore                          : 271 / 1536 / 256
+FIFO                               : 148 / 252 / 148
+Message queue                      : 503 / 1680 / 496
+Blocking message queue             : 697 / 1948 / 676
+Alarm combination (1/2/3/5/7)      : 572 / 2188 / 340
+Memory allocation/free pair        : 275 / 461 / 263
+ISR Mailbox                        : 819 / 960 / 784
+ISR Semaphore                      : 776 / 2948 / 736
+ISR Message queue                  : 908 / 996 / 856
+ISR Blocking message queue         : 1003 / 2160 / 952
+ISR RVM activation relay           : 1709 / 1964 / 1616
 
-ARMCC 6.18 -O3 -LTO (SysTick turned on; fast context switch path enabled)
+GCC 13.2.1 -O3 (SysTick turned on, w/o FPU context)
     ___   __  ___ ___
    / _ \ /  |/  // _ \       Simple real-time kernel
   / , _// /|_/ // ___/       Standard benchmark test
  /_/|_|/_/  /_//_/
 ====================================================
 Test (number in CPU cycles)        : AVG / MAX / MIN
-Yield                              : 221 / 264 / 216
-Mailbox                            : 403 / 1608 / 388
-Semaphore                          : 348 / 1540 / 328
-FIFO                               : 150 / 1308 / 148
-Message queue                      : 589 / 1768 / 548
-Blocking message queue             : 765 / 1992 / 728
-Memory allocation/free pair        : 334 / 493 / 321
-ISR Mailbox                        : 942 / 2072 / 844
-ISR Semaphore                      : 962 / 2184 / 856
-ISR Message queue                  : 1134 / 2292 / 1032
-ISR Blocking message queue         : 1227 / 2444 / 1128
+Yield                              : 184 / 1356 / 184
+Mailbox                            : 356 / 1580 / 316
+Semaphore                          : 309 / 1628 / 288
+FIFO                               : 148 / 1300 / 148
+Message queue                      : 469 / 1640 / 448
+Blocking message queue             : 637 / 1848 / 608
+Alarm combination (1/2/3/5/7)      : 525 / 1728 / 312
+Memory allocation/free pair        : 272 / 520 / 261
+ISR Mailbox                        : 808 / 2076 / 772
+ISR Semaphore                      : 796 / 880 / 760
+ISR Message queue                  : 987 / 1120 / 920
+ISR Blocking message queue         : 1068 / 2392 / 984
+ISR RVM activation relay           : 1525 / 1972 / 1480
 ******************************************************************************/
 
 /* Include *******************************************************************/

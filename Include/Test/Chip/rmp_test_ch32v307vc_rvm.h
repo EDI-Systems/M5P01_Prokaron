@@ -29,46 +29,48 @@ Description : The testbench for CH32V307VC, running in the RVM.
                  TIM4_INTFR=0U;
                  return RME_RVM_VCT_SIG_INIT;
               These steps can be automatically completed by the RVM generator.
-              
-GCC 12.2.0 -O3 (FPU disabled, fastpath turned on)
-    ___   __  ___ ___
-   / _ \ /  |/  // _ \       Simple real-time kernel
-  / , _// /|_/ // ___/       Standard benchmark test
- /_/|_|/_/  /_//_/
-====================================================
-Test (number in CPU cycles)        : AVG / MAX / MIN
-Yield                              : 247 / 255 / 247
-Mailbox                            : 419 / 457 / 419
-Semaphore                          : 361 / 376 / 361
-FIFO                               : 169 / 195 / 169
-Message queue                      : 538 / 585 / 538
-Blocking message queue             : 689 / 738 / 689
-Alarm combination (1/2/3/5/7)      : 605 / 1135 / 364
-Memory allocation/free pair        : 390 / 400 / 379
-ISR Mailbox                        : 1399 / 1436 / 994
-ISR Semaphore                      : 1328 / 1349 / 1328
-ISR Message queue                  : 1437 / 1451 / 1437
-ISR Blocking message queue         : 1545 / 1553 / 1545
 
-GCC 12.2.0 -O3 (FPU enabled, fastpath turned on)
+GCC 13.2.1 -O3 (SysTick turned on, w/FPU context)
     ___   __  ___ ___
    / _ \ /  |/  // _ \       Simple real-time kernel
   / , _// /|_/ // ___/       Standard benchmark test
  /_/|_|/_/  /_//_/
 ====================================================
 Test (number in CPU cycles)        : AVG / MAX / MIN
-Yield                              : 325 / 340 / 325
-Mailbox                            : 497 / 537 / 497
-Semaphore                          : 436 / 457 / 436
-FIFO                               : 169 / 185 / 169
-Message queue                      : 616 / 668 / 616
-Blocking message queue             : 767 / 816 / 767
-Alarm combination (1/2/3/5/7)      : 608 / 1149 / 367
-Memory allocation/free pair        : 390 / 405 / 379
-ISR Mailbox                        : 1789 / 1825 / 1162
-ISR Semaphore                      : 1742 / 1756 / 1740
-ISR Message queue                  : 1857 / 1883 / 1855
-ISR Blocking message queue         : 1951 / 1967 / 1951
+Yield                              : 309 / 330 / 309
+Mailbox                            : 465 / 500 / 465
+Semaphore                          : 414 / 448 / 414
+FIFO                               : 150 / 168 / 150
+Message queue                      : 562 / 606 / 562
+Blocking message queue             : 705 / 749 / 705
+Alarm combination (1/2/3/5/7)      : 545 / 1048 / 322
+Memory allocation/free pair        : 364 / 383 / 353
+ISR Mailbox                        : 1681 / 1736 / 1681
+ISR Semaphore                      : 1630 / 1645 / 1630
+ISR Message queue                  : 1723 / 1739 / 1723
+ISR Blocking message queue         : 1818 / 1853 / 1818
+ISR RVM activation relay           : 2217 / 2304 / 2217
+
+GCC 13.2.1 -O3 (SysTick turned on, w/o FPU context)
+    ___   __  ___ ___
+   / _ \ /  |/  // _ \       Simple real-time kernel
+  / , _// /|_/ // ___/       Standard benchmark test
+ /_/|_|/_/  /_//_/
+====================================================
+Test (number in CPU cycles)        : AVG / MAX / MIN
+Yield                              : 231 / 246 / 231
+Mailbox                            : 391 / 417 / 391
+Semaphore                          : 336 / 357 / 336
+FIFO                               : 150 / 165 / 150
+Message queue                      : 484 / 522 / 484
+Blocking message queue             : 621 / 657 / 621
+Alarm combination (1/2/3/5/7)      : 550 / 1031 / 325
+Memory allocation/free pair        : 364 / 384 / 353
+ISR Mailbox                        : 1282 / 1332 / 1282
+ISR Semaphore                      : 1242 / 1263 / 1242
+ISR Message queue                  : 1327 / 1349 / 1327
+ISR Blocking message queue         : 1423 / 1441 / 1423
+ISR RVM activation relay           : 1981 / 2045 / 1979
 ******************************************************************************/
 
 /* Include *******************************************************************/
