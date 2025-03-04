@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <launchConfiguration type="com.ti.ccstudio.debug.launchType.device.debugging">
     <mapAttribute key="ccs.memoryview.format">
-        <mapEntry key="org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowser@#$Texas Instruments XDS100v3 USB Debug Probe_0/C28xx@#$0" value="16-Bit Hex - TI Style"/>
+        <mapEntry key="org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowser@#$Texas Instruments XDS100v3 USB Debug Probe_0/C28xx@#$0" value="Character"/>
+        <mapEntry key="org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowser@#$Texas Instruments XDS100v3 USB Debug Probe_0/C28xx@#$1" value="16-Bit Hex - C Style"/>
     </mapAttribute>
     <mapAttribute key="ccs.memoryview.pageexpr">
         <mapEntry key="org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowser@#$Texas Instruments XDS100v3 USB Debug Probe_0/C28xx" value="Program@@0x3D8000"/>
