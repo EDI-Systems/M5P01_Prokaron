@@ -64,7 +64,7 @@ Description : The header of "rmp_platform_m6502.c".
               The most famous/powerful mappers included:
               1. No mapper (iNES 000): Just the base FAMICOM.
               2. Nintendo MMC5 (iNES 005): The most powerful official mapper.
-              3. Konami VRC7 （iNES 085): The best graphics, and great music.
+              3. Konami VRC7 (iNES 085): The best graphics, and great music.
               4. Sunsoft 5B (iNES 069): The single best music ever.
               5. Namco(t) 163 (iNES 019): The most number of sound channels.
               ------------------------------------------------------------------
@@ -151,7 +151,7 @@ Description : The header of "rmp_platform_m6502.c".
               2. Have a catridge burner that could burn CHR/PRG catridges.
               3. Have a real FAMICOM/NES. Clones are not guaranteed to work.
               4. Have a monitor that accepts TV signal, or modify your FAMICOM
-                 so that it outputs AV， RGB or HDMI signals.
+                 so that it outputs AV, RGB or HDMI signals.
 ******************************************************************************/
 
 /* Define ********************************************************************/
