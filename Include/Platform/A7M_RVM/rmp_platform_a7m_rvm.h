@@ -81,9 +81,6 @@ typedef rmp_s32_t rmp_ret_t;
 /* FPU registers */
 #define RMP_FPU                         ((volatile struct RVM_A7M_Cop_Struct*)(RVM_REG->Cop))
 
-/* The virtual machine configs are here */
-#include "rvm_guest_conf.h"
-
 /* The CPU and application specific macros are here */
 #include "rmp_platform_a7m_rvm_conf.h"
 
@@ -171,6 +168,10 @@ RMP_EXTERN const rvm_ptr_t RVM_Desc[];
 
 /* Private Function **********************************************************/ 
 /*****************************************************************************/
+/* External print in process main file */
+#if(RVM_DBGLOG_ENABLE!=0U)
+RVM_EXTERN void RVM_Putchar(char Char);
+#endif
 /* Interrupts */
 static void RMP_PendSV_Handler(void);
 static void RMP_SysTick_Handler(void);
@@ -198,18 +199,18 @@ __RMP_EXTERN__ void RMP_Int_Disable(void);
 RMP_EXTERN void RVM_Virt_Int_Mask(void);
 RMP_EXTERN void RVM_Virt_Int_Unmask(void);
 
-RMP_EXTERN rvm_ptr_t _RMP_A7M_RVM_MSB_Get(rvm_ptr_t Value);
-RMP_EXTERN rvm_ptr_t _RMP_A7M_RVM_LSB_Get(rvm_ptr_t Value);
-RMP_EXTERN void _RMP_Start(rvm_ptr_t Entry,
-                           rvm_ptr_t Stack);
+RMP_EXTERN rmp_ptr_t _RMP_A7M_RVM_MSB_Get(rmp_ptr_t Value);
+RMP_EXTERN rmp_ptr_t _RMP_A7M_RVM_LSB_Get(rmp_ptr_t Value);
+RMP_EXTERN void _RMP_Start(rmp_ptr_t Entry,
+                           rmp_ptr_t Stack);
 RMP_EXTERN void _RMP_A7M_RVM_Yield(void);
 RMP_EXTERN void RVM_Virt_Yield(void);
 
 /* Initialization */
 __RMP_EXTERN__ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
-                                     rmp_ptr_t Size,
-                                     rmp_ptr_t Entry,
-                                     rmp_ptr_t Param);
+                                         rmp_ptr_t Size,
+                                         rmp_ptr_t Entry,
+                                         rmp_ptr_t Param);
 __RMP_EXTERN__ void _RMP_Lowlvl_Init(void);
 __RMP_EXTERN__ void RMP_Putchar(char Char);
 __RMP_EXTERN__ void _RMP_Plat_Hook(void);

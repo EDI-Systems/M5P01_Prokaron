@@ -97,9 +97,9 @@ f31    $ft11      temporary (caller-save)
 
 /* Import ********************************************************************/
     /* Linker-provided global data address */
-    .extern             _RVM_Global
+    .extern             __RVM_Global
     /* Linker-provided kernel stack address */
-    .extern             _RVM_Stack
+    .extern             __RVM_Stack
     /* The real task switch handling function */
     .extern             _RMP_Run_High
     /* The stack address of current thread */
@@ -221,11 +221,11 @@ Return      : None.
     SW                  a1,0*4(sp)
     .option             push
     .option             norelax
-    LA                  gp,_RVM_Global      /* Load gp for kernel - defined by linker script */
+    LA                  gp,__RVM_Global     /* Load gp for kernel - defined by linker script */
     .option             pop
     LA                  a0,RMP_SP_Cur       /* Save the sp to control block */
     SW                  sp,(a0)
-    LA                  sp,_RVM_Stack       /* Load sp for kernel - defined by linker script */
+    LA                  sp,__RVM_Stack      /* Load sp for kernel - defined by linker script */
     CALL                _RMP_Run_High       /* Get the highest ready task */
     LA                  a0,RMP_SP_Cur       /* Load the sp from control block */
     LW                  sp,(a0)

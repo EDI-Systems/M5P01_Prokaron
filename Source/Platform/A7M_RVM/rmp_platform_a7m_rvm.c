@@ -7,8 +7,7 @@ Description : The platform specific file for ARMv7-M on RVM hypervisor.
 ******************************************************************************/
 
 /* Include *******************************************************************/
-/* The virtual machine configs are here */
-#include "rvm_guest.h"
+#include "rvm.h"
 
 #define __HDR_DEF__
 #include "Platform/A7M_RVM/rmp_platform_a7m_rvm.h"
@@ -59,8 +58,8 @@ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
     Ctx->PC=Entry;
     Ctx->R0=Param;
 
-    /* Hypercall not active */
-    Ctx->Number=RVM_HYP_INVALID;
+    /* Hypercall default to spurious */
+    Ctx->Number=RVM_HYP_SPURIOUS;
 
     /* Fill the rest for ease of identification */
     Ctx->R1=0x01010101U;

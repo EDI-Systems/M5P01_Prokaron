@@ -114,8 +114,8 @@ ISR RVM activation relay           : 2348 / 3956 / 2284
 ******************************************************************************/
 
 /* Include *******************************************************************/
+#include "rvm.h"
 #include "rmp.h"
-#include "rvm_guest.h"
 
 #define RVM_TEST_VIRTUAL_INC
 #include "rvm_test.h"

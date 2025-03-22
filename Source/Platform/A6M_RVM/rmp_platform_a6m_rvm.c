@@ -7,6 +7,8 @@ Description : The platform specific file for Cortex-M on RVM hypervisor.
 ******************************************************************************/
 
 /* Include *******************************************************************/
+#include "rvm.h"
+
 #define __HDR_DEF__
 #include "Platform/A6M_RVM/rmp_platform_a6m_rvm.h"
 #include "Kernel/rmp_kernel.h"
@@ -23,9 +25,6 @@ Description : The platform specific file for Cortex-M on RVM hypervisor.
 #define __HDR_PUBLIC__
 #include "Kernel/rmp_kernel.h"
 #undef __HDR_PUBLIC__
-
-/* The virtual machine configs are here */
-#include "rvm_guest.h"
 /* End Include ***************************************************************/
 
 /* Function:_RMP_Stack_Init ***************************************************
@@ -59,8 +58,8 @@ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
     Ctx->PC=Entry;
     Ctx->R0=Param;
 
-    /* Hypercall not active */
-    Ctx->Number=RVM_HYP_INVALID;
+    /* Hypercall default to spurious */
+    Ctx->Number=RVM_HYP_SPURIOUS;
 
     /* Fill the rest for ease of identification */
     Ctx->R1=0x01010101U;

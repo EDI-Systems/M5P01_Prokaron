@@ -74,8 +74,8 @@ ISR RVM activation relay           : 1981 / 2045 / 1979
 ******************************************************************************/
 
 /* Include *******************************************************************/
+#include "rvm.h"
 #include "rmp.h"
-#include "rvm_guest.h"
 
 #define RVM_TEST_VIRTUAL_INC
 #include "rvm_test.h"

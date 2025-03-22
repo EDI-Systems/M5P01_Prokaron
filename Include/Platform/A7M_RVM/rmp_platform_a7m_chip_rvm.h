@@ -6,10 +6,6 @@ Licence    : The Unlicense; see LICENSE for details.
 Description: The configuration file for any virtualized ARMv7-M chip.
 ******************************************************************************/
 
-/* Include *******************************************************************/
-#include "rvm_guest.h"
-/* End Include ***************************************************************/
-
 /* Define ********************************************************************/
 /* Debugging */
 /* Assertion */

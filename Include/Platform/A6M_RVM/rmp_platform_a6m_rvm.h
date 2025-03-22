@@ -78,9 +78,6 @@ typedef rmp_s32_t rmp_ret_t;
 #define RMP_MSB_GET(VAL)                RMP_MSB_Generic(VAL)
 #define RMP_LSB_GET(VAL)                RMP_LSB_Generic(VAL)
 
-/* The virtual machine configs are here */
-#include "rvm_guest_conf.h"
-
 /* The CPU and application specific macros are here */
 #include "rmp_platform_a6m_rvm_conf.h"
 
@@ -168,6 +165,10 @@ RMP_EXTERN const rvm_ptr_t RVM_Desc[];
 
 /* Private Function **********************************************************/ 
 /*****************************************************************************/
+/* External print in process main file */
+#if(RVM_DBGLOG_ENABLE!=0U)
+RVM_EXTERN void RVM_Putchar(char Char);
+#endif
 /* Interrupts */
 static void RMP_PendSV_Handler(void);
 static void RMP_SysTick_Handler(void);
@@ -195,8 +196,8 @@ __RMP_EXTERN__ void RMP_Int_Disable(void);
 RMP_EXTERN void RVM_Virt_Int_Mask(void);
 RMP_EXTERN void RVM_Virt_Int_Unmask(void);
 
-RMP_EXTERN void _RMP_Start(rvm_ptr_t Entry,
-                           rvm_ptr_t Stack);
+RMP_EXTERN void _RMP_Start(rmp_ptr_t Entry,
+                           rmp_ptr_t Stack);
 RMP_EXTERN void _RMP_A6M_RVM_Yield(void);
 RMP_EXTERN void RVM_Virt_Yield(void);
 

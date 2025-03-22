@@ -79,11 +79,7 @@ typedef rmp_s32_t rmp_ret_t;
 #define RMP_LSB_GET(VAL)                RMP_LSB_Generic(VAL)
 
 /* FPU registers */
-#define RMP_FPU_RVF                     ((volatile struct RVM_RV32P_RVF_Struct*)(RVM_REG->Cop))
-#define RMP_FPU_RVD                     ((volatile struct RVM_RV32P_RVD_Struct*)(RVM_REG->Cop))
-
-/* The virtual machine configs are here */
-#include "rvm_guest_conf.h"
+#define RMP_FPU                         ((volatile struct RVM_RV32P_Cop_Struct*)(RVM_REG->Cop))
 
 /* The CPU and application specific macros are here */
 #include "rmp_platform_rv32p_rvm_conf.h"
@@ -194,6 +190,10 @@ RMP_EXTERN const rvm_ptr_t RVM_Desc[];
 
 /* Private Function **********************************************************/ 
 /*****************************************************************************/
+/* External print in process main file */
+#if(RVM_DBGLOG_ENABLE!=0U)
+RVM_EXTERN void RVM_Putchar(char Char);
+#endif
 /* Interrupts */
 static void RMP_Ctx_Handler(void);
 static void RMP_Tim_Handler(void);
@@ -209,7 +209,7 @@ static void RMP_Tim_Handler(void);
 #endif
 
 /*****************************************************************************/
-RMP_EXTERN rmp_ptr_t _RVM_Global;
+RMP_EXTERN rmp_ptr_t __RVM_Global;
 /*****************************************************************************/
 
 /* End Public Variable *******************************************************/
@@ -219,10 +219,13 @@ RMP_EXTERN rmp_ptr_t _RVM_Global;
 /* Interrupts */
 __RMP_EXTERN__ void RMP_Int_Enable(void);
 __RMP_EXTERN__ void RMP_Int_Disable(void);
+RMP_EXTERN void RVM_Virt_Int_Mask(void);
+RMP_EXTERN void RVM_Virt_Int_Unmask(void);
 
 RMP_EXTERN void _RMP_Start(rmp_ptr_t Entry,
                            rmp_ptr_t Stack);
 RMP_EXTERN void _RMP_RV32P_RVM_Yield(void);
+RMP_EXTERN void RVM_Virt_Yield(void);
 
 /* Platform specific */
 RMP_EXTERN void _RMP_RV32P_RVM_Yield_NONE(void);
