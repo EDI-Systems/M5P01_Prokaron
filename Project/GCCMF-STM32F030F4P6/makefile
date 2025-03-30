@@ -27,7 +27,7 @@ INCS+=-I.
 INCS+=-I../../Include
 INCS+=-I../../../M0A00_Library/STM32Cube_FW_F0_V1.9.0/Drivers/CMSIS/Include
 INCS+=-I../../../M0A00_Library/STM32Cube_FW_F0_V1.9.0/Drivers/CMSIS/Device/ST/STM32F0xx/Include
-INCS+=-I../../../M0A00_Library/STM32Cube_FW_F0_V1.9.0/Drivers/STM32F0xx_haL_Driver/Inc
+INCS+=-I../../../M0A00_Library/STM32Cube_FW_F0_V1.9.0/Drivers/STM32F0xx_HAL_Driver/Inc
 INCS+=-I../../../M0A00_Library/STM32Cube_FW_F0_V1.9.0/Drivers/STM32F0xx_HAL_Driver/Inc/Conf
 
 CSRCS+=../../Source/Kernel/rmp_kernel.c
