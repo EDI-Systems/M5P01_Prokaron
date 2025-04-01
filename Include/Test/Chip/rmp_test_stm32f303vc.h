@@ -1,7 +1,7 @@
 /******************************************************************************
 Filename    : rmp_test_stm32f405rg.h
 Author      : zzx
-Date        : 30/03/2025
+Date        : 01/04/2025
 Licence     : The Unlicense; see LICENSE for details.
 Description : The testbench for STM32F405RG.
 
@@ -12,18 +12,18 @@ GCC 13.2.0 -O3 (SysTick turned on)
  /_/|_|/_/  /_//_/
 ====================================================
 Test (number in CPU cycles)        : AVG / MAX / MIN
-Yield                              : 467 / 696 / 460
-Mailbox                            : 1011 / 1236 / 996
-Semaphore                          : 828 / 1048 / 816
-FIFO                               : 508 / 740 / 500
-Message queue                      : 1291 / 1512 / 1272
-Blocking message queue             : 1779 / 1988 / 1752
-Alarm combination (1/2/3/5/7)      : 1835 / 3544 / 1096
-Memory allocation/free pair        : 975 / 1042 / 932
-ISR Mailbox                        : 870 / 1100 / 860
-ISR Semaphore                      : 799 / 1020 / 780
-ISR Message queue                  : 1073 / 1304 / 1060
-ISR Blocking message queue         : 1369 / 1600 / 1352
+Yield                              : 229 / 340 / 226
+Mailbox                            : 487 / 596 / 480
+Semaphore                          : 413 / 522 / 408
+FIFO                               : 247 / 360 / 244
+Message queue                      : 637 / 748 / 628
+Blocking message queue             : 875 / 980 / 862
+Alarm combination (1/2/3/5/7)      : 916 / 1786 / 536
+Memory allocation/free pair        : 482 / 520 / 458
+ISR Mailbox                        : 432 / 538 / 422
+ISR Semaphore                      : 382 / 494 / 378
+ISR Message queue                  : 508 / 616 / 502
+ISR Blocking message queue         : 660 / 766 / 648
 ******************************************************************************/
 
 /* Include *******************************************************************/
@@ -32,7 +32,7 @@ ISR Blocking message queue         : 1369 / 1600 / 1352
 
 /* Define ********************************************************************/
 /* Counter read wrapper */
-#define RMP_CNT_READ()      ((rmp_tim_t)((TIM2->CNT)<<1))
+#define RMP_CNT_READ()      ((rmp_tim_t)TIM2->CNT)
 /* Memory pool test switch */
 #define TEST_MEM_POOL       (8192U)
 /* Minimal build switch */
