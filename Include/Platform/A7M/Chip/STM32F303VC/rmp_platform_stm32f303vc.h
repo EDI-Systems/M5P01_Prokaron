@@ -60,7 +60,7 @@ do \
     RCC_OscInitTypeDef RCC_OscInitStruct; \
     UART_HandleTypeDef UART1_Handle; \
     GPIO_InitTypeDef GPIO_Init; \
-	HAL_Init(); \
+    HAL_Init(); \
     RMP_Clear(&RCC_ClkInitStruct, sizeof(RCC_ClkInitStruct)); \
     RMP_Clear(&RCC_OscInitStruct, sizeof(RCC_OscInitStruct)); \
     RMP_Clear(&UART1_Handle, sizeof(UART_HandleTypeDef)); \
@@ -69,7 +69,7 @@ do \
     /* Enable HSE Oscillator and activate PLL with HSE as source */ \
     RCC_OscInitStruct.OscillatorType=RCC_OSCILLATORTYPE_HSE; \
     RCC_OscInitStruct.HSEState=RCC_HSE_ON; \
-	RCC_OscInitStruct.HSEPredivValue = RCC_HSE_PREDIV_DIV1; \
+    RCC_OscInitStruct.HSEPredivValue = RCC_HSE_PREDIV_DIV1; \
     RCC_OscInitStruct.PLL.PLLState=RCC_PLL_ON; \
     RCC_OscInitStruct.PLL.PLLSource=RCC_PLLSOURCE_HSE; \
     RCC_OscInitStruct.PLL.PLLMUL=RCC_PLL_MUL9; \
@@ -82,7 +82,7 @@ do \
     RCC_ClkInitStruct.APB1CLKDivider=RCC_HCLK_DIV2; \
     RCC_ClkInitStruct.APB2CLKDivider=RCC_HCLK_DIV1; \
     HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2); \
-	__HAL_FLASH_PREFETCH_BUFFER_ENABLE(); \
+    __HAL_FLASH_PREFETCH_BUFFER_ENABLE(); \
     /* Enable USART 1 for user-level operations */ \
     /* Clock enabling */ \
     __HAL_RCC_GPIOC_CLK_ENABLE(); \

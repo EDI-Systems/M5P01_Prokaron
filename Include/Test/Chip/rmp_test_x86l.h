@@ -6,7 +6,7 @@ Licence     : The Unlicense; see LICENSE for details.
 Description : The testbench for linux OS. This is not particularly fast due to
               system emulation, and thus suffers a long run time. It can take
               30000 clock cycles to do a context switch and send operations can
-              take up to 130000 cycles. Additionall,, the itimer is not accurate
+              take up to 130000 cycles. Additionally, the itimer is not accurate
               for time as little as 1ms. Expect a run of 2-3 minutes.
 ******************************************************************************/
 

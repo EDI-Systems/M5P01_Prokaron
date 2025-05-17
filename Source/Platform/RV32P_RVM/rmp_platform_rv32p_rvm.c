@@ -131,7 +131,7 @@ void _RMP_Plat_Hook(void)
      * ALL VMs are guaranteed to have three entries: Vector, User and Stub */
     RVM_ASSERT(RVM_Desc[0]==RVM_MAGIC_VIRTUAL);
     RVM_ASSERT(RVM_Desc[1]==3U);
-    /* Enable interrupt, we've finished all initialization */
+    /* Scheduler lock implemented with interrupt masking */
     RVM_Hyp_Int_Ena();
 }
 /* End Function:_RMP_Plat_Hook ***********************************************/
