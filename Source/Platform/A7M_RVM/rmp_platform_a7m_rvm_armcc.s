@@ -175,7 +175,7 @@ _RMP_A7M_RVM_LSB_Get    PROC
                         
     ;Exception unstacking for basic frame:
     ;The original sequence is [PAD] [FPU] XPSR PC LR R12 R3-R0. This is not
-    ;ideal for manual restoring, because restoring PC and SP simulaneously
+    ;ideal for manual restoring, because restoring PC and SP simultaneously
     ;must be the last step. Thus, we need to transform it.
     ;1. When there is [PAD] or [FPU]:
     ;   Original    : [PAD] [FPU]  XPSR PC LR   R12 R3  - R0

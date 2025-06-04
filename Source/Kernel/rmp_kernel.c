@@ -10,9 +10,11 @@ Description : The RMP RTOS single-file kernel.
               control over this.
               The white-box coverage of 100% of all kernel branches have been
               reached. Formal verification in progress.
+              
               Use of 'volatile': we make every data structure volatile so all 
               memory reads and writes to potentially shared structures are 
-              strongly ordered from a compiler perspective. This DOES decrease
+              fully deoptimized from a compiler perspective. This is equivalent
+              to always accessing them using volatile pointers and DOES decrease
               performance, but can survive smart LTOs without manually adding
               barriers. The kernel is written such that all frequently read data
               is a copy of the global data, so the performance loss is mild.
@@ -4459,9 +4461,18 @@ rmp_ret_t RMP_Fifo_Del(volatile struct RMP_Fifo* Fifo)
 /* End Function:RMP_Fifo_Del *************************************************/
 
 /* Function:RMP_Fifo_Read *****************************************************
-Description : Read an element from a FIFO.
+Description : Read an element from a FIFO. The node read should to be declared
+              volatile because it might be changed by another thread. Some may
+              argue that data dependency is sufficient to guarantee a reload
+              (the pointer is assigned before the data can be accessed anyway,
+              and sender usually won't write to the message once it enters
+              the queue), but we still make it volatile here to indicates that
+              the message structure is shared between threads, and also to deal
+              with rare cases where the sender modifies the message when it is
+              received or on the fly.
+              Msgq and Bmq are built upon FIFO and the reason above also apply.
 Input       : volatile struct RMP_Fifo* Fifo - The pointer to the FIFO.
-Output      : struct RMP_List** Node - The node read.
+Output      : volatile struct RMP_List** Node - The node read.
 Return      : rmp_ret_t - If successful, 0; or an error code.
 ******************************************************************************/
 rmp_ret_t RMP_Fifo_Read(volatile struct RMP_Fifo* Fifo,
@@ -4842,6 +4853,7 @@ rmp_ret_t RMP_Msgq_Del(volatile struct RMP_Msgq* Queue)
 /* Function:RMP_Msgq_Snd ******************************************************
 Description : Send a message to the message queue.
 Input       : volatile struct RMP_Msgq* Queue - The pointer to the queue.
+              volatile struct RMP_List* Node - The node to put into the queue.
 Output      : None.
 Return      : rmp_ret_t - If successful, 0; or an error code.
 ******************************************************************************/
@@ -4927,6 +4939,7 @@ Description : Send a message to the message queue. This function can only be
               We do not check whether the scheduler is locked; if we are calling
               this function, we're pretty sure that it's not.
 Input       : volatile struct RMP_Msgq* Queue - The pointer to the queue.
+              volatile struct RMP_List* Node - The node to put into the queue.
 Output      : None.
 Return      : rmp_ret_t - If successful, 0; or an error code.
 ******************************************************************************/
@@ -5283,6 +5296,7 @@ rmp_ret_t RMP_Bmq_Del(volatile struct RMP_Bmq* Queue)
 /* Function:RMP_Bmq_Snd *******************************************************
 Description : Send to a blocking message queue.
 Input       : volatile struct RMP_Bmq* Queue - The pointer to the queue.
+              volatile struct RMP_List* Node - The node to put into the queue.
               rmp_ptr_t Slice - The number of slices to wait.
 Output      : None.
 Return      : rmp_ret_t - If successful, 0; or an error code.
@@ -5388,6 +5402,7 @@ Description : Send to a blocking message queue. Different from the normal
               not check whether the scheduler is locked; if we are calling this
               function, we're pretty sure that it's not.
 Input       : volatile struct RMP_Bmq* Queue - The pointer to the queue.
+              volatile struct RMP_List* Node - The node to put into the queue.
 Output      : None.
 Return      : rmp_ret_t - If successful, 0; or an error code.
 ******************************************************************************/

@@ -131,7 +131,7 @@ Return      : None.
 
     /* Exception unstacking for basic frame:
      * The original sequence is [PAD] XPSR PC LR R12 R3-R0. This is not
-     * ideal for manual restoring, because restoring PC and SP simulaneously
+     * ideal for manual restoring, because restoring PC and SP simultaneously
      * must be the last step. Thus, we need to transform it.
      * 1. When there is [PAD]:
      *    Original    : [PAD] XPSR PC   LR      R12 R3  - R0
