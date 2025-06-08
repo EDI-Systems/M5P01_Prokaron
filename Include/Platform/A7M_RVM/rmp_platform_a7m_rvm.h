@@ -203,7 +203,9 @@ RMP_EXTERN rmp_ptr_t _RMP_A7M_RVM_MSB_Get(rmp_ptr_t Value);
 RMP_EXTERN rmp_ptr_t _RMP_A7M_RVM_LSB_Get(rmp_ptr_t Value);
 RMP_EXTERN void _RMP_Start(rmp_ptr_t Entry,
                            rmp_ptr_t Stack);
-RMP_EXTERN void _RMP_A7M_RVM_Yield(void);
+RMP_EXTERN void _RMP_A7M_RVM_Yield_Swt(void);
+__RMP_EXTERN__ void _RMP_A7M_RVM_Yield_Err(void);
+__RMP_EXTERN__ void _RMP_A7M_RVM_Yield(void);
 RMP_EXTERN void RVM_Virt_Yield(void);
 
 /* Initialization */

@@ -31,6 +31,8 @@ The ARM Cortex-M4/7 also include a FPU.
     .extern             RVM_Virt_Int_Unmask
     /* Hypercall parameter space */
     .extern             RVM_Usr_Param
+    /* Wrong ICI/IT bits in fast context switch */
+    .extern             _RMP_A7M_RVM_Yield_Err
 /* End Import ****************************************************************/
 
 /* Export ********************************************************************/
@@ -40,7 +42,7 @@ The ARM Cortex-M4/7 also include a FPU.
     .global             _RMP_A7M_RVM_MSB_Get
     .global             _RMP_A7M_RVM_LSB_Get
     /* Fast-path context switching without invoking the RVM */
-    .global             _RMP_A7M_RVM_Yield
+    .global             _RMP_A7M_RVM_Yield_Swt
 /* End Export ****************************************************************/
 
 /* Header ********************************************************************/
@@ -88,7 +90,7 @@ _RMP_A7M_RVM_LSB_Get:
     BX                  LR
 /* End Function:_RMP_A7M_RVM_LSB_Get *****************************************/
 
-/* Function:_RMP_A7M_RVM_Yield ************************************************
+/* Function:_RMP_A7M_RVM_Yield_Swt ********************************************
 Description : Switch from user code to another thread, rather than from the 
               interrupt handler. Need to masquerade the context well so that
               it may be recovered from the interrupt handler as well.
@@ -192,6 +194,9 @@ Return      : None.
     LDR                 LR,[SP,#4*5]        /* Restore LR */
     POP                 {R0}                /* Load R0/XPSR/PC into R0/R1/R2 */
     LDR                 R1,[SP,#4*6]
+    LDR                 R12,=0x0600FC00     /* Detect dirty XPSR ICI/IT on the fly */
+    TST                 R1,R12
+    BNE                 _RMP_A7M_RVM_Yield_Err
     AND                 R1,#0xFFFFFDFF      /* Clear XPSR[9] */
     LDR                 R2,[SP,#4*5]        
     ORR                 R2,#0x00000001      /* Set PC[0] */
@@ -209,7 +214,7 @@ Return      : None.
 
 /* User-level Context Switch *************************************************/
     .thumb_func
-_RMP_A7M_RVM_Yield:
+_RMP_A7M_RVM_Yield_Swt:
     PUSH                {R0}                /* Protect R0 and XPSR */
     MRS                 R0,XPSR
     PUSH                {R0}
@@ -250,7 +255,7 @@ Stk_Basic_Done:
     LDMIA               R0,{R1-R5}
     PUSH                {R1-R5}
 
-    BL                  RVM_Virt_Int_Mask   /* Mask interrupts */
+    /* BL                  RVM_Virt_Int_Mask   Mask interrupts - masked externally */
     LDR                 R1,=RMP_SP_Cur      /* Save the SP to control block */
     STR                 SP,[R1]
     BL                  _RMP_Run_High       /* Get the highest ready task */
@@ -291,7 +296,7 @@ Uns_Extend_Unalign:                         /* Unaligned stack */
 
 _RMP_A7M_Skip:
     BX                  LR
-/* End Function:_RMP_A7M_RVM_Yield *******************************************/
+/* End Function:_RMP_A7M_RVM_Yield_Swt ***************************************/
     .end
 /* End Of File ***************************************************************/
 

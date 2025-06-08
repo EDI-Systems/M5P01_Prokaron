@@ -649,6 +649,7 @@ __RMP_EXTERN__ rmp_ret_t RMP_Thd_Resume(volatile struct RMP_Thd* Thread);
 __RMP_EXTERN__ rmp_ret_t RMP_Thd_Delay(rmp_ptr_t Slice);
 __RMP_EXTERN__ rmp_ret_t RMP_Thd_Cancel(volatile struct RMP_Thd* Thread);
 __RMP_EXTERN__ void RMP_Thd_Loop(rmp_ptr_t Loop);
+__RMP_EXTERN__ volatile struct RMP_Thd* RMP_Thd_Peek_ISR(void);
 
 __RMP_EXTERN__ rmp_ret_t RMP_Thd_Snd(volatile struct RMP_Thd* Thread,
                                      rmp_ptr_t Data,

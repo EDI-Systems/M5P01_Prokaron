@@ -283,6 +283,74 @@ void RMP_SysTick_Handler(void)
 }
 /* End Function:RMP_SysTick_Handler ******************************************/
 
+/* Function:_RMP_A7M_RVM_Yield ************************************************
+Description : Switch from user code to another thread, rather than from the 
+              interrupt handler. This was supposed to be full assembly code,
+              but we need to peek the next thread and possibly continue (rather
+              than restart) the ICI/IT instruction leftovers (IT blocks, LDMs, 
+              STMs, VLDMs, VSTMs, or even multi-cycle multiplications) through
+              the slow interrupt-based path. An alternative to this would be to
+              complete all possible instruction leftovers manually, which is off
+              the maintainability limits.
+              This fix does not impact the Cortex-M0+ because it always abandon
+              LDM/STMs and does not have IT blocks. as a consequence, all of its
+              operations are fully restartable.
+Input       : None.
+Output      : None.
+Return      : None.
+******************************************************************************/
+void _RMP_A7M_RVM_Yield(void)
+{
+    volatile struct RMP_Thd* Thread;
+    volatile struct RMP_A7M_RVM_Stack* Stack;
+    
+    RVM_Virt_Int_Mask();
+    
+    /* Find the next thread that will be scheduled */
+    Thread=RMP_Thd_Peek_ISR();
+    if(Thread!=RMP_Thd_Cur)
+    {
+        Stack=(volatile struct RMP_A7M_RVM_Stack*)(Thread->Stack);
+        
+        /* Skip OS-managed FPU registers if we do have any */
+        if((Stack->LR_EXC&0x00000010U)==0U)
+        {
+            RMP_COV_MARKER();
+            
+            Stack=(volatile struct RMP_A7M_RVM_Stack*)(Thread->Stack+16U*sizeof(rvm_ptr_t));
+        }
+        
+        /* See if the xPSR have ICI/IT bits set. If so, it can only be correctly restored
+         * by an exception return, otherwise we risk corrputing program logic or stack. */
+        if((Stack->XPSR&0x0600FC00U)!=0U)
+        {
+            RVM_Virt_Int_Unmask();
+            RVM_Virt_Yield();
+        }
+        /* The fast yield routine will unmask interrupts in the end */
+        else
+            _RMP_A7M_RVM_Yield_Swt();
+    }
+    else
+        RVM_Virt_Int_Unmask();
+}
+/* End Function:_RMP_A7M_RVM_Yield *******************************************/
+
+/* Function:_RMP_A7M_RVM_Yield_Err ********************************************
+Description : Report XPSR ICI/IT-related errors when the fast yield path is
+              attempted with these bits set, indicating an interrupted long
+              instruction.
+Input       : None.
+Output      : None.
+Return      : None.
+******************************************************************************/
+void _RMP_A7M_RVM_Yield_Err(void)
+{
+    RMP_DBG_S("Attempted to fast yield to a thread with dirty XPSR ICI/IT.\r\n");
+    RMP_ASSERT(0);
+}
+/* End Function:_RMP_A7M_RVM_Yield_Err ***************************************/
+
 /* End Of File ***************************************************************/
 
 /* Copyright (C) Evo-Devo Instrum. All rights reserved ***********************/

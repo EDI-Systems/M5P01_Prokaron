@@ -169,7 +169,7 @@ void Int_Init(void)
     RMP_ASSERT(RVM_RV32P_Int_Local_Mod(KFN_INT_LOCAL_MOD,46U,
                                        RVM_RV32P_KFN_INT_LOCAL_MOD_PRIO_SET,0xFFU)==0);
     /* Interrupt generation is initialized too, here we only register our handler */
-    RVM_Virt_Vct_Reg(2U,Int_Handler);
+    RVM_Virt_Vct_Reg(2U,Int_Handler,RVM_VCT_MASKABLE);
     
     /* TIM4 clock = CPU clock */
     RCC_APB1PCENR|=RCC_APB1PCENR_TIM4;
@@ -196,7 +196,7 @@ void Int_Disable(void)
     RMP_ASSERT(RVM_RV32P_Int_Local_Mod(KFN_INT_LOCAL_MOD,46U,
                                        RVM_RV32P_KFN_INT_LOCAL_MOD_STATE_SET,0U)==0);
     /* Reverse registration */
-    RVM_Virt_Vct_Reg(2U,RMP_NULL);
+    RVM_Virt_Vct_Reg(2U,RMP_NULL,RVM_VCT_MASKABLE);
 }
 #endif
 /* End Function:Int_Disable **************************************************/

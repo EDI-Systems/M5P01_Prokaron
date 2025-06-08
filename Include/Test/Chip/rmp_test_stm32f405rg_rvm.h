@@ -208,7 +208,7 @@ void Int_Init(void)
     RMP_ASSERT(RVM_A7M_Int_Local_Mod(KFN_INT_LOCAL_MOD,30U,
                                      RVM_A7M_KFN_INT_LOCAL_MOD_PRIO_SET,0xFFU)==0);
     /* Interrupt generation is initialized too, here we only register our handler */
-    RVM_Virt_Vct_Reg(2U,Int_Handler);
+    RVM_Virt_Vct_Reg(2U,Int_Handler,RVM_VCT_MASKABLE);
     
     /* TIM4 clock = 1/2 CPU clock */
     TIM4_CR1=TIM_COUNTERMODE_DOWN|TIM_CLOCKDIVISION_DIV1;
@@ -233,7 +233,7 @@ void Int_Disable(void)
     /* Disable interrupt */
     RMP_ASSERT(RVM_A7M_Int_Local_Mod(KFN_INT_LOCAL_MOD,30U,RVM_A7M_KFN_INT_LOCAL_MOD_STATE_SET,0U)==0);
     /* Reverse registration */
-    RVM_Virt_Vct_Reg(2U,RMP_NULL);
+    RVM_Virt_Vct_Reg(2U,RMP_NULL,RVM_VCT_MASKABLE);
 }
 #endif
 /* End Function:Int_Disable **************************************************/
