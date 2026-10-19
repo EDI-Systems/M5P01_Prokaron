@@ -778,7 +778,8 @@ void Func_2(void)
 #endif
     
     /* Test stop - Decide whether to exit, or keep dumping counter values
-     * to detect potentially wrong timer clock rate configurations */
+     * to detect potentially wrong timer clock configurations; simply divide
+     * 655.36 by the overflow interval in seconds to obtain CPU clock rate */
 #ifdef TEST_EXIT
     Test_Exit();
 #else
