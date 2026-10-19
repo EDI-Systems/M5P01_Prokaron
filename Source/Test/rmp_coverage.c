@@ -1,6 +1,6 @@
 /******************************************************************************
 Filename    : rmp_coverage.c
-Author      : pry, zk (zhang kai); LLM (GLM-5.2)
+Author      : pry, zk (zhang kai); ChatGLM
 Date        : 22/07/2017
 Licence     : The Unlicense; see LICENSE for details.
 Description : The white-box coverage test for RMP. Instead of firing interrupts,
@@ -10,6 +10,7 @@ Description : The white-box coverage test for RMP. Instead of firing interrupts,
 
 /* Include *******************************************************************/
 #include "rmp.h"
+#include "rmp_test.h"
 /* End Include ***************************************************************/
 
 /* Define ********************************************************************/
@@ -53,10 +54,10 @@ volatile struct RMP_Thd Thd_2;
  * (SEMBLK/SEMDLY states) */
 volatile struct RMP_Sem Sem_1;
 /* Extended kernel objects */
-/* FIFO used directly by Cov_Fifo_Msgq, and also the embedded FIFO
+/* FIFO used directly by Cov_Fifo, and also the embedded FIFO
  * whose state is forced to RMP_FIFO_FREE to make RMP_Msgq_Rcv fail */
 volatile struct RMP_Fifo Fifo_1;
-/* Message queue used by Cov_Fifo_Msgq; its State and Sem.State are
+/* Message queue used by Cov_Msgq; its State and Sem.State are
  * forcibly corrupted to reach the internal error branches */
 volatile struct RMP_Msgq Msgq_1;
 /* Blocking message queue used by Cov_Bmq; its Msgq and Sem members are
@@ -68,6 +69,13 @@ volatile struct RMP_Bmq Bmq_1;
  * exercise the TL2F allocator's FLI/SLI paths; TEST_MEM_POOL-sized requests
  * refer to the same array */
 volatile rmp_ptr_t Pool[4096];
+/* The alarm manager and alarms used by Cov_Amgr */
+volatile struct RMP_Amgr Amgr_1;
+volatile struct RMP_Alrm Alrm_1;
+volatile struct RMP_Alrm Alrm_2;
+volatile struct RMP_Alrm Alrm_3;
+volatile rmp_ptr_t Alrm_1_Cnt=0U;
+volatile rmp_ptr_t Alrm_2_Cnt=0U;
 /* End Global ****************************************************************/
 
 /* Function:Cov_Bit ***********************************************************
@@ -111,16 +119,16 @@ Return      : None.
 void Cov_Print(void)
 {
     /* Int-print: tests the Int==0 early-return branch */
-    RMP_Int_Print;
+    RMP_Int_Print(0);
     /* Int-print: tests the Int<0 negative branch and the multi-digit loop */
     RMP_Int_Print(-1);
     /* Int-print: tests the single-digit positive path */
-    RMP_Int_Print;
+    RMP_Int_Print(7);
     /* Int-print: tests a three-digit positive number */
-    RMP_Int_Print;
+    RMP_Int_Print(123);
     /* Int-print: tests a large positive number with more loop iterations */
-    RMP_Int_Print;
-    RMP_ASSERT(RMP_Str_Print("\r\n")==2U);
+    RMP_Int_Print(12345);
+    RMP_ASSERT(RMP_Str_Print((const rmp_s8_t*)"\r\n")==2U);
 
     /* Hex-print: tests the Uint==0 early-return branch */
     RMP_Hex_Print(0U);
@@ -128,13 +136,13 @@ void Cov_Print(void)
     RMP_Hex_Print(0x12345678UL);
     /* Hex-print: tests the hex letter (A-F) branch */
     RMP_Hex_Print(0xABCDEF12UL);
-    RMP_ASSERT(RMP_Str_Print("\r\n")==2U);
+    RMP_ASSERT(RMP_Str_Print((const rmp_s8_t*)"\r\n")==2U);
 
     /* Str-print: tests the normal loop and its break-on-NUL branch */
-    RMP_ASSERT(RMP_Str_Print("Hello, World!")==13U);
+    RMP_ASSERT(RMP_Str_Print((const rmp_s8_t*)"Hello, World!")==13U);
     /* Str-print: tests the loop bound against overlong strings */
-    RMP_ASSERT(RMP_Str_Print(STR STR STR STR STR STR)==RMP_DEBUG_PRINT_MAX);
-    RMP_ASSERT(RMP_Str_Print("\r\n")==2U);
+    RMP_ASSERT(RMP_Str_Print((const rmp_s8_t*)(STR STR STR STR STR STR))==RMP_DBGLOG_MAX);
+    RMP_ASSERT(RMP_Str_Print((const rmp_s8_t*)"\r\n")==2U);
 }
 /* End Function:Cov_Print ****************************************************/
 
@@ -146,6 +154,9 @@ Return      : None.
 ******************************************************************************/
 void Cov_Lock(void)
 {
+    /* Yield: unlocked yield switches back to ourself (round-robin requeue) */
+    RMP_Thd_Yield();
+
     /* Sched-lock: sets the lock count to 1 */
     RMP_Sched_Lock();
     /* Sched-unlock: tests the count==1, no-pending-yield branch */
@@ -163,30 +174,111 @@ void Cov_Lock(void)
     /* Sched-lock: holds the scheduler locked across a yield request */
     RMP_Sched_Lock();
     /* Yield: pends a scheduler activation while the lock is held */
-    RMP_Yield();
+    RMP_Thd_Yield();
     /* Sched-unlock: tests the count==1, pending-yield branch */
     RMP_Sched_Unlock();
 }
 /* End Function:Cov_Lock *****************************************************/
 
-/* Function:Cov_Thd_Param *****************************************************
-Description : Thread simple parameter tests.
-Input       : None
+/* Function:Cov_Tim ***********************************************************
+Description : Test the timer helper routines. These are normally only
+              used by tickless kernels, but they are plain functions
+              and are called directly here for coverage.
+Input       : None.
 Output      : None.
-Return      : None
+Return      : None.
 ******************************************************************************/
 void Cov_Thd_Param_Delay_Func(void)
 {
-    /* Thd-delay: blocks the test thread on the delay list, wakeup path */
-    RMP_Thd_Delay(10000U);
-    while;
+    while(1)
+    {
+        RMP_Thd_Delay(10000U);
+    }
 }
 
+void Cov_Thd_Param_Spin_Func(void)
+{
+    while(1);
+}
+
+void Cov_Tim(void)
+{
+    volatile rmp_ptr_t Timeout_Bkp;
+
+    /* Tim-idle: nothing delays and only the init thread is at prio 0.
+     * Note that the "Run[0] head is not the init thread" branch inside
+     * _RMP_Tim_Idle is covered at the end of this function: it requires
+     * the init thread to be round-robined to the tail of its priority
+     * level. The init thread is born at the head of level 0 and every
+     * other thread is inserted behind it, so the only way to move it is
+     * the dispatcher's timeslice rotation (_RMP_Run_High). Coverage
+     * builds shrink the init timeslice to 1 (RMP_INIT_SLICE), so this
+     * takes just one tick with a ready prio-0 companion, instead of the
+     * full 65500-slice quanta of normal builds. */
+    RMP_USE(_RMP_Tim_Idle());
+    /* Tim-future: the delay queue is empty */
+    RMP_USE(_RMP_Tim_Future());
+
+    /* Thd-crt: a delayed worker parks itself in the delay queue */
+    PASS(RMP_Thd_Crt(&Thd_1, Cov_Thd_Param_Delay_Func, RMP_NULL, Stack_1, sizeof(Stack_1), PRIO_HIGHER, 10U));
+    /* (the worker preempts and parks itself in the delay queue) */
+
+    /* Tim-future: a delay is pending, far in the future */
+    RMP_USE(_RMP_Tim_Future());
+    /* Tim-idle: a delay is pending */
+    RMP_USE(_RMP_Tim_Idle());
+
+    /* Corrupt the timeout into the recent past: the overflow path */
+    Timeout_Bkp=Thd_1.Timeout;
+    Thd_1.Timeout=RMP_Timestamp-1U;
+    RMP_USE(_RMP_Tim_Future());
+    /* Corrupt the timeout into the near future: closer than our slice */
+    Thd_1.Timeout=RMP_Timestamp+2U;
+    RMP_USE(_RMP_Tim_Future());
+    Thd_1.Timeout=Timeout_Bkp;
+
+    PASS(RMP_Thd_Del(&Thd_1));
+
+    /* Thd-crt: a worker queued at the same level as the init thread */
+    PASS(RMP_Thd_Crt(&Thd_1, Cov_Thd_Param_Delay_Func, RMP_NULL, Stack_1, sizeof(Stack_1), 0U, 10U));
+    /* (does not preempt: prio 0 is below ours) */
+    /* Tim-idle: the init level now has another thread queued behind */
+    RMP_USE(_RMP_Tim_Idle());
+    PASS(RMP_Thd_Del(&Thd_1));
+
+    /* Tim-idle: move the init thread off the head of priority level 0.
+     * Create a prio-0 worker that busy-spins (never blocks), then park
+     * this thread for a few ticks: the init thread runs as the head of
+     * level 0, expires its timeslice (1 slice in coverage builds, see
+     * RMP_INIT_SLICE), and is round-robined to the tail by the dispatcher
+     * (_RMP_Run_High), leaving the spinning worker at the head. When we
+     * wake up (prio 3 preempts prio 0 without rotating it), _RMP_Tim_Idle
+     * finally sees a non-init head. The worker must spin instead of
+     * delaying: a delaying worker would leave the run queue on its first
+     * dispatch, putting the init thread back at the head before we wake.
+     * Its timeslice (100) must also outlast our parking window (3 ticks)
+     * so that the worker itself never gets rotated to the tail. */
+    PASS(RMP_Thd_Crt(&Thd_1, Cov_Thd_Param_Spin_Func, RMP_NULL, Stack_1, sizeof(Stack_1), 0U, 100U));
+    /* (does not preempt: prio 0 is below ours; the worker stays ready) */
+    PASS(RMP_Thd_Delay(3U));
+    /* (the init thread expired and was rotated; we preempted the worker,
+     * which is still the head of priority level 0) */
+    RMP_USE(_RMP_Tim_Idle());
+    /* (deleting the worker restores the init thread as the only resident) */
+    PASS(RMP_Thd_Del(&Thd_1));
+}
+/* End Function:Cov_Tim ******************************************************/
+
+/* Function:Cov_Thd_Param *****************************************************
+Description : Thread simple parameter tests.
+Input       : None.
+Output      : None.
+Return      : None.
+******************************************************************************/
 void Cov_Thd_Param_Suspend_Func(void)
 {
-    /* Thd-suspend: suspends itself, blocking the thread forever */
     RMP_Thd_Suspend(&Thd_1);
-    while;
+    while(1);
 }
 
 void Cov_Thd_Param(void)
@@ -224,8 +316,12 @@ void Cov_Thd_Param(void)
     /* Sched-unlock: release the scheduler without triggering a yield */
     RMP_Sched_Unlock();
 
-    /* Thd-crt: recreate the test thread for the parameter tests below */
-    PASS(RMP_Thd_Crt(&Thd_1, DUMMY, RMP_NULL, Stack_1, sizeof(Stack_1), PRIO_BOTTOM, 10U));
+    /* Thd-crt: recreate the test thread for the parameter tests below.
+     * A real entry must be used here: this thread stays ready at a low
+     * priority while the test thread blocks on timed sends, and will
+     * be dispatched during those windows. A dummy entry such as DUMMY
+     * would make the scheduler jump to an arbitrary flash address. */
+    PASS(RMP_Thd_Crt(&Thd_1, Cov_Thd_Param_Delay_Func, RMP_NULL, Stack_1, sizeof(Stack_1), PRIO_BOTTOM, 10U));
 
     /* Thd-set: tests the NULL control block rejection branch */
     FAIL(RMP_Thd_Set(RMP_NULL, PRIO_BOTTOM, 10U));
@@ -324,17 +420,45 @@ void Cov_Thd_Param(void)
     PASS(RMP_Thd_Set(&Thd_1, PRIO_TOP, 10U));
     PASS(RMP_Thd_Set(&Thd_1, PRIO_HIGHER, 10U));
 
+    /* Thd-set: timeslice left unchanged when Slice==RMP_SLICE_MAX */
+    PASS(RMP_Thd_Set(&Thd_1, PRIO_HIGHER, RMP_SLICE_MAX));
+
+    /* Thd-rcv: zero-slice nonblocking receive on an empty mailbox */
+    FAIL(RMP_Thd_Rcv((rmp_ptr_t*)RMP_NULL, 0U));
+
     /* Thd-del: final cleanup of the test thread */
     PASS(RMP_Thd_Del(&Thd_1));
+
+    /* Thd-set/suspend/resume/snd/cancel on a freed thread: rejections */
+    FAIL(RMP_Thd_Set(&Thd_1, PRIO_BOTTOM, 10U));
+    FAIL(RMP_Thd_Suspend(&Thd_1));
+    FAIL(RMP_Thd_Resume(&Thd_1));
+    FAIL(RMP_Thd_Snd(&Thd_1, 1U, 10U));
+    FAIL(RMP_Thd_Cancel(&Thd_1));
 }
 /* End Function:Cov_Thd_Param ************************************************/
 
 /* Function:Cov_Thd_Oper ******************************************************
-Description : Test thread delay/wakeup.
-Input       : None
+Description : Test thread delay, suspend, resume, send and send-ISR against
+              a worker exercised in every waiting state, plus the Peek-ISR
+              ready-thread paths.
+Input       : None.
 Output      : None.
-Return      : None
+Return      : None.
 ******************************************************************************/
+void Cov_Thd_Rcv_Timeout_Func(void)
+{
+    rmp_ptr_t Data;
+
+    /* Thd-rcv: blocks on a finite 200-tick timeout */
+    RMP_Thd_Rcv(&Data, 200U);
+    /* Thd-delay: park the thread in the delaying state afterwards */
+    while(1)
+    {
+        RMP_Thd_Delay(10000U);
+    }
+}
+
 void Cov_Thd_Oper_Func(void)
 {
     /* Thd-rcv: blocks until the main thread sends, wakeup path */
@@ -351,8 +475,10 @@ void Cov_Thd_Oper_Func(void)
     PASS(RMP_Thd_Rcv(RMP_NULL, RMP_SLICE_MAX));
 
     /* Infinite delay loop so the main thread can delete us at any state */
-    while
+    while(1)
+    {
         PASS(RMP_Thd_Delay(10000U));
+    }
 }
 
 void Cov_Thd_Oper(void)
@@ -423,46 +549,121 @@ void Cov_Thd_Oper(void)
     /* Thd-crt: restart the worker thread, now lower priority */
     PASS(RMP_Thd_Crt(&Thd_1, Cov_Thd_Oper_Func, DUMMY, Stack_1,sizeof(Stack_1), PRIO_LOWER, 10U));
 
+    /* Thd-delay: let the worker run and block on its first receive */
+    PASS(RMP_Thd_Delay(10000U));
+
     /* Sched-lock: simulate ISR context for the ready-thread test */
     RMP_Sched_Lock();
-    /* Thd-snd-ISR: sends to a ready thread that cannot preempt us */
+    /* Thd-snd-ISR: hand a message to the blocked receiver; it is woken
+     * to the ready state, and cannot preempt us in the ISR context.
+     * The message is copied into its mailbox, which is marked full. */
     PASS(RMP_Thd_Snd_ISR(&Thd_1, 1U));
+    /* Thd-snd-ISR: the mailbox is full now, rejection path with a ready receiver */
+    FAIL(RMP_Thd_Snd_ISR(&Thd_1, 2U));
     /* Sched-unlock: leave the simulated ISR context */
     RMP_Sched_Unlock();
 
     /* Thd-delay: delay while Thd_1 is ready but cannot preempt us */
-    RMP_Thd_Delay;
-
-    /* Sched-lock: simulate ISR context for the second full-mailbox test */
-    RMP_Sched_Lock();
-    /* Thd-snd-ISR: mailbox is full again, rejection path with a ready receiver */
-    FAIL(RMP_Thd_Snd_ISR(&Thd_1, 1U));
-    /* Sched-unlock: leave the simulated ISR context */
-    RMP_Sched_Unlock();
+    PASS(RMP_Thd_Delay(10000U));
 
     /* Thd-del: final cleanup of the worker thread */
+    PASS(RMP_Thd_Del(&Thd_1));
+
+    /* ---- Scheduler-aware thread operations ---- */
+
+    /* Peek-ISR: only low priorities are ready; the high bitmap word is empty */
+    RMP_Sched_Lock();
+    RMP_USE(RMP_Thd_Peek_ISR());
+    RMP_Sched_Unlock();
+
+    /* Thd-crt: a worker queued at our own priority level */
+    PASS(RMP_Thd_Crt(&Thd_1, Cov_Thd_Param_Delay_Func, RMP_NULL, Stack_1, sizeof(Stack_1), PRIO_COV, 10U));
+    RMP_Sched_Lock();
+    /* Peek-ISR: we are the head of our level, and another thread is queued
+     * behind us - the not-alone peek path */
+    RMP_USE(RMP_Thd_Peek_ISR());
+    RMP_Sched_Unlock();
+    /* Thd-del: removing a thread that is not alone on its priority level */
+    PASS(RMP_Thd_Del(&Thd_1));
+
+    /* Thd-crt: a higher-priority worker created under the lock, so it
+     * cannot preempt us yet - for the not-head peek path */
+    RMP_Sched_Lock();
+    PASS(RMP_Thd_Crt(&Thd_1, Cov_Thd_Param_Delay_Func, RMP_NULL, Stack_1, sizeof(Stack_1), PRIO_HIGHER, 10U));
+    /* Peek-ISR: the current thread is not the head of the highest level */
+    RMP_USE(RMP_Thd_Peek_ISR());
+    RMP_Sched_Unlock();
+    /* (the worker preempts and parks itself in the delay queue) */
+    PASS(RMP_Thd_Del(&Thd_1));
+
+    /* Thd-cancel: NULL control block rejection */
+    FAIL(RMP_Thd_Cancel(RMP_NULL));
+    /* Thd-cancel: not in the delaying state, rejection */
+    PASS(RMP_Thd_Crt(&Thd_1, Cov_Thd_Param_Delay_Func, RMP_NULL, Stack_1, sizeof(Stack_1), PRIO_LOWER, 10U));
+    FAIL(RMP_Thd_Cancel(&Thd_1));
+    PASS(RMP_Thd_Del(&Thd_1));
+    /* Thd-cancel: aborting a thread from its delaying state */
+    PASS(RMP_Thd_Crt(&Thd_1, Cov_Thd_Param_Delay_Func, RMP_NULL, Stack_1, sizeof(Stack_1), PRIO_HIGHER, 10U));
+    /* (the worker preempts and parks itself in the delay queue) */
+    PASS(RMP_Thd_Cancel(&Thd_1));
+    /* (the cancelled worker preempts again and re-parks itself) */
+    PASS(RMP_Thd_Del(&Thd_1));
+    /* Thd-cancel: freed thread, rejection */
+    FAIL(RMP_Thd_Cancel(&Thd_1));
+
+    /* Sem-abort: the thread is delaying, not pending on a semaphore */
+    PASS(RMP_Thd_Crt(&Thd_1, Cov_Thd_Param_Delay_Func, RMP_NULL, Stack_1, sizeof(Stack_1), PRIO_HIGHER, 10U));
+    /* (the worker preempts and parks itself in the delay queue) */
+    FAIL(RMP_Sem_Abort(&Thd_1));
+    PASS(RMP_Thd_Del(&Thd_1));
+
+    /* ---- Timed receiver scenarios ---- */
+
+    /* Thd-crt: a timed receiver woken by a plain send */
+    PASS(RMP_Thd_Crt(&Thd_1, Cov_Thd_Rcv_Timeout_Func, RMP_NULL, Stack_1, sizeof(Stack_1), PRIO_HIGHER, 10U));
+    /* (the worker preempts and blocks on a timed receive) */
+    /* Thd-snd: waking a timed receiver removes it from the delay queue */
+    PASS(RMP_Thd_Snd(&Thd_1, 1U, RMP_SLICE_MAX));
+    PASS(RMP_Thd_Del(&Thd_1));
+
+    /* Thd-crt: a timed receiver woken from the ISR context */
+    PASS(RMP_Thd_Crt(&Thd_1, Cov_Thd_Rcv_Timeout_Func, RMP_NULL, Stack_1, sizeof(Stack_1), PRIO_HIGHER, 10U));
+    RMP_Sched_Lock();
+    /* Thd-snd-ISR: waking a timed receiver from an ISR context */
+    PASS(RMP_Thd_Snd_ISR(&Thd_1, 1U));
+    RMP_Sched_Unlock();
+    PASS(RMP_Thd_Del(&Thd_1));
+
+    /* Thd-crt: a timed receiver left to time out */
+    PASS(RMP_Thd_Crt(&Thd_1, Cov_Thd_Rcv_Timeout_Func, RMP_NULL, Stack_1, sizeof(Stack_1), PRIO_HIGHER, 10U));
+    /* (the worker preempts and blocks on a timed receive) */
+    /* Thd-delay: sleep past the 200-tick receive timeout - the timer
+     * handler aborts the receiver from the delay queue, and the receiver
+     * returns from its timed receive with a timeout error */
+    PASS(RMP_Thd_Delay(300U));
     PASS(RMP_Thd_Del(&Thd_1));
 }
 /* End Function:Cov_Thd_Oper *************************************************/
 
 /* Function:Cov_Thd_Del *******************************************************
-Description : Test thread delete under various circumstances.
-Input       : None
+Description : Test thread deletion under various circumstances, hitting
+              every thread state branch of the deletion path.
+Input       : None.
 Output      : None.
-Return      : None
+Return      : None.
 ******************************************************************************/
 void Cov_Thd_Del_Delay_Func(void)
 {
     /* Thd-delay: puts the thread into the delaying state */
     RMP_Thd_Delay(10000U);
-    while;
+    while(1);
 }
 
 void Cov_Thd_Del_Suspend_Func(void)
 {
     /* Thd-suspend: puts the thread into the suspended state */
     RMP_Thd_Suspend(&Thd_1);
-    while;
+    while(1);
 }
 
 void Cov_Thd_Del_Snd_Func(void)
@@ -471,7 +672,7 @@ void Cov_Thd_Del_Snd_Func(void)
     RMP_Thd_Snd(&Thd_Cov, 1U, RMP_SLICE_MAX);
     /* Thd-snd: second send blocks infinitely on a full mailbox */
     RMP_Thd_Snd(&Thd_Cov, 1U, RMP_SLICE_MAX);
-    while;
+    while(1);
 }
 
 void Cov_Thd_Del_Snd_Delay_Func(void)
@@ -480,7 +681,7 @@ void Cov_Thd_Del_Snd_Delay_Func(void)
     RMP_Thd_Snd(&Thd_Cov, 1U, RMP_SLICE_MAX);
     /* Thd-snd: second send blocks with a timeout on a full mailbox */
     RMP_Thd_Snd(&Thd_Cov, 1U, RMP_SLICE_MAX);
-    while;
+    while(1);
 }
 
 void Cov_Thd_Del_Rcv_Func(void)
@@ -489,7 +690,7 @@ void Cov_Thd_Del_Rcv_Func(void)
 
     /* Thd-rcv: blocks infinitely waiting for a message */
     RMP_Thd_Rcv(&Data, RMP_SLICE_MAX);
-    while;
+    while(1);
 }
 
 void Cov_Thd_Del_Rcv_Delay_Func(void)
@@ -498,58 +699,56 @@ void Cov_Thd_Del_Rcv_Delay_Func(void)
 
     /* Thd-rcv: blocks with a timeout waiting for a message */
     RMP_Thd_Rcv(&Data, 10000U);
-    while;
+    while(1);
 }
 
 void Cov_Thd_Del_Rcv_Sender_Func(void)
 {
     /* Thd-snd: first send lands in an empty mailbox of Thd_2 */
-    RMP_Thd_Snd(&Thd_2, 1, RMP_SLICE_MAX);
+    RMP_Thd_Snd(&Thd_2, 1U, RMP_SLICE_MAX);
     /* Thd-snd: second send blocks infinitely on Thd_2's full mailbox */
-    RMP_Thd_Snd(&Thd_2, 1, RMP_SLICE_MAX);
+    RMP_Thd_Snd(&Thd_2, 1U, RMP_SLICE_MAX);
     /* Thd-delay: park the thread after the blocking sends are set up */
     RMP_Thd_Delay(10000U);
-    while;
+    while(1);
 }
 
 void Cov_Thd_Del_Rcv_Sender_Delay_Func(void)
 {
     /* Thd-snd: first send lands in an empty mailbox of Thd_2 */
-    RMP_Thd_Snd(&Thd_2, 1, RMP_SLICE_MAX);
+    RMP_Thd_Snd(&Thd_2, 1U, RMP_SLICE_MAX);
     /* Thd-snd: second send blocks with a timeout on Thd_2's full mailbox */
-    RMP_Thd_Snd(&Thd_2, 1, 10000U);
+    RMP_Thd_Snd(&Thd_2, 1U, 10000U);
     /* Thd-delay: park the thread after the blocking sends are set up */
     RMP_Thd_Delay(10000U);
-    while;
+    while(1);
 }
 
 void Cov_Thd_Del_Rcv_Receiver_Func(void)
 {
     /* Thd-delay: keep Thd_2 delayed so its mailbox stays full */
     RMP_Thd_Delay(10000U);
-    while;
+    while(1);
 }
 
 void Cov_Thd_Del_Pend_Func(void)
 {
-    rmp_ptr_t Data;
-
     /* Sem-pend: blocks infinitely on the counting semaphore */
     RMP_Sem_Pend(&Sem_1, RMP_SLICE_MAX);
-    while;
+    while(1);
 }
 
 void Cov_Thd_Del_Pend_Delay_Func(void)
 {
-    rmp_ptr_t Data;
-
     /* Sem-pend: blocks with a timeout on the counting semaphore */
-    RMP_Sem_Pend(&Sem_1, 10000);
-    while;
+    RMP_Sem_Pend(&Sem_1, 10000U);
+    while(1);
 }
 
 void Cov_Thd_Del(void)
 {
+    rmp_ptr_t Data;
+
     /* Thd-crt: worker that delays itself; deletion hits the DELAY state branch */
     PASS(RMP_Thd_Crt(&Thd_1, Cov_Thd_Del_Delay_Func, DUMMY, Stack_1, sizeof(Stack_1), PRIO_HIGHER, 5U));
     /* Thd-del: deletes a thread from the delay queue */
@@ -564,8 +763,9 @@ void Cov_Thd_Del(void)
     PASS(RMP_Thd_Crt(&Thd_1, Cov_Thd_Del_Snd_Func, DUMMY, Stack_1, sizeof(Stack_1), PRIO_HIGHER, 5U));
     /* Thd-del: deletes a thread blocked on an infinite send */
     PASS(RMP_Thd_Del(&Thd_1));
-    /* Thd-rcv: drains the message the deleted thread left in our mailbox */
-    PASS(RMP_Thd_Rcv(RMP_NULL, RMP_SLICE_MAX));
+    /* Thd-rcv: drains the message the deleted thread left in our mailbox,
+     * through the unblock path with a real data pointer */
+    PASS(RMP_Thd_Rcv(&Data, RMP_SLICE_MAX));
 
     /* Thd-crt: worker that blocks sending with timeout; hits the SNDDLY branch */
     PASS(RMP_Thd_Crt(&Thd_1, Cov_Thd_Del_Snd_Delay_Func, DUMMY, Stack_1, sizeof(Stack_1), PRIO_HIGHER, 5U));
@@ -647,6 +847,9 @@ void Cov_Sem_Param(void)
     /* Sem-del: tests the already-deleted rejection branch */
     FAIL(RMP_Sem_Del(&Sem_1));
 
+    /* Sem-crt: recreate the semaphore for the pend/post tests below */
+    PASS(RMP_Sem_Crt(&Sem_1, 0U));
+
     /* Sem-pend: tests the NULL control block rejection branch */
     FAIL(RMP_Sem_Pend(RMP_NULL, 10U));
     /* Sem-pend: tests the timed-wait timeout path on an empty semaphore */
@@ -664,18 +867,33 @@ void Cov_Sem_Param(void)
     /* Sem-post: tests the zero-count rejection branch */
     FAIL(RMP_Sem_Post(&Sem_1, 0U));
     /* Sem-post: tests the successful post path */
-    PASS(RMP_Sem_Post(&Sem_1, 10U));
-    /* Sem-pend: tests the immediate zero-slice pend success path */
+    PASS(RMP_Sem_Post(&Sem_1, 1U));
+    /* Sem-pend: tests the immediate zero-slice pend success path.
+     * A successful pend returns the number left in the semaphore, so we
+     * post a single count and let the pend drain it to zero. */
     PASS(RMP_Sem_Pend(&Sem_1, 0U));
+    /* Sem-post: refill for the timed pend */
+    PASS(RMP_Sem_Post(&Sem_1, 1U));
     /* Sem-pend: tests the immediate timed pend success path */
     PASS(RMP_Sem_Pend(&Sem_1, 10U));
+    /* Sem-post: refill for the infinite pend */
+    PASS(RMP_Sem_Post(&Sem_1, 1U));
     /* Sem-pend: tests the immediate infinite pend success path */
     PASS(RMP_Sem_Pend(&Sem_1, RMP_SLICE_MAX));
+    /* Sem-post: refill so the pend-unlock and broadcast tests have counts */
+    PASS(RMP_Sem_Post(&Sem_1, 1U));
     /* Sem-bcst: tests the broadcast wakeup path */
     PASS(RMP_Sem_Bcst(&Sem_1));
-    /* Sem-pend-unlock: tests the scheduler-not-locked rejection branch */
+    /* Sched-lock: lock twice so that pend-unlock sees an over-locked
+     * scheduler; calling it with an unlocked scheduler (count zero) is
+     * forbidden and trips the kernel assertion inside sched-unlock */
+    RMP_Sched_Lock();
+    RMP_Sched_Lock();
+    /* Sem-pend-unlock: tests the scheduler-not-locked-once rejection branch */
     FAIL(RMP_Sem_Pend_Unlock(&Sem_1, RMP_SLICE_MAX));
-    /* Sched-lock: provide the locked scheduler the pend-unlock call requires */
+    /* Sched-unlock: drop the extra lock taken above */
+    RMP_Sched_Unlock();
+    /* Sched-lock: provide the single lock the pend-unlock call requires */
     RMP_Sched_Lock();
     /* Sem-pend-unlock: tests the successful locked pend path */
     PASS(RMP_Sem_Pend_Unlock(&Sem_1, 10U));
@@ -692,45 +910,6 @@ void Cov_Sem_Param(void)
 }
 /* End Function:Cov_Sem_Param ************************************************/
 
-/* Function:Test_Set_2 ********************************************************
-Description : Helper thread for the semaphore pend and timing tests. The
-              thread deletes itself after the pend returns.
-Input       : rmp_ptr_t Param - The test case selector.
-Output      : None.
-Return      : None.
-******************************************************************************/
-void Test_Set_2(rmp_ptr_t Param)
-{
-    volatile rmp_ptr_t Middle;
-
-    /* Dispatch on the test case selector passed by the creator */
-    switch(Param)
-    {
-        case 0:
-        {
-            /* Thd-delay: park the thread so it stays in the delaying state */
-            RMP_Thd_Delay;
-            while;
-        }
-        case 2:
-        {
-            /* Sem-pend: blocks infinitely; the thread is deleted while pending */
-            RMP_Sem_Pend(&Sem_1, RMP_SLICE_MAX);
-            /* Thd-del: self-delete after the pend returns (aborted or woken) */
-            RMP_Thd_Del(&Thd_1);
-            while;
-        }
-        case 3:
-        {
-            /* Sem-pend: blocks with a timeout; the thread is deleted while waiting */
-            RMP_Sem_Pend(&Sem_1, 10000);
-            /* Thd-del: self-delete after the pend returns (aborted or woken) */
-            RMP_Thd_Del(&Thd_1);
-            while;
-        }
-    }
-}
-
 /* Function:Cov_Sem_Oper ******************************************************
 Description : Test the thread and semaphore operations, including semaphore
               deletion while someone is waiting on it, pend aborts, and
@@ -739,49 +918,84 @@ Input       : None.
 Output      : None.
 Return      : None.
 ******************************************************************************/
+void Test_Set_2(rmp_ptr_t Param)
+{
+    /* Dispatch on the test case selector passed by the creator */
+    switch(Param)
+    {
+        case 0:
+        {
+            /* Thd-delay: park the thread in the delaying state for a long,
+             * but finite time; an infinite delay (RMP_SLICE_MAX) would be
+             * rejected outright by the parameter checks in the kernel */
+            RMP_Thd_Delay(10000U);
+            while(1);
+        }
+        case 2:
+        {
+            /* Sem-pend: blocks infinitely; the thread is deleted while pending */
+            RMP_Sem_Pend(&Sem_1, RMP_SLICE_MAX);
+            /* Thd-del: self-delete after the pend returns (aborted or woken) */
+            RMP_Thd_Del(&Thd_1);
+            while(1);
+        }
+        case 3:
+        {
+            /* Sem-pend: blocks with a timeout; the thread is deleted while waiting */
+            RMP_Sem_Pend(&Sem_1, 10000U);
+            /* Thd-del: self-delete after the pend returns (aborted or woken) */
+            RMP_Thd_Del(&Thd_1);
+            while(1);
+        }
+    }
+}
+
 void Cov_Sem_Oper(void)
 {
-    rmp_ptr_t Data;
-    rmp_ptr_t Temp;
-    rmp_ptr_t Stub;
     rmp_ret_t Sched_Pend_Bkp;
     rmp_ret_t Lock_Cnt_Bkp;
 
-    /* Thd-crt: worker that pends infinitely; used for deletion-while-pending */
-    RMP_Thd_Crt(&Thd_1, Test_Set_2, (void*)2, Stack_1, sizeof(Stack_1), 3, 5);
-    /* Sem-del: deletes the semaphore while a thread pends on it, aborting the pend */
+    /* Sem-crt: recreate the semaphore for the deletion-while-pending tests */
+    RMP_Sem_Crt(&Sem_1, 0U);
+    /* Thd-crt: worker that pends infinitely; used for deletion-while-pending.
+     * The worker runs at a higher priority so it gets to block before us. */
+    RMP_Thd_Crt(&Thd_1, Test_Set_2, (void*)2, Stack_1, sizeof(Stack_1), PRIO_HIGHER, 5U);
+    /* Sem-del: deletes the semaphore while a thread pends on it, aborting
+     * the pend; the aborted worker then deletes itself */
     RMP_Sem_Del(&Sem_1);
-    /* Sem-crt: recreate the semaphore for the next round */
-    RMP_Sem_Crt(&Sem_1, 0);
+    /* Sem-crt: recreate the semaphore for the timed-path deletion test */
+    RMP_Sem_Crt(&Sem_1, 0U);
     /* Thd-crt: worker that pends with a timeout; deletion hits the timed path */
-    RMP_Thd_Crt(&Thd_1, Test_Set_2, (void*)3, Stack_1, sizeof(Stack_1), 3, 5);
-    /* Sem-del: deletes the semaphore while a timed pend is waiting on it */
+    RMP_Thd_Crt(&Thd_1, Test_Set_2, (void*)3, Stack_1, sizeof(Stack_1), PRIO_HIGHER, 5U);
+    /* Sem-del: deletes the semaphore while a timed pend is waiting on it;
+     * the aborted worker then deletes itself */
     RMP_Sem_Del(&Sem_1);
-    /* Sem-crt: recreate the semaphore for the timed-pend success round */
-    RMP_Sem_Crt(&Sem_1, 0);
+    /* Sem-crt: recreate the semaphore for the timed-pend wakeup round */
+    RMP_Sem_Crt(&Sem_1, 0U);
     /* Thd-crt: worker that pends with a timeout again */
-    RMP_Thd_Crt(&Thd_1, Test_Set_2, (void*)3, Stack_1, sizeof(Stack_1), 3, 5);
-    /* Sem-post: wakes the timed pend so it completes successfully this time */
-    RMP_Sem_Post(&Sem_1, 1);
+    RMP_Thd_Crt(&Thd_1, Test_Set_2, (void*)3, Stack_1, sizeof(Stack_1), PRIO_HIGHER, 5U);
+    /* Sem-post: wakes the timed pend so it completes successfully, and the
+     * woken worker then deletes itself */
+    RMP_Sem_Post(&Sem_1, 1U);
 
     /* Sem-post: put one count on the semaphore for the immediate pends below */
-    RMP_Sem_Post(&Sem_1, 1);
+    RMP_Sem_Post(&Sem_1, 1U);
     /* Sem-pend: timed pend that returns immediately because a count exists */
-    RMP_Sem_Pend(&Sem_1, 100);
+    RMP_Sem_Pend(&Sem_1, 100U);
     /* Sem-pend: zero-slice pend that returns immediately */
-    RMP_Sem_Pend(&Sem_1, 0);
+    RMP_Sem_Pend(&Sem_1, 0U);
 
-    /* Sem-pend-abort: boot a worker that will block on the semaphore */
-    RMP_Thd_Crt(&Thd_1, Test_Set_2, (void*)2, Stack_1, sizeof(Stack_1), 3, 5);
-    /* Sem-abort: aborts the wait while the thread is blocked on the semaphore */
+    /* Thd-crt: worker that blocks on the semaphore for the pend-abort test */
+    RMP_Thd_Crt(&Thd_1, Test_Set_2, (void*)2, Stack_1, sizeof(Stack_1), PRIO_HIGHER, 5U);
+    /* Sem-abort: aborts the wait while the thread is blocked on the semaphore;
+     * the aborted worker then deletes itself */
     RMP_Sem_Abort(&Thd_1);
-    /* Thd-del: clean up the aborted worker */
-    RMP_Thd_Del(&Thd_1);
     /* Thd-crt: boot a worker that pends with a timeout */
-    RMP_Thd_Crt(&Thd_1, Test_Set_2, (void*)3, Stack_1, sizeof(Stack_1), 3, 5);
-    /* Sem-abort: aborts the wait while the thread is delaying on the semaphore */
+    RMP_Thd_Crt(&Thd_1, Test_Set_2, (void*)3, Stack_1, sizeof(Stack_1), PRIO_HIGHER, 5U);
+    /* Sem-abort: aborts the wait while the thread is delaying on the semaphore;
+     * the aborted worker then deletes itself */
     RMP_Sem_Abort(&Thd_1);
-    /* Thd-del: clean up the aborted worker */
+    /* Thd-del: clean up any worker left over (self-deleted ones reject here) */
     RMP_Thd_Del(&Thd_1);
 
     /* Sem-post-ISR: count too large, rejection branch from ISR context */
@@ -791,57 +1005,62 @@ void Cov_Sem_Oper(void)
     /* Sched-lock: simulate ISR context for the ISR post tests */
     RMP_Sched_Lock();
     /* Sem-post-ISR: tests the NULL control block rejection branch */
-    RMP_Sem_Post_ISR(0, 1);
+    RMP_Sem_Post_ISR(RMP_NULL, 1U);
     /* Sem-post-ISR: posts to a deleted semaphore, not-in-use rejection branch */
-    RMP_Sem_Post_ISR(&Sem_1, 2);
+    RMP_Sem_Post_ISR(&Sem_1, 2U);
     /* Sched-unlock: leave the simulated ISR context */
     RMP_Sched_Unlock();
 
+    /* Sem-crt: recreate the semaphore for the ISR wakeup tests */
+    RMP_Sem_Crt(&Sem_1, 0U);
     /* Thd-crt: worker blocked on the semaphore for the ISR wakeup test */
-    RMP_Thd_Crt(&Thd_1, Test_Set_2, (void*)2, Stack_1, sizeof(Stack_1), 3, 5);
+    RMP_Thd_Crt(&Thd_1, Test_Set_2, (void*)2, Stack_1, sizeof(Stack_1), PRIO_HIGHER, 5U);
     /* Sched-lock: simulate ISR context; post wakes the blocked thread */
     RMP_Sched_Lock();
-    /* Sem-post-ISR: successful post that unblocks the pending thread */
-    RMP_Sem_Post_ISR(&Sem_1, 1);
-    /* Sched-unlock: leave the simulated ISR context */
+    /* Sem-post-ISR: successful post that unblocks the pending thread;
+     * the woken worker cannot run until we unlock the scheduler */
+    RMP_Sem_Post_ISR(&Sem_1, 1U);
+    /* Sched-unlock: leave the simulated ISR context; the woken worker
+     * then runs, completes its pend and deletes itself */
     RMP_Sched_Unlock();
-    /* Thd-del: clean up the woken worker */
+    /* Thd-del: clean up the woken worker (self-deleted; rejected here) */
     RMP_Thd_Del(&Thd_1);
 
     /* Thd-crt: worker pending with a timeout for the ISR wakeup test */
-    RMP_Thd_Crt(&Thd_1, Test_Set_2, (void*)3, Stack_1, sizeof(Stack_1), 3, 5);
+    RMP_Thd_Crt(&Thd_1, Test_Set_2, (void*)3, Stack_1, sizeof(Stack_1), PRIO_HIGHER, 5U);
     /* Sched-lock: simulate ISR context; post wakes the delaying thread */
     RMP_Sched_Lock();
     /* Sem-post-ISR: successful post that wakes the timed pending thread */
-    RMP_Sem_Post_ISR(&Sem_1, 1);
-    /* Sched-unlock: leave the simulated ISR context */
+    RMP_Sem_Post_ISR(&Sem_1, 1U);
+    /* Sched-unlock: leave the simulated ISR context; the woken worker
+     * then runs, completes its pend and deletes itself */
     RMP_Sched_Unlock();
-    /* Thd-del: clean up the woken worker */
+    /* Thd-del: clean up the woken worker (self-deleted; rejected here) */
     RMP_Thd_Del(&Thd_1);
 
-    /* Thd-crt: worker that delays instead of pending (Test_Set_1, case 2) */
-    RMP_Thd_Crt(&Thd_1, Test_Set_1, (void*)2, Stack_1, sizeof(Stack_1), 3, 5);
+    /* Thd-crt: worker that delays instead of pending (Test_Set_2, case 0) */
+    RMP_Thd_Crt(&Thd_1, Test_Set_2, (void*)0, Stack_1, sizeof(Stack_1), PRIO_HIGHER, 5U);
     /* Sched-lock: simulate ISR context; the target is not pending */
     RMP_Sched_Lock();
     /* Sem-post-ISR: successful post when the thread is not pending */
-    RMP_Sem_Post_ISR(&Sem_1, 1);
+    RMP_Sem_Post_ISR(&Sem_1, 1U);
     /* Sched-unlock: leave the simulated ISR context */
     RMP_Sched_Unlock();
-    /* Thd-del: clean up the worker */
+    /* Thd-del: clean up the worker, removing it from the delay queue */
     RMP_Thd_Del(&Thd_1);
     /* Sem-del: drop the semaphore before the low-priority test */
     RMP_Sem_Del(&Sem_1);
 
     /* Sem-crt: recreate the semaphore for the low-priority wakeup test */
-    RMP_Sem_Crt(&Sem_1, 0);
+    RMP_Sem_Crt(&Sem_1, 0U);
     /* Thd-crt: worker at a lower priority than the test thread */
-    RMP_Thd_Crt(&Thd_1, Test_Set_2, (void*)2, Stack_1, sizeof(Stack_1), 1, 5);
+    RMP_Thd_Crt(&Thd_1, Test_Set_2, (void*)2, Stack_1, sizeof(Stack_1), PRIO_BOTTOM, 5U);
     /* Thd-delay: let the worker block on the semaphore first */
-    RMP_Thd_Delay;
+    RMP_Thd_Delay(10000U);
     /* Sched-lock: simulate ISR context; the woken thread cannot preempt us */
     RMP_Sched_Lock();
     /* Sem-post-ISR: success path where the woken thread has lower priority */
-    RMP_Sem_Post_ISR(&Sem_1, 1);
+    RMP_Sem_Post_ISR(&Sem_1, 1U);
     /* Sched-unlock: leave the simulated ISR context */
     RMP_Sched_Unlock();
     /* Thd-del: clean up the worker */
@@ -859,39 +1078,41 @@ void Cov_Sem_Oper(void)
     Sem_1.State=RMP_SEM_FREE;
     RMP_Sem_Bcst_ISR(&Sem_1);
 
-    /* Sem-bcst-ISR: force a pending context switch flag, yield branch */
+    /* Sem-bcst-ISR: force the semaphore back into the used state, then
+     * force a pending context switch flag, yield branch */
     Sched_Pend_Bkp=RMP_Sched_Pend;
-    RMP_Sched_Pend=1;
+    RMP_Sched_Pend=1U;
     Sem_1.State=RMP_SEM_USED;
     RMP_Sem_Bcst_ISR(&Sem_1);
     RMP_Sched_Pend=Sched_Pend_Bkp;
 
-    /* Sem-pend-unlock: tests the NULL control block rejection with a nested
-     * lock count forced to 2 so the unlock path is not taken */
-    Lock_Cnt_Bkp=RMP_Sched_Lock_Cnt;
-    RMP_Sched_Lock_Cnt=2;
-    RMP_Sem_Pend_Unlock(RMP_NULL,1);
-    RMP_Sched_Lock_Cnt=Lock_Cnt_Bkp;
-    /* Sem-pend-unlock: lock count 2, pend succeeds but lock stays held */
-    Lock_Cnt_Bkp=RMP_Sched_Lock_Cnt;
-    RMP_Sched_Lock_Cnt=2;
-    RMP_Sem_Pend_Unlock(&Sem_1,1);
-    RMP_Sched_Lock_Cnt=Lock_Cnt_Bkp;
+    /* Sem-pend-unlock: NULL control block rejection under a single lock;
+     * the call consumes the lock when it rejects */
+    RMP_Sched_Lock();
+    FAIL(RMP_Sem_Pend_Unlock(RMP_NULL,1));
 
-    /* Sem-pend-unlock: lock count 1, unlock drops it to zero and yields */
-    Lock_Cnt_Bkp=RMP_Sched_Lock_Cnt;
-    RMP_Sched_Lock_Cnt=1;
-    RMP_Sem_Pend_Unlock(&Sem_1,1);
-    RMP_Sched_Lock_Cnt=Lock_Cnt_Bkp;
+    /* Sem-pend-unlock: scheduler locked twice, so the not-locked-once
+     * rejection branch is taken; the call drops one lock before it
+     * rejects, so we take one extra lock beforehand to balance it out */
+    RMP_Sched_Lock();
+    RMP_Sched_Lock();
+    FAIL(RMP_Sem_Pend_Unlock(RMP_NULL,1));
+    RMP_Sched_Unlock();
+
+    /* Sem-pend-unlock: post a count, lock once, and let the pend
+     * consume it immediately through the unlock path */
+    RMP_Sem_Post(&Sem_1, 1U);
+    RMP_Sched_Lock();
+    PASS(RMP_Sem_Pend_Unlock(&Sem_1, 10));
 
     /* Sem-post-ISR: special case where the post count is zero */
-    RMP_Sem_Post_ISR(&Sem_1,0);
+    RMP_Sem_Post_ISR(&Sem_1,0U);
 
     /* Sem-post-ISR: force a pending context switch flag, yield branch */
-    RMP_Sched_Pend=Lock_Cnt_Bkp;
-    RMP_Sched_Pend=1;
-    RMP_Sem_Post_ISR(&Sem_1,10);
-    RMP_Sched_Pend=Lock_Cnt_Bkp;
+    Sched_Pend_Bkp=RMP_Sched_Pend;
+    RMP_Sched_Pend=1U;
+    RMP_Sem_Post_ISR(&Sem_1,10U);
+    RMP_Sched_Pend=Sched_Pend_Bkp;
     /* Sem-bcst: tests the NULL control block rejection branch */
     RMP_Sem_Bcst(RMP_NULL);
 
@@ -917,72 +1138,89 @@ void Cov_Sem_Oper(void)
 }
 /* End Function:Cov_Sem_Oper *************************************************/
 
-/* Function:Cov_Mem ***********************************************************
-Description : Test the memory pool operations, including initialization,
-              allocation, free and reallocation, covering the underlying
-              FLI/SLI bitmap and linked list paths.
+/* Function:Cov_Mem_Free_Class ************************************************
+Description : Free-list insertion scenarios for 64-byte blocks, which map to
+              FLI = SLI = 0. First two slots are freed while isolated from
+              each other by live blocks, so they cannot merge; then two
+              adjacent slots are freed, which ensures Slot != Slot->Next
+              inside the class list.
 Input       : None.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void Cov_Mem(void)
+void Cov_Mem_Free_Class(void)
+{
+    void* Slot_Isolated_First;
+    void* Slot_Isolated_Second;
+    void* Slot_Adjacent_First;
+    void* Slot_Adjacent_Second;
+
+    RMP_Clear(Pool,1024U*sizeof(rmp_ptr_t));
+    RMP_Mem_Init(Pool,1024U*sizeof(rmp_ptr_t));
+    /* Five 64-byte slots; free the second and the fifth, which are separated
+     * by live blocks and therefore cannot be merged with anything */
+    RMP_Malloc(Pool, 64U);
+    Slot_Isolated_First=RMP_Malloc(Pool, 64U);
+    RMP_Malloc(Pool, 64U);
+    RMP_Malloc(Pool, 64U);
+    Slot_Isolated_Second=RMP_Malloc(Pool, 64U);
+    RMP_Malloc(Pool, 64U);
+    RMP_Free(Pool,Slot_Isolated_First);
+    RMP_Free(Pool,Slot_Isolated_Second);
+
+    /* Six 64-byte slots; free the third and the fourth, which sit right next
+     * to each other and therefore merge into one larger free block */
+    RMP_Malloc(Pool, 64U);
+    Slot_Adjacent_First=RMP_Malloc(Pool, 64U);
+    Slot_Adjacent_Second=RMP_Malloc(Pool, 64U);
+    RMP_Malloc(Pool, 64U);
+    RMP_Malloc(Pool, 64U);
+    RMP_Malloc(Pool, 64U);
+    RMP_Free(Pool,Slot_Adjacent_First);
+    RMP_Free(Pool,Slot_Adjacent_Second);
+}
+/* End Function:Cov_Mem_Free_Class *******************************************/
+
+/* Function:Cov_Mem_Realloc_Expand ********************************************
+Description : Expand an allocated base block by reallocating it to a larger
+              size after the donor block right next to it has been freed.
+Input       : None.
+Output      : None.
+Return      : None.
+******************************************************************************/
+void Cov_Mem_Realloc_Expand(void)
+{
+    void* Block_Base;
+    void* Block_Donor;
+
+    RMP_Clear(Pool,1024U*4);
+    RMP_Mem_Init(Pool,1024U*4);
+    Block_Base=RMP_Malloc(Pool, 256U);
+    Block_Donor=RMP_Malloc(Pool, 128U);
+    RMP_Malloc(Pool, 64U);
+    /* Free: the donor leaves free space right of the base block */
+    RMP_Free(Pool,Block_Donor);
+    RMP_Malloc(Pool, 256U);
+    /* Realloc: the base block grows over the freed donor space */
+    RMP_Realloc(Pool, Block_Base,512U);
+
+}
+/* End Function:Cov_Mem_Realloc_Expand ***************************************/
+
+/* Function:Cov_Mem_Param_Reject **********************************************
+Description : Parameter rejection branches of Malloc, Free and Mem_Init,
+              including the double-free detection, followed by the Realloc
+              edge cases: NULL pointer as a fresh allocation, NULL pool,
+              out-of-range pointer, oversized request on an already freed
+              block, zero size as a free, and expand-by-move on a live block.
+Input       : None.
+Output      : None.
+Return      : None.
+******************************************************************************/
+void Cov_Mem_Param_Reject(void)
 {
     volatile rmp_ptr_t Data;
-    volatile rmp_ptr_t Temp;
     volatile rmp_ptr_t Stub;
-    volatile rmp_ret_t iii=0;
-
-    /* In the RMP_Mem structure, Table is a pointer to an RMP_List array that
-       serves as the allocation table of the memory pool. Its purpose is to keep
-       track of the allocation state, i.e. the free block lists of every size
-       class (defined by the First-Level Index (FLI) and the Second-Level Index
-       (SLI)). Each list head represents a set of free blocks within a certain
-       size range that are available for allocation. Specifically, every element
-       of the Table array is an RMP_List structure acting as the head node of a
-       doubly-linked list, and each head corresponds to one FLI/SLI combination,
-       representing a group of free blocks of similar size. */
-
-    /* When freeing a block whose both neighbors are occupied, the block
-       is inserted via _RMP_Mem_Ins with Size = 64, and 64 maps to FLI = SLI = 0
-       (a C++ helper was written to visualize FLI/SLI directly instead of using
-       the debugger). Hence it suffices to free two 64-byte blocks in a row that
-       cannot be merged. */
-    for(iii=0;iii<1024;iii++)
-    {
-        Pool[iii]=0U;
-    }
-    RMP_Mem_Init(Pool,1024U*sizeof(rmp_ptr_t));
-    void* p4=RMP_Malloc(Pool, 64);
-    void* p5=RMP_Malloc(Pool, 64);
-    void* p6=RMP_Malloc(Pool, 64);
-    void* p7=RMP_Malloc(Pool, 64);
-    void* p8=RMP_Malloc(Pool, 64);
-    void* p9=RMP_Malloc(Pool, 64);
-    RMP_Free(Pool,p5);
-    RMP_Free(Pool,p8);
-
-    /* Similar to the case above, but the two freed 64-byte blocks are
-       adjacent and thus mergeable, which ensures Slot != Slot->Next */
-    void* t4=RMP_Malloc(Pool, 64);
-    void* t5=RMP_Malloc(Pool, 64);
-    void* t6=RMP_Malloc(Pool, 64);
-    void* t7=RMP_Malloc(Pool, 64);
-    void* t8=RMP_Malloc(Pool, 64);
-    void* t9=RMP_Malloc(Pool, 64);
-    RMP_Free(Pool,t5);
-    RMP_Free(Pool,t6);
-
-    for(iii=0;iii<1024;iii++)
-    {
-        Pool[iii]=0U;
-    }
-    RMP_Mem_Init(Pool,1024U*4);
-    void* p1=RMP_Malloc(Pool, 256);
-    void* p2=RMP_Malloc(Pool, 128);
-    void* p3=RMP_Malloc(Pool, 64);
-    RMP_Free(Pool,p2);
-    RMP_Malloc(Pool, 256);
-    RMP_Realloc(Pool, p1,512);
 
     /* Malloc: size too large for the pool, rejection path */
     RMP_Malloc(Pool, TEST_MEM_POOL*sizeof(rmp_ptr_t)*200);
@@ -993,11 +1231,11 @@ void Cov_Mem(void)
     /* Free: NULL pool rejection branch */
     RMP_Free(RMP_NULL,(void*)100);
     /* Malloc: NULL pool rejection branch */
-    RMP_Malloc(RMP_NULL,100);
+    RMP_Malloc(RMP_NULL,100U);
     /* Malloc: zero size rejection branch */
-    RMP_Malloc(Pool,0);
+    RMP_Malloc(Pool,0U);
     /* Malloc: ordinary allocation to set up the double-free test */
-    Data=(rmp_ptr_t)RMP_Malloc(Pool, 256);
+    Data=(rmp_ptr_t)RMP_Malloc(Pool, 256U);
     /* Free: normal free of the block just allocated */
     RMP_Free(Pool,(void*)Data);
     /* Free: double free of the same block, rejection branch */
@@ -1005,42 +1243,89 @@ void Cov_Mem(void)
     /* Mem-init: NULL pool rejection branch */
     RMP_Mem_Init(RMP_NULL, TEST_MEM_POOL*sizeof(rmp_ptr_t));
     /* Mem-init: zero size rejection branch */
-    RMP_Mem_Init(Pool, 0);
+    RMP_Mem_Init(Pool, 0U);
     /* Mem-init: unaligned memory rejection branch */
     RMP_Mem_Init((void*)(((rmp_ptr_t)Pool)+1), TEST_MEM_POOL*sizeof(rmp_ptr_t));
 
     /* Realloc: NULL pointer behaves like a fresh allocation */
-    RMP_Realloc(Pool,RMP_NULL,128);
+    RMP_Realloc(Pool,RMP_NULL,128U);
     /* Realloc: NULL pool rejection branch */
-    RMP_Realloc(0, (void*)0, 100);
+    RMP_Realloc(0, (void*)0, 100U);
     /* Realloc: pointer out of range rejection branch */
-    RMP_Realloc(Pool, (void*)1, 100);
-    /* Realloc: shrink with right side allocated, residual stub below 64 bytes */
-    RMP_Realloc(Pool, (void*)Data, TEST_MEM_POOL*sizeof(rmp_ptr_t)/4*3+Temp-64);
+    RMP_Realloc(Pool, (void*)1, 100U);
+    /* Realloc: size far beyond the pool capacity, rejection path
+     * (the block itself is already freed at this point) */
+    RMP_Realloc(Pool, (void*)Data, TEST_MEM_POOL*sizeof(rmp_ptr_t)/4*3-64);
     /* Realloc: zero size is equivalent to a free */
-    RMP_Realloc(Pool, (void*)Data, 0);
+    RMP_Realloc(Pool, (void*)Data, 0U);
     /* Realloc: operating on a block that was already freed */
-    RMP_Realloc(Pool, (void*)Data, 100);
+    RMP_Realloc(Pool, (void*)Data, 100U);
     /* Realloc: expand by moving the content to a new, larger block */
-    Stub=(rmp_ptr_t)RMP_Realloc(Pool, (void*)Stub, TEST_MEM_POOL*sizeof(rmp_ptr_t)/2);
+    Stub=(rmp_ptr_t)RMP_Malloc(Pool, 256U);
+    Stub=(rmp_ptr_t)RMP_Realloc(Pool, (void*)Stub, 1024U);
     /* Free: release the stub block we just reallocated */
     RMP_Free(Pool, (void*)Stub);
+}
+/* End Function:Cov_Mem_Param_Reject *****************************************/
+
+/* Function:Cov_Mem_Exhaust ***************************************************
+Description : Drain the pool with 64-byte requests until it refuses, then
+              try to reallocate the last good block into space that no
+              longer exists.
+Input       : None.
+Output      : None.
+Return      : None.
+******************************************************************************/
+void Cov_Mem_Exhaust(void)
+{
+    volatile rmp_ptr_t Data;
+    volatile rmp_ptr_t Last_Good;
 
     /* Malloc: request nearly the whole pool, found on the first FLI try */
     Data=(rmp_ptr_t)RMP_Malloc(Pool, TEST_MEM_POOL*sizeof(rmp_ptr_t)/5*4);
 
     /* Test residue smaller than 64 - keep allocating 64 byte until we run out
        of memory. Memory leaking is fine because this is just a test. */
-    while
+    while(1)
     {
-        Data=(rmp_ptr_t)RMP_Malloc(Pool, 64);
+        Data=(rmp_ptr_t)RMP_Malloc(Pool, 64U);
         if(Data==0)
             break;
         /* Last good allocation stored here */
-        Temp=Data;
+        Last_Good=Data;
     }
     /* Realloc: no space left in the pool, the move fails */
-    RMP_Realloc(Pool,(void*)Temp,256);
+    RMP_Realloc(Pool,(void*)Last_Good,256U);
+}
+/* End Function:Cov_Mem_Exhaust **********************************************/
+
+/* Function:Cov_Mem_Size_Class ************************************************
+Description : Ordinary allocations across size classes, the minimum-size
+              request, an exact FLI/SLI match, the 511/513 boundary
+              conditions, an oversized rejection, and a refill after
+              partial frees.
+Input       : None.
+Output      : None.
+Return      : None.
+******************************************************************************/
+void Cov_Mem_Size_Class(void)
+{
+    void* Slot_100;
+    void* Slot_200_First;
+    void* Slot_200_Second;
+    void* Slot_200_Third;
+    void* Slot_8000_First;
+    void* Slot_6000;
+    void* Slot_8000_Second;
+    void* Slot_200_Fourth;
+    void* Slot_Minimum;
+    void* Slot_Exact;
+    void* Slot_Below;
+    void* Slot_Above;
+    void* Slot_Oversize;
+    void* Slot_Refill_128;
+    void* Slot_Refill_256;
+    void* Slot_Cross;
 
     /* Mem-init: aligned memory, the normal path */
     RMP_Mem_Init((void*)((rmp_ptr_t)Pool), TEST_MEM_POOL*sizeof(rmp_ptr_t));
@@ -1049,35 +1334,35 @@ void Cov_Mem(void)
        touching the bitmap state. Memory allocation itself does not lock the
        scheduler. */
     /* Malloc: ordinary allocations in various size classes */
-    void* block1=RMP_Malloc(Pool, 100);
-    void* block2=RMP_Malloc(Pool, 200);
-    void* block3=RMP_Malloc(Pool, 200);
-    void* block4=RMP_Malloc(Pool, 200);
-    void* block5=RMP_Malloc(Pool, 8000);
-    void* block6=RMP_Malloc(Pool, 6000);
-    void* block8=RMP_Malloc(Pool, 8000);
-    void* block9=RMP_Malloc(Pool, 200);
+    Slot_100=RMP_Malloc(Pool, 100U);
+    Slot_200_First=RMP_Malloc(Pool, 200U);
+    Slot_200_Second=RMP_Malloc(Pool, 200U);
+    Slot_200_Third=RMP_Malloc(Pool, 200U);
+    Slot_8000_First=RMP_Malloc(Pool, 8000U);
+    Slot_6000=RMP_Malloc(Pool, 6000U);
+    Slot_8000_Second=RMP_Malloc(Pool, 8000U);
+    Slot_200_Fourth=RMP_Malloc(Pool, 200U);
 
     /* Minimum block allocation test */
-    void* ptr1=RMP_Malloc(Pool, 65);
+    Slot_Minimum=RMP_Malloc(Pool, 65U);
 
     /* Exact FLI/SLI match test */
-    void* ptr2=RMP_Malloc(Pool, 512);
+    Slot_Exact=RMP_Malloc(Pool, 512U);
 
     /* Boundary condition test */
-    void* ptr3=RMP_Malloc(Pool, 511);
-    void* ptr4=RMP_Malloc(Pool, 513);
+    Slot_Below=RMP_Malloc(Pool, 511U);
+    Slot_Above=RMP_Malloc(Pool, 513U);
 
     /* Large block allocation test - the pool cannot support such a request */
-    void* ptr5=RMP_Malloc(Pool, TEST_MEM_POOL*100);
+    Slot_Oversize=RMP_Malloc(Pool, TEST_MEM_POOL*100);
 
     /* Combined test - free a few blocks first */
-    RMP_Free(Pool, ptr1);
-    RMP_Free(Pool, ptr2);
+    RMP_Free(Pool, Slot_Minimum);
+    RMP_Free(Pool, Slot_Exact);
 
     /* Then allocate different sizes and observe the pool behavior */
-    void* ptr6=RMP_Malloc(Pool, 128);
-    void* ptr7=RMP_Malloc(Pool, 256);
+    Slot_Refill_128=RMP_Malloc(Pool, 128U);
+    Slot_Refill_256=RMP_Malloc(Pool, 256U);
 
     /* Make sure that during the memory search at least one iteration
        sees Mem->Bitmap[Word] == 0, i.e. no block is available at the current
@@ -1088,79 +1373,125 @@ void Cov_Mem(void)
 
     /* Now attempt an allocation large enough that the algorithm must cross FLI levels */
     /* Malloc: size forces the search past the first FLI level */
-    void* ptr=RMP_Malloc(Pool, TEST_MEM_POOL*2);
+    Slot_Cross=RMP_Malloc(Pool, TEST_MEM_POOL*2);
 
     /* Free the blocks allocated via RMP_Malloc */
-    RMP_Free(Pool, block1);
-    RMP_Free(Pool, block2);
-    RMP_Free(Pool, block3);
-    RMP_Free(Pool, block4);
-    RMP_Free(Pool, block5);
-    RMP_Free(Pool, block6);
-    RMP_Free(Pool, block8);
-    RMP_Free(Pool, block9);
+    RMP_Free(Pool, Slot_100);
+    RMP_Free(Pool, Slot_200_First);
+    RMP_Free(Pool, Slot_200_Second);
+    RMP_Free(Pool, Slot_200_Third);
+    RMP_Free(Pool, Slot_8000_First);
+    RMP_Free(Pool, Slot_6000);
+    RMP_Free(Pool, Slot_8000_Second);
+    RMP_Free(Pool, Slot_200_Fourth);
 
     /* Free the minimum block allocation test */
-    RMP_Free(Pool, ptr1);
+    RMP_Free(Pool, Slot_Minimum);
 
     /* Free the exact FLI/SLI match test */
-    RMP_Free(Pool, ptr2);
+    RMP_Free(Pool, Slot_Exact);
 
     /* Free the boundary condition test */
-    RMP_Free(Pool, ptr3);
-    RMP_Free(Pool, ptr4);
+    RMP_Free(Pool, Slot_Below);
+    RMP_Free(Pool, Slot_Above);
 
     /* Large block allocation test */
-    /* ptr5 may not have been allocated since the pool cannot support such a
-       large request, so check it is not NULL before freeing */
-    if(ptr5!=NULL)
+    /* Slot_Oversize may not have been allocated since the pool cannot support
+       such a large request, so check it is not NULL before freeing */
+    if(Slot_Oversize!=NULL)
     {
-        RMP_Free(Pool, ptr5);
+        RMP_Free(Pool, Slot_Oversize);
     }
 
     /* Free the combined test */
-    RMP_Free(Pool, ptr6);
-    RMP_Free(Pool, ptr7);
+    RMP_Free(Pool, Slot_Refill_128);
+    RMP_Free(Pool, Slot_Refill_256);
 
     /* Free the FLI-crossing allocation test */
-    if(ptr!=NULL)
+    if(Slot_Cross!=NULL)
     {
-        RMP_Free(Pool, ptr);
+        RMP_Free(Pool, Slot_Cross);
     }
+}
+/* End Function:Cov_Mem_Size_Class *******************************************/
 
-    /* To cover the last else branch of _RMP_Mem_Del, we need a scenario where,
-       when _RMP_Mem_Del removes a block, other blocks still exist in its FLI/SLI
-       class. After the deletion the corresponding FLI/SLI class is still
-       non-empty, so the Slot == Slot->Next check evaluates to false and the
-       else branch is taken. */
+/* Function:Cov_Mem_Del_Shared ************************************************
+Description : Cover the last else branch of _RMP_Mem_Del: when a block is
+              removed, other blocks still exist in its FLI/SLI class, so the
+              class stays non-empty and the Slot == Slot->Next check fails.
+              Two 128-byte blocks share one class; freeing the first leaves
+              the second inside it.
+Input       : None.
+Output      : None.
+Return      : None.
+******************************************************************************/
+void Cov_Mem_Del_Shared(void)
+{
+    void* Slot_Same_Class_First;
+    void* Slot_Same_Class_Second;
+
     /* Malloc: two blocks of the same size, they share one FLI/SLI class */
-    void* mem1=RMP_Malloc(Pool, 128);
-    void* mem2=RMP_Malloc(Pool, 128);
+    Slot_Same_Class_First=RMP_Malloc(Pool, 128U);
+    Slot_Same_Class_Second=RMP_Malloc(Pool, 128U);
 
     /* Free: both blocks reside in the same FLI/SLI class */
-    RMP_Free(Pool, mem1);
+    RMP_Free(Pool, Slot_Same_Class_First);
 
     /* This should trigger the else branch of _RMP_Mem_Del, since the second
        block still resides in the same FLI/SLI class */
 
     /* Cleanup */
     /* Free: the second block empties the FLI/SLI class */
-    RMP_Free(Pool, mem2);
+    RMP_Free(Pool, Slot_Same_Class_Second);
+
+}
+/* End Function:Cov_Mem_Del_Shared *******************************************/
+
+/* Function:Cov_Mem_Realloc_Cases *********************************************
+Description : A batch of realloc scenarios on the fully reinitialized pool:
+              out-of-range and NULL-pool rejections, an in-place shrink,
+              reallocating an already-freed block, growing a block leftwards
+              over a freed left neighbor, expanding rightwards over a freed
+              right neighbor, and a tight merge whose residual is too small
+              to form a new block. The shrunk 16-byte block is deliberately
+              kept alive until the end so the intermediate scenarios run
+              against the exact pool layout they were designed for.
+Input       : None.
+Output      : None.
+Return      : None.
+******************************************************************************/
+void Cov_Mem_Realloc_Cases(void)
+{
+    void* Slot_Shrink;
+    void* Slot_Freed;
+    void* Slot_Reallocated;
+    void* Block_Left_Guard;
+    void* Block_Growing;
+    void* Block_Right_Guard;
+    void* Block_Base;
+    void* Block_Right_Freed;
+    void* Block_Expanded;
+    void* Block_Initial;
+    void* Block_Neighbor_Free;
+    void* Block_Neighbor_Held;
+    void* Block_Merged;
 
     /* Realloc: freed-and-recreated out-of-range pointer, residual paths */
-    RMP_Realloc(Pool,(void*)1,0);
+    RMP_Realloc(Pool,(void*)1,0U);
+    /* Realloc: NULL pool rejection */
+    RMP_Realloc(RMP_NULL,(void*)1,64U);
     /* Malloc/Realloc: shrink a block in place, covering the shrink paths */
-    void* ptr_re=RMP_Malloc(Pool,16);
-    RMP_Realloc(Pool,ptr_re,32);
+    Slot_Shrink=RMP_Malloc(Pool,16U);
+    RMP_Realloc(Pool,Slot_Shrink,32U);
 
     /* Malloc: allocate a block and free it for the freed-realloc test */
-    void* mem_block=RMP_Malloc(Pool, 128);
+    Slot_Freed=RMP_Malloc(Pool, 128U);
     /* Free: return the block to the pool */
-    RMP_Free(Pool, mem_block);
+    RMP_Free(Pool, Slot_Freed);
     /* Realloc: try to reallocate an already freed block */
-    void* realloc_block=RMP_Realloc(Pool, mem_block, 256);
+    Slot_Reallocated=RMP_Realloc(Pool, Slot_Freed, 256U);
     /* Free: release the reallocated block */
-    RMP_Free(Pool,realloc_block);
+    RMP_Free(Pool,Slot_Reallocated);
 
     /* If Right_Head's address differs from the end of the pool, there are more
        blocks after the current one and the block pointed to by Right_Head
@@ -1168,38 +1499,38 @@ void Cov_Mem(void)
        in the pool. */
     /* RMP_Mem_Init(Pool, 1024); */
     /* Malloc: three blocks so the reallocated one is not the last */
-    void* b1=RMP_Malloc(Pool, 100);
-    void* b2=RMP_Malloc(Pool, 200);
-    void* b3=RMP_Malloc(Pool, 300);
+    Block_Left_Guard=RMP_Malloc(Pool, 100U);
+    Block_Growing=RMP_Malloc(Pool, 200U);
+    Block_Right_Guard=RMP_Malloc(Pool, 300U);
     /* Free a block and immediately try to reallocate, to trigger the else branch */
-    /* Free: the first block, so the second can grow leftwards */
-    RMP_Free(Pool, b1);
-    /* Realloc: grow the second block into the freed space left of it */
-    b2=RMP_Realloc(Pool, b2, 250);
+    /* Free: the left guard, so the growing block can expand leftwards */
+    RMP_Free(Pool,Block_Left_Guard);
+    /* Realloc: grow the middle block into the freed space left of it */
+    Block_Growing=RMP_Realloc(Pool, Block_Growing, 250U);
     /* Cleanup - free all allocated blocks and destroy the pool */
-    /* Free: the first block (may already be merged if the realloc failed) */
-    RMP_Free(Pool, b1);
-    /* Free: the resized second block */
-    RMP_Free(Pool, b2);
-    /* Free: the third block */
-    RMP_Free(Pool, b3);
+    /* Free: the left guard (may already be merged if the realloc failed) */
+    RMP_Free(Pool,Block_Left_Guard);
+    /* Free: the resized middle block */
+    RMP_Free(Pool,Block_Growing);
+    /* Free: the right guard */
+    RMP_Free(Pool,Block_Right_Guard);
 
     /* Expansion cases */
-    /* Allocate the first block, which is about to be resized */
-    void* firstBlock=RMP_Malloc(Pool, 128);
+    /* Allocate the base block, which is about to be resized */
+    Block_Base=RMP_Malloc(Pool, 128U);
     /* Allocate the second block right after, then free it immediately so it
        becomes the right free block */
-    void* secondBlock=RMP_Malloc(Pool, 128);
+    Block_Right_Freed=RMP_Malloc(Pool, 128U);
     /* Free: the second block becomes the right free neighbor */
-    RMP_Free(Pool, secondBlock);
+    RMP_Free(Pool,Block_Right_Freed);
 
-    /* Try to expand the first block, expecting the right free block handling
+    /* Try to expand the base block, expecting the right free block handling
        logic to trigger */
-    /* Realloc: expand the first block by merging with its right free neighbor */
-    void* resizedFirstBlock=RMP_Realloc(Pool, firstBlock, 256);
+    /* Realloc: expand the base block by merging with its right free neighbor */
+    Block_Expanded=RMP_Realloc(Pool, Block_Base, 256U);
     /* Cleanup - free the block and destroy the pool */
     /* Free: the expanded block */
-    RMP_Free(Pool, resizedFirstBlock);
+    RMP_Free(Pool,Block_Expanded);
 
     /*
        When attempting to expand a block that has a right adjacent free block
@@ -1212,25 +1543,43 @@ void Cov_Mem(void)
     /* Logically this should be fine, but Res_Size always came out surprisingly
        large - solved: the entire right side was free. */
     /* RMP_Mem_Init(Pool, 256); */
-    /* Allocate the first block from the pool; we will try to expand it later */
-    void* initialBlock=RMP_Malloc(Pool,64);
+    /* Allocate the base block from the pool; we will try to expand it later */
+    Block_Initial=RMP_Malloc(Pool,64U);
 
     /* Allocate and free another block right after, to create a free block to
-       the right of initialBlock */
-    void* adjacentFreeBlock=RMP_Malloc(Pool, 64);
-    void* adjacentFreeBlock2=RMP_Malloc(Pool, 128);
-    RMP_Free(Pool, adjacentFreeBlock);
-    /* Try to expand initialBlock, to trigger a merge with the right free block */
+       the right of the base block */
+    Block_Neighbor_Free=RMP_Malloc(Pool, 64U);
+    Block_Neighbor_Held=RMP_Malloc(Pool, 128U);
+    RMP_Free(Pool,Block_Neighbor_Free);
+    /* Try to expand the base block, to trigger a merge with the right free block */
     /* Realloc: pick a size that ensures the merge leaves no room for a new block */
-    void* resizedBlock=RMP_Realloc(Pool, initialBlock, 110);
+    Block_Merged=RMP_Realloc(Pool, Block_Initial, 110U);
     /* Cleanup - free the memory and destroy the pool */
-    /* Free: the resized block */
-    RMP_Free(Pool, resizedBlock);
+    /* Free: the merged block */
+    RMP_Free(Pool,Block_Merged);
     /* Free: the remaining neighbor block */
-    RMP_Free(Pool, adjacentFreeBlock2);
+    RMP_Free(Pool,Block_Neighbor_Held);
 
-    /* Free: release the shrunk block, covering the free paths */
-    RMP_Free(Pool,ptr_re);
+    /* Free: release the 16-byte block kept alive since the in-place shrink */
+    RMP_Free(Pool,Slot_Shrink);
+}
+/* End Function:Cov_Mem_Realloc_Cases ****************************************/
+
+/* Function:Cov_Mem_Realloc_Residual ******************************************
+Description : Five self-contained pool scenarios around the Res_Size logic
+              of RMP_Realloc: the no-resize shortcut when Mem_Size equals
+              Rounded_Size, a shrink that splits off a residual block, an
+              expansion whose new block allocation fails, a shrink whose
+              residual block is large enough to be reinserted, and a shrink
+              where Res_Size is just above the minimum viable block size.
+Input       : None.
+Output      : None.
+Return      : None.
+******************************************************************************/
+void Cov_Mem_Realloc_Residual(void)
+{
+    void* Block_Small;
+    void* Block_Target;
 
     /*
        Rounded_Size - the adjusted (rounded up) size.
@@ -1239,72 +1588,91 @@ void Cov_Mem(void)
        possibly merging adjacent free blocks, enough residual space remains to
        form a new free block.
     */
-    for(iii=0;iii<1024;iii++)
-    {
-        Pool[iii]=0U;
-    }
+    RMP_Clear(Pool,1024U*sizeof(rmp_ptr_t));
 
     /* Realloc where Mem_Size==Rounded_Size, the no-resize shortcut */
     RMP_Mem_Init(Pool,1024U*sizeof(rmp_ptr_t));
-    void* ppp1=RMP_Malloc(Pool, 64);
-    void* ppp2=RMP_Malloc(Pool, 128);
-    RMP_Free(Pool,ppp1);
-    ppp2=RMP_Realloc(Pool,ppp2,128);
+    Block_Small=RMP_Malloc(Pool, 64U);
+    Block_Target=RMP_Malloc(Pool, 128U);
+    RMP_Free(Pool,Block_Small);
+    Block_Target=RMP_Realloc(Pool,Block_Target,128U);
 
     /* Realloc shrink that splits off a residual block */
-    for(iii=0;iii<1024;iii++)
-    {
-        Pool[iii]=0U;
-    }
+    RMP_Clear(Pool,1024U*sizeof(rmp_ptr_t));
     RMP_Mem_Init(Pool,1024U*sizeof(rmp_ptr_t));
-    void* ppp3=RMP_Malloc(Pool, 64);
-    void* ppp4=RMP_Malloc(Pool, 256);
-    RMP_Free(Pool,ppp3);
-    ppp2=RMP_Realloc(Pool,ppp4,128);
+    Block_Small=RMP_Malloc(Pool, 64U);
+    Block_Target=RMP_Malloc(Pool, 256U);
+    RMP_Free(Pool,Block_Small);
+    Block_Target=RMP_Realloc(Pool,Block_Target,128U);
 
     /* Realloc expansion where the new block allocation fails */
-    for(iii=0;iii<1024;iii++)
-    {
-        Pool[iii]=0U;
-    }
+    RMP_Clear(Pool,1024U*sizeof(rmp_ptr_t));
     RMP_Mem_Init(Pool,1024U*sizeof(rmp_ptr_t));
-    void* ppp5=RMP_Malloc(Pool, 64);
-    void* ppp6=RMP_Malloc(Pool, 256);
-    ppp2=RMP_Realloc(Pool,ppp5,1024U*sizeof(rmp_ptr_t)+10086);
+    Block_Small=RMP_Malloc(Pool, 64U);
+    RMP_Malloc(Pool, 256U);
+    Block_Target=RMP_Realloc(Pool,Block_Small,1024U*sizeof(rmp_ptr_t)+10086);
 
     /* Realloc shrink where the residual block is large enough to be reinserted */
-    for(iii=0;iii<1024;iii++)
-    {
-        Pool[iii]=0U;
-    }
+    RMP_Clear(Pool,1024U*sizeof(rmp_ptr_t));
     RMP_Mem_Init(Pool,1024U*sizeof(rmp_ptr_t));
-    void* ppp7=RMP_Malloc(Pool, 128);
-    void* ppp8=RMP_Malloc(Pool, 256);
-    ppp2=RMP_Realloc(Pool,ppp7,64);
+    Block_Small=RMP_Malloc(Pool, 128U);
+    RMP_Malloc(Pool, 256U);
+    Block_Target=RMP_Realloc(Pool,Block_Small,64U);
 
     /* Res_Size = Mem_Size - Rounded_Size */
     /* if(Res_Size < (sizeof(struct RMP_Mem_Head)+64U+sizeof(struct RMP_Mem_Tail))) not satisfied */
     /* i.e. make Res_Size >= 84 */
-    for(iii=0;iii<1024;iii++)
-    {
-        Pool[iii]=0U;
-    }
+    RMP_Clear(Pool,1024U*sizeof(rmp_ptr_t));
     RMP_Mem_Init(Pool,1024U*4);
-    void* ppp9=RMP_Malloc(Pool, 256);
-    void* ppp10=RMP_Malloc(Pool, 256);
-    ppp2=RMP_Realloc(Pool,ppp9,64);
+    Block_Target=RMP_Malloc(Pool, 256U);
+    RMP_Malloc(Pool, 256U);
+    Block_Target=RMP_Realloc(Pool,Block_Target,64U);
 }
-/* End Function:Cov_Mem ******************************************************/
+/* End Function:Cov_Mem_Realloc_Residual *************************************/
 
-/* Function:Cov_Fifo_Msgq *****************************************************
-Description : Test the FIFO and message queue operations.
+/* Function:Cov_Mem ***********************************************************
+Description : Test the memory pool operations, including initialization,
+              allocation, free and reallocation, covering the underlying
+              FLI/SLI bitmap and linked list paths. The scenarios are split
+              into focused sub-tests; this function only sequences them.
 Input       : None.
 Output      : None.
 Return      : None.
 ******************************************************************************/
-void Cov_Fifo_Msgq()
+void Cov_Mem(void)
 {
-    struct RMP_List* Node;
+    /* In the RMP_Mem structure, Table is a pointer to an RMP_List array that
+       serves as the allocation table of the memory pool. Its purpose is to keep
+       track of the allocation state, i.e. the free block lists of every size
+       class (defined by the First-Level Index (FLI) and the Second-Level Index
+       (SLI)). Each list head represents a set of free blocks within a certain
+       size range that are available for allocation. Specifically, every element
+       of the Table array is an RMP_List structure acting as the head node of a
+       doubly-linked list, and each head corresponds to one FLI/SLI combination,
+       representing a group of free blocks of similar size. */
+    Cov_Mem_Free_Class();
+    Cov_Mem_Realloc_Expand();
+    Cov_Mem_Param_Reject();
+    Cov_Mem_Exhaust();
+    Cov_Mem_Size_Class();
+    Cov_Mem_Del_Shared();
+    Cov_Mem_Realloc_Cases();
+    Cov_Mem_Realloc_Residual();
+}
+/* End Function:Cov_Mem ******************************************************/
+
+/* Function:Cov_Fifo **********************************************************
+Description : Test the FIFO operations: creation, deletion, read, write,
+              ISR-context write and count, including the state and NULL
+              parameter rejection branches.
+Input       : None.
+Output      : None.
+Return      : None.
+******************************************************************************/
+void Cov_Fifo(void)
+{
+    struct RMP_List Node;
+    volatile struct RMP_List* Receive;
 
     /* RMP_Fifo_Crt */
     /* NULL control block */
@@ -1334,18 +1702,18 @@ void Cov_Fifo_Msgq()
     RMP_Fifo_Crt(&Fifo_1);
     RMP_Fifo_Read(RMP_NULL,RMP_NULL);
     RMP_Fifo_Read(&Fifo_1,RMP_NULL);
-    RMP_Fifo_Read(&Fifo_1,&Node);
+    RMP_Fifo_Read(&Fifo_1,&Receive);
     RMP_Fifo_Del(&Fifo_1);
 
     /* Abnormal case: read from a FIFO in free state; expect RMP_ERR_FIFO */
     RMP_Fifo_Crt(&Fifo_1);
     Fifo_1.State=RMP_FIFO_FREE;
-    RMP_Fifo_Read(&Fifo_1,&Node);
+    RMP_Fifo_Read(&Fifo_1,&Receive);
     RMP_Fifo_Del(&Fifo_1);
 
     /* FIFO is empty */
     RMP_Fifo_Crt(&Fifo_1);
-    RMP_Fifo_Read(&Fifo_1,&Node);
+    RMP_Fifo_Read(&Fifo_1,&Receive);
     RMP_Fifo_Del(&Fifo_1);
 
     /* RMP_Fifo_Write */
@@ -1381,6 +1749,21 @@ void Cov_Fifo_Msgq()
     Fifo_1.State=RMP_FIFO_FREE;
     RMP_Fifo_Cnt(&Fifo_1);
     RMP_Fifo_Del(&Fifo_1);
+}
+/* End Function:Cov_Fifo *****************************************************/
+
+/* Function:Cov_Msgq **********************************************************
+Description : Test the message queue operations: creation, deletion, send,
+              ISR-context send, receive with timeout and count, including
+              the state, semaphore and NULL parameter rejection branches.
+Input       : None.
+Output      : None.
+Return      : None.
+******************************************************************************/
+void Cov_Msgq(void)
+{
+    struct RMP_List Node;
+    volatile struct RMP_List* Receive;
 
     /* RMP_Msgq_Crt */
     /* Msgq-crt: tests the NULL control block rejection branch */
@@ -1464,14 +1847,14 @@ void Cov_Fifo_Msgq()
     /* RMP_Msgq_Rcv */
     RMP_Msgq_Crt(&Msgq_1);
     /* Msgq-rcv: tests the NULL queue rejection branch */
-    RMP_Msgq_Rcv(RMP_NULL,RMP_NULL,1);
+    RMP_Msgq_Rcv(RMP_NULL,RMP_NULL,1U);
     /* Msgq-rcv: tests the NULL node rejection branch */
-    RMP_Msgq_Rcv(&Msgq_1,RMP_NULL,1);
+    RMP_Msgq_Rcv(&Msgq_1,RMP_NULL,1U);
     /* Msgq-rcv: normal receive path */
-    RMP_Msgq_Rcv(&Msgq_1,&Node,10);
+    RMP_Msgq_Rcv(&Msgq_1,&Receive,10U);
     /* Msgq-rcv: force free state so the in-use check fails */
     Msgq_1.State=RMP_SEM_FREE;
-    RMP_Msgq_Rcv(&Msgq_1,&Node,10);
+    RMP_Msgq_Rcv(&Msgq_1,&Receive,10U);
     Msgq_1.State=RMP_MSGQ_USED;
     RMP_Msgq_Del(&Msgq_1);
 
@@ -1484,17 +1867,17 @@ void Cov_Fifo_Msgq()
     RMP_Msgq_Crt(&Msgq_1);
     /* Msgq-rcv: cannot acquire the semaphore in time, timeout path
        (nothing was posted) */
-    RMP_Msgq_Rcv(&Msgq_1,&Node,20);
+    RMP_Msgq_Rcv(&Msgq_1,&Receive,20U);
     RMP_Msgq_Del(&Msgq_1);
 
     /* if(RMP_Fifo_Read(&(Queue->Fifo), Node)<0) */
     RMP_Clear(&Msgq_1, sizeof(struct RMP_Msgq));
     RMP_Msgq_Crt(&Msgq_1);
     /* Sem-post-ISR: post one count so the pend succeeds and is not caught by the pend timeout check */
-    RMP_Sem_Post_ISR(&Msgq_1.Sem, 1);
+    RMP_Sem_Post_ISR(&Msgq_1.Sem, 1U);
     /* Msgq-rcv: force free FIFO so the internal read fails */
     Msgq_1.Fifo.State=RMP_FIFO_FREE;
-    RMP_Msgq_Rcv(&Msgq_1,&Node,100);
+    RMP_Msgq_Rcv(&Msgq_1,&Receive,100U);
     /* Restore normal state */
     Msgq_1.Fifo.State=RMP_FIFO_USED;
     RMP_Msgq_Del(&Msgq_1);
@@ -1518,7 +1901,7 @@ void Cov_Fifo_Msgq()
     RMP_Msgq_Cnt(&Msgq_1);
     RMP_Msgq_Del(&Msgq_1);
 }
-/* End Function:Cov_Fifo_Msgq ************************************************/
+/* End Function:Cov_Msgq *****************************************************/
 
 /* Function:Cov_Bmq ***********************************************************
 Description : Test the blocking message queue (Bmq) operations.
@@ -1526,20 +1909,45 @@ Input       : None.
 Output      : None.
 Return      : None.
 ******************************************************************************/
+void Cov_Bmq_Race_Func(void)
+{
+    volatile struct RMP_List* Node;
+
+    /* Sched-lock: hold the scheduler across the wake, the drain and the
+     * delete, so the woken main thread resumes into a deleted queue */
+    RMP_Sched_Lock();
+    /* Sem-post: wake the blocked main thread; it cannot run yet */
+    RMP_Sem_Post(&Bmq_1.Sem, 1U);
+    /* Fifo-read: drain the queued message directly, or the FIFO would
+     * refuse the deletion below (it deletes only empty queues) */
+    RMP_Fifo_Read(&Bmq_1.Msgq.Fifo, &Node);
+    /* Bmq-del: delete the queue while the woken thread cannot run */
+    RMP_Bmq_Del(&Bmq_1);
+    /* Sched-unlock: let the woken main thread resume */
+    RMP_Sched_Unlock();
+    /* Thd-delay: park the thread in the delaying state */
+    while(1)
+    {
+        RMP_Thd_Delay(10000U);
+    }
+}
+
 void Cov_Bmq(void)
 {
-    struct RMP_List* Node;
+    struct RMP_List Node;
+    volatile struct RMP_List* Receive;
+    volatile struct RMP_List Race_Node;
 
     RMP_Clear(&Bmq_1, sizeof(struct RMP_Bmq));
 
     /* RMP_Bmq_Crt */
     /* Bmq-crt: tests the NULL queue rejection branch */
-    RMP_Bmq_Crt(RMP_NULL,1);
+    RMP_Bmq_Crt(RMP_NULL,1U);
     /* Bmq-crt: normal creation path */
-    RMP_Bmq_Crt(&Bmq_1,10);
+    RMP_Bmq_Crt(&Bmq_1,10U);
     /* Do not delete Bmq_1 here, so that the next creation sees a USED state */
     /* Bmq-crt: already-in-use rejection branch */
-    RMP_Bmq_Crt(&Bmq_1,10);
+    RMP_Bmq_Crt(&Bmq_1,10U);
     RMP_Bmq_Del(&Bmq_1);
     /* Bmq-crt: zero limit rejection branch, expect RMP_ERR_OPER */
     RMP_Bmq_Crt(&Bmq_1,0U);
@@ -1551,7 +1959,7 @@ void Cov_Bmq(void)
     RMP_Bmq_Del(&Bmq_1);
 
     /* if(RMP_Msgq_Del(&(Queue->Msgq))<0) - Attempt to delete the message queue first */
-    RMP_Bmq_Crt(&Bmq_1,10);
+    RMP_Bmq_Crt(&Bmq_1,10U);
     /* Bmq-del: abnormal case - force free state so the internal Msgq_Del fails */
     Bmq_1.Msgq.State=RMP_MSGQ_FREE;
     RMP_Bmq_Del(&Bmq_1);
@@ -1562,25 +1970,25 @@ void Cov_Bmq(void)
     /* RMP_Bmq_Snd */
     RMP_Clear(&Bmq_1, sizeof(struct RMP_Bmq));
     /* Bmq-snd: tests the NULL queue rejection branch */
-    RMP_Bmq_Snd(RMP_NULL,&Node,10);
+    RMP_Bmq_Snd(RMP_NULL,&Node,10U);
     /* Bmq-snd: tests the NULL node rejection branch */
-    RMP_Bmq_Snd(&Bmq_1,RMP_NULL,10);
+    RMP_Bmq_Snd(&Bmq_1,RMP_NULL,10U);
     /* Bmq-snd: state != RMP_BMQ_USED rejection branch */
-    RMP_Bmq_Snd(&Bmq_1,&Node,20);
+    RMP_Bmq_Snd(&Bmq_1,&Node,20U);
     RMP_Clear(&Bmq_1, sizeof(struct RMP_Bmq));
-    RMP_Bmq_Crt(&Bmq_1,5);
+    RMP_Bmq_Crt(&Bmq_1,5U);
     /* Bmq-snd: semaphore state != RMP_SEM_USED, makes _RMP_Sem_Pend_Core
        return RMP_ERR_SEM, satisfying the 4885 condition */
     Bmq_1.Sem.State=RMP_SEM_FREE;
-    RMP_Bmq_Snd(&Bmq_1,&Node,20);
+    RMP_Bmq_Snd(&Bmq_1,&Node,20U);
     /* Restore */
     Bmq_1.Sem.State=RMP_SEM_USED;
     /* Bmq-snd: normal send path */
-    RMP_Bmq_Snd(&Bmq_1,&Node,20);
+    RMP_Bmq_Snd(&Bmq_1,&Node,20U);
     /* if(RMP_Msgq_Snd(&(Queue->Msgq), Node)<0) */
     /* Bmq-snd: abnormal case - RMP_Msgq_Snd returns RMP_ERR_MSGQ */
     Bmq_1.Msgq.State=RMP_MSGQ_FREE;
-    RMP_Bmq_Snd(&Bmq_1,&Node,20);
+    RMP_Bmq_Snd(&Bmq_1,&Node,20U);
     /* Bmq-del: delete correctly */
     RMP_Bmq_Del(&Bmq_1);
 
@@ -1592,11 +2000,11 @@ void Cov_Bmq(void)
     RMP_Bmq_Snd_ISR(&Bmq_1,RMP_NULL);
     /* Bmq-snd-ISR: queue not created, rejection branch */
     RMP_Bmq_Snd_ISR(&Bmq_1,&Node);
-    RMP_Bmq_Crt(&Bmq_1,5);
-    /* Bmq-snd-ISR: abnormal case - Sem.Cur_Num is zero */
-    Bmq_1.Sem.Cur_Num=0;
+    RMP_Bmq_Crt(&Bmq_1,5U);
+    /* Bmq-snd-ISR: abnormal case - Sem.Num_Cur is zero */
+    Bmq_1.Sem.Num_Cur=0;
     RMP_Bmq_Snd_ISR(&Bmq_1,&Node);
-    Bmq_1.Sem.Cur_Num=5;
+    Bmq_1.Sem.Num_Cur=5;
     /* Bmq-snd-ISR: normal send path */
     RMP_Bmq_Snd_ISR(&Bmq_1,&Node);
     /* Bmq-del: delete correctly */
@@ -1605,20 +2013,20 @@ void Cov_Bmq(void)
     /* RMP_Bmq_Rcv */
     RMP_Clear(&Bmq_1, sizeof(struct RMP_Bmq));
     /* Bmq-rcv: tests the NULL queue rejection branch */
-    RMP_Bmq_Rcv(RMP_NULL,RMP_NULL,10);
+    RMP_Bmq_Rcv(RMP_NULL,RMP_NULL,10U);
     /* Bmq-rcv: tests the NULL node rejection branch */
-    RMP_Bmq_Rcv(&Bmq_1,RMP_NULL,10);
+    RMP_Bmq_Rcv(&Bmq_1,RMP_NULL,10U);
     /* Bmq-rcv: state != RMP_BMQ_USED rejection branch */
-    RMP_Bmq_Rcv(&Bmq_1,&Node,10);
-    RMP_Bmq_Crt(&Bmq_1,10);
+    RMP_Bmq_Rcv(&Bmq_1,&Receive,10U);
+    RMP_Bmq_Crt(&Bmq_1,10U);
     /* Bmq-rcv: receive from an empty queue, timeout path */
-    RMP_Bmq_Rcv(&Bmq_1,&Node,100);
+    RMP_Bmq_Rcv(&Bmq_1,&Receive,100U);
     /* Bmq-snd-ISR: queue three nodes so the next receive succeeds */
     RMP_Bmq_Snd_ISR(&Bmq_1,&Node);
     RMP_Bmq_Snd_ISR(&Bmq_1,&Node);
     RMP_Bmq_Snd_ISR(&Bmq_1,&Node);
     /* Bmq-rcv: normal receive path with data available */
-    RMP_Bmq_Rcv(&Bmq_1,&Node,100);
+    RMP_Bmq_Rcv(&Bmq_1,&Receive,100U);
     /* Bmq-del: delete correctly */
     RMP_Bmq_Del(&Bmq_1);
 
@@ -1627,7 +2035,7 @@ void Cov_Bmq(void)
     RMP_Bmq_Cnt(RMP_NULL);
     /* Bmq-cnt: query on a free queue, rejection branch */
     RMP_Bmq_Cnt(&Bmq_1);
-    RMP_Bmq_Crt(&Bmq_1,10);
+    RMP_Bmq_Crt(&Bmq_1,10U);
     /* Bmq-cnt: query on a used queue, success path */
     RMP_Bmq_Cnt(&Bmq_1);
     /* Bmq-del: delete correctly */
@@ -1635,8 +2043,183 @@ void Cov_Bmq(void)
     /* Bmq-cnt: query on a cleared structure, free-state branch */
     RMP_Clear(&Bmq_1, sizeof(struct RMP_Bmq));
     RMP_Bmq_Cnt(&Bmq_1);
+
+    /* Deletion race: the sender resumes into a deleted queue */
+    PASS(RMP_Bmq_Crt(&Bmq_1, 1U));
+    /* Bmq-snd: fill the only slot */
+    PASS(RMP_Bmq_Snd(&Bmq_1, &Race_Node, RMP_SLICE_MAX));
+    /* Thd-crt: the racing deleter worker */
+    PASS(RMP_Thd_Crt(&Thd_2, Cov_Bmq_Race_Func, RMP_NULL, Stack_2, sizeof(Stack_2), PRIO_LOWER, 10U));
+    /* Bmq-snd: blocks on the empty semaphore. The worker wakes us by
+     * posting a slot back, drains the queued message, and deletes the
+     * queue, all under one scheduler lock, so we resume into the
+     * deleted queue and the send fails through the deletion race
+     * guard. No PASS here: the send is expected to return an error. */
+    RMP_Bmq_Snd(&Bmq_1, &Race_Node, 100U);
+    /* Thd-del: clean up the parked racing worker */
+    PASS(RMP_Thd_Del(&Thd_2));
 }
 /* End Function:Cov_Bmq ******************************************************/
+
+/* Function:Cov_Amgr **********************************************************
+Description : Test the alarm manager and alarm operations.
+Input       : None.
+Output      : None.
+Return      : None.
+******************************************************************************/
+void Cov_Amgr_Hook(volatile struct RMP_Amgr* Amgr,
+                   volatile struct RMP_Alrm* Alrm,
+                   rmp_cnt_t Timestamp)
+{
+    RMP_USE(Amgr);
+    RMP_USE(Alrm);
+    RMP_USE(Timestamp);
+
+    if(Alrm==&Alrm_1)
+    {
+        Alrm_1_Cnt++;
+    }
+    else
+    {
+        Alrm_2_Cnt++;
+    }
+}
+
+void Cov_Amgr(void)
+{
+    volatile struct RMP_Alrm* Popped;
+    /* A second manager used for the cross-mounted rejection tests */
+    volatile struct RMP_Amgr Amgr_2;
+    volatile rmp_ptr_t State_Bkp;
+
+    /* Amgr-crt/cnt/del/proc/pop: NULL control block rejections */
+    FAIL(RMP_Amgr_Crt(RMP_NULL));
+    FAIL(RMP_Amgr_Cnt(RMP_NULL));
+    FAIL(RMP_Amgr_Del(RMP_NULL));
+    FAIL(RMP_Amgr_Proc(RMP_NULL, 1U));
+    FAIL(RMP_Amgr_Pop(RMP_NULL, (volatile struct RMP_Alrm**)&Popped));
+
+    /* Alrm-init: parameter rejections */
+    FAIL(RMP_Alrm_Init(RMP_NULL, 1U, RMP_ALRM_AUTORLD, Cov_Amgr_Hook));
+    FAIL(RMP_Alrm_Init(&Alrm_1, 0U, RMP_ALRM_AUTORLD, Cov_Amgr_Hook));
+    FAIL(RMP_Alrm_Init(&Alrm_1, RMP_MASK_INTMAX+1U, RMP_ALRM_AUTORLD, Cov_Amgr_Hook));
+    FAIL(RMP_Alrm_Init(&Alrm_1, 1U, 1U, Cov_Amgr_Hook));
+    FAIL(RMP_Alrm_Init(&Alrm_1, 1U, RMP_ALRM_AUTORLD, RMP_NULL));
+
+    /* Alrm-set/clr/trg: NULL pointer rejections */
+    FAIL(RMP_Alrm_Set(RMP_NULL, &Alrm_1));
+    FAIL(RMP_Alrm_Set(&Amgr_1, RMP_NULL));
+    FAIL(RMP_Alrm_Clr(RMP_NULL, &Alrm_1));
+    FAIL(RMP_Alrm_Clr(&Amgr_1, RMP_NULL));
+    FAIL(RMP_Alrm_Trg(RMP_NULL, &Alrm_1));
+    FAIL(RMP_Alrm_Trg(&Amgr_1, RMP_NULL));
+
+    /* Amgr-crt: success, then already-created rejection */
+    PASS(RMP_Amgr_Crt(&Amgr_1));
+    FAIL(RMP_Amgr_Crt(&Amgr_1));
+    /* Amgr-cnt: empty manager count */
+    PASS(RMP_Amgr_Cnt(&Amgr_1));
+    /* Amgr-proc: zero and oversized tick rejections */
+    FAIL(RMP_Amgr_Proc(&Amgr_1, 0U));
+    FAIL(RMP_Amgr_Proc(&Amgr_1, RMP_MASK_INTMAX+1U));
+
+    /* Amgr-proc/set/clr/trg: broken mutex, the pend must fail */
+    State_Bkp=Amgr_1.Mutex.State;
+    Amgr_1.Mutex.State=RMP_SEM_FREE;
+    FAIL(RMP_Amgr_Proc(&Amgr_1, 1U));
+    FAIL(RMP_Alrm_Set(&Amgr_1, &Alrm_1));
+    FAIL(RMP_Alrm_Clr(&Amgr_1, &Alrm_1));
+    FAIL(RMP_Alrm_Trg(&Amgr_1, &Alrm_1));
+    Amgr_1.Mutex.State=State_Bkp;
+
+    /* Alrm-init: a long one-shot, a short autoreloading and a medium
+     * one-shot alarm. The mixed delays exercise both paths of the
+     * insertion traversal: inserting the short autoreloader behind the
+     * long one-shot walks to the list head (no early pivot), while
+     * inserting the medium one-shot behind the short autoreloader takes
+     * the early-break path.
+     * Historically the one-shot flag was RMP_POW2(RMP_WORD_ORDER-1),
+     * which overlapped the delay field: an autoreloading alarm with a
+     * delay carrying that bit (e.g. 50) silently behaved as one-shot.
+     * The flag now lives on the top bit of the word, so every delay
+     * is safe. */
+    PASS(RMP_Alrm_Init(&Alrm_1, 100U, RMP_ALRM_ONESHOT, Cov_Amgr_Hook));
+    PASS(RMP_Alrm_Init(&Alrm_2, 32U, RMP_ALRM_AUTORLD, Cov_Amgr_Hook));
+    PASS(RMP_Alrm_Init(&Alrm_3, 64U, RMP_ALRM_ONESHOT, Cov_Amgr_Hook));
+
+    /* Alrm-set: register the short alarm into the empty queue */
+    PASS(RMP_Alrm_Set(&Amgr_1, &Alrm_1));
+    /* Alrm-init: already-mounted alarm rejection */
+    FAIL(RMP_Alrm_Init(&Alrm_1, 2U, RMP_ALRM_AUTORLD, Cov_Amgr_Hook));
+    /* Alrm-set: inserting the long alarm behind the short one takes
+     * the early-break path of the insertion traversal */
+    PASS(RMP_Alrm_Set(&Amgr_1, &Alrm_2));
+    /* Alrm-set: re-registering a mounted alarm pulls and reinserts it */
+    PASS(RMP_Alrm_Set(&Amgr_1, &Alrm_2));
+    /* Alrm-set: register the slow one-shot alarm at the queue tail */
+    PASS(RMP_Alrm_Set(&Amgr_1, &Alrm_3));
+    /* Amgr-cnt: three alarms are now managed */
+    RMP_Amgr_Cnt(&Amgr_1);
+    /* Amgr-del: non-empty manager rejection */
+    FAIL(RMP_Amgr_Del(&Amgr_1));
+
+    /* Alrm-set/clr/trg: cross-mounted rejections through a second manager */
+    RMP_Clear(&Amgr_2, sizeof(Amgr_2));
+    PASS(RMP_Amgr_Crt(&Amgr_2));
+    FAIL(RMP_Alrm_Set(&Amgr_2, &Alrm_1));
+    FAIL(RMP_Alrm_Clr(&Amgr_2, &Alrm_1));
+    FAIL(RMP_Alrm_Trg(&Amgr_2, &Alrm_1));
+    PASS(RMP_Amgr_Del(&Amgr_2));
+
+    /* Alrm-clr: unregister the slow one-shot alarm - the success path.
+     * The manager backlink is cleared here, so the alarm object becomes
+     * recyclable again. */
+    PASS(RMP_Alrm_Clr(&Amgr_1, &Alrm_3));
+    RMP_Amgr_Cnt(&Amgr_1);
+    /* Alrm-clr: re-cancelling a cancelled alarm is rejected */
+    FAIL(RMP_Alrm_Clr(&Amgr_1, &Alrm_3));
+    /* Alrm-init: a cancelled alarm can be initialized again for reuse */
+    PASS(RMP_Alrm_Init(&Alrm_3, 2U, RMP_ALRM_ONESHOT, Cov_Amgr_Hook));
+
+    /* Alrm-trg: trigger the short one-shot alarm */
+    PASS(RMP_Alrm_Trg(&Amgr_1, &Alrm_1));
+    /* Alrm-trg: the one-shot alarm was freed by its expiration, rejection */
+    FAIL(RMP_Alrm_Trg(&Amgr_1, &Alrm_1));
+    /* Alrm-trg: trigger the long autoreloading alarm */
+    PASS(RMP_Alrm_Trg(&Amgr_1, &Alrm_2));
+
+    /* Amgr-proc: advance the manager timestamps; a few increments let
+     * nothing expire, then a big one pushes past the 32-tick autoreloading
+     * alarm so it expires and re-arms itself through the tick handler */
+    RMP_Amgr_Proc(&Amgr_1, 1U);
+    RMP_Amgr_Proc(&Amgr_1, 1U);
+    RMP_Amgr_Proc(&Amgr_1, 2U);
+    FAIL(RMP_Amgr_Proc(&Amgr_1, 0U));
+    RMP_Amgr_Proc(&Amgr_1, 60U);
+    RMP_Amgr_Proc(&Amgr_1, 1U);
+
+    /* Amgr-pop: dump the alarm that the autoreloading hook re-armed.
+     * The popped alarms are NOT put back, or this would loop forever. */
+    PASS(RMP_Amgr_Pop(&Amgr_1, (volatile struct RMP_Alrm**)&Popped));
+    /* Amgr-pop: nothing left to dump, empty-queue rejection branch */
+    FAIL(RMP_Amgr_Pop(&Amgr_1, (volatile struct RMP_Alrm**)&Popped));
+    /* Amgr-pop: NULL output pointer rejection branch */
+    FAIL(RMP_Amgr_Pop(&Amgr_1, (volatile struct RMP_Alrm**)RMP_NULL));
+
+    /* Alrm-clr: both alarms are unregistered now, rejection branches */
+    FAIL(RMP_Alrm_Clr(&Amgr_1, &Alrm_1));
+    FAIL(RMP_Alrm_Clr(&Amgr_1, &Alrm_2));
+    /* Amgr-del: empty manager success, then already-deleted rejections */
+    PASS(RMP_Amgr_Del(&Amgr_1));
+    FAIL(RMP_Amgr_Del(&Amgr_1));
+    FAIL(RMP_Amgr_Cnt(&Amgr_1));
+    FAIL(RMP_Amgr_Proc(&Amgr_1, 1U));
+    FAIL(RMP_Amgr_Pop(&Amgr_1, (volatile struct RMP_Alrm**)&Popped));
+    FAIL(RMP_Alrm_Set(&Amgr_1, &Alrm_1));
+    FAIL(RMP_Alrm_Clr(&Amgr_1, &Alrm_1));
+    FAIL(RMP_Alrm_Trg(&Amgr_1, &Alrm_1));
+}
+/* End Function:Cov_Amgr *****************************************************/
 
 /* Function:Thd_Cov_Entry *****************************************************
 Description : The entry of the main coverage test thread. Runs all the
@@ -1655,35 +2238,61 @@ void Thd_Cov_Entry(void)
     RMP_DBG_S(" /_/|_|/_/  /_//_/\r\n");
     RMP_DBG_S("====================================================\r\n");
 
-    /* Run every coverage test defined in this file, in definition order */
+    /* Run every coverage test defined in this file, in definition order.
+     * A line naming the next test is printed before it runs, so that the
+     * position of any kernel panic can be attributed to a test. */
     /* Bit manipulation tests */
+    RMP_DBG_S("=== Bit manipulation ===\r\n");
     Cov_Bit();
     /* Print helper tests */
+    RMP_DBG_S("=== Print helpers ===\r\n");
     Cov_Print();
     /* Scheduler lock tests */
+    RMP_DBG_S("=== Scheduler lock ===\r\n");
     Cov_Lock();
+    /* Timer helper tests */
+    RMP_DBG_S("=== Timer helpers ===\r\n");
+    Cov_Tim();
     /* Thread parameter tests */
+    RMP_DBG_S("=== Thread parameters ===\r\n");
     Cov_Thd_Param();
     /* Thread operation tests */
+    RMP_DBG_S("=== Thread operations ===\r\n");
     Cov_Thd_Oper();
     /* Thread deletion tests */
+    RMP_DBG_S("=== Thread deletion ===\r\n");
     Cov_Thd_Del();
     /* Semaphore parameter tests */
+    RMP_DBG_S("=== Semaphore parameters ===\r\n");
     Cov_Sem_Param();
     /* Semaphore operation tests */
+    RMP_DBG_S("=== Semaphore operations ===\r\n");
     Cov_Sem_Oper();
     /* Memory pool tests */
+    RMP_DBG_S("=== Memory pool ===\r\n");
     Cov_Mem();
-    /* FIFO and message queue tests */
-    Cov_Fifo_Msgq();
+    /* FIFO tests */
+    RMP_DBG_S("=== FIFO ===\r\n");
+    Cov_Fifo();
+    /* Message queue tests */
+    RMP_DBG_S("=== Message queue ===\r\n");
+    Cov_Msgq();
     /* Blocking message queue tests */
+    RMP_DBG_S("=== Blocking message queue ===\r\n");
     Cov_Bmq();
+    /* Alarm manager and alarm tests */
+    RMP_DBG_S("=== Alarm manager ===\r\n");
+    Cov_Amgr();
 
     /* Print all covered line numbers to the serial port */
     RMP_Cov_Print();
 
-    /* Should stop here */
-    while(1);
+    /* Should stop here; keep delaying so that lower priority worker
+     * threads can finish their panic prints, if any */
+    while(1)
+    {
+        RMP_Thd_Delay(100000U);
+    }
 }
 /* End Function:Thd_Cov_Entry ************************************************/
 
@@ -1703,11 +2312,19 @@ void RMP_Init_Hook(void)
                 Stack_Cov, sizeof(Stack_Cov),
                 PRIO_COV, 50U);
 }
+/* End Function:RMP_Init_Hook ************************************************/
 
+/* Function:RMP_Init_Idle *****************************************************
+Description : The idle hook of the init thread. The coverage test has nothing
+              to do here.
+Input       : None.
+Output      : None.
+Return      : None.
+******************************************************************************/
 void RMP_Init_Idle(void)
 {
     return;
 }
-/* End Function:RMP_Init_Hook ************************************************/
+/* End Function:RMP_Init_Idle ************************************************/
 
 /* End Of File ***************************************************************/

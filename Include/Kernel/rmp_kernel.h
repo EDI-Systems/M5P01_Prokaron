@@ -141,7 +141,7 @@ while(0)
 /* Alarm delay mode & value */
 #define RMP_ALRM_DELAY(X)           ((X)&RMP_MASK_INTMAX)
 #define RMP_ALRM_AUTORLD            (0U)
-#define RMP_ALRM_ONESHOT            RMP_POW2(RMP_WORD_ORDER-1U)
+#define RMP_ALRM_ONESHOT            RMP_POW2(RMP_WORD_BIT-1U)
 
 /* Error codes */
 /* This error is thread related */
@@ -213,6 +213,12 @@ do \
 } \
 while(0)
 
+/* Initial thread's timeslice number */
+#ifndef RMP_COV_LINE_NUM
+#define RMP_INIT_SLICE              (65500U)
+#else
+#define RMP_INIT_SLICE              (1U)
+#endif
 /* Initial thread's stack pointer */
 #define RMP_INIT_STACK              RMP_STACK_END((rmp_ptr_t)RMP_Init_Stack,RMP_INIT_STACK_SIZE)
 

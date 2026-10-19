@@ -3452,7 +3452,7 @@ int main(void)
     /* Initialize coverage markers if coverage enabled */
     for(Count=0U;Count<RMP_COV_WORD_NUM;Count++)
     {
-        RMP_Coverage[Count]=0U;
+        RMP_Cov[Count]=0U;
     }
 #endif
 
@@ -3475,8 +3475,8 @@ int main(void)
     /* Now boot into the first thread */
     RMP_Clear(&RMP_Init_Thd,sizeof(struct RMP_Thd));
     RMP_Init_Thd.Prio=0U;
-    RMP_Init_Thd.Slice=65500U;
-    RMP_Init_Thd.Slice_Left=65500U;
+    RMP_Init_Thd.Slice=RMP_INIT_SLICE;
+    RMP_Init_Thd.Slice_Left=RMP_INIT_SLICE;
     RMP_Init_Thd.State=RMP_THD_READY;
     RMP_Init_Thd.Stack=RMP_INIT_STACK;
 
@@ -6465,6 +6465,7 @@ rmp_ret_t RMP_Alrm_Clr(volatile struct RMP_Amgr* Amgr,
     
     /* Pull it from queue and we're done */
     RMP_Sched_Lock();
+    Alrm->Amgr=RMP_NULL;
     RMP_List_Del(Alrm->Head.Prev,Alrm->Head.Next);
     Amgr->Num_Cur--;
     RMP_Sched_Unlock();
