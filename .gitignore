@@ -90,4 +90,26 @@ Project/ATS-*/.vs/
 
 #E2STUDIO specific
 Project/E2STUDIO-*/.eclipse/
+
+#IAR specific
+Project/EWARM-*/settings/
+*.ewt
+*.ewd
+*.ewp.bak
+*.eww.bak
+*.crun
+*.dbgdt
+*.wsdt
+*.dnx
+*.pbi
+*.pbd
+*.pbw
+*.browse
+
+#AI agent workspace (tools and scratch data, never commit)
+Document/Private/Agent_Workspace/
+
+#Visual Studio folder metadata
+.vs/
+
  
