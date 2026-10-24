@@ -324,8 +324,10 @@ void _RMP_A7M_RVM_Yield(void)
          * by an exception return, otherwise we risk corrputing program logic or stack. */
         if((Stack->XPSR&0x0600FC00U)!=0U)
         {
-            RVM_Virt_Int_Unmask();
+            /* Pend the switch under mask; the unmask arms it at its
+             * hypercall boundary - no unmasked window in between. */
             RVM_Virt_Yield();
+            RVM_Virt_Int_Unmask();
         }
         /* The fast yield routine will unmask interrupts in the end */
         else

@@ -788,7 +788,7 @@ void RMP_Sched_Unlock(void)
          * (1) We're using a dedicated interrupt handler to switch context.
          *     In this case, the software interrupt will be pending until we 
          *     unmask the kernel-aware interrupts here.
-         * (2) We're using a routine to do context switch.
+         * (2) We're using a thread-level routine to do context switch.
          *     In this case, the routine will unmask interrupts at its end 
          *     anyway, and will not leave the interrupt masked when it is 
          *     exiting, and unmasking it again here does no harm. 
