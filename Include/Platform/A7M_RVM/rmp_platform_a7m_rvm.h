@@ -81,6 +81,8 @@ typedef rmp_s32_t rmp_ret_t;
 /* FPU registers */
 #define RMP_FPU                         ((volatile struct RVM_A7M_Cop_Struct*)(RVM_REG->Cop))
 
+/* The virtualization configuration macros are here */
+#include "rvm_platform_a7m_conf.h"
 /* The CPU and application specific macros are here */
 #include "rmp_platform_a7m_rvm_conf.h"
 

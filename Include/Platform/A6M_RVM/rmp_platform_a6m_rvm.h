@@ -78,6 +78,8 @@ typedef rmp_s32_t rmp_ret_t;
 #define RMP_MSB_GET(VAL)                RMP_MSB_Generic(VAL)
 #define RMP_LSB_GET(VAL)                RMP_LSB_Generic(VAL)
 
+/* The virtualization configuration macros are here */
+#include "rvm_platform_a6m_conf.h"
 /* The CPU and application specific macros are here */
 #include "rmp_platform_a6m_rvm_conf.h"
 
