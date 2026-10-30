@@ -5,7 +5,7 @@ Date        : 23/02/2018
 Licence     : The Unlicense; see LICENSE for details.
 Description : The header of "rmp_platform_mp32p.c".
               -----------------------------------------------------------------
-                                   MIPS Monumental Port
+                                  MIPS Commemorative Port
                   Those Who do not Learn History are Doomed to Repeat It
               -----------------------------------------------------------------
               This monumental port supports MIPS 32 (Microprocessor without

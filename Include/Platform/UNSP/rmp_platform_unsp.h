@@ -5,7 +5,7 @@ Date        : 25/05/2024
 Licence     : The Unlicense; see LICENSE for details.
 Description : The header of "rmp_platform_unsp.c".
               -----------------------------------------------------------------
-                              Sunplus u'nSP Monumental Port
+                            Sunplus u'nSP Commemorative Port
                       The Golden Age of Microcontroller Innovation
               -----------------------------------------------------------------
               This port supports both unSP 1.2 and 2.0 (2.0 has 8 extra regs).

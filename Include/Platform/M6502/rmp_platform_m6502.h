@@ -5,7 +5,7 @@ Date        : 10/06/2024
 Licence     : The Unlicense; see LICENSE for details.
 Description : The header of "rmp_platform_m6502.c".
               -----------------------------------------------------------------
-                                MOS6502 Monumental Port
+                               MOS6502 Commemorative Port
                           The Least Complex Yet the Most Sold
               -----------------------------------------------------------------
               This is a retro port paying tribute to the legendary MOS 6502

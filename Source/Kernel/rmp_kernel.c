@@ -539,6 +539,18 @@ rmp_ptr_t RMP_LSB_Generic(rmp_ptr_t Value)
         4U,0U,1U,0U,2U,0U,1U,0U,3U,0U,1U,0U,2U,0U,1U,0U
     };
     
+    /* Need to explicitly defend against zero, unlike MSB finding */
+    if(Value==0U)
+    {
+        RMP_COV_MARKER();
+        
+        return 0U;
+    }
+    else
+    {
+        RMP_COV_MARKER();
+    }
+    
 #if(RMP_WORD_ORDER==4U)
     /* 16-8 */
     if((Value<<8U)==0U)
