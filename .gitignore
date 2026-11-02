@@ -111,5 +111,6 @@ Document/Private/Agent_Workspace/
 
 #Visual Studio folder metadata
 .vs/
+.zcode/
 
  

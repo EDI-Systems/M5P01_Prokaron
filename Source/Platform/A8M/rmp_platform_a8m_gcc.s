@@ -29,8 +29,8 @@ set (see the chip configuration header).
 ******************************************************************************/
 
 /* Import ********************************************************************/
-    /* The C part of the platform layer: the task switch selection */
-    /* routine, the systick handler and the current stack pointer. */
+    /* The C part of the platform layer: the task switch selection
+     * routine, the systick handler and the current stack pointer. */
     .extern             _RMP_Run_High
     .extern             _RMP_Tim_Handler
     .extern             RMP_SP_Cur
@@ -97,8 +97,6 @@ Return      : None.
     .thumb_func
 RMP_Int_Mask:
     MSR                 BASEPRI,R0
-    /* We are not influenced by errata #837070 as the next */
-    /* instruction is BX LR. Thus we have a free window. */
     BX                  LR
 /* End Function:RMP_Int_Mask *************************************************/
 
@@ -203,9 +201,6 @@ PendSV_Handler:
     .hword              0xECB0              /* VLDMIAEQ R0!,{S16-S31} */
     .hword              0x8A10              /* Restore FPU/MVE registers not loaded by lazy stacking */
     MSR                 PSP,R0
-
-    /* Some chips such as XMC4xxx step AA/step AB may corrupt on this branch. */
-    /* For those chips, you must manually edit this to PUSH {LR} then POP {PC}. */
     BX                  LR
 /* End Function:PendSV_Handler ***********************************************/
 
@@ -224,7 +219,6 @@ SysTick_Handler:
 
     POP                 {PC}
 /* End Function:SysTick_Handler **********************************************/
-
     .end
 /* End Of File ***************************************************************/
 

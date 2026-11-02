@@ -46,6 +46,27 @@ ISR Mailbox                        : 282 / 509 / 282
 ISR Semaphore                      : 246 / 506 / 246
 ISR Message queue                  : 364 / 491 / 364
 ISR Blocking message queue         : 454 / 565 / 454
+
+IAR 9.40.1 -Oh (SysTick turned on, CPU @600MHz HSI-PLL1/SMPS/VOS1,
+L1 caches enabled, image in AXISRAM1)
+    ___   __  ___ ___
+   / _ \ /  |/  // _ \       Simple real-time kernel
+  / , _// /|_/ // ___/       Standard benchmark test
+ /_/|_|/_/  /_//_/
+====================================================
+Test (number in CPU cycles)        : AVG / MAX / MIN
+Yield                              : 162 / 219 / 151
+Mailbox                            : 303 / 493 / 303
+Semaphore                          : 262 / 381 / 262
+FIFO                               : 154 / 348 / 154
+Message queue                      : 456 / 668 / 456
+Blocking message queue             : 607 / 717 / 607
+Alarm combination (1/2/3/5/7)      : 631 / 1225 / 363
+Memory allocation/free pair        : 330 / 459 / 318
+ISR Mailbox                        : 290 / 484 / 290
+ISR Semaphore                      : 260 / 345 / 260
+ISR Message queue                  : 375 / 523 / 375
+ISR Blocking message queue         : 449 / 482 / 449
 ******************************************************************************/
 
 /* Include *******************************************************************/
