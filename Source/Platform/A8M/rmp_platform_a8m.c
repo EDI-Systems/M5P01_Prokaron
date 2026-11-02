@@ -1,24 +1,25 @@
 /******************************************************************************
-Filename    : rmp_platform_cmx.c
+Filename    : rmp_platform_a8m.c
 Author      : pry
-Date        : 04/02/2018
+Date        : 02/11/2026
 Licence     : The Unlicense; see LICENSE for details.
-Description : The platform specific file for Cortex-M.
+Description : The platform specific file for ARMv8-M Mainline
+              (Cortex-M33/M35P/M55/M85, optional FPU/MVE).
 ******************************************************************************/
 
 /* Include *******************************************************************/
 #define __HDR_DEF__
-#include "Platform/CortexM/rmp_platform_cmx.h"
+#include "Platform/A8M/rmp_platform_a8m.h"
 #include "Kernel/rmp_kernel.h"
 #undef __HDR_DEF__
 
 #define __HDR_STRUCT__
-#include "Platform/CortexM/rmp_platform_cmx.h"
+#include "Platform/A8M/rmp_platform_a8m.h"
 #include "Kernel/rmp_kernel.h"
 #undef __HDR_STRUCT__
 
 /* Private include */
-#include "Platform/CortexM/rmp_platform_cmx.h"
+#include "Platform/A8M/rmp_platform_a8m.h"
 
 #define __HDR_PUBLIC__
 #include "Kernel/rmp_kernel.h"
@@ -28,69 +29,80 @@ Description : The platform specific file for Cortex-M.
 /* Function:_RMP_Stack_Init ***************************************************
 Description : Initiate the process stack when trying to start a process. Never
               call this function in user application.
-              Special note must be taken if you are using va_list, va_arg, va_start
-              and va_end (variable argument related functions), the stack passed
-              in must be 8n+4 byte aligned instead of 4n byte aligned. If this is not
-              adhered to, the va_arg can return wrong results, especially for 64-bit
-              arguments (long long, int64, double). 
-              The reason why we require 8n+4 is that the context size is 17 words,
-              and after popping the context will be aligned to 8n bytes.
-Input       : rmp_ptr_t Entry - The entry address of the thread.
-              rmp_ptr_t Stack - The stack address of the thread.
-              rmp_ptr_t Arg - The argument to pass to the thread.
+              Need to pretend that we're returning from a context switch:
+                  16  15  14    13  12-9  8  7-0
+              H> XPSR PC LR(1) R12 R3-R0 LR R11-R4 >L
+Input       : rmp_ptr_t Stack - The stack address of the thread.
+              rmp_ptr_t Size - The stack size of the thread.
+              rmp_ptr_t Entry - The entry address of the thread.
+              rmp_ptr_t Param - The argument to pass to the thread.
 Output      : None.
-Return      : None.
-Other       : When the system stack safe redundancy is set to zero, the stack 
-              looks like this when we try to step into the next process by 
-              context switch: (context size is 17 words)
-              HIGH-->  XPSR PC LR(1) R12 R3-R0 LR R11-R4 -->LOW 
-              We need to set the stack correctly pretending that we are 
-              returning from an systick timer interrupt. Thus, we set the XPSR
-              to avoid INVSTATE; set PC to the pseudo-process entrance; set LR
-              (1) to 0 because the process does not return to anything; set the 
-              R12,R3-R0 to 0; set R11-R4 to 0.
+Return      : rmp_ptr_t - The adjusted stack location.
 ******************************************************************************/
-void _RMP_Stack_Init(rmp_ptr_t Entry, rmp_ptr_t Stack, rmp_ptr_t Arg)
+rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
+                          rmp_ptr_t Size,
+                          rmp_ptr_t Entry,
+                          rmp_ptr_t Param)
 {
-    /* This is the LR value indicating that we never used the FPU */
-    ((rmp_ptr_t*)Stack)[0+8]=0xFFFFFFFD;    
-    /* Cortex-M:Pass the parameter */                            
-    ((rmp_ptr_t*)Stack)[0+9]=Arg;       
-    /* Cortex-M:Set the process entry */
-    ((rmp_ptr_t*)Stack)[6+9]=Entry;
-    /* Cortex-M:Set the T bit or an INVSTATE will happen; don't set STKALIGN, 
-     * and there is no stack padding. The effect of STKALIGN is, if it is set
-     * and the (hardware-pushed) interrupt stack is 8n byte aligned, it will
-     * pop an extra word (to restore the stack to an previous unaligned state);
-     * if the interrupt stack is 8n+4 byte aligned, even if STKALIGN is set, it
-     * will not pop this extra word. The result is, if STKALIGN is set, we will
-     * never be able to get a 8n byte aligned stack, so we do not set it. */                            
-    ((rmp_ptr_t*)Stack)[7+9]=0x01000000;
+    rmp_ptr_t Ptr;
+    struct RMP_A8M_Stack* Ctx;
+
+    RMP_STACK_CALC(Ptr,Ctx,Stack,Size);
+
+    /* Set LR_EXC and xPSR accordingly to avoid INVSTATE. The LR_EXC says
+     * "standard frame" so the thread starts without any FP/MVE context;
+     * the hardware will start stacking the extended frame (including the
+     * MVE VPR on Helium cores) automatically once the thread executes its
+     * first FP/MVE instruction, exactly like the lazy FPU on ARMv7-M. */
+    Ctx->LR_EXC=0xFFFFFFFDU;
+    Ctx->XPSR=0x01000000U;
+
+    /* Pass entry and parameter */
+    Ctx->PC=Entry;
+    Ctx->R0=Param;
+
+    /* Fill the rest for ease of identification */
+    Ctx->R1=0x01010101U;
+    Ctx->R2=0x02020202U;
+    Ctx->R3=0x03030303U;
+    Ctx->R4=0x04040404U;
+    Ctx->R5=0x05050505U;
+    Ctx->R6=0x06060606U;
+    Ctx->R7=0x07070707U;
+    Ctx->R8=0x08080808U;
+    Ctx->R9=0x09090909U;
+    Ctx->R10=0x10101010U;
+    Ctx->R11=0x11111111U;
+    Ctx->R12=0x12121212U;
+    Ctx->LR=0x14141414U;
+
+    return Ptr;
 }
 /* End Function:_RMP_Stack_Init **********************************************/
 
-/* Function:_RMP_Low_Level_Init ***********************************************
+/* Function:_RMP_Lowlvl_Init **************************************************
 Description : Initialize the low level hardware of the system.
 Input       : None
-Output      : None.
+Output      : None
 Return      : None.
 ******************************************************************************/
-void _RMP_Low_Level_Init(void)
-{    
-    RMP_CMX_LOW_LEVEL_INIT();
-  
+void _RMP_Lowlvl_Init(void)
+{
     RMP_Int_Disable();
+
+    RMP_A8M_LOWLVL_INIT();
 }
-/* End Function:_RMP_Low_Level_Init ******************************************/
+/* End Function:_RMP_Lowlvl_Init *********************************************/
 
 /* Function:_RMP_Plat_Hook ****************************************************
 Description : Platform-specific hook for system initialization.
 Input       : None
-Output      : None.
+Output      : None
 Return      : None.
 ******************************************************************************/
 void _RMP_Plat_Hook(void)
 {
+    /* Scheduler lock implemented with interrupt masking */
     RMP_Int_Enable();
 }
 /* End Function:_RMP_Plat_Hook ***********************************************/
@@ -103,7 +115,7 @@ Return      : None.
 ******************************************************************************/
 void RMP_Putchar(char Char)
 {
-    RMP_CMX_PUTCHAR(Char);
+    RMP_A8M_PUTCHAR(Char);
 }
 /* End Function:RMP_Putchar **************************************************/
 

@@ -2831,7 +2831,7 @@ rmp_ret_t RMP_Sem_Post(volatile struct RMP_Sem* Semaphore,
 
 #if(RMP_CHECK_ENABLE!=0U)
     /* Check if the maximum value will be exceeded if this is posted */
-    if((Num_Cur+Number)>=RMP_SEM_CNT_MAX)
+    if(((Num_Cur+Number)>=RMP_SEM_CNT_MAX)||((Num_Cur+Number)<Num_Cur))
     {
         RMP_COV_MARKER();
         
@@ -2924,7 +2924,7 @@ rmp_ret_t RMP_Sem_Post_ISR(volatile struct RMP_Sem* Semaphore,
 
 #if(RMP_CHECK_ENABLE!=0U)
     /* Check if the maximum value will be exceeded if this is posted */
-    if((Num_Cur+Number)>=RMP_SEM_CNT_MAX)
+    if(((Num_Cur+Number)>=RMP_SEM_CNT_MAX)||((Num_Cur+Number)<Num_Cur))
     {
         RMP_COV_MARKER();
         

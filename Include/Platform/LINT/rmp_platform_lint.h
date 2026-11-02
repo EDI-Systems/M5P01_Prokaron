@@ -64,7 +64,7 @@ typedef rmp_s32_t rmp_ret_t;
 /* System Macro **************************************************************/
 /* Compiler "extern" keyword setting */
 #define RMP_EXTERN                      extern
-#define RMP_WORD_ORDER                  (4U)
+#define RMP_WORD_ORDER                  (5U)
 /* Full descending stack of rmp_ptr_t, 4-byte alignment */
 #define RMP_STKSEG_ENABLE               (0U)
 #define RMP_STACK_TYPE                  RMP_STACK_FULL_DESCEND
@@ -84,19 +84,19 @@ typedef rmp_s32_t rmp_ret_t;
 
 /* Debugging */
 /* Assertion */
-#define RMP_ASSERT_ENABLE               (1U)
+#define RMP_ASSERT_ENABLE               (0U)
 /* Invalid parameter checking */
 #define RMP_CHECK_ENABLE                (1U)
 /* Debug logging */
-#define RMP_DBGLOG_ENABLE               (1U)
+#define RMP_DBGLOG_ENABLE               (0U)
 
 /* System */
 /* The maximum number of preemption priorities */
-#define RMP_PREEMPT_PRIO_NUM            (32U)
+#define RMP_PREEMPT_PRIO_NUM            (64U)
 /* The maximum number of slices allowed */
 #define RMP_SLICE_MAX                   (10000U)
 /* The maximum number of semaphore counts allowed */
-#define RMP_SEM_CNT_MAX                 (1000U)
+#define RMP_SEM_CNT_MAX                 (10000U)
 /* The stack size of the init thread */
 #define RMP_INIT_STACK_SIZE             (512U)
 

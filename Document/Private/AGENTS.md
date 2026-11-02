@@ -2,7 +2,7 @@
 
 > 本文档由 AI agent 撰写并持续维护，用于帮助后续 agents 快速理解本项目。
 > 每次对项目做出结构性或重要的修改后，请同步更新本文档。
-> 最后更新：2026-10-21（基于 main 分支，版本 R6T1）。
+> 最后更新：2026-11-02（基于 main 分支，版本 R6T1；新增 §11 A8M/N657）。
 
 ---
 
@@ -108,7 +108,7 @@ M5P01_Prokaron/
 | A6M | ARMv6-M (Cortex-M0) | MP32P | MIPS32 (PIC32) |
 | A7M | ARMv7-M (Cortex-M3/4/7) | MSP430 | TI MSP430 |
 | A7R | ARMv7-R (Cortex-R, TMS570) | RL78 | Renesas RL78 |
-| A8M | ARMv8-M (Cortex-M23/33) | RV32P | RISC-V 32 |
+| A8M | ARMv8-M Mainline (Cortex-M33/M35P/M55/M85，含 MVE/Helium；Baseline/M23 不支持) | RV32P | RISC-V 32 |
 | AVR | Microchip AVR | UNSP | 凌阳 SPCE061A |
 | C28X | TI C28x DSP | X86L | x86-32 Linux (ptrace) |
 | DSPIC | dsPIC33/PIC24 | LINT | cppcheck 专用虚拟架构 |
@@ -220,6 +220,32 @@ cd Project/EWARM-STM32F429ZIT6
 - **注意**：H7 的 Keil 包含路径顺序与 F4 不同（`CMSIS\Include` 在 HAL 之前、Device Include 在最后），.ewp 已按 Keil 原序镜像。
 - **链接**：IAR 内置 `stm32h743xI.icf`（ZI 型号，处理 H7 复杂内存布局：DTCM/AXI SRAM 等），`IlinkIcfOverride=0` 走器件默认；启动文件用 ST Cube H7 的 `Templates\iar\startup_stm32h743xx.s`。
 - **验证状态（2026-10-21）**：**已上板验证**——镜像烧录 NUCLEO-H743ZI（Device ID 0x450，ST-LINK V2，VCP=COM14）校验复位，基准完整跑通（12 项含 Mem）。IAR 9.40.1 -O3 结果已按 §5 硬规矩存档：Yield 176、Mail 308、Sem 264、FIFO 148、Msgq 524、Bmq 718、Alrm 535、Mem 297、Mail/I 284、Sem/I 274、Msgq/I 396、Bmq/I 521，README 双语 IAR 行已同步为真实数据。构建阶段即 0 错误 / 0 警告，首次上板一次点亮（A7M iccarm 汇编在 M7 上无任何适配问题）。
+
+## 11. A8M 平台与 GCCMF/RVMDK-STM32N657X0H3 工程（2026-11-02 新增，STM32N657X0H3 / Cortex-M55 + Helium）
+
+**新增文件**：`Include/Platform/A8M/rmp_platform_a8m.h`、`Source/Platform/A8M/rmp_platform_a8m.c`（重写 2018 年死代码）、`rmp_platform_a8m_gcc.s`（重写；**ARMv8.1-M 起 armasm 私有格式已废弃，Keil/AC6 直接复用同一份 GNU 语法汇编，A8M 不设 `_armcc.s`**）、`Include/Platform/A8M/Chip/STM32N657X0H3/rmp_platform_stm32n657x0h3.h`、`Include/Test/Chip/rmp_test_stm32n657x0h3.h`、`Project/GCCMF-STM32N657X0H3/`（makefile + LRUN 式链接脚本 + 三转发头 + 本地 `stm32n6xx_hal_conf.h`，HAL 来自 M0A00_Library/STM32Cube_FW_N6_V1.1.0）、`Project/RVMDK-STM32N657X0H3/`（Keil 工程：uvprojx + 自定义 scatter + `rmp_platform_stm32n657x0h3_sp.s`）。A8M 仅支持 Mainline（M33/M35P/M55/M85）；M23 走 A6M。
+
+**架构要点（均有权威出处）**：MVE 的 VPR 由硬件在 extended frame 中自动压栈（与 FPU 同机制），PendSV 只需条件保存 S16-S31（沿用 A7M 的 `.hword` 手工编码 VSTMDB/VLDMIA）；EXC_RETURN bit4 判断不变；FPCCR 需 ASPEN|LSPEN（芯片头里显式置位，`FPU->FPCCR`，CMSIS 里不在 SCB 上）；初始 LR_EXC=0xFFFFFFFD。**A8M 专属**：`_RMP_Start` 必须**先清零 PSPLIM 再写 PSP**——系统复位不清核心寄存器，接管前固件（ROM/前一个镜像）的 PSPLIM 残留会导致线程态首个异常压栈触发 UFSR.STKOF → HardFault（本次上板实测踩坑）。
+
+**STM32N6 特有工作流（本机实测）**：
+- **无内部 flash**，镜像经调试器载入 AXISRAM1（安全别名 0x34000400，LRUN 布局）运行；编译需 `-mcmse`（ST 的 system_stm32n6xx_s.c 用到 SCB_NS/CMSE 属性），`-mcpu=cortex-m55 -mfpu=auto -mfloat-abi=hard`。
+- **必须 DEV boot**：BOOT1 跳线 2-3（BOOT0 1-2）。生产 boot（跑出厂 demo）时调试总线被锁（AP 读返回假数据、CubeProgrammer 写全走扇区引擎失败），只有 DP 层和 UR 连接可用。换跳线后需**拔 USB 断电**一次。
+- **烧录流水线**：CubeIDE 自带 ST OpenOCD（`plugins/com.st.stm32cube.ide.mcu.externaltools.openocd.win32_2.4.100.202501161620/tools/bin`）+ `plugins/com.st.stm32cube.ide.mcu.debug.openocd_2.3.100.202501240831/resources/openocd/st_scripts`；脚本在 `Document/Private/Agent_Workspace/n657_flash.ocd`（dapdirect_swd、核心在 **AP1**、`-defer-examine`+先写 DP ABORT 0x1E 清粘性错、`reset halt` 回到纯净 HSI64 时钟、载入+校验、resume 入口+1）。采集脚本 `capture_n657.ps1`（COM15）。**重链后必须更新 resume 地址**（`arm-none-eabi-nm Object/RMP.elf | grep Reset_Handler`）。
+- **0x34200000 是雷区**（SRAM3 未上电）：任何访问会把 AXI 矩阵挂死（复读陈旧 TAR、跨会话存活、NRST 无效），**只有整片断电恢复**。链接脚本已缩到 SRAM1 内（_estack=0x34100000），work-area 用 0x34020000。
+- ST 的 OpenOCD fork 无 SRST 能力（"BUG: can't assert SRST"）；`reset_config connect_assert_srst` 在生产 boot 下反而能让 AP0 枚举（但写不进 DBGMCU）；ST-LINK GDB Server 对本板不可用（halt 竞争不过时钟门控）。
+- **VCP 是 USART1/PE5/AF7**（不是其他 Nucleo 的 USART3/PD8）；出厂 demo 有 IWDG 在跑（芯片头与测试头 TIM4 中断里各喂一次 `IWDG->KR=0xAAAA`）；RMP_CNT_READ 用 DWT CYCCNT（此 CMSIS 版 DWT 无 LAR 成员，M55 复位后默认未锁）。
+- **已存档基准（GCC 13.2.1 -O3 @600MHz HSI-PLL1/SMPS/VOS1，L1 cache 开）**：Yield 163、Mail 298、Sem 252、FIFO 135、Msgq 391、Bmq 524、Alrm 527、Mem 307、Mail/I 289、Sem/I 256、Msgq/I 336、Bmq/I 427。
+- **已存档基准（ARMCLANG 6.23 -O3 同条件）**：Yield 155、Mail 281、Sem 228、FIFO 130、Msgq 421、Bmq 571、Alrm 555、Mem 309、Mail/I 282、Sem/I 246、Msgq/I 364、Bmq/I 454（切换/邮箱/信号量/FIFO 略快于 GCC，消息队列系列略慢）。两者均与 M7@400MHz 同量级。已按 §5 存档进测试头注释与 README 双语表格。时钟树照抄官方 NUCLEO-N657X0-Q 例程：`HAL_PWREx_ConfigSupply(PWR_EXTERNAL_SOURCE_SUPPLY)`（板载 SMPS）+ VOS1 + HSI→PLL1(M4×N75=1200MHz)→IC1/2=CPU 600MHz、SYS 400MHz、HCLK 100MHz、APB1=100MHz；SysTick=600000、TIM4=20000(5kHz)。**实测溢出行间隔 1.104s → 593.7MHz**（HSI ±1% 容差内，655.36/间隔=频率的自验证法）。ISR 四项在 TIM4=5kHz 下约 30 秒跑完（墙钟时间与 CPU 频率无关）。
+
+### 11.1 RVMDK-STM32N657X0H3（Keil/AC6）工程要点
+
+- **DFP**：`Keil.STM32N6xx_DFP`（装到 TOOLS.INI 里 RTEPATH 指向的 `C:\Keil_v5_ARM\Packs\Keil\`，**不是** `ARM\PACK\`——后者只有老式 pack.idx，容易误判"未安装"）；器件名 `STM32N657X0HxQ`（BGA264），Cortex-M55 + DP_FPU + MVE。
+- **汇编**：AC6 的 armasm 兼容层**明确拒绝 Cortex-M55**（`armasm does not support CPU 'cortex-m55'`），必须走 armclang 集成汇编器（`<ClangAsOpt>2</ClangAsOpt>`）并复用 `rmp_platform_a8m_gcc.s`。注意该 IAS 与 GNU as 的差异：**`.extern` 后紧跟的独立 `/* */` 块注释行会报 "unexpected token at start of statement"**（`.global`、`.section`、标签之后都没有这个问题）。因此 Import 段的符号说明集中在段首一个注释块里，且最后一个 `.extern` 与 `/* End Import */` 之间必须留一个空行——这两处不要"整理"掉，否则 GCC 构建照常而 Keil 构建报错。行尾 `/* */`、多行横幅注释都安全。
+- **uVision 5.42 的 Not-Too-Old 陷阱**：它自带的器件→汇编 CPU 映射表不认识 M55，会往 armasm 传 `--cpu NOT_SUPPORTED`；但走 ClangAsOpt=2（armclang IAS）时由 `<Cpu>` 串里的 `CPUTYPE("Cortex-M55")` 决定，无需任何 Misc 补丁（早期给 Aads 加 `--cpu=Cortex-M55` 反而会毒化 armclang 命令行，已移除）。
+- **MicroLIB 的栈符号**：ST 的 N6 C 启动（`Templates/arm/startup_stm32n657xx.c`）没有自己的 STACK 区，靠 scatter 的 `ARM_LIB_STACK`；但 MicroLIB 的 entry2 还要传统绝对符号 `__initial_sp`。解法：工程内加 `rmp_platform_stm32n657x0h3_sp.s` 用 `.set __initial_sp, 0x34100000` 补齐（MicroLIB 保持开启，不要改 useUlib=0——否则 C 启动又会要 `Image$$ARM_LIB_STACK$$ZI$$Base/Limit`）。
+- **scatter 必须真正生效**：`<umfTarg>` 要设 **0**（1 = 沿用 Target 对话框布局，uVision 会无视 `<ScatterFile>` 自动生成 RD/scatter——症状是链接报缺 `Image$$ARM_LIB_STACK$$ZI$$*`），且 `<useFile>`=1、`<ScatterFile>` 写 `.\\rmp_platform_stm32n657x0h3.sct`（写 `.\Output\...` 会静默回退）。`-mcmse` 生成的 veneer 需要显式选择器：scatter 里加 `CMSE_VENEER +0 { *(Veneer$$CMSE) }`，否则报 L6405E。N6 的 TIM/UART HAL 无条件引用 `HAL_DMAEx_*`，工程必须包含 `stm32n6xx_hal_dma_ex.c`（GCC 侧靠 gc-sections 掩盖了这点）。
+- **构建/烧录命令**：`UV4.exe -r RMP.uvprojx -j0 -o build.log`（`-r` 才是全量重建，增量会掩盖汇编配置错误）；`fromelf --bin --output RMP.bin Debug/Output/RMP.axf` 出 RAM 镜像，再走 §11 的 OpenOCD 脚本烧录（脚本 `n657_flash_keil.ocd`，**重链后要同步 resume 地址**）。
+- **内核修复提示**：`RMP_Sem_Post/_ISR` 的溢出检查在无符号类型下必须写成 `(Num_Cur+Number)<Num_Cur`；写成 `<=Number` 会把 `Num_Cur==0` 的合法首次 Post 也拦掉，症状是 Semaphore 阶段调度位图全零 → `rmp_kernel.c:884` 断言 panic（两个工具链同现）。
 
 *维护者：AI agent（Cline）。发现文档与代码不符时，以代码为准并修正本文档。*
 
