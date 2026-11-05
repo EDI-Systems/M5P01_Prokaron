@@ -1,0 +1,32 @@
+; Scatter file for the Keil build of RMP on the Nuvoton M2351.
+;
+; MicroLIB is disabled: its entry2.o carries its own
+; __vectab_stack_and_reset_area (vector table + stack) which collides with the
+; vector table and .bss.STACK of the Nuvoton startup, and the resulting mix
+; faults inside __scatterload_zeroinit.
+;
+; With the standard C library the stack comes from ARM_LIB_STACK (an EMPTY
+; region, never copied or zero-filled). The startup's own .bss.STACK is kept
+; out of the ZI area as well by an UNINIT region, so the __initial_sp that the
+; vector table points at is never overwritten either.
+
+LR_IROM1 0x00000000 0x00080000  {          ; load region (APROM, 512K)
+  ER_IROM1 0x00000000 0x00080000  {        ; load == execution
+   *.o (RESET, +First)                     ; vector table at address 0
+   *(InRoot$$Sections)
+   .ANY (+RO)
+   .ANY (+XO)
+  }
+
+  ; Startup stack section: UNINIT so nothing zero-fills it
+  RW_STACK 0x20017000 UNINIT 0x00001000  {
+   *(.bss.STACK)
+  }
+
+  ; Standard C library stack (EMPTY, armlink publishes the symbols)
+  ARM_LIB_STACK 0x20016000 EMPTY 0x00001000  { }
+
+  RW_IRAM1 0x20000000 0x00016000  {        ; RW data + the rest of ZI
+   .ANY (+RW +ZI)
+  }
+}

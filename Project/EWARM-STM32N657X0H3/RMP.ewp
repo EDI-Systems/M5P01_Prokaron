@@ -1148,10 +1148,10 @@
     <group>
         <name>Platform</name>
         <file>
-            <name>$PROJ_DIR$\..\..\Source\Platform\A8M\rmp_platform_a8m.c</name>
+            <name>$PROJ_DIR$\..\..\Source\Platform\A8MM\rmp_platform_a8mm.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\..\Source\Platform\A8M\rmp_platform_a8m_iccarm.s</name>
+            <name>$PROJ_DIR$\..\..\Source\Platform\A8MM\rmp_platform_a8mm_iccarm.s</name>
         </file>
     </group>
     <group>

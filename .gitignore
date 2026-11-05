@@ -55,6 +55,8 @@ Project/**/Debug/
 Project/RVMDK-*/RTE/
 Project/RVMDK-*/DebugConfig/
 Project/RVMDK-*/RMP.BAT/
+Project/RVMDK-*/obj/
+Project/RVMDK-*/lst/
 *.uvgui*
 *.uvopt*
 *.dep

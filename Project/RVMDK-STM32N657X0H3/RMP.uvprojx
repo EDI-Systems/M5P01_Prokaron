@@ -395,14 +395,14 @@
           <GroupName>Platform</GroupName>
           <Files>
             <File>
-              <FileName>rmp_platform_a8m.c</FileName>
+              <FileName>rmp_platform_a8mm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\Source\Platform\A8M\rmp_platform_a8m.c</FilePath>
+              <FilePath>..\..\Source\Platform\A8MM\rmp_platform_a8mm.c</FilePath>
             </File>
             <File>
-              <FileName>rmp_platform_a8m_gcc.s</FileName>
+              <FileName>rmp_platform_a8mm_gcc.s</FileName>
               <FileType>2</FileType>
-              <FilePath>..\..\Source\Platform\A8M\rmp_platform_a8m_gcc.s</FilePath>
+              <FilePath>..\..\Source\Platform\A8MM\rmp_platform_a8mm_gcc.s</FilePath>
             </File>
           </Files>
         </Group>

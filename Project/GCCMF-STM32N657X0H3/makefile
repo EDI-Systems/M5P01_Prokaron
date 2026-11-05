@@ -38,7 +38,7 @@ INCS+=-I../../../M0A00_Library/STM32Cube_FW_N6_V1.1.0/Drivers/STM32N6xx_HAL_Driv
 
 CSRCS+=../../Source/Kernel/rmp_kernel.c
 CSRCS+=../../Source/Test/rmp_benchmark.c
-CSRCS+=../../Source/Platform/A8M/rmp_platform_a8m.c
+CSRCS+=../../Source/Platform/A8MM/rmp_platform_a8mm.c
 CSRCS+=../../../M0A00_Library/STM32Cube_FW_N6_V1.1.0/Drivers/CMSIS/Device/ST/STM32N6xx/Source/Templates/system_stm32n6xx_s.c
 CSRCS+=../../../M0A00_Library/STM32Cube_FW_N6_V1.1.0/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal.c
 CSRCS+=../../../M0A00_Library/STM32Cube_FW_N6_V1.1.0/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_cortex.c
@@ -52,7 +52,7 @@ CSRCS+=../../../M0A00_Library/STM32Cube_FW_N6_V1.1.0/Drivers/STM32N6xx_HAL_Drive
 CSRCS+=../../../M0A00_Library/STM32Cube_FW_N6_V1.1.0/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_uart.c
 CSRCS+=../../../M0A00_Library/STM32Cube_FW_N6_V1.1.0/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_uart_ex.c
 
-ASRCS+=../../Source/Platform/A8M/rmp_platform_a8m_gcc.s
+ASRCS+=../../Source/Platform/A8MM/rmp_platform_a8mm_gcc.s
 ASRCS+=../../../M0A00_Library/STM32Cube_FW_N6_V1.1.0/Drivers/CMSIS/Device/ST/STM32N6xx/Source/Templates/gcc/startup_stm32n657xx.s
 
 LDSCRIPT=rmp_platform_stm32n657x0h3.ld
@@ -85,7 +85,7 @@ BIN=$(CP) -O binary -S
 # Build #######################################################################
 COBJS=$(CSRCS:%.c=%.o)
 CDEPS=$(CSRCS:%.c=%.d)
-AOBJS=$(ASRCS:%.s=%.o)
+AOBJS=$(ASRCS:%.s=%.o) $(ASRCS:%.S=%.o)
 ADEPS=$(ASRCS:%.s=%.d)
 
 DEP=$(OBJDIR)/$(notdir $(@:%.o=%.d))
@@ -105,8 +105,13 @@ mkdir:
 	@echo "    CC      $(notdir $<)"
 	@$(CC) -c $(CPU) $(CDEFS) $(INCS) $(CFLAGS) $(DFLAGS) -MMD -MP -MF "$(DEP)" -Wa,-a,-ad,-alms="$(LST)" "$<" -o "$(OBJ)"
 
-# Assemble ASM sources
+# Assemble ASM sources (lower case goes through cpp via $(AS) anyway,
+# upper case is preprocessed by the compiler driver regardless)
 %.o:%.s
+	@echo "    AS      $(notdir $<)"
+	@$(AS) -c $(CPU) $(INCS) $(AFLAGS) $(DFLAGS) "$<" -o "$(OBJ)"
+
+%.o:%.S
 	@echo "    AS      $(notdir $<)"
 	@$(AS) -c $(CPU) $(INCS) $(AFLAGS) $(DFLAGS) "$<" -o "$(OBJ)"
 

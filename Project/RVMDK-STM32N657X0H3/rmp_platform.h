@@ -7,7 +7,7 @@ Description: The platform specific types for RMP.
 ******************************************************************************/
 
 /* Platform Include **********************************************************/
-#include "Platform/A8M/rmp_platform_a8m.h"
+#include "Platform/A8MM/rmp_platform_a8mm.h"
 /* End Platform Include ******************************************************/
 
 /* End Of File ***************************************************************/

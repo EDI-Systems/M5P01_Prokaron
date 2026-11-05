@@ -1,19 +1,18 @@
 /******************************************************************************
-Filename    : rmp_platform_a8m.h
+Filename    : rmp_platform_a8mb.h
 Author      : pry
 Date        : 02/11/2026
 Licence     : The Unlicense; see LICENSE for details.
-Description : The header of "rmp_platform_a8m.c". This port targets the
-              ARMv8-M Mainline profiles (Cortex-M33/M35P/M55/M85) with
+Description : The header of "rmp_platform_a8mb.c". This port targets the
+              ARMv8-M MAINLINE profiles (Cortex-M33/M35P/M55/M85) with
               optional FPU and MVE (Helium) extensions. The ARMv8-M Baseline
-              (Cortex-M23) is NOT covered here because it lacks BASEPRI and
-              CLZ; it should reuse the A6M port.
+              (Cortex-M23) is a separate port, A8MB.
 ******************************************************************************/
 
 /* Define ********************************************************************/
 #ifdef __HDR_DEF__
-#ifndef __RMP_PLATFORM_A8M_DEF__
-#define __RMP_PLATFORM_A8M_DEF__
+#ifndef __RMP_PLATFORM_A8MB_DEF__
+#define __RMP_PLATFORM_A8MB_DEF__
 /*****************************************************************************/
 /* Basic Type ****************************************************************/
 #ifndef __RMP_S32_T__
@@ -77,40 +76,40 @@ typedef rmp_s32_t rmp_ret_t;
 #define RMP_STACK_TYPE                  RMP_STACK_FULL_DESCEND
 #define RMP_STACK_ALIGN                 (3U)
 #define RMP_STACK_ELEM                  rmp_ptr_t
-#define RMP_STACK_STRUCT                struct RMP_A8M_Stack
-/* MSB/LSB extraction */
-#define RMP_MSB_GET(VAL)                _RMP_A8M_MSB_Get(VAL)
-#define RMP_LSB_GET(VAL)                _RMP_A8M_LSB_Get(VAL)
+#define RMP_STACK_STRUCT                struct RMP_A8MB_Stack
 
 /* The CPU and application specific macros are here */
-#include "rmp_platform_a8m_conf.h"
+#include "rmp_platform_a8mb_conf.h"
 
-/* Interrupt masking/unmasking */
-#define RMP_INT_MASK()                  RMP_Int_Mask(RMP_A8M_INT_MASK_LVL)
+/* Interrupt masking/unmasking. The Baseline has no BASEPRI, so the level is
+ * ignored and masking degrades to PRIMASK. It also has no CLZ, so the MSB/LSB
+ * helpers come from the kernel's generic C implementations - exactly like the
+ * A6M port does on the ARMv6-M. */
+#define RMP_MSB_GET(VAL)                RMP_MSB_Generic(VAL)
+#define RMP_LSB_GET(VAL)                RMP_LSB_Generic(VAL)
+#define RMP_INT_MASK()                  RMP_Int_Mask(RMP_A8MB_INT_MASK_LVL)
 #define RMP_INT_UNMASK()                RMP_Int_Mask(0x00U)
 /* Yield operation */
-#define RMP_YIELD()                     _RMP_A8M_Yield()
+#define RMP_YIELD()                     _RMP_A8MB_Yield()
 #define RMP_YIELD_ISR()                 RMP_YIELD()
 /* End System Macro **********************************************************/
 
 /* ARMv8-M Macro *************************************************************/
-/* Fault enabling switch */
-#define RMP_A8M_SHCSR_USGFAULTENA       RMP_POW2(18U)
-#define RMP_A8M_SHCSR_BUSFAULTENA       RMP_POW2(17U)
-#define RMP_A8M_SHCSR_MEMFAULTENA       RMP_POW2(16U)
+/* No SHCSR fault-enable bits here: the Baseline escalates every configurable
+ * fault straight to HardFault, so there is nothing to switch on. */
 
 /* NVIC grouping */
-#define RMP_A8M_NVIC_GROUPING_P7S1      (0U)
-#define RMP_A8M_NVIC_GROUPING_P6S2      (1U)
-#define RMP_A8M_NVIC_GROUPING_P5S3      (2U)
-#define RMP_A8M_NVIC_GROUPING_P4S4      (3U)
-#define RMP_A8M_NVIC_GROUPING_P3S5      (4U)
-#define RMP_A8M_NVIC_GROUPING_P2S6      (5U)
-#define RMP_A8M_NVIC_GROUPING_P1S7      (6U)
-#define RMP_A8M_NVIC_GROUPING_P0S8      (7U)
+#define RMP_A8MB_NVIC_GROUPING_P7S1      (0U)
+#define RMP_A8MB_NVIC_GROUPING_P6S2      (1U)
+#define RMP_A8MB_NVIC_GROUPING_P5S3      (2U)
+#define RMP_A8MB_NVIC_GROUPING_P4S4      (3U)
+#define RMP_A8MB_NVIC_GROUPING_P3S5      (4U)
+#define RMP_A8MB_NVIC_GROUPING_P2S6      (5U)
+#define RMP_A8MB_NVIC_GROUPING_P1S7      (6U)
+#define RMP_A8MB_NVIC_GROUPING_P0S8      (7U)
 /* End ARMv8-M Macro *********************************************************/
 /*****************************************************************************/
-/* __RMP_PLATFORM_A8M_DEF__ */
+/* __RMP_PLATFORM_A8MB_DEF__ */
 #endif
 /* __HDR_DEF__ */
 #endif
@@ -118,8 +117,8 @@ typedef rmp_s32_t rmp_ret_t;
 
 /* Struct ********************************************************************/
 #ifdef __HDR_STRUCT__
-#ifndef __RMP_PLATFORM_A8M_STRUCT__
-#define __RMP_PLATFORM_A8M_STRUCT__
+#ifndef __RMP_PLATFORM_A8MB_STRUCT__
+#define __RMP_PLATFORM_A8MB_STRUCT__
 /* We used structs in the header */
 
 /* Use defines in these headers */
@@ -132,7 +131,7 @@ typedef rmp_s32_t rmp_ret_t;
  * extended frame is managed by hardware and requires no software intervention;
  * the PendSV handler only saves the callee-saved S16-S31 when the extended
  * frame is present, exactly like the ARMv7-M FPU case. */
-struct RMP_A8M_Stack
+struct RMP_A8MB_Stack
 {
     rmp_ptr_t R4;
     rmp_ptr_t R5;
@@ -153,7 +152,7 @@ struct RMP_A8M_Stack
     rmp_ptr_t XPSR;
 };
 /*****************************************************************************/
-/* __RMP_PLATFORM_A8M_STRUCT__ */
+/* __RMP_PLATFORM_A8MB_STRUCT__ */
 #endif
 /* __HDR_STRUCT__ */
 #endif
@@ -161,8 +160,8 @@ struct RMP_A8M_Stack
 
 /* Private Variable **********************************************************/
 #if(!(defined __HDR_DEF__||defined __HDR_STRUCT__))
-#ifndef __RMP_PLATFORM_A8M_MEMBER__
-#define __RMP_PLATFORM_A8M_MEMBER__
+#ifndef __RMP_PLATFORM_A8MB_MEMBER__
+#define __RMP_PLATFORM_A8MB_MEMBER__
 
 /* In this way we can use the data structures and definitions in the headers */
 #define __HDR_DEF__
@@ -207,11 +206,9 @@ RMP_EXTERN void RMP_Int_Disable(void);
 RMP_EXTERN void RMP_Int_Enable(void);
 RMP_EXTERN void RMP_Int_Mask(rmp_ptr_t Level);
 
-RMP_EXTERN rmp_ptr_t _RMP_A8M_MSB_Get(rmp_ptr_t Value);
-RMP_EXTERN rmp_ptr_t _RMP_A8M_LSB_Get(rmp_ptr_t Value);
 RMP_EXTERN void _RMP_Start(rmp_ptr_t Entry,
                            rmp_ptr_t Stack);
-RMP_EXTERN void _RMP_A8M_Yield(void);
+RMP_EXTERN void _RMP_A8MB_Yield(void);
 
 /* Initialization */
 __RMP_EXTERN__ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
@@ -224,7 +221,7 @@ __RMP_EXTERN__ void _RMP_Plat_Hook(void);
 /*****************************************************************************/
 /* Undefine "__RMP_EXTERN__" to avoid redefinition */
 #undef __RMP_EXTERN__
-/* __RMP_PLATFORM_A8M_MEMBER__ */
+/* __RMP_PLATFORM_A8MB_MEMBER__ */
 #endif
 /* !(defined __HDR_DEF__||defined __HDR_STRUCT__) */
 #endif

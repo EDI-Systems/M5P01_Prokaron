@@ -1,5 +1,5 @@
 /******************************************************************************
-Filename    : rmp_platform_a8m.c
+Filename    : rmp_platform_a8mb.c
 Author      : pry
 Date        : 02/11/2026
 Licence     : The Unlicense; see LICENSE for details.
@@ -9,17 +9,17 @@ Description : The platform specific file for ARMv8-M Mainline
 
 /* Include *******************************************************************/
 #define __HDR_DEF__
-#include "Platform/A8M/rmp_platform_a8m.h"
+#include "Platform/A8MB/rmp_platform_a8mb.h"
 #include "Kernel/rmp_kernel.h"
 #undef __HDR_DEF__
 
 #define __HDR_STRUCT__
-#include "Platform/A8M/rmp_platform_a8m.h"
+#include "Platform/A8MB/rmp_platform_a8mb.h"
 #include "Kernel/rmp_kernel.h"
 #undef __HDR_STRUCT__
 
 /* Private include */
-#include "Platform/A8M/rmp_platform_a8m.h"
+#include "Platform/A8MB/rmp_platform_a8mb.h"
 
 #define __HDR_PUBLIC__
 #include "Kernel/rmp_kernel.h"
@@ -45,7 +45,7 @@ rmp_ptr_t _RMP_Stack_Init(rmp_ptr_t Stack,
                           rmp_ptr_t Param)
 {
     rmp_ptr_t Ptr;
-    struct RMP_A8M_Stack* Ctx;
+    struct RMP_A8MB_Stack* Ctx;
 
     RMP_STACK_CALC(Ptr,Ctx,Stack,Size);
 
@@ -90,7 +90,7 @@ void _RMP_Lowlvl_Init(void)
 {
     RMP_Int_Disable();
 
-    RMP_A8M_LOWLVL_INIT();
+    RMP_A8MB_LOWLVL_INIT();
 }
 /* End Function:_RMP_Lowlvl_Init *********************************************/
 
@@ -115,7 +115,7 @@ Return      : None.
 ******************************************************************************/
 void RMP_Putchar(char Char)
 {
-    RMP_A8M_PUTCHAR(Char);
+    RMP_A8MB_PUTCHAR(Char);
 }
 /* End Function:RMP_Putchar **************************************************/
 

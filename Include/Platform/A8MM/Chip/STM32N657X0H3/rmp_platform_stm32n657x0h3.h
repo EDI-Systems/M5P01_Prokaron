@@ -40,16 +40,16 @@ Description: The configuration file for STM32N657X0H3 (Cortex-M55, no internal
 #define RMP_GUI_WIDGET_ENABLE       (0U)
 
 /* What is the NVIC priority grouping? */
-#define RMP_A8M_NVIC_GROUPING       RMP_A8M_NVIC_GROUPING_P2S6
+#define RMP_A8MM_NVIC_GROUPING       RMP_A8MM_NVIC_GROUPING_P2S6
 /* What is the Systick value? CPU clock = 600MHz, 1ms tick */
-#define RMP_A8M_SYSTICK_VAL         (600000U)
+#define RMP_A8MM_SYSTICK_VAL         (600000U)
 /* What is the interrupt masking level? */
-#define RMP_A8M_INT_MASK_LVL        (0xFFU)
+#define RMP_A8MM_INT_MASK_LVL        (0xFFU)
 /* What is the FPU type? The Cortex-M55 on STM32N6 has FPv5 with double
  * precision plus the MVE (Helium) extension with single precision vectors. */
-#define RMP_A8M_COP_FPV5_SP         (1U)
-#define RMP_A8M_COP_FPV5_DP         (1U)
-#define RMP_A8M_COP_MVE_SP          (1U)
+#define RMP_A8MM_COP_FPV5_SP         (1U)
+#define RMP_A8MM_COP_FPV5_DP         (1U)
+#define RMP_A8MM_COP_MVE_SP          (1U)
 
 /* Other low-level initialization stuff - clock and serial
  * STM32N657X0H3 CPU @600MHz(HSI 64MHz -> PLL1: M=4,N=75,VCO 1200MHz -> IC1/2),
@@ -62,7 +62,7 @@ Description: The configuration file for STM32N657X0H3 (Cortex-M55, no internal
  * This is the default initialization sequence. If you wish to supply your
  * own, just redirect this macro to a custom function, or do your
  * initialization stuff in the initialization hook (RMP_START_HOOK). */
-#define RMP_A8M_LOWLVL_INIT() \
+#define RMP_A8MM_LOWLVL_INIT() \
 do \
 { \
     RCC_OscInitTypeDef RCC_OscInitStructure; \
@@ -182,11 +182,11 @@ do \
     UART1_Handle.Init.HwFlowCtl=UART_HWCONTROL_NONE; \
     UART1_Handle.Init.Mode=UART_MODE_TX; \
     RMP_ASSERT(HAL_UART_Init(&UART1_Handle)==HAL_OK); \
-    RMP_A8M_PUTCHAR('\r'); \
-    RMP_A8M_PUTCHAR('\n'); \
+    RMP_A8MM_PUTCHAR('\r'); \
+    RMP_A8MM_PUTCHAR('\n'); \
     \
     /* Set the priority of timer, svc and faults to the lowest */ \
-    NVIC_SetPriorityGrouping(RMP_A8M_NVIC_GROUPING); \
+    NVIC_SetPriorityGrouping(RMP_A8MM_NVIC_GROUPING); \
     NVIC_SetPriority(SVCall_IRQn, 0xFF); \
     NVIC_SetPriority(PendSV_IRQn, 0xFF); \
     NVIC_SetPriority(SysTick_IRQn, 0xFF); \
@@ -194,12 +194,12 @@ do \
     NVIC_SetPriority(BusFault_IRQn, 0xFF); \
     NVIC_SetPriority(UsageFault_IRQn, 0xFF); \
     NVIC_SetPriority(DebugMonitor_IRQn, 0xFF); \
-    SysTick_Config(RMP_A8M_SYSTICK_VAL); \
+    SysTick_Config(RMP_A8MM_SYSTICK_VAL); \
 } \
 while(0)
 
 /* This is for debugging output */
-#define RMP_A8M_PUTCHAR(CHAR) \
+#define RMP_A8MM_PUTCHAR(CHAR) \
 do \
 { \
     USART1->TDR=(rmp_ptr_t)(CHAR); \
