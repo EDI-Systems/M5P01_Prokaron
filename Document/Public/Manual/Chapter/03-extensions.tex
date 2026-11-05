@@ -1,0 +1,547 @@
+\chapter{Kernel Extension Interfaces}\label{ch:extensions}
+
+The primitive kernel is small, atomic, and easy to verify, but it is too basic to use directly in many applications.
+RMP therefore provides a set of higher-level extension interfaces assembled from one or more primitive calls.
+They are slower than the primitives; for performance-critical paths, the application should use the primitives directly.
+
+\section{Kernel extension interface introduction}
+
+\subsection{Queue extension interface}
+
+For message queues, RMP extends the first-in-first-out queue (FIFO), the message queue, and the blocking message queue.
+
+A FIFO is similar to a non-blocking pipe in Unix.
+It does not support blocking; it is only a thread-safe wrapper around a linked list and can pass data by polling.
+It is the fastest.
+
+A message queue is similar to the mechanism of the same name in other operating systems.
+It supports multiple producers and multiple consumers; only the consumer can block, while the producer cannot, and the queue length is unlimited.
+It is a combined wrapper of a counting semaphore and a FIFO, and its speed is medium.
+
+A blocking message queue supports a queue-length limit and producer blocking in addition to the message queue, so that the producer can be slowed down when the consumer cannot consume all the data.
+It is a combined wrapper of two counting semaphores and a FIFO; it has the most functions, but consumes the most resources and is the slowest.
+
+Queue messages are all encapsulated with the doubly linked list head \texttt{struct RMP\_List}.
+If a complex message must be passed, a message structure containing this structure can be defined, with \texttt{struct RMP\_List} as its first element, so that the message structure can be found easily through the list head.
+For flexibility, the allocation and provision of the structure space are both done by the caller; the communication mechanism itself is not responsible for allocating or managing this space, which helps avoid unnecessary space waste and data copying.
+Although the queue is thread-safe, all messages are thread-local and queue-local:\footnote{Locking each message to prevent races costs too much performance and is not worth it.} two threads must not operate on one message at the same time, and the same message must not be inserted into two queues; once a message is enqueued, it must not be modified.
+
+The message queue extension interface is not atomic; it is assembled from several atomic interfaces.
+Deleting a thread while it is using a message queue can leave the queue data structure incomplete.
+Deleting a message queue while it is in use and immediately creating a new queue with the same control block can cause an ABA problem.
+Therefore, before deleting a thread or a message queue, ensure that these situations do not exist, or perform a forced deletion in the following order: (1) delete all threads that use the message queue, (2) delete the message queue, and (3) re-create it if necessary.
+Note that in (1), some threads may have just allocated a message from the memory pool and have not yet linked it into the queue when they are deleted.
+Reclaiming the leaked message is then the application's responsibility; this can be done with a memory-block marking method, or by giving messages a dedicated memory pool and reinitialising that pool.
+In addition, a thread using a message queue can be suspended at any time, or its blocking on the queue can be released with \texttt{RMP\_Sem\_Abort}.
+
+\subsection{Soft timer extension interface}
+
+For timed callbacks, RMP extends the software alarm interface.
+Through this interface, an application can register a callback function that is called after a period of time, implementing a timed-trigger function.
+To (1) improve the flexibility of the timer function and (2) prevent the timer function of a high-priority task from being disturbed by a low-priority task, RMP provides multiple timer managers: the priority at which each manager runs and the timing granularity it uses can be customised arbitrarily.
+
+Therefore, the RMP soft-timer interface is divided into (1) timer-manager operations and (2) timer operations.
+To create a timer, the application must first (1) create a timer manager and maintain it periodically, then (2) initialise the required timer, and finally (3) register the timer with the corresponding timer manager.
+Once a timer times out, its callback hook is called; when the hook is called, the current manager \texttt{Amgr}, the current timer \texttt{Alrm}, and the overdue amount \texttt{Overdue} are passed as parameters to facilitate application design.
+Timers registered on the same manager always fire first by (1) timeout and then by (2) registration order: if one timer's timeout is earlier than another's, the earlier timer fires first; if two timers time out at the same time, the earlier-registered timer fires first.
+
+Timer managers use \texttt{struct RMP\_Amgr} and timers use \texttt{struct RMP\_Alrm}.
+If data must be attached to these structures, a new structure containing the structure as its first element can be defined, so that the attached data can be found easily.
+For flexibility, allocation and provision of these structures are done by the caller; the alarm mechanism does not allocate or manage them, which avoids waste and copying.
+Although the manager is thread-safe, all timers are thread-local and manager-local:\footnote{Locking each timer to prevent races costs too much performance and is not worth it.} two threads must not operate on one timer at the same time,\footnote{Exception: two threads may operate on the same timer if both specify the same timer manager, because the manager's semaphore guarantees mutual exclusion.} and the same timer must not be registered with two managers; once a timer is registered, it must not be reinitialised.\footnote{The interface detects this error in non-concurrent conditions and reports it, but does not guarantee detection in concurrent conditions.}
+
+The soft-timer extension interface is not atomic; it is assembled from several atomic interfaces.
+Deleting a thread while it is using the timer interface can leave the manager data structure incomplete.
+Deleting a manager while it is in use and immediately creating a new manager with the same control block can cause an ABA problem.
+Therefore, before deleting a thread or manager, ensure that these situations do not exist, or perform a forced deletion in the following order: (1) delete all threads that operate on the manager, (2) delete the manager, and (3) re-create it if necessary.
+Note that in (1), some threads may have just allocated a timer from the memory pool and have not yet linked it into the queue when they are deleted.
+Reclaiming the leaked timer is then the application's responsibility; this can be done with a memory-block marking method, or by giving timers a dedicated pool and reinitialising that pool.
+In addition, suspending a thread while it uses a timer is not recommended, because manager operations are protected by a semaphore\footnote{The semaphore is used here as a mutex.} rather than the scheduler lock.
+If a thread is suspended while holding the semaphore, other threads using the same manager may be blocked indefinitely until the suspension is released.
+
+\section{First-in-first-out queue extension interface}
+
+All FIFO extension interfaces are listed below.
+
+\begin{apisummarytable}{FIFO extension interface summary.}{tab:fifo-api}
+    RMP\_Fifo\_Crt       & Create a FIFO.
+    & \cmark & \xmark \\
+    RMP\_Fifo\_Del       & Delete a FIFO. & \cmark & \xmark \\
+    RMP\_Fifo\_Read      & Read from a FIFO. & \cmark & \xmark \\
+    RMP\_Fifo\_Write     & Write to a FIFO. & \cmark & \xmark \\
+    RMP\_Fifo\_Write\_ISR & Write to a FIFO from an interrupt. & \xmark & \cmark \\
+    RMP\_Fifo\_Cnt       & Query the FIFO length. & \cmark & \xmark \\
+\end{apisummarytable}
+
+They may return the following values.
+
+\begin{returncodetable}{Possible return values of the FIFO extension interfaces.}{tab:fifo-returns}
+    RMP\_ERR\_OPER & \(-6\) & The operation failed for another reason.
+    \\
+    RMP\_ERR\_FIFO & \(-9\) & The FIFO control block caused the operation to fail. \\
+\end{returncodetable}
+
+\subsection{Create a FIFO}
+\begin{apidesc}{RMP\_Fifo\_Crt}{Create a FIFO}\label{api:RMP_Fifo_Crt}
+    \apisig{rmp\_ret\_t RMP\_Fifo\_Crt(volatile struct RMP\_Fifo* Fifo)}
+    This operation creates a FIFO.
+    \begin{apiparams}
+        \apiparam{volatile struct RMP\_Fifo* Fifo}{Pointer to an empty FIFO control block to be used for this FIFO.}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{rmp\_ret\_t}{0 on success; \texttt{RMP\_ERR\_FIFO} if the control block is 0 (NULL) or already used.}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{Delete a FIFO}
+\begin{apidesc}{RMP\_Fifo\_Del}{Delete a FIFO}\label{api:RMP_Fifo_Del}
+    \apisig{rmp\_ret\_t RMP\_Fifo\_Del(volatile struct RMP\_Fifo* Fifo)}
+    This operation deletes a FIFO.
+    Only an empty FIFO can be deleted.
+    \begin{apiparams}
+        \apiparam{volatile struct RMP\_Fifo* Fifo}{Pointer to the FIFO control block to delete.}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{rmp\_ret\_t}{0 on success. On failure: \texttt{RMP\_ERR\_FIFO} if the control block is 0 (NULL) or unused; \texttt{RMP\_ERR\_OPER} if the FIFO still contains elements and cannot be deleted. This check is performed even when \texttt{RMP\_CHECK\_ENABLE} is disabled.}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{Read from a FIFO}
+\begin{apidesc}{RMP\_Fifo\_Read}{Read from a FIFO}\label{api:RMP_Fifo_Read}
+    \apisig{rmp\_ret\_t RMP\_Fifo\_Read(volatile struct RMP\_Fifo* Fifo,
+        volatile struct RMP\_List** Node)}
+    This operation tries to read one element from a FIFO.
+    If the FIFO has no elements, the operation returns immediately and does not provide blocking.
+    \begin{apiparams}
+        \apiparam{volatile struct RMP\_Fifo* Fifo}{Pointer to the FIFO control block to read.}
+        \apiparam{volatile struct RMP\_List** Node}{Output parameter for the element read.}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{rmp\_ret\_t}{0 on success. On failure: \texttt{RMP\_ERR\_FIFO} if the control block is 0 (NULL) or unused; \texttt{RMP\_ERR\_OPER} if the node pointer is 0 (NULL) or the FIFO temporarily has no elements. The last check is performed even when \texttt{RMP\_CHECK\_ENABLE} is disabled.}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{Write to a FIFO}
+\begin{apidesc}{RMP\_Fifo\_Write}{Write to a FIFO}\label{api:RMP_Fifo_Write}
+    \apisig{rmp\_ret\_t RMP\_Fifo\_Write(volatile struct RMP\_Fifo* Fifo,
+        volatile struct RMP\_List* Node)}
+    This operation writes one element to a FIFO.
+    \begin{apiparams}
+        \apiparam{volatile struct RMP\_Fifo* Fifo}{Pointer to the FIFO control block to write.}
+        \apiparam{volatile struct RMP\_List* Node}{Pointer to the element to write.}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{rmp\_ret\_t}{0 on success. On failure: \texttt{RMP\_ERR\_FIFO} if the control block is 0 (NULL) or unused; \texttt{RMP\_ERR\_OPER} if the write pointer is 0 (NULL).}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{Write to a FIFO from an interrupt}
+\begin{apidesc}{RMP\_Fifo\_Write\_ISR}{Write to a FIFO from an ISR}\label{api:RMP_Fifo_Write_ISR}
+    \apisig{rmp\_ret\_t RMP\_Fifo\_Write\_ISR(volatile struct RMP\_Fifo* Fifo,
+        volatile struct RMP\_List* Node)}
+    This operation writes one element to a FIFO from an interrupt vector.
+    \begin{apiparams}
+        \apiparam{volatile struct RMP\_Fifo* Fifo}{Pointer to the FIFO control block to write.}
+        \apiparam{volatile struct RMP\_List* Node}{Pointer to the element to write.}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{rmp\_ret\_t}{0 on success. On failure: \texttt{RMP\_ERR\_FIFO} if the control block is 0 (NULL) or unused; \texttt{RMP\_ERR\_OPER} if the write pointer is 0 (NULL).}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{Query the FIFO length}
+\begin{apidesc}{RMP\_Fifo\_Cnt}{Query the FIFO length}\label{api:RMP_Fifo_Cnt}
+    \apisig{rmp\_ret\_t RMP\_Fifo\_Cnt(volatile struct RMP\_Fifo* Fifo)}
+    This operation queries the current length of a FIFO.
+    \begin{apiparams}
+        \apiparam{volatile struct RMP\_Fifo* Fifo}{Pointer to the FIFO control block whose length is to be queried.}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{rmp\_ret\_t}{Current queue length on success; \texttt{RMP\_ERR\_FIFO} if the control block is 0 (NULL) or unused.}
+    \end{apiret}
+\end{apidesc}
+
+\section{Message queue extension interface}
+
+All message queue extension interfaces are listed below.
+
+\begin{apisummarytable}{Message queue extension interface summary.}{tab:msgq-api}
+    RMP\_Msgq\_Crt       & Create a message queue.
+    & \cmark & \xmark \\
+    RMP\_Msgq\_Del       & Delete a message queue. & \cmark & \xmark \\
+    RMP\_Msgq\_Snd       & Send to a message queue. & \cmark & \xmark \\
+    RMP\_Msgq\_Snd\_ISR  & Send to a message queue from an interrupt. & \xmark & \cmark \\
+    RMP\_Msgq\_Rcv       & Receive from a message queue. & \xmark & \xmark \\
+    RMP\_Msgq\_Cnt       & Query the message queue length. & \cmark & \xmark \\
+\end{apisummarytable}
+
+They may return the following values.
+
+\begin{returncodetable}{Possible return values of the message queue extension interfaces.}{tab:msgq-returns}
+    RMP\_ERR\_OPER & \(-6\) & The operation failed for another reason.
+    \\
+    RMP\_ERR\_MSGQ & \(-10\) & The message queue control block caused the operation to fail. \\
+\end{returncodetable}
+
+\subsection{Create a message queue}
+\begin{apidesc}{RMP\_Msgq\_Crt}{Create a message queue}\label{api:RMP_Msgq_Crt}
+    \apisig{rmp\_ret\_t RMP\_Msgq\_Crt(volatile struct RMP\_Msgq* Queue)}
+    This operation creates a message queue.
+    \begin{apiparams}
+        \apiparam{volatile struct RMP\_Msgq* Queue}{Pointer to an empty message queue control block to be used for this message queue.}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{rmp\_ret\_t}{0 on success; \texttt{RMP\_ERR\_MSGQ} if the control block is 0 (NULL) or already used.}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{Delete a message queue}
+\begin{apidesc}{RMP\_Msgq\_Del}{Delete a message queue}\label{api:RMP_Msgq_Del}
+    \apisig{rmp\_ret\_t RMP\_Msgq\_Del(volatile struct RMP\_Msgq* Queue)}
+    This operation deletes a message queue.
+    Only an empty message queue can be deleted.
+    \begin{apiparams}
+        \apiparam{volatile struct RMP\_Msgq* Queue}{Pointer to the message queue control block to delete.}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{rmp\_ret\_t}{0 on success. On failure: \texttt{RMP\_ERR\_MSGQ} if the control block is 0 (NULL) or unused; \texttt{RMP\_ERR\_OPER} if the queue still contains elements and cannot be deleted. This check is performed even when \texttt{RMP\_CHECK\_ENABLE} is disabled.}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{Send to a message queue}
+\begin{apidesc}{RMP\_Msgq\_Snd}{Send to a message queue}\label{api:RMP_Msgq_Snd}
+    \apisig{rmp\_ret\_t RMP\_Msgq\_Snd(volatile struct RMP\_Msgq* Queue,
+        volatile struct RMP\_List* Node)}
+    This operation sends one message to a message queue.
+    \begin{apiparams}
+        \apiparam{volatile struct RMP\_Msgq* Queue}{Pointer to the message queue control block to send to.}
+        \apiparam{volatile struct RMP\_List* Node}{Pointer to the message to send.}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{rmp\_ret\_t}{0 on success. On failure: \texttt{RMP\_ERR\_MSGQ} if the control block is 0 (NULL) or unused; \texttt{RMP\_ERR\_OPER} if the send pointer is 0 (NULL) or the current message count reaches \texttt{RMP\_SEM\_CNT\_MAX}.}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{Send to a message queue from an interrupt}
+\begin{apidesc}{RMP\_Msgq\_Snd\_ISR}{Send to a message queue from an ISR}\label{api:RMP_Msgq_Snd_ISR}
+    \apisig{rmp\_ret\_t RMP\_Msgq\_Snd\_ISR(volatile struct RMP\_Msgq* Queue,
+        volatile struct RMP\_List* Node)}
+    This operation sends one message to a message queue from an interrupt.
+    Unlike the ordinary version, it always returns immediately and does not block.
+    \begin{apiparams}
+        \apiparam{volatile struct RMP\_Msgq* Queue}{Pointer to the message queue control block to send to.}
+        \apiparam{volatile struct RMP\_List* Node}{Pointer to the message to send.}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{rmp\_ret\_t}{0 on success. On failure: \texttt{RMP\_ERR\_MSGQ} if the control block is 0 (NULL) or unused; \texttt{RMP\_ERR\_OPER} if the send pointer is 0 (NULL) or the current message count reaches \texttt{RMP\_SEM\_CNT\_MAX}.}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{Receive from a message queue}
+\begin{apidesc}{RMP\_Msgq\_Rcv}{Receive from a message queue}\label{api:RMP_Msgq_Rcv}
+    \apisig{rmp\_ret\_t RMP\_Msgq\_Rcv(volatile struct RMP\_Msgq* Queue,
+        volatile struct RMP\_List** Node, rmp\_ptr\_t Slice)}
+    This operation receives one message from a message queue.
+    \begin{apiparams}
+        \apiparam{volatile struct RMP\_Msgq* Queue}{Pointer to the message queue control block to receive from.}
+        \apiparam{volatile struct RMP\_List** Node}{Output parameter for the received message.}
+        \apiparam{rmp\_ptr\_t Slice}{Number of time slices to wait when no message is available. If 0, return immediately if blocking is detected; if between 0 and \texttt{RMP\_SLICE\_MAX}, wait at most that many slices; if greater than or equal to \texttt{RMP\_SLICE\_MAX}, wait forever until a message is received or the queue is destroyed.}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{rmp\_ret\_t}{0 on success. On failure: \texttt{RMP\_ERR\_MSGQ} if the control block is 0 (NULL) or unused; \texttt{RMP\_ERR\_OPER} if the receive pointer is 0 (NULL), blocking would occur with a zero timeout, or the wait timed out, was aborted, or the target queue was deleted. The last two checks are performed even when \texttt{RMP\_CHECK\_ENABLE} is disabled.}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{Query the message queue length}
+\begin{apidesc}{RMP\_Msgq\_Cnt}{Query the message queue length}\label{api:RMP_Msgq_Cnt}
+    \apisig{rmp\_ret\_t RMP\_Msgq\_Cnt(volatile struct RMP\_Msgq* Queue)}
+    This operation queries the current length of a message queue.
+    \begin{apiparams}
+        \apiparam{volatile struct RMP\_Msgq* Queue}{Pointer to the message queue control block whose length is to be queried.}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{rmp\_ret\_t}{Current queue length on success; \texttt{RMP\_ERR\_MSGQ} if the control block is 0 (NULL) or unused.}
+    \end{apiret}
+\end{apidesc}
+
+\section{Blocking message queue extension interface}
+
+All blocking message queue extension interfaces are listed below.
+
+\begin{apisummarytable}{Blocking message queue extension interface summary.}{tab:bmq-api}
+    RMP\_Bmq\_Crt       & Create a blocking message queue.
+    & \cmark & \xmark \\
+    RMP\_Bmq\_Del       & Delete a blocking message queue. & \cmark & \xmark \\
+    RMP\_Bmq\_Snd       & Send to a blocking message queue. & \xmark & \xmark \\
+    RMP\_Bmq\_Snd\_ISR  & Send to a blocking message queue from an interrupt. & \xmark & \cmark \\
+    RMP\_Bmq\_Rcv       & Receive from a blocking message queue. & \xmark & \xmark \\
+    RMP\_Bmq\_Cnt       & Query the blocking message queue length. & \cmark & \xmark \\
+\end{apisummarytable}
+
+They may return the following values.
+
+\begin{returncodetable}{Possible return values of the blocking message queue extension interfaces.}{tab:bmq-returns}
+    RMP\_ERR\_OPER & \(-6\) & The operation failed for another reason.
+    \\
+    RMP\_ERR\_BMQ  & \(-11\) & The blocking message queue control block caused the operation to fail. \\
+\end{returncodetable}
+
+\subsection{Create a blocking message queue}
+\begin{apidesc}{RMP\_Bmq\_Crt}{Create a blocking message queue}\label{api:RMP_Bmq_Crt}
+    \apisig{rmp\_ret\_t RMP\_Bmq\_Crt(volatile struct RMP\_Bmq* Queue,
+        rmp\_ptr\_t Limit)}
+    This operation creates a blocking message queue.
+    \begin{apiparams}
+        \apiparam{volatile struct RMP\_Bmq* Queue}{Pointer to an empty blocking message queue control block.}
+        \apiparam{rmp\_ptr\_t Limit}{Maximum queue length: the maximum number of messages allowed in the queue at one time.}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{rmp\_ret\_t}{0 on success. On failure: \texttt{RMP\_ERR\_BMQ} if the control block is 0 (NULL) or already used; \texttt{RMP\_ERR\_OPER} if the maximum length is 0 or reaches \texttt{RMP\_SEM\_CNT\_MAX}.}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{Delete a blocking message queue}
+\begin{apidesc}{RMP\_Bmq\_Del}{Delete a blocking message queue}\label{api:RMP_Bmq_Del}
+    \apisig{rmp\_ret\_t RMP\_Bmq\_Del(volatile struct RMP\_Bmq* Queue)}
+    This operation deletes a blocking message queue.
+    Only an empty blocking message queue can be deleted.
+    \begin{apiparams}
+        \apiparam{volatile struct RMP\_Bmq* Queue}{Pointer to the blocking message queue control block to delete.}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{rmp\_ret\_t}{0 on success. On failure: \texttt{RMP\_ERR\_BMQ} if the control block is 0 (NULL) or unused; \texttt{RMP\_ERR\_OPER} if the queue still contains elements and cannot be deleted. This check is performed even when \texttt{RMP\_CHECK\_ENABLE} is disabled.}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{Send to a blocking message queue}
+\begin{apidesc}{RMP\_Bmq\_Snd}{Send to a blocking message queue}\label{api:RMP_Bmq_Snd}
+    \apisig{rmp\_ret\_t RMP\_Bmq\_Snd(volatile struct RMP\_Bmq* Queue,
+        volatile struct RMP\_List* Node, rmp\_ptr\_t Slice)}
+    This operation sends one message to a blocking message queue.
+    \begin{apiparams}
+        \apiparam{volatile struct RMP\_Bmq* Queue}{Pointer to the blocking message queue control block to send to.}
+        \apiparam{volatile struct RMP\_List* Node}{Pointer to the message to send.}
+        \apiparam{rmp\_ptr\_t Slice}{Number of time slices to wait when the queue is full. If 0, return immediately if blocking would occur; if between 0 and \texttt{RMP\_SLICE\_MAX}, wait at most that many slices; if greater than or equal to \texttt{RMP\_SLICE\_MAX}, wait forever until the message is sent.}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{rmp\_ret\_t}{0 on success. On failure: \texttt{RMP\_ERR\_BMQ} if the control block is 0 (NULL) or unused; \texttt{RMP\_ERR\_OPER} if the send pointer is 0 (NULL), the current message count reaches \texttt{RMP\_SEM\_CNT\_MAX}, blocking would occur with a zero timeout, or the wait timed out, was aborted, or the target queue was deleted. The last two checks are performed even when \texttt{RMP\_CHECK\_ENABLE} is disabled.}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{Send to a blocking message queue from an interrupt}
+\begin{apidesc}{RMP\_Bmq\_Snd\_ISR}{Send to a blocking queue from an ISR}\label{api:RMP_Bmq_Snd_ISR}
+    \apisig{rmp\_ret\_t RMP\_Bmq\_Snd\_ISR(volatile struct RMP\_Bmq* Queue,
+        volatile struct RMP\_List* Node)}
+    This operation sends one element to a blocking message queue from an interrupt.
+    Unlike the ordinary version, it always returns immediately, does not block, and does not accept a timeout parameter.
+    \begin{apiparams}
+        \apiparam{volatile struct RMP\_Bmq* Queue}{Pointer to the blocking message queue control block to send to.}
+        \apiparam{volatile struct RMP\_List* Node}{Pointer to the message to send.}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{rmp\_ret\_t}{0 on success. On failure: \texttt{RMP\_ERR\_BMQ} if the control block is 0 (NULL) or unused; \texttt{RMP\_ERR\_OPER} if the send pointer is 0 (NULL), the current message count reaches \texttt{RMP\_SEM\_CNT\_MAX}, or the message count reaches the maximum allowed at creation. The last check is performed even when \texttt{RMP\_CHECK\_ENABLE} is disabled.}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{Receive from a blocking message queue}
+\begin{apidesc}{RMP\_Bmq\_Rcv}{Receive from a blocking message queue}\label{api:RMP_Bmq_Rcv}
+    \apisig{rmp\_ret\_t RMP\_Bmq\_Rcv(volatile struct RMP\_Bmq* Queue,
+        volatile struct RMP\_List** Node, rmp\_ptr\_t Slice)}
+    This operation receives one message from a blocking message queue.
+    \begin{apiparams}
+        \apiparam{volatile struct RMP\_Bmq* Queue}{Pointer to the blocking message queue control block to receive from.}
+        \apiparam{volatile struct RMP\_List** Node}{Output parameter for the received message.}
+        \apiparam{rmp\_ptr\_t Slice}{Number of time slices to wait when no message is available. If 0, return immediately if blocking would occur; if between 0 and \texttt{RMP\_SLICE\_MAX}, wait at most that many slices; if greater than or equal to \texttt{RMP\_SLICE\_MAX}, wait forever until a message is received or the queue is destroyed.}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{rmp\_ret\_t}{0 on success. On failure: \texttt{RMP\_ERR\_BMQ} if the control block is 0 (NULL) or unused; \texttt{RMP\_ERR\_OPER} if the receive pointer is 0 (NULL), blocking would occur with a zero timeout, or the wait timed out, was aborted, or the queue was deleted. The last two checks are performed even when \texttt{RMP\_CHECK\_ENABLE} is disabled.}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{Query the blocking message queue length}
+\begin{apidesc}{RMP\_Bmq\_Cnt}{Query the blocking queue length}\label{api:RMP_Bmq_Cnt}
+    \apisig{rmp\_ret\_t RMP\_Bmq\_Cnt(volatile struct RMP\_Bmq* Queue)}
+    This operation queries the current length of a blocking message queue.
+    \begin{apiparams}
+        \apiparam{volatile struct RMP\_Bmq* Queue}{Pointer to the blocking message queue control block whose length is to be queried.}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{rmp\_ret\_t}{Current queue length on success; \texttt{RMP\_ERR\_BMQ} if the control block is 0 (NULL) or unused.}
+    \end{apiret}
+\end{apidesc}
+
+\section{Soft timer extension interface}
+
+All soft timer extension interfaces are listed below.
+
+\begin{apisummarytable}{Soft timer extension interface summary.}{tab:alarm-api}
+    RMP\_Amgr\_Crt   & Create an alarm manager.
+    & \cmark & \xmark \\
+    RMP\_Amgr\_Del   & Delete an alarm manager. & \cmark & \xmark \\
+    RMP\_Amgr\_Pop   & Dismantle an alarm manager. & \cmark & \xmark \\
+    RMP\_Amgr\_Proc  & Maintain an alarm manager. & \xmark & \xmark \\
+    RMP\_Amgr\_Cnt   & Query the number of alarms. & \cmark & \xmark \\
+    RMP\_Alrm\_Init  & Initialise an alarm. & \cmark & \xmark \\
+    RMP\_Alrm\_Set   & Register an alarm. & \xmark & \xmark \\
+    RMP\_Alrm\_Clr   & Cancel an alarm. & \xmark & \xmark \\
+    RMP\_Alrm\_Trg   & Trigger an alarm. & \xmark & \xmark \\
+\end{apisummarytable}
+
+They may return the following values.
+
+\begin{returncodetable}{Possible return values of the soft timer extension interfaces.}{tab:alarm-returns}
+    RMP\_ERR\_OPER & \(-6\) & The operation failed for another reason.
+    \\
+    RMP\_ERR\_AMGR & \(-12\) & The alarm manager control block caused the operation to fail. \\
+    RMP\_ERR\_ALRM & \(-13\) & The alarm control block caused the operation to fail. \\
+\end{returncodetable}
+
+\subsection{Create an alarm manager}
+\begin{apidesc}{RMP\_Amgr\_Crt}{Create an alarm manager}\label{api:RMP_Amgr_Crt}
+    \apisig{rmp\_ret\_t RMP\_Amgr\_Crt(volatile struct RMP\_Amgr* Amgr)}
+    This operation creates an alarm manager.
+    \begin{apiparams}
+        \apiparam{volatile struct RMP\_Amgr* Amgr}{Pointer to an empty alarm manager control block.}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{rmp\_ret\_t}{0 on success; \texttt{RMP\_ERR\_AMGR} if the control block is 0 (NULL) or already used.}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{Delete an alarm manager}
+\begin{apidesc}{RMP\_Amgr\_Del}{Delete an alarm manager}\label{api:RMP_Amgr_Del}
+    \apisig{rmp\_ret\_t RMP\_Amgr\_Del(volatile struct RMP\_Amgr* Amgr)}
+    This operation deletes an alarm manager.
+    Only an empty alarm manager can be deleted.
+    If the manager is to be deleted, either wait for (1) its alarms to expire naturally or (2) dismantle it manually with the function described in the next section.
+    \begin{apiparams}
+        \apiparam{volatile struct RMP\_Amgr* Amgr}{Pointer to the alarm manager control block to delete.}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{rmp\_ret\_t}{0 on success. On failure: \texttt{RMP\_ERR\_AMGR} if the control block is 0 (NULL) or unused; \texttt{RMP\_ERR\_OPER} if the manager still contains alarms and cannot be deleted. This check is performed even when \texttt{RMP\_CHECK\_ENABLE} is disabled.}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{Dismantle an alarm manager}
+\begin{apidesc}{RMP\_Amgr\_Pop}{Dismantle an alarm manager}\label{api:RMP_Amgr_Pop}
+    \apisig{rmp\_ret\_t RMP\_Amgr\_Pop(volatile struct RMP\_Amgr* Amgr,
+        volatile struct RMP\_Alrm** Alrm)}
+    This operation forcibly pops one alarm from an alarm manager.
+    When an alarm manager must be stopped forcibly and, after all threads that may operate on it have been terminated, its data structure may be damaged, this function can be used to dismantle the manager step by step so that it no longer contains any alarms and can be deleted.
+    If the alarms were allocated from a memory pool, they can be returned to the pool one by one.
+    Before dismantling, all manager operations must stop; once dismantling starts, only dismantling or deletion of the manager is allowed.
+    \begin{apiparams}
+        \apiparam{volatile struct RMP\_Amgr* Amgr}{Pointer to the alarm manager control block to dismantle.}
+        \apiparam{volatile struct RMP\_Alrm** Alrm}{Output parameter for the dismantled alarm.}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{rmp\_ret\_t}{0 on success. On failure: \texttt{RMP\_ERR\_AMGR} if the control block is 0 (NULL) or unused; \texttt{RMP\_ERR\_OPER} if the output pointer is 0 (NULL) or the manager has no alarms. The last check is performed even when \texttt{RMP\_CHECK\_ENABLE} is disabled.}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{Maintain an alarm manager}
+\begin{apidesc}{RMP\_Amgr\_Proc}{Maintain an alarm manager}\label{api:RMP_Amgr_Proc}
+    \apisig{rmp\_ret\_t RMP\_Amgr\_Proc(volatile struct RMP\_Amgr* Amgr,
+        rmp\_ptr\_t Tick)}
+    This operation adds to the manager's time count and processes any alarms that have expired; it is the core interface of the alarm manager.
+    It must be called periodically to process alarms registered on the manager; a dedicated thread can be arranged to call it periodically, and the call period is the manager's timing granularity.
+    \begin{apiparams}
+        \apiparam{volatile struct RMP\_Amgr* Amgr}{Pointer to the alarm manager control block to maintain.}
+        \apiparam{rmp\_ptr\_t Tick}{Time count to add to the manager. The number is not limited by \texttt{RMP\_SLICE\_MAX}, but it must not be 0 or exceed \(2^{N-1}-1\) (\texttt{RMP\_MASK\_INTMAX}), where \(N\) is \texttt{RMP\_WORD\_ORDER}. Adding more than one count at once may cause an alarm to expire late; the callback's overdue amount will then be positive.}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{rmp\_ret\_t}{Current number of alarms on the manager on success. On failure: \texttt{RMP\_ERR\_AMGR} if the control block is 0 (NULL) or unused; \texttt{RMP\_ERR\_OPER} if \texttt{Tick} is 0 or exceeds \texttt{RMP\_MASK\_INTMAX}, or locking fails because the manager was deleted or cancelled. The last check is performed even when \texttt{RMP\_CHECK\_ENABLE} is disabled.}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{Query the number of alarms}
+\begin{apidesc}{RMP\_Amgr\_Cnt}{Query the number of alarms}\label{api:RMP_Amgr_Cnt}
+    \apisig{rmp\_ret\_t RMP\_Amgr\_Cnt(volatile struct RMP\_Amgr* Amgr)}
+    This operation queries the current number of alarms on an alarm manager.
+    \begin{apiparams}
+        \apiparam{volatile struct RMP\_Amgr* Amgr}{Pointer to the alarm manager control block whose alarm count is to be queried.}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{rmp\_ret\_t}{Current number of alarms on success; \texttt{RMP\_ERR\_AMGR} if the control block is 0 (NULL) or unused.}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{Initialise an alarm}
+\begin{apidesc}{RMP\_Alrm\_Init}{Initialise an alarm}\label{api:RMP_Alrm_Init}
+    \apisig{rmp\_ret\_t RMP\_Alrm\_Init(volatile struct RMP\_Alrm* Alrm,
+        rmp\_ptr\_t Delay, rmp\_ptr\_t Mode,\\
+        void (*Hook)(volatile struct RMP\_Amgr*,
+        volatile struct RMP\_Alrm*, rmp\_cnt\_t))}
+    This operation initialises an alarm's data structure according to the parameters given by the user, so that it can be registered with an alarm manager next.
+    \begin{apiparams}
+        \apiparam{volatile struct RMP\_Alrm* Alrm}{Pointer to the alarm control block to initialise.}
+        \apiparam{rmp\_ptr\_t Delay}{Delay of the alarm. The number is not limited by \texttt{RMP\_SLICE\_MAX}, but it must not be 0 or exceed \(2^{N-1}-1\) (\texttt{RMP\_MASK\_INTMAX}). Its unit is the manager's timing granularity.}
+        \apiparam{rmp\_ptr\_t Mode}{Working mode of the alarm, either \texttt{RMP\_ALRM\_AUTORLD} (auto-reload) or \texttt{RMP\_ALRM\_ONESHOT}.}
+        \apiparam{void (*Hook)(volatile struct RMP\_Amgr*, volatile struct RMP\_Alrm*, rmp\_cnt\_t) Hook}{Callback hook of the alarm. Its prototype is \texttt{void Hook(volatile struct RMP\_Amgr* Amgr, volatile struct RMP\_Alrm* Alrm, rmp\_cnt\_t Overdue)}.}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{rmp\_ret\_t}{0 on success. On failure: \texttt{RMP\_ERR\_ALRM} if the control block is 0 (NULL) or already registered; \texttt{RMP\_ERR\_OPER} if \texttt{Delay} is 0 or exceeds \texttt{RMP\_MASK\_INTMAX}, \texttt{Mode} is neither of the two allowed values, or \texttt{Hook} is 0 (NULL).}
+    \end{apiret}
+\end{apidesc}
+
+\begin{apidesc}{Hook}{Alarm callback hook}\label{api:Hook}
+    \apisig{void Hook(volatile struct RMP\_Amgr* Amgr, volatile struct RMP\_Alrm* Alrm, rmp\_cnt\_t Overdue)}
+    \begin{apiparams}
+        \apiparam{volatile struct RMP\_Amgr* Amgr}{Pointer to the alarm manager to which this alarm belongs.}
+        \apiparam{volatile struct RMP\_Alrm* Alrm}{Pointer to this alarm's control block.}
+        \apiparam{rmp\_cnt\_t Overdue}{How overdue the alarm is. Positive if the alarm expired late because \texttt{RMP\_Amgr\_Proc} advanced the count by more than one tick; negative if it was triggered early by \texttt{RMP\_Alrm\_Trg}; 0 if it expired normally.}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{None}{No return value.}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{Register an alarm}
+\begin{apidesc}{RMP\_Alrm\_Set}{Register an alarm}\label{api:RMP_Alrm_Set}
+    \apisig{rmp\_ret\_t RMP\_Alrm\_Set(volatile struct RMP\_Amgr* Amgr,
+        volatile struct RMP\_Alrm* Alrm)}
+    This operation registers the specified alarm with the specified alarm manager.
+    If the alarm is already registered with the same manager, its delay is reset.
+    \begin{apiparams}
+        \apiparam{volatile struct RMP\_Amgr* Amgr}{Pointer to the alarm manager control block to register with.}
+        \apiparam{volatile struct RMP\_Alrm* Alrm}{Pointer to the alarm control block to register.}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{rmp\_ret\_t}{0 on success. On failure: \texttt{RMP\_ERR\_AMGR} if the manager control block is 0 (NULL) or unused; \texttt{RMP\_ERR\_ALRM} if the alarm control block is 0 (NULL) or registered with another manager (the last check is performed even when \texttt{RMP\_CHECK\_ENABLE} is disabled); \texttt{RMP\_ERR\_OPER} if locking fails because the manager was deleted or cancelled (also checked even when checking is disabled).}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{Cancel an alarm}
+\begin{apidesc}{RMP\_Alrm\_Clr}{Cancel an alarm}\label{api:RMP_Alrm_Clr}
+    \apisig{rmp\_ret\_t RMP\_Alrm\_Clr(volatile struct RMP\_Amgr* Amgr,
+        volatile struct RMP\_Alrm* Alrm)}
+    This operation cancels the specified alarm.
+    The cancelled alarm is immediately unregistered from the manager.
+    \begin{apiparams}
+        \apiparam{volatile struct RMP\_Amgr* Amgr}{Pointer to the alarm manager control block that owns the alarm.}
+        \apiparam{volatile struct RMP\_Alrm* Alrm}{Pointer to the alarm control block to cancel.}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{rmp\_ret\_t}{0 on success. On failure: \texttt{RMP\_ERR\_AMGR} if the manager control block is 0 (NULL) or unused; \texttt{RMP\_ERR\_ALRM} if the alarm control block is 0 (NULL) or not registered with this manager (the last check is performed even when \texttt{RMP\_CHECK\_ENABLE} is disabled); \texttt{RMP\_ERR\_OPER} if locking fails because the manager was deleted or cancelled (also checked even when checking is disabled).}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{Trigger an alarm}
+\begin{apidesc}{RMP\_Alrm\_Trg}{Trigger an alarm}\label{api:RMP_Alrm_Trg}
+    \apisig{rmp\_ret\_t RMP\_Alrm\_Trg(volatile struct RMP\_Amgr* Amgr,
+        volatile struct RMP\_Alrm* Alrm)}
+    This operation triggers the specified alarm early, as if its delay had expired.
+    The alarm's callback hook is called, and its overdue amount is negative.
+    Afterwards, an auto-reload alarm starts counting again immediately, while a one-shot alarm is unregistered from its manager.
+    \begin{apiparams}
+        \apiparam{volatile struct RMP\_Amgr* Amgr}{Pointer to the alarm manager control block that owns the alarm.}
+        \apiparam{volatile struct RMP\_Alrm* Alrm}{Pointer to the alarm control block to trigger early.}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{rmp\_ret\_t}{0 on success. On failure: \texttt{RMP\_ERR\_AMGR} if the manager control block is 0 (NULL) or unused; \texttt{RMP\_ERR\_ALRM} if the alarm control block is 0 (NULL) or not registered with this manager (the last check is performed even when \texttt{RMP\_CHECK\_ENABLE} is disabled); \texttt{RMP\_ERR\_OPER} if locking fails because the manager was deleted or cancelled (also checked even when checking is disabled).}
+    \end{apiret}
+\end{apidesc}
+
+\section{Chapter bibliography}
+
+None.

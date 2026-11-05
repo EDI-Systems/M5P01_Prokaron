@@ -97,6 +97,9 @@ void Cov_Bit(void)
     /* MSB-finding: tests the 7-0 branch, table entry 0x80 */
     RMP_MSB_Generic(0x00000080UL);
 
+    /* LSB-finding: tests the zero defence, which returns 0 and covers both
+     * sides of the guard (the nonzero calls below cover the else side) */
+    PASS(RMP_LSB_Generic(0U));
     /* LSB-finding: tests the 31-24 branch, table entry 0x80 */
     RMP_LSB_Generic(0x80000000UL);
     /* LSB-finding: tests the 24-16 branch, table entry 0x80 */

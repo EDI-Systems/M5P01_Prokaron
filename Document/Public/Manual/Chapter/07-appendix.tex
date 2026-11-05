@@ -1,0 +1,665 @@
+\chapter{Appendix}\label{ch:appendix}
+
+\section{Implementation of special kernel features}
+
+Some features of RMP are not implemented by the kernel by default.
+It is possible to implement them in RMP; the principles are described below.
+If the user needs these features, they must be implemented by the user.
+
+\subsection{Implementation of a tickless kernel}
+
+A tickless kernel requires the system to have a timer with a long duration and high precision, and to generate variable scheduler time interrupts from that timer.
+The ratio between the time slice and the timer reload value can be freely chosen by the implementer.
+To make a tickless kernel easier to implement, the system provides two functions, \texttt{\_RMP\_Tim\_Future} and \texttt{\_RMP\_Tim\_Elapse}; if a tickless kernel is not implemented, they can be ignored.
+
+To make the timer generate an interrupt at the nearest potential timeout, after every timer interrupt,\footnote{For example the timer interrupt hook \texttt{RMP\_TIM\_HOOK}. A timer interrupt can mean (1) a thread has exhausted its time slice, (2) a thread delay has expired, or (3) the hardware timer's maximum configurable timeout is not long enough and the delay must be completed in several parts. In case (1) a context switch always occurs; in case (2) a context switch may occur; in case (3) no context switch can occur. When a context switch is detected as pending, this timer programming is not needed, because the following context switch will do it.} context switch,\footnote{For example the context-switch hook \texttt{RMP\_SCHED\_HOOK}.} or new thread entering the delay queue,\footnote{For example the delay-insertion hook \texttt{RMP\_DLY\_HOOK}.} the current thread's remaining time must be checked, then the remaining time of the earliest delayed thread, and the smaller of the two must be chosen as the next hardware timer timeout.
+
+The kernel provides \texttt{\_RMP\_Tim\_Future} to obtain this timeout.
+Two special cases must be handled: (1) if the timeout is 0, a thread delay has expired and a timer interrupt must be triggered immediately; (2) if the interval is longer than the timer can support, simply set the timer timeout to the maximum allowed value.
+RMP's design guarantees that only the time that actually elapsed is deducted from a thread's remaining time, so there is no need to worry about losing delay time.
+
+\begin{apidesc}{\_RMP\_Tim\_Future}{Get the nearest timeout in slices}\label{port:Tim_Future}
+    \apisig{rmp\_ptr\_t \_RMP\_Tim\_Future(void)}
+    Obtains the number of time slices until the nearest future timeout, which can be used to set the next timeout of the system timer.
+    \begin{apiparams}
+        \apiparam{None}{No parameters.}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{rmp\_ptr\_t}{Number of time slices until the nearest future timeout.}
+    \end{apiret}
+\end{apidesc}
+
+Before \texttt{\_RMP\_Tim\_Future} calculates the remaining time of the nearest delayed thread, it is necessary to ensure that the timestamp \texttt{RMP\_Timestamp} is up to date.
+Otherwise the calculation will be wrong.
+The kernel therefore provides \texttt{\_RMP\_Tim\_Elapse} to update the timestamp.
+Outside a timer interrupt,\footnote{That is, in \texttt{RMP\_SCHED\_HOOK} and \texttt{RMP\_DLY\_HOOK}, but not in \texttt{RMP\_TIM\_HOOK}.} it must be called before \texttt{\_RMP\_Tim\_Future}; inside a timer interrupt it need not be called, because the timer interrupt itself updates the timestamp.
+
+Note: observing where \texttt{\_RMP\_Tim\_Elapse} is called shows that it appears either in the context-switch vector or in \texttt{\_RMP\_Dly\_Ins}, which is necessarily followed by a context switch; RMP always refills a thread's time slice after a context switch.\footnote{In RME the slice is not refilled automatically; the user-mode scheduler must pass it manually.}
+Therefore \texttt{\_RMP\_Tim\_Elapse} does not need to update the current thread's remaining slice count.
+This further means that in a context switch, \texttt{\_RMP\_Tim\_Elapse} only needs to be called before \texttt{\_RMP\_Tim\_Future}, and does not have to be fixed before the switch.\footnote{In RME the same-named function must be called at the beginning of the vector; otherwise, once the switch is complete, the consumed slice is charged to another thread.}
+
+\begin{apidesc}{\_RMP\_Tim\_Elapse}{Record elapsed time}\label{port:Tim_Elapse}
+    \apisig{void \_RMP\_Tim\_Elapse(rmp\_ptr\_t Slice)}
+    Records the number of time slices the current thread has used before calculating the timer timeout.
+    \begin{apiparams}
+        \apiparam{rmp\_ptr\_t Slice}{Number of slices elapsed since the timer was last reloaded. This can be obtained by reading the timer's counter register and computing its difference from the reload value. The number is not limited by \texttt{RMP\_SLICE\_MAX}, but must not exceed \(2^{N-1}-1\) (\texttt{RMP\_MASK\_INTMAX}). The read may stop the timer first, because the next \texttt{RMP\_SCHED\_HOOK} necessarily reprograms it and it does not matter whether the timer keeps running after the read. After calling this function, \texttt{RMP\_DLY\_HOOK} must also clear the timer reload and count values, to avoid a duplicate time deduction by a later \texttt{RMP\_SCHED\_HOOK}.}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{None}{No return value.}
+    \end{apiret}
+\end{apidesc}
+
+To save more energy, when only the initial idle thread is running and no thread is delayed, even the clock source of the system timer can be stopped.
+The system provides \texttt{\_RMP\_Tim\_Idle} to detect this condition.
+To use this feature, interrupts must first be disabled, then the function is used to detect whether the timer clock source can be stopped, and finally interrupts are enabled atomically while entering an appropriate low-power state.\footnote{If the CPU does not provide an operation that atomically enables interrupts and stops the timer clock source, or if the clock source cannot start automatically when an interrupt arrives, this feature cannot be used.}
+A concrete example is the CCS-MSP430G2553 project in the MSP430 port.
+
+\begin{apidesc}{\_RMP\_Tim\_Idle}{Query the system timer idle state}\label{port:Tim_Idle}
+    \apisig{rmp\_ret\_t \_RMP\_Tim\_Idle(void)}
+    Determines whether the system timer and its clock source can be completely stopped to save energy.
+    \begin{apiparams}
+        \apiparam{None}{No parameters.}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{0}{The timer and its clock source may be stopped.}
+        \apiretval{-1}{They may not be stopped.}
+    \end{apiret}
+\end{apidesc}
+
+It is worth noting that although a tickless kernel has lower CPU power consumption, its real-time behaviour is not necessarily better, because it necessarily includes time-elapse accounting before a context switch and timer reprogramming after it.
+Both can increase the length of the context-switch critical section and negatively affect the worst-case execution time.
+In a virtualised environment these disadvantages are multiplied.
+Therefore, a ticked kernel is recommended in non-low-power environments.
+
+\subsection{Saving and restoring thread context}\label{sec:ctx-strategies}
+
+Normally, the system uses a dedicated thread context-switch interrupt vector, and performs thread context switching only in that vector.
+This makes the context-switch vector the only interrupt vector in the system that must be written in assembly, greatly simplifying porting.
+It also reduces the interrupt latency of other vectors, because entering and leaving other vectors does not require pushing and popping the full context.
+In addition, when several interrupts execute back-to-back, context saving, restoring, and switching are performed only after the last interrupt exits, saving a great deal of overhead.
+For these reasons, this method is recommended.
+
+However, this method is not without disadvantages.
+It (1) requires an extra software-triggerable, pendable interrupt vector,\footnote{For example ARMv7-M PendSV.} (2) requires that vector to be entered almost immediately after the software trigger,\footnote{The vector must be entered immediately after the trigger, or the number of instructions between the trigger and entry must be controllable.} (3) requires interrupts to be able to tail-chain directly, that is, the next interrupt must be able to follow the exit of the previous one without any main-program instruction in between,\footnote{Some CPUs must execute one main-program instruction after an interrupt return before accepting the next interrupt.} (4) increases the latency of activating a thread from an interrupt, and (5) increases the latency of initiating a context switch from a thread.
+When conditions (1)--(3) are not met, or when (4) and (5) are not desired, the implementation ideas below can be used.\footnote{For example when threads are used as cooperative fibers or coroutines, or when the software interrupt latency is high.}
+
+First, write \texttt{RMP\_YIELD} in assembly and perform the following steps:
+
+\begin{enumerate}
+    \item disable interrupts;
+    \item simulate the processor's interrupt entry, pushing the registers that an interrupt would push, and ensure that interrupts are enabled in the pushed frame;
+    \item push all the CPU's basic registers onto the thread stack;\footnote{The instruction pointer PC (or IP) needs special treatment: its original value must not be pushed; the return point of step 10 must be pushed instead.}
+    \item store the current thread stack pointer in \texttt{RMP\_SP\_Cur};
+    \item switch to the kernel stack;\footnote{This step is optional, but a separate kernel stack and thread stack are recommended.}
+    \item call \texttt{\_RMP\_Run\_High} to switch threads;
+    \item assign \texttt{RMP\_SP\_Cur} to the current thread stack pointer and
+    switch to the thread stack;
+    \item pop all the CPU's basic registers from the thread stack;
+    \item call the interrupt-return instruction to enable interrupts and return;
+    and
+    \item call the normal return instruction to return to the original program
+    flow.
+\end{enumerate}
+
+Then write the interrupt vector entry and exit in assembly.
+Add register saving (steps 3, 4, and 5 above) at every entry and register restoring (steps 7, 8, and 9 above) at every exit, and before the exit check whether \texttt{RMP\_Sched\_Pend} is set.
+If it is set, perform the thread switch (step 6).
+In this case the \texttt{RMP\_YIELD\_ISR} macro need not be defined.
+
+When using this method, the context produced by \texttt{RMP\_YIELD} must be restorable by the interrupt vector's exit, and the context produced by the vector's entry must be restorable by \texttt{RMP\_YIELD}, especially on architectures that perform hardware pushes on interrupt entry.
+In addition, some architectures have long-running instructions\footnote{For example the ARMv7-M LDM, STM, and IT blocks, and the hardware loop instructions of some DSP processors.} that the processor designer allows interrupts to break, recording their execution state so that they can be restored correctly on interrupt exit.
+For such architectures, \texttt{RMP\_YIELD} must be able to resume such an instruction from the point where it was interrupted, not restart the whole instruction; otherwise the program logic will fail.\footnote{For example double pushes or incorrect condition evaluation.}
+If resumption from the middle cannot be guaranteed but this method must be used, the port can lock the scheduler and use \texttt{RMP\_Thd\_Peek\_ISR} to examine the next thread's context in advance; if that context is in the middle of an interrupted instruction and cannot be restored by \texttt{RMP\_YIELD}, the slower interrupt-context-switch path is taken.\footnote{For example the ARMv7-M RVM port.}
+
+For architectures without a dedicated context-switch interrupt, all official RMP ports use this method and package the assembly code into a macro.
+All system interrupts\footnote{System interrupts are those that call the \texttt{\_ISR} series of functions or access an operating-system critical section.} must use this macro to save and restore context, while transparent interrupts\footnote{Transparent interrupts are those that do not call the \texttt{\_ISR} series of functions and are unrelated to the operating system.} have no such requirement.
+See the MSP430 port for a concrete example.
+
+This method can be further optimised by the measures described in the following subsections.
+None of the official RMP ports implement these optimisations, because after comprehensive consideration they are not worthwhile.
+
+\subsubsection{Tolerating a software interrupt that does not enter immediately}
+
+A loop waiting for \texttt{RMP\_Sched\_Pend} to clear can be added after every call to \texttt{RMP\_YIELD}, and code can continue only after it clears, to avoid the requirement in (2) that the vector enter almost immediately.
+The other requirements still cannot be easily avoided.
+Therefore, the official RMP ports for architectures that do not satisfy (1)--(3) do not use this method.
+
+\subsubsection{Deferring interrupt disabling to improve real-time behaviour}
+
+Interrupt disabling can be deferred until after the registers are pushed, reducing the total disabled time.
+But if an interrupt arrives immediately after the push\footnote{Calls to \texttt{RMP\_YIELD} caused by \texttt{RMP\_Sched\_Unlock} do not have this problem, because the scheduler is already locked and interrupts are disabled.} caused by \texttt{RMP\_Thd\_Yield}'s \texttt{RMP\_YIELD}, the thread context is saved twice.
+Similarly, enabling interrupts can be moved before the pops, but this is even more dangerous: an interrupt that breaks the \texttt{RMP\_YIELD} pop sequence pushes another frame, and that frame may still be popped by \texttt{RMP\_YIELD} in the future; however, \texttt{RMP\_YIELD} may be interrupted again before it finishes popping, causing theoretically unbounded stack use.\footnote{In practice this is almost impossible, so it can be ignored in non-serious contexts.}
+To avoid these problems, official RMP ports always disable interrupts before pushing registers and do not enable them until the pops are complete.
+
+\subsubsection{Using the calling convention to optimise interrupt latency}
+
+An interrupt vector does not necessarily request a context switch on every trigger, so aggressively saving and restoring all registers at vector entry and exit is unnecessary.
+Two optimisations are possible: (1) at entry save only the caller-saved registers required by the calling convention, execute the vector immediately, and at the end check \texttt{RMP\_Sched\_Pend} to decide whether a context switch is needed; if so, push the remaining registers and switch, otherwise pop the caller-saved registers and exit the interrupt; (2) further, at the end of the vector, determine whether other interrupts are pending after the exit; if so, defer the above decision until the last vector exits, and do not switch on this occasion regardless of \texttt{RMP\_Sched\_Pend}.\footnote{To achieve an effect similar to ARMv7-M PendSV.}
+However, these two optimisations (1) must adapt to potentially different calling conventions of different compilers, (2) increase the complexity of the hardware abstraction layer, and (3) improve only the average efficiency while worsening the worst-case execution time; therefore they are not implemented in official RMP ports.
+
+\subsubsection{Using the calling convention to optimise yield efficiency}
+
+Because \texttt{RMP\_YIELD} is a macro that is really an assembly function, the compiler necessarily follows the calling convention before calling it, saving the caller-saved registers in advance and restoring them automatically after the function returns.
+In fact, \texttt{RMP\_YIELD} only needs to save and restore the callee-saved registers; this can improve the efficiency of voluntary processor yielding between threads, a design that is quite common in monolithic kernels.
+However, the context produced by \texttt{RMP\_YIELD} is then no longer complete, and the interrupt vector's context saving and restoring must be made compatible with it.
+Whatever compatibility method is used, interrupt latency will undoubtedly worsen, so this optimisation is not implemented in official RMP ports.
+
+Note 1: A clever compatibility method is to let the interrupt vector use the thread stack and modify the interrupt-return path used for a context switch so that it (1) lets the processor acknowledge the interrupt early\footnote{On processors such as ARMv7-M that record interrupt state and automatically send an end-of-interrupt (EOI) signal, this is required.} but keeps interrupts disabled, (2) calls a variant of \texttt{RMP\_YIELD} with a final state of interrupts disabled\footnote{It should not normally be called from an interrupt vector, and it always enables interrupts at the end.} to produce an incomplete context that can be restored by normal \texttt{RMP\_YIELD}, and finally (3) pops the stack and exits the interrupt.
+Combined with the optimisation of Section~7.1.2.3,\footnote{Of course it is also possible not to combine them, at the cost of pushing and popping the full stack, which unnecessarily worsens performance.} the interrupt entry and exit then only push and pop caller-saved registers, and all callee-saved register saving and restoring is handled by \texttt{RMP\_YIELD}, bypassing the compatibility problem.
+The cost is that (1) every thread stack must reserve space for the interrupt vector, increasing memory consumption, and (2) when switching back, an incomplete stack must be popped before the interrupt stack, adding several jumps and worsening the worst-case execution time.
+
+Note 2: In the compatibility method above, some implementations go further to minimise interrupt-disabled time.
+They leave interrupts enabled after (1) the processor acknowledges the interrupt, so that accumulated pending interrupts can be serviced before \texttt{RMP\_YIELD} is called, and they call the original \texttt{RMP\_YIELD} directly at (2), so that interrupts can be serviced before the interrupt-exit pops.
+This does reduce interrupt-disabled time, but the thread may be interrupted again and have its registers pushed before \texttt{RMP\_YIELD} has a chance to run or just after it finishes, causing the theoretically unbounded stack use described in Section~7.1.2.2.
+If the optimisation of Section~7.1.2.2 is also applied, stack use becomes even worse.
+
+\subsubsection{Reusing code between yield and preemption}
+
+In official RMP ports, \texttt{RMP\_YIELD} and the interrupt vector entry and exit always use two independent implementations, however similar they are, and no code is reused.
+The reasons are: (1) not all assemblers allow including assembly header files; where allowed, an \texttt{.inc} file is provided for the user to include in the interrupt vector assembly file and in the architecture's low-level assembly file, allowing reuse; where not allowed, a \texttt{.cpy} file is provided for the user to paste manually into the vector assembly file, and reuse is impossible; (2) the two implementations differ greatly on some architectures, so reuse is impossible; for example, some architectures perform special stack-alignment operations in hardware on interrupt entry and exit, which \texttt{RMP\_YIELD} must simulate in another way.\footnote{For example the ARMv7-M RVM port.}
+Overall, rather than using a shared implementation for only some architectures and toolchains, it is better to use two independent implementations for all architectures; this keeps the low-level mental model uniform.
+
+\subsection{Saving and restoring coprocessor context}
+
+A coprocessor is a CPU extension module such as a floating-point unit or a vector processor; it also has its own context.
+If several threads share the same coprocessor concurrently, its context must be saved and restored together with the thread context during a context switch.
+RMP therefore provides two hooks, \texttt{RMP\_CTX\_SAVE} and \texttt{RMP\_CTX\_LOAD}.
+In the save hook, first detect whether the current thread used the coprocessor, and save its context if it did; in the load hook, also detect whether the coprocessor was used, and restore its context if it was.
+If it is impossible to detect whether the coprocessor was used, its context must always be saved and restored.
+
+Because these two hooks are called after entering the kernel's C environment, on ports with a separate kernel stack they can use \texttt{RMP\_SP\_Cur} to save the context on the thread stack; all official RMP ports use a separate kernel stack.
+On ports that share the kernel stack with the thread, the coprocessor context must be saved in an additional structure; otherwise it may overwrite the kernel's return address and cause errors.
+
+For most architectures, the official RMP ports already save and restore the coprocessor context on the stack in assembly.
+For these architectures, the floating-point register context can be saved and restored without the hooks.
+Different floating-point processor configurations may require different save/restore routines to be referenced in the assembly file.
+
+Note 1: In official RMP ports, all context including the general registers is placed on the thread stack.
+This is because (1) almost all processors push at least the PC and FLAGS on interrupt entry, and some also force-push some general registers; putting all context into a structure would require copying these registers into the structure, which is bad for performance, and (2) if context that is not automatically pushed is saved separately into a structure, the PC and FLAGS in the thread stack and the structure would both need to be initialised before a thread starts, which is bad for software engineering.
+
+Note 2: In official RMP ports, to include all floating-point processor configurations in one assembly file, floating-point operations are always encoded as machine code.
+This avoids assembler errors when the floating-point unit is absent; the correct save/restore routine is selected according to the configuration, so an undefined-instruction exception is not caused.
+
+Note 3: On RMP, the recommended way to use a coprocessor is to let only one thread use it, so that its context need not be saved or restored, improving efficiency and real-time behaviour.
+For a very few special architectures whose coprocessor context is fully controlled by hardware and cannot be saved or restored by software,\footnote{For example the DO-instruction-related registers of the DSPIC family.} the system must be guaranteed to have only one thread using that coprocessor.
+
+\subsection{Implementation of thread memory protection}\label{sec:mpu}
+
+Microcontrollers usually implement memory protection with a memory protection unit (MPU).
+Unlike a memory management unit (MMU), which performs address translation, an MPU only restricts access permissions to physical memory and cannot translate addresses.
+An MPU consists of a set of registers filled with the access attributes of protected physical memory regions.
+Each thread can have its own set of MPU register settings, thereby restricting its own memory accesses.
+
+The recommended implementation treats the MPU as a coprocessor and saves and restores its context in \texttt{RMP\_CTX\_SAVE} and \texttt{RMP\_CTX\_LOAD}.
+Note that each thread's MPU configuration must allow reading and writing RMP kernel memory and executing RMP code; this is because RMP has no true user mode and kernel mode, and all system calls are implemented directly as function calls.
+For this reason, memory protection implemented on RMP can only enhance the system's functional safety,\footnote{Also called dependability; for example detecting common accidents such as stack overflow.} but cannot provide any information security.
+
+\subsection{Low-power design considerations}
+
+In low-power design, a tickless kernel is recommended, and an instruction that puts the processor into a sleep state should be inserted in the \texttt{RMP\_Init\_Idle} hook.\footnote{On ARM, the WFI and WFE instructions achieve this; on MSP430, some bits of the STATUS register must be changed.}
+
+\section{Known factors that affect real-time performance in RMP}
+
+There are only two known factors that affect RMP's real-time performance, listed below.
+Both are easy to avoid in practical applications; generally, if the system's real-time performance is damaged by these factors, the application is not well designed.
+
+\subsection{The delay queue}
+
+RMP uses one delay queue to manage all delays.
+In this queue, thread timeouts increase from front to back.
+Thus, on each timer interrupt, RMP only needs to check the first thread in the queue.
+However, this design requires that, when a thread is inserted, the queue be traversed to find the correct insertion position so that timeouts remain increasing.
+The worst-case time complexity of this traversal is O(\(n\)) in the number of threads already in the queue.\footnote{An O(\(\log n\)) data structure exists, but RMP's application scenarios generally do not need such a heavyweight implementation.}
+It can be shown mathematically that no data structure can make all timer operations O(1), so applications must not use delay waits or delay blocking in very large numbers.
+
+In addition, the delays provided by RMP are always system-wide, and a low-priority thread's delay operation also needs the scheduler lock, which may interfere with high-priority threads.
+If this causes problems, it is recommended that the user implement software-timer functionality with a small number of threads, each serving the delays of a different priority.
+
+\subsection{Deleting kernel objects}
+
+Some kernel objects, such as thread mailboxes and semaphores, can have a wait queue, and deleting such an object requires removing every thread in the wait queue one by one.
+If too many threads are waiting on an object, deleting it can cause the scheduler lock to be held for too long.
+
+\subsection{Locking the scheduler and disabling interrupts}
+
+RMP provides interfaces for locking the scheduler and disabling interrupts.
+However, these obviously harm the system's real-time performance, so they should be avoided as far as possible in applications.
+For example, if it is known that only one thread operates on a memory pool, the scheduler lock need not be used when allocating and freeing memory.
+
+\section{Reducing the interrupt latency of RMP}
+
+To protect critical sections from intrusion, RMP needs to lock the scheduler for certain operations, and the simplest implementation is to disable all interrupts.
+However, this makes the whole system lose immediate response to external events; even transparent interrupts\footnote{Transparent interrupts are those that do not call the \texttt{\_ISR} series of functions and are unrelated to the operating system.} unrelated to the system are disabled, increasing the delay from the stimulus source to execution of the interrupt vector.\footnote{The interrupt latency here is hardware interrupt latency, which is different from RTOS interrupt latency; the latter generally means the delay from sending in an interrupt to activation of the corresponding receiving thread, is an inherent value of the RTOS, and cannot be reduced.}
+In applications such as real-time electromechanical equipment or interface emulation, this behaviour is unacceptable.
+RMP therefore provides a series of methods to reduce or completely eliminate interrupt latency caused by critical sections.
+Whichever method is used, system interrupts\footnote{System interrupts call the \texttt{\_ISR} series of functions and access operating-system critical sections, including the clock interrupt and the dedicated context-switch interrupt.} must use the context-saving macro provided by RMP, while transparent interrupts need only save and restore the registers they modify; the preemption priority of system interrupts must be set to the same value so that they cannot nest with one another.
+
+\subsection{Masking system interrupts by priority}
+
+If the architecture\footnote{For example the Cortex-M series, C28x, and similar architectures.} provides the ability to mask interrupts below a certain priority, and the priorities of all system interrupts are below that value, masking interrupts at or below that value can disable only system interrupts without disabling transparent interrupts.
+On such architectures, official RMP ports always use masking instead of disabling all interrupts, so no interrupt latency is introduced.
+The mask level in the configuration header can be adjusted by the user.
+
+\subsection{Masking system interrupts by source}
+
+On architectures that cannot mask by priority, the same effect as priority masking can be achieved by disabling each system interrupt source in turn.
+However, because it is impossible to predict which system interrupt sources the user will use, RMP cannot provide a unified solution: the \texttt{RMP\_INT\_MASK()} and \texttt{RMP\_INT\_UNMASK()} macros in official ports operate on global interrupts, and \texttt{RMP\_YIELD} also operates on global interrupts on entry and exit.
+
+To achieve source-based masking, the official port must be modified as follows:
+
+\begin{enumerate}
+    \item define \texttt{RMP\_INT\_MASK()} and \texttt{RMP\_INT\_UNMASK()} as the masking and unmasking operations for each system interrupt source;
+    \item after entering an interrupt, save the interrupt return address\footnote{Most architectures automatically push the return address on interrupt entry; for example RISC-V must push it manually before enabling interrupts, otherwise a transparent interrupt can overwrite it before it is saved and the system interrupt cannot return to its original context.} and immediately enable global interrupts.
+    This only requires inserting an instruction that enables global interrupts before calling RMP's official context-save macro, so the global interrupt disable lasts at most one instruction.
+    If the hardware does not provide a way to set all system interrupts to the same preemption priority, the provided macros must be modified to mask each system interrupt source before enabling global interrupts, and before returning from the interrupt (1) disable global interrupts, (2) unmask the system interrupt sources, and (3) atomically enable global interrupts and return from the interrupt;\footnote{The interrupt-return instruction can achieve this.}
+    and
+    \item add masking and unmasking of system interrupt sources at the beginning
+    and end of \texttt{RMP\_YIELD}.
+\end{enumerate}
+
+\subsection{Delegating operations to a software interrupt}
+
+When there are many system interrupt sources or the interrupt controller is inconvenient to configure, masking and unmasking each system interrupt source creates a huge porting and execution burden.
+In this case, if the processor has a pendable software interrupt source or a spare software-triggerable peripheral interrupt source,\footnote{Peripheral interrupt sources are generally always available and can be used for this purpose.} a higher-priority interrupt can delegate some operations to it.
+The software interrupt is then a system interrupt, and the higher-priority interrupt is a transparent interrupt, greatly reducing the number of system interrupt sources.
+If interrupts occur frequently, this method also reduces processor load, because a transparent interrupt only needs to save and restore the registers it uses.\footnote{On architectures with multiple register banks, a transparent interrupt can use another register bank to avoid saving and restoring entirely.}
+However, for the delegated operation, both its own interrupt latency and its latency to the thread become longer, so this method has advantages and disadvantages.
+
+To delegate operations, the official port must be modified as follows:
+
+\begin{enumerate}
+    \item using the method of Section~7.3.2, add the software interrupt source, together with all system interrupts, to the source-masking objects;
+    \item in the transparent interrupt, record the system operation to be performed in a data structure and trigger the software interrupt source; and
+    \item in the software interrupt, read the system operation from the data structure and perform it on behalf of the transparent interrupt.
+\end{enumerate}
+
+The design of the data structure is difficult because it may be modified by both the transparent interrupt and the software interrupt.
+If the data structure is a simple counter, the software interrupt can keep a local copy and compute the difference between the local copy and the current counter value to decide how many operations to perform; the counter can be read atomically by reading repeatedly until the value is stable.
+If the data structure must record complex additional information, it can be accessed with atomic instructions, or even with a lock-free or wait-free data structure; on processors without such instructions, the same effect can be achieved by briefly disabling the corresponding transparent interrupt.
+For the design of mutual-exclusion schemes, refer to the relevant literature; they are not described further here.
+
+\subsection{Delegating operations to the timer interrupt}
+
+When a software-pendable interrupt source cannot be found or is inconvenient to use, but operation delegation is still desired, operations can be delegated to the timer interrupt.
+Its principle is similar to delegation to a separate software interrupt, except that (1) the timer interrupt handles the delegated operations, (2) the timer interrupt is triggered by the timer hardware rather than by a transparent interrupt, and (3) the system must be a ticked kernel.
+
+To implement timer delegation, the official port must be modified as follows:
+
+\begin{enumerate}
+    \item handle the timer interrupt, the only system interrupt source, using the method of Section~7.3.3;
+    \item in the transparent interrupt, record the system operation to be performed in a data structure; and
+    \item in the system tick hook \texttt{RMP\_TIM\_HOOK}, read the system operation from the data structure and perform it on behalf of the transparent interrupt.
+\end{enumerate}
+
+This method effectively pushes all interrupt operations within a time slice to the timer interrupt, so these operations may be delayed for a long time; it can be used only when the thread does not need to know immediately that the interrupt occurred.
+If these operations are notifications rather than counts, multiple operations can be merged into one, which can produce considerable performance improvement.\footnote{This is especially true for devices with deep buffers, such as network cards and serial ports, where processing can wait until a certain amount of data has been received.}
+
+\subsection{Limiting interference from non-critical interrupts on critical interrupts}
+
+In mixed-criticality systems, some transparent interrupt sources are not critical but have high priority.\footnote{Urgent but not important, where occasional lost interrupts do not matter, such as remote-control decoding and streaming media transmission.}
+If their interrupt frequency is not limited, they will inevitably consume a great deal of CPU and may even interfere with the execution of other interrupts that are critical but relatively less urgent, causing their interrupt latency to grow without bound.
+
+To limit the frequency of these transparent interrupt sources, the following measures are needed:
+
+\begin{enumerate}
+    \item prepare a counter for each transparent interrupt source; atomically decrement it on each interrupt, and when it reaches zero, disable the interrupt source; and
+    \item whenever the timer interrupt or a critical interrupt occurs, atomically (1) assign an appropriate initial value to the counter or (2) add a fixed value until it reaches the upper limit, and enable the corresponding interrupt source.
+\end{enumerate}
+
+Each transparent interrupt source is then effectively confined to a deferrable server or sporadic server: it can be triggered only a limited number of times in a period, and excess triggers are lost without response.
+In this way, the interference suffered by a low-priority but high-criticality interrupt is bounded.
+\section{Reducing the memory footprint of RMP}
+
+When memory is especially precious, RMP must be configured carefully to save RAM and ROM.
+This situation is common on 16-bit microcontrollers such as MSP430 and low-end 32-bit microcontrollers such as Cortex-M0.
+In practice, the following methods can reduce RMP's memory footprint.
+
+\subsection{Reducing the number of preemption priorities}
+
+Unlike other operating systems, RMP's thread mailbox is built into the thread and costs nothing, while other functions consume no memory when unused.
+Therefore, only one compile-time option determines the kernel's RAM usage: the number of priorities supported by RMP.\footnote{That is, \texttt{RMP\_PREEMPT\_PRIO\_NUM}.}
+Because RMP manages each priority with a doubly linked circular list, each priority consumes two machine words of RAM.
+On some tiny systems it is completely unnecessary to configure many priorities, so the number of supported priorities can be reduced to 3 to save the maximum amount of RAM.
+In this case, RMP's own RAM consumption can be squeezed below 128 bytes.\footnote{If the kernel interrupt-response stack is not counted, the actual size is 64 bytes.}
+
+\subsection{Adjusting the vendor-provided library}
+
+Some vendor HAL libraries and startup files\footnote{For example at the very beginning of the assembly startup file of a Cortex-M series microcontroller.} statically allocate heap and stack.
+In an RMP system, the vendor-allocated heap is completely unnecessary and can be set to zero; the vendor-allocated stack is used by the OS kernel when responding to interrupts,\footnote{That is, used as the kernel stack.} so it is only necessary to confirm the maximum stack consumption of the interrupt handlers and set the vendor stack size slightly above that number.\footnote{A few dozen extra bytes are generally recommended.}
+In addition, unused files in the vendor library need not be added to the project, which also helps reduce RAM and ROM usage.
+If the vendor library's memory usage is unacceptable, the peripheral registers can be operated directly.
+
+\subsection{Adjusting compiler options}
+
+Adjusting compiler options can also reduce ROM and RAM usage.
+Optimising for code size is especially effective for reducing ROM and sometimes also helps RAM.
+
+\subsection{Not using dynamic memory management}
+
+RMP has a built-in dynamic memory allocator.
+This allocator is not recommended on small-memory devices, because the allocator itself also has a fixed memory cost.
+On small-memory devices, all kernel objects and variables are recommended to be statically allocated.
+
+\section{Recommended rules for porting}
+
+On some architectures, porting RMP may present a dilemma.
+The following sections describe why these choices are difficult and give recommended handling rules.
+
+\subsection{Recommended rules for processor word length}
+
+On 32-bit or higher processors, the pointer length is generally one machine word, because these processors can generally use any register for indirect addressing and a machine word can address the whole address space; in this case \texttt{rmp\_ptr\_t} can be defined directly as one machine word.
+However, for processors with shorter words, (1) data and code space may be separate,\footnote{Some architectures have separate data and code memory; data and code memory may also each have several subcategories.} (2) the instruction-set design imposes great restrictions, and (3) the machine word may not address the whole address space; deciding the length of \texttt{rmp\_ptr\_t} therefore requires some skill.
+
+\subsubsection{The case of 8-bit processors}
+
+On the vast majority of 8-bit processors, RMP cannot or need not be ported, because (1) their memory resources are too small, (2) to pursue memory utilisation efficiency, compilers use static overlay of local variables,\footnote{This may also be because the architecture lacks SP-relative addressing.} (3) to pursue silicon-area efficiency, the function call stack is implemented in hardware, and (4) applications are relatively simple and can be expressed with an RMS state machine.
+On the few 8-bit processors with abundant resources where RMP can be ported, almost all compilers default to a pointer length of 16 bits, because 8 bits can address only 256 bytes, which is too little for any application.
+Therefore \texttt{rmp\_ptr\_t} must be defined as at least 16 bits.
+
+A very few 8-bit processors can even address a 24-bit memory space; two cases must then be discussed.
+If the internal binary representation\footnote{For example some RL78 and similar architectures use a 20-bit pointer literal but a 16-bit internal binary representation.} of either the data pointer or the function pointer is wider than 16 bits, then \texttt{rmp\_ptr\_t} must be defined as 32 bits on that architecture, which wastes space but is unavoidable.
+If the internal representation of both pointers is 16 bits, then \texttt{rmp\_ptr\_t} can be defined as 16 bits.
+The latter case is possible because there are two ways to address memory beyond 16 bits: (1) a segment register independent of the pointer, in which case, if the compiler's pointer does not include the segment register, the pointer is 16 bits\footnote{For example DSPIC and similar architectures.} and the segment register must be changed manually by the user program; or (2) the toolchain guarantees that the variables and code used by the kernel are linked into the first 64\,KiB,\footnote{For example the AVR architecture.} while the rest of the address space is available to variables and code that are mostly not referenced by pointers.
+For details of segment registers and memory models, see the next two subsections.
+
+\subsubsection{The case of 16-bit processors}
+
+Most 16-bit processors can be ported.
+They can also be divided into those that can address only a 16-bit address space and those that can address more.
+For the former, defining \texttt{rmp\_ptr\_t} as 16 bits is sufficient; for the latter, handle it like the 8-bit case according to how the higher memory space is addressed.
+
+\subsection{Rules for saving and restoring segment registers}
+
+Some processors have segment registers,\footnote{For example DSPIC and similar architectures.} and some compilers may use a global variable pointer register under certain conditions.\footnote{The only exceptions are MIPS and RISC-V.}
+Depending on how the compiler uses it, the segment register context can be handled differently.
+
+\subsubsection{The segment register is set only by startup code}
+
+This is the easiest case.
+The segment register is set once at startup and never changed afterwards; this may be because the program is small enough to fit in one segment.
+If the program's behaviour can be confirmed to be like this, the segment register need not be saved or restored at all.
+
+\subsubsection{The segment register is changed temporarily before each memory access}
+
+This is a relatively easy case.
+The compiler makes no assumption about the segment register's value and points it at the required segment temporarily before a memory access.
+Because the segment register value may change and an interrupt may occur between the change and the use, the segment register must be saved and restored.
+
+\subsubsection{The segment register must hold its initial value before a function call}
+
+This is the most difficult case.
+The compiler not only generates code that modifies the segment register inside a function, but also assumes that the segment register has its initial value before entering every function, including an interrupt vector; this is generally done to optimise program efficiency.
+If startup code can point the segment register at the most frequently accessed segment at initialisation, segment setup can be omitted between function calls, reducing code size.
+Functions that access other segments must save and restore the segment register at their entry and exit.
+
+In this case, the segment register must be saved and restored in the context, and its initial values must be saved in \texttt{\_RMP\_Start}; if an interrupt vector calls a C function, the segment registers must be set to the values saved by \texttt{\_RMP\_Start} before the call.\footnote{Also in \texttt{RMP\_YIELD}; if a dedicated thread context-switch interrupt vector is not used.}
+The advantage of this approach is that, regardless of how the toolchain and startup code set these values, they are necessarily captured by \texttt{\_RMP\_Start}, so there is no need to obtain them from a variety of linker scripts.
+Of course, if the toolchain is an open standard product such as GCC, the values can also be obtained directly from the linker script.
+
+The segment-register usage style of some toolchains changes with the selected memory model.
+Therefore, on architectures with segment registers, almost all official RMP ports use the above method to eliminate the risk of segment errors, even when it may be unnecessary.
+There is only one exception: the architecture plans to support only one toolchain, and that toolchain documents fixed initial values for the segment registers.\footnote{For example the AVR architecture, for which only a GCC port is provided.}
+
+\subsection{Recommended rules for memory models}
+
+On some 8-bit and 16-bit processors, the presence of segment registers allows the program to use one or more code segments (CODE), data segments (DATA), or stack segments (STACK), producing different memory models.
+When the program uses one segment, its pointers are 16 bits but the address range is limited to one segment; when the program uses multiple segments, its pointers are 24 or 32 bits and the address range covers the whole memory space.
+Some architectures even divide the same memory into several classes by address space, each with a different pointer length.
+In addition, the default pointer types of the code, data, and stack segments can be set independently: if the code segment has C pointer lengths, the data segment has D pointer lengths, and the stack segment has S pointer lengths, there are C~$\times$~D~$\times$~S memory models.
+Some architectures' segment-register schemes are even more varied, because they do not provide architectural segment registers but require the user to implement memory-mapping circuits externally with discrete logic and I/O ports.\footnote{For example the memory mapper of the 6502-based Famicom/NES.}
+
+For simplicity, RMP cannot provide a port for every case, and RMP assumes that all pointers have the same length, which requires the default memory models of the code, data, and stack segments to be the same.
+This can create a dilemma when porting: if the largest memory model is always chosen without thought, \texttt{rmp\_ptr\_t} is 32 bits, greatly increasing the processor's burden, especially when the program is small; if the smallest memory model is always chosen, \texttt{rmp\_ptr\_t} is 16 bits, the processor burden is lighter, but a larger address space cannot be accessed.
+For this reason, processors are divided into the following three classes, with a recommended scheme for each.
+
+\subsubsection{The common memory model is the large model}
+
+A small number of processors\footnote{For example the 8051 and 80251 architectures.} have used the large memory model since their introduction, and most of their toolchains default to \texttt{sizeof(void*)} = 4.
+This is because they have too many memory classes and some classes have too small an address range; even the toolchain authors find the many combinations difficult to handle and use long pointers to avoid the complexity.
+
+On these processors, official RMP ports use the large model: \texttt{rmp\_ptr\_t} is defined as 32 bits, the upper 16 bits are the segment register value, and the segment register and the raw pointer are saved and restored together.
+
+\subsubsection{The common memory model is the small model}
+
+Most processors use the large memory model only when the user explicitly requests it; most of their toolchains default to \texttt{sizeof(void*)} = 2, to maximise efficiency in performance-sensitive parts of the program.
+When the program needs to access more memory, the programmer declares variables and functions as far symbols with the \texttt{far} keyword, and the compiler automatically generates the corresponding segment and cross-segment access code, so that the wider memory address space can be accessed even in the small model.
+
+On these processors, official RMP ports use the small model with segment register save/restore: \texttt{rmp\_ptr\_t} is defined as 16 bits, but the segment register is switched during a context switch to support thread access to other segments.
+The user must ensure that all kernel data structures\footnote{Including all object control blocks and the messages in a message queue.} are in the same segment as the kernel data segment, and that all thread entry points\footnote{Do not declare them as far.} are in the same segment as the kernel code segment; however, once a thread starts, it can access variables in other segments and jump to other segments to run without this restriction.
+
+When porting, the stack segment must be handled specially depending on the case: (1) if the processor does not provide a stack segment register, or the common systems it forms have RAM close to 64\,KiB,\footnote{Common on microcontrollers: they either have no stack segment register or have less than 64\,KiB of RAM, so the stack segment register is always fixed.} the stack segment needs no special handling; (2) if the processor provides a segment register and its RAM is commonly much larger than 64\,KiB,\footnote{Common on general-purpose microcomputer systems such as the 8086.} then \texttt{RMP\_STKSEG\_ENABLE} can be defined as 1 to store the stack segment register in the thread control block.
+Once this macro is enabled, the formats of the ``create thread'' system call and the ``thread stack initialisation'' low-level call both change, and an additional \texttt{Segment} parameter appears before the \texttt{Stack} parameter so that the user can pass the stack segment register value.
+
+Note: In case (2), the stack segment register cannot be saved on the stack, because restoring the stack segment register from the stack requires popping, and popping itself uses the stack segment register, creating a paradox.
+
+\subsubsection{The common memory model cannot be inferred}
+
+Some processors\footnote{For example 6502 and Z80 architectures, but not Rabbit 2000, which officially defines segment registers.} have a memory model that cannot be inferred; most of their toolchains default to \texttt{sizeof(void*)} = 2, but allow the user to write custom segment-switching code to work with external custom circuits for cross-segment access.
+
+For such architectures, official RMP ports always use the small model and ignore the segment registers.
+The user must make a small custom modification to the low-level port to adapt it to the hardware structure.
+
+\subsection{Recommended rules for porting compatibility}
+
+Almost all microcontroller vendors combine a base instruction set with a series of optional coprocessors\footnote{Or extension instruction sets.} to serve different market segments.
+Some vendors even increase the register length of an older architecture\footnote{For example the MSP430X architecture.} to meet new requirements.
+When porting RMP, a simple approach is to write a separate port for each coprocessor combination, but this leads to a huge amount of duplicated code between ports.
+We therefore define some rules to decide which coprocessor combinations should be merged into one port.
+
+\subsubsection{The link-and-run rule}
+
+This is the most important rule for deciding whether to merge ports.
+If there is a subset of the binaries for several coprocessor combinations\footnote{Including the no-coprocessor case.} that can be linked for any combination and the resulting final binary can run on that combination, those combinations can be merged into one port.
+In this case, an additional coprocessor-selection macro \texttt{RMP\_XXX\_COP\_YYY} is added to each chip configuration header, where XXX is the port name and YYY is the extension instruction set; selecting the macro selects the coprocessor combination.
+
+The compatibility between coprocessors can be classified as ``contains'', ``and'', ``or'', ``not'', and ``xor'': for two coprocessors A and B, ``contains'' means that if A exists then B must exist, but the converse need not hold; ``and'' means that if A exists then B must exist and vice versa; ``or'' means that the existence of A and B is independent and neither affects the other; ``not'' means that only one of A and B may exist, but neither need exist; ``xor'' means that exactly one and only one of A and B must exist.
+The compatibility between combinations is confirmed at compile time by the port's low-level code, and an error is reported through \texttt{\#error} when the user selects an invalid combination.
+Generally, microcontroller coprocessors are simple and do not involve very complex compatibility judgments.
+
+Note: The link-and-run rule concerns not only the common instruction subset of the coprocessor combinations but also how mainstream compilers handle each combination.
+In the following cases, even if a common instruction subset exists, the software may still be incompatible: (1) the common subset is not Turing-complete and cannot form an application on its own; (2) the common subset cannot be selected alone in the compiler, that is, a binary containing only that subset cannot be generated; (3) the calling conventions of the combinations are completely different, so that even two arguments cannot be passed in a unified way;\footnote{Assembly may be possible, but its development efficiency is too low to be meaningful.} (4) the memory models of the combinations are completely different and incompatible; and (5) the stack alignment required by the combinations is different.
+If cases (1)--(4) occur, the rule is not satisfied\footnote{For example ARMv6-M and ARMv7-M are treated as two independent architectures because cases (3) and (4) occur.} and a separate port must be provided for each combination; if only case (5) occurs, the rule is satisfied, and the stack alignment of the merged port is the maximum of all combinations.\footnote{For example C64x, C67x, C64x+, C67x+, and C66x are merged as the C6x architecture because only case (5) occurs.}
+
+\subsubsection{The mental-model rule}
+
+This is the secondary rule for merging ports.
+If either of the following two conditions holds, the coprocessor combinations are considered to have a unified mental model and can be merged into one port: (1) the vendor explicitly states in its official documentation that the combinations are derivatives of the same processor;\footnote{For example ARMv7-M FPV4\_SP, FPV5\_SP, and FPV5\_DP.} or (2) although the vendor does not state this explicitly, its technical manuals often discuss the combinations together in a ``bound volume''.\footnote{For example the PIC24, PIC33, and various other DSPIC derivatives.}
+
+For coprocessor combinations that satisfy the link-and-run rule but not the mental-model rule,\footnote{For example ARMv6-M and ARMv7-M.} official RMP ports always keep them separate to preserve the independence of their mental models.
+
+\subsubsection{The high-repetition rule}
+
+This is the least important rule for merging ports.
+If the above two rules both hold and the low-level code of the combinations has a considerable degree of repetition, the combinations can be merged into one port: high repetition indicates that (1) the coprocessor combinations are very similar and (2) the products corresponding to these combinations occupy the same or similar market niche.
+
+For coprocessor combinations that satisfy the link-and-run and mental-model rules but not the high-repetition rule, official RMP ports always merge the C code into one file but may provide separate assembly files.
+In this case, an additional coprocessor-selection macro \texttt{RMP\_XXX\_COP\_YYY} is also added to each chip configuration header.
+
+\section{Vendor library compatibility}
+
+With developer time extremely valuable, most microcontroller vendors provide firmware libraries.
+Accessing on-chip peripherals through these easy-to-learn library functions is much easier than reading and writing registers.
+Unfortunately, some firmware libraries' low-level functions may conflict with the operating system and need to be modified.\footnote{Some vendors have considered this and added a ``weak symbol'' attribute to the default implementation; in that case they can simply be overridden.}
+Common conflicts occur in interrupts and delays; their solutions are described below.
+
+\subsection{Interrupt enable/disable compatibility}
+
+When operating some peripherals, the read/write sequence must be completed within a specified time without interruption.
+Firmware libraries therefore often disable interrupts to complete the operation and then enable them again.
+Do not call such library functions while the system is holding the scheduler lock; otherwise they will enable interrupts before the scheduler is unlocked, without notifying the operating system, and crash the system.
+If it is uncertain whether these library functions may be called while the scheduler is locked, consider replacing their interrupt enable/disable functions with RMP's scheduler lock/unlock functions, and define \texttt{RMP\_INT\_MASK} and \texttt{RMP\_INT\_UNMASK} to mask all interrupts.
+
+\subsection{Delay-function compatibility}
+
+When operating some peripherals, the read/write sequence often requires waiting for the peripheral to become ready, so delay functions are inserted between steps.
+Firmware libraries implement delay functions in many ways: busy loops, timer polling, or timer interrupts.
+Some libraries even use several implementations simultaneously for different purposes.
+
+A busy-loop delay function delays by running a useless instruction sequence.
+Its behaviour is the same as ordinary code and it is compatible with RMP without modification.
+It can also be used with the scheduler locked or interrupts disabled, because it does not depend on the interrupt system.
+Of course, if it can be confirmed that the library never calls this delay function while the scheduler is locked or interrupts are disabled, it can be rewritten to use \texttt{RMP\_Thd\_Delay}, which saves processor performance.
+
+A timer-polling delay function delays by initialising a timer and repeatedly polling it until the delay is complete.
+It is more accurate than a busy loop and can also be used with the scheduler locked, but it may interfere with RMP's tick timer.
+The delay function may modify (1) the timer's counter value, (2) the timer's upper count value, or (3) the timer's operating frequency, any of which may cause the system to malfunction.
+Worse, it may disable the timer interrupt during initialisation, causing RMP's scheduler to lose control.
+When this happens, the function can be rewritten to (1) use another timer, (2) use a busy loop, or (3) call \texttt{RMP\_Thd\_Delay}.
+Method (3) is the most processor-efficient, but it is not always possible, because the library may call the delay while the scheduler is locked or interrupts are disabled; if no other timer is available at that time, the busy-loop method provided by \texttt{RMP\_Thd\_Loop} must be used.
+
+A timer-interrupt delay function initialises a timer interrupt, increments a global variable in the interrupt, and repeatedly polls the global variable during the delay.
+It has high delay accuracy and a wide delay range, and can also provide a timestamp variable for querying, but it may interfere with RMP's tick timer.
+However, this delay function can only be used with interrupts enabled, so it can be simply replaced with \texttt{RMP\_Thd\_Delay}.
+If the global variable it produces is also read, it can be replaced with \texttt{RMP\_Timestamp}.
+
+\subsection{Code-generator compatibility}
+
+To make microcontrollers easier to use, some vendors provide code generators on top of their library functions.
+The output of these generators may conflict with RMP.
+Three common conflicts are:
+
+\begin{enumerate}
+    \item \textbf{Generated code containing a \texttt{main} function.
+    }
+    To be compatible with vendor startup code that calls \texttt{main}, RMP declares \texttt{main} inside the kernel.
+    When generator-generated framework code is compiled with RMP, \texttt{main} is defined twice and a link error occurs.
+    Because these \texttt{main} functions mostly contain simple hardware initialisation code, the \texttt{main} function can be renamed or macro-defined to \texttt{hw\_main}, and \texttt{RMP\_LOWLVL\_INIT} in the configuration header can be defined as it.
+    To simplify the system startup mental model, RMP does not provide an independent \texttt{RME\_Kmain} as RME does, so other code must stay out of the way of \texttt{main}.\footnote{After entering \texttt{main}, some memory controllers, segment registers, and other hardware may not yet be initialised, and execution is not in a thread context; certain kernel operations at this point may fail for hard-to-diagnose reasons, while doing them after everything is initialised avoids such problems. In addition, we want the system entry to always be \texttt{main}, so that its stack can be used directly to initialise the interrupt-response stack, which suits bare-metal toolchains; for these two reasons, we do not use the independent kernel entry function design common in other RTOSes.}
+    \item \textbf{Generated code that initialises the watchdog or enables
+    unrelated peripheral interrupts, which may unexpectedly interfere with
+    the system.}
+    The best solution is to configure the generator not to generate such code; if this is impossible, the generated code must be modified manually to remove these interference items, or additional operations\footnote{For example feeding the watchdog.} must be added during system startup and operation so that they do not cause interference.
+\end{enumerate}
+
+\section{RMP's deviations from the C standard and MISRA}
+
+\subsection{C undefined behaviour: type-punning pointer aliasing may exist and does not follow strict aliasing}
+
+Type-punning pointer aliasing is a widely used practice in C that allows two pointers of different types to refer to the same block of memory.
+It is very common in network protocol stacks, where packets must be assembled or disassembled and byte order changed, and in operating systems, where unsigned integer pointers and structure pointers are converted back and forth to operate on objects.
+Unfortunately, C's strict aliasing rule does not allow two pointers of different types to refer to the same memory unless the types are compatible or one is converted to \texttt{char};\footnote{Referring to C90; the same applies below.} there is also no general way around this.
+There are generally three ways to avoid type punning:
+
+\begin{enumerate}
+    \item use a \texttt{union} to convert between types.
+    Unfortunately, this is defined behaviour in C but not in C++, and RMP code may need to be compiled as C++ because it may link directly with libraries written in C++,\footnote{If \texttt{extern "C"} is not desired.} so it may still be undefined behaviour.
+    Moreover, this method cannot handle array objects whose length is not known at compile time unless they are converted one by one at a performance cost.
+    Finally, using \texttt{union} this way does not conform to the design spirit of \texttt{union} and abuses the language rules.
+    \item use \texttt{char*} for the operation, because \texttt{char*} can always
+    alias any pointer.
+    Unfortunately, existing compilers optimise this very poorly; some quite good compilers even compile these operations into byte-by-byte access instructions, especially low-quality embedded compilers.
+    This is therefore a poor solution.
+    \item use \texttt{memcpy} to copy content between two incompatible pointers,
+    and copy it back after the operation, hoping that the compiler can
+    detect this and optimise away the duplicate \texttt{memcpy}.
+    This cleverly exploits the fact that \texttt{memcpy} takes \texttt{char*} arguments.
+    Its immediate problem is that some low-quality embedded compilers may not be smart enough to optimise \texttt{memcpy} away, causing the generated code to actually call \texttt{memcpy} twice and incur a huge performance loss.
+    Once \texttt{memcpy} is not optimised away, a local copy buffer declared inside the function may be allocated on the stack, greatly increasing stack consumption and causing stack overflow.
+    Finally, this use of \texttt{memcpy} does not conform to its design intent and abuses a language loophole; the C standard does not encourage this practice.
+\end{enumerate}
+
+In view of the problems with these three methods, RMP does not use them; it uses type-punning pointer aliasing directly and disables the relevant optimisation at compile time.\footnote{For example GCC's \texttt{-fno-strict-aliasing} option.}
+
+\subsection{C undefined behaviour: a byte is always eight bits and a \texttt{char} is always one byte}
+
+C does not define the length of \texttt{char}; it only says that \texttt{char} must equal the width of a single character in the system's basic character set.\footnote{Referring to C90; the same applies below.}
+In theory, a \texttt{char} can be 16 or 32 bits, or even more.
+On all current mainstream compilers and architectures, \texttt{char} is always 8 bits, so the code makes this assumption and avoids an unnecessary ``char length'' configuration macro.
+
+In fact, RMP does not use bits above bit 7 of a \texttt{char}, and does not operate on bytes or measure longer data types in bytes,\footnote{It uses bit operations and measures by \texttt{char}, which works on all processors.} so it can still work on a platform where \texttt{char} is wider than 8 bits.\footnote{Some early digital signal processors, such as the C28x compiler, do this, but modern digital signal processors rarely do so; see the C28x port.}
+However, such a port must be careful: (1) \texttt{rmp\_u8\_t} is no longer literally 8 bits but the smallest integer type that can express 8 bits,\footnote{Similar to \texttt{uint\_least8\_t} in \texttt{stdint.h}.} (2) all addresses in this manual are word-addressed, and (3) all data-structure sizes and memory lengths in this manual are in words, not bytes.
+
+\subsection{C undefined behaviour: a pointer's actual representation is always a machine-recognisable address}
+
+C does not define how a pointer should be represented in memory.
+In theory, a pointer variable's actual representation can be anything, as long as dereferencing it returns the value of the variable it points to according to C semantics.\footnote{This does not even prohibit a difference between the representation before and after a round trip, as long as the two values always compare equal as pointers.}
+This makes it impossible, under strict C, to align a pointer to a memory granularity by masking some of its bits with a bitwise AND.
+We therefore assume that a pointer's actual representation is always a machine-recognisable binary address, which is true on all architectures that RMP supports or plans to support.
+
+\subsection{C undefined behaviour: converting a pointer to an unsigned integer no smaller than a machine word always preserves its actual representation}
+
+C does not specify how a pointer's actual representation should change when it is converted to an unsigned integer.
+It only specifies that if a pointer is converted to a sufficiently large unsigned integer and then converted back, the resulting pointer must compare equal to the original.
+If the representation changed when converted to an unsigned integer, we would face a problem similar to that described in Section~7.7.3.
+We therefore assume that converting a pointer to an unsigned integer of no less than one machine word always preserves its actual representation, which is true on all architectures that RMP supports or plans to support.
+
+In fact, RMP does not forbid adding anything to the high bits of a wider unsigned integer after conversion,\footnote{For example the RL78 CC-RL compiler inserts \texttt{0x000F} in the high bits of an unsigned integer converted from a memory pointer, to indicate that it points to the memory space.} as long as those high bits are discarded when converting back to the original pointer type.
+RMP only masks the lowest few bits of the unsigned integer and then converts it back to (1) the original pointer type or (2) a pointer type with alignment requirements no stricter than the original pointer, pointing to the same memory space; it never involves the potential high-bit content.
+However, such a port must be aware that the unsigned integer obtained from a pointer may contain unexpected high-byte garbage.
+
+\subsection{C undefined behaviour: all ``exactly fitting'' structures are automatically packed}
+
+C does not define the memory alignment of variables inside a structure.
+In theory, the compiler can decide the alignment of structure members arbitrarily, as long as it guarantees the structure's access semantics.\footnote{For example, aligning every variable in a structure containing only \texttt{char} to 1\,GiB; C semantics permits this absurd behaviour.}
+It does not even forbid aligning a structure containing only one type to any larger granularity.
+Therefore, even if a structure is ``clean'' in terms of types, we cannot guarantee that its internal variables are packed.
+To solve this lack in the C specification, almost all compilers provide additional mechanisms for packing structure members,\footnote{The best known example is GCC's \texttt{\_\_attribute\_\_((packed))}.} but their methods are like the Tower of Babel: some compilers use \texttt{\#pragma}, some use \texttt{\_\_attribute\_\_}, and the position of the mechanism in the structure declaration differs between compilers.
+Compilers that use \texttt{\#pragma} are especially troublesome, because a macro cannot expand to a \texttt{\#pragma}; the \texttt{\#pragma} must be inserted directly into the code file.
+
+To avoid these problems, RMP assumes that the compiler always automatically packs all ``exactly fitting'' structures, where ``exactly fitting'' is defined as follows:
+
+\begin{enumerate}
+    \item the size of every ``ultimate base type'' in the structure is a power of two, where ``ultimate base type'' means the compiler's native data type obtained by recursively composing the structure type;
+    \item if the structure is packed, the offset of every variable of an ultimate base type is naturally aligned to the size of that type; and
+    \item the structure's base-address alignment requirement is no stricter than the alignment requirement of its longest ultimate base type.
+\end{enumerate}
+
+Almost all compilers satisfy these requirements, because the only purpose of aligning variables is to prevent unaligned accesses that may affect performance or cause exceptions.
+RMP therefore does not guarantee support for compilers that do not satisfy them.
+
+\subsection{C undefined behaviour: external identifiers are extended to 31 characters}
+
+C90 specifies that only the first 6 characters of an external identifier are guaranteed to be significant.
+This is far too few for any operating system.
+RMP therefore extends the limit to 31 characters, the same as the limit for internal identifiers.
+All modern compilers support this.
+
+\subsection{MISRA-C deviations}
+
+\begin{table}[H]
+    \centering
+    \caption{RMP deviations from the Required part of MISRA-C:2012.}
+    \label{tab:misra-required}
+    \small
+    \begin{tabularx}{\textwidth}{@{}>{\ttfamily}p{1.2cm} X@{}}
+        \toprule
+        \tablehead{Rule} & \tablehead{Explanation}\\
+        \midrule
+        1.3 & Some of the undefined behaviour described above is necessary for low-level software such as an operating system.\\
+        5.1 & RMP extends the significant length of external identifiers to 31 characters. This is necessary for the software engineering of an operating system.\\
+        8.4 & RMP uses a special header-file writing method to avoid this problem and allows a variable's declaration and definition to be in one place. This improves software quality.\\
+        11.3 & Type-punning pointer aliasing and pointer-to-integer conversion are necessary for software such as an operating system.\\
+        11.6 & RMP in fact uses such aliasing only in (1) structures and sub-structures, (2) HAL interfaces, and (3) memory pools.\\
+        11.9 & To avoid conflicts with other third-party source packages, RMP uses \texttt{RMP\_NULL} rather than \texttt{NULL} for a null pointer.\\
+        14.3 & RMP uses many compile-time boolean expressions in its configuration check. These are passed directly to \texttt{RMP\_ASSERT} to ensure that RMP is configured correctly. This improves software quality.\\
+        17.7 & Because RMP's HAL must define a uniform interface for all supported hardware, some HAL or debug-print return values are redundant on some architectures.\\
+        21.1 & RMP declares the reserved macros \texttt{\_\_HDR\_DEF\_\_}, \texttt{\_\_HDR\_STRUCT\_\_}, and \texttt{\_\_HDR\_PUBLIC\_\_} for its own use. This does not violate the rule against undefining other system-reserved macros. See also 20.5.\\
+        \bottomrule
+    \end{tabularx}
+
+    \vspace{1.2em}
+    \caption{RMP deviations from the Advisory part of MISRA-C:2012.}
+    \label{tab:misra-advisory}
+    \small
+    \begin{tabularx}{\textwidth}{@{}>{\ttfamily}p{1.2cm} X@{}}
+        \toprule
+        \tablehead{Rule} & \tablehead{Explanation}\\
+        \midrule
+        2.3, 2.5 & In the HAL, especially in firmware libraries, some macros and data types are supplied together. They may be unused in the current configuration but must be kept for future configuration adjustments, which helps maintain consistency and improve code quality. These macros are well commented and documented.\\
+        2.7, 8.7 & Because RMP's HAL must define a uniform interface for all supported hardware, some HAL function parameters are redundant on some architectures, and some functions declared \texttt{extern} are not actually called.\\
+        8.9 & Some global variables in RMP are referenced by only one function but are not placed inside that function, to make code debugging easier for the user.\\
+        11.4, 11.5 & Converting an unsigned number or \texttt{void*} to an ordinary pointer is necessary for software such as an operating system. See 11.3 for details.\\
+        15.5 & Some RMP functions may have multiple exits. These exits are well commented, and other possible implementations would violate other requirements or recommendations and break the project's overall abstraction.\\
+        20.5 & To ensure that every function and variable is declared only once (including its \texttt{extern} form) and to systematically prevent implicit-declaration errors, RMP internally uses a special segmented inclusion header format. This format requires \texttt{\#undef}. The \texttt{\#undef} is used only for this internal format, is not exposed outside the kernel, and is followed consistently throughout the system and documented in detail.\\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+RMP is strictly checked against all three classes of MISRA-C:2012 [2] rules, and all deviations are approved.
+RMP has no deviations from the Mandatory class.
+The deviations from the Required class are listed in Table~\ref{tab:misra-required}, and the deviations from the Advisory class are listed in Table~\ref{tab:misra-advisory}.
+
+\section{Chapter bibliography}
+
+\nocite{iso9899,misra2012}
+\printbibliography[heading=none]

@@ -1,0 +1,413 @@
+\chapter{Porting RMP to a New Architecture}\label{ch:porting}
+
+\section{Porting overview}
+
+Porting an operating system means modifying it so that it can run on a new architecture and platform.
+Sometimes, making it possible to build the operating system with a new compiler is also called porting.
+Compared with the porting process of $\mu$C/OS and RT-Thread, porting RMP is very simple.
+All RMP code is written in ANSI/ISO C89, relatively close to MISRA C, and contains a minimal amount of assembly.
+The porting work therefore consists of only a few steps.
+
+Before porting, some preparation is needed to confirm that porting is possible.
+Then the corresponding code is written for each part.
+Finally, test cases can be used to check that the port is successful.
+Because the architecture-independent part of RMP has been formally verified, no modification to that part is permitted; otherwise the system's certification is destroyed.
+
+The low-level interface of the graphics library is described in Chapter~\ref{ch:gui} and is not repeated here.
+
+\section{Checks before porting}
+
+\subsection{Processor}
+
+RMP requires the selected processor to have at least two interrupt vectors and one timer.
+Apart from this, RMP imposes no other requirements on the processor.
+RMP cannot run on a platform with less than 8\,KiB of flash memory, and it cannot run on a processor narrower than 16 bits.
+To run an operating system on such platforms, the state-machine-based RMS may be a better choice.
+If the selected processor is multi-core or has an MMU, the microkernel-based RME may be a better choice.
+RMP does not support a hardware stack mechanism; the stack must be implemented in software and cannot be implemented in hardware inside the processor.\footnote{That is, the stack pointer and stack contents can be manipulated by software.}\footnote{This is typical of a few architectures such as PIC microcontrollers.}
+
+\subsection{Compiler}
+
+RMP requires the compiler to be C89 compliant and to generate code according to a function calling convention.
+Because RMP code is very standard and does not use any C runtime library functions, any compiler that conforms to ANSI C89 is sufficient.
+Common compilers such as GCC, CLANG/LLVM, MSVC, ARMCC, ICC, IAR, and TASKING all satisfy this requirement.
+RMP does not use compiler extensions that vary between implementations, such as bitfields, \texttt{enum}, and structure packing, and it avoids undefined behaviour in C as far as possible, so maximum compatibility is guaranteed.
+
+When using the compiler, care should be taken to disable dead-code elimination and link-time optimisation on low-quality compilers; it is also preferable to disable loop-invariant hoisting on such compilers.
+Do not use aggressive optimisation options.
+On ordinary compilers, the recommended optimisation level is GCC \texttt{-O2} or an equivalent level.
+
+\subsection{Assembler}
+
+RMP requires the assembler to import symbols from C and call them according to the calling convention.
+It also requires the code produced by the assembler to be exported and callable from C according to the calling convention.
+These requirements are usually easy to satisfy.
+If the compiler supports inline assembly, a separate assembler is not needed.
+
+\subsection{Debugger}
+
+RMP has no special requirements for the debugger.
+A debugger is best if available, but porting is possible without one.
+With a debugger, kernel variables can be inspected directly.
+Without a debugger, the lowest-level \texttt{RMP\_Putchar} function should be implemented first to print individual characters; the log can then be printed with this facility.
+The implementation of this function is described in the next section.
+
+\section{Architecture-dependent parts of RMP}
+
+All architecture-dependent source files are placed under the corresponding architecture name in the \texttt{Platform} folder.
+For example, the ARMv7-M architecture is under \texttt{Platform/A7M}, and its headers are under \texttt{Include/Platform/A7M}; other architectures follow the same rule.
+
+Each architecture contains one or more source files and one or more header files.
+When the kernel includes an architecture-dependent header, it always includes \texttt{Include/rmp\_platform.h}, which in turn includes the top-level header of the corresponding architecture.
+When changing RMP's build target, this file is modified to include the headers of the new target.
+For example, to compile for ARMv7-M, this header should include all the low-level headers corresponding to ARMv7-M.
+
+When porting to another architecture, the ARMv7-M low-level implementation can be used as a template and the new port can be developed from it.
+
+\subsection{Type definitions}
+
+The first part to port for each architecture and compiler is the type definitions.
+For these, it is only necessary to determine how the processor's word length is expressed by the compiler and to define it with \texttt{typedef}.
+Note that for some architectures and compilers, \texttt{long} corresponds to two machine words rather than one; in that case \texttt{int} should be used to represent one machine word.
+For other architectures and compilers, \texttt{int} is half a machine word and \texttt{long} is one machine word; in that case \texttt{long} should be used for one machine word.
+
+When necessary, small programs using \texttt{sizeof()} can be written to determine the compiler's word model.
+To make the low-level code easier to write, the fixed-width integer types in Table~\ref{tab:port-types} are recommended.
+When defining them, the lengths of the compiler's \texttt{char}, \texttt{short}, \texttt{int}, and \texttt{long} types must also be determined.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Overview of typedefs.}
+    \label{tab:port-types}
+    \small
+    \begin{tabularx}{\textwidth}{@{}>{\ttfamily}p{2.4cm}>{\raggedright\arraybackslash}p{3.2cm} X@{}}
+        \toprule
+        \tablehead{Type} & \tablehead{Typical definition} & \tablehead{Meaning}\\
+        \midrule
+        rmp\_s8\_t & \texttt{typedef signed char} & Signed 8-bit integer.\\
+        rmp\_s16\_t & \texttt{typedef signed short} & Signed 16-bit integer.\\
+        rmp\_s32\_t & \texttt{typedef signed int} & Signed 32-bit integer.\\
+        rmp\_u8\_t & \texttt{typedef unsigned char} & Unsigned 8-bit integer.\\
+        rmp\_u16\_t & \texttt{typedef unsigned short} & Unsigned 16-bit integer.\\
+        rmp\_u32\_t & \texttt{typedef unsigned int} & Unsigned 32-bit integer.\\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+RMP requires the three types in Table~\ref{tab:port-required-types}.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Overview of necessary typedefs.}
+    \label{tab:port-required-types}
+    \small
+    \begin{tabularx}{\textwidth}{@{}>{\ttfamily}p{2.4cm}>{\raggedright\arraybackslash}p{3.2cm} X@{}}
+        \toprule
+        \tablehead{Type} & \tablehead{Typical definition} & \tablehead{Meaning}\\
+        \midrule
+        rmp\_ptr\_t & \texttt{typedef unsigned long} & Pointer integer type; an unsigned integer of the same length as one machine word.\\
+        rmp\_cnt\_t & \texttt{typedef long} & Counting-variable type; a signed integer no longer than one machine word but at least 32 bits.\\
+        rmp\_ret\_t & \texttt{typedef long} & Return-value type; a signed integer of the same length as one machine word.\\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+\subsection{Macro definitions}
+
+The second part is the macro definitions.
+The macros are listed in Table~\ref{tab:port-macros}.
+
+{\small
+\begin{longtable}{@{}>{\ttfamily}p{4.6cm}>{\raggedright\arraybackslash}p{3.6cm}p{3.8cm}@{}}
+    \caption{Overview of macro definitions.}\label{tab:port-macros}\\
+    \toprule
+    \tablehead{Macro} & \tablehead{Typical} & \tablehead{Meaning}\\
+    \midrule
+    \endfirsthead
+    \toprule
+    \tablehead{Macro} & \tablehead{Typical} & \tablehead{Meaning}\\
+    \midrule
+    \endhead
+    \bottomrule
+    \endfoot
+    RMP\_EXTERN & \texttt{extern} & The compiler's \texttt{extern} keyword. When using a C++ compiler, it can be defined as \texttt{extern "C"} to prevent name mangling.\\
+    RMP\_WORD\_ORDER & 5 & The power of two corresponding to the processor word length.\footnote{Measured in bits.} For example, 8-bit\footnote{An 8-bit processor has at least 16-bit pointers, so RMP regards it as a 16-bit processor.} and 16-bit processors use 4, 32-bit processors use 5, and 64-bit processors use 6.\\
+    RMP\_STACK\_TYPE & FULL\_DESCEND & Stack type. Use \texttt{RMP\_STACK\_FULL\_ASCEND} for a full ascending stack, \texttt{RMP\_STACK\_FULL\_DESCEND} for a full descending stack, \texttt{RMP\_STACK\_EMPTY\_ASCEND} for an empty ascending stack, and \texttt{RMP\_STACK\_EMPTY\_DESCEND} for an empty descending stack.\\
+    RMP\_STACK\_ALIGN & 3 & Stack alignment requirement. If the value is \(X\), the stack is aligned to \(2^X\) bytes when a thread is entered.\\
+    RMP\_STACK\_ELEM & \texttt{rmp\_ptr\_t} & Element type inside the stack; the type pushed on each normal data push.\\
+    RMP\_STACK\_STRUCT & \texttt{struct RMP\_XXX\_Stack} & Name of the structure used to initialise a thread stack.\\
+    RMP\_INIT\_STACK\_SIZE & 1024 & Initial thread stack size in bytes. The initial stack is an array declared inside \texttt{rmp\_kernel.c}; if an architecture has special address requirements for the stack,\footnote{For example, it must reside in the low 64 KiB.} the kernel data section must be linked at a suitable address.\\
+    RMP\_PREEMPT\_PRIO\_NUM & 32 & Maximum number of preemptive priorities; must be at least 3. In practice, if memory is not extremely tight, a multiple of the processor word length\footnote{Measured in bits.} is recommended, but this is not required. Usually it is sufficient to set this to the word length.\\
+    RMP\_SLICE\_MAX & 100000 & Maximum thread time slice or delay slice; must not exceed \(2^{N-1}-1\) (that is, \texttt{RMP\_MASK\_INTMAX}), where \(N\) is \texttt{RMP\_WORD\_ORDER}.\\
+    RMP\_SEM\_CNT\_MAX & 1000 & Maximum semaphore count; must not exceed \(2^{N-1}-1\) (\texttt{RMP\_MASK\_INTMAX}).\\
+    RMP\_INT\_MASK() & \texttt{MASK(SYSPRIO)} & Whether to mask interrupts that can call the interrupt send functions when the scheduler is locked. If this feature is not used, the macros may be empty; interrupts that call the send functions can then occur while the scheduler is locked, but their send functions will fail. If the feature is used, \texttt{RMP\_INT\_MASK()} can mask all system interrupts and \texttt{RMP\_INT\_UNMASK()} can unmask them. A global interrupt disable is also possible but affects real-time performance. \texttt{MASK(SYSPRIO)} masks all interrupts at or below the \texttt{SYSPRIO} priority, and \texttt{MASK(0x00)} removes the mask; the \texttt{SYSPRIO} value should be the highest priority of an interrupt that can call the send functions.\\
+    RMP\_INT\_UNMASK() & \texttt{MASK(0x00)} & See \texttt{RMP\_INT\_MASK()}.\\
+    RMP\_MSB\_GET(VAL) & \texttt{32-\_\_builtin\_clz(VAL)} & Index of the highest binary bit, counting the lowest bit as 0. Many processors provide a count-leading-zeros instruction or builtin; otherwise use \texttt{RMP\_MSB\_Generic}.\\
+    RMP\_LSB\_GET(VAL) & \texttt{\_\_builtin\_ctz(VAL)} & Index of the lowest binary bit, counting from 0. Many processors provide a count-trailing-zeros instruction or builtin; otherwise use \texttt{RMP\_LSB\_Generic}.\\
+    RMP\_STKSEG\_ENABLE & 0 & Whether to save and restore a stack segment register in addition. If enabled, RMP defines \texttt{RMP\_SS\_Cur} for the low-level assembly. Most architectures do not need this.\\
+    RMP\_ASSERT\_ENABLE & 1 & Whether to enable the assertion macro. Define as 1 to detect errors with \texttt{RMP\_ASSERT}; define as 0 to skip assertions.\\
+    RMP\_CHECK\_ENABLE & 1 & Whether to enable parameter checking. If 0, system calls do not check argument validity and, except where specially noted, do not return error values. Keep it enabled unless performance or code size is extremely constrained.\\
+    RMP\_DBGLOG\_ENABLE & 1 & Whether to enable kernel print macros. If 0, the macros are disabled.\\
+\end{longtable}
+}
+
+\subsection{Assembly functions and macros}
+
+RMP requires only five short low-level assembly functions or macros, implemented in assembly or inline assembly.
+They are listed in Table~\ref{tab:asm-primitives}.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Overview of low-level assembly functions and macros.}
+    \label{tab:asm-primitives}
+    \small
+    \begin{tabularx}{\textwidth}{@{}>{\ttfamily}p{3.8cm} X@{}}
+        \toprule
+        \tablehead{Function} & \tablehead{Meaning}\\
+        \midrule
+        RMP\_Int\_Disable & Disable processor interrupts.\\
+        RMP\_Int\_Enable & Enable processor interrupts.\\
+        \_RMP\_Start & Start the initial thread.\\
+        RMP\_YIELD & Trigger a thread switch.\\
+        RMP\_YIELD\_ISR & Trigger a thread switch from an interrupt.\\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+The implementation methods and requirements are described later.
+
+\subsection{System interrupt vectors}
+
+RMP requires at least two interrupt vectors, implemented in assembly or inline assembly, listed in Table~\ref{tab:vectors}.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Overview of system interrupt vectors.}
+    \label{tab:vectors}
+    \small
+    \begin{tabularx}{\textwidth}{@{}>{\ttfamily}p{3.8cm} X@{}}
+        \toprule
+        \tablehead{Vector} & \tablehead{Meaning}\\
+        \midrule
+        System timer vector & Handle the system timer interrupt and manage time-slice usage.\\
+        Thread context-switch vector & Perform thread context switches.\\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+\subsection{Other low-level functions}
+
+These functions concern startup, debugging, and other low-level aspects.
+They may be written in assembly, in C, or partly in each.
+They are listed in Table~\ref{tab:lowlevel}.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Overview of other low-level functions.}
+    \label{tab:lowlevel}
+    \small
+    \begin{tabularx}{\textwidth}{@{}>{\ttfamily}p{3.8cm} X@{}}
+        \toprule
+        \tablehead{Function} & \tablehead{Meaning}\\
+        \midrule
+        RMP\_Putchar & Print one character to the kernel debugging console.\\
+        \_RMP\_Lowlvl\_Init & Initialise the low-level hardware.\\
+        \_RMP\_Stack\_Init & Initialise a thread's stack.\\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+\section{Porting the assembly functions and macros}
+
+The prototypes and porting requirements of the assembly functions and macros are described in detail below.
+
+\subsection{Implementation of RMP\_Int\_Disable}
+\begin{apidesc}{RMP\_Int\_Disable}{Disable interrupts}\label{api:RMP_Int_Disable}
+    \apisig{void RMP\_Int\_Disable(void)}
+    This function disables the processor's interrupts and returns.
+    \begin{apiparams}
+        \apiparam{None}{No parameters.}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{None}{No return value.}
+    \end{apiret}
+\end{apidesc}
+
+This function only needs to disable processor interrupts and return.
+There are no special precautions; in most cases it is a single CPU register or peripheral write followed by a return.
+
+\subsection{Implementation of RMP\_Int\_Enable}
+\begin{apidesc}{RMP\_Int\_Enable}{Enable interrupts}\label{api:RMP_Int_Enable}
+    \apisig{void RMP\_Int\_Enable(void)}
+    This function enables the processor's interrupts and returns.
+    \begin{apiparams}
+        \apiparam{None}{No parameters.}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{None}{No return value.}
+    \end{apiret}
+\end{apidesc}
+
+This function only needs to enable processor interrupts and return.
+There are no special precautions; in most cases it is a single CPU register or peripheral write followed by a return.
+
+\subsection{Implementation of \_RMP\_Start}
+\begin{apidesc}{\_RMP\_Start}{Start the initial thread}\label{api:_RMP_Start}
+    \apisig{void \_RMP\_Start(rmp\_ptr\_t Entry, rmp\_ptr\_t Stack)}
+    This function switches from the kernel stack to the thread stack and is called only at the end of system startup; after this, the system enters normal operation.
+    It only needs to assign \texttt{Stack} to the stack pointer and jump to \texttt{Entry}; it never returns.
+    \begin{apiparams}
+        \apiparam{rmp\_ptr\_t Entry}{Entry address of the initial thread, actually \texttt{RMP\_Init}.}
+        \apiparam{rmp\_ptr\_t Stack}{Stack address of the initial thread.}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{None}{No return value.}
+    \end{apiret}
+\end{apidesc}
+
+This function switches from the kernel stack to the thread stack and is called only at the end of the system boot process.
+After it, the system enters normal operation.
+It only needs to assign \texttt{Stack} to the stack pointer and jump directly to \texttt{Entry}; it never returns.
+
+\subsection{Implementation of RMP\_YIELD}
+
+\begin{apidesc}{RMP\_YIELD}{Request a context switch}\label{port:Yield}
+    \apisig{void RMP\_YIELD(void)}
+    This macro notifies the hardware abstraction layer to perform a context switch.
+    It must guarantee that a context switch is arranged after it is called and before thread code continues.
+    Normally it software-triggers a pendable thread context-switch vector by writing a memory address or executing a special instruction.
+    If interrupts are not masked, the software interrupt fires before the macro returns; if interrupts are disabled, the software interrupt must remain pending and fire before the interrupt-enable function returns.
+    The macro must contain a compiler barrier so that the compiler does not optimise the following code before it.\footnote{Link-time optimisation builds need particular care here.}
+    \begin{apiparams}
+        \apiparam{None}{No parameters.}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{None}{No return value.}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{Implementation of RMP\_YIELD\_ISR}
+
+\begin{apidesc}{RMP\_YIELD\_ISR}{Request a context switch from an ISR}\label{port:Yield_ISR}
+    \apisig{void RMP\_YIELD\_ISR(void)}
+    This macro is similar to \texttt{RMP\_YIELD}, but it is called only by the interrupt send functions whose names end in \texttt{\_ISR}.
+    It also software-triggers the pendable context-switch vector, and its implementation is identical to \texttt{RMP\_YIELD}.
+    The two macros are separate so that a port can adopt another method; see Section~\ref{sec:ctx-strategies}.
+    \begin{apiparams}
+        \apiparam{None}{No parameters.}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{None}{No return value.}
+    \end{apiret}
+\end{apidesc}
+
+\section{Porting the system interrupt vectors}
+
+RMP requires two interrupt vectors to be ported: the system timer interrupt vector and the thread context-switch vector.
+The timer vector need not be written in assembly; the context-switch vector must be.
+
+\subsection{System tick vector}
+
+The timer interrupt vector only needs to call the timer handler \texttt{\_RMP\_Tim\_Handler(Slice)}.
+In a ticked kernel, one time slice always elapses on each timer interrupt, so \texttt{Slice} is 1.
+In a tickless kernel, it is the slice value last programmed into the timer.
+The value is not limited by \texttt{RMP\_SLICE\_MAX}, but it must not exceed \(2^{N-1}-1\) (\texttt{RMP\_MASK\_INTMAX}).
+The handler is implemented by the system and need not be written by the user; see Section~7.1.1 for tickless operation and \texttt{\_RMP\_Tim\_Elapse}.
+
+\begin{apidesc}{\_RMP\_Tim\_Handler}{Timer interrupt handler}\label{api:_RMP_Tim_Handler}
+    \apisig{void \_RMP\_Tim\_Handler(rmp\_ptr\_t Slice)}
+    Executes timer interrupt handling.
+    \begin{apiparams}
+        \apiparam{rmp\_ptr\_t Slice}{In a ticked kernel, one time slice always elapses per clock interrupt, so pass 1; in a tickless kernel, pass the slice value last programmed into the timer. The number is not limited by \texttt{RMP\_SLICE\_MAX}, but it must not exceed \(2^{N-1}-1\) (\texttt{RMP\_MASK\_INTMAX}), where \(N\) is \texttt{RMP\_WORD\_ORDER}.}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{None}{No return value.}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{Context-switch vector}
+
+The context-switch interrupt vector must be written in assembly and must perform the following steps in order:
+
+\begin{enumerate}
+    \item push all the CPU's basic registers onto the thread stack;
+    \item store the current thread stack pointer in \texttt{RMP\_SP\_Cur};
+    \item switch to the kernel stack;\footnote{This step is optional, but a separate kernel stack and thread stack are recommended.}
+    \item call \texttt{\_RMP\_Run\_High} to switch threads;
+    \item assign \texttt{RMP\_SP\_Cur} to the current thread stack pointer;
+    \item restore all the CPU's basic registers from the thread stack; and
+    \item switch to the thread stack and exit the interrupt.
+\end{enumerate}
+
+\texttt{\_RMP\_Run\_High} is implemented by the system and need not be written
+by the user.
+A thread context switch initiated from a user thread\footnote{Rather than from an interrupt vector.} may also use inline assembly, in which case interrupts must be disabled during the switch; see Section~7.1.2.
+
+\begin{apidesc}{\_RMP\_Run\_High}{Thread context-switch interrupt handler}\label{api:_RMP_Run_High}
+    \apisig{void \_RMP\_Run\_High(void)}
+    Executes thread context-switch handling. The switch updates the variables used by the context-switch assembly section and by other kernel functions.
+    \begin{apiparams}
+        \apiparam{None}{No parameters.}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{None}{No return value.}
+    \end{apiret}
+\end{apidesc}
+
+\section{Porting the other low-level functions}
+
+Of the remaining low-level functions, \texttt{RMP\_Putchar} and \texttt{RMP\_MSB\_Get} were discussed in Chapter 2.
+Only \texttt{\_RMP\_Lowlvl\_Init} and \texttt{\_RMP\_Stack\_Init} are discussed here.
+
+\subsection{Low-level hardware initialisation}
+
+This function initialises all low-level hardware.
+When initialising the interrupt system, the system tick timer should be given the lowest priority and the thread context-switch interrupt the second-lowest priority; neither may nest with any other interrupt.
+Interrupt vectors that call \texttt{RMP\_Thd\_Snd\_ISR} or \texttt{RMP\_Sem\_Post\_ISR} must also not nest with other interrupt vectors.
+All other interrupt vectors may nest freely.
+
+\begin{apidesc}{\_RMP\_Lowlvl\_Init}{Initialise low-level hardware}\label{port:Lowlvl_Init}
+    \apisig{void \_RMP\_Lowlvl\_Init(void)}
+    Initialises all basic system hardware, including the PLL, CPU, interrupt system, and system tick timer.
+    \begin{apiparams}
+        \apiparam{None}{No parameters.}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{None}{No return value.}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{Thread stack initialisation}
+
+This function is called by the thread creation function.
+Because the second half of the context-switch interrupt pops registers from this stack, the registers must be placed in the same order, especially the thread entry and its parameter.
+The exact sequence depends on the processor and on the push/pop order of the context-switch interrupt.
+
+In general, the function selects an address at the head\footnote{Ascending stack.} or tail\footnote{Descending stack.} of the stack according to the processor's stack-growth direction and initialises it there.
+If the processor has a stack alignment requirement,\footnote{For example ARMv6-M and ARMv7-M.} the function must also ensure that the stack pointer satisfies that alignment after the pops.
+The initial values of sensitive registers\footnote{Such as segment registers and condition-code registers. The toolchain's initial values can be obtained by entering debug mode and stopping at the entry to \texttt{main}, or captured in \texttt{\_RMP\_Start}. For a stack segment register, see Section 7.5.3.2.} must conform to the architecture's binary interface standard to prevent errors when the thread starts.
+
+To make the function easier to write, RMP provides the macro \texttt{RMP\_STACK\_CALC(PTR, CTX, STK, SZ)}.
+It takes the stack start \texttt{STK} and size \texttt{SZ} and returns the real initial stack pointer \texttt{PTR} and a pointer \texttt{CTX} to the context structure used for initialisation.
+\texttt{PTR} can be used as the function's return value, and
+filling the structure pointed to by \texttt{CTX} completes the stack
+initialisation.
+
+\begin{apidesc}{\_RMP\_Stack\_Init}{Initialise a thread stack}\label{port:Stack_Init}
+    \apisig{rmp\_ptr\_t \_RMP\_Stack\_Init(rmp\_ptr\_t Stack,
+        rmp\_ptr\_t Size, rmp\_ptr\_t Entry, rmp\_ptr\_t Param)}
+    Fills the thread stack so that the new thread, on its first run, behaves as if it had returned to this point.
+    \begin{apiparams}
+        \apiparam{rmp\_ptr\_t Stack}{Start address of the thread's stack area.}
+        \apiparam{rmp\_ptr\_t Size}{Size of the thread's stack area.}
+        \apiparam{rmp\_ptr\_t Entry}{Thread entry point.}
+        \apiparam{rmp\_ptr\_t Param}{Parameter passed to the thread.}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{rmp\_ptr\_t}{The real start address of the thread stack. The thread will pop from here on its first run.}
+    \end{apiret}
+\end{apidesc}
+
+\section{Chapter bibliography}
+
+None.

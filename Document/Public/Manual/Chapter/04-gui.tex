@@ -1,0 +1,570 @@
+\chapter{Lightweight Graphics Interface}\label{ch:gui}
+
+\section{Introduction to embedded graphical interfaces}
+
+An embedded graphical user interface (GUI) is a graphics solution dedicated to embedded systems.
+Compared with a traditional computer GUI, an embedded GUI has the characteristics of simplicity, diversity, planarity, and restriction.
+Grasping these four characteristics is the key to a good embedded GUI design.
+
+\subsection{Simplicity}
+
+Generally, the elements of an embedded GUI are relatively simple: usually a few buttons or a few display controls, unlike a traditional GUI with scroll bars, tree lists, and many other elements.
+Moreover, once the UI is designed, it rarely changes during the product's life.
+
+\subsection{Diversity}
+
+After years of evolution, traditional GUI design has reached a certain consensus, forming a large number of desktop environments represented by Windows, MacOS, Gnome, and Unity.
+They all emphasise optimising the mouse and keyboard experience, use almost the same interaction logic, and mostly have standardised controls.
+Embedded GUIs are the opposite: standard mouse and keyboard input is rarely used; custom keypads and touch screens are more common, and there are many non-standard controls and interfaces.
+The appearance and logic of these controls differ, and require a great deal of optimisation and adaptation for the specific application.
+
+\subsection{Planarity}
+
+The traditional GUI technology stack places great emphasis on complex window clipping, so that windows have a vertical stacking relationship; complex algorithms calculate the display region of each window and draw it.
+This is necessary in extremely complex multi-window, multi-task environments.
+In an embedded GUI, the display area is small and the input means are limited, so vertical spatial relationships between windows are rarely used; flat and humane GUI design is emphasised instead.
+This can also be seen in the evolution of mobile operating systems.
+
+\subsection{Restriction}
+
+Traditional GUI implementations often depend on powerful CPU and GPU support and large amounts of memory for complex graphics operations.
+In an embedded environment, it is often difficult even to obtain enough frame-buffer memory, let alone use dedicated hardware for graphics.
+A GUI for an embedded environment therefore needs special optimisation.
+
+\section{Enabling and configuring the graphics interface}
+
+RMP supports a GUI by providing a series of drawing functions.
+Its basic drawing functions include point and line drawing, geometric-shape drawing, and bitmap anti-aliasing rendering; the more complex functions include drawing various controls.
+These drawing functions do not record the state of GUI objects and do not use object-oriented design, so they consume no extra RAM and only a certain amount of ROM.
+
+The drawing functions provided by RMP are divided into basic drawing functions, anti-aliased drawing functions, and control drawing functions.
+To use them, the corresponding switches must be enabled in the configuration header, and some additional low-level macros must be provided.
+These macros are listed in Table~\ref{tab:gui-config}.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Macros required to use the built-in embedded graphics interface.}
+    \label{tab:gui-config}
+    \small
+    \begin{tabularx}{\textwidth}{@{}>{\ttfamily}p{4.2cm}>{\raggedright\arraybackslash} X@{}}
+        \toprule
+        \tablehead{Macro} & \tablehead{Meaning}\\
+        \midrule
+        RMP\_GUI\_ENABLE & Master switch for the GUI. Define as 1 to enable GUI functions. Example: \texttt{\#define RMP\_GUI\_ENABLE 1U}.\\
+        RMP\_POINT(X,Y,COLOR) & Macro for the point-drawing function. Once the GUI is enabled, this macro should be defined as the name of a point-drawing function with the prototype \texttt{void foo(rmp\_cnt\_t X, rmp\_cnt\_t Y, rmp\_ptr\_t Color)}. Its purpose is to draw one point on the screen. Example: \texttt{\#define RMP\_POINT RMP\_Point}.\\
+        RMP\_GUI\_ANTIALIAS\_ENABLE & Master switch for anti-aliased drawing. Define as 1 to enable it. Example: \texttt{\#define RMP\_GUI\_ANTIALIAS\_ENABLE 1U}.\\
+        RMP\_COLOR\_25P(C1,C2) & Colour-mixing macros. If anti-aliased drawing is enabled, these macros must be defined. Each takes two colours and returns a colour. \texttt{RMP\_COLOR\_25P} mixes 25\% of C1 with 75\% of C2; \texttt{RMP\_COLOR\_50P} mixes them equally; \texttt{RMP\_COLOR\_75P} mixes 75\% of C1 with 25\% of C2.\\
+        RMP\_COLOR\_50P(C1,C2) & See above.\\
+        RMP\_COLOR\_75P(C1,C2) & See above.\\
+        RMP\_GUI\_WIDGET\_ENABLE & Master switch for control drawing. Define as 1 to enable it. Example: \texttt{\#define RMP\_GUI\_WIDGET\_ENABLE 1U}.\\
+        RMP\_COLOR\_WHITE & Built-in control colour macros. If control drawing is enabled, these macros must be defined. White, recommended \texttt{0xFFFFFF}.\\
+        RMP\_COLOR\_LGREY & Light grey, recommended \texttt{0xB8B8B8}.\\
+        RMP\_COLOR\_GREY & Grey, recommended \texttt{0xE0E0E0}.\\
+        RMP\_COLOR\_DGREY & Dark grey, recommended \texttt{0xA0A0A0}.\\
+        RMP\_COLOR\_DARK & Dark, recommended \texttt{0x787C78}.\\
+        RMP\_COLOR\_DDARK & Very dark, recommended \texttt{0x686868}.\\
+        RMP\_COLOR\_BLACK & Black, recommended \texttt{0x000000}.\\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+The drawing functions provided by RMP do not check whether the X and Y coordinates of the drawing range exceed the screen boundary.
+This responsibility belongs to the application developer.
+
+\section{Basic drawing functions}
+
+The basic drawing functions require \texttt{RMP\_GUI\_ENABLE} and a definition of \texttt{RMP\_POINT}.
+
+\subsection{Draw a line}
+\begin{apidesc}{RMP\_Line}{Draw a line}\label{api:RMP_Line}
+    \apisig{void RMP\_Line(rmp\_cnt\_t Begin\_X, rmp\_cnt\_t Begin\_Y,
+        rmp\_cnt\_t End\_X, rmp\_cnt\_t End\_Y, rmp\_ptr\_t Color)}
+    This function draws a line of width 1 on the screen.
+    Rasterisation uses the Bresenham algorithm.
+    \begin{apiparams}
+        \apiparam{rmp\_cnt\_t Begin\_X}{X coordinate of the line's start point.}
+        \apiparam{rmp\_cnt\_t Begin\_Y}{Y coordinate of the line's start point.}
+        \apiparam{rmp\_cnt\_t End\_X}{X coordinate of the line's end point.}
+        \apiparam{rmp\_cnt\_t End\_Y}{Y coordinate of the line's end point.}
+        \apiparam{rmp\_ptr\_t Color}{Colour of the line.}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{None}{No return value.}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{Draw a dotted line}
+\begin{apidesc}{RMP\_Dot\_Line}{Draw a dotted line}\label{api:RMP_Dot_Line}
+    \apisig{void RMP\_Dot\_Line(rmp\_cnt\_t Begin\_X, rmp\_cnt\_t Begin\_Y,
+        rmp\_cnt\_t End\_X, rmp\_cnt\_t End\_Y,\\
+        rmp\_ptr\_t Dot, rmp\_ptr\_t Space)}
+    This function draws a dotted line of width 1 on the screen.
+    Rasterisation uses the Bresenham algorithm.
+    \begin{apiparams}
+        \apiparam{rmp\_cnt\_t Begin\_X}{X coordinate of the dotted line's start point.}
+        \apiparam{rmp\_cnt\_t Begin\_Y}{Y coordinate of the dotted line's start point.}
+        \apiparam{rmp\_cnt\_t End\_X}{X coordinate of the dotted line's end point.}
+        \apiparam{rmp\_cnt\_t End\_Y}{Y coordinate of the dotted line's end point.}
+        \apiparam{rmp\_ptr\_t Dot}{Colour of the dots.}
+        \apiparam{rmp\_ptr\_t Space}{Colour of the gaps. If \texttt{RMP\_TRANS} is entered, the gaps are not drawn.}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{None}{No return value.}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{Draw a rectangle}
+\begin{apidesc}{RMP\_Rectangle}{Draw a rectangle}\label{api:RMP_Rectangle}
+    \apisig{void RMP\_Rectangle(rmp\_cnt\_t Coord\_X, rmp\_cnt\_t Coord\_Y,
+        rmp\_cnt\_t Length, rmp\_cnt\_t Width,\\
+        rmp\_ptr\_t Border, rmp\_ptr\_t Fill)}
+    This function draws a rectangle on the screen.
+    The rectangle can have a border colour different from the fill colour, and it can be filled or not filled.
+    \begin{apiparams}
+        \apiparam{rmp\_cnt\_t Coord\_X}{X coordinate of the rectangle's top-left corner.}
+        \apiparam{rmp\_cnt\_t Coord\_Y}{Y coordinate of the rectangle's top-left corner.}
+        \apiparam{rmp\_cnt\_t Length}{Length of the rectangle.}
+        \apiparam{rmp\_cnt\_t Width}{Width of the rectangle.}
+        \apiparam{rmp\_ptr\_t Border}{Border colour of the rectangle.}
+        \apiparam{rmp\_ptr\_t Fill}{Fill colour of the rectangle. If \texttt{RMP\_TRANS} is entered, the rectangle is not filled.}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{None}{No return value.}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{Draw a rounded rectangle}
+\begin{apidesc}{RMP\_Round\_Rect}{Draw a rounded rectangle}\label{api:RMP_Round_Rect}
+    \apisig{void RMP\_Round\_Rect(rmp\_cnt\_t Coord\_X, rmp\_cnt\_t Coord\_Y,
+        rmp\_cnt\_t Length, rmp\_cnt\_t Width,\\
+        rmp\_cnt\_t Round, rmp\_ptr\_t Color)}
+    This function draws a rounded rectangle on the screen.
+    The outline and fill colour of the rounded rectangle are the same, and it is always completely filled.
+    \begin{apiparams}
+        \apiparam{rmp\_cnt\_t Coord\_X}{X coordinate of the rectangle's top-left corner.}
+        \apiparam{rmp\_cnt\_t Coord\_Y}{Y coordinate of the rectangle's top-left corner.}
+        \apiparam{rmp\_cnt\_t Length}{Length of the rectangle.}
+        \apiparam{rmp\_cnt\_t Width}{Width of the rectangle.}
+        \apiparam{rmp\_cnt\_t Round}{Corner radius of the rounded rectangle.}
+        \apiparam{rmp\_ptr\_t Color}{Colour of the rounded rectangle.}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{None}{No return value.}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{Draw a circle}
+\begin{apidesc}{RMP\_Circle}{Draw a circle}\label{api:RMP_Circle}
+    \apisig{void RMP\_Circle(rmp\_cnt\_t Center\_X, rmp\_cnt\_t Center\_Y,
+        rmp\_cnt\_t Radius, rmp\_ptr\_t Border, rmp\_ptr\_t Fill)}
+    This function draws a circle on the screen.
+    The circle can have a border colour different from the fill colour, and it can be filled or not filled.
+    \begin{apiparams}
+        \apiparam{rmp\_cnt\_t Center\_X}{X coordinate of the circle's centre.}
+        \apiparam{rmp\_cnt\_t Center\_Y}{Y coordinate of the circle's centre.}
+        \apiparam{rmp\_cnt\_t Radius}{Radius of the circle.}
+        \apiparam{rmp\_ptr\_t Border}{Border colour of the circle.}
+        \apiparam{rmp\_ptr\_t Fill}{Fill colour of the circle. If \texttt{RMP\_TRANS} is entered, the circle is not filled.}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{None}{No return value.}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{Draw a monochrome bitmap}
+\begin{apidesc}{RMP\_Matrix}{Draw a monochrome bitmap}\label{api:RMP_Matrix}
+    \apisig{void RMP\_Matrix(rmp\_cnt\_t Coord\_X, rmp\_cnt\_t Coord\_Y,
+        const rmp\_u8\_t* Matrix, rmp\_ptr\_t Bit\_Order,\\
+        rmp\_cnt\_t Length, rmp\_cnt\_t Width, rmp\_ptr\_t Color)}
+    This function draws a monochrome bitmap on the screen.
+    The bitmap length must be a multiple of 8, and the bitmap must be stored row-major, scanned from left to right and from high to low.
+    High-bit-first or low-bit-first mode can be selected when drawing; in the former, the highest bit of a byte has the smallest X value among the pixels represented by that byte, and in the latter the opposite is true.\footnote{This is similar to the concept of endianness, but here it is the pixel order of the bits within one byte.}
+    \begin{apiparams}
+        \apiparam{rmp\_cnt\_t Coord\_X}{X coordinate of the bitmap's top-left corner.}
+        \apiparam{rmp\_cnt\_t Coord\_Y}{Y coordinate of the bitmap's top-left corner.}
+        \apiparam{const rmp\_u8\_t* Matrix}{Pointer to the monochrome bitmap data.}
+        \apiparam{rmp\_ptr\_t Bit\_Order}{Bit order within a byte. \texttt{RMP\_MAT\_BIG} is high-bit-first; \texttt{RMP\_MAT\_SMALL} is low-bit-first.}
+        \apiparam{rmp\_cnt\_t Length}{Bitmap length; must be a multiple of 8, otherwise drawing does not start.}
+        \apiparam{rmp\_cnt\_t Width}{Bitmap width.}
+        \apiparam{rmp\_ptr\_t Color}{Colour used to draw the bitmap.}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{None}{No return value.}
+    \end{apiret}
+\end{apidesc}
+
+\section{Anti-aliased drawing functions}
+
+The anti-aliased function requires \texttt{RMP\_GUI\_ANTIALIAS\_ENABLE} and the three colour-mixing macros.
+It draws a monochrome bitmap in 4$\times$ FXAA anti-aliased mode.
+The bitmap length must be a multiple of 8, and the bitmap is stored row-major, scanned from left to right and from high to low.
+The bit order inside a byte can be most-significant-bit first or least-significant-bit first.\footnote{This is similar to endianness, but here it is the pixel order within one byte.}
+
+\begin{apidesc}{RMP\_Matrix\_AA}{Draw an anti-aliased monochrome bitmap}\label{api:RMP_Matrix_AA}
+    \apisig{void RMP\_Matrix\_AA(rmp\_cnt\_t Coord\_X, rmp\_cnt\_t Coord\_Y,
+        const rmp\_u8\_t* Matrix,\\ rmp\_ptr\_t Bit\_Order,
+        rmp\_cnt\_t Length, rmp\_cnt\_t Width,\\
+        rmp\_ptr\_t Color, rmp\_ptr\_t Back)}
+    This function draws a monochrome bitmap on the screen in a 4$\times$ FXAA anti-aliased mode.
+    The bitmap length must be a multiple of 8, and the bitmap must be stored row-major, scanned from left to right and from high to low.
+    High-bit-first or low-bit-first mode can be selected.
+    The background colour of the layer containing the bitmap must be passed for anti-aliasing.
+    The three colour-mixing macros must also be defined.
+    \begin{apiparams}
+        \apiparam{rmp\_cnt\_t Coord\_X}{X coordinate of the bitmap's top-left corner.}
+        \apiparam{rmp\_cnt\_t Coord\_Y}{Y coordinate of the bitmap's top-left corner.}
+        \apiparam{const rmp\_u8\_t* Matrix}{Pointer to the monochrome bitmap data.}
+        \apiparam{rmp\_ptr\_t Bit\_Order}{Bit order within a byte; \texttt{RMP\_MAT\_BIG} or \texttt{RMP\_MAT\_SMALL}.}
+        \apiparam{rmp\_cnt\_t Length}{Bitmap length; must be a multiple of 8, otherwise drawing does not start.}
+        \apiparam{rmp\_cnt\_t Width}{Bitmap width.}
+        \apiparam{rmp\_ptr\_t Color}{Colour used to draw the bitmap.}
+        \apiparam{rmp\_ptr\_t Back}{Background colour of the layer containing the bitmap.}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{None}{No return value.}
+    \end{apiret}
+\end{apidesc}
+
+\section{Widget drawing functions}
+
+The widget functions require \texttt{RMP\_GUI\_WIDGET\_ENABLE} and the seven widget colour macros.
+
+\subsection{Draw a cursor}
+\begin{apidesc}{RMP\_Cursor}{Draw a cursor}\label{api:RMP_Cursor}
+    \apisig{void RMP\_Cursor(rmp\_cnt\_t Coord\_X, rmp\_cnt\_t Coord\_Y,
+        rmp\_ptr\_t Style)}
+    This function can draw various 16$\times$16 cursors on the screen.
+    \begin{apiparams}
+        \apiparam{rmp\_cnt\_t Coord\_X}{X coordinate of the cursor's top-left corner.}
+        \apiparam{rmp\_cnt\_t Coord\_Y}{Y coordinate of the cursor's top-left corner.}
+        \apiparam{rmp\_ptr\_t Style}{Cursor style, one of \texttt{RMP\_CUR\_NORM}, \texttt{RMP\_CUR\_BUSY}, \texttt{RMP\_CUR\_QUESTION}, \texttt{RMP\_CUR\_HAND}, \texttt{RMP\_CUR\_TEXT}, \texttt{RMP\_CUR\_STOP}, \texttt{RMP\_CUR\_MOVE}, \texttt{RMP\_CUR\_LR}, \texttt{RMP\_CUR\_UD}, \texttt{RMP\_CUR\_ULBR}, \texttt{RMP\_CUR\_URBL}, or \texttt{RMP\_CUR\_CROSS}.}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{None}{No return value.}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{Draw a checkbox}
+\begin{apidesc}{RMP\_Checkbox}{Draw a checkbox}\label{api:RMP_Checkbox}
+    \apisig{void RMP\_Checkbox(rmp\_cnt\_t Coord\_X, rmp\_cnt\_t Coord\_Y,
+        rmp\_cnt\_t Length, rmp\_ptr\_t Status)}
+    This function draws a checkbox of variable size on the screen.
+    \begin{apiparams}
+        \apiparam{rmp\_cnt\_t Coord\_X}{X coordinate of the checkbox's top-left corner.}
+        \apiparam{rmp\_cnt\_t Coord\_Y}{Y coordinate of the checkbox's top-left corner.}
+        \apiparam{rmp\_cnt\_t Length}{Length of the checkbox.\footnote{This is also the width.}}
+        \apiparam{rmp\_ptr\_t Status}{Current state of the checkbox. If \texttt{RMP\_CBOX\_CHECK} is entered, the checkbox is checked; 0 means unchecked.}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{None}{No return value.}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{Check a checkbox}
+\begin{apidesc}{RMP\_Checkbox\_Set}{Check a checkbox}\label{api:RMP_Checkbox_Set}
+    \apisig{void RMP\_Checkbox\_Set(rmp\_cnt\_t Coord\_X, rmp\_cnt\_t Coord\_Y,
+        rmp\_cnt\_t Length)}
+    This function checks an already drawn checkbox.
+    \begin{apiparams}
+        \apiparam{rmp\_cnt\_t Coord\_X}{X coordinate of the checkbox's top-left corner.}
+        \apiparam{rmp\_cnt\_t Coord\_Y}{Y coordinate of the checkbox's top-left corner.}
+        \apiparam{rmp\_cnt\_t Length}{Length of the checkbox.\footnote{This is also the width.}}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{None}{No return value.}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{Clear a checkbox}
+\begin{apidesc}{RMP\_Checkbox\_Clr}{Clear a checkbox}\label{api:RMP_Checkbox_Clr}
+    \apisig{void RMP\_Checkbox\_Clr(rmp\_cnt\_t Coord\_X, rmp\_cnt\_t Coord\_Y,
+        rmp\_cnt\_t Length)}
+    This function clears an already drawn checkbox.
+    \begin{apiparams}
+        \apiparam{rmp\_cnt\_t Coord\_X}{X coordinate of the checkbox's top-left corner.}
+        \apiparam{rmp\_cnt\_t Coord\_Y}{Y coordinate of the checkbox's top-left corner.}
+        \apiparam{rmp\_cnt\_t Length}{Length of the checkbox.\footnote{This is also the width.}}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{None}{No return value.}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{Draw a command button}
+\begin{apidesc}{RMP\_Cmdbtn}{Draw a command button}\label{api:RMP_Cmdbtn}
+    \apisig{void RMP\_Cmdbtn(rmp\_cnt\_t Coord\_X, rmp\_cnt\_t Coord\_Y,
+        rmp\_cnt\_t Length, rmp\_cnt\_t Width, rmp\_ptr\_t Status)}
+    This function draws a command button of variable size.
+    \begin{apiparams}
+        \apiparam{rmp\_cnt\_t Coord\_X}{X coordinate of the button's top-left corner.}
+        \apiparam{rmp\_cnt\_t Coord\_Y}{Y coordinate of the button's top-left corner.}
+        \apiparam{rmp\_cnt\_t Length}{Length of the button.}
+        \apiparam{rmp\_cnt\_t Width}{Width of the button.}
+        \apiparam{rmp\_ptr\_t Status}{Current state of the button. If \texttt{RMP\_CBTN\_DOWN} is entered, the button is pressed; 0 means released.}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{None}{No return value.}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{Press a command button}
+\begin{apidesc}{RMP\_Cmdbtn\_Down}{Press a command button}\label{api:RMP_Cmdbtn_Down}
+    \apisig{void RMP\_Cmdbtn\_Down(rmp\_cnt\_t Coord\_X, rmp\_cnt\_t Coord\_Y,
+        rmp\_cnt\_t Length, rmp\_cnt\_t Width)}
+    This function presses an already drawn button.
+    \begin{apiparams}
+        \apiparam{rmp\_cnt\_t Coord\_X}{X coordinate of the button's top-left corner.}
+        \apiparam{rmp\_cnt\_t Coord\_Y}{Y coordinate of the button's top-left corner.}
+        \apiparam{rmp\_cnt\_t Length}{Length of the button.}
+        \apiparam{rmp\_cnt\_t Width}{Width of the button.}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{None}{No return value.}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{Release a command button}
+\begin{apidesc}{RMP\_Cmdbtn\_Up}{Release a command button}\label{api:RMP_Cmdbtn_Up}
+    \apisig{void RMP\_Cmdbtn\_Up(rmp\_cnt\_t Coord\_X, rmp\_cnt\_t Coord\_Y,
+        rmp\_cnt\_t Length, rmp\_cnt\_t Width)}
+    This function releases an already drawn button.
+    \begin{apiparams}
+        \apiparam{rmp\_cnt\_t Coord\_X}{X coordinate of the button's top-left corner.}
+        \apiparam{rmp\_cnt\_t Coord\_Y}{Y coordinate of the button's top-left corner.}
+        \apiparam{rmp\_cnt\_t Length}{Length of the button.}
+        \apiparam{rmp\_cnt\_t Width}{Width of the button.}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{None}{No return value.}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{Draw a text-edit box}
+\begin{apidesc}{RMP\_Lineedit}{Draw a text-edit box}\label{api:RMP_Lineedit}
+    \apisig{void RMP\_Lineedit(rmp\_cnt\_t Coord\_X, rmp\_cnt\_t Coord\_Y,
+        rmp\_cnt\_t Length, rmp\_cnt\_t Width)}
+    This function draws a text-edit box of variable size.
+    \begin{apiparams}
+        \apiparam{rmp\_cnt\_t Coord\_X}{X coordinate of the text-edit box's top-left corner.}
+        \apiparam{rmp\_cnt\_t Coord\_Y}{Y coordinate of the text-edit box's top-left corner.}
+        \apiparam{rmp\_cnt\_t Length}{Length of the text-edit box.}
+        \apiparam{rmp\_cnt\_t Width}{Width of the text-edit box.}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{None}{No return value.}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{Clear part of a text-edit box}
+\begin{apidesc}{RMP\_Lineedit\_Clr}{Clear part of a text-edit box}\label{api:RMP_Lineedit_Clr}
+    \apisig{void RMP\_Lineedit\_Clr(rmp\_cnt\_t Clr\_X, rmp\_cnt\_t Clr\_Len,
+        rmp\_cnt\_t Coord\_Y, rmp\_cnt\_t Width)}
+    This function clears part of a text-edit box, implementing text deletion in the box.
+    \begin{apiparams}
+        \apiparam{rmp\_cnt\_t Clr\_X}{Starting X coordinate of the part to clear. This is a relative coordinate value.}
+        \apiparam{rmp\_cnt\_t Clr\_Len}{Length to clear.}
+        \apiparam{rmp\_cnt\_t Coord\_Y}{Y coordinate of the text-edit box's top-left corner.}
+        \apiparam{rmp\_cnt\_t Width}{Width of the text-edit box.}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{None}{No return value.}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{Draw a radio button}
+\begin{apidesc}{RMP\_Radiobtn}{Draw a radio button}\label{api:RMP_Radiobtn}
+    \apisig{void RMP\_Radiobtn(rmp\_cnt\_t Coord\_X, rmp\_cnt\_t Coord\_Y,
+        rmp\_cnt\_t Length, rmp\_ptr\_t Status)}
+    This function draws a radio button of variable size.
+    \begin{apiparams}
+        \apiparam{rmp\_cnt\_t Coord\_X}{X coordinate of the radio button's top-left corner.}
+        \apiparam{rmp\_cnt\_t Coord\_Y}{Y coordinate of the radio button's top-left corner.}
+        \apiparam{rmp\_cnt\_t Length}{Length of the radio button.\footnote{This is also the width.}}
+        \apiparam{rmp\_ptr\_t Status}{Current state of the radio button. If \texttt{RMP\_RBTN\_SEL} is entered, the radio button is selected; 0 means not selected.}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{None}{No return value.}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{Select a radio button}
+\begin{apidesc}{RMP\_Radiobtn\_Set}{Select a radio button}\label{api:RMP_Radiobtn_Set}
+    \apisig{void RMP\_Radiobtn\_Set(rmp\_cnt\_t Coord\_X, rmp\_cnt\_t Coord\_Y,
+        rmp\_cnt\_t Length)}
+    This function selects an already drawn radio button.
+    \begin{apiparams}
+        \apiparam{rmp\_cnt\_t Coord\_X}{X coordinate of the radio button's top-left corner.}
+        \apiparam{rmp\_cnt\_t Coord\_Y}{Y coordinate of the radio button's top-left corner.}
+        \apiparam{rmp\_cnt\_t Length}{Length of the radio button.\footnote{This is also the width.}}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{None}{No return value.}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{Clear a radio button}
+\begin{apidesc}{RMP\_Radiobtn\_Clr}{Clear a radio button}\label{api:RMP_Radiobtn_Clr}
+    \apisig{void RMP\_Radiobtn\_Clr(rmp\_cnt\_t Coord\_X, rmp\_cnt\_t Coord\_Y,
+        rmp\_cnt\_t Length)}
+    This function clears an already drawn radio button.
+    \begin{apiparams}
+        \apiparam{rmp\_cnt\_t Coord\_X}{X coordinate of the radio button's top-left corner.}
+        \apiparam{rmp\_cnt\_t Coord\_Y}{Y coordinate of the radio button's top-left corner.}
+        \apiparam{rmp\_cnt\_t Length}{Length of the radio button.\footnote{This is also the width.}}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{None}{No return value.}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{Draw a progress bar}
+\begin{apidesc}{RMP\_Progbar}{Draw a progress bar}\label{api:RMP_Progbar}
+    \apisig{void RMP\_Progbar(rmp\_cnt\_t Coord\_X, rmp\_cnt\_t Coord\_Y,
+        rmp\_cnt\_t Length, rmp\_cnt\_t Width,\\ rmp\_cnt\_t Style,
+        rmp\_cnt\_t Prog, rmp\_ptr\_t Fore, rmp\_ptr\_t Back)}
+    This function draws a progress bar.
+    \begin{apiparams}
+        \apiparam{rmp\_cnt\_t Coord\_X}{X coordinate of the progress bar's top-left corner.}
+        \apiparam{rmp\_cnt\_t Coord\_Y}{Y coordinate of the progress bar's top-left corner.}
+        \apiparam{rmp\_cnt\_t Length}{Length of the progress bar.}
+        \apiparam{rmp\_cnt\_t Width}{Width of the progress bar.}
+        \apiparam{rmp\_cnt\_t Style}{Style of the progress bar, one of \texttt{RMP\_PBAR\_L2R} (grows left to right), \texttt{RMP\_PBAR\_D2U} (grows down to up), \texttt{RMP\_PBAR\_R2L} (grows right to left), or \texttt{RMP\_PBAR\_U2D} (grows up to down).}
+        \apiparam{rmp\_cnt\_t Prog}{Progress of the progress bar; must be between 0 and 100.}
+        \apiparam{rmp\_ptr\_t Fore}{Foreground colour of the progress bar, that is, the colour of the progress.}
+        \apiparam{rmp\_ptr\_t Back}{Background colour of the progress bar, that is, the colour of the empty region.}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{None}{No return value.}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{Change the progress of a progress bar}
+\begin{apidesc}{RMP\_Progbar\_Set}{Change progress of a progress bar}\label{api:RMP_Progbar_Set}
+    \apisig{void RMP\_Progbar\_Set(rmp\_cnt\_t Coord\_X, rmp\_cnt\_t Coord\_Y,
+        rmp\_cnt\_t Length, rmp\_cnt\_t Width,\\ rmp\_cnt\_t Style,
+        rmp\_cnt\_t Old\_Prog, rmp\_cnt\_t New\_Prog,\\
+        rmp\_ptr\_t Fore, rmp\_ptr\_t Back)}
+    This function changes the progress of an already drawn progress bar.
+    \begin{apiparams}
+        \apiparam{rmp\_cnt\_t Coord\_X}{X coordinate of the progress bar's top-left corner.}
+        \apiparam{rmp\_cnt\_t Coord\_Y}{Y coordinate of the progress bar's top-left corner.}
+        \apiparam{rmp\_cnt\_t Length}{Length of the progress bar.}
+        \apiparam{rmp\_cnt\_t Width}{Width of the progress bar.}
+        \apiparam{rmp\_cnt\_t Style}{Style of the progress bar; one of \texttt{RMP\_PBAR\_L2R}, \texttt{RMP\_PBAR\_D2U}, \texttt{RMP\_PBAR\_R2L}, or \texttt{RMP\_PBAR\_U2D}.}
+        \apiparam{rmp\_cnt\_t Old\_Prog}{Old progress; must be between 0 and 100.}
+        \apiparam{rmp\_cnt\_t New\_Prog}{New progress; must be between 0 and 100.}
+        \apiparam{rmp\_ptr\_t Fore}{Foreground colour of the progress bar.}
+        \apiparam{rmp\_ptr\_t Back}{Background colour of the progress bar.}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{None}{No return value.}
+    \end{apiret}
+\end{apidesc}
+
+\section{GUI design guidelines}
+
+Because this library is extremely limited compared with a full graphics library, some basic principles and design techniques must be followed when designing an interface.
+These techniques are described in the following sections.
+
+\subsection{Planar design}
+
+Because this graphics library does not support a window manager, a planar design is preferred.
+Planar design is also the current design trend.
+For its concepts and details, refer to relevant websites and literature, such as Apple's UI design guidelines.
+
+\subsection{Use a simple background and monochrome bitmaps}
+
+Because this GUI does not actually support layer stacking or semi-transparent blending, its anti-aliased bitmap function requires a fixed background colour for the calculation.
+If a non-monochrome background is used, the function cannot be used.
+In fact, most interfaces do not need a complex background image; a dark grey background is often sufficient.
+
+At the same time, try to avoid graphics other than monochrome bitmaps.
+Greyscale and colour bitmaps consume a great deal of flash space.
+Monochrome bitmaps can save about 90\% or more storage compared with grey or colour bitmaps.
+
+\subsection{Font-library design and implementation}
+
+Two methods can be used to implement a font library with this GUI.
+The first is to make the characters used into monochrome bitmaps and store them in the microcontroller's ROM; the other is to use an external font chip.
+For interfaces that require high visual quality but not a full character set, the first method is recommended; for those that require a full character set, the second method must be used.
+
+\subsection{Design and implementation of complex controls}
+
+Because this GUI provides only the most basic controls, and these basic controls often cannot meet the requirements of interfaces with higher visual standards, custom controls must be designed.
+To display a custom control, use the bitmap drawing functions provided by this GUI to draw it, and when a change in the control state is detected, update the control to a new bitmap.
+
+\section{Optimised implementation of low-level drawing}
+
+Unlike the frame buffers common on microprocessors, the entire memory of a microcontroller may not even be enough for one frame, so the accompanying screen often has its own display memory.
+Such a screen is also called an MCU screen.
+Every change of display content must transfer data to the screen through an interface, and these interfaces may even be low-performance serial interfaces such as SPI or IIC.
+In the worst case, these serial interfaces are even emulated with GPIO, making performance worse.
+Therefore, minimising the number of interface operations for the same drawing task is of the utmost importance.
+If the whole screen is updated every time, and the XY coordinates are set again for every point, drawing performance is greatly reduced.
+
+The following methods can significantly improve the drawing speed of a microcontroller.
+
+\subsection{Region control}
+
+In common graphics frameworks, every redraw involves the whole screen or window, but the pixels that actually change are often only a very small part of the screen or window.
+It is therefore sufficient to update only the part that changed, without redrawing all elements every time.
+This method can be combined with the methods below to eliminate unnecessary screen updates as far as possible.
+
+\subsection{Macro inlining}
+
+\texttt{RMP\_POINT} is called very frequently, so if it can be declared as a
+simple operation, it should not be declared as a function.
+This saves function call overhead and allows the compiler to perform deep optimisation.
+This method can be combined with the methods below to eliminate function call overhead as far as possible.
+
+\subsection{Collinear auto-increment}
+
+The RMP graphics interface uses only one low-level macro, \texttt{RMP\_POINT}, but this does not mean that every drawing operation must be done point by point.
+Common drawing functions such as lines and rectangles tend to draw continuously in one direction, so the screen's drawing-coordinate auto-increment direction can be set before drawing.
+If the drawn points are all on the same row or column, and the coordinates passed to \texttt{RMP\_POINT} are detected to be an extension of the previous coordinates in the auto-increment direction, there is no need to set the drawing coordinates again; only the drawing data needs to be transferred continuously.
+
+\subsection{Write combining}
+
+Some monochrome displays always write N consecutive pixels at a time and cannot write a single point without reading the screen.
+In this case, several \texttt{RMP\_POINT} calls must be combined into one write: if consecutive \texttt{RMP\_POINT} calls do not switch the drawing row, wait until all N pixels on the same line have been written before writing to the screen.
+If the last transfer has fewer than N pixels, either (1) read back the colours of the remaining pixels from the screen to complete the group, or (2) fill the remaining pixels with the background colour when the background colour is known.
+
+\subsection{Block buffering}
+
+Although a microcontroller's memory cannot hold a complete frame buffer, it may be enough for part of the screen.
+A 320$\times$240 16-bit true-colour screen needs 153\,kB of memory for a complete buffer, but if only one quarter is buffered, 38.4\,kB is enough.
+We can therefore draw the content for different blocks of the screen separately and upload each block to the screen at once.
+When drawing each block, the whole screen must be simulated, but only the part falling inside the block updates the block buffer.
+Because the microcontroller's computing speed is much higher than the I/O interface speed, simulating several full-screen draws may be worthwhile.
+For a screen of the same area, the more blocks there are, the less memory is used, but the more simulated full-screen redraws are needed; the block size must therefore be chosen as a compromise.
+
+Some screens also support setting an update region, so when writing a complete block the coordinate setup can be omitted entirely, further improving screen write speed.
+
+\subsection{Palette method}
+
+For 16-bit or 32-bit true-colour screens, each pixel needs two or four bytes to express its colour.
+But the screen does not have to display every colour at all times; often the number of colours on one screen is small.
+In this case, the palette method can compress the buffer space.
+If only 16 colours are displayed on one screen, four bits per pixel are enough to express a colour code, where each colour code corresponds to a complete 16-bit or 32-bit colour.
+When writing data to the screen, look up the real colour data by colour code and then write that colour data to the screen.
+The lookup table can be changed at any time during program execution to use a different set of 16 colours.
+
+This method can be combined with block buffering to reduce memory further.
+Suppose a TFT colour screen has a resolution of 320$\times$240, one quarter is buffered at a time, and 16 colours are displayed; only 9.6\,kB of memory is needed for efficient screen writing, and many 16-bit microcontrollers have memory of this order.
+Suppose an OLED mini colour screen has a resolution of 128$\times$64, one quarter is buffered at a time, and 16 colours are displayed; only 1\,kB of memory is needed for efficient screen writing, covering almost all 8-bit microcontrollers.
+
+\subsection{DMA transfer}
+
+When the interface supports DMA transfer, DMA can greatly reduce the CPU load.
+When DMA is available, it is recommended to always use DMA, especially for serial interfaces that generate frequent interrupts.
+
+This method can be combined cleverly with block buffering; two block buffers are then needed.
+While the CPU performs a simulated full-screen drawing in one buffer, DMA can be started on the other buffer, so that DMA transfer and buffer updates proceed together.
+Because CPU drawing is generally faster than DMA transfer,\footnote{Serial interfaces often have low transfer rates.} the buffer size can be chosen so that DMA transfer finishes slightly faster than the CPU's full-screen simulation.
+In this way, the microcontroller updates the screen at full speed as seen from the outside, and the CPU's full-screen drawing time is completely hidden, achieving the theoretical maximum performance.
+
+However, this method cannot be combined with the palette method unless the DMA hardware can perform the palette lookup automatically.
+
+\section{Chapter bibliography}
+
+None.

@@ -106,6 +106,38 @@ Project/EWARM-*/settings/
 *.pbw
 *.browse
 
+# LaTeX build artefacts
+Document/Public/Manual/Build/
+Document/Public/Manual_CN/Build/
+*.aux
+*.bcf
+*.bbl
+*.blg
+*.brf
+*.fls
+*.fdb_latexmk
+*.idx
+*.ind
+*.ilg
+*.lof
+*.lot
+*.nav
+*.snm
+*.toc
+*.vrb
+*.xdv
+*.dvi
+*.ps
+*.spl
+*.run.xml
+*.synctex.gz
+*.synctex(busy)
+*.loa
+*.maf
+*.mtc
+*.mtc0
+*.ptc
+
 #AI agent workspace (tools and scratch data, never commit)
 Document/Private/Agent_Workspace/
 

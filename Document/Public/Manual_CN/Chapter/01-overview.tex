@@ -1,0 +1,375 @@
+\chapter{概述}\label{ch:overview}
+
+\section{简介}\label{sec:introduction}
+
+在小型物联网系统中，16到32位的单片机的使用越发普遍。同时，对于开发周期和可靠性的要求也在增长。因此，有必要开发轻量级的小型系统以实现简单高效的物联网应用。同时，在现代系统中，轻量级虚拟化功能的重要性逐渐增加，因此我们也需要一个轻型操作系统来作为其他操作系统的客户机使用。此外，对于此类操作系统，由于缺乏内存保护单元的介入，因此需要进行形式化验证来保证其可靠性。
+
+实时操作系统是一种简单高效易用的全抢占式实时操作系统（Real-Time
+Operating
+System，RTOS）。它提供了典型RTOS内核所提供的所有特性：全抢占静态优先级时间片轮转调度器，简单的存储管理功能，简明的通信机制以及针对硬件的特殊优化能力。操作系统被设计为可以在仅具2kB
+ROM、1kB RAM的微控制器上高效地运行。
+
+本手册从用户的角度提供了的内核API的描述。在本手册中，我们先简要回顾关于小型实时操作系统的若干概念，然后分章节介绍的特性和API。
+
+\subsection{\texorpdfstring{\textbf{设计目的和指标}}{设计目的和指标}}\label{subsec:design-goals-and-specifications}
+
+操作系统的设计目的是创造一个简单易用的开源RTOS内核。这个内核要具有同级别中最好的实时性和可靠性，并且在平均执行效率上和主流内核相近。
+
+\subsection{\texorpdfstring{\textbf{软件版权与许可证}}{软件版权与许可证}}\label{subsec:copyright-and-license}
+
+综合考虑到不同应用对开源系统的不同要求，内核本身所采用的许可证为Unlicensed，但是对一些特殊情况\footnote{比如安防器材和医疗器材等}使用特殊的规定。这些特殊规定是就事论事的，对于每一种可能情况的具体条款都会有不同。
+
+\subsection{易混术语表}\label{subsec:terms-and-definitions}
+
+在本手册中，容易混淆的基本术语规定如下：
+
+\subsubsection{操作系统}\label{subsubsec:operating-system}
+
+指运行在设备上的执行最底层处理器、内存等硬件资源管理的基本软件。
+
+\subsubsection{线程}\label{subsubsec:thread}
+
+线程指操作系统中拥有一个独立执行栈和一个独立指令流的可被调度的实体。一个进程内部可以拥有多个线程，它们共享一个进程地址空间。
+
+\subsubsection{静态分配}\label{subsubsec:static-allocation}
+
+指在系统编译时就决定好资源分配方式的情形。
+
+\subsubsection{动态分配}\label{subsubsec:dynamic-allocation}
+
+指在系统运行过程中，可以更改资源分配的情形。
+
+\subsubsection{软实时}\label{subsubsec:soft-real-time}
+
+指绝大多数情况下操作应该在时限之内完成，但也允许小部分操作偶尔在时限之外完成的实时性保证。
+
+\subsubsection{硬实时}\label{subsubsec:hard-real-time}
+
+指所有操作都必须在时限之内完成的实时性保证。
+
+\subsubsection{常数实时}\label{subsubsec:constant-real-time}
+
+指所有操作对用户输入和系统配置都是O(1)的，而且执行都能在某个有实际意义的常数时限之内完成的实时性保证。这是所有实时保证中最强的一种。
+
+\subsubsection{对某值常数实时}\label{subsubsec:value-constant-real-time}
+
+指所有操作和响应在某值不变的时候都是O(1)的，而且执行都能在某个有实际意义的常数时限之内完成的实时性保证。
+
+\subsection{主要参考系统}\label{subsec:major-reference-systems}
+
+调度器与API部分参考了FreeRTOS（RT Engineering Ltd./Amazon）。
+
+形式化证明参考了seL4（2016 Data61/CSIRO）。
+
+其他各章的参考文献和参考资料在该章列出。
+
+\section{前言}\label{sec:foreword}
+
+操作系统是一种运行在设备上的执行最底层处理器、内存等硬件资源管理的基本软件。对于实时操作系统而言，系统的每个操作都必须是正确的和及时的，其执行时间必须是可预测的。总的而言，有两类实时操作系统：第一类是软实时系统，第二类是硬实时系统。对于软实时系统，只要在大多数时间之内，程序的响应在时限之内即可；对于硬实时系统，系统的响应在任何时候都必须在时限之内。实际上，很少有实时应用或操作系统完全是软实时的或者完全是硬实时的；他们往往是软实时部分和硬实时部分的有机结合。一个最常见的例子是LCD显示屏人机界面部分是软实时的，而电机控制部分是硬实时的。
+
+系统是一种基本实时系统。此类系统是初步展现了实时系统的基本特性的最小系统。它们一般运行在高档8/16位机以及低档32位机上面，需要一个系统定时器。此类系统没有用户态和内核态的区别，但是可以将MMU和MPU配置为保护某段内存。此类系统需要简单的架构相关汇编代码来进行上下文堆栈切换。若要使得其在多种架构上可运行，修改这段汇编代码是必须的。移植往往还涉及系统定时器，堆栈切换，中断管理和协处理器管理。此类系统可以使用定制的链接器脚本也可以不使用，通常而言在涉及到内存保护的时候必须使用定制的链接器脚本。
+
+在此类系统中任务表现为线程。任务函数有可能是可重入的。每个任务会使用单独的执行栈。任务代码和内核代码可以编译在一起也可以不编译在一起。任务调用系统函数往往使用直接的普通函数调用，没有经由软中断进行系统调用的概念。
+
+此类系统具备优先级的概念，并且一般实现了不同优先级之间的抢占和相同优先级之间的时间片轮转调度。此类系统具备初级的内存管理方案，并且这种内存管理方案一般基于SLAB和伙伴系统。
+
+中断对操作系统可以是完全透明的，此时操作系统并不需要知道中断是否已经到来；如果需要在中断中进行上下文切换，那么就必须将堆栈切换汇编插入该中断函数中，此时需要用汇编代码编写中断的进入和退出。
+
+典型的此类操作系统包括RMProkaron、RT-Thread、FreeRTOS、uC/OS、Salvo和ChibiOS。对于此类实时系统，要进行完全的形式化验证通常是容易的，因为内核代码的数量非常少。传统的软件工程最多只能系统性地对软件的功能进行测试，最多能说明软件存在缺陷的可能性很小；而形式化验证可以根据某种规范或者逻辑推演规则，证明系统符合一定的属性，也即相当于证明了在给定条件下系统不可能有缺陷。
+
+\section{实时操作系统及其组件的性能指标}\label{sec:performance-and-specifications-of-rtoses}
+
+当前市场上有几百种不同种类的RTOS存在，而爱好者和个人开发的内核更是数不胜数。这些系统的性能往往是良莠不齐的。我们需要一些指标来衡量这些RTOS的性能。下面所列的指标都只能在处理器架构相同，编译器、编译选项相同的情况下进行直接比较。如果采用了不同的架构、编译器或编译选项，得到的数据没有直接意义，只具有参考性而不具有可比性。一个推荐的方法是使用工业实际标准的ARM或MIPS系列处理器配合GCC -O2选项进行评估。此外，也可以使用Chronos模拟器来进行评估。在评估时还要注意，系统的负载水平可能会对这些值有影响，因此只有在系统的负载水平一致的情况下，这些值才能够被比较。
+
+\subsection{内核大小}\label{subsec:kernel-size}
+
+内核的尺寸是衡量RTOS的一个重要指标。由于RTOS通常被部署在内存极度受限的设备中，因此内核的小体积是非常关键的。内核的尺寸主要从两个方面衡量，一是只读段大小，二是数据段大小。只读段包括了内核的代码段和只读数据段，数据段包括了内核的可读写数据段大小。在基于Flash的微控制器系统中，只读段会消耗Flash，而数据段则会消耗SRAM\hyperref[sec:chapter-bibliography-2]{{[}1{]}}。
+
+由于RTOS是高度可配置的，其内核大小往往不是固定的，而是和所选用的配置紧密相关的。因此，衡量此项性能，应该查看衡量最小内核配置、常见内核配置和最大内核配置下的内核大小\hyperref[sec:chapter-bibliography-2]{{[}1{]}}。
+
+内核大小数据的获得非常简单，只要用编译器编译该内核，然后使用专门的二进制查看器查看目标文件各段的大小即可。
+
+\subsection{执行时间、最坏执行时间及其抖动}\label{subsec:execution-time-worst-case-execution-time-and-jitter}
+
+执行时间指RTOS系统调用的用时大小。最坏执行时间指执行时间在最不利条件下能达到的最大长度。RTOS的最坏执行时间通常会在如下情况下达到：执行最长的系统调用，并在此过程中产生了大量的缓存未命中。RTOS在执行系统调用时一般都会关中断；最坏执行时间通常是系统关中断最长的时间，因此对系统的实时性的影响是非常巨大的。
+
+最坏执行时间可以分成两类：第一类是内核系统调用的最坏执行时间，另一类是线程间同步的最坏执行时间。
+
+要获得第一类最坏执行时间，可以在调用某个系统调用之前，计时器记下此时的时间戳T\textsubscript{s}，然后在系统调用结束之后，再调用计时器记下此时的时间戳T\textsubscript{e}。然后，连续调用两次计时器，记下两个时间戳T\textsubscript{ts}和T\textsubscript{te}，得到调用计时器的额外代价为T\textsubscript{te}-T\textsubscript{ts}。此时，执行时间就是T\textsubscript{e}-T\textsubscript{s}-(T\textsubscript{te}-T\textsubscript{ts})。最坏执行时间就是所有的系统调用测试之中执行时间最大的那一个。
+
+要获得第二类最坏执行时间，可以在通信机制的发送端调用一次计时器，记下此时的时间戳T\textsubscript{s}，在通信机制的接收端调用一次计时器，记下此时的时间戳T\textsubscript{e}。对于调用计时器的代价测量是类似第一类最坏执行时间的。最终得到的T\textsubscript{e}-T\textsubscript{s}-(T\textsubscript{te}-T\textsubscript{ts})就是执行时间。最坏执行时间，就是所有的通信测试之中，执行时间最大的那一个。
+
+执行时间的抖动也是非常重要的。在多次测量同一个系统的执行、通信时间时，我们往往会得到一个分布。这个分布的平均值是平均执行时间，简称执行时间；其标准差\footnote{有时我们也使用极差}被称为执行时间抖动。
+
+对于一个RTOS，我们通常认为执行时间、最坏执行时间和抖动都是越小越好。执行时间又可以详细分成以下几类\hyperref[sec:chapter-bibliography-2]{{[}1{]}}：
+
+\subsubsection{线程切换时间}\label{subsubsec:thread-switch-time}
+
+线程切换时间指从一个线程切换到另外一个线程所消耗的时间。我们用下图的方法进行测量。在测量时，除了使用T\textsubscript{e}-T\textsubscript{s}的方法，也可以使用两次T\textsubscript{s}之间的差值除以2。线程切换包括两种情况，一种情况是同优先级线程之间互相切换，另外一种是由低优先级线程唤醒高优先级线程\hyperref[sec:chapter-bibliography-2]{{[}2{]}}。
+
+在第一种情况下，我们假设图中的两个线程是相同优先级的，而且在测量开始时，我们正执行的是刚刚由线程B切换过来的线程A。
+
+\captionof{table}{线程切换的第一种情况}\label{tab:thread-switch-first-case}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.4999}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5001}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+线程A
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+线程B
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+永久循环
+
+\{
+
+\textgreater{} 计时T\textsubscript{s}；
+
+切换到线程B；
+
+\} & 永久循环
+
+\{
+
+计时T\textsubscript{e}；
+
+\textgreater{} 切换到线程A；
+
+\} \\
+\end{longtable}
+}
+
+在第二种情况下，我们假设图中的线程B优先级较高，而且在测量开始时，我们正执行的是刚刚由线程B切换过来的线程A。
+
+\captionof{table}{线程切换的第二种情况}\label{tab:thread-switch-second-case}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+线程A
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+线程B
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+永久循环
+
+\{
+
+\textgreater{} 计时T\textsubscript{s}；
+
+唤醒B；
+
+\} & 永久循环
+
+\{
+
+计时T\textsubscript{e}；
+
+\textgreater{} 睡眠；
+
+\} \\
+\end{longtable}
+}
+
+\subsubsection{异步通信时间}\label{subsubsec:asynchronous-communication-time}
+
+异步通信时间指不同线程之间发送和接收异步信号所用的时间。我们用下图的方法进行测量。我们假设线程B已经在接收端阻塞，线程A进行发送，而且线程B的优先级比线程A高\hyperref[sec:chapter-bibliography-2]{{[}2{]}}。
+
+\captionof{table}{线程间异步通信}\label{tab:asynchronous-communication-between-threads}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+线程A
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+线程B
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+永久循环
+
+\{
+
+\textgreater{} 计时T；
+
+向B线程发送；
+
+\} & 永久循环
+
+\{
+
+计时T\textsubscript{e}；
+
+\textgreater{} 从自己的邮箱接收；
+
+\} \\
+\end{longtable}
+}
+
+\subsection{中断响应时间、最坏中断响应时间及其抖动}\label{subsec:interrupt-response-time-worst-case-response-time-and-jitter}
+
+中断响应时间指从中断发生到RTOS调用中断对应的处理线程之间的时间。最坏中断响应时间指中断响应时间在最不利条件下能达到的最大长度。最坏中断响应时间通常会在如下情况下达到：在中断处理过程中发生了大量的缓存未命中和快表（Trans
+Look-aside
+Buffer，TLB）未命中。中断响应时间是RTOS最重要的指标，甚至可以说，RTOS的一切设计都是围绕着该指标进行的。该指标是RTOS对外界刺激响应时间的最直接的标准。
+
+要获得最坏中断响应时间，可以在中断向量的第一行汇编代码\footnote{不能等到函数中再去调用，因为寄存器和堆栈维护也是中断响应时间的一部分}T\textsubscript{e}-T\textsubscript{s}-(T\textsubscript{te}-T\textsubscript{ts})就是中断响应时间。最坏中断响应时间，就是所有的中断响应测试之中，响应时间最大的那一个。
+
+中断响应时间的抖动也是非常重要的。在多次测量同一个系统的中断响应时间时，我们往往会得到一个分布。这个分布的平均值是平均中断响应时间，其标准差\footnote{有时我们也使用极差}被称为中断响应时间抖动。
+
+对于一个RTOS，我们通常认为中断响应时间、最坏中断响应时间和抖动都是越小越好。中断响应时间的测量通常如下所示\hyperref[sec:chapter-bibliography-2]{{[}1{]}{[}3{]}}：
+
+\captionof{table}{中断响应时间}\label{tab:interrupt-response-time}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+内核
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+线程A
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+硬件中断向量
+
+\{
+
+\textgreater{} 计时T\textsubscript{s}；
+
+从内核向异步端点P发送信号；
+
+\} & 永久循环
+
+\{
+
+计时T\textsubscript{e}；
+
+\textgreater{} 从异步端点P接收信号；
+
+\} \\
+\end{longtable}
+}
+
+\subsection{实际中断响应时间、最坏实际中断响应时间及其抖动}\label{subsec:realistic-interrupt-response-time-worst-case-and-jitter}
+
+实际中断响应时间指软硬件系统从中断外部信号输入到发出IO操作响应之间的时间。最坏实际中断响应时间指实际中断响应时间在最不利条件下能达到的最大长度。影响实际最坏中断响应时间的因素中，除了那些能影响最坏中断响应时间的因素之外，还有对应的CPU及IO硬件本身的因素。
+
+要获得实际中断响应时间，我们需要一些外部硬件来支持该种测量。比如，我们需要测量某系统的I/O的实际中断响应时间，我们可以将一个FPGA的管脚连接到某CPU或主板的输入管脚，然后将另一个管脚连接到某CPU或者主板上的输出管脚。首先，FPGA向输入管脚发出一个信号，此时FPGA内部的高精度计时器开始工作；在FPGA接收到输出管脚上的信号的时候，FPGA内部的高精度计时器停止工作。最终得到的FPGA内部计时器的时间就是系统的实际中断响应时间。最坏实际中断响应时间，就是所有测试之中，响应时间最大的那一个。
+
+对于一个软硬件系统，我们通常认为实际中断响应时间、最坏实际中断响应时间和抖动都是越小越好。值得注意的是，实际最坏中断响应时间一般会大约等于最坏执行时间加上最坏中断响应时间加上系统CPU/IO的固有延迟。比如，某系统在IO输入来临时刚刚开始执行某系统调用，此时硬件中断向量无法立刻得到执行，必须等到该系统调用执行完毕才可以。等到该系统调用执行完毕时，实际的硬件中断向量才开始执行，切换到处理线程进行处理并产生输出。实际中断响应时间的测量通常如下所示\hyperref[sec:chapter-bibliography-2]{{[}1{]}}：
+
+\captionof{table}{实际中断响应时间}\label{tab:realistic-interrupt-response-time}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+FPGA（或者示波器）
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+被测系统
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+永久循环
+
+\{
+
+\textgreater{} 发出信号并启动计时器；
+
+接收信号；
+
+停止计时器；
+
+\} & 永久循环
+
+\{
+
+从I/O上接收信号；
+
+最简化的内部处理流程；
+
+从I/O上输出信号；
+
+\} \\
+\end{longtable}
+}
+
+\section{RMP系统调用格式}\label{sec:rmp-system-call-format}
+
+系统调用是使用系统提供的功能的唯一方法。对于这样的库结构操作系统而言，系统调用和通常的函数调用是一样的。下面是中所有的系统调用接口的列表。
+
+\captionof{table}{RMP系统调用一览}\label{tab:rmp-system-calls}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3668}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1076}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.5256}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+系统调用名称
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+序号
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+意义
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+RMP\_Thd\_Yield & 0 & 出让当前线程的处理器 \\
+RMP\_Thd\_Crt & 1 & 创建一个线程 \\
+RMP\_Thd\_Del & 2 & 删除一个线程 \\
+RMP\_Thd\_Set & 3 & 设置一个线程的优先级和时间片 \\
+RMP\_Thd\_Suspend & 4 & 悬起一个线程 \\
+RMP\_Thd\_Resume & 5 & 解除一个线程的悬起 \\
+RMP\_Thd\_Delay & 6 & 延时一段时间 \\
+RMP\_Thd\_Cancel & 7 & 解除一个线程的延时 \\
+RMP\_Thd\_Snd & 8 & 向某线程的邮箱发送数值 \\
+RMP\_Thd\_Snd\_ISR & 9 & 从中断向某线程的邮箱发送数值 \\
+RMP\_Thd\_Rcv & 10 & 接收本线程邮箱值 \\
+RMP\_Sem\_Crt & 11 & 创建一个计数信号量 \\
+RMP\_Sem\_Del & 12 & 删除一个计数信号量 \\
+RMP\_Sem\_Pend & 13 & 试图获取一个信号量 \\
+RMP\_Sem\_Abort & 14 & 解除某线程对信号量的获取 \\
+RMP\_Sem\_Post & 15 & 释放信号到某信号量 \\
+RMP\_Sem\_Post\_ISR & 16 & 从中断释放信号到某信号量 \\
+\end{longtable}
+}
+
+\section{本章参考文献}\label{sec:chapter-bibliography}
+
+\protect\phantomsection\label{sec:chapter-bibliography-2}{[}1{]}
+T. N. B. Anh and S.-L. Tan, "Real-time operating systems for small
+microcontrollers," IEEE micro, vol. 29, 2009.
+
+{[}2{]} R. P. Kar, "Implementing the Rhealstone real-time benchmark,"
+Dr. Dobb\textquotesingle s Journal, vol. 15, pp. 46-55, 1990.
+
+{[}3{]} T. J. Boger, Rhealstone benchmarking of FreeRTOS and the Xilinx
+Zynq extensible processing platform: Temple University, 2013.

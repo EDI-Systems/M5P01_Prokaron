@@ -1,0 +1,85 @@
+\begin{titlepage}
+    \thispagestyle{empty}
+    \centering
+
+    \vspace*{1.6cm}
+
+    \includegraphics[width=2.9cm]{Figure/logo.png}
+
+    \vspace{0.55cm}
+    {\sffamily\small\color{rmpmid}\MakeUppercase{Prokaron}\par}
+
+    \vfill
+
+    {\sffamily\fontsize{22}{27}\selectfont\color{rmppurple}
+        M5P01 (Prokaron) R6T1\\[3pt]
+        Light-Weight Real-Time\\[2pt]
+        Operating System\\[2pt]
+        (Sixth Edition, Type One)\par}
+
+    \vspace{1.1em} {\sffamily\fontsize{21}{25}\selectfont\color{rmpgray}Technical Reference Manual\par}
+
+    \vspace{1.4em} {\rmfamily\large\color{rmpmid} Version R6T1\quad$\cdot$\quad June 2024\par}
+
+    \vfill
+
+    {\sffamily\small\color{rmpmid} EDI-Systems\quad$\cdot$\quad \texttt{www.rtospro.com}\par} \vspace*{1.4cm}
+
+\end{titlepage}
+
+\chapter*{System Features} \addcontentsline{toc}{chapter}{System Features} \markboth{System Features}{}
+
+\begin{center} {\sffamily\large\color{rmpgray}M5P01 (Prokaron) R6T1}\\[2pt] {\sffamily\large\bfseries\color{rmpgray}Light-Weight Real-Time Operating System\\[2pt](Sixth Edition, Type One)}\\[4pt] {\rmfamily\color{rmpmid}Technical Reference Manual}\\[12pt] \end{center}
+
+\begin{description}[leftmargin=0pt,labelindent=0pt,style=nextline,itemsep=8pt]
+    \item[\textsf{\color{rmppurple}High usability}]
+    Light-weight and easy to use as first-class requirements.
+    Easy to configure the development environment and the project paths.
+    Provides the most common inter-thread communication interfaces.
+
+    \item[\textsf{\color{rmppurple}Hard real-time}]
+    A fully preemptive hard-real-time kernel.
+    Round-robin scheduling between threads of the same priority.
+    All key operations have O(1) time complexity.
+
+    \item[\textsf{\color{rmppurple}High portability}]
+    The least assembly language among all RTOSes.
+    Written to ANSI C89 and MISRA C requirements for compiler compatibility.
+    Extremely low resource requirements for a minimal system.
+    Can run as a guest operating system on another operating system.
+
+    \item[\textsf{\color{rmppurple}High efficiency}]
+    Performance-critical code is carefully optimised.
+    Extremely short thread switch time and interrupt response time.
+
+    \item[\textsf{\color{rmppurple}High reliability}]
+    Provides parameter assertion and pervasive interface-parameter checking.
+    Formally verified to the equivalent of IEC 61508 SIL 4.\footnote{This work is not complete. The current software is equivalent to a SIL 2 pre-certification level.}
+\end{description}
+
+% Revision history is deferred so it can stay after the lists in rmp-manual.tex.
+\newcommand{\RMPRevisionHistory}{%
+    \chapter*{Revision History}
+    \addcontentsline{toc}{chapter}{Revision History}
+    \markboth{Revision History}{}
+
+    \begin{table}[htbp]
+        \centering
+        \small
+        \begin{tabularx}{\textwidth}{@{}>{\sffamily\bfseries\color{rmppurple}}m{1.8cm} >{\raggedright\arraybackslash}m{2.6cm} X@{}}
+            \toprule
+            Revision & Date & Description\\
+            \midrule
+            R1T1 & 15 February 2018 & Initial release.\\
+            R2T1 & 12 March 2018 & Added the porting notes and the appendix.\\
+            R4T3 & 31 July 2018 & Corrected errors in the manual.\\
+            R4T3 & 1 September 2018 & Updated the manual to the new version.\\
+            R4T4 & 10 October 2018 & Removed the 128\,MB limit of the memory management unit; used a better rounded-rectangle drawing algorithm.\\
+            R4T5 & 25 November 2018 & Removed the limit on the number of priorities; allowed more aggressive memory-usage optimisations.\\
+            R5T1 & 1 March 2020 & Added extra thread-communication interfaces beyond the basic ones.\\
+            R5T2 & 7 May 2023 & Added broadcast and synchronous-unlock modes to semaphores.\\
+            R6T1 & 26 June 2024 & Adjusted the placement and declarations of the hook macros and the GUI configuration-macro rules.\\
+            \bottomrule
+        \end{tabularx}
+    \end{table}
+}

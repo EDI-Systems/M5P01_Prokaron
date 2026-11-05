@@ -1,0 +1,38 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% M5P01 (RMP) Real-Time Operating System -- Chinese User Manual
+%
+% Build with XeLaTeX:
+%   latexmk -xelatex -outdir=Build rmp-manual.tex
+%
+% Seven-chapter R6T1 organisation.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[10pt,a4paper,twoside,openany]{book}
+\usepackage{rmp-style}
+
+\begin{document}
+
+\frontmatter
+\input{Chapter/00-frontmatter}
+
+\tableofcontents
+\clearpage
+\phantomsection
+\addcontentsline{toc}{chapter}{表目录}
+\listoftables
+\clearpage
+\phantomsection
+\addcontentsline{toc}{chapter}{图目录}
+\listoffigures
+\clearpage
+\RMPRevisionHistory
+
+\mainmatter
+\input{Chapter/01-overview}
+\input{Chapter/02-kernel}
+\input{Chapter/03-extensions}
+\input{Chapter/04-gui}
+\input{Chapter/05-verification}
+\input{Chapter/06-porting}
+\input{Chapter/07-appendix}
+
+\end{document}

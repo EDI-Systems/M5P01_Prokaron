@@ -26,7 +26,7 @@
 
 &ensp;&ensp;This operating system is much **leaner** than any other RTOSes, especially when compared to _FreeRTOS_ or _RT-Thread_, and understanding it should be simple enough. Yet it provides a complete set of functions that you may need during resource-constrained microcontroller development, such as **efficient memory management**, **anti-aliasing graphics**, and **various helper functions**. All these features come in a **single .C** file, and are **without any extra RAM consumption**!
 
-&ensp;&ensp;The manual of the operating system can be found **[here](/Document/Public)**.
+&ensp;&ensp;The manuals can be found here: **[English](/Document/EN_M5P01_R6T1_User_Manual.pdf)** and **[Chinese](/Document/CN_M5P01_R6T1_User_Manual.pdf)**.
 
 &ensp;&ensp;Read **[Contributing](CONTRIBUTING.md)** and **[Code of Conduct](CODE_OF_CONDUCT.md)** if you want to contribute, and **[Pull Request Template](PULL_REQUEST_TEMPLATE.md)** when you make pull requests.
 This software is an official work of EDI, and thus belongs to the **public domain**. All copyrights reserved by EDI are granted to all entities under all applicable laws to the maximum extent.
@@ -306,7 +306,7 @@ This software is an official work of EDI, and thus belongs to the **public domai
 
 ### Deployment
 
-&ensp;&ensp;&ensp;When deploying this into a production system, it is recommended that you read the manual in the **[Document](Document)** folder carefully to configure all macros correctly.
+&ensp;&ensp;&ensp;When deploying this into a production system, it is recommended that you read the **[English manual](/Document/EN_M5P01_R6T1_User_Manual.pdf)** carefully to configure all macros correctly.
 
 &ensp;&ensp;&ensp;Nowadays, with mainstream Coding Agents, porting this system to any supported architecture and toolchain takes only about 10M tokens.
 

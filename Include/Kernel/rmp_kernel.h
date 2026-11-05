@@ -869,10 +869,10 @@ __RMP_EXTERN__ void RMP_Cmdbtn(rmp_cnt_t Coord_X,
                                rmp_cnt_t Width,
                                rmp_ptr_t Status);
 
-__RMP_EXTERN__ void RMP_Lineedit_Clr(rmp_cnt_t Coord_Y,
-                                     rmp_cnt_t Width,
-                                     rmp_cnt_t Clr_X,
-                                     rmp_cnt_t Clr_Len);
+__RMP_EXTERN__ void RMP_Lineedit_Clr(rmp_cnt_t Clr_X,
+                                     rmp_cnt_t Clr_Len,
+                                     rmp_cnt_t Coord_Y,
+                                     rmp_cnt_t Width);
 __RMP_EXTERN__ void RMP_Lineedit(rmp_cnt_t Coord_X,
                                  rmp_cnt_t Coord_Y,
                                  rmp_cnt_t Length,

@@ -94,9 +94,9 @@ typedef rmp_s32_t rmp_ret_t;
 /* The maximum number of preemption priorities */
 #define RMP_PREEMPT_PRIO_NUM            (64U)
 /* The maximum number of slices allowed */
-#define RMP_SLICE_MAX                   (10000U)
+#define RMP_SLICE_MAX                   (0x0FFFFFFFU)
 /* The maximum number of semaphore counts allowed */
-#define RMP_SEM_CNT_MAX                 (10000U)
+#define RMP_SEM_CNT_MAX                 (0xFFFFFFFFU)
 /* The stack size of the init thread */
 #define RMP_INIT_STACK_SIZE             (512U)
 

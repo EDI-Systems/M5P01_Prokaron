@@ -1,0 +1,296 @@
+\chapter{Overview}\label{ch:introduction}
+
+\section{Introduction}
+
+Small Internet-of-Things systems increasingly use 16- and 32-bit microcontrollers, while the requirements on development time and reliability continue to grow.
+A lightweight system is therefore needed to build simple and efficient IoT applications.
+At the same time, lightweight virtualisation is becoming more important, so a small operating system is also useful as a guest under another operating system.
+Because such systems usually have no memory protection unit, formal verification is needed to establish their reliability.
+
+RMP is a simple, efficient, and easy-to-use fully preemptive real-time operating system (RTOS).
+It provides the features expected of a typical RTOS kernel: a fully preemptive static-priority round-robin scheduler, simple memory management, concise communication mechanisms, and hardware-specific optimisations.
+RMP is designed to run efficiently on a microcontroller with only 2\,KiB of ROM and 1\,KiB of RAM.
+
+This manual describes the RMP kernel API from the user's point of view.
+It first reviews a few concepts of small real-time operating systems, then describes the features and APIs of RMP chapter by chapter.
+
+\subsection{Design goals and specifications}
+
+The goal of RMP is to create a simple, easy-to-use, open-source RTOS kernel with the best real-time behaviour and reliability in its class, and with average execution efficiency comparable to mainstream kernels.
+
+\subsection{Copyright and license}
+
+RMP is released under \emph{The Unlicense}.
+Special cases are handled by special provisions, and the exact terms differ for each possible case.\footnote{For example, security equipment and medical equipment.}
+
+\subsection{Terms and definitions}
+
+The basic terms used in this manual are defined as follows.
+
+\subsubsection{Operating system}
+
+The basic software that runs on a device and manages the processor, memory, and other hardware resources.
+
+\subsubsection{Thread}
+
+A schedulable entity that has its own execution stack and instruction stream.
+A process may contain several threads that share the process address space.
+
+\subsubsection{Static allocation}
+
+A resource-allocation scheme in which the allocation is decided at compile time.
+
+\subsubsection{Dynamic allocation}
+
+A resource-allocation scheme in which the allocation can change while the system is running.
+
+\subsubsection{Soft real-time}
+
+A real-time guarantee under which most operations complete within their deadlines, but a small fraction may occasionally finish late.
+
+\subsubsection{Hard real-time}
+
+A real-time guarantee under which every operation must complete within its deadline.
+
+\subsubsection{Constant real-time}
+
+A real-time guarantee under which every operation is O(1) in the user input and the system configuration, and every execution completes within a practically meaningful constant deadline.
+This is the strongest form of real-time guarantee.
+
+\subsubsection{Value-constant real-time}
+
+A real-time guarantee under which every operation and response is O(1) while a particular value is unchanged, and every execution completes within a practically meaningful constant deadline.
+
+\subsection{Major reference systems}
+
+The scheduler and API are partly modelled on FreeRTOS (RT Engineering Ltd.
+/Amazon).
+The formal-proof approach is informed by seL4 (2016 Data61/CSIRO).
+The references and source material for the other chapters are listed at the end of each chapter.
+
+\section{Foreword}
+
+An operating system is the basic software that runs on a device and manages the processor, memory, and other hardware resources.
+For a real-time operating system, every operation must be correct and timely, and its execution time must be predictable.
+There are two broad classes of real-time systems: soft real-time systems, where most responses meet their deadlines, and hard real-time systems, where every response must meet its deadline.
+In practice, few real-time applications or operating systems are purely soft or purely hard; most combine both.
+A common example is an LCD human-machine interface, which is soft real-time, combined with a motor-control loop, which is hard real-time.
+
+RMP is a basic real-time system: the smallest system that exhibits the essential properties of a real-time system.
+Such systems generally run on high-end 8/16-bit machines and low-end 32-bit machines and need a system timer.
+They do not distinguish user mode from kernel mode, but an MMU or MPU can be configured to protect a region of memory.
+They need a small amount of architecture-specific assembly for context-stack switching.
+Porting to a new architecture always involves this assembly, and often also the system timer, stack switching, interrupt management, and coprocessor management.
+Such systems may use a custom linker script or may not; a custom script is usually required when memory protection is used.
+
+In such a system a task is represented by a thread.
+A task function may be reentrant.
+Each task has its own execution stack.
+Task code and kernel code may be compiled together or separately.
+A task calls a system function with an ordinary function call; there is no system-call instruction or software interrupt gate.
+
+Such systems have priorities, and generally implement preemption between different priorities and round-robin scheduling at the same priority.
+They have a basic memory-management scheme, usually based on a slab or buddy allocator.
+
+Interrupts may be completely transparent to the operating system, in which case the operating system need not know that an interrupt occurred.
+If a context switch is needed in an interrupt, the stack-switch assembly must be inserted into that interrupt, and the interrupt entry and exit must be written in assembly.
+
+Typical systems in this class include RMProkaron, RT-Thread, FreeRTOS, uC/OS, Salvo, and ChibiOS.
+Complete formal verification of such a system is usually feasible because the kernel is very small.
+Traditional software engineering can systematically test functionality and show that defects are unlikely; formal verification can prove, from a specification or a set of logical rules, that the system has certain properties, which amounts to proving that under the stated conditions the system cannot have those defects.
+
+\section{Performance and specifications of RTOSes}
+
+Hundreds of RTOSes exist, and hobbyist kernels are countless.
+Their performance varies widely.
+The metrics below are directly comparable only when the processor architecture, the compiler, and the compiler options are the same.
+With a different architecture, compiler, or option set, the numbers are indicative but not comparable.
+A recommended method is to use an industry-standard ARM or MIPS processor with GCC \texttt{-O2}, or the Chronos simulator.
+The system load can also affect the values, so they are comparable only at the same load level.
+
+\subsection{Kernel size}
+
+Kernel size is an important metric for an RTOS, because RTOSes are deployed on devices with very limited memory.
+It is measured in two parts: the read-only section, which contains code and read-only data, and the data section, which contains read-write data.
+On a flash-based microcontroller, the read-only section consumes flash and the data section consumes SRAM [1].
+
+An RTOS is highly configurable, so its size is not fixed; it depends on the selected configuration.
+The metric should therefore be reported for the smallest, a typical, and the largest configuration.
+
+Kernel size is easy to obtain: compile the kernel, then use a binary viewer to inspect the size of each section.\footnote{For example, \texttt{objdump}.}
+
+\subsection{Execution time, worst-case execution time, and jitter}
+
+Execution time is the time taken by an RTOS system call.
+Worst-case execution time (WCET) is the maximum execution time under the least favourable conditions.
+An RTOS usually reaches its WCET when it executes the longest system call and suffers many cache misses along the way.
+System calls normally disable interrupts, so the WCET is often the longest interval with interrupts disabled; its effect on real-time behaviour is therefore very large.
+
+There are two kinds of WCET: the WCET of a kernel system call and the WCET of inter-thread synchronisation.
+To measure the first, record a timestamp \(T_s\) before the call and \(T_e\) after it.
+Call the timer twice more to obtain \(T_{ts}\) and \(T_{te}\), so the timer overhead is \(T_{te}-T_{ts}\).
+The execution time is \(T_e-T_s-(T_{te}-T_{ts})\).
+The WCET is the largest such value over all system-call tests.
+
+To measure the second, record \(T_s\) at the sender and \(T_e\) at the receiver.
+The timer overhead is measured as above, and the execution time is again \(T_e-T_s-(T_{te}-T_{ts})\).
+The WCET is the largest value over all communication tests.
+
+Jitter is also important.
+Repeated measurements of the execution or communication time produce a distribution.
+Its mean is the average execution time, and its standard deviation\footnote{Sometimes the range is used instead.} is the execution-time jitter.
+
+For an RTOS, execution time, WCET, and jitter are all better when smaller.
+Execution time can be divided into the following categories.
+
+\subsubsection{Thread switch time}
+
+Thread switch time is the time to switch from one thread to another.
+It can be measured with the \(T_e-T_s\) method or, in a two-thread loop, as half the difference between two successive \(T_s\) values.
+There are two cases: a switch between threads of the same priority, and a low-priority thread waking a high-priority thread.
+
+In the first case, assume the two threads have the same priority and that thread A has just been switched in from thread B.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Thread switch, first case.}
+    \small
+    \begin{tabular}{@{}p{0.44\textwidth}p{0.44\textwidth}@{}}
+        \toprule
+        Thread A & Thread B\\
+        \midrule
+        forever \{ & forever \{ \\ \quad record \(T_s\); & \quad record \(T_e\); \\ \quad switch to thread B; & \quad switch to thread A; \\ \} & \}\\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+In the second case, thread B has the higher priority and thread A has just been switched in from B.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Thread switch, second case.}
+    \small
+    \begin{tabular}{@{}p{0.44\textwidth}p{0.44\textwidth}@{}}
+        \toprule
+        Thread A & Thread B\\
+        \midrule
+        forever \{ & forever \{ \\ \quad record \(T_s\); & \quad record \(T_e\); \\ \quad wake B; & \quad sleep; \\ \} & \}\\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\subsubsection{Asynchronous communication time}
+
+Asynchronous communication time is the time to send and receive an asynchronous signal between threads.
+Assume thread B is already blocked at the receiver, thread A sends, and B has higher priority than A.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Asynchronous communication between threads.}
+    \small
+    \begin{tabular}{@{}p{0.44\textwidth}p{0.44\textwidth}@{}}
+        \toprule
+        Thread A & Thread B\\
+        \midrule
+        forever \{ & forever \{ \\ \quad record \(T_s\); & \quad record \(T_e\); \\ \quad send to B; & \quad receive from own mailbox; \\ \} & \}\\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\subsection{Interrupt response time, worst-case response time, and jitter}
+
+Interrupt response time is the time from an interrupt request to the RTOS invoking the handler thread.
+Worst-case interrupt response time is its maximum under the least favourable conditions, typically with many cache and TLB misses during interrupt handling.
+This is the most important RTOS metric; one could say that every RTOS design decision revolves around it.
+It is the most direct measure of the RTOS's response to an external stimulus.
+
+To measure the worst case, record \(T_s\) in the first assembly instruction of the interrupt vector\footnote{It cannot wait until a C function is entered, because register and stack maintenance are also part of the interrupt response time.} and \(T_e\) at the first line of the handler thread.
+The timer overhead is measured as above, and the response time is \(T_e-T_s-(T_{te}-T_{ts})\).
+The worst case is the largest value over all interrupt tests.
+Jitter is the standard deviation\footnote{Sometimes the range is used instead.} of the distribution.
+
+Smaller response time, worst-case response time, and jitter are better.
+The measurement is usually arranged as follows.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Interrupt response time.}
+    \small
+    \begin{tabular}{@{}p{0.44\textwidth}p{0.44\textwidth}@{}}
+        \toprule
+        Kernel & Thread A\\
+        \midrule
+        hardware interrupt vector \{ & forever \{ \\ \quad record \(T_s\); & \quad record \(T_e\); \\ \quad signal endpoint P; & \quad receive from endpoint P; \\ \} & \}\\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\subsection{Realistic interrupt response time, worst case, and jitter}
+
+Realistic interrupt response time is the time from an external signal input to the corresponding I/O output.
+Its worst case includes the factors that affect the ordinary worst case plus the intrinsic latency of the CPU and I/O hardware.
+
+Measuring it requires external hardware.
+For example, connect one FPGA pin to a CPU input pin and another to a CPU output pin.
+The FPGA emits a signal and starts its high-resolution timer; when it receives the output signal, it stops the timer.
+The elapsed time is the realistic response time.
+The worst case is the largest value over all tests.
+
+For a hardware/software system, smaller realistic response time, worst case, and jitter are better.
+The realistic worst case is approximately the worst-case execution time plus the worst-case interrupt response time plus the intrinsic CPU/IO delay.
+If an I/O input arrives just as a system call begins, the hardware vector cannot run until the call finishes; the output is produced only after that.
+The measurement is arranged as follows.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Realistic interrupt response time.}
+    \small
+    \begin{tabular}{@{}p{0.44\textwidth}p{0.44\textwidth}@{}}
+        \toprule
+        FPGA or oscilloscope & System under test\\
+        \midrule
+        forever \{ & forever \{ \\ \quad emit signal and start timer; & \quad receive signal from I/O; \\ \quad receive signal; & \quad minimal internal processing; \\ \quad stop timer; & \quad output signal to I/O; \\ \} & \}\\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\section{RMP system call format}
+
+A system call is the only way to use a service provided by the system.
+In a library-structured operating system such as RMP, a system call is an ordinary function call.
+Table~\ref{tab:syscalls} lists all RMP system-call interfaces.
+
+\begin{table}[htbp]
+    \centering
+    \caption{RMP system calls.}
+    \label{tab:syscalls}
+    \small
+    \begin{tabularx}{\textwidth}{@{}>{\ttfamily}p{4.2cm}rX@{}}
+        \toprule
+        \tablehead{System call} & \tablehead{No.} & \tablehead{Meaning}\\
+        \midrule
+        RMP\_Thd\_Yield & 0 & Yield the current thread's processor.\\
+        RMP\_Thd\_Crt & 1 & Create a thread.\\
+        RMP\_Thd\_Del & 2 & Delete a thread.\\
+        RMP\_Thd\_Set & 3 & Set a thread's priority and time slice.\\
+        RMP\_Thd\_Suspend & 4 & Suspend a thread.\\
+        RMP\_Thd\_Resume & 5 & Resume a suspended thread.\\
+        RMP\_Thd\_Delay & 6 & Delay for a period.\\
+        RMP\_Thd\_Cancel & 7 & Cancel a thread's delay.\\
+        RMP\_Thd\_Snd & 8 & Send a value to a thread's mailbox.\\
+        RMP\_Thd\_Snd\_ISR & 9 & Send to a mailbox from an interrupt.\\
+        RMP\_Thd\_Rcv & 10 & Receive from the calling thread's mailbox.\\
+        RMP\_Sem\_Crt & 11 & Create a counting semaphore.\\
+        RMP\_Sem\_Del & 12 & Delete a counting semaphore.\\
+        RMP\_Sem\_Pend & 13 & Try to acquire a semaphore.\\
+        RMP\_Sem\_Abort & 14 & Abort a thread's semaphore wait.\\
+        RMP\_Sem\_Post & 15 & Post to a semaphore.\\
+        RMP\_Sem\_Post\_ISR & 16 & Post to a semaphore from an interrupt.\\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+\section{Chapter bibliography}
+
+\nocite{anh2009,kar1990,boger2013}
+\printbibliography[heading=none]

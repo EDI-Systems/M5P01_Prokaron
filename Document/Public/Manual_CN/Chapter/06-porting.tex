@@ -1,0 +1,515 @@
+\chapter{移植RMP到新架构}\label{ch:porting-rmp-to-a-new-architecture}
+
+\section{移植概述}\label{sec:porting-overview}
+
+操作系统的移植是指将一个操作系统加以修改从而使其能运行在一个新的体系架构上的工作。有时，我们也把使得能用一款新编译器编译该操作系统的工作叫做移植工作。相比较于μC/OS和RT-Thread等系统的移植，RMP的移植是非常简单的。RMP的所有代码都用相对符合MISRA C规范的ANSI/ISO C89代码写成，并包含有最小量的汇编，因此其移植工作仅仅需要几步。
+
+在移植之前，我们要先做一些准备工作，以确定移植可以进行；然后，分别针对各个部分，编写相应的移植代码即可。最后，还可以用一些测试用例来测试系统是否正确移植成功。由于的非架构相关部分代码经过了形式化验证，因此不要对非架构相关部分进行任何修改，否则会造成系统认证被破坏。
+
+有关图形界面的底层接口，请参见第\ref{ch:lightweight-graphics-interface}章
+，在此不再赘述。
+
+\section{移植前的检查工作}\label{sec:checks-before-porting}
+
+\subsection{处理器}\label{subsec:processor}
+
+要求所选择的处理器具备至少两个中断向量和一个定时器。除此之外，对处理器没有其他任何要求。不能在少于8kB闪存存储器的平台上运行，也不能在低于16位的处理器上运行。如果要在这些平台上运行操作系统，采用基于状态机的可能是一个更好的选择。如果所选择的处理器是多核的或具备MMU，那么运行基于微内核的可能是一个更好的选择。不支持硬件堆栈机制，堆栈必须是由软件实现的\footnote{也即堆栈指针可以由用户修改，堆栈实现在内存中}，而不能在处理器内部通过硬件实现\footnote{这是单片机等少数架构的典型实现方式}。
+
+\subsection{编译器}\label{subsec:compiler}
+
+RMP要求编译器是C89标准的，并能够根据一定的函数调用约定生成代码。由于RMP的代码非常标准，也不使用运行时库中的库函数，因此只要编译器符合ANSI C89标准即可。通常的GCC、CLANG/LLVM、MSVC、ARMCC、ICC、IAR、TASKING等编译器都是满足这个需求的。RMP没有使用位段、enum和结构体对齐等各编译器实现差别较大的编译器扩展，也尽量避开了C语言中的未定义操作，因此保证了最大限度的兼容性。
+
+在使用编译器时，要注意关闭低质量编译器的死代码消除功能和链接时优化功能，最好也要关闭低质量编译器的循环不变量外提优化。不要使用任何激进的编译优化选项，在一般的编译器上，推荐的优化选项是GCC -O2或相当的优化水平。
+
+\subsection{汇编器}\label{subsec:assembler}
+
+要求汇编器能够引入中的符号，并根据函数调用约定进行调用；此外，也要求汇编器产生的代码能够导出并根据函数调用约定被语言调用。这通常是非常好满足的要求。如果编译器可以内联汇编，那么不需要汇编器也是可以的。
+
+\subsection{调试器}\label{subsec:debugger}
+
+对调试器没有特别的要求。如果有调试器可用的话，当然是最好的，但是没有调试器也是可以进行移植的。在有调试器的情况下可以直接用调试器查看内核变量；在没有调试器的情况下，要先实现内核最底层的函数，实现单个字符的打印输出，然后就可以用该打印输出来输出日志了。关于该函数的实现请看下节所述。
+
+\section{RMP架构相关部分介绍}\label{sec:architecture-dependent-parts-of-rmp}
+
+的架构相关部分代码的源文件全部都放在文件夹的对应架构名称下。如ARMv7架构的文件夹名称为A7。其对应的头文件在A7，其他架构以此类推。
+
+每个架构都包含一个或多个源文件和一个或多个头文件。内核包含架构相关头文件时，总是会包含，而这是一个包含了对应架构顶层头文件的头文件。在更改的编译目标平台时，通过修改这个头文件来达成对不同目标的相应头文件的包含。比如，要针对ARMv7架构进行编译，那么该头文件就应该包含对应ARMv7的底层函数实现的全部头文件。
+
+在移植到其他架构时，可以用ARMv7架构的底层作为一套模板并在它的基础上展开新架构的移植工作。
+
+\subsection{类型定义}\label{subsec:type-definitions}
+
+对于每个架构/编译器，首先需要移植的部分就是的类型定义。对于类型定义，只需要确定处理器的字长在编译器中的表达方法，使用定义即可。需要注意的是，对于某些架构和编译器，（长整型）类型对应的是两个机器字的长度，而非一个机器字；此时应当使用类型来表达一个机器字的长度。对于另一些架构和编译器，是半个机器字的长度，是一个机器字的长度，此时应当注意用来定义一个机器字。
+
+在必要的时候，可以使用运算符编写几个小程序，来确定该编译器的机器字究竟是何种标准。
+
+为了使得底层函数的编写更加方便，推荐使用如下的几个typedef来定义经常使用到的确定位数的整型。在定义这些整型时，也需要确定编译器的char、short、int、long等究竟是多少个机器字的长度。
+
+\captionof{table}{类型定义一览}\label{tab:overview-of-typedefs}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.2332}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.7668}}@{}}
+\toprule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+类型 & 意义 \\
+rmp\_s8\_t & 一个有符号八位整型。
+
+例子： \\
+rmp\_s16\_t & 一个有符号十六位整型。
+
+例子： \\
+rmp\_s32\_t & 一个有符号三十二位整型。
+
+例子： \\
+rmp\_u8\_t & 一个无符号八位整型。
+
+例子： \\
+rmp\_u16\_t & 一个无符号十六位整型。
+
+例子： \\
+rmp\_u32\_t & 一个无符号三十二位整型。
+
+例子： \\
+\end{longtable}
+}
+
+对于而言，必须被定义的类型定义一共有如下三个：
+
+\captionof{table}{必要类型定义一览}\label{tab:overview-of-necessary-typedefs}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.1394}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.8606}}@{}}
+\toprule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+类型 & 作用 \\
+rmp\_ptr\_t &
+指针整数的类型。这个类型应该被为与处理器字长相等的无符号整数。
+
+例子： unsigned long \\
+rmp\_cnt\_t &
+计数变量的类型。这个类型应该被为最长为一个处理器字长但至少为32位的有符号整数。
+
+例子： long \\
+rmp\_ret\_t &
+函数返回值的类型。这个类型应该被为与处理器字长相等的有符号整数。
+
+例子： long \\
+\end{longtable}
+}
+
+\subsection{宏定义}\label{subsec:macro-definitions}
+
+其次，需要移植的是的宏定义。的宏定义一共有如下几个：
+
+\captionof{table}{宏定义一览}\label{tab:overview-of-macro-definitions}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.3061}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.6939}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+宏名称
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+作用
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+RMP\_EXTERN & 编译器的关键字。当使用C++编译器时，可以通过将其定义为extern "C"来防止函数名重整。
+
+例子：
+
+\#define RMP\_EXTERN extern \\
+RMP\_WORD\_ORDER &
+处理器字长\footnote{按Bit计算}对应的2的方次。比如，8位\footnote{8位处理器的指针至少是16位，因此在看来它们是16位处理器}和16位处理器对应4，32位处理器对应5，64位处理器对应6，依此类推。
+
+例子：
+
+\#define RMP\_WORD\_ORDER 5U \\
+RMP\_STACK\_TYPE &
+栈的类型。对于递增满栈，请将其定义为RMP\_STACK\_FULL\_ASCEND；对于递减满栈，请将其定义为RMP\_STACK\_FULL\_DESCEND；对于递增空栈，请将其定义为RMP\_STACK\_EMPTY\_ASCEND；对于递减空栈，请将其定义为RMP\_STACK\_EMPTY\_DESCEND。
+
+例子：
+
+\#define RMP\_STACK\_TYPE RMP\_STACK\_FULL\_DESCEND
+
+取递减满栈定义。 \\
+RMP\_STACK\_ALIGN &
+栈的对齐要求。假设该值设为X，则进入线程时的栈将保证被对齐到2\textsuperscript{X}字节。
+
+例子：
+
+\#define RMP\_STACK\_ALIGN 3U
+
+将进入线程时栈的初始位置对齐到8字节。 \\
+RMP\_STACK\_ELEM &
+栈内部的元素类型；处理器每次常规数据压栈时会压入该类型的数据。
+
+例子：
+
+\#define RMP\_STACK\_ELEM rmp\_ptr\_t
+
+栈内部的每个元素都是rmp\_ptr\_t类型。 \\
+RMP\_STACK\_STRUCT & 初始化线程栈时使用的结构体名。
+
+例子：
+
+\#define RMP\_STACK\_STRUCT struct RMP\_XXX\_Stack
+
+初始化线程栈使用的结构体是struct RMP\_XXX\_Stack。 \\
+RMP\_INIT\_STACK\_SIZE &
+初始线程堆栈大小，单位为字节。初始线程的栈是在rmp\_kernel.c中内置声明的数组，因此如果某些架构对栈的内存地址有特殊要求\footnote{如必须位于地址空间的低64k等}，则rmp\_kernel.c的数据段必须被链接到满足这些要求的位置。
+
+例子：
+
+\#define RMP\_INIT\_STACK\_SIZE 1024U \\
+RMP\_PREEMPT\_PRIO\_NUM &
+内核支持的抢占优先级的最大数量。这个数字必须大于等于3。在实践中，如果内存不是特别紧张，推荐配置为处理器字长\footnote{按Bit计算}的整数倍，但并非必须如此。通常而言，把这个值定义为处理器字长就可以了。
+
+例子：
+
+\#define RMP\_PREEMPT\_PRIO\_NUM 32U \\
+RMP\_SLICE\_MAX &
+内核允许的线程时间片或延时时间片的最大数量。这个数字不能超过2\textsuperscript{N-1}-1（也即RMP\_MASK\_INTMAX），其中N是RMP\_WORD\_ORDER。
+
+例子：
+
+\#define RMP\_SLICE\_MAX 100000U \\
+RMP\_SEM\_CNT\_MAX &
+内核允许的信号量计数的最大数量。这个数字不能超过2\textsuperscript{N-1}-1（也即RMP\_MASK\_INTMAX），其中N是RMP\_WORD\_ORDER。
+
+例子：
+
+\#define RMP\_SEM\_CNT\_MAX 1000U \\
+RMP\_INT\_MASK()
+
+RMP\_INT\_UNMASK() &
+是否在锁调度器时屏蔽能调用中断发送函数的中断。如果不使用该功能，这两个宏可以定义为空，此时调用中断发送函数的一系列中断仍然可能在锁调度器时发生，但它们的中断发送函数均会因调度器被锁而出错。如果使用该功能，可以定义为掩蔽所有系统中断，而可以定义为解除系统中断掩蔽，这样就能保证那些调用中断发送函数的中断在锁调度器期间不发生。当然，处理器不具备该功能时也可将两宏简单定义为开关全局中断，但这样做会影响系统的实时性。
+
+例子：
+
+\#define RMP\_INT\_MASK MASK(SYSPRIO)
+
+\#define RMP\_INT\_UNMASK MASK(0x00U)
+
+更详细的例子请参看ARMv7-M处理器上的移植。的意义是掩蔽所有的优先级为及以下的中断，则为解除所有掩蔽。具体的值应该被定义为能调用中断发送函数的中断的优先级的最高值。 \\
+RMP\_MSB\_GET(VAL) &
+求一个值的最高的二进制位位的位号，最低位的位号从0开始数起。比如，在32位处理器上的值0x00001120的最高二进制位是第12位。很多处理器能够提供诸如``数前导零（Count
+Leading
+Zeroes，CLZ）''的指令来帮助完成这一操作，此时可考虑用汇编编写这个宏的实现。部分编译器也提供前导零计算的内联函数。如果两者都不存在，则可将该宏定义为提供的默认实现。
+
+例子：
+
+\#define RMP\_MSB\_GET(VAL) (32-\_\_builtin\_clz(VAL))
+
+\#define RMP\_MSB\_GET(VAL) RMP\_MSB\_Generic(VAL) \\
+RMP\_LSB\_GET(VAL) &
+求一个值的最低的二进制位位的位号，最低位的位号从0开始数起。比如，在32位处理器上的值0x00001120的最低二进制位是第5位。很多处理器能够提供诸如``数后缀零（Count
+Trailing
+Zeroes，CTZ）''的指令来帮助完成这一操作，此时可考虑用汇编编写这个宏的实现。部分编译器也提供后缀零计算的内联函数。如果两者都不存在，则可将该宏定义为RMP提供的默认实现RMP\_LSB\_Generic。
+
+例子：
+
+\#define RMP\_LSB\_GET(VAL) (\_\_builtin\_ctz(VAL))
+
+\#define RMP\_LSB\_GET(VAL) RMP\_LSB\_Generic(VAL) \\
+RMP\_STKSEG\_ENABLE &
+控制堆栈段寄存器额外保存与恢复是否开启。如果开启，则将额外定义\_SS变量以方便底层汇编保存和恢复堆栈段寄存器。在绝大多数架构上不需要开启此宏；有关堆栈段寄存器的相关信息，请参见\ref{subsubsec:the-common-memory-model-is-the-small-model}
+。
+
+例子：
+
+\#define RMP\_STKSEG\_ENABLE 0U \\
+RMP\_ASSERT\_ENABLE &
+控制断言宏是否开启。如果需要启用RMP\_ASSERT宏以检测错误，请将其定义为1，否则可将其定义为0，此时断言将不被检查。
+
+例子：
+
+\#define RMP\_ASSERT\_ENABLE 1U \\
+RMP\_CHECK\_ENABLE &
+控制参数检查是否开启。如果它被定义为0，则系统调用在使用参数前不检查其合法性，且除特殊注明的情况外，系统调用将不再返回错误返回值。如果性能或代码体积的要求并不极端，请尽量开启参数检查。
+
+例子：
+
+\#define RMP\_CHECK\_ENABLE 1U \\
+RMP\_DBGLOG\_ENABLE &
+控制内核打印宏是否开启。如果它被定义为0，则内核打印宏无效化。
+
+例子：
+
+\#define RMP\_DBGLOG\_ENABLE 1U \\
+\end{longtable}
+}
+
+\subsection{汇编函数与宏}\label{subsec:assembly-functions-and-macros}
+
+仅要求用汇编或内联汇编实现5个短小的底层汇编函数与宏。它们的名称和意义如下：
+
+\captionof{table}{汇编函数与宏一览}\label{tab:overview-of-assembly-functions-and-macros}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.4980}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5020}}@{}}
+\toprule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+函数名 & 意义 \\
+RMP\_Int\_Disable & 禁止处理器中断。 \\
+RMP\_Int\_Enable & 使能处理器中断。 \\
+\_RMP\_Start & 启动初始线程。 \\
+RMP\_YIELD & 触发线程切换。 \\
+RMP\_YIELD\_ISR & 在中断中触发线程切换。 \\
+\end{longtable}
+}
+
+这些函数的具体实现方法和实现要求将在后面章节加以讲解。
+
+\subsection{系统中断向量}\label{subsec:system-interrupt-vectors}
+
+最低仅仅要求用汇编或内联汇编实现2个中断向量。这些中断向量的名称和意义如下：
+
+\captionof{table}{系统中断向量一览}\label{tab:overview-of-system-interrupt-vectors}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.3458}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.6542}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+中断向量名
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+意义
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+系统定时器中断向量 & 处理系统定时器中断，管理时间片使用。 \\
+线程上下文切换中断向量 & 处理线程上下文切换时使用。 \\
+\end{longtable}
+}
+
+这些中断向量的具体实现方法和实现次序将在后面章节加以讲解。
+
+\subsection{其他底层函数}\label{subsec:other-low-level-functions}
+
+这些底层函数涉及的启动、调试等其他方面。这些函数可以用汇编实现，也可以不用汇编实现，也可以部分使用语言，部分使用内联汇编实现。这些函数的列表如下：
+
+\captionof{table}{其他底层函数一览}\label{tab:overview-of-other-low-level-functions}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.3985}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.6015}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+函数
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+意义
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+RMP\_Putchar & 打印一个字符到内核调试控制台。 \\
+\_RMP\_Lowlvl\_Init & 底层硬件初始化。 \\
+\_RMP\_Stack\_Init & 初始化某线程的线程栈。 \\
+\end{longtable}
+}
+
+\section{汇编函数与宏的移植}\label{sec:porting-the-assembly-functions-and-macros}
+
+汇编底层函数与宏的原型和移植要求详述如下。
+
+\subsection{RMP\_Int\_Disable的实现}\label{subsec:implementation-of-rmp-int-disable}
+
+该函数需要关闭处理器的中断，然后返回。实现上没有特别需要注意的地方，通常而言只需要写一个CPU寄存器或者外设地址，关闭中断，然后返回即可。
+
+\begin{apidesc}{RMP\_Int\_Disable}{RMP\_Int\_Disable的实现}
+    \apisig{void RMP\_Int\_Disable(void)}
+    关闭处理器中断。
+    \begin{apiparams}
+        \apiparam{无。}{}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{无。}{}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{RMP\_Int\_Enable的实现}\label{subsec:implementation-of-rmp-int-enable}
+
+该函数需要开启处理器的中断，然后返回。实现上没有特别需要注意的地方，通常而言只需要写一个CPU寄存器或者外设地址，开启中断，然后返回即可。
+
+\begin{apidesc}{RMP\_Int\_Enable}{RMP\_Int\_Enable的实现}
+    \apisig{void RMP\_Int\_Enable(void)}
+    开启处理器中断。
+    \begin{apiparams}
+        \apiparam{无。}{}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{无。}{}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{\_RMP\_Start的实现}\label{subsec:implementation-of-rmp-start}
+
+该函数实现从内核栈到线程栈的切换，仅在系统启动阶段的最后被调用。在此之后，系统进入正常运行状态。该函数只要将Stack的值赋给堆栈指针，然后直接跳转到Entry即可。该函数将永远不会返回。
+
+\begin{apidesc}{\_RMP\_Start}{\_RMP\_Start的实现}
+    \apisig{void \_RMP\_Start(rmp\_ptr\_t Entry, rmp\_ptr\_t Stack)}
+    开始执行初始线程。
+    \begin{apiparams}
+        \apiparam{rmp\_ptr\_t Entry}{初始线程的入口地址，实际上就是RMP\_Init。}
+        \apiparam{rmp\_ptr\_t Stack}{初始线程的栈地址。}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{无。}{}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{RMP\_YIELD的实现}\label{subsec:implementation-of-rmp-yield}
+
+该宏负责通知硬件抽象层进行上下文切换。该宏必须保证在它被调用之后、继续执行线程代码之前安排一次上下文切换。一般地，它需要软件触发可悬起的线程切换中断向量，这可以通过写入某个内存地址或者执行某条特殊指令实现。若中断没有被屏蔽，该软件中断在该宏退出前触发；若中断被关闭，该软件中断必须悬起，且在开中断函数退出前触发。该宏必须含有一个编译器屏障\footnote{在那些支持链接期优化（Link-Time Optimization，LTO）的编译器中需要多加注意}，以防止编译器将其后的代码优化到其前面。
+
+\begin{apidesc}{RMP\_YIELD}{RMP\_YIELD的实现}
+    \apisig{void RMP\_YIELD(void)}
+    软件触发可悬起的线程切换中断向量。
+    \begin{apiparams}
+        \apiparam{无。}{}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{无。}{}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{RMP\_YIELD\_ISR的实现}\label{subsec:implementation-of-rmp-yield-isr}
+
+该宏与类似，但它只会被带ISR后缀的中断发送函数调用。在该宏中，也需要触发软件触发可悬起的线程切换中断向量，其实现与完全相同。系统设计上将这两个宏分开是为了方便在移植时采取其它方式；有关这种方式，请参见\ref{subsec:saving-and-restoring-thread-context}
+。
+
+\begin{apidesc}{RMP\_YIELD\_ISR}{RMP\_YIELD\_ISR的实现}
+    \apisig{void RMP\_YIELD\_ISR(void)}
+    在中断中软件触发可悬起的线程切换中断向量。
+    \begin{apiparams}
+        \apiparam{无。}{}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{无。}{}
+    \end{apiret}
+\end{apidesc}
+
+\section{系统中断向量的移植}\label{sec:porting-the-system-interrupt-vectors}
+
+系统需要移植两个中断向量，分别是系统定时器中断向量和线程上下文切换中断向量。系统定时器中断向量没有必须使用汇编编写的要求，而线程切换中断向量则必须使用汇编编写。
+
+\subsection{定时器中断向量}\label{subsec:system-tick-vector}
+
+在定时器中断处理向量中，仅仅需要调用如下定时器中断处理函数：
+
+\begin{apidesc}{\_RMP\_Tim\_Handler}{定时器中断处理函数}
+    \apisig{void \_RMP\_Tim\_Handler(rmp\_ptr\_t Slice)}
+    执行定时器中断处理。
+    \begin{apiparams}
+        \apiparam{rmp\_ptr\_t Slice}{在有节拍内核中，每次发生时钟中断时总是经过一个时间片，因此填充为1；在无节拍内核中，填充为上一次设置给定时器的时间片值。这个数字不受RMP\_SLICE\_MAX限制，但它不能超过2\textsuperscript{N-1}-1（也即RMP\_MASK\_INTMAX），其中N是RMP\_WORD\_ORDER。}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{无。}{}
+    \end{apiret}
+\end{apidesc}
+
+这个函数是系统实现好的，无需用户自行实现。有关无节拍内核和\_RMP\_Tim\_Elapse，请参见\ref{subsec:implementation-of-a-tickless-kernel-2}
+。
+
+\subsection{上下文切换中断向量}\label{subsec:context-switch-vector}
+
+上下文切换中断向量必须使用汇编编写，并且按顺序完成以下步骤：
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  将CPU的基本寄存器全部压入线程栈；
+\item
+  将现在的线程堆栈指针存入变量；
+\item
+  切换到内核栈\footnote{这一步是可选的，但推荐使用独立的内核栈和线程栈}；
+\item
+  调用进行线程切换；
+\item
+  将变量赋给现在的线程堆栈指针；
+\item
+  将CPU的基本寄存器全部从线程栈恢复；
+\item
+  切换到线程栈，退出中断。
+\end{enumerate}
+
+\begin{apidesc}{\_RMP\_Run\_High}{线程上下文切换中断处理函数}
+    \apisig{void \_RMP\_Run\_High(void)}
+    执行线程上下文切换处理。该切换会更新变量和，供上下文切换汇编段和其他内核函数使用。
+    \begin{apiparams}
+        \apiparam{无。}{}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{无。}{}
+    \end{apiret}
+\end{apidesc}
+
+这个函数也是系统实现好的，无需用户自行实现。从用户线程\footnote{而非中断向量}发起的线程上下文切换也可以改用内嵌汇编的方法进行，此时需要在上下文切换过程中屏蔽中断。关于这种方法，请参见\ref{subsec:saving-and-restoring-thread-context}
+。
+
+\section{其他底层函数的移植}\label{sec:porting-the-other-low-level-functions}
+
+在剩下的底层函数中，和在第二章已经讨论过，我们在这里仅讨论和。
+
+\subsection{底层硬件初始化}\label{subsec:low-level-hardware-initialisation}
+
+该函数初始化所有的底层硬件。在初始化中断系统时，应当把系统嘀嗒定时器的优先级设为最低，将线程切换中断的优先级设置得次低，并且两者不能和任何其他中断有嵌套关系。调用了和的中断向量也不允许和其他中断向量出现嵌套关系。对于其他的中断向量，则没有此种约束，可以任意嵌套。
+
+\begin{apidesc}{\_RMP\_Lowlvl\_Init}{\_RMP\_Lowlvl\_Init的实现}
+    \apisig{void \_RMP\_Lowlvl\_Init(void)}
+    初始化包括PLL、CPU、中断系统、系统嘀嗒计时器在内的所有系统基本硬件。
+    \begin{apiparams}
+        \apiparam{无。}{}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{无。}{}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{线程栈初始化}\label{subsec:thread-stack-initialisation}
+
+该函数在系统中会被线程创建函数调用。由于线程切换中断的后半段会从该栈中弹出寄存器，因此这里应当按照同样的顺序放置各个寄存器，尤其是线程入口和参数。具体的序列依各个处理器而有不同，和线程切换中断中具体压栈弹栈的实现顺序也有关系。
+
+一般地，该函数将根据处理器的栈增长形式，在栈区头部\footnote{递增栈}或尾部\footnote{递减栈}选择一处地址，并在该处进行相应的初始化。如果该处理器还有栈对齐要求\footnote{如、等}，则该函数还要保证在弹栈结束后栈指针满足该对齐要求。各敏感寄存器\footnote{如各种段寄存器和运算状态寄存器等；可以通过进入调试模式并停留在入口处来得到工具链对这些寄存器值的初值设置，也可以选择在中截获这些设置；如果涉及堆栈段寄存器，请参见\ref{subsubsec:the-common-memory-model-is-the-small-model}}的初值必须符合该架构的二进制接口标准的规定，以防止在启动线程时出现错误。
+
+为了方便编写该函数，提供了宏CALCPTR, CTX,
+STKSZ：它接受栈的起点和大小作为参数，返回线程栈寄存器指针的真实初始地址以及初始化线程栈时使用的上下文结构体指针；可以用作本函数的返回值，而填充指向的结构体可完成栈区的初始化工作。
+
+\begin{apidesc}{\_RMP\_Stack\_Init}{\_RMP\_Stack\_Init的实现}
+    \apisig{rmp\_ptr\_t \_RMP\_Stack\_Init(rmp\_ptr\_t Stack, rmp\_ptr\_t Size, rmp\_ptr\_t Entry, rmp\_ptr\_t Param)}
+    填充线程的线程栈，以便在新线程第一次运行时模拟出返回至此处的假象。
+    \begin{apiparams}
+        \apiparam{rmp\_ptr\_t Stack}{该线程的栈区的首地址。}
+        \apiparam{rmp\_ptr\_t Size}{该线程的栈大小。}
+        \apiparam{rmp\_ptr\_t Entry}{该线程的入口。}
+        \apiparam{rmp\_ptr\_t Param}{给该线程传入的参数。}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{rmp\_ptr\_t}{线程栈的真实起始地址。线程第一次运行时，将从这里开始弹栈。}
+    \end{apiret}
+\end{apidesc}
+
+\section{本章参考文献}\label{sec:chapter-bibliography-9}
+
+无

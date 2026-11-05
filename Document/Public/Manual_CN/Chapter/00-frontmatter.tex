@@ -1,0 +1,95 @@
+\begin{titlepage}
+\thispagestyle{empty}
+\centering
+
+\vspace*{1.6cm}
+
+\includegraphics[width=2.9cm]{Figure/logo.png}
+
+\vspace{0.55cm}
+{\sffamily\small\color{rmpmid}PROKARON\par}
+
+\vfill
+
+{\sffamily\fontsize{28}{34}\selectfont\color{rmppurple}
+M5P01（Prokaron）R6T1\\[3pt]
+轻量级实时操作系统（六版一型）\par}
+
+\vspace{1.1em}
+{\sffamily\fontsize{21}{25}\selectfont\color{rmpgray}技术参考手册\par}
+
+\vspace{1.4em}
+{\rmfamily\large\color{rmpmid}
+版本 R6T1\quad$\cdot$\quad 二〇二四年六月\par}
+
+\vfill
+
+{\sffamily\small\color{rmpmid}
+EDI-Systems\quad$\cdot$\quad \texttt{www.rtospro.com}\par}
+\vspace*{1.4cm}
+
+\end{titlepage}
+
+\chapter*{系统特性}
+\addcontentsline{toc}{chapter}{系统特性}
+\markboth{系统特性}{}
+
+\begin{center}
+{\sffamily\large\color{rmpgray}M5P01（Prokaron）R6T1}\\[2pt]
+{\sffamily\Large\bfseries\color{rmpgray}轻量级实时操作系统（六版一型）}\\[4pt]
+{\rmfamily\color{rmpmid}技术参考手册}\\[12pt]
+\end{center}
+
+\begin{description}[leftmargin=0pt,labelindent=0pt,style=nextline,itemsep=8pt]
+    \item[\textsf{\color{rmppurple}高易用性}]
+    以轻量易用为第一准绳构建的实时操作系统。
+    容易配置开发环境及工程路径。
+    提供最常见的线程通信接口。
+
+    \item[\textsf{\color{rmppurple}高实时性}]
+    强实时策略的全抢占式内核。
+    相同优先级的线程之间时间片轮转式调度。
+    所有关键操作时间复杂度 O(1)。
+
+    \item[\textsf{\color{rmppurple}高可移植性}]
+    在所有实时系统中底层汇编语言数量最少。
+    严格按照 ANSI C89 和 MISRA C 要求进行编写，保证对编译器的兼容性。
+    最小系统对资源的要求极低。
+    可作为客户操作系统运行在其他操作系统上。
+
+    \item[\textsf{\color{rmppurple}高执行效率}]
+    对代码关键性能部分进行调优。
+    极短的线程切换时间和中断响应时间。
+
+    \item[\textsf{\color{rmppurple}高可靠性}]
+    提供参数检查（Assert）功能，进行广泛存在的接口参数检查。
+    经形式化验证，相当于 IEC 61508 SIL 4。\footnote{暂时未完成，目前相当于 SIL 2 预认证级别。}
+\end{description}
+
+\newcommand{\RMPRevisionHistory}{%
+\chapter*{版本历史}
+\addcontentsline{toc}{chapter}{版本历史}
+\markboth{版本历史}{}
+
+\begin{table}[htbp]
+    \centering
+    \renewcommand{\arraystretch}{1.25}
+    \small
+    \begin{tabularx}{\textwidth}{@{}>{\sffamily\bfseries\color{rmppurple}}m{1.8cm}
+                                  >{\raggedright\arraybackslash}m{3.2cm}X@{}}
+    \toprule
+    版本 & 日期（年-月-日） & 说明 \\
+    \midrule
+    R1T1 & 2018-02-15 & 初始发布。 \\
+    R2T1 & 2018-03-12 & 增加了移植说明和附录。 \\
+    R4T3 & 2018-07-31 & 修正手册的错误。 \\
+    R4T3 & 2018-09-01 & 更新手册到新版本。 \\
+    R4T4 & 2018-10-10 & 解除内存管理单元的 128\,MB 限制，使用更优化的圆角矩形绘制算法。 \\
+    R4T5 & 2018-11-25 & 解除最大优先级个数的限制，允许更激进的内存用量优化策略。 \\
+    R5T1 & 2020-03-01 & 在基本接口之外增加额外的线程通信接口。 \\
+    R5T2 & 2023-05-07 & 为信号量增加广播和同步解锁模式。 \\
+    R6T1 & 2024-06-26 & 调整钩子宏的位置和声明，调整 GUI 的配置宏规则。 \\
+    \bottomrule
+    \end{tabularx}
+\end{table}
+}

@@ -26,7 +26,7 @@ Click **[HERE](README.md)** for English version.
 
 &emsp;&emsp;本系统比以 _FreeRTOS_ 和 _RT-Thread_ 为代表的全功能系统相比要**小**得多，而且理解起来应该也相对容易得多。即便本系统仅仅包含了**一个.C**文件，它仍然提供了**高效的内存管理**，**抗锯齿图形界面库**和**其他实用函数**，并且这些功能的实现都**不消耗任何额外的RAM**！
 
-&emsp;&emsp;本系统的手册可以在 **[这里](/Document/Public)** 找到。
+&emsp;&emsp;本系统的手册可以在以下位置找到：**[英文手册](/Document/EN_M5P01_R6T1_User_Manual.pdf)** 和 **[中文手册](/Document/CN_M5P01_R6T1_User_Manual.pdf)**。
 
 &emsp;&emsp;如果想要参与开发，请阅读 **[参与](CONTRIBUTING.md)** 和 **[规范](CODE_OF_CONDUCT.md)** 两个指导文档。如果要提交拉取请求，请使用 **[拉取请求模板](PULL_REQUEST_TEMPLATE.md)** 。
 本软件是EDI的官方作品，因此属于 **公有领域** 。 所有由EDI保留的版权在所有适用的法律条款下尽最大可能地授权给所有实体。
@@ -307,7 +307,7 @@ Click **[HERE](README.md)** for English version.
 
 ### 生产部署
 
-&emsp;&emsp;当部署本系统到生产环境时，请仔细阅读本系统自带的手册，以确保各项配置正确。本系统的手册可以在 **[Document](Document)** 文件夹下找到。
+&emsp;&emsp;当部署本系统到生产环境时，请仔细阅读本系统自带的**[中文手册](/Document/CN_M5P01_R6T1_User_Manual.pdf)**，以确保各项配置正确。
 
 &emsp;&emsp;现在，使用主流 Coding Agent，约 10M token 即可将本系统移植到任何所支持的架构和工具链上。
 

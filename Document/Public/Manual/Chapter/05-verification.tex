@@ -1,0 +1,70 @@
+\chapter{Formal Verification}\label{ch:verification}
+
+\section{Introduction to formal verification}
+
+The essence of an embedded real-time operating system is complexity, diversity, and reliability.
+The hardware-independent part of RMP contains about 2000 lines of code, and its parts have complex interactions.
+An operating system must satisfy many different application requirements and guarantee functional correctness.
+At the same time, development efficiency, cost, and the development cycle must be controlled, and software delivery must be assured.
+
+Traditional software design is based on natural-language thinking, design, and description; it is often one-sided and ambiguous, and easily misunderstood.
+It cannot be checked rigorously and can only be analysed by human reasoning.
+Semi-formal methods such as UML use relatively clear graphical descriptions, and some tools can generate code frameworks and check them automatically.
+Both methods test a system by designing a series of cases, at most with structured testing.
+Neither can guarantee that the system has no errors, and neither is suitable for the analysis and development of life-critical systems.
+A stricter development process is therefore needed.
+A fully formal method is based on precisely defined mathematical concepts and languages and can be checked and analysed by automated tools.
+It brings mathematical rigour to every stage of software development and uses rigorous mathematical proof to guarantee that the system has no defects.
+
+The EAL standard for software security has seven levels,\footnote{EAL7+ is also included.} described in Table~\ref{tab:eal}.
+
+\begin{table}[htbp]
+    \centering
+    \caption{EAL levels and their descriptions.}
+    \label{tab:eal}
+    \small
+    \begin{tabularx}{\textwidth}{@{}>{\sffamily\bfseries\color{rmppurple}}p{1.2cm} X@{}}
+        \toprule
+        Level & Description\\
+        \midrule
+        EAL1 & A functionally tested system. It provides a basic description of the security assurance targets, including the functional specification and a potential-error analysis. Every target is listed and evaluated by testing. Compared with an unevaluated system, EAL1 is only a small security improvement.\\
+        EAL2 & A system developed with basic software-engineering methodology and structured development. It provides a complete description of the security targets, including the basic functional specification and security architecture. Every target is listed and independently evaluated by testing; security testers with some attack capability must also attack the targets to confirm that no problem exists. EAL2 has stricter test specifications and system weakness analysis than EAL1.\\
+        EAL3 & A system systematically tested and checked with a strengthened software-engineering methodology. It provides a complete description of the security targets, including the basic functional specification and a detailed design of the security architecture. Every target is listed and independently evaluated by testing; testers with some attack capability must attack the detailed design of the security architecture. EAL3 has stricter system architecture specifications and corresponding tests than EAL2.\\
+        EAL4 & A system systematically designed, tested, and evaluated with a strengthened software-engineering methodology. It provides a complete description of the security targets, including the detailed functional specification and security architecture, and a division of some key modules with their implementation. Every target is listed and independently evaluated by testing; testers with above-average attack capability must attack the detailed design of the security architecture. EAL4 has stricter design descriptions, implementation review, and stronger tests than EAL3.\\
+        EAL5 & A system designed and tested with semi-formal methods. It provides a complete description of the security targets, including the detailed functional specification and security architecture, the division of all key modules described semi-formally, and the implementation of some modules. Every target is listed and independently evaluated by testing; testers with considerable attack capability must attack the detailed design of the security architecture. EAL5 has semi-formal design descriptions, a clearer architecture, and stronger tests than EAL4.\\
+        EAL6 & A system designed, tested, and verified with semi-formal methods. It provides a complete description of the security targets, including the detailed functional specification and security architecture, the division of all key modules, and the implementation of all modules. EAL6 requires a complete formal description of the security-target policy and a semi-formal description of its functions. The functional design must be modular, layered, and concise. Every target is listed and independently evaluated by testing; testers with strong attack capability must attack the detailed design of the security architecture. EAL6 has more comprehensive design analysis, weakness testing, and structured implementation descriptions than EAL5.\\
+        EAL7 & A system designed, tested, and verified with formal methods. It provides a complete description of the security targets, including the detailed functional specification and security architecture, the division of all key modules, and a structured implementation of all modules. EAL7 requires a complete formal description of the security-target policy and a semi-formal description of its functions. The functional design must be modular, layered, and concise. Every target is listed and subjected to complete independent evaluation testing against the implementation; testers with extremely strong attack capability must attack the detailed design of the security architecture. EAL7 has further formal design and more comprehensive tests than EAL6.\\
+        EAL7+ & A system designed, tested, and verified with strict formal methods. It provides a complete description of the security targets, including the detailed functional specification and security architecture, the division of all key modules, and a structured implementation of all modules. EAL7+ requires a complete formal description of the functions and policy of the security targets. The functional design must be modular, layered, and concise, and the implementation must be proved to conform completely to the formal description. Every target is listed and subjected to complete independent evaluation testing against the implementation; the test cases must be generated automatically by formal tools; testers with extremely strong attack capability must attack the detailed design of the security architecture. EAL7+ has further formal implementation and formal testing than EAL7. RMP is designed and tested according to the EAL7+ standard.\\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+Most operating systems, such as FreeRTOS, Windows, and Linux, are certified at EAL4.
+A few other systems are certified at EAL5, and INTEGRITY-178B is certified at EAL6+.
+Because RMP's structure is relatively simple, and its security targets include only functional correctness and not information security, it is easier for RMP to obtain a higher certification level.\footnote{Most CC/CAPP/LSPP design standards are not applicable.}
+
+\section{Formal specification of the system}
+
+In RMP, the architecture-dependent part is very short\footnote{Usually within 50 lines of code.} and easy to verify, so it is not formally verified.
+Another reason is that the architecture-dependent part changes with the chip, and RMP supports dozens of platforms; building a formal model for each one is not practical in terms of manpower.
+The main verification work therefore concentrates on the 1500 lines of code in \texttt{rmp\_kernel.c}, about 1000 lines excluding comments.
+For the same multi-architecture reason, the correctness of this code is verified only at the level of C language semantics, not at the level of binary instructions.
+This means that the correctness of the final executable still depends on the correctness of the compiler.
+In practice, compilers usually have a high certification level, so trusting the compiler is reasonable.
+If the compiler is not to be trusted, the formally verified CompCert [2] compiler can be used.
+
+Formal verification cannot completely eliminate erroneous operation of a software/hardware system, especially problems caused by hardware errors.\footnote{For example CPU or peripheral silicon errors; these are often described in the manufacturer's chip errata.}
+RMP's formal verification cannot prevent failures caused by hardware errors or by errors in the hardware abstraction layer (HAL).
+
+\section{Formal proof}
+
+This will be completed as future work.
+
+\section{Other documents}
+
+This will be completed as future work.
+
+\section{Chapter bibliography}
+
+\nocite{cc2012,compcert2012}
+\printbibliography[heading=none]

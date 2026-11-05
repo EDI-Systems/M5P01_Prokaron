@@ -1,0 +1,366 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% rmp-style.sty -- Layout and typography for the M5P01 (RMP) R6T1 User Manual
+%
+% The visual language follows the RISC-V Instruction Set Manual: Montserrat
+% for display/headings, Petrona for body text, JetBrains Mono for code, a
+% restrained purple accent, generous A4 margins, and thin rules instead of
+% heavy boxes.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{rmp-style}[2026/11/03 RMP User Manual style]
+
+% --------------------------------------------------------------------------
+% Page geometry and fonts
+% --------------------------------------------------------------------------
+\RequirePackage[a4paper,top=30mm,bottom=32mm,left=28mm,right=28mm,
+                headheight=20pt,headsep=8mm,footskip=15mm]{geometry}
+\RequirePackage{fontspec}
+\RequirePackage{unicode-math}
+
+\setmainfont{Petrona}[
+  Path=../Font/, Extension=.ttf,
+  UprightFont=Petrona-Light,
+  BoldFont=Petrona-Medium,
+  ItalicFont=Petrona-LightItalic,
+  BoldItalicFont=Petrona-MediumItalic,
+  Ligatures=TeX
+]
+\setsansfont{Montserrat}[
+  Path=../Font/, Extension=.ttf,
+  UprightFont=Montserrat-Light,
+  BoldFont=Montserrat-Medium,
+  ItalicFont=Montserrat-LightItalic,
+  BoldItalicFont=Montserrat-MediumItalic,
+  Ligatures=TeX
+]
+\setmonofont{JetBrainsMono}[
+  Path=../Font/, Extension=.ttf,
+  UprightFont=JetBrainsMono-Regular,
+  BoldFont=JetBrainsMono-Bold,
+  Scale=0.86
+]
+\setmathfont{Latin Modern Math}
+
+\linespread{1.10}
+\setlength{\parindent}{1.2em}
+\setlength{\parskip}{0.15em plus 0.05em minus 0.05em}
+\setlength{\emergencystretch}{3em}
+\tolerance=1000
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{2}
+\renewcommand{\thetable}{\thechapter-\arabic{table}}
+\renewcommand{\thefigure}{\thechapter-\arabic{figure}}
+\raggedbottom
+
+% --------------------------------------------------------------------------
+% Colour palette
+% --------------------------------------------------------------------------
+\RequirePackage{xcolor}
+\definecolor{rmppurple}{HTML}{5B2A86}
+\definecolor{rmpgold}{HTML}{E8A317}
+\definecolor{rmpgray}{HTML}{3C3C43}
+\definecolor{rmpmid}{HTML}{6E6E78}
+\definecolor{rmplight}{HTML}{F5F1FA}
+\definecolor{rmprule}{HTML}{D8D0E6}
+\definecolor{rmpgreen}{HTML}{2E7D32}
+\definecolor{rmpred}{HTML}{B3261E}
+\definecolor{codebg}{HTML}{F7F7F9}
+
+% --------------------------------------------------------------------------
+% Running headers and footers
+% --------------------------------------------------------------------------
+\RequirePackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0pt}
+\renewcommand{\headrule}{\hbox to\headwidth{\color{rmprule}\leaders\hrule height \headrulewidth\hfill}}
+\fancyhead[LE]{\sffamily\footnotesize\color{rmpmid}\leftmark}
+\fancyhead[RO]{\sffamily\footnotesize\color{rmpmid}\rightmark}
+\fancyfoot[LE,RO]{\sffamily\footnotesize\color{rmpmid}\thepage}
+\fancyfoot[RE,LO]{\sffamily\footnotesize\color{rmpmid}M5P01 (RMP) R6T1 User Manual}
+\fancypagestyle{plain}{%
+  \fancyhf{}%
+  \renewcommand{\headrulewidth}{0pt}%
+  \fancyfoot[C]{\sffamily\small\color{rmpmid}\thepage}%
+}
+
+\renewcommand{\chaptermark}[1]{\markboth{Chapter \thechapter{} $\mid$ #1}{}}
+\renewcommand{\sectionmark}[1]{\markright{Section \thesection{} $\mid$ #1}}
+
+% --------------------------------------------------------------------------
+% Chapter, section, and part headings
+% --------------------------------------------------------------------------
+\RequirePackage{titlesec}
+\titleformat{\chapter}[hang]
+  {\normalfont\sffamily\fontsize{22}{26}\selectfont\bfseries\color{rmpgray}}
+  {\color{rmppurple}\thechapter.\quad}{0pt}{}
+  [\vspace{0.45em}{\color{rmprule}\rule{\textwidth}{0.7pt}}]
+\titlespacing*{\chapter}{0pt}{6pt}{26pt}
+
+\titleformat{name=\chapter,numberless}[hang]
+  {\normalfont\sffamily\fontsize{22}{26}\selectfont\bfseries\color{rmpgray}}
+  {}{0pt}{}
+  [\vspace{0.45em}{\color{rmprule}\rule{\textwidth}{0.7pt}}]
+\titlespacing*{\chapter}{0pt}{6pt}{26pt}
+
+\titleformat{\section}[hang]
+  {\normalfont\sffamily\Large\bfseries\color{rmpgray}}
+  {\color{rmppurple}\thesection\quad}{0pt}{}
+\titlespacing*{\section}{0pt}{18pt plus 3pt minus 3pt}{7pt}
+
+\titleformat{\subsection}[hang]
+  {\normalfont\sffamily\large\itshape\color{rmpgray}}
+  {\color{rmppurple}\thesubsection\quad}{0pt}{}
+\titlespacing*{\subsection}{0pt}{13pt plus 2pt minus 2pt}{5pt}
+
+\titleformat{\subsubsection}[hang]
+  {\normalfont\sffamily\normalsize\bfseries\color{rmpgray}}
+  {\color{rmppurple}\thesubsubsection\quad}{0pt}{}
+\titlespacing*{\subsubsection}{0pt}{10pt plus 2pt minus 1pt}{3pt}
+
+\titleformat{\part}[display]
+  {\normalfont\sffamily\raggedright}
+  {\fontsize{42}{46}\selectfont\color{rmppurple!35}\thepart}
+  {0.6em}
+  {\fontsize{26}{30}\selectfont\bfseries\color{rmpgray}}
+  [\vspace{0.6em}{\color{rmprule}\rule{\textwidth}{0.8pt}}]
+\titlespacing*{\part}{0pt}{40pt}{30pt}
+
+% --------------------------------------------------------------------------
+% Table of contents and lists
+% --------------------------------------------------------------------------
+\RequirePackage{titletoc}
+\renewcommand{\contentsname}{Contents}
+\renewcommand{\listfigurename}{List of Figures}
+\renewcommand{\listtablename}{List of Tables}
+\renewcommand{\bibname}{References}
+\titlecontents{chapter}[0pt]
+  {\addvspace{5pt}\sffamily\bfseries\color{rmpgray}}
+  {\contentslabel{2.5em}}{}{\hfill\contentspage}
+\titlecontents{section}[2.5em]
+  {\sffamily\normalsize\color{rmpgray}}
+  {\contentslabel{2.5em}}{}{\titlerule*[0.55pc]{.}\contentspage}
+\titlecontents{subsection}[5.0em]
+  {\sffamily\small\color{rmpmid}}
+  {\contentslabel{2.8em}}{}{\titlerule*[0.55pc]{.}\contentspage}
+
+% --------------------------------------------------------------------------
+% Tables, captions, lists, floats
+% --------------------------------------------------------------------------
+\RequirePackage{booktabs}
+\RequirePackage{array}
+\RequirePackage{tabularx}
+\RequirePackage{longtable}
+\RequirePackage{colortbl}
+\RequirePackage{multirow}
+\RequirePackage{makecell}
+\RequirePackage{caption}
+\captionsetup{
+  font={small,sf},
+  labelfont={bf,color=rmppurple},
+  labelsep=period,
+  justification=raggedright,
+  singlelinecheck=false
+}
+\RequirePackage{subcaption}
+\RequirePackage{float}
+\RequirePackage[section]{placeins}
+\RequirePackage{enumitem}
+\setlist[itemize]{leftmargin=1.5em,itemsep=2pt,topsep=3pt}
+\setlist[enumerate]{leftmargin=1.8em,itemsep=2pt,topsep=3pt}
+\setlist[description]{leftmargin=1.4em,style=nextline,itemsep=1pt,topsep=3pt}
+
+% --------------------------------------------------------------------------
+% Code listings
+% --------------------------------------------------------------------------
+\RequirePackage{listings}
+\lstdefinestyle{rmpcode}{
+  language=C,
+  basicstyle=\ttfamily\footnotesize\color{rmpgray},
+  backgroundcolor=\color{codebg},
+  keywordstyle=\color{rmppurple}\bfseries,
+  commentstyle=\color{rmpmid}\itshape,
+  stringstyle=\color{rmpgold!85!black},
+  numberstyle=\ttfamily\scriptsize\color{rmpmid!60},
+  numbers=left,
+  numbersep=8pt,
+  frame=none,
+  framesep=4pt,
+  rulecolor=\color{rmprule},
+  breaklines=true,
+  breakatwhitespace=false,
+  columns=fullflexible,
+  keepspaces=true,
+  showstringspaces=false,
+  tabsize=4,
+  xleftmargin=16pt,
+  xrightmargin=2pt,
+  aboveskip=8pt,
+  belowskip=8pt,
+  literate={->}{{$\rightarrow$}}1 {<-}{{$\leftarrow$}}1
+}
+\lstset{style=rmpcode}
+
+% --------------------------------------------------------------------------
+% Callout boxes
+% --------------------------------------------------------------------------
+\RequirePackage[most]{tcolorbox}
+\newtcolorbox{notebox}[1][]{
+  enhanced, breakable,
+  colback=rmplight, colframe=rmppurple!55,
+  boxrule=0pt, leftrule=2.2pt, arc=0pt,
+  left=8pt, right=8pt, top=6pt, bottom=6pt,
+  fontupper=\small,
+  #1
+}
+\newtcolorbox{warnbox}[1][]{
+  enhanced, breakable,
+  colback=red!3!white, colframe=rmpred,
+  boxrule=0pt, leftrule=2.2pt, arc=0pt,
+  left=8pt, right=8pt, top=6pt, bottom=6pt,
+  fontupper=\small,
+  #1
+}
+\newtcolorbox{tipbox}[1][]{
+  enhanced, breakable,
+  colback=green!3!white, colframe=rmpgreen,
+  boxrule=0pt, leftrule=2.2pt, arc=0pt,
+  left=8pt, right=8pt, top=6pt, bottom=6pt,
+  fontupper=\small,
+  #1
+}
+
+% --------------------------------------------------------------------------
+% API documentation boxes
+% --------------------------------------------------------------------------
+\RequirePackage{needspace}
+\newtcolorbox{apidesc}[2]{
+  enhanced, breakable,
+  colback=white, colframe=rmprule,
+  boxrule=0.5pt, arc=1pt,
+  left=9pt, right=9pt, top=8pt, bottom=8pt,
+  before skip=8pt, after skip=8pt,
+  fontupper=\normalsize,
+  before upper={\par\noindent
+    {\sffamily\bfseries\large\color{rmppurple}#1}\hfill
+    {\sffamily\small\color{rmpmid}#2}\par
+    \vspace{1pt}{\color{rmprule}\hrule height 0.4pt}\vspace{3pt}}
+}
+\newcommand{\apisig}[1]{%
+  \par\vspace{2pt}\noindent
+  \begin{tcolorbox}[colback=rmplight,colframe=rmplight,boxrule=0pt,arc=1pt,
+                    left=6pt,right=6pt,top=4pt,bottom=4pt]
+  \ttfamily\small #1
+  \end{tcolorbox}
+}
+\newenvironment{apiparams}{%
+  \par\vspace{2pt}\noindent{\sffamily\bfseries\color{rmpgray}Parameters}%
+  \begin{description}[leftmargin=0pt,labelindent=0pt,style=nextline,
+                      itemsep=2pt,topsep=3pt,parsep=0pt]%
+}{%
+  \end{description}%
+}
+\newenvironment{apiret}{%
+  \par\vspace{2pt}\noindent{\sffamily\bfseries\color{rmpgray}Returns}%
+  \begin{description}[leftmargin=0pt,labelindent=0pt,style=nextline,
+                      itemsep=2pt,topsep=3pt,parsep=0pt]%
+}{%
+  \end{description}%
+}
+\newcommand{\apiparam}[2]{\item[\texttt{\small #1}] #2}
+\newcommand{\apiretval}[2]{\item[\texttt{\small #1}] #2}
+
+
+% --------------------------------------------------------------------------
+% Misc
+% --------------------------------------------------------------------------
+\RequirePackage{etoolbox}
+\RequirePackage{pdflscape}
+\RequirePackage{graphicx}
+\RequirePackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,shapes.geometric,calc,fit,
+                backgrounds,patterns,decorations.pathreplacing}
+\RequirePackage[hidelinks]{hyperref}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=rmppurple,
+  citecolor=rmppurple,
+  urlcolor=rmppurple,
+  filecolor=rmppurple,
+  linktoc=none,
+  pdfauthor={EDI-Systems},
+  pdftitle={M5P01 (Prokaron) R6T1 Light-Weight Real-Time Operating System (Sixth Edition, Type One) Technical Reference Manual},
+  pdfsubject={User manual for the M5P01 (RMP) real-time operating system,
+               version R6T1},
+  pdfkeywords={RTOS, RMP, M5P01, Prokaron, embedded, real-time, EDI-Systems},
+  bookmarks=true,
+  bookmarksnumbered=true,
+  bookmarksopen=true,
+  bookmarksopenlevel=1,
+  bookmarksdepth=2
+}
+\RequirePackage{makeidx}
+\makeindex
+
+
+% Keep footnotes quiet
+\renewcommand{\footnoterule}{\vspace*{-3pt}{\color{rmprule}\hrule width 0.4\textwidth height 0.4pt}\vspace*{2.6pt}}
+\setlength{\skip\footins}{10pt plus 4pt minus 2pt}
+
+% --------------------------------------------------------------------------
+% Reusable table styles
+% --------------------------------------------------------------------------
+\RequirePackage{xparse}
+\RequirePackage{fontawesome5}
+
+% Positive/negative markers for the Locked and ISR columns.
+\newcommand{\cmark}{\textcolor{rmpgreen}{\faCheck}}
+\newcommand{\xmark}{\textcolor{rmpred}{\faTimes}}
+
+% Table header cell.
+\newcommand{\tablehead}[1]{\textbf{\textsf{\color{rmppurple}#1}}}
+
+% API summary table: Function / Purpose / Locked / ISR.
+% Usage: \begin{apisummarytable}[placement]{caption}{label} ... rows ... \end{apisummarytable}
+\NewDocumentEnvironment{apisummarytable}{O{htbp} m m +b}
+{%
+  \begin{table}[#1]
+  \centering
+  \caption{#2}
+  \label{#3}
+  \small
+  \begin{tabularx}{\textwidth}{@{}>{\ttfamily}p{3.6cm}>{\raggedright\arraybackslash}Xcc@{}}
+  \toprule
+  \tablehead{Function} & \tablehead{Purpose} &
+  \tablehead{Locked} & \tablehead{ISR} \\
+  \midrule
+  #4
+  \bottomrule
+  \end{tabularx}
+  \end{table}
+}
+{}
+
+% Return-code table: Value / No. / Meaning.
+% Usage: \begin{returncodetable}[placement]{caption}{label} ... rows ... \end{returncodetable}
+\NewDocumentEnvironment{returncodetable}{O{htbp} m m +b}
+{%
+  \begin{table}[#1]
+  \centering
+  \caption{#2}
+  \label{#3}
+  \small
+  \begin{tabularx}{\textwidth}{@{}>{\ttfamily}p{3.6cm}rX@{}}
+  \toprule
+  \tablehead{Value} & \tablehead{No.} &
+  \tablehead{Meaning} \\
+  \midrule
+  #4
+  \bottomrule
+  \end{tabularx}
+  \end{table}
+}
+{}
+
+\endinput

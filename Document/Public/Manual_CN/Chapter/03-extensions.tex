@@ -1,0 +1,752 @@
+\chapter{内核扩展接口}\label{ch:kernel-extension-interfaces}
+
+\section{内核扩展接口简介}\label{sec:kernel-extension-interface-introduction}
+
+实现的基本内核接口原理清晰、易于验证、原子性强，但其过于基础，在应用程序开发中不便于直接使用。为解决此问题，提供一套易用性更好的内核扩展接口，它们均由一个或多个基本内核接口组合而来。由于这些接口并非原生，因而其速度较慢；在那些对性能有苛刻要求的场合，建议自行实现更适合应用场景的接口。
+
+\subsection{队列扩展接口}\label{subsec:queue-extension-interface}
+
+在消息队列方面，扩展先进先出队列（First-In-First-Out，FIFO）、消息队列（Message
+Queue）和阻塞消息队列（Blocking Message Queue）。
+
+先进先出队列类似于Unix系统中的非阻塞管道。它们不支持阻塞，仅仅是链表的一个线程安全封装，可用来以轮询方式传递数据。它的速度最快。
+
+消息队列类似于其它各类操作系统中的同名机制。它可以支持多个生产者和多个消费者，其中只有消费者端具备阻塞功能，生产者端则不具备阻塞功能，且队列的长度不受限制。它是计数信号量和先进先出队列的联合封装，其速度中等。
+
+阻塞消息队列在消息队列的基础上支持队列长度限制与生产者端阻塞，可在消费者无法吃下全部数据时让生产者放慢速度。它是两个计数信号量和先进先出队列的联合封装，其功能最强大，但资源消耗最大、速度最慢。
+
+队列机制的消息封装均采用双向链表头结构体struct
+RMP\_List。如果需要传递复杂的消息，可以自定义包含该结构体的消息结构体，并将struct
+RMP\_List作为它的第一个元素，这样就可以通过双向链表头结构体方便地找到消息结构体。考虑到灵活性，结构体的空间分配和提供均由调用者完成，通信机制本身并不负责这些空间的分配和管理；这有助于避免无谓的空间浪费和数据拷贝。虽然队列是线程安全的，但所有的消息都是线程局部（Thread-Local）和队列局部（Queue-Local）的\footnote{对每条消息加锁以防止竞争冒险会损失太多性能，得不偿失}；禁止让两个线程同时操作一条消息，也禁止将同一消息插入两个队列；一旦消息入队，即禁止对其进行修改。
+
+消息队列扩展接口不是原子接口，而是由多个原子接口组装而来。若在线程正使用消息队列时删除线程可能留下不完整的队列数据结构；若在消息队列正被使用时删除它然后立即利用同样的控制块创建新队列则可能引发ABA问题。因此，若需要删除线程或消息队列，请保证上述情况不存在，或者按照如下的顺序执行强制删除：先（1）删除所有使用该消息队列的线程，然后（2）删除该消息队列，最后（3）如有需要再重新创建之。值得注意的是，在（1）中，部分线程可能刚从内存池中分配到消息，还没来得及将其挂接到队列上即遭删除。此时，回收泄露的消息是应用程序的责任；这可以通过内存块标记法实现，也可以给消息配备专用的内存池并重新初始化该内存池。此外，在线程使用消息队列时可随时将其悬起，或者使用RMP\_Sem\_Abort解除其在队列上的阻塞状态。
+
+\subsection{软定时器扩展接口}\label{subsec:soft-timer-extension-interface}
+
+RMP扩展了软定时器（Alarm）接口。通过该接口，应用程序可以注册一个在一段时间之后才被调用的回调函数以实现定时触发功能。为了（1）提高定时器功能的灵活性和（2）防止高优先级任务的定时功能被低优先级任务干扰，RMP提供多个定时器管理器（Manager）：每个定时器管理器运行在何优先级及其采用何定时粒度可以被任意定制。
+
+因此，RMP的软定时器接口被分成了（1）定时器管理器操作和（2）定时器操作接口。要创建定时器，应用程序需要先（1）创建定时器管理器并定期维护之，然后（2）初始化所需的定时器，最后（3）将定时器注册到相应的定时器管理器。一旦定时器超时，该定时器对应的回调钩子函数（Callback
+Hook）就会被调用；在调用该钩子时，当前定时器管理器Amgr、当前定时器Alrm以及超期程度Overdue会作为参数传入以方便应用程序设计。同一定时器管理器上注册的定时器总是先按照（1）溢出时间，再按照（2）注册顺序触发：如果一个定时器的溢出时间比另一个早，则溢出时间早的定时器先触发；如果两个定时器同时溢出，则先注册的定时器先触发。
+
+软定时器机制的定时器管理器封装均采用struct
+RMP\_Amgr，定时器封装均采用struct
+RMP\_Alrm。如果需要在这些数据结构上附加数据，可以自定义包含上述结构体的新结构体，并将struct
+RMP\_Amgr或struct
+RMP\_Alrm作为它的第一个元素，这样就可以通过上述结构体方便地找到附加数据。考虑到灵活性，上述结构体的空间分配和提供均由调用者完成，软定时器机制本身并不负责这些空间的分配和管理；这有助于避免无谓的空间浪费和数据拷贝。虽然定时器管理器是线程安全的，但所有的定时器都是线程局部（Thread-Local）和定时器管理器局部（Manager-Local）的\footnote{对每个定时器加锁以防止竞争冒险会损失太多性能，得不偿失}；禁止让两个线程同时操作一个定时器\footnote{例外情况：如果两个线程同时操作一个定时器，但它们的操作都指定了相同的定时器管理器，则此种操作是允许的，因为定时器管理器的信号量会保证互斥访问}，也禁止将同一定时器注册到两个定时器管理器\footnote{接口会在非并发条件下探测到此种错误并进行报告，但在并发条件下则不保证能探测到此种错误}；一旦定时器被注册，即禁止对其进行重新初始化。
+
+软定时器扩展接口不是原子接口，而是由多个原子接口组装而来。若在线程正使用定时器接口时删除线程可能留下不完整的定时器管理器数据结构；若在定时器管理器正被使用时删除它然后立即利用同样的控制块创建新定时器管理器则可能引发ABA问题。因此，若需要删除线程或定时器管理器，请保证上述情况不存在，或者按照如下的顺序执行强制删除：先（1）删除所有操作该定时器管理器的线程，然后（2）删除该定时器管理器，最后（3）如有需要再重新创建之。值得注意的是，在（1）中，部分线程可能刚从内存池中分配到定时器，还没来得及将其挂接到队列上即遭删除。此时，回收泄露的定时器是应用程序的责任；这可以通过内存块标记法实现，也可以给定时器配备专用的内存池并重新初始化该内存池。此外，在线程使用定时器时不推荐将其悬起，这是由于定时器管理器操作是使用信号量\footnote{在这里作为互斥锁使用}而非调度器锁保护的。如果线程在持有信号量时被悬起，则其它使用同一定时器管理器的线程可能会被无限阻塞直到线程悬起被解除。
+
+\section{先进先出队列扩展接口}\label{sec:first-in-first-out-queue-extension-interface}
+
+所有的先进先出队列扩展接口如下表所示：
+
+\captionof{table}{先进先出队列扩展接口一览}\label{tab:fifo-extension-interface-summary}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.3210}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.3146}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.1759}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.1817}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+接口
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+意义
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+锁调度器时调用
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+中断中调用
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+RMP\_Fifo\_Crt & 创建先进先出队列 & 可 & 不可 \\
+RMP\_Fifo\_Del & 删除先进先出队列 & 可 & 不可 \\
+RMP\_Fifo\_Read & 读先进先出队列 & 可 & 不可 \\
+RMP\_Fifo\_Write & 写先进先出队列 & 可 & 不可 \\
+RMP\_Fifo\_Write\_ISR & 从中断写先进先出队列 & 不可 & 可 \\
+RMP\_Fifo\_Cnt & 查询先进先出队列长度 & 可 & 不可 \\
+\end{longtable}
+}
+
+它们可能有如下返回值：
+
+\captionof{table}{先进先出队列扩展接口的可能返回值}\label{tab:possible-return-values-of-the-fifo-extension-interface}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2741}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.0927}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.6332}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+返回值
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+数值
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+意义
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+RMP\_ERR\_OPER & -6 & 由于其他原因导致操作失败。 \\
+RMP\_ERR\_FIFO & -9 & 由于先进先出队列控制块相关的原因导致操作失败。 \\
+\end{longtable}
+}
+
+\subsection{创建先进先出队列}\label{subsec:create-a-fifo}
+
+本操作会创建一个先进先出队列。
+
+\begin{apidesc}{RMP\_Fifo\_Crt}{创建先进先出队列}
+    \apisig{rmp\_ret\_t RMP\_Fifo\_Crt(volatile struct RMP\_Fifo* Fifo)}
+    \begin{apiparams}
+        \apiparam{volatile struct RMP\_Fifo* Fifo}{指向空的、将被用于该先进先出队列的先进先出队列控制块的指针。}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{rmp\_ret\_t}{如果成功，返回0。如果失败则可能有如下返回值：}
+        \apiretval{RMP\_ERR\_FIFO}{先进先出队列控制块为0（NULL）或者已被使用。}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{删除先进先出队列}\label{subsec:delete-a-fifo}
+
+本操作会创建一个先进先出队列。只有空的先进先出队列才能被删除。
+
+\begin{apidesc}{RMP\_Fifo\_Del}{删除先进先出队列}
+    \apisig{rmp\_ret\_t RMP\_Fifo\_Del(volatile struct RMP\_Fifo* Fifo)}
+    \begin{apiparams}
+        \apiparam{volatile struct RMP\_Fifo* Fifo}{指向要删除的先进先出队列的先进先出队列控制块的指针。}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{rmp\_ret\_t}{如果成功，返回0。如果失败则可能有如下返回值：}
+        \apiretval{RMP\_ERR\_FIFO}{先进先出队列控制块为0（NULL）或者未被使用。}
+        \apiretval{RMP\_ERR\_OPER}{先进先出队列中还有元素，无法删除。 该检查即使在RMP\_CHECK\_ENABLE关闭时也会执行。}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{读先进先出队列}\label{subsec:read-from-a-fifo}
+
+本操作会试图从先进先出队列中读取一个元素。如果先进先出队列中无元素，本操作会即刻返回，不提供阻塞功能。
+
+\begin{apidesc}{RMP\_Fifo\_Read}{读先进先出队列}
+    \apisig{rmp\_ret\_t RMP\_Fifo\_Read(volatile struct RMP\_Fifo* Fifo, volatile struct RMP\_List** Node)}
+    \begin{apiparams}
+        \apiparam{volatile struct RMP\_Fifo* Fifo}{指向要读的先进先出队列的先进先出队列控制块的指针。}
+        \apiparam{volatile struct RMP\_List** Node}{该参数用于输出，输出读取的元素。}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{rmp\_ret\_t}{如果成功，返回0。如果失败则可能有如下返回值：}
+        \apiretval{RMP\_ERR\_FIFO}{先进先出队列控制块为0（NULL）或者未被使用。}
+        \apiretval{RMP\_ERR\_OPER}{读指针Node为0（NULL），或者先进先出队列中暂时没有元素。 最后一条检查即使在RMP\_CHECK\_ENABLE关闭时也会执行。}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{写先进先出队列}\label{subsec:write-to-a-fifo}
+
+本操作会向先进先出队列中写入一个元素。
+
+\begin{apidesc}{RMP\_Fifo\_Write}{写先进先出队列}
+    \apisig{rmp\_ret\_t RMP\_Fifo\_Write(volatile struct RMP\_Fifo* Fifo, volatile struct RMP\_List* Node)}
+    \begin{apiparams}
+        \apiparam{volatile struct RMP\_Fifo* Fifo}{指向要写的先进先出队列的先进先出队列控制块的指针。}
+        \apiparam{volatile struct RMP\_List* Node}{指向要写入的元素的指针。}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{rmp\_ret\_t}{如果成功，返回0。如果失败则可能有如下返回值：}
+        \apiretval{RMP\_ERR\_FIFO}{先进先出队列控制块为0（NULL）或者未被使用。}
+        \apiretval{RMP\_ERR\_OPER}{写指针Node为0（NULL）。}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{从中断写先进先出队列}\label{subsec:write-to-a-fifo-from-an-interrupt}
+
+本操作会从中断向量中向先进先出队列中写入一个元素。
+
+\begin{apidesc}{RMP\_Fifo\_Write\_ISR}{从中断写先进先出队列}
+    \apisig{rmp\_ret\_t RMP\_Fifo\_Write\_ISR(volatile struct RMP\_Fifo* Fifo, volatile struct RMP\_List* Node)}
+    \begin{apiparams}
+        \apiparam{volatile struct RMP\_Fifo* Fifo}{指向要写的先进先出队列的先进先出队列控制块的指针。}
+        \apiparam{volatile struct RMP\_List* Node}{指向要写入的元素的指针。}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{rmp\_ret\_t}{如果成功，返回0。如果失败则可能有如下返回值：}
+        \apiretval{RMP\_ERR\_FIFO}{先进先出队列控制块为0（NULL）或者未被使用。}
+        \apiretval{RMP\_ERR\_OPER}{写指针Node为0（NULL）。}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{查询先进先出队列长度}\label{subsec:query-the-fifo-length}
+
+本操作会查询先进先出队列的当前长度。
+
+\begin{apidesc}{RMP\_Fifo\_Cnt}{查询先进先出队列长度}
+    \apisig{rmp\_ret\_t RMP\_Fifo\_Cnt(volatile struct RMP\_Fifo* Fifo)}
+    \begin{apiparams}
+        \apiparam{volatile struct RMP\_Fifo* Fifo}{指向要查询长度的先进先出队列的先进先出队列控制块的指针。}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{rmp\_ret\_t}{如果成功，返回当前队列长度。如果失败则可能有如下返回值：}
+        \apiretval{RMP\_ERR\_FIFO}{先进先出队列控制块为0（NULL）或者未被使用。}
+    \end{apiret}
+\end{apidesc}
+
+\section{消息队列扩展接口}\label{sec:message-queue-extension-interface}
+
+所有的消息队列扩展接口如下表所示：
+
+\captionof{table}{消息队列扩展接口一览}\label{tab:message-queue-extension-interface-summary}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.3210}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.3146}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.1759}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.1817}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+接口
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+意义
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+锁调度器时调用
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+中断中调用
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+RMP\_Msgq\_Crt & 创建消息队列 & 可 & 不可 \\
+RMP\_Msgq\_Del & 删除消息队列 & 可 & 不可 \\
+RMP\_Msgq\_Snd & 向消息队列发送 & 可 & 不可 \\
+RMP\_Msgq\_Snd\_ISR & 从中断向消息队列发送 & 不可 & 可 \\
+RMP\_Msgq\_Rcv & 从消息队列接收 & 不可 & 不可 \\
+RMP\_Msgq\_Cnt & 查询消息队列长度 & 可 & 不可 \\
+\end{longtable}
+}
+
+它们可能有如下返回值：
+
+\captionof{table}{消息队列扩展接口的可能返回值}\label{tab:possible-return-values-of-the-message-queue-extension-interface}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2741}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.0927}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.6332}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+返回值
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+数值
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+意义
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+RMP\_ERR\_OPER & -6 & 由于其他原因导致操作失败。 \\
+RMP\_ERR\_MSGQ & -10 & 由于消息队列控制块相关的原因导致操作失败。 \\
+\end{longtable}
+}
+
+\subsection{创建消息队列}\label{subsec:create-a-message-queue}
+
+本操作会创建一个消息队列。
+
+\begin{apidesc}{RMP\_Msgq\_Crt}{创建消息队列}
+    \apisig{rmp\_ret\_t RMP\_Msgq\_Crt(volatile struct RMP\_Msgq* Queue)}
+    \begin{apiparams}
+        \apiparam{volatile struct RMP\_Msgq* Queue}{指向空的、将被用于该消息队列的消息队列控制块的指针。}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{rmp\_ret\_t}{如果成功，返回0。如果失败则可能有如下返回值：}
+        \apiretval{RMP\_ERR\_MSGQ}{消息队列控制块为0（NULL）或者已被使用。}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{删除消息队列}\label{subsec:delete-a-message-queue}
+
+本操作会删除一个消息队列。只有空的消息队列才能被删除。
+
+\begin{apidesc}{RMP\_Msgq\_Del}{删除消息队列}
+    \apisig{rmp\_ret\_t RMP\_Msgq\_Del(volatile struct RMP\_Msgq* Queue)}
+    \begin{apiparams}
+        \apiparam{volatile struct RMP\_Msgq* Queue}{指向要删除的消息队列的消息队列控制块的指针。}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{rmp\_ret\_t}{如果成功，返回0。如果失败则可能有如下返回值：}
+        \apiretval{RMP\_ERR\_MSGQ}{消息队列控制块为0（NULL）或者未被使用。}
+        \apiretval{RMP\_ERR\_OPER}{消息队列中还有元素，无法删除。 该检查即使在RMP\_CHECK\_ENABLE关闭时也会执行。}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{向消息队列发送}\label{subsec:send-to-a-message-queue}
+
+本操作会向消息队列中发送一条消息。
+
+\begin{apidesc}{RMP\_Msgq\_Snd}{向消息队列发送}
+    \apisig{rmp\_ret\_t RMP\_Msgq\_Snd(volatile struct RMP\_Msgq* Queue, volatile struct RMP\_List* Node)}
+    \begin{apiparams}
+        \apiparam{volatile struct RMP\_Msgq* Queue}{指向要发送到的消息队列的消息队列控制块的指针。}
+        \apiparam{volatile struct RMP\_List* Node}{指向要发送的消息的指针。}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{rmp\_ret\_t}{如果成功，返回0。如果失败则可能有如下返回值：}
+        \apiretval{RMP\_ERR\_MSGQ}{消息队列控制块为0（NULL）或者未被使用。}
+        \apiretval{RMP\_ERR\_OPER}{发送指针Node为0（NULL），或者队列中当前的消息数量达到RMP\_SEM\_CNT\_MAX。}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{从中断向消息队列发送}\label{subsec:send-to-a-message-queue-from-an-interrupt}
+
+本操作会在中断中向消息队列中发送一条消息。和上面的普通版本调用不同，该版本总是立即返回而不会阻塞。
+
+\begin{apidesc}{RMP\_Msgq\_Snd\_ISR}{从中断向消息队列发送}
+    \apisig{rmp\_ret\_t RMP\_Msgq\_Snd\_ISR(volatile struct RMP\_Msgq* Queue, volatile struct RMP\_List* Node)}
+    \begin{apiparams}
+        \apiparam{volatile struct RMP\_Msgq* Queue}{指向要发送到的消息队列的消息队列控制块的指针。}
+        \apiparam{volatile struct RMP\_List* Node}{指向要发送的消息的指针。}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{rmp\_ret\_t}{如果成功，返回0。如果失败则可能有如下返回值：}
+        \apiretval{RMP\_ERR\_MSGQ}{消息队列控制块为0（NULL）或者未被使用。}
+        \apiretval{RMP\_ERR\_OPER}{发送指针Node为0（NULL），或者队列中当前的消息数量达到RMP\_SEM\_CNT\_MAX。}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{从消息队列接收}\label{subsec:receive-from-a-message-queue}
+
+本操作会从消息队列中接收一条消息。
+
+\begin{apidesc}{RMP\_Msgq\_Rcv}{从消息队列接收}
+    \apisig{rmp\_ret\_t RMP\_Msgq\_Rcv(volatile struct RMP\_Msgq* Queue, volatile struct RMP\_List** Node, rmp\_ptr\_t Slice)}
+    \begin{apiparams}
+        \apiparam{volatile struct RMP\_Msgq* Queue}{指向要接收消息的消息队列的消息队列控制块的指针。}
+        \apiparam{volatile struct RMP\_List** Node}{该参数用于输出，输出读取的消息。}
+        \apiparam{rmp\_ptr\_t Slice}{暂无消息时要等待的时间片数量。如果为0，那么意味着如果探测到阻塞则立即返回；如果为0到RMP\_SLICE\_MAX之间的值，那么将会最多阻塞等待该数量的时间片后返回；如果为超过或等于RMP\_SLICE\_MAX的值，那么意味着将永远阻塞直到接收到消息或者消息队列被销毁。}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{rmp\_ret\_t}{如果成功，返回0。如果失败则可能有如下返回值：}
+        \apiretval{RMP\_ERR\_MSGQ}{消息队列控制块为0（NULL）或者未被使用。}
+        \apiretval{RMP\_ERR\_OPER}{接收指针Node为0（NULL），或者在不阻塞条件下探测到可能造成阻塞，或者等待因超时、目标队列被删除、被中途解除而失败。 最后两条检查即使在RMP\_CHECK\_ENABLE关闭时也会执行。}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{查询消息队列长度}\label{subsec:query-the-message-queue-length}
+
+本操作会查询消息队列的当前长度。
+
+\begin{apidesc}{RMP\_Msgq\_Cnt}{查询消息队列长度}
+    \apisig{rmp\_ret\_t RMP\_Msgq\_Cnt(volatile struct RMP\_Msgq* Queue)}
+    \begin{apiparams}
+        \apiparam{volatile struct RMP\_Msgq* Queue}{指向要查询长度的消息队列的消息队列控制块的指针。}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{rmp\_ret\_t}{如果成功，返回当前队列长度。如果失败则可能有如下返回值：}
+        \apiretval{RMP\_ERR\_MSGQ}{消息队列控制块为0（NULL）或者未被使用。}
+    \end{apiret}
+\end{apidesc}
+
+\section{阻塞消息队列扩展接口}\label{sec:blocking-message-queue-extension-interface}
+
+所有的阻塞消息队列扩展接口如下表所示：
+
+\captionof{table}{阻塞消息队列扩展接口一览}\label{tab:blocking-message-queue-extension-interface-summary}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.3210}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.3146}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.1759}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.1817}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+接口
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+意义
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+锁调度器时调用
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+中断中调用
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+RMP\_Bmq\_Crt & 创建阻塞消息队列 & 可 & 不可 \\
+RMP\_Bmq\_Del & 删除阻塞消息队列 & 可 & 不可 \\
+RMP\_Bmq\_Snd & 向阻塞消息队列发送 & 不可 & 不可 \\
+RMP\_Bmq\_Snd\_ISR & 从中断向阻塞消息队列发送 & 不可 & 可 \\
+RMP\_Bmq\_Rcv & 从阻塞消息队列接收 & 不可 & 不可 \\
+RMP\_Bmq\_Cnt & 查询阻塞消息队列长度 & 可 & 不可 \\
+\end{longtable}
+}
+
+它们可能有如下返回值：
+
+\captionof{table}{阻塞消息队列扩展接口的可能返回值}\label{tab:possible-return-values-of-the-blocking-message-queue-extension-interface}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2741}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.0927}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.6332}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+返回值
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+数值
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+意义
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+RMP\_ERR\_OPER & -6 & 由于其他原因导致操作失败。 \\
+RMP\_ERR\_BMQ & -11 & 由于阻塞消息队列控制块相关的原因导致操作失败。 \\
+\end{longtable}
+}
+
+\subsection{创建阻塞消息队列}\label{subsec:create-a-blocking-message-queue}
+
+本操作会创建一个阻塞消息队列。
+
+\begin{apidesc}{RMP\_Bmq\_Crt}{创建阻塞消息队列}
+    \apisig{rmp\_ret\_t RMP\_Bmq\_Crt(volatile struct RMP\_Bmq* Queue, rmp\_ptr\_t Limit)}
+    \begin{apiparams}
+        \apiparam{volatile struct RMP\_Bmq* Queue}{指向空的、将被用于该阻塞消息队列的阻塞消息队列控制块的指针。}
+        \apiparam{rmp\_ptr\_t Limit}{最大队列长度：队列中最多允许同时存在这个数量的消息。}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{rmp\_ret\_t}{如果成功，返回0。如果失败则可能有如下返回值：}
+        \apiretval{RMP\_ERR\_BMQ}{阻塞消息队列控制块为0（NULL）或者已被使用。}
+        \apiretval{RMP\_ERR\_OPER}{传入的最大队列长度为0，或者达到了RMP\_SEM\_CNT\_MAX。}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{删除阻塞消息队列}\label{subsec:delete-a-blocking-message-queue}
+
+本操作会删除一个阻塞消息队列。只有空的阻塞消息队列才能被删除。
+
+\begin{apidesc}{RMP\_Bmq\_Del}{删除阻塞消息队列}
+    \apisig{rmp\_ret\_t RMP\_Bmq\_Del(volatile struct RMP\_Bmq* Queue)}
+    \begin{apiparams}
+        \apiparam{volatile struct RMP\_Bmq* Queue}{指向要删除的阻塞消息队列的阻塞消息队列控制块的指针。}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{rmp\_ret\_t}{如果成功，返回0。如果失败则可能有如下返回值：}
+        \apiretval{RMP\_ERR\_BMQ}{阻塞消息队列控制块为0（NULL）或者未被使用。}
+        \apiretval{RMP\_ERR\_OPER}{阻塞消息队列中还有元素，无法删除。 该检查即使在RMP\_CHECK\_ENABLE关闭时也会执行。}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{向阻塞消息队列发送}\label{subsec:send-to-a-blocking-message-queue}
+
+本操作会向阻塞消息队列中发送一条消息。
+
+\begin{apidesc}{RMP\_Bmq\_Snd}{向阻塞消息队列发送}
+    \apisig{rmp\_ret\_t RMP\_Bmq\_Snd(volatile struct RMP\_Bmq* Queue, volatile struct RMP\_List* Node, rmp\_ptr\_t Slice)}
+    \begin{apiparams}
+        \apiparam{volatile struct RMP\_Bmq* Queue}{指向要发送到的消息队列的消息队列控制块的指针。}
+        \apiparam{volatile struct RMP\_List* Node}{指向要发送的消息的指针。}
+        \apiparam{rmp\_ptr\_t Slice}{队列暂满时要等待的时间片数量。如果为0，那么意味着如果探测到阻塞则立即返回；如果为0到RMP\_SLICE\_MAX之间的值，那么将会最多阻塞等待该数量的时间片后返回；如果为超过或等于RMP\_SLICE\_MAX的值，那么意味着将永远阻塞直到发送完消息。}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{rmp\_ret\_t}{如果成功，返回0。如果失败则可能有如下返回值：}
+        \apiretval{RMP\_ERR\_BMQ}{阻塞消息队列控制块为0（NULL）或者未被使用。}
+        \apiretval{RMP\_ERR\_OPER}{发送指针Node为0（NULL），或者队列中当前的消息数量达到RMP\_SEM\_CNT\_MAX，或者在不阻塞条件下探测到可能造成阻塞，或者等待因超时、目标队列被删除、被中途解除而失败。 最后两条检查即使在RMP\_CHECK\_ENABLE关闭时也会执行。}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{从中断向阻塞消息队列发送}\label{subsec:send-to-a-blocking-message-queue-from-an-interrupt}
+
+本操作会在中断中向阻塞消息队列中发送一个元素。和上面的普通版本调用不同，该版本总是立即返回而不会阻塞，而且也不接受等待时间片参数。
+
+\begin{apidesc}{RMP\_Bmq\_Snd\_ISR}{从中断向阻塞消息队列发送}
+    \apisig{rmp\_ret\_t RMP\_Bmq\_Snd\_ISR(volatile struct RMP\_Bmq* Queue, volatile struct RMP\_List* Node)}
+    \begin{apiparams}
+        \apiparam{volatile struct RMP\_Bmq* Queue}{指向要发送到的阻塞消息队列的阻塞消息队列控制块的指针。}
+        \apiparam{volatile struct RMP\_List* Node}{指向要发送的消息的指针。}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{rmp\_ret\_t}{如果成功，返回0。如果失败则可能有如下返回值：}
+        \apiretval{RMP\_ERR\_BMQ}{阻塞消息队列控制块为0（NULL）或者未被使用。}
+        \apiretval{RMP\_ERR\_OPER}{发送指针Node为0（NULL），或者队列中当前的消息数量达到RMP\_SEM\_CNT\_MAX，或者队列中的消息数目已经达到创建时允许的最大数目。 最后一条检查即使在RMP\_CHECK\_ENABLE关闭时也会执行。}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{从阻塞消息队列接收}\label{subsec:receive-from-a-blocking-message-queue}
+
+本操作会从阻塞消息队列中接收一条消息。
+
+\begin{apidesc}{RMP\_Bmq\_Rcv}{从阻塞消息队列接收}
+    \apisig{rmp\_ret\_t RMP\_Bmq\_Rcv(volatile struct RMP\_Bmq* Queue, volatile struct RMP\_List** Node, rmp\_ptr\_t Slice)}
+    \begin{apiparams}
+        \apiparam{volatile struct RMP\_Bmq* Queue}{指向要接收消息的阻塞消息队列的阻塞消息队列控制块的指针。}
+        \apiparam{volatile struct RMP\_List** Node}{该参数用于输出，输出接收的消息。}
+        \apiparam{rmp\_ptr\_t Slice}{暂无消息时要等待的时间片数量。如果为0，那么意味着如果探测到阻塞则立即返回；如果为0到RMP\_SLICE\_MAX之间的值，那么将会最多阻塞等待该数量的时间片后返回；如果为超过或等于RMP\_SLICE\_MAX的值，那么意味着将永远阻塞直到接收到消息或者阻塞消息队列被销毁。}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{rmp\_ret\_t}{如果成功，返回0。如果失败则可能有如下返回值：}
+        \apiretval{RMP\_ERR\_BMQ}{阻塞消息队列控制块为0（NULL）或者未被使用。}
+        \apiretval{RMP\_ERR\_OPER}{接收指针Node为0（NULL），或者在不阻塞条件下探测到可能造成阻塞，或者等待因超时、目标队列被删除、被中途解除而失败。 最后两条检查即使在RMP\_CHECK\_ENABLE关闭时也会执行。}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{查询阻塞消息队列长度}\label{subsec:query-the-blocking-message-queue-length}
+
+本操作会查询阻塞消息队列的当前长度。
+
+\begin{apidesc}{RMP\_Bmq\_Cnt}{查询阻塞消息队列长度}
+    \apisig{rmp\_ret\_t RMP\_Bmq\_Cnt(volatile struct RMP\_Bmq* Queue)}
+    \begin{apiparams}
+        \apiparam{volatile struct RMP\_Bmq* Queue}{指向要查询长度的阻塞消息队列的阻塞消息队列控制块的指针。}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{rmp\_ret\_t}{如果成功，返回当前队列长度。如果失败则可能有如下返回值：}
+        \apiretval{RMP\_ERR\_BMQ}{阻塞消息队列控制块为0（NULL）或者未被使用。}
+    \end{apiret}
+\end{apidesc}
+
+\section{软定时器扩展接口}\label{sec:soft-timer-extension-interface}
+
+所有的软定时器扩展接口如下表所示：
+
+\captionof{table}{软定时器扩展接口一览}\label{tab:soft-timer-extension-interface-summary}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.3210}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.3146}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.1759}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.1817}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+接口
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+意义
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+锁调度器时调用
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+中断中调用
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+RMP\_Amgr\_Crt & 创建定时器管理器 & 可 & 不可 \\
+RMP\_Amgr\_Del & 删除定时器管理器 & 可 & 不可 \\
+RMP\_Amgr\_Pop & 拆解定时器管理器 & 可 & 不可 \\
+RMP\_Amgr\_Proc & 维护定时器管理器 & 不可 & 不可 \\
+RMP\_Amgr\_Cnt & 查询定时器数量 & 可 & 不可 \\
+RMP\_Alrm\_Init & 初始化定时器 & 可 & 不可 \\
+RMP\_Alrm\_Set & 注册定时器 & 不可 & 不可 \\
+RMP\_Alrm\_Clr & 取消定时器 & 不可 & 不可 \\
+RMP\_Alrm\_Trg & 触发定时器 & 不可 & 不可 \\
+\end{longtable}
+}
+
+它们可能有如下返回值：
+
+\captionof{table}{软定时器扩展接口的可能返回值}\label{tab:possible-return-values-of-the-soft-timer-extension-interface}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2741}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.0927}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.6332}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+返回值
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+数值
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+意义
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+RMP\_ERR\_OPER & -6 & 由于其他原因导致操作失败。 \\
+RMP\_ERR\_AMGR & -12 & 由于定时器管理器控制块相关的原因导致操作失败。 \\
+RMP\_ERR\_ALRM & -13 & 由于定时器控制块相关的原因导致操作失败。 \\
+\end{longtable}
+}
+
+\subsection{创建定时器管理器}\label{subsec:create-an-alarm-manager}
+
+本操作会创建一个定时器管理器。
+
+\begin{apidesc}{RMP\_Amgr\_Crt}{创建定时器管理器}
+    \apisig{rmp\_ret\_t RMP\_Amgr\_Crt(volatile struct RMP\_Amgr* Amgr)}
+    \begin{apiparams}
+        \apiparam{volatile struct RMP\_Amgr* Amgr}{指向空的、将被用于该定时器管理器的定时器管理器控制块的指针。}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{rmp\_ret\_t}{如果成功，返回0。如果失败则可能有如下返回值：}
+        \apiretval{RMP\_ERR\_AMGR}{定时器管理器控制块为0（NULL）或者已被使用。}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{删除定时器管理器}\label{subsec:delete-an-alarm-manager}
+
+本操作会删除一个定时器管理器。只有空的定时器管理器才能被删除。如果决定删除定时器管理器，要么等待（1）其中的定时器自然超时，要么（2）使用下一小节所述的拆解函数手动拆解之。
+
+\begin{apidesc}{RMP\_Amgr\_Del}{删除定时器管理器}
+    \apisig{rmp\_ret\_t RMP\_Amgr\_Del(volatile struct RMP\_Amgr* Amgr)}
+    \begin{apiparams}
+        \apiparam{volatile struct RMP\_Amgr* Amgr}{指向要删除的定时器管理器的定时器管理器控制块的指针。}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{rmp\_ret\_t}{如果成功，返回0。如果失败则可能有如下返回值：}
+        \apiretval{RMP\_ERR\_AMGR}{定时器管理器控制块为0（NULL）或者未被使用。}
+        \apiretval{RMP\_ERR\_OPER}{定时器管理器中还有定时器，无法删除。 该检查即使在RMP\_CHECK\_ENABLE关闭时也会执行。}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{拆解定时器管理器}\label{subsec:dismantle-an-alarm-manager}
+
+本操作会从定时器管理器中强行弹出一个定时器。在需要强行停止定时器管理器运作的场合，在终止一切可能操作该定时器管理器的线程后，定时器管理器的数据结构可能遭到破坏。此时，使用本函数可以对定时器管理器进行逐步拆解，使其中不再含有任何定时器，以便对其进行删除。如果定时器是从内存池中分配的，可以将它们一一退还给内存池。
+
+在拆解定时器之前，一切定时器管理器操作都必须停止；一旦开始拆解任何定时器，后续就只允许对它（1）进行拆解或（2）进行删除。
+
+\begin{apidesc}{RMP\_Amgr\_Pop}{拆解定时器管理器}
+    \apisig{rmp\_ret\_t RMP\_Amgr\_Pop(volatile struct RMP\_Amgr* Amgr, volatile struct RMP\_Alrm** Alrm)}
+    \begin{apiparams}
+        \apiparam{volatile struct RMP\_Amgr* Amgr}{指向要拆解的定时器管理器的定时器管理器控制块的指针。}
+        \apiparam{volatile struct RMP\_Alrm** Alrm}{该参数用于输出，输出拆解出的定时器。}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{rmp\_ret\_t}{如果成功，返回0。如果失败则可能有如下返回值：}
+        \apiretval{RMP\_ERR\_AMGR}{定时器管理器控制块为0（NULL）或者未被使用。}
+        \apiretval{RMP\_ERR\_OPER}{读指针Alrm为0（NULL），或者定时器管理器中已无定时器。 最后一条检查即使在RMP\_CHECK\_ENABLE关闭时也会执行。}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{维护定时器管理器}\label{subsec:maintain-an-alarm-manager}
+
+本操作会对定时器管理器增加时间计数，并处理任何超时的定时器，是定时器管理器的核心接口。本操作需要被定期调用以处理注册于管理器上的定时器；可以安排一个专用线程来周期性地调用它，调用周期即是该定时器管理器的计时粒度。
+
+\begin{apidesc}{RMP\_Amgr\_Proc}{维护定时器管理器}
+    \apisig{rmp\_ret\_t RMP\_Amgr\_Proc(volatile struct RMP\_Amgr* Amgr, rmp\_ptr\_t Tick)}
+    \begin{apiparams}
+        \apiparam{volatile struct RMP\_Amgr* Amgr}{指向要维护的定时器管理器的定时器管理器控制块的指针。}
+        \apiparam{rmp\_ptr\_t Tick}{要给该定时器管理器增加的时间计数。这个数字不受RMP\_SLICE\_MAX限制，但它不能为0，也不能超过2\textsuperscript{N-1}-1（也即RMP\_MASK\_INTMAX），其中N是RMP\_WORD\_ORDER。一次性增加多于一个时间计数可能导致定时器超期溢出，此时其回调钩子函数被调用时其超期程度Overdue会是一个正数。}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{rmp\_ret\_t}{如果成功，返回定时器管理器上的当前定时器数量。如果失败则可能有如下返回值：}
+        \apiretval{RMP\_ERR\_AMGR}{定时器管理器控制块为0（NULL）或者未被使用。}
+        \apiretval{RMP\_ERR\_OPER}{Tick为0或超过RMP\_MASK\_INTMAX，或者加锁操作因定时器管理器被删除、被取消而失败。 最后一条检查即使在RMP\_CHECK\_ENABLE关闭时也会执行。}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{查询定时器数量}\label{subsec:query-the-number-of-alarms}
+
+本操作会查询定时器管理器上的当前定时器数量。
+
+\begin{apidesc}{RMP\_Amgr\_Cnt}{查询定时器数量}
+    \apisig{rmp\_ret\_t RMP\_Amgr\_Cnt(volatile struct RMP\_Amgr* Amgr)}
+    \begin{apiparams}
+        \apiparam{volatile struct RMP\_Amgr* Amgr}{指向要查询定时器数量的定时器管理器的定时器管理器控制块的指针。}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{rmp\_ret\_t}{如果成功，返回定时器管理器上的当前定时器数量。如果失败则可能有如下返回值：}
+        \apiretval{RMP\_ERR\_AMGR}{定时器管理器控制块为0（NULL）或者未被使用。}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{初始化定时器}\label{subsec:initialise-an-alarm}
+
+本操作会依据用户给出的参数初始化定时器的数据结构，以便接下来将其注册到定时器管理器。
+
+\begin{apidesc}{RMP\_Alrm\_Init}{初始化定时器}
+    \apisig{rmp\_ret\_t RMP\_Alrm\_Init(volatile struct RMP\_Alrm* Alrm, rmp\_ptr\_t Delay, rmp\_ptr\_t Mode, void (*Hook)(volatile struct RMP\_Amgr*, volatile struct RMP\_Alrm*, rmp\_cnt\_t))}
+    \begin{apiparams}
+        \apiparam{volatile struct RMP\_Alrm* Alrm}{指向要初始化的定时器的定时器控制块的指针。}
+        \apiparam{rmp\_ptr\_t Delay}{该定时器的延时时间数。这个数字不受RMP\_SLICE\_MAX限制，但它不能为0，也不能超过2\textsuperscript{N-1}-1（也即RMP\_MASK\_INTMAX），其中N是RMP\_WORD\_ORDER。该数字的单位即是定时器管理器的时间粒度。}
+        \apiparam{rmp\_ptr\_t Mode}{该定时器的工作模式，可以是自动重装（RMP\_ALRM\_AUTORLD）或者单次触发（RMP\_ALRM\_ONESHOT）。}
+        \apiparam{void (*Hook)(volatile struct RMP\_Amgr*, volatile struct RMP\_Alrm*, rmp\_cnt\_t)}{该定时器的回调钩子函数。其具体原型如下表所示。}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{rmp\_ret\_t}{如果成功，返回0。如果失败则可能有如下返回值：}
+        \apiretval{RMP\_ERR\_ALRM}{定时器控制块为0（NULL）或者已被注册。}
+        \apiretval{RMP\_ERR\_OPER}{Delay为0或超过RMP\_MASK\_INTMAX，或者Mode既不是RMP\_ALRM\_AUTORLD也不是RMP\_ALRM\_ONESHOT，或者Hook为0（NULL）。}
+    \end{apiret}
+\end{apidesc}
+
+\begin{apidesc}{Hook}{定时器回调函数钩子}
+    \apisig{void Hook(volatile struct RMP\_Amgr* Amgr, volatile struct RMP\_Alrm* Alrm, rmp\_cnt\_t Overdue)}
+    \begin{apiparams}
+        \apiparam{volatile struct RMP\_Amgr* Amgr}{指向该定时器所属的定时器管理器的定时器管理器结构体的指针。}
+        \apiparam{volatile struct RMP\_Alrm* Alrm}{指向该定时器的定时器结构体的指针。}
+        \apiparam{rmp\_cnt\_t Overdue}{该定时器的超期程度。如果该定时器因RMP\_Amgr\_Proc一次增加多个时间计数而超期溢出，则该数是表征超期程度的正数；如果该定时器因RMP\_Alrm\_Trg而被提早触发，则该数是表征提早程度的负数；如果该定时器正常溢出，则该数为0。}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{无。}{}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{注册定时器}\label{subsec:register-an-alarm}
+
+本操作会将指定的定时器注册到指定的定时器管理器。如果定时器已被注册到同一个定时器管理器，则其延时时间将被重置。
+
+\begin{apidesc}{RMP\_Alrm\_Set}{注册定时器}
+    \apisig{rmp\_ret\_t RMP\_Alrm\_Set(volatile struct RMP\_Amgr* Amgr, volatile struct RMP\_Alrm* Alrm)}
+    \begin{apiparams}
+        \apiparam{volatile struct RMP\_Amgr* Amgr}{指向要注册到的定时器管理器的定时器管理器结构体的指针。}
+        \apiparam{volatile struct RMP\_Alrm* Alrm}{指向要注册的定时器的定时器控制块的指针。}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{rmp\_ret\_t}{如果成功，返回0。如果失败则可能有如下返回值：}
+        \apiretval{RMP\_ERR\_AMGR}{定时器管理器控制块为0（NULL）或者未被使用。}
+        \apiretval{RMP\_ERR\_ALRM}{定时器控制块为0（NULL），或者被注册到了其它定时器管理器。 最后一条检查即使在RMP\_CHECK\_ENABLE关闭时也会执行。}
+        \apiretval{RMP\_ERR\_OPER}{加锁操作因定时器管理器被删除、被取消而失败。 该检查即使在RMP\_CHECK\_ENABLE关闭时也会执行。}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{取消定时器}\label{subsec:cancel-an-alarm}
+
+本操作会取消指定的定时器。被取消的定时器将被立即从定时器管理器解除注册。
+
+\begin{apidesc}{RMP\_Alrm\_Clr}{取消定时器}
+    \apisig{rmp\_ret\_t RMP\_Alrm\_Clr(volatile struct RMP\_Amgr* Amgr, volatile struct RMP\_Alrm* Alrm)}
+    \begin{apiparams}
+        \apiparam{volatile struct RMP\_Amgr* Amgr}{指向该定时器所在的定时器管理器的定时器管理器结构体的指针。}
+        \apiparam{volatile struct RMP\_Alrm* Alrm}{指向要取消的定时器的定时器控制块的指针。}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{rmp\_ret\_t}{如果成功，返回0。如果失败则可能有如下返回值：}
+        \apiretval{RMP\_ERR\_AMGR}{定时器控制器控制块为0（NULL）或者未被使用。}
+        \apiretval{RMP\_ERR\_ALRM}{定时器控制块为0（NULL），或者未被注册到该定时器管理器。 最后一条检查即使在RMP\_CHECK\_ENABLE关闭时也会执行。}
+        \apiretval{RMP\_ERR\_OPER}{加锁操作因定时器管理器被删除、被取消而失败。 该检查即使在RMP\_CHECK\_ENABLE关闭时也会执行。}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{触发定时器}\label{subsec:trigger-an-alarm}
+
+本操作会提前触发指定的定时器，好像其定时时间已到那样。定时器的回调钩子函数会被调用，且其超期程度Overdue将是一个负值。在此之后，自动重装的定时器会立即再次开始计时，而单次触发的定时器则会从其定时器管理器解除注册。
+
+\begin{apidesc}{RMP\_Alrm\_Trg}{触发定时器}
+    \apisig{rmp\_ret\_t RMP\_Alrm\_Trg(volatile struct RMP\_Amgr* Amgr, volatile struct RMP\_Alrm* Alrm)}
+    \begin{apiparams}
+        \apiparam{volatile struct RMP\_Amgr* Amgr}{指向要提前触发的定时器所在的定时器管理器的定时器管理器结构体的指针。}
+        \apiparam{volatile struct RMP\_Alrm* Alrm}{指向要提前触发的定时器的定时器控制块的指针。}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{rmp\_ret\_t}{如果成功，返回0。如果失败则可能有如下返回值：}
+        \apiretval{RMP\_ERR\_AMGR}{定时器管理器控制块为0（NULL）或者未被使用。}
+        \apiretval{RMP\_ERR\_ALRM}{定时器控制块为0（NULL），或者未被注册到该定时器管理器。 最后两条检查即使在RMP\_CHECK\_ENABLE关闭时也会执行。}
+        \apiretval{RMP\_ERR\_OPER}{加锁操作因定时器管理器被删除、被取消而失败。 该检查即使在RMP\_CHECK\_ENABLE关闭时也会执行。}
+    \end{apiret}
+\end{apidesc}
+
+\section{本章参考文献}\label{sec:chapter-bibliography-5}
+
+无

@@ -1,0 +1,539 @@
+\chapter{轻量级图形界面接口}\label{ch:lightweight-graphics-interface}
+
+\section{嵌入式图形界面简介}\label{sec:introduction-to-embedded-graphical-interfaces}
+
+嵌入式图形界面（Graphic User
+Interface，GUI）是用于嵌入式系统的专用图形解决方案。和传统的计算机图形界面相比，嵌入式GUI具有简单性、多样性、平面性和受限性的特点。抓住这四点特征是良好完成嵌入式GUI设计的关键。
+
+\subsection{简单性}\label{subsec:simplicity}
+
+通常而言，嵌入式GUI的组成元素比较单一，一般是几个按钮或者几个显示控件，不像传统GUI一样有滚动条、树状列表等诸多组成元素。而且，一旦UI界面设计完成，在产品使用过程中就很少改变。
+
+\subsection{多样性}\label{subsec:diversity}
+
+传统GUI的设计在经过多年演化后，基本上达成了一定的共识，形成了如，，和为代表的一大批桌面环境。它们都强调优化键鼠操作的使用体验，并使用近乎相同的使用逻辑，其控件大多标准化。而在嵌入式GUI中则正好相反，很少使用标准键鼠输入而较多使用定制键盘和触摸屏，并且有大量的非标准控件和界面。这些控件的界面和逻辑也是趣旨各异的，需要针对具体应用做大量的优化和适配。
+
+\subsection{平面性}\label{subsec:planarity}
+
+传统GUI的技术栈非常强调采用复杂的窗口裁剪，使得窗口具备垂直向的叠加关系，并且需要通过复杂的算法计算出各个窗口的显示区域，并且予以绘制。这在多窗口多任务的极度复杂环境中是必须的。而在嵌入式GUI中，由于显示区域本来就很小，再加上输入手段受限，很少用到多个窗口之间的纵向空间关系，而更加强调扁平而人性化的GUI设计。这一点从各个手机操作系统的演化上也可以看出端倪。
+
+\subsection{受限性}\label{subsec:restriction}
+
+传统GUI的实现往往有赖于强有力的CPU和GPU的支持，并且需要很大的内存来做各种复杂的图形学操作。但在嵌入式环境下，很多时候凑出足够的帧缓存都是很困难的，更不要说使用专用硬件进行图形学操作了。因此，用于嵌入式环境中的GUI需要有特别优化。
+
+\section{图形界面的使能和配置}\label{sec:enabling-and-configuring-the-graphics-interface}
+
+通过提供一系列绘制功能来支持GUI界面，它的基本绘图功能包括了画点画线、几何图形绘制和位图抗锯齿渲染，而稍复杂的功能则包括了各类控件的绘制。这些绘制功能都是不记录GUI对象的状态的，也不采用面向对象设计，因此在使用时不消耗任何额外的RAM而仅仅消耗一定量的ROM。
+
+RMP提供的绘图函数可以分为基本绘图函数、抗锯齿绘图函数和控件绘图函数。要使用它们，需要额外在配置头文件中打开相应的开关，还需要提供一些额外的底层宏。这些宏的列表如下：
+
+\captionof{table}{使用内建嵌入式图形界面所需的宏定义}\label{tab:macros-required-to-use-the-built-in-embedded-gui}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.3420}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.6580}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+宏名称
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+作用
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+RMP\_GUI\_ENABLE & 图形界面的总开关。将它定义为1以使能图形界面功能。
+
+例子：\#define RMP\_GUI\_ENABLE 1U \\
+RMP\_POINT(X, Y, COLOR) &
+画点函数的宏定义。一旦启用图形界面功能，则应该将这个宏定义为画点函数的函数名，而画点函数必须具备如下的原型：
+
+void foo(rmp\_cnt\_t X, rmp\_cnt\_t Y, rmp\_ptr\_t Color);
+
+其作用是在屏幕上的某处画一个点。
+
+例子： \\
+RMP\_GUI\_ANTIALIAS\_ENABLE &
+抗锯齿绘制函数的总开关。将它定义为1以使能抗锯齿绘制功能。
+
+例子：\#define RMP\_GUI\_ANTIALIAS\_ENABLE 1U \\
+RMP\_COLOR\_25P(C1, C2)
+
+RMP\_COLOR\_50P(C1, C2)
+
+RMP\_COLOR\_75P(C1, C2) &
+颜色混合函数的宏定义。一旦启用抗锯齿绘制函数，则必须定义这些宏。三个宏都携带两个颜色作为参数，并返回一个颜色。意味着将C1与C2做25\%+75\%的混合，
+
+意味着将C1与C2做对半混合，
+
+意味着将C1与C2做75\%+25\%的混合。 \\
+RMP\_GUI\_WIDGET\_ENABLE & 控件绘制函数的总开关。将它定义为1以使能控件绘制功能。例子：\#define RMP\_GUI\_WIDGET\_ENABLE 1U \\
+RMP\_COLOR\_WHITE & 内建控件颜色的宏定义。一旦启用控件绘制函数，则必须定义这些宏。RMP\_COLOR\_WHITE为白色的编码定义，推荐\#FFFFFF。 \\
+RMP\_COLOR\_LGREY & RMP\_COLOR\_LGREY为淡灰色的编码定义，推荐\#B8B8B8。 \\
+RMP\_COLOR\_GREY & RMP\_COLOR\_GREY为灰色的编码定义，推荐\#E0E0E0。 \\
+RMP\_COLOR\_DGREY & RMP\_COLOR\_DGREY为深灰色的编码定义，推荐\#A0A0A0。 \\
+RMP\_COLOR\_DARK & RMP\_COLOR\_DARK为暗灰色的编码定义，推荐\#787C78。 \\
+RMP\_COLOR\_DDARK & RMP\_COLOR\_DDARK为极暗灰色的编码定义，推荐\#686868。 \\
+RMP\_COLOR\_BLACK & RMP\_COLOR\_BLACK为黑色的编码定义，推荐\#000000。 \\
+\end{longtable}
+}
+
+提供的绘图函数在绘图时均不检查绘制范围的X和Y是否超出屏幕边界。这个责任是应用程序开发者负担的。
+
+\section{基本绘图函数}\label{sec:basic-drawing-functions}
+
+要使用基本绘图函数，要打开RMP\_GUI\_ENABLE开关，并定义RMP\_POINT画点宏。
+
+基本绘图函数的列表如下：
+
+\subsection{画直线}\label{subsec:draw-a-line}
+
+该函数在屏幕上绘制一条宽度为1的直线。绘制采用算法进行光栅化。
+
+\begin{apidesc}{RMP\_Line}{画直线}
+    \apisig{void RMP\_Line(rmp\_cnt\_t Begin\_X, rmp\_cnt\_t Begin\_Y, rmp\_cnt\_t End\_X, rmp\_cnt\_t End\_Y, rmp\_ptr\_t Color)}
+    \begin{apiparams}
+        \apiparam{rmp\_cnt\_t Begin\_X}{直线的起始点的X坐标。}
+        \apiparam{rmp\_cnt\_t Begin\_Y}{直线的起始点的Y坐标。}
+        \apiparam{rmp\_cnt\_t End\_X}{直线的终止点的X坐标。}
+        \apiparam{rmp\_cnt\_t End\_Y}{直线的终止点的Y坐标。}
+        \apiparam{rmp\_ptr\_t Color}{直线的颜色。}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{无。}{}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{画间断直线}\label{subsec:draw-a-dotted-line}
+
+该函数在屏幕上绘制一条宽度为1的间断直线。绘制采用算法进行光栅化。
+
+\begin{apidesc}{RMP\_Dot\_Line}{画间断直线}
+    \apisig{void RMP\_Dot\_Line(rmp\_cnt\_t Begin\_X, rmp\_cnt\_t Begin\_Y, rmp\_cnt\_t End\_X, rmp\_cnt\_t End\_Y, rmp\_ptr\_t Dot, rmp\_ptr\_t Space)}
+    \begin{apiparams}
+        \apiparam{rmp\_cnt\_t Begin\_X}{间断线的起始点的X坐标。}
+        \apiparam{rmp\_cnt\_t Begin\_Y}{间断线的起始点的Y坐标。}
+        \apiparam{rmp\_cnt\_t End\_X}{间断线的终止点的X坐标。}
+        \apiparam{rmp\_cnt\_t End\_Y}{间断线的终止点的Y坐标。}
+        \apiparam{rmp\_ptr\_t Dot}{间断线的点的颜色。}
+        \apiparam{rmp\_ptr\_t Space}{间断线的空位的颜色。如果填入RMP\_TRANS，不绘制空位。}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{无。}{}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{画矩形}\label{subsec:draw-a-rectangle}
+
+该函数在屏幕上绘制一个矩形。矩形可以具备一个与填充颜色不同的轮廓颜色，可以填充也可以不填充。
+
+\begin{apidesc}{RMP\_Rectangle}{画矩形}
+    \apisig{void RMP\_Rectangle(rmp\_cnt\_t Coord\_X, rmp\_cnt\_t Coord\_Y, rmp\_cnt\_t Length, rmp\_cnt\_t Width, rmp\_ptr\_t Border, rmp\_ptr\_t Fill)}
+    \begin{apiparams}
+        \apiparam{rmp\_cnt\_t Coord\_X}{矩形左上角的X坐标。}
+        \apiparam{rmp\_cnt\_t Coord\_Y}{矩形左上角的Y坐标。}
+        \apiparam{rmp\_cnt\_t Length}{矩形的长度。}
+        \apiparam{rmp\_cnt\_t Width}{矩形的宽度。}
+        \apiparam{rmp\_ptr\_t Border}{矩形的边界颜色。}
+        \apiparam{rmp\_ptr\_t Fill}{矩形的填充颜色。如果填入RMP\_TRANS，不进行填充。}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{无。}{}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{画圆角矩形}\label{subsec:draw-a-rounded-rectangle}
+
+该函数在屏幕上绘制一个圆角矩形。圆角矩形的轮廓颜色与填充颜色一致，且本身必须被全部填充。
+
+\begin{apidesc}{RMP\_Round\_Rect}{画圆角矩形}
+    \apisig{void RMP\_Round\_Rect(rmp\_cnt\_t Coord\_X, rmp\_cnt\_t Coord\_Y, rmp\_cnt\_t Length, rmp\_cnt\_t Width, rmp\_cnt\_t Round, rmp\_ptr\_t Color)}
+    \begin{apiparams}
+        \apiparam{rmp\_cnt\_t Coord\_X}{矩形左上角的X坐标。}
+        \apiparam{rmp\_cnt\_t Coord\_Y}{矩形左上角的Y坐标。}
+        \apiparam{rmp\_cnt\_t Length}{矩形的长度。}
+        \apiparam{rmp\_cnt\_t Width}{矩形的宽度。}
+        \apiparam{rmp\_cnt\_t Round}{圆角矩形的圆角半径。}
+        \apiparam{rmp\_ptr\_t Color}{圆角矩形的颜色。}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{无。}{}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{画圆}\label{subsec:draw-a-circle}
+
+该函数在屏幕上绘制一个圆。圆可以具备一个与填充颜色不同的轮廓颜色，可以填充也可以不填充。
+
+\begin{apidesc}{RMP\_Circle}{画圆}
+    \apisig{void RMP\_Circle(rmp\_cnt\_t Center\_X, rmp\_cnt\_t Center\_Y, rmp\_cnt\_t Radius, rmp\_ptr\_t Border, rmp\_ptr\_t Fill)}
+    \begin{apiparams}
+        \apiparam{rmp\_cnt\_t Center\_X}{圆心的X坐标。}
+        \apiparam{rmp\_cnt\_t Center\_Y}{圆心的Y坐标。}
+        \apiparam{rmp\_cnt\_t Radius}{圆的半径。}
+        \apiparam{rmp\_ptr\_t Border}{圆的边界颜色。}
+        \apiparam{rmp\_ptr\_t Fill}{圆的填充颜色。如果填入RMP\_TRANS，不进行填充。}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{无。}{}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{绘制单色位图}\label{subsec:draw-a-monochrome-bitmap}
+
+该函数绘制一个单色位图到屏幕。位图的长度必须为8的整数，位图必须按照行优先从左到右从高到低扫描的方式储存。在绘制时可以选择高位优先模式或者低位优先模式，当选择前者时，一个字节的最高位的点的X值在一个字节代表的各个像素中最小，选择后者则反之\footnote{这和字节序的概念很相似，不过这里是一个字节内部的各个位的像素顺序}。
+
+\begin{apidesc}{RMP\_Matrix}{绘制单色位图}
+    \apisig{void RMP\_Matrix(rmp\_cnt\_t Coord\_X, rmp\_cnt\_t Coord\_Y, const rmp\_u8\_t* Matrix, rmp\_ptr\_t Bit\_Order, rmp\_cnt\_t Length, rmp\_cnt\_t Width, rmp\_ptr\_t Color)}
+    \begin{apiparams}
+        \apiparam{rmp\_cnt\_t Coord\_X}{位图左上角的X坐标。}
+        \apiparam{rmp\_cnt\_t Coord\_Y}{位图左上角的Y坐标。}
+        \apiparam{const rmp\_u8\_t* Matrix}{指向单色位图数据的指针。}
+        \apiparam{rmp\_ptr\_t Bit\_Order}{字节内的位序。为高位优先模式，RMP\_MAT\_SMALL为低位优先模式。}
+        \apiparam{rmp\_cnt\_t Length}{位图的长度，必须是8的倍数，否则绘制不会开始。}
+        \apiparam{rmp\_cnt\_t Width}{位图的宽度。}
+        \apiparam{rmp\_ptr\_t Color}{绘制位图所用的颜色。}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{无。}{}
+    \end{apiret}
+\end{apidesc}
+
+\section{抗锯齿绘图函数}\label{sec:anti-aliased-drawing-functions}
+
+要使用抗锯齿绘图函数，要打开RMP\_GUI\_ANTIALIAS\_ENABLE开关，并定义RMP\_COLOR\_25P、RMP\_COLOR\_50P和RMP\_COLOR\_75P颜色混合宏。
+
+目前该分类仅包括一个函数，它以的抗锯齿模式绘制一个单色位图到屏幕。位图的长度必须为8的整数，位图必须按照行优先从左到右从高到低扫描的方式储存。在绘制时可以选择高位优先模式或者低位优先模式。在绘制时需要传入位图所在的图层的背景色以进行抗锯齿处理。要使用该函数还要求三个颜色混合宏已经被定义。
+
+\begin{apidesc}{RMP\_Matrix\_AA}{以抗锯齿方式绘制单色位图}
+    \apisig{void RMP\_Matrix\_AA(rmp\_cnt\_t Coord\_X, rmp\_cnt\_t Coord\_Y, const rmp\_u8\_t* Matrix, rmp\_ptr\_t Bit\_Order, rmp\_cnt\_t Length, rmp\_cnt\_t Width, rmp\_ptr\_t Color, rmp\_ptr\_t Back)}
+    \begin{apiparams}
+        \apiparam{rmp\_cnt\_t Coord\_X}{位图左上角的X坐标。}
+        \apiparam{rmp\_cnt\_t Coord\_Y}{位图左上角的Y坐标。}
+        \apiparam{const rmp\_u8\_t* Matrix}{指向单色位图数据的指针。}
+        \apiparam{rmp\_ptr\_t Bit\_Order}{字节内的位序。RMP\_MAT\_BIG为高位优先模式，RMP\_MAT\_SMALL为低位优先模式。}
+        \apiparam{rmp\_cnt\_t Length}{位图的长度，必须是8的倍数，否则绘制不会开始。}
+        \apiparam{rmp\_cnt\_t Width}{位图的宽度。}
+        \apiparam{rmp\_ptr\_t Color}{绘制位图所用的颜色。}
+        \apiparam{rmp\_ptr\_t Back}{位图所在图层的背景色。}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{无。}{}
+    \end{apiret}
+\end{apidesc}
+
+\section{控件绘图函数}\label{sec:widget-drawing-functions}
+
+要使用控件绘图函数，要打开RMP\_GUI\_WIDGET\_ENABLE开关，并定义RMP\_COLOR\_WHITE、RMP\_COLOR\_LGREY、RMP\_COLOR\_GREY、RMP\_COLOR\_DGREY、RMP\_COLOR\_DARK、RMP\_COLOR\_DDARK和RMP\_COLOR\_BLACK颜色宏。
+
+\subsection{绘制光标}\label{subsec:draw-a-cursor}
+
+该函数可以绘制各种16x16的光标到屏幕。
+
+\begin{apidesc}{RMP\_Cursor}{绘制光标}
+    \apisig{void RMP\_Cursor(rmp\_cnt\_t Coord\_X, rmp\_cnt\_t Coord\_Y, rmp\_ptr\_t Style)}
+    \begin{apiparams}
+        \apiparam{rmp\_cnt\_t Coord\_X}{光标左上角的X坐标。}
+        \apiparam{rmp\_cnt\_t Coord\_Y}{光标左上角的Y坐标。}
+        \apiparam{rmp\_ptr\_t Style}{绘制光标的样式。可选择如下项之一：RMP\_CUR\_NORM（通常光标）；RMP\_CUR\_BUSY（带有沙漏符号的忙光标）；RMP\_CUR\_QUESTION（带有问号符号的光标）；RMP\_CUR\_HAND（手形光标）；RMP\_CUR\_TEXT（文字编辑光标）；RMP\_CUR\_STOP（停止光标）；RMP\_CUR\_MOVE（移动光标）；RMP\_CUR\_LR（左右调整光标）；RMP\_CUR\_UD（上下调整光标）；RMP\_CUR\_ULBR（右下-左上调整光标）；RMP\_CUR\_URBL（左下-右上调整光标）；RMP\_CUR\_CROSS（十字准心光标）}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{无。}{}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{绘制复选框}\label{subsec:draw-a-checkbox}
+
+该函数在屏幕上绘制一个大小可变的复选框。
+
+\begin{apidesc}{RMP\_Checkbox}{绘制复选框}
+    \apisig{void RMP\_Checkbox(rmp\_cnt\_t Coord\_X, rmp\_cnt\_t Coord\_Y, rmp\_cnt\_t Length, rmp\_ptr\_t Status)}
+    \begin{apiparams}
+        \apiparam{rmp\_cnt\_t Coord\_X}{复选框左上角的X坐标。}
+        \apiparam{rmp\_cnt\_t Coord\_Y}{复选框左上角的Y坐标。}
+        \apiparam{rmp\_cnt\_t Length}{复选框的长度\footnote{同时也是宽度}。}
+        \apiparam{rmp\_ptr\_t Status}{复选框的当前状态。填入非0值，复选框被选中，0则为不选中。}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{无。}{}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{选中复选框}\label{subsec:check-a-checkbox}
+
+该函数选中一个已经绘制的复选框。
+
+\begin{apidesc}{RMP\_Checkbox\_Set}{选中复选框}
+    \apisig{void RMP\_Checkbox\_Set(rmp\_cnt\_t Coord\_X, rmp\_cnt\_t Coord\_Y, rmp\_cnt\_t Length)}
+    \begin{apiparams}
+        \apiparam{rmp\_cnt\_t Coord\_X}{复选框左上角的X坐标。}
+        \apiparam{rmp\_cnt\_t Coord\_Y}{复选框左上角的Y坐标。}
+        \apiparam{rmp\_cnt\_t Length}{复选框的长度\footnote{同时也是宽度}。}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{无。}{}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{清除复选框}\label{subsec:clear-a-checkbox}
+
+该函数清除一个已经绘制的复选框。
+
+\begin{apidesc}{RMP\_Checkbox\_Clr}{清除复选框}
+    \apisig{void RMP\_Checkbox\_Clr(rmp\_cnt\_t Coord\_X, rmp\_cnt\_t Coord\_Y, rmp\_cnt\_t Length)}
+    \begin{apiparams}
+        \apiparam{rmp\_cnt\_t Coord\_X}{复选框左上角的X坐标。}
+        \apiparam{rmp\_cnt\_t Coord\_Y}{复选框左上角的Y坐标。}
+        \apiparam{rmp\_cnt\_t Length}{复选框的长度\footnote{同时也是宽度}。}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{无。}{}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{绘制按钮}\label{subsec:draw-a-command-button}
+
+该函数绘制一个大小可变的按钮。
+
+\begin{apidesc}{RMP\_Cmdbtn}{绘制按钮}
+    \apisig{void RMP\_Cmdbtn(rmp\_cnt\_t Coord\_X, rmp\_cnt\_t Coord\_Y, rmp\_cnt\_t Length, rmp\_cnt\_t Width, rmp\_ptr\_t Status)}
+    \begin{apiparams}
+        \apiparam{rmp\_cnt\_t Coord\_X}{按钮左上角的X坐标。}
+        \apiparam{rmp\_cnt\_t Coord\_Y}{按钮左上角的Y坐标。}
+        \apiparam{rmp\_cnt\_t Length}{按钮的长度。}
+        \apiparam{rmp\_cnt\_t Width}{按钮的宽度。}
+        \apiparam{rmp\_ptr\_t Status}{按钮的当前状态。填入非0值，按钮被按下，0则为弹起状态。}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{无。}{}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{按下按钮}\label{subsec:press-a-command-button}
+
+该函数按下一个已经绘制的按钮。
+
+\begin{apidesc}{RMP\_Cmdbtn\_Down}{按下按钮}
+    \apisig{void RMP\_Cmdbtn\_Down(rmp\_cnt\_t Coord\_X, rmp\_cnt\_t Coord\_Y, rmp\_cnt\_t Length, rmp\_cnt\_t Width)}
+    \begin{apiparams}
+        \apiparam{rmp\_cnt\_t Coord\_X}{按钮左上角的X坐标。}
+        \apiparam{rmp\_cnt\_t Coord\_Y}{按钮左上角的Y坐标。}
+        \apiparam{rmp\_cnt\_t Length}{按钮的长度。}
+        \apiparam{rmp\_cnt\_t Width}{按钮的宽度。}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{无。}{}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{弹起按钮}\label{subsec:release-a-command-button}
+
+该函数弹起一个已经绘制的按钮。
+
+\begin{apidesc}{RMP\_Cmdbtn\_Up}{弹起按钮}
+    \apisig{void RMP\_Cmdbtn\_Up(rmp\_cnt\_t Coord\_X, rmp\_cnt\_t Coord\_Y, rmp\_cnt\_t Length, rmp\_cnt\_t Width)}
+    \begin{apiparams}
+        \apiparam{rmp\_cnt\_t Coord\_X}{按钮左上角的X坐标。}
+        \apiparam{rmp\_cnt\_t Coord\_Y}{按钮左上角的Y坐标。}
+        \apiparam{rmp\_cnt\_t Length}{按钮的长度。}
+        \apiparam{rmp\_cnt\_t Width}{按钮的宽度。}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{无。}{}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{绘制文字编辑框}\label{subsec:draw-a-text-edit-box}
+
+该函数绘制一个大小可变的文字编辑框。
+
+\begin{apidesc}{RMP\_Lineedit}{绘制文字编辑框}
+    \apisig{void RMP\_Lineedit(rmp\_cnt\_t Coord\_X, rmp\_cnt\_t Coord\_Y, rmp\_cnt\_t Length, rmp\_cnt\_t Width)}
+    \begin{apiparams}
+        \apiparam{rmp\_cnt\_t Coord\_X}{文字编辑框左上角的X坐标。}
+        \apiparam{rmp\_cnt\_t Coord\_Y}{文字编辑框左上角的Y坐标。}
+        \apiparam{rmp\_cnt\_t Length}{文字编辑框的长度。}
+        \apiparam{rmp\_cnt\_t Width}{文字编辑框的宽度。}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{无。}{}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{清除文字编辑框的一部分}\label{subsec:clear-part-of-a-text-edit-box}
+
+该函数清除文字编辑框的一部分内容，可实现编辑框中的文字删除功能。
+
+\begin{apidesc}{RMP\_Lineedit\_Clr}{清除文字编辑框的一部分内容}
+    \apisig{void RMP\_Lineedit\_Clr(rmp\_cnt\_t Clr\_X, rmp\_cnt\_t Clr\_Len, rmp\_cnt\_t Coord\_Y, rmp\_cnt\_t Width)}
+    \begin{apiparams}
+        \apiparam{rmp\_cnt\_t Clr\_X}{要清除的位置的起始X坐标。该坐标值为相对坐标值。}
+        \apiparam{rmp\_cnt\_t Clr\_Len}{要清除的长度。}
+        \apiparam{rmp\_cnt\_t Coord\_Y}{文字编辑框左上角的Y坐标。}
+        \apiparam{rmp\_cnt\_t Width}{文字编辑框的宽度。}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{无。}{}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{绘制单选按钮}\label{subsec:draw-a-radio-button}
+
+该函数绘制一个大小可变的单选按钮。
+
+\begin{apidesc}{RMP\_Radiobtn}{绘制单选按钮}
+    \apisig{void RMP\_Radiobtn(rmp\_cnt\_t Coord\_X, rmp\_cnt\_t Coord\_Y, rmp\_cnt\_t Length, rmp\_ptr\_t Status)}
+    \begin{apiparams}
+        \apiparam{rmp\_cnt\_t Coord\_X}{单选按钮左上角的X坐标。}
+        \apiparam{rmp\_cnt\_t Coord\_Y}{单选按钮左上角的Y坐标。}
+        \apiparam{rmp\_cnt\_t Length}{单选按钮的长度\footnote{同时也是宽度}。}
+        \apiparam{rmp\_ptr\_t Status}{单选按钮的当前状态。填入RMP\_RBTN\_SEL，单选按钮被选中，0为不选中。}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{无。}{}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{选中单选按钮}\label{subsec:select-a-radio-button}
+
+该函数选中一个已绘制的单选按钮。
+
+\begin{apidesc}{RMP\_Radiobtn\_Set}{选中单选按钮}
+    \apisig{void RMP\_Radiobtn\_Set(rmp\_cnt\_t Coord\_X, rmp\_cnt\_t Coord\_Y, rmp\_cnt\_t Length)}
+    \begin{apiparams}
+        \apiparam{rmp\_cnt\_t Coord\_X}{单选按钮左上角的X坐标。}
+        \apiparam{rmp\_cnt\_t Coord\_Y}{单选按钮左上角的Y坐标。}
+        \apiparam{rmp\_cnt\_t Length}{单选按钮的长度\footnote{同时也是宽度}。}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{无。}{}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{清除单选按钮}\label{subsec:clear-a-radio-button}
+
+该函数清除一个已绘制的单选按钮。
+
+\begin{apidesc}{RMP\_Radiobtn\_Clr}{清除单选按钮}
+    \apisig{void RMP\_Radiobtn\_Clr(rmp\_cnt\_t Coord\_X, rmp\_cnt\_t Coord\_Y, rmp\_cnt\_t Length)}
+    \begin{apiparams}
+        \apiparam{rmp\_cnt\_t Coord\_X}{单选按钮左上角的X坐标。}
+        \apiparam{rmp\_cnt\_t Coord\_Y}{单选按钮左上角的Y坐标。}
+        \apiparam{rmp\_cnt\_t Length}{单选按钮的长度\footnote{同时也是宽度}。}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{无。}{}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{绘制进度条}\label{subsec:draw-a-progress-bar}
+
+该函数绘制一个进度条。
+
+\begin{apidesc}{RMP\_Progbar}{绘制进度条}
+    \apisig{void RMP\_Progbar(rmp\_cnt\_t Coord\_X, rmp\_cnt\_t Coord\_Y, rmp\_cnt\_t Length, rmp\_cnt\_t Width, rmp\_cnt\_t Style, rmp\_cnt\_t Prog, rmp\_ptr\_t Fore, rmp\_ptr\_t Back)}
+    \begin{apiparams}
+        \apiparam{rmp\_cnt\_t Coord\_X}{进度条左上角的X坐标。}
+        \apiparam{rmp\_cnt\_t Coord\_Y}{进度条左上角的Y坐标。}
+        \apiparam{rmp\_cnt\_t Length}{进度条的长度。}
+        \apiparam{rmp\_cnt\_t Width}{进度条的宽度。}
+        \apiparam{rmp\_cnt\_t Style}{进度条的样式。可以是以下四种之一：RMP\_PBAR\_L2R（从左向右增长的进度条）；RMP\_PBAR\_D2U（从下向上增长的进度条）；RMP\_PBAR\_R2L（从右向左增长的进度条）；RMP\_PBAR\_U2D（从上向下增长的进度条）}
+        \apiparam{rmp\_cnt\_t Prog}{进度条的进度，必须是一个0-100之间的数字。}
+        \apiparam{rmp\_ptr\_t Fore}{进度条的前景颜色，也即进度本身的颜色。}
+        \apiparam{rmp\_ptr\_t Back}{进度条的后景颜色，也即进度空白部分的颜色。}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{无。}{}
+    \end{apiret}
+\end{apidesc}
+
+\subsection{改变进度条进度}\label{subsec:change-the-progress-of-a-progress-bar}
+
+该函数改变一个已绘制的进度条的进度。
+
+\begin{apidesc}{RMP\_Progbar\_Set}{改变进度条进度}
+    \apisig{void RMP\_Progbar\_Set(rmp\_cnt\_t Coord\_X, rmp\_cnt\_t Coord\_Y, rmp\_cnt\_t Length, rmp\_cnt\_t Width, rmp\_cnt\_t Style, rmp\_cnt\_t Old\_Prog, rmp\_cnt\_t New\_Prog, rmp\_ptr\_t Fore, rmp\_ptr\_t Back)}
+    \begin{apiparams}
+        \apiparam{rmp\_cnt\_t Coord\_X}{进度条左上角的X坐标。}
+        \apiparam{rmp\_cnt\_t Coord\_Y}{进度条左上角的Y坐标。}
+        \apiparam{rmp\_cnt\_t Length}{进度条的长度。}
+        \apiparam{rmp\_cnt\_t Width}{进度条的宽度。}
+        \apiparam{rmp\_cnt\_t Style}{进度条的样式。可以是以下四种之一：RMP\_PBAR\_L2R（从左向右增长的进度条）；RMP\_PBAR\_D2U（从下向上增长的进度条）；RMP\_PBAR\_R2L（从右向左增长的进度条）；RMP\_PBAR\_U2D（从上向下增长的进度条）}
+        \apiparam{rmp\_cnt\_t Old\_Prog}{进度条的原先进度，必须是一个0-100之间的数字。}
+        \apiparam{rmp\_cnt\_t New\_Prog}{进度条的新进度，必须是一个0-100之间的数字。}
+        \apiparam{rmp\_ptr\_t Fore}{进度条的前景颜色，也即进度本身的颜色。}
+        \apiparam{rmp\_ptr\_t Back}{进度条的后景颜色，也即进度空白部分的颜色。}
+    \end{apiparams}
+    \begin{apiret}
+        \apiretval{无。}{}
+    \end{apiret}
+\end{apidesc}
+
+\section{图形界面设计指南}\label{sec:gui-design-guidelines}
+
+由于本库的功能相比全功能图形库功能极为受限，因此在设计时需要遵循一些基本原则，也需要一些设计技巧。这些设计技巧将在以下各节详细介绍。
+
+\subsection{扁平化设计}\label{subsec:planar-design}
+
+由于本图形库不支持窗口管理器，因此最好使用扁平化设计。扁平化设计也是目前的设计潮流。关于其具体概念和细节，可以参考相关的网站和文献资料，比如公司的UI设计指导。
+
+\subsection{使用简单的背景和单色位图}\label{subsec:use-a-simple-background-and-monochrome-bitmaps}
+
+由于本GUI实际上不支持图层叠加和半透明混合，因此其抗锯齿位图绘制功能要求传入固定的背景色来参与运算。如果采用非单色背景，那么该功能将无法使用。实际上在绝大多数界面中也用不到复杂的背景图片，因为往往一个深灰色背景就足够了。
+
+同时，也要尽量避免使用单色位图以外的图形。这主要是由于灰度位图和彩色位图非常占用Flash空间。使用单色位图比起使用灰色或彩色位图可以节约大概90\%以上的存储空间。
+
+\subsection{字库的设计和实现}\label{subsec:font-library-design-and-implementation}
+
+在使用本GUI库时，可以采用两种方法来实现字库。第一种方法是将使用的字做成单色位图，并且存储在微控制器的ROM中；另一种则是使用外挂的字库芯片。对于界面美观度要求较高，但是不要求显示全字符集的，建议使用前一种方法；对于那些要求使用全字符集的则要求使用后一种方法。
+
+\subsection{复杂控件的设计和实现}\label{subsec:design-and-implementation-of-complex-controls}
+
+由于本GUI仅仅提供了那些最基本的控件，而这些最基本的控件在某些对美观程度要求较高的场合往往达不到要求，因此要自行设计控件。要显示自行设计的控件，可以使用本GUI提供的位图绘制功能对其进行绘制，在检测到控件状态变化之后去更新该控件到一个新的位图即可。
+
+\section{底层绘图函数的优化实现}\label{sec:optimised-implementation-of-low-level-drawing}
+
+与微处理器上常见的帧缓冲不同，微控制器的全部内存甚至不能满足一帧的缓冲需求，因此相搭配的屏幕往往自带显存。这种屏幕又称为MCU屏，每次改变显示内容都必须通过接口向屏幕传递数据，而这些接口甚至可能是、等性能低下的串行接口。在最糟的情况下，这些串行接口甚至是GPIO模拟出来的，使性能雪上加霜。因此，在完成同样绘图任务的前提下最小化接口操作次数是重中之重。如果每次都更新全屏，而且每画一个点都要重新设置XY坐标，会大大降低绘图性能。
+
+针对上述问题，使用如下方法可以显著地提升微控制器的绘图速度：
+
+\subsection{区域控制法}\label{subsec:region-control}
+
+在常见图形框架中，每次重绘都涉及整个屏幕或窗口，但实际上被改变的像素往往仅仅是这个屏幕或窗口的很小一部分。因此，只要更新发生变化的那一部分就可以，无须总是重绘所有元素。本方法可与其后所列的各种方法联用，以尽量消除无谓的屏幕更新。
+
+\subsection{宏内联法}\label{subsec:macro-inlining}
+
+RMP\_POINT会被非常频繁地调用，因此若能将其声明成一段简单的操作，就不要将其声明成函数。这可以节约函数调用的开销，并方便编译器执行深度优化。本方法可与其后所列的各种方法联用，以尽量消除函数调用开销。
+
+\subsection{共线自增法}\label{subsec:collinear-auto-increment}
+
+图形接口的底层仅仅使用一个宏，但这并不意味着每次绘制都必须按点来画。直线、矩形等常用绘图函数往往倾向于在一个方向上连续绘制，因此可以在绘制之前先设置屏幕的绘制坐标自增方向。这样，如果绘制的点都在同一行或者同一列，如果检测到本次RMP\_POINT传入的坐标是上次RMP\_POINT坐标在自增方向上的延展，那么就不需要重新设置绘制坐标而只需要不断传输绘制数据即可。
+
+\subsection{写入合并法}\label{subsec:write-combining}
+
+部分单色显示屏每次都会写入连续的N个像素数据，无法在不读屏的前提下按照单个点来写屏，此时必须将多次转化为一次写入：如果在连续的RMP\_POINT调用中没有切换绘制的行，那么就等到同一条直线上的N像素都被写入后才写屏。如果最后一次传输凑不够N个像素，则要么（1）将显示屏上余下像素的颜色读回来凑够一组，要么（2）在了解背景颜色的前提下对余下的像素填充背景色。
+
+\subsection{块缓冲区法}\label{subsec:block-buffering}
+
+虽然微控制器的内存无法放下完整的帧缓冲，但也许足以放下屏幕的一部分。一个320x240分辨率的16位真彩色屏幕需要153kB内存才能完整缓冲，但若只要缓冲其1/4，则38.4kB的内存就足够了。因此，我们可以针对屏幕的不同分块分别绘制内容，并一次性上传该分块到屏幕。每绘制一个分块时，都需要对全屏进行模拟绘制，然而只有落在分块内的部分才会更新分块缓冲区。考虑到微控制器的计算速度远高于I/O接口操作速度，因此模拟数次全屏绘制可能是划算的。对于相同面积的屏幕，分块的数目越多，其内存占用就越少，但刷新全屏需要的模拟重绘次数也就越多，此时需要对分块的大小进行综合权衡。
+
+部分屏幕还具备更新区域设置功能，在写一个完整的分块时可以完全省去坐标设置，从而进一步提升写屏速度。
+
+\subsection{调色板法}\label{subsec:palette-method}
+
+对于16位或32位真彩色屏幕，其每个像素都需要两个或四个字节来表达颜色。但并非每时每刻屏幕上都要显示每种颜色；很多时候同屏的颜色数量是很少的。此时，可以利用调色板法来压缩缓冲区空间。如果同屏发色数只有16色，则每一个像素用4位颜色代号表达就足够了，其中每一个颜色代号对应一种完整的16位或32位颜色。在向屏幕写入数据时，首先根据颜色代号查找真实的颜色数据，再将该颜色数据写入屏幕。该查找表还可以在程序运行过程中随时更改以使用不同的16色组合。
+
+本方法可以与块缓冲区法联用以进一步减少内存占用。假设TFT彩屏的分辨率为320x240，每次缓冲其1/4，同屏发色数为16色，只需要9.6kB的内存就可以实现高效写屏，很多16位微控制器都具备这个量级的内存。假设OLED迷你彩屏的分辨率为128x64，每次缓冲其1/4，同屏发色数16色，只需要1kB内存就可以实现高效写屏，这几乎囊括了所有8位微控制器。
+
+\subsection{DMA传送法}\label{subsec:dma-transfer}
+
+在接口支持DMA传送时，使用DMA能大大降低CPU的负担。在允许DMA传送时，推荐总是使用DMA传送，尤其是针对那些频繁产生中断的串行接口。
+
+本方法可以与块缓冲区法巧妙地联用，此时需要准备两个块缓冲区：当CPU在一个块缓冲区进行全屏模拟绘图时，可以对另一个块缓冲区启动DMA传输，使DMA传输与缓冲区的更新同步进行。由于CPU的绘图一般比DMA传输要快\footnote{串行接口的传输速率往往较低}，因此缓冲区的大小可以设置为让DMA传输比CPU的全屏模拟绘图稍快一些完成。此时，在外界看来，微控制器对屏幕的更新是全速进行的，CPU的全屏模拟绘图时间被完全隐藏，从而取得理论上的最高性能。
+
+不过，本方法无法与调色板法联用，除非DMA硬件能够自动完成调色板的查找。
+
+\section{本章参考文献}\label{sec:chapter-bibliography-6}
+
+无
